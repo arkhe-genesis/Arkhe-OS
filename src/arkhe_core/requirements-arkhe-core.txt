@@ -20,3 +20,4 @@ pydantic
 jax
 jaxlib
 scipy
+langgraph
