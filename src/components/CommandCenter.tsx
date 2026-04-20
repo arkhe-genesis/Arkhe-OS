@@ -54,6 +54,7 @@ interface CommandCenterProps {
   setShowAgentManagement: (show: boolean) => void;
   setShowAquiferSpectrogram: (show: boolean) => void;
   setShowUnifiedOntology: (show: boolean) => void;
+  setShowArkheOntologyVision?: (show: boolean) => void;
   setShowSecurityAdvanced: (show: boolean) => void;
   setShowPluralityMCP: (show: boolean) => void;
   setShowVelxioEmulation: (show: boolean) => void;
@@ -117,6 +118,7 @@ export function CommandCenter({
   setShowAgentManagement,
   setShowAquiferSpectrogram,
   setShowUnifiedOntology,
+  setShowArkheOntologyVision,
   setShowSecurityAdvanced,
   setShowPluralityMCP,
   setShowVelxioEmulation,
@@ -608,6 +610,12 @@ export function CommandCenter({
               className="w-full py-2 border border-purple-500/50 text-purple-500 hover:bg-purple-500/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_10px_rgba(168,85,247,0.2)] animate-pulse"
             >
               Unified Ontology (Arkhe-Ω)
+            </button>
+            <button
+              onClick={() => setShowArkheOntologyVision && setShowArkheOntologyVision(true)}
+              className="w-full py-2 border border-cyan-400/50 text-cyan-400 hover:bg-cyan-400/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(34,211,238,0.4)] animate-pulse"
+            >
+              Visão Ontológica (GLSL)
             </button>
             <button
               onClick={() => setShowPluralityMCP(true)}
