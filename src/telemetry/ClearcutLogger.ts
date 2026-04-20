@@ -29,6 +29,7 @@ const SUPPORTED_ZOD_TYPES = [
   'ZodBoolean',
   'ZodArray',
   'ZodEnum',
+  'ZodRecord',
 ] as const;
 type ZodType = (typeof SUPPORTED_ZOD_TYPES)[number];
 
@@ -62,7 +63,7 @@ type LoggedToolCallArgValue = string | number | boolean;
 export function transformArgName(zodType: ZodType, name: string): string {
   if (zodType === 'ZodString') {
     return `${name}_length`;
-  } else if (zodType === 'ZodArray') {
+  } else if (zodType === 'ZodArray' || zodType === 'ZodRecord') {
     return `${name}_count`;
   } else {
     return name;
@@ -70,7 +71,11 @@ export function transformArgName(zodType: ZodType, name: string): string {
 }
 
 export function transformArgType(zodType: ZodType): string {
-  if (zodType === 'ZodString' || zodType === 'ZodArray') {
+  if (
+    zodType === 'ZodString' ||
+    zodType === 'ZodArray' ||
+    zodType === 'ZodRecord'
+  ) {
     return 'number';
   }
   switch (zodType) {
@@ -93,6 +98,8 @@ function transformValue(
     return (value as string).length;
   } else if (zodType === 'ZodArray') {
     return (value as unknown[]).length;
+  } else if (zodType === 'ZodRecord') {
+    return Object.keys(value as object).length;
   } else {
     return value as LoggedToolCallArgValue;
   }
@@ -103,6 +110,8 @@ function hasEquivalentType(zodType: ZodType, value: unknown): boolean {
     return typeof value === 'string';
   } else if (zodType === 'ZodArray') {
     return Array.isArray(value);
+  } else if (zodType === 'ZodRecord') {
+    return typeof value === 'object' && value !== null && !Array.isArray(value);
   } else if (zodType === 'ZodNumber') {
     return typeof value === 'number';
   } else if (zodType === 'ZodBoolean') {
