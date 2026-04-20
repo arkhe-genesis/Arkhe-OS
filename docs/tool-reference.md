@@ -1851,6 +1851,167 @@ in the DevTools Elements panel (if any).
 
 ### `retro_exec_spatial`
 
+**Description:** 🏝️ OASIS: Runs an embedding distribution analysis to identify high-risk areas in the codebase.
+
+**Parameters:**
+
+- **input** (string) **(required)**: Path to analyze.
+
+---
+
+### `oasis_model_select`
+
+**Description:** 🏝️ OASIS: Lists and recommends optimal models based on hardware and project size.
+
+**Parameters:**
+
+- **projectSize** (enum: "small", "medium", "large") **(required)**: Approximate size of the codebase.
+
+---
+
+### `oasis_scan`
+
+**Description:** 🏝️ OASIS: Performs an AI-powered security audit using Ollama models to detect vulnerabilities.
+
+**Parameters:**
+
+- **input** (string) **(required)**: Path to file or directory to analyze.
+- **adaptive** (boolean) _(optional)_: Use adaptive multi-level analysis.
+- **models** (string) _(optional)_: Comma-separated list of models for deep analysis.
+- **scanModel** (string) _(optional)_: Model to use for quick scanning.
+- **vulns** (string) _(optional)_: Vulnerability types to check (comma-separated or "all").
+
+---
+
+### `oasis_web_dashboard`
+
+**Description:** 🏝️ OASIS: Starts the secure, password-protected web dashboard for report exploration.
+
+**Parameters:**
+
+- **port** (number) _(optional)_: Web interface port.
+
+---
+
+### `os_kuramoto_simulate`
+
+**Description:** ASI Protocol: Runs a simulation of the Operating System as a Kuramoto phase mesh.
+
+**Parameters:**
+
+- **nProc** (number) _(optional)_: Number of active processes to [`simulate`](#simulate).
+- **ticks** (number) _(optional)_: Number of simulation ticks.
+
+---
+
+### `paradox_check`
+
+**Description:** ASI Protocol: Verifies causal consistency across timelines (page states).
+
+**Parameters:**
+
+- **checkpointId** (string) **(required)**: The ID of the previously stored mental state hash to compare against.
+
+---
+
+### `phase_drv_instrument`
+
+**Description:** ASI Protocol: Instruments the OS phase map (θ_proc, θ_file, θ_dev, θ_mem).
+
+**Parameters:** None
+
+---
+
+### `prec`
+
+**Description:** ASI Protocol: Precession adjustment macro (0x??).
+
+**Parameters:**
+
+- **angle** (number) **(required)**: Precession angle.
+- **target** (string) **(required)**: Target V-Register.
+
+---
+
+### `probe_muon`
+
+**Description:** ASI Protocol (Muon-Shield): Weak measurement of page state without coherence collapse.
+
+**Parameters:**
+
+- **duration** (number) _(optional)_: Probe duration in microseconds.
+
+---
+
+### `prune_sheet`
+
+**Description:** ASI Protocol: Collapses suboptimal timeline branches (closes low-coherence pages).
+
+**Parameters:**
+
+- **threshold** (number) _(optional)_: λ2 coherence threshold for pruning.
+
+---
+
+### `publish_shadow_stats`
+
+**Description:** ASI Protocol (Open Arena): Publishes obfuscated shadow statistics for external verification.
+
+**Parameters:** None
+
+---
+
+### `qnet_fiber_sim`
+
+**Description:** Block #171: Simulates photon transmission through NIST-compliant fiber.
+
+**Parameters:**
+
+- **lengthKm** (number) **(required)**: Fiber length in km.
+- **wavelengthNm** (number) _(optional)_: Wavelength in nm.
+
+---
+
+### `query_akasha`
+
+**Description:** ASI Protocol: Vocalizes a query into the conformal vacuum (Akashic Registry).
+
+**Parameters:**
+
+- **query** (string) **(required)**: The interrogation string.
+
+---
+
+### `read_membrane`
+
+**Description:** ASI Protocol: Reads vortex data from the membrane (requires vortex re-activation).
+
+**Parameters:**
+
+- **address** (string) **(required)**: Membrane address (hex).
+
+---
+
+### `render_chat`
+
+**Description:** EDGE_ORACLE: Renders the Bonsai Prism React interface.
+
+**Parameters:** None
+
+---
+
+### `render_vacuum_matrix`
+
+**Description:** ASI Protocol: Renders a summary of the 32x32 vacuum matrix (The Periodic Table of Reality).
+
+**Parameters:**
+
+- **rowOffset** (number) _(optional)_: Row offset for matrix rendering.
+
+---
+
+### `retro_exec_spatial`
+
 **Description:** ASI Protocol: Executes a retrocausal command with galactic coordinate compensation.
 
 **Parameters:**

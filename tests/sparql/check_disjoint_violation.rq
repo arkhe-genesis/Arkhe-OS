@@ -1,9 +1,9 @@
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
-SELECT ?x ?y
+SELECT ?individual ?class1 ?class2
 WHERE {
-  ?x owl:disjointWith ?y .
-  ?i rdf:type ?x .
-  ?i rdf:type ?y .
+  ?individual rdf:type ?class1 .
+  ?individual rdf:type ?class2 .
+  ?class1 owl:disjointWith ?class2 .
 }
