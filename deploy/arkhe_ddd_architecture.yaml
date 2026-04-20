@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent-context-service
+  namespace: arkhe
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: agent-context
+  template:
+    metadata:
+      labels:
+        app: agent-context
+    spec:
+      containers:
+      - name: agent-service
+        image: arkhe/agent-context:v1.2.0
+        ports:
+        - containerPort: 8080
+        env:
+        - name: ONTOLOGY_PATH
+          value: "/config/arkhe_ontology.owl"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: agent-context
+  namespace: arkhe
+spec:
+  selector:
+    app: agent-context
+  ports:
+  - port: 80
+    targetPort: 8080
