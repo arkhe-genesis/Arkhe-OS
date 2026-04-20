@@ -2213,50 +2213,6 @@ export const commands: Commands = {
       }
     }
   },
-  "researchhub_get_hubs": {
-    "description": "Retrieves a list of trending scientific hubs from ResearchHub.",
-    "category": "Network",
-    "args": {
-      "page": {
-        "name": "page",
-        "type": "number",
-        "description": "Page number for results.",
-        "required": false,
-        "default": 1
-      }
-    }
-  },
-  "researchhub_get_paper": {
-    "description": "Retrieves detailed information about a specific ResearchHub paper by ID.",
-    "category": "Network",
-    "args": {
-      "paperId": {
-        "name": "paperId",
-        "type": "number",
-        "description": "The ID of the paper to retrieve.",
-        "required": true
-      }
-    }
-  },
-  "researchhub_search": {
-    "description": "Searches ResearchHub for scientific papers and documents.",
-    "category": "Network",
-    "args": {
-      "query": {
-        "name": "query",
-        "type": "string",
-        "description": "Search query for papers.",
-        "required": true
-      },
-      "page": {
-        "name": "page",
-        "type": "number",
-        "description": "Page number for results.",
-        "required": false,
-        "default": 1
-      }
-    }
-  },
   "resize_page": {
     "description": "Resizes the selected page's window so that the page has specified dimension",
     "category": "Emulation",
