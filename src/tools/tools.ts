@@ -21,6 +21,7 @@ import * as memoryTools from './memory.js';
 import * as logosLibraryTools from './logos_library.js';
 import * as nekoTools from './neko.js';
 import * as networkTools from './network.js';
+import * as oasisTools from './oasis.js';
 import * as osCathedralTools from './os_cathedral.js';
 import * as spectraTools from './spectra.js';
 import * as tauTools from './tau.js';
@@ -63,6 +64,7 @@ export const createTools = (args: ParsedArguments) => {
         ...Object.values(tauTools),
         ...Object.values(logosLibraryTools),
         ...Object.values(nekoTools),
+        ...Object.values(oasisTools),
       ];
 
   const tools = [];
