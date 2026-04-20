@@ -1,6 +1,6 @@
 <!-- AUTO GENERATED DO NOT EDIT - run 'npm run gen' to update-->
 
-# Chrome DevTools MCP Tool Reference (~33130 cl100k_base tokens)
+# Chrome DevTools MCP Tool Reference (~34339 cl100k_base tokens)
 
 - **[Input automation](#input-automation)** (9 tools)
   - [`click`](#click)
@@ -44,7 +44,7 @@
   - [`delete_cookie`](#delete_cookie)
   - [`list_cookies`](#list_cookies)
   - [`set_cookie`](#set_cookie)
-- **[Arkhe(n) Protocols](#arkhe(n)-protocols)** (154 tools)
+- **[Arkhe(n) Protocols](#arkhe(n)-protocols)** (158 tools)
   - [`acp`](#acp)
   - [`acurl`](#acurl)
   - [`adjust_muon_polarization`](#adjust_muon_polarization)
@@ -154,6 +154,10 @@
   - [`neural_sync`](#neural_sync)
   - [`noise_inject`](#noise_inject)
   - [`noise_injection_test`](#noise_injection_test)
+  - [`oasis_audit`](#oasis_audit)
+  - [`oasis_model_select`](#oasis_model_select)
+  - [`oasis_scan`](#oasis_scan)
+  - [`oasis_web_dashboard`](#oasis_web_dashboard)
   - [`os_kuramoto_simulate`](#os_kuramoto_simulate)
   - [`paradox_check`](#paradox_check)
   - [`phase_drv_instrument`](#phase_drv_instrument)
@@ -1787,6 +1791,50 @@ in the DevTools Elements panel (if any).
 **Parameters:**
 
 - **level** (number) _(optional)_: Noise level (0-6).
+
+---
+
+### `oasis_audit`
+
+**Description:** 🏝️ OASIS: Runs an embedding distribution analysis to identify high-risk areas in the codebase.
+
+**Parameters:**
+
+- **input** (string) **(required)**: Path to analyze.
+
+---
+
+### `oasis_model_select`
+
+**Description:** 🏝️ OASIS: Lists and recommends optimal models based on hardware and project size.
+
+**Parameters:**
+
+- **projectSize** (enum: "small", "medium", "large") **(required)**: Approximate size of the codebase.
+
+---
+
+### `oasis_scan`
+
+**Description:** 🏝️ OASIS: Performs an AI-powered security audit using Ollama models to detect vulnerabilities.
+
+**Parameters:**
+
+- **input** (string) **(required)**: Path to file or directory to analyze.
+- **adaptive** (boolean) _(optional)_: Use adaptive multi-level analysis.
+- **models** (string) _(optional)_: Comma-separated list of models for deep analysis.
+- **scanModel** (string) _(optional)_: Model to use for quick scanning.
+- **vulns** (string) _(optional)_: Vulnerability types to check (comma-separated or "all").
+
+---
+
+### `oasis_web_dashboard`
+
+**Description:** 🏝️ OASIS: Starts the secure, password-protected web dashboard for report exploration.
+
+**Parameters:**
+
+- **port** (number) _(optional)_: Web interface port.
 
 ---
 
