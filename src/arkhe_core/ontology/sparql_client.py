@@ -1,6 +1,8 @@
 from rdflib import Graph, Namespace, URIRef, RDF
 from typing import List, Dict
 
+from arkhe_core.security.sparql_guard import sanitize_sparql_query
+
 class OntologyClient:
     """
     Cliente local/remoto para a ontologia Arkhe.
@@ -13,6 +15,8 @@ class OntologyClient:
         except:
             pass
         self.ns = Namespace("http://arkhe.ai/ontology/2026#")
+        # Update default endpoint to match new dataset name 'arkhe-data'
+        self.base_url = "http://localhost:3030/arkhe-data"
 
     def validate_agent_task(self, agent_id: str, task_type: str) -> bool:
         """
@@ -25,6 +29,8 @@ class OntologyClient:
             arkhe:{task_type} rdf:type arkhe:Task .
         }}
         """
+        # Internal call, marked as trusted_source=True
+        query = sanitize_sparql_query(query, trusted_source=True)
         # Mocking logic for validation if graph is empty
         if len(self.g) == 0:
              return True
@@ -38,6 +44,8 @@ class OntologyClient:
             arkhe:{task_id} arkhe:protectedBy ?seal .
         }}
         """
+        # Internal call, marked as trusted_source=True
+        query = sanitize_sparql_query(query, trusted_source=True)
         if len(self.g) == 0:
              return ["TEMPORAL"]
         results = self.g.query(query)

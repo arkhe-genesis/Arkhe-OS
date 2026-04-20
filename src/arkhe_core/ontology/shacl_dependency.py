@@ -4,6 +4,8 @@ from rdflib import Graph
 import json
 from typing import Optional
 
+from arkhe_core.security.sparql_guard import sanitize_shacl_report
+
 class SHACLValidator:
     _instance = None
     _shapes_graph: Optional[Graph] = None
@@ -41,7 +43,8 @@ class SHACLValidator:
         )
 
         if not conforms:
-            return [{"message": "Constraint violation detected"}]
+            violations = [{"message": "Constraint violation detected"}]
+            return sanitize_shacl_report(violations)
         return []
 
 validator = SHACLValidator()

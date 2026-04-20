@@ -7,20 +7,37 @@
 
 [] rdf:type fuseki:Server ;
    fuseki:services (
-     <#arkhe_service>
+     <#arkhe_abox_service>
+     <#arkhe_tbox_service>
    ) .
 
-<#arkhe_service> rdf:type fuseki:Service ;
-    fuseki:name                     "arkhe" ;
+# A-Box Service: Accessible to agents for data operations
+<#arkhe_abox_service> rdf:type fuseki:Service ;
+    fuseki:name                     "arkhe-data" ;
     fuseki:serviceQuery             "sparql" ;
-    fuseki:serviceUpdate            "update" ;
-    fuseki:serviceUpload            "upload" ;
-    fuseki:serviceReadWriteGraphStore  "data" ;
-    fuseki:dataset                  <#arkhe_dataset> .
+    # update/upload restricted in production, but here we define the service
+    fuseki:dataset                  <#arkhe_abox_dataset> .
 
-<#arkhe_dataset> rdf:type tdb:DatasetTDB ;
-    tdb:location "/fuseki/databases/arkhe" ;
-    ja:defaultGraph <#arkhe_graph> .
+# T-Box Service: Restricted access, only for schema management
+<#arkhe_tbox_service> rdf:type fuseki:Service ;
+    fuseki:name                     "arkhe-schema" ;
+    fuseki:serviceQuery             "sparql" ;
+    fuseki:dataset                  <#arkhe_tbox_dataset> .
 
-<#arkhe_graph> rdf:type tdb:GraphTDB ;
-    tdb:dataset <#arkhe_dataset> .
+# A-Box Dataset
+<#arkhe_abox_dataset> rdf:type tdb:DatasetTDB ;
+    tdb:location "/fuseki/databases/arkhe_abox" ;
+    tdb:unionDefaultGraph false ;
+    ja:defaultGraph <#arkhe_abox_graph> .
+
+<#arkhe_abox_graph> rdf:type tdb:GraphTDB ;
+    tdb:dataset <#arkhe_abox_dataset> .
+
+# T-Box Dataset
+<#arkhe_tbox_dataset> rdf:type tdb:DatasetTDB ;
+    tdb:location "/fuseki/databases/arkhe_tbox" ;
+    tdb:unionDefaultGraph false ;
+    ja:defaultGraph <#arkhe_tbox_graph> .
+
+<#arkhe_tbox_graph> rdf:type tdb:GraphTDB ;
+    tdb:dataset <#arkhe_tbox_dataset> .

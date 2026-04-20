@@ -27,6 +27,14 @@ jobs:
         run: |
           robot reason --reasoner HermiT --input src/arkhe_core/ontology/arkhe_ontology.owl --output inferred.owl
           robot verify --queries tests/sparql/*.rq --input src/arkhe_core/ontology/arkhe_ontology.owl
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install rdflib
       - name: SemVer Diff
         run: |
           python3 scripts/owl_semver_diff.py src/arkhe_core/ontology/arkhe_ontology.owl src/arkhe_core/ontology/arkhe_ontology.owl
