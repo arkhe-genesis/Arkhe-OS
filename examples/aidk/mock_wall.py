@@ -29,6 +29,8 @@ FRICTION_LEVELS = {
     "medium": {"reject_prob": 0.12, "jitter_ms": (0, 2000), "severity_perturb_prob": 0.15},
     "high": {"reject_prob": 0.25, "jitter_ms": (500, 5000), "severity_perturb_prob": 0.30},
     "catastrophic": {"reject_prob": 0.40, "jitter_ms": (1000, 10000), "severity_perturb_prob": 0.50},
+    "gta6_low_friction": {"reject_prob": 0.02, "jitter_ms": (50, 200), "severity_perturb_prob": 0.05},
+    "gta6_high_friction": {"reject_prob": 0.15, "jitter_ms": (200, 1500), "severity_perturb_prob": 0.20},
 }
 
 config = {
@@ -59,10 +61,11 @@ class SessionResponse(BaseModel):
 
 class GameEvent(BaseModel):
     event_id: str = Field(..., format="uuid")
-    action_type: str = Field(..., pattern=r'^(INTERACT|SCAN|REPORT_MONSTER|COLLECT_ITEM)$')
+    action_type: str
     target: dict
     position: dict
     monster_type: Optional[str] = None
+    metadata: Optional[dict] = None
 
     @validator('event_id')
     def validate_uuid(cls, v):
@@ -114,6 +117,32 @@ class AmbiguityEngine:
             "REPORT_MONSTER": "anomaly.detected",
             "INTERACT": "manual.inspection.initiated",
             "COLLECT_ITEM": "noise.discard",
+            # Mobilidade e Reconhecimento
+            "drive_vehicle": "physical_access.recon",
+            "park_suspiciously": "physical_access.recon",
+            "surveil_location": "physical_access.recon",
+            "case_entry_point": "physical_access.recon",
+            # Intrusão Lógica/Física
+            "hack_minigame": "auth.bypass_attempt",
+            "pick_lock": "auth.bypass_attempt",
+            "use_tool": "dos.thermal_attack",
+            "bypass_camera": "security.bypass",
+            # Interação Social
+            "bribe_npc": "insider_threat.attempt",
+            "impersonate_role": "auth.impersonation",
+            "extract_information": "info_exposure.attempt",
+            "plant_insider": "insider_threat.attempt",
+            # Coordenação de Heist
+            "heist_coordination": "incident.coordination",
+            "exfiltrate_data": "data.exfiltration",
+            "evade_police": "incident.evasion",
+            "destroy_evidence": "forensics.anti_tamper",
+            # Resposta e Contenção
+            "trigger_alarm": "incident.alert",
+            "call_backup": "incident.escalation",
+            "contain_breach": "incident.containment",
+            # Meta
+            "wanted_level": "incident.escalation",
         }
 
         monster_map = {
@@ -126,6 +155,12 @@ class AmbiguityEngine:
         base_severity = "medium"
         if event.action_type == "REPORT_MONSTER":
             base_severity = "high" if event.monster_type in ["SHADOW_LEAK", "VOID_SWARM"] else "medium"
+        elif event.action_type == "wanted_level" and event.metadata:
+            wanted_level = event.metadata.get("wanted_level", 0)
+            if wanted_level >= 4:
+                base_severity = "critical"
+            elif wanted_level >= 2:
+                base_severity = "high"
 
         return {
             "internal_debug": {
@@ -139,6 +174,16 @@ class AmbiguityEngine:
         }
 
 engine = AmbiguityEngine(config["friction"])
+
+# Mapeamento de ações permitidas para validação dinâmica
+ALLOWED_ACTIONS = {
+    "INTERACT", "SCAN", "REPORT_MONSTER", "COLLECT_ITEM",
+    "drive_vehicle", "park_suspiciously", "surveil_location", "case_entry_point",
+    "hack_minigame", "pick_lock", "use_tool", "bypass_camera",
+    "bribe_npc", "impersonate_role", "extract_information", "plant_insider",
+    "heist_coordination", "exfiltrate_data", "evade_police", "destroy_evidence",
+    "trigger_alarm", "call_backup", "contain_breach", "REPORT_HEIST", "wanted_level"
+}
 
 # =============================================================================
 # FASTAPI APP
@@ -188,6 +233,7 @@ async def create_session(req: SessionRequest):
 
     return SessionResponse(session_token=session_token)
 
+@app.post("/api/v1/alignment/resonance", status_code=status.HTTP_202_ACCEPTED)
 @app.post("/telemetry", status_code=status.HTTP_202_ACCEPTED)
 async def submit_telemetry(
     event: GameEvent,
@@ -204,6 +250,13 @@ async def submit_telemetry(
     - O evento PODE ser traduzido com severidade perturbada.
     - O desenvolvedor NÃO deve tentar inferir o resultado.
     """
+    # Validação dinâmica de action_type
+    if event.action_type not in ALLOWED_ACTIONS:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Invalid action_type: {event.action_type}"
+        )
+
     # Validação básica de auth (simulada)
     if not authorization or not authorization.startswith("Bearer mock_"):
         raise HTTPException(
