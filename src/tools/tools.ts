@@ -25,8 +25,11 @@ import * as oasisTools from './oasis.js';
 import * as osCathedralTools from './os_cathedral.js';
 import * as spectraTools from './spectra.js';
 import * as tauTools from './tau.js';
+import * as mercuryTools from './mercury.js';
+import * as microsandboxTools from './microsandbox.js';
 import * as pagesTools from './pages.js';
 import * as performanceTools from './performance.js';
+import * as researchhubTools from './researchhub.js';
 import * as screencastTools from './screencast.js';
 import * as screenshotTools from './screenshot.js';
 import * as scriptTools from './script.js';
@@ -49,6 +52,7 @@ export const createTools = (args: ParsedArguments) => {
         ...Object.values(networkTools),
         ...Object.values(pagesTools),
         ...Object.values(performanceTools),
+        ...Object.values(researchhubTools),
         ...Object.values(screencastTools),
         ...Object.values(screenshotTools),
         ...Object.values(scriptTools),
@@ -62,6 +66,8 @@ export const createTools = (args: ParsedArguments) => {
         ...Object.values(osCathedralTools),
         ...Object.values(spectraTools),
         ...Object.values(tauTools),
+        ...Object.values(mercuryTools),
+        ...Object.values(microsandboxTools),
         ...Object.values(logosLibraryTools),
         ...Object.values(nekoTools),
         ...Object.values(oasisTools),

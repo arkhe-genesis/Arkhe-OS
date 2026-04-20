@@ -23,6 +23,16 @@ describe('cli args parsing', () => {
     performanceCrux: true,
     'usage-statistics': true,
     usageStatistics: true,
+    'bee-api': 'http://127.0.0.1:1633',
+    beeApi: 'http://127.0.0.1:1633',
+    'ipfs-gateway': 'http://127.0.0.1:8080',
+    ipfsGateway: 'http://127.0.0.1:8080',
+    'ipfs-api': 'http://127.0.0.1:5001',
+    ipfsApi: 'http://127.0.0.1:5001',
+    'radicle-httpd': 'http://127.0.0.1:8780',
+    radicleHttpd: 'http://127.0.0.1:8780',
+    'eth-rpc': 'http://127.0.0.1:8545',
+    ethRpc: 'http://127.0.0.1:8545',
   };
 
   it('parses with default args', async () => {

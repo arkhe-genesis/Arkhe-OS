@@ -17,6 +17,8 @@ export enum ToolCategory {
   ARKHE = 'arkhe',
   DECENTRALIZED = 'decentralized',
   FINANCE = 'finance',
+  AGENT = 'agent',
+  SANDBOX = 'sandbox',
 }
 
 export const labels = {
@@ -32,4 +34,6 @@ export const labels = {
   [ToolCategory.ARKHE]: 'Arkhe(n) Protocols',
   [ToolCategory.DECENTRALIZED]: 'Decentralized Protocols',
   [ToolCategory.FINANCE]: 'Finance Protocols',
+  [ToolCategory.AGENT]: 'Mercury Agent Protocols',
+  [ToolCategory.SANDBOX]: 'Microsandbox Protocols',
 };
