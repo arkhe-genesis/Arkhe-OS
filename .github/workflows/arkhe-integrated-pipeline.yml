@@ -1,0 +1,28 @@
+name: Arkhe Integrated Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-ontology:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Download ROBOT
+        run: |
+          wget https://github.com/ontodev/robot/releases/download/v1.9.6/robot.jar
+          wget https://raw.githubusercontent.com/ontodev/robot/master/bin/robot
+          chmod +x robot
+          sudo mv robot /usr/local/bin/
+      - name: ROBOT Validate
+        run: |
+          robot reason --reasoner HermiT --input src/arkhe_core/ontology/arkhe_ontology.owl --output inferred.owl
+          robot verify --queries tests/sparql/*.rq --input src/arkhe_core/ontology/arkhe_ontology.owl
