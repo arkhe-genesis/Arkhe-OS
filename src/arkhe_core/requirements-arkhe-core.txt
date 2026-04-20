@@ -20,3 +20,5 @@ pydantic
 jax
 jaxlib
 scipy
+langgraph
+rdflib
