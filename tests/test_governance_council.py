@@ -1,7 +1,9 @@
 
 import asyncio
+import pytest
 from src.arkhe_core.governance_council import governance_app
 
+@pytest.mark.asyncio
 async def test_governance_workflow():
     print("\n--- TESTANDO WORKFLOW DE GOVERNANÇA ---")
     initial_state = {

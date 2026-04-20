@@ -10,6 +10,7 @@ from .telemetry_processor import TelemetryProcessor
 app = FastAPI(title="Arkhe(n) Forge API", version="0.1.0")
 council = IOTACouncil()
 telemetry_processor = TelemetryProcessor()
+gameplay_handler = GameplayHandler()
 
 class IntentRequest(BaseModel):
     intent: str
@@ -44,17 +45,13 @@ class VisualizationState(BaseModel):
     nodes: List[OntologyNode]
     edges: List[OntologyEdge]
 
-class PlayerInfo(BaseModel):
-    sub: str
-    role: str
-
 class ViewportState(BaseModel):
     position: Dict[str, float]
     direction: Dict[str, float]
 
 class VisualTelemetryRequest(BaseModel):
     session_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    timestamp: datetime = Field(default_factory=datetime.now)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     viewport: ViewportState
     interaction: Optional[Dict[str, Any]] = None
     rendering_metrics: Optional[Dict[str, Any]] = None
@@ -89,9 +86,6 @@ async def health():
 
 @app.get("/visualization-state", response_model=VisualizationState)
 async def get_visualization_state():
-    # Mock data for demonstration - Note: URIs are kept in backend for real use,
-    # but here they are returned to allow the client to know what it is looking at
-    # (in a real "blind" system, URIs would be replaced by hashes or IDs).
     nodes = [
         OntologyNode(uri="arkhe:Core", position=[0, 0, 0], color=[0, 1, 0.6, 1], size=0.5, type=0, securityState=0),
         OntologyNode(uri="arkhe:Sensory", position=[2, 0, 0], color=[0, 0.5, 1, 1], size=0.3, type=1, securityState=0),
@@ -110,10 +104,60 @@ async def get_visualization_state():
 @app.post("/visual-telemetry")
 async def post_visual_telemetry(telemetry: VisualTelemetryRequest):
     try:
-        result = await telemetry_processor.process_telemetry(telemetry.dict())
+        result = await telemetry_processor.process_telemetry(telemetry.model_dump())
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/v1/gameplay/event")
+async def gameplay_event(
+    event: GameplayEventRequest,
+    x_arkhe_async: Optional[bool] = Header(None, alias="X-Arkhe-Async"),
+    game_id: str = Depends(get_current_game)
+):
+    try:
+        if x_arkhe_async:
+            task_id = str(uuid.uuid4())
+            return HTTPException(status_code=202, detail={"task_id": task_id, "status": "pending"})
+
+        # Verify event's game_id matches token's game_id
+        if event.game_id != game_id:
+             raise HTTPException(status_code=403, detail="Token does not match game_id")
+
+        result = await gameplay_handler.process_event(event.model_dump())
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.websocket("/api/v1/stream")
+async def websocket_endpoint(websocket: WebSocket):
+    # Verify token from query param or header
+    token = websocket.query_params.get("token")
+    if not token:
+        # Check header if subprotocol or similar mechanism is used
+        auth_header = websocket.headers.get("authorization")
+        if auth_header and auth_header.startswith("Bearer "):
+            token = auth_header.split(" ")[1]
+
+    if not token:
+        await websocket.close(code=4001)
+        return
+
+    try:
+        jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except JWTError:
+        await websocket.close(code=4001)
+        return
+
+    await stream_gateway.connect(websocket)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            logger.info(f"Received from client: {data}")
+    except WebSocketDisconnect:
+        stream_gateway.disconnect(websocket)
 
 if __name__ == "__main__":
     import uvicorn
