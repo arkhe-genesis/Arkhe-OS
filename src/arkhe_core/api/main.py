@@ -14,6 +14,12 @@ telemetry_processor = TelemetryProcessor()
 class IntentRequest(BaseModel):
     intent: str
 
+class GovernanceRequest(BaseModel):
+    evento: str
+    sistema: str
+    cve: Optional[str] = None
+    cvss: float
+
 class DeliberationResponse(BaseModel):
     intent: str
     perspectives: List[Dict[str, Any]]
