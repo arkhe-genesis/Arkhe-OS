@@ -39,6 +39,7 @@ import SpectraYieldPanel from './components/SpectraYieldPanel';
 import TemporalLensPanel from './components/TemporalLensPanel';
 import TemporalLog from './components/TemporalLog';
 import TemporalStreamViewer from './components/TemporalStreamViewer';
+import ArkheOntologyVision from './components/ArkheOntologyVision';
 import ThreatDetection from './components/ThreatDetection';
 import ThukdamProtocolPanel from './components/ThukdamProtocolPanel';
 import TimechainVisualizer from './components/TimechainVisualizer';
@@ -58,6 +59,7 @@ export default function App() {
   const [showTelevision, setShowTelevision] = useState(false);
   const [showVideoGen, setShowVideoGen] = useState(false);
   const [showTemporalStream, setShowTemporalStream] = useState(false);
+  const [showArkheOntologyVision, setShowArkheOntologyVision] = useState(false);
 
   const navigation = [
     { id: 'simulation', label: 'Reality Simulation', icon: Shield },
@@ -242,6 +244,7 @@ export default function App() {
                 setShowAgentManagement={() => {}}
                 setShowAquiferSpectrogram={() => {}}
                 setShowUnifiedOntology={() => {}}
+                setShowArkheOntologyVision={() => setShowArkheOntologyVision(true)}
                 setShowSecurityAdvanced={() => {}}
                 setShowPluralityMCP={() => {}}
                 setShowVelxioEmulation={() => {}}
@@ -355,6 +358,10 @@ export default function App() {
 
       <AnimatePresence>
         {showTemporalStream && <TemporalStreamViewer onClose={() => setShowTemporalStream(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showArkheOntologyVision && <ArkheOntologyVision onClose={() => setShowArkheOntologyVision(false)} />}
       </AnimatePresence>
 
       {/* Global Modals */}

@@ -1,0 +1,43 @@
+@prefix :        <#> .
+@prefix fuseki:  <http://jena.apache.org/fuseki#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix tdb:     <http://jena.hpl.hp.com/2008/tdb#> .
+@prefix ja:      <http://jena.hpl.hp.com/2005/11/Assembler#> .
+
+[] rdf:type fuseki:Server ;
+   fuseki:services (
+     <#arkhe_abox_service>
+     <#arkhe_tbox_service>
+   ) .
+
+# A-Box Service: Accessible to agents for data operations
+<#arkhe_abox_service> rdf:type fuseki:Service ;
+    fuseki:name                     "arkhe-data" ;
+    fuseki:serviceQuery             "sparql" ;
+    # update/upload restricted in production, but here we define the service
+    fuseki:dataset                  <#arkhe_abox_dataset> .
+
+# T-Box Service: Restricted access, only for schema management
+<#arkhe_tbox_service> rdf:type fuseki:Service ;
+    fuseki:name                     "arkhe-schema" ;
+    fuseki:serviceQuery             "sparql" ;
+    fuseki:dataset                  <#arkhe_tbox_dataset> .
+
+# A-Box Dataset
+<#arkhe_abox_dataset> rdf:type tdb:DatasetTDB ;
+    tdb:location "/fuseki/databases/arkhe_abox" ;
+    tdb:unionDefaultGraph false ;
+    ja:defaultGraph <#arkhe_abox_graph> .
+
+<#arkhe_abox_graph> rdf:type tdb:GraphTDB ;
+    tdb:dataset <#arkhe_abox_dataset> .
+
+# T-Box Dataset
+<#arkhe_tbox_dataset> rdf:type tdb:DatasetTDB ;
+    tdb:location "/fuseki/databases/arkhe_tbox" ;
+    tdb:unionDefaultGraph false ;
+    ja:defaultGraph <#arkhe_tbox_graph> .
+
+<#arkhe_tbox_graph> rdf:type tdb:GraphTDB ;
+    tdb:dataset <#arkhe_tbox_dataset> .

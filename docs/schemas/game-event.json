@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://api.arkhe.ai/schemas/game-event.json",
+  "title": "Arkhe Gameplay Event",
+  "description": "Evento gerado pela interação do jogador com o ambiente 3D ontológico.",
+  "type": "object",
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Identificador único da interação para correlação forense."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "player": {
+      "type": "object",
+      "properties": {
+        "sub": { "type": "string", "description": "ID do usuário (do JWT)" },
+        "role": { "type": "string", "enum": ["explorer", "auditor", "board"] }
+      },
+      "required": ["sub", "role"]
+    },
+    "action_type": {
+      "type": "string",
+      "enum": ["raycast_hit", "area_selection", "orbital_scan", "connection_attempt"],
+      "description": "Mecânica de jogo utilizada."
+    },
+    "target_entities": {
+      "type": "array",
+      "description": "Lista de URIs ontológicas atingidas pelo raio ou área de seleção.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "uri": { "type": "string", "format": "uri" },
+          "position": {
+            "type": "object",
+            "properties": {
+              "x": { "type": "number" },
+              "y": { "type": "number" },
+              "z": { "type": "number" }
+            }
+          },
+          "visual_anomaly_tag": {
+            "type": "string",
+            "description": "Tag inferida pelo shader (ex: 'flicker', 'crack', 'shadow_leak').",
+            "enum": ["flicker", "crack", "shadow_leak", "corruption", "void"]
+          }
+        },
+        "required": ["uri"]
+      }
+    },
+    "context": {
+      "type": "object",
+      "description": "Estado do jogo no momento da ação (ex: Modo Conselho ou Modo Técnico).",
+      "properties": {
+        "view_mode": { "type": "string", "enum": ["tbox_only", "abox_live", "security_overlay"] },
+        "active_policy": { "type": "string", "description": "Política OPA ativa no momento." }
+      }
+    }
+  },
+  "required": ["event_id", "timestamp", "player", "action_type", "target_entities"]
+}
