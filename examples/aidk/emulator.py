@@ -4,6 +4,7 @@ import random
 import time
 import uuid
 import logging
+import urllib.request
 from datetime import datetime, timezone
 from typing import Dict, List, Optional, Set
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Header, HTTPException
@@ -34,6 +35,7 @@ class GameEvent(BaseModel):
     event_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     player_id: str
     action: str
+    action_type: Optional[str] = None # Added for GTA VI compatibility
     target: dict
     metadata: Optional[dict] = None
 
@@ -138,9 +140,63 @@ async def anomaly_loop():
 
         await asyncio.sleep(2.0)
 
+def send_resonance_event(event_dict):
+    url = "http://localhost:8080/api/v1/alignment/resonance"
+    data = json.dumps(event_dict).encode('utf-8')
+    req = urllib.request.Request(url, data=data, method='POST')
+    req.add_header('Content-Type', 'application/json')
+    req.add_header('Authorization', 'Bearer mock_token_for_emulator')
+    try:
+        with urllib.request.urlopen(req, timeout=2) as response:
+            return response.status
+    except Exception:
+        # Silently fail if mock wall is not running
+        pass
+
+async def gta6_heist_simulation_loop():
+    logger.info("Starting GTA VI Heist Simulation Loop")
+    phases = ["recon", "intrusion", "exfiltration", "escape"]
+    actions = {
+        "recon": ["drive_vehicle", "surveil_location"],
+        "intrusion": ["hack_minigame", "pick_lock", "use_tool"],
+        "exfiltration": ["use_tool", "trigger_alarm", "extract_information"],
+        "escape": ["evade_police", "drive_vehicle"]
+    }
+
+    while True:
+        await asyncio.sleep(random.uniform(5, 15))
+        phase = random.choice(phases)
+        action_list = actions.get(phase, ["drive_vehicle"])
+        action = random.choice(action_list)
+
+        event = {
+            "game_id": "gta-vi-palmetto",
+            "event_id": str(uuid.uuid4()),
+            "player_id": f"player-{random.randint(100, 999)}",
+            "action": action,
+            "action_type": action,
+            "target": {
+                "entity_type": random.choice(["bank_vault", "security_panel", "vehicle_van"]),
+                "entity_id": uuid.uuid4().hex[:16]
+            },
+            "position": {"x": random.uniform(0, 1000), "y": 0, "z": random.uniform(0, 1000)},
+            "metadata": {
+                "heist_phase": phase,
+                "wanted_level": random.randint(0, 5) if phase in ["exfiltration", "escape"] else 0,
+                "player_hesitation_seconds": random.uniform(0, 5)
+            }
+        }
+
+        try:
+            loop = asyncio.get_running_loop()
+            await loop.run_in_executor(None, send_resonance_event, event)
+        except Exception as e:
+            logger.error(f"Error in gta6_heist_simulation_loop: {e}")
+
 @app.on_event("startup")
 async def startup():
     asyncio.create_task(anomaly_loop())
+    asyncio.create_task(gta6_heist_simulation_loop())
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8765)
