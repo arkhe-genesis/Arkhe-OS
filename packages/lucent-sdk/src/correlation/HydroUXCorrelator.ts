@@ -1,5 +1,3 @@
-import { LucentCollector } from '../LucentCollector';
-
 export interface HydroState {
   nodeId: string;
   waterLevel: number;

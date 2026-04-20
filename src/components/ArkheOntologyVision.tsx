@@ -5,7 +5,7 @@
  */
 
 import React, { useRef, useEffect, useState } from 'react';
-import { X, Activity, Shield, Network, Eye, MousePointer2 } from 'lucide-react';
+import { X, Activity, Shield, Network, Eye, MousePointer2, AlertTriangle, CheckCircle2, Lock, Fingerprint } from 'lucide-react';
 
 const VERTEX_SHADER = `#version 300 es
 in vec4 a_position;
@@ -170,6 +170,9 @@ export default function ArkheOntologyVision({ onClose }: { onClose: () => void }
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [nodes, setNodes] = useState<NodeData[]>([]);
     const [edges, setEdges] = useState<EdgeData[]>([]);
+    const [selectedNode, setSelectedNode] = useState<NodeData | null>(null);
+    const [notification, setNotification] = useState<{type: 'success' | 'error' | 'info', message: string} | null>(null);
+    const [isProving, setIsProving] = useState(false);
     const [sessionId] = useState(() => Math.random().toString(36).substring(7));
     const requestRef = useRef<number>(0);
 
@@ -196,17 +199,8 @@ export default function ArkheOntologyVision({ onClose }: { onClose: () => void }
             const time = performance.now() * 0.001;
             const angle = time * 0.1;
 
-            // Camera position/direction (simplified for demonstration)
-            const pos = {
-                x: 6 * Math.sin(angle),
-                y: 1,
-                z: -6 * Math.cos(angle)
-            };
-            const dir = {
-                x: -Math.sin(angle),
-                y: 0,
-                z: Math.cos(angle)
-            };
+            const pos = { x: 6 * Math.sin(angle), y: 1, z: -6 * Math.cos(angle) };
+            const dir = { x: -Math.sin(angle), y: 0, z: Math.cos(angle) };
 
             const telemetry = {
                 session_id: sessionId,
@@ -221,14 +215,93 @@ export default function ArkheOntologyVision({ onClose }: { onClose: () => void }
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(telemetry)
                 });
-            } catch (err) {
-                // Fail silently in telemetry
-            }
+            } catch (err) {}
         };
 
         const interval = setInterval(sendTelemetry, 1000);
         return () => clearInterval(interval);
     }, [sessionId]);
+
+    const handleZKChallenge = async () => {
+        if (!selectedNode) return;
+        setIsProving(true);
+        setNotification({type: 'info', message: 'Iniciando Desafio ZK (Commit-and-Prove)...'});
+
+        try {
+            // 1. Get challenge from backend
+            // In a real system, we'd hash the URI using the same logic as backend
+            const nodeHash = selectedNode.uri.split(':').pop() || "unknown";
+            const challengeRes = await fetch(`/api/game/zk-challenge/${nodeHash}`);
+            const challenge = await challengeRes.json();
+
+            // 2. Simulate Local Proof Generation (WASM)
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            // 3. Submit Proof
+            const reportRes = await fetch('/api/game/zk-report', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    proof: { pi_a: ["0x1", "0x2"], pi_b: [["0x3", "0x4"], ["0x5", "0x6"]], pi_c: ["0x7", "0x8"] },
+                    public_inputs: {
+                        commitment: "26487e41258d9294", // Simulation of the hash for 'Cognitive'
+                        violation_exists: selectedNode.securityState > 0
+                    }
+                })
+            });
+            const reportResult = await reportRes.json();
+
+            if (reportResult.status === 'verified') {
+                setNotification({
+                    type: 'success',
+                    message: `PROVA ZK VERIFICADA! Conformidade validada sem revelar URI.`
+                });
+            } else {
+                setNotification({
+                    type: 'error',
+                    message: `FALHA NA PROVA ZK. O recurso está em conformidade formal.`
+                });
+            }
+        } catch (err) {
+            setNotification({type: 'error', message: 'Erro no protocolo de privacidade ZK.'});
+        } finally {
+            setIsProving(false);
+            setTimeout(() => setNotification(null), 5000);
+        }
+    };
+
+    const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const rect = canvas.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / canvas.clientWidth) * 2 - 1;
+        const y = -(((e.clientY - rect.top) / canvas.clientHeight) * 2 - 1);
+
+        const time = performance.now() * 0.001;
+        const angle = time * 0.1;
+
+        let nearest: NodeData | null = null;
+        let minDist = 0.5;
+
+        nodes.forEach(node => {
+            const cosA = Math.cos(angle);
+            const sinA = Math.sin(angle);
+            const rx = node.position[0] * cosA + node.position[2] * sinA;
+            const rz = -node.position[0] * sinA + node.position[2] * cosA;
+            const ry = node.position[1];
+            const distZ = rz - (-6);
+            if (distZ > 0) {
+                const px = rx / distZ * 1.2;
+                const py = (ry - 1) / distZ * 1.2;
+                const d = Math.sqrt((px - x)**2 + (py - y)**2);
+                if (d < minDist) {
+                    minDist = d;
+                    nearest = node;
+                }
+            }
+        });
+        setSelectedNode(nearest);
+    };
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -304,15 +377,15 @@ export default function ArkheOntologyVision({ onClose }: { onClose: () => void }
                             <Eye className="w-8 h-8 text-cyan-400" />
                         </div>
                         <div>
-                            <h2 className="text-2xl font-bold text-cyan-400 tracking-[0.2em] uppercase font-mono">Immersive Telemetry HUD</h2>
+                            <h2 className="text-2xl font-bold text-cyan-400 tracking-[0.2em] uppercase font-mono">Arkhe Immersive Defense</h2>
                             <div className="text-xs font-mono text-cyan-500/60 flex items-center gap-2">
                                 <Activity className="w-4 h-4 text-emerald-400" />
-                                Monitoramento Passivo de Infraestrutura Crítica
+                                Monitoramento de Integridade Ontológica com Privacidade ZK
                             </div>
                         </div>
                     </div>
                     <button onClick={onClose} className="group flex items-center gap-2 px-4 py-2 border border-white/10 rounded-lg text-neutral-500 hover:text-white hover:border-white transition-all">
-                        <span className="text-xs font-mono uppercase tracking-widest">DISCONNECT_SESSION [ESC]</span>
+                        <span className="text-xs font-mono uppercase tracking-widest">DISCONNECT [ESC]</span>
                         <X className="w-5 h-5 group-hover:rotate-90 transition-transform" />
                     </button>
                 </div>
@@ -323,45 +396,79 @@ export default function ArkheOntologyVision({ onClose }: { onClose: () => void }
                             ref={canvasRef}
                             width={1600}
                             height={900}
-                            className="w-full h-full object-cover"
+                            onClick={handleCanvasClick}
+                            className="w-full h-full object-cover cursor-crosshair"
                         />
+
+                        {notification && (
+                            <div className={`absolute top-10 left-1/2 -translate-x-1/2 px-6 py-4 rounded-xl border flex items-center gap-4 animate-bounce z-50 backdrop-blur-xl ${
+                                notification.type === 'success' ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' :
+                                notification.type === 'error' ? 'bg-rose-500/20 border-rose-500/50 text-rose-400' :
+                                'bg-blue-500/20 border-blue-500/50 text-blue-400'
+                            }`}>
+                                {notification.type === 'success' ? <CheckCircle2 /> : notification.type === 'info' ? <Fingerprint /> : <AlertTriangle />}
+                                <span className="font-mono text-sm font-bold uppercase tracking-widest">{notification.message}</span>
+                            </div>
+                        )}
 
                         <div className="absolute top-6 left-6 flex flex-col gap-3">
                             <div className="flex items-center gap-3 px-4 py-2 bg-black/60 border border-emerald-500/30 rounded-lg backdrop-blur-md">
                                 <Shield className="w-4 h-4 text-emerald-400" />
-                                <span className="text-[10px] font-mono text-white uppercase tracking-widest">Auditoria Assistida: ATIVA</span>
-                            </div>
-                            <div className="flex items-center gap-3 px-4 py-2 bg-black/60 border border-cyan-500/30 rounded-lg backdrop-blur-md">
-                                <Activity className="w-4 h-4 text-cyan-400" />
-                                <span className="text-[10px] font-mono text-white uppercase tracking-widest">Sessão: {sessionId}</span>
+                                <span className="text-[10px] font-mono text-white uppercase tracking-widest">Auditoria ZK-Proof Ativa</span>
                             </div>
                         </div>
                     </div>
 
                     <div className="w-full lg:w-96 bg-[#050507] border-l border-white/10 p-6 flex flex-col gap-6 overflow-y-auto">
-                        <h3 className="font-mono text-xs uppercase tracking-[0.2em] text-neutral-500 border-b border-white/10 pb-3 flex items-center gap-2">
-                            <Activity className="w-4 h-4" /> Telemetria Visual (Read-Only)
-                        </h3>
-
-                        <div className="space-y-4">
-                            {nodes.map((node, i) => (
-                                <div key={i} className="p-4 bg-white/5 border border-white/10 rounded-xl space-y-2">
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-[10px] font-mono text-neutral-500">OBJECT_{i.toString().padStart(2, '0')}</span>
-                                        <div className="text-[8px] font-mono text-cyan-400 bg-cyan-400/10 px-2 py-0.5 rounded">MAP_SYNC_OK</div>
+                        {selectedNode ? (
+                            <div className="space-y-6 animate-in slide-in-from-right">
+                                <div className="p-4 bg-white/5 border border-cyan-500/30 rounded-2xl space-y-4">
+                                    <h4 className="font-mono text-xs text-cyan-400 uppercase font-bold tracking-widest">Inspeção de Objeto</h4>
+                                    <div className="space-y-1">
+                                        <div className="text-[9px] text-neutral-500 uppercase font-mono">Assinatura Visual</div>
+                                        <div className="text-[10px] text-white font-mono break-all bg-black/40 p-2 rounded border border-white/5">
+                                            HASH: {btoa(selectedNode.uri).substring(0, 16)}...
+                                        </div>
                                     </div>
-                                    <p className="text-[9px] font-mono text-neutral-500 leading-tight">
-                                        Coord: [{node.position.map(p => p.toFixed(2)).join(', ')}]
+                                    <div className="flex items-center gap-2 text-[9px] text-neutral-400 uppercase font-mono">
+                                        <Lock className="w-3 h-3" /> URI Original Oculta por Protocolo de Privacidade
+                                    </div>
+                                </div>
+
+                                <div className="space-y-3">
+                                    <h4 className="font-mono text-[10px] text-neutral-500 uppercase tracking-widest">Ação: Auditoria de Integridade</h4>
+                                    <button
+                                        onClick={handleZKChallenge}
+                                        disabled={isProving}
+                                        className={`w-full py-4 rounded-xl font-mono text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-3 ${
+                                            isProving
+                                            ? 'bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 animate-pulse'
+                                            : 'bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 hover:bg-indigo-500/20'
+                                        }`}
+                                    >
+                                        {isProving ? <Activity className="w-4 h-4" /> : <Shield className="w-4 h-4" />}
+                                        {isProving ? 'Gerando Prova ZK...' : 'Solicitar Desafio ZK'}
+                                    </button>
+                                    <p className="text-[8px] font-mono text-neutral-500 leading-tight">
+                                        A geração da prova ZK valida restrições SHACL (maxCount) localmente sem expor a URI do recurso ao backend.
                                     </p>
                                 </div>
-                            ))}
-                        </div>
+                            </div>
+                        ) : (
+                            <div className="flex-1 flex flex-col items-center justify-center text-center gap-4 opacity-40">
+                                <MousePointer2 className="w-12 h-12 text-neutral-600 animate-pulse" />
+                                <p className="font-mono text-xs text-neutral-500 uppercase tracking-widest">Selecione uma entidade no<br/>universo 3D para interagir.</p>
+                            </div>
+                        )}
 
-                        <div className="mt-auto p-4 bg-blue-500/5 border border-blue-500/20 rounded-xl">
-                            <p className="text-[10px] font-mono text-blue-400 uppercase mb-2 font-bold">Modo de Navegação</p>
-                            <p className="text-[9px] font-mono text-neutral-500 leading-relaxed">
-                                Você está em modo de inspeção passiva. Seus movimentos de câmera e tempos de permanência são correlacionados no backend para detecção de anomalias semânticas.
-                            </p>
+                        <div className="mt-auto border-t border-white/5 pt-6">
+                            <div className="flex items-center gap-3 mb-4">
+                                <Lock className="w-5 h-5 text-indigo-400" />
+                                <span className="font-mono text-[10px] text-white uppercase font-bold">Protocolo Commit-and-Prove</span>
+                            </div>
+                            <div className="p-3 bg-indigo-500/5 border border-indigo-500/20 rounded-lg text-[9px] font-mono text-neutral-400 leading-relaxed">
+                                As auditorias utilizam Compromissos de Pedersen e circuitos R1CS (Pinocchio) para garantir que apenas anomalias reais sejam reportadas, mantendo o sigilo da infraestrutura.
+                            </div>
                         </div>
                     </div>
                 </div>

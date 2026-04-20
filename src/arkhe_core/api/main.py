@@ -1,38 +1,11 @@
-import uuid
-import asyncio
-import logging
-from datetime import datetime, timezone
-from fastapi import FastAPI, HTTPException, Header, WebSocket, WebSocketDisconnect, Depends
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 from typing import List, Dict, Any, Optional
-from jose import jwt, JWTError
-
+from datetime import datetime
+import uuid
 from ..iota_council import IOTACouncil
-from ..governance_council import governance_app, IncidentState
 from .telemetry_processor import TelemetryProcessor
-from .gameplay_handler import GameplayHandler
-from .stream_gateway import stream_gateway
-
-# Setup logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-# Security configuration
-SECRET_KEY = "arkhe-dev-secret-key-change-in-prod"
-ALGORITHM = "HS256"
-security = HTTPBearer()
-
-async def get_current_game(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    token = credentials.credentials
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        game_id: str = payload.get("game_id")
-        if game_id is None:
-            raise HTTPException(status_code=401, detail="Invalid token: game_id missing")
-        return game_id
-    except JWTError:
-        raise HTTPException(status_code=401, detail="Could not validate credentials")
 
 app = FastAPI(title="Arkhe(n) Forge API", version="0.1.0")
 council = IOTACouncil()
@@ -83,18 +56,9 @@ class VisualTelemetryRequest(BaseModel):
     interaction: Optional[Dict[str, Any]] = None
     rendering_metrics: Optional[Dict[str, Any]] = None
 
-class GameplayEventRequest(BaseModel):
-    game_id: str
-    event_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    player_id: str
-    action: str
-    target: Dict[str, Any]
-    metadata: Optional[Dict[str, Any]] = None
-
-@app.on_event("startup")
-async def startup_event():
-    # Start the anomaly simulation in the background
-    asyncio.create_task(stream_gateway.run_simulation())
+class ZKReportRequest(BaseModel):
+    proof: Dict[str, Any]
+    public_inputs: Dict[str, Any]
 
 @app.post("/deliberate", response_model=DeliberationResponse)
 async def deliberate(request: IntentRequest):
@@ -104,18 +68,14 @@ async def deliberate(request: IntentRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/governance/deliberate")
-async def governance_deliberate(request: GovernanceRequest):
+@app.get("/game/zk-challenge/{node_hash}")
+async def get_zk_challenge(node_hash: str):
+    return await telemetry_processor.generate_zk_challenge(node_hash)
+
+@app.post("/game/zk-report")
+async def post_zk_report(report: ZKReportRequest):
     try:
-        initial_state = {
-            "evento": request.evento,
-            "sistema": request.sistema,
-            "cve": request.cve,
-            "cvss": request.cvss,
-            "iteration_count": 0,
-            "historico": []
-        }
-        result = await governance_app.ainvoke(initial_state)
+        result = await telemetry_processor.verify_zk_report(report.proof, report.public_inputs)
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

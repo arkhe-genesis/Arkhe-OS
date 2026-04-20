@@ -2,6 +2,7 @@ from typing import Dict, Any, List, Optional
 import logging
 import hashlib
 from .attention_anomaly_scorer import AttentionAnomalyScorer
+from .zk_validator import ZKValidator
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +18,7 @@ class TelemetryProcessor:
             "arkhe:Immune": [0, -2, 0],
         }
         self.scorer = AttentionAnomalyScorer()
+        self.zk_validator = ZKValidator()
 
     def _hash_uri(self, uri: str) -> str:
         return hashlib.sha256(uri.encode()).hexdigest()[:16]
@@ -65,3 +67,10 @@ class TelemetryProcessor:
             return {"status": "processed", "interaction_recorded": True, "anomaly_score": anomaly_score}
 
         return {"status": "processed", "interaction_recorded": False}
+
+    async def generate_zk_challenge(self, node_hash: str) -> Dict[str, Any]:
+        return self.zk_validator.get_challenge_data(node_hash)
+
+    async def verify_zk_report(self, proof: Dict[str, Any], public_inputs: Dict[str, Any]) -> Dict[str, Any]:
+        success = self.zk_validator.verify_shacl_proof(proof, public_inputs)
+        return {"status": "verified" if success else "failed", "reward": 500 if success else 0}
