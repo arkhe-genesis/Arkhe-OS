@@ -1,9 +1,11 @@
 
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Dict, Any, Optional
+from datetime import datetime
+import uuid
 from ..iota_council import IOTACouncil
-from ..governance_council import governance_app, IncidentState
+from .telemetry_processor import TelemetryProcessor
 
 app = FastAPI(title="Arkhe(n) Forge API", version="0.1.0")
 council = IOTACouncil()
@@ -11,12 +13,6 @@ telemetry_processor = TelemetryProcessor()
 
 class IntentRequest(BaseModel):
     intent: str
-
-class GovernanceRequest(BaseModel):
-    evento: str
-    sistema: str
-    cve: Optional[str] = None
-    cvss: float
 
 class DeliberationResponse(BaseModel):
     intent: str
@@ -57,6 +53,10 @@ class VisualTelemetryRequest(BaseModel):
     interaction: Optional[Dict[str, Any]] = None
     rendering_metrics: Optional[Dict[str, Any]] = None
 
+class ZKReportRequest(BaseModel):
+    proof: Dict[str, Any]
+    public_inputs: Dict[str, Any]
+
 @app.post("/deliberate", response_model=DeliberationResponse)
 async def deliberate(request: IntentRequest):
     try:
@@ -65,18 +65,14 @@ async def deliberate(request: IntentRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/governance/deliberate")
-async def governance_deliberate(request: GovernanceRequest):
+@app.get("/game/zk-challenge/{node_hash}")
+async def get_zk_challenge(node_hash: str):
+    return await telemetry_processor.generate_zk_challenge(node_hash)
+
+@app.post("/game/zk-report")
+async def post_zk_report(report: ZKReportRequest):
     try:
-        initial_state = {
-            "evento": request.evento,
-            "sistema": request.sistema,
-            "cve": request.cve,
-            "cvss": request.cvss,
-            "iteration_count": 0,
-            "historico": []
-        }
-        result = await governance_app.ainvoke(initial_state)
+        result = await telemetry_processor.verify_zk_report(report.proof, report.public_inputs)
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
