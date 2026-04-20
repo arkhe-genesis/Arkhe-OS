@@ -1987,6 +1987,85 @@ export const commands: Commands = {
       }
     }
   },
+  "oasis_audit": {
+    "description": "🏝️ OASIS: Runs an embedding distribution analysis to identify high-risk areas in the codebase.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "input": {
+        "name": "input",
+        "type": "string",
+        "description": "Path to analyze.",
+        "required": true
+      }
+    }
+  },
+  "oasis_model_select": {
+    "description": "🏝️ OASIS: Lists and recommends optimal models based on hardware and project size.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "projectSize": {
+        "name": "projectSize",
+        "type": "string",
+        "description": "Approximate size of the codebase.",
+        "required": true,
+        "enum": [
+          "small",
+          "medium",
+          "large"
+        ]
+      }
+    }
+  },
+  "oasis_scan": {
+    "description": "🏝️ OASIS: Performs an AI-powered security audit using Ollama models to detect vulnerabilities.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "input": {
+        "name": "input",
+        "type": "string",
+        "description": "Path to file or directory to analyze.",
+        "required": true
+      },
+      "models": {
+        "name": "models",
+        "type": "string",
+        "description": "Comma-separated list of models for deep analysis.",
+        "required": false
+      },
+      "scanModel": {
+        "name": "scanModel",
+        "type": "string",
+        "description": "Model to use for quick scanning.",
+        "required": false
+      },
+      "vulns": {
+        "name": "vulns",
+        "type": "string",
+        "description": "Vulnerability types to check (comma-separated or \"all\").",
+        "required": false
+      },
+      "adaptive": {
+        "name": "adaptive",
+        "type": "boolean",
+        "description": "Use adaptive multi-level analysis.",
+        "required": false,
+        "default": false
+      }
+    }
+  },
+  "oasis_web_dashboard": {
+    "description": "🏝️ OASIS: Starts the secure, password-protected web dashboard for report exploration.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "port": {
+        "name": "port",
+        "type": "number",
+        "description": "Web interface port.",
+        "required": false,
+        "default": 5000
+      }
+    }
+  },
   "os_kuramoto_simulate": {
     "description": "ASI Protocol: Runs a simulation of the Operating System as a Kuramoto phase mesh.",
     "category": "Arkhe(n) Protocols",
@@ -2210,6 +2289,50 @@ export const commands: Commands = {
         "description": "Row offset for matrix rendering.",
         "required": false,
         "default": 0
+      }
+    }
+  },
+  "researchhub_get_hubs": {
+    "description": "Retrieves a list of trending scientific hubs from ResearchHub.",
+    "category": "Network",
+    "args": {
+      "page": {
+        "name": "page",
+        "type": "number",
+        "description": "Page number for results.",
+        "required": false,
+        "default": 1
+      }
+    }
+  },
+  "researchhub_get_paper": {
+    "description": "Retrieves detailed information about a specific ResearchHub paper by ID.",
+    "category": "Network",
+    "args": {
+      "paperId": {
+        "name": "paperId",
+        "type": "number",
+        "description": "The ID of the paper to retrieve.",
+        "required": true
+      }
+    }
+  },
+  "researchhub_search": {
+    "description": "Searches ResearchHub for scientific papers and documents.",
+    "category": "Network",
+    "args": {
+      "query": {
+        "name": "query",
+        "type": "string",
+        "description": "Search query for papers.",
+        "required": true
+      },
+      "page": {
+        "name": "page",
+        "type": "number",
+        "description": "Page number for results.",
+        "required": false,
+        "default": 1
       }
     }
   },

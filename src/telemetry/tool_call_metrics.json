@@ -1955,5 +1955,169 @@
   {
     "name": "write_primordial_seed",
     "args": []
+  },
+  {
+    "name": "mercury_budget_status",
+    "args": []
+  },
+  {
+    "name": "mercury_chat",
+    "args": [
+      {
+        "name": "message_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "mercury_get_soul",
+    "args": []
+  },
+  {
+    "name": "mercury_list_skills",
+    "args": []
+  },
+  {
+    "name": "msb_create",
+    "args": [
+      {
+        "name": "name_length",
+        "argType": "number"
+      },
+      {
+        "name": "image_length",
+        "argType": "number"
+      },
+      {
+        "name": "cpus",
+        "argType": "number"
+      },
+      {
+        "name": "memory",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "msb_exec",
+    "args": [
+      {
+        "name": "name_length",
+        "argType": "number"
+      },
+      {
+        "name": "command_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "msb_ls",
+    "args": []
+  },
+  {
+    "name": "msb_rm",
+    "args": [
+      {
+        "name": "name_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "msb_run",
+    "args": [
+      {
+        "name": "image_length",
+        "argType": "number"
+      },
+      {
+        "name": "command_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "oasis_audit",
+    "args": [
+      {
+        "name": "input_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "oasis_model_select",
+    "args": [
+      {
+        "name": "projectSize",
+        "argType": "string"
+      }
+    ]
+  },
+  {
+    "name": "oasis_scan",
+    "args": [
+      {
+        "name": "input_length",
+        "argType": "number"
+      },
+      {
+        "name": "models_length",
+        "argType": "number"
+      },
+      {
+        "name": "scanModel_length",
+        "argType": "number"
+      },
+      {
+        "name": "vulns_length",
+        "argType": "number"
+      },
+      {
+        "name": "adaptive",
+        "argType": "boolean"
+      }
+    ]
+  },
+  {
+    "name": "oasis_web_dashboard",
+    "args": [
+      {
+        "name": "port",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "researchhub_get_hubs",
+    "args": [
+      {
+        "name": "page",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "researchhub_get_paper",
+    "args": [
+      {
+        "name": "paperId",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "researchhub_search",
+    "args": [
+      {
+        "name": "query_length",
+        "argType": "number"
+      },
+      {
+        "name": "page",
+        "argType": "number"
+      }
+    ]
   }
 ]

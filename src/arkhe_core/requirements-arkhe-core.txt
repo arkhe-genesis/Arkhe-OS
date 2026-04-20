@@ -21,3 +21,4 @@ jax
 jaxlib
 scipy
 langgraph
+rdflib
