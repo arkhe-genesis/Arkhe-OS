@@ -31,8 +31,6 @@
 | **AW** | Os Alicerces do Reino Digital | Fundamentos inegociáveis da Web. |
 | **AX** | As Dez Primeiras Forjas | Rituais de utilidade e poder para o aprendiz. |
 | **AZ** | O Sussurro no Silício | Tradução ontológica de Shellcode. |
-| **BY** | A Mente do Monstro | Arquitetura cognitiva para NPCs vivos. |
-| **CD** | A Sincronicidade | Validação científica via GEM-AUI. |
 
 ---
 

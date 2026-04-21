@@ -35,6 +35,21 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install rdflib
-      - name: SemVer Diff
+      - name: SemVer Diff + Security Gate + Architecture Gate
+        id: semver
         run: |
-          python3 scripts/owl_semver_diff.py src/arkhe_core/ontology/arkhe_ontology.owl src/arkhe_core/ontology/arkhe_ontology.owl
+          python3 scripts/owl_semver_diff.py src/arkhe_core/ontology/arkhe_ontology.owl src/arkhe_core/ontology/arkhe_ontology.owl > semver.json
+          cat semver.json
+          IMPACT=$(python3 -c "import json; d=json.load(open('semver.json')); print(d['semver'])")
+          echo "impact=$IMPACT" >> $GITHUB_OUTPUT
+
+          if [ "$IMPACT" = "ARCHITECTURAL_MAJOR" ]; then
+            echo "::error::Mudança arquitetural detectada (ARCHITECTURAL_MAJOR). Toda forma degenerada requer justificativa Cliffordiana."
+            exit 4
+          elif [ "$IMPACT" = "SECURITY_MAJOR" ]; then
+            echo "::error::Mudança de superfície de ameaça detectada (SECURITY_MAJOR). Requer aprovação do Guardião da Forja."
+            exit 3
+          elif [ "$IMPACT" = "MAJOR" ]; then
+            echo "::error::Breaking change detectado. Requer aprovação manual."
+            exit 2
+          fi

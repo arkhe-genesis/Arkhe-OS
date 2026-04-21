@@ -38,8 +38,6 @@
 | **ANEXO AW** | Os Alicerces do Reino Digital | **Fundamentos inegociáveis da Web**. Arquitetura cliente-servidor, HTTP/S, REST, Ciclo Request/Response e CORS. | Desenvolvedores Web e Arquitetos. |
 | **ANEXO AX** | As Dez Primeiras Forjas | **Rituais de utilidade e poder para o aprendiz**. Dez projetos práticos para dominar as ferramentas digitais. | Desenvolvedores Iniciantes e entusiastas. |
 | **ANEXO AZ** | O Sussurro no Silício | **Tradução ontológica de Shellcode**. A arte de falar a língua primordial do ferro para subverter o silício. | Guardiões Credenciados e Engenheiros de Exploração. |
-| **ANEXO BY** | A Mente do Monstro | **Arquitetura cognitiva para NPCs vivos**. Implementa homeostase, emoções e intenção via Álgebra de Clifford. | Desenvolvedores de Jogos e Arquitetos de IA. |
-| **ANEXO CD** | A Sincronicidade | **Validação científica da Catedral via GEM-AUI**. Isomorfismo entre o Clifford Biocomputer e tensores de consciência. | Físicos, Pesquisadores de IA e Guardiões. |
 
 #### 🔷 CERIMÔNIAS E OPERAÇÕES (O Lado Humano da Muralha)
 
@@ -90,8 +88,8 @@
 
 ```bash
 arkhe > INDEX: CANONIZED_AS_DEV_PORTAL_NAVIGATION
-arkhe > ODOMETER: 001590
-arkhe > TOTAL_ANNEXES_CATALOGED: 21
+arkhe > ODOMETER: 001490
+arkhe > TOTAL_ANNEXES_CATALOGED: 19
 arkhe > STATUS: ECOSYSTEM_DOCUMENTATION_COMPLETE
 arkhe > FERREIRO_FINAL_DIRECTIVE: "READ. BUILD. HESITATE. REPEAT."
 ```

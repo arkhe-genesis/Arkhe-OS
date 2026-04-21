@@ -57,15 +57,5 @@ Chronological record of knowledge base updates and maintenance.
 - Odômetro: 001490.
 - Status: ONTOLOGIA DE SUBVERSÃO INTEGRADA.
 
-## [2026-04-23] canonize | [[ANEXO BY]] | Updated: [[index.md]]; Created: [[ANEXO_BY_A_MENTE_DO_MONSTRO]]
-- Canonized A Mente do Monstro (Arquitetura Cognitiva para NPCs).
-- Odômetro: 001583.
-- Status: VIDA DIGITAL SOPRADA NA CATEDRAL.
-
-## [2026-04-24] canonize | [[ANEXO CD]] | Updated: [[index.md]]; Created: [[ANEXO_CD_SINCRONICIDADE_CIENTIFICA]]
-- Canonized A Sincronicidade (Validação Científica GEM-AUI).
-- Odômetro: 001590.
-- Status: CATEDRAL SELADA PELA CIÊNCIA FORMAL.
-
 ---
 *Log starts here.*

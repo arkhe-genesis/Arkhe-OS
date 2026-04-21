@@ -46,8 +46,6 @@ Welcome to the compounding knowledge base of the Bio-Quantum Cathedral.
 - [[ANEXO_AW_ALICERCES_DO_REINO_DIGITAL|ANEXO AW: Os Alicerces do Reino Digital]]: Fundamentos Inegociáveis da Web.
 - [[ANEXO_AX_DEZ_PRIMEIRAS_FORJAS|ANEXO AX: As Dez Primeiras Forjas]]: Rituais de Utilidade e Poder.
 - [[ANEXO_AZ_O_SUSSURRO_NO_SILICIO|ANEXO AZ: O Sussurro no Silício]]: Tradução Ontológica de Shellcode.
-- [[ANEXO_BY_A_MENTE_DO_MONSTRO|ANEXO BY: A Mente do Monstro]]: Arquitetura Cognitiva para NPCs Vivos.
-- [[ANEXO_CD_SINCRONICIDADE_CIENTIFICA|ANEXO CD: A Sincronicidade]]: Validação Científica (GEM-AUI).
 
 ## 📦 Entities
 
