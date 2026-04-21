@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect } from 'react';
-import { X, Monitor, Users, Activity, Shield, ExternalLink, RefreshCw, Cpu, Database } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { X, Monitor, Users, Activity, Shield, ExternalLink, RefreshCw, Cpu, Database } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 interface NekoPanelProps {
   onClose: () => void;

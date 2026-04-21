@@ -1,3 +1,10 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 export interface HydroState {
   nodeId: string;
   waterLevel: number;
@@ -68,7 +75,7 @@ export class HydroUXCorrelator {
   private pearsonCorrelation(uxEvents: any[], hydroHistory: any[]): number {
     // Simplificação para o motor LucentEngine
     // Implementação real exigiria alinhamento temporal fino
-    if (uxEvents.length === 0 || hydroHistory.length === 0) return 0;
+    if (uxEvents.length === 0 || hydroHistory.length === 0) {return 0;}
 
     // Simula cálculo de correlação baseado em tendências
     const uxTrend = uxEvents.filter(e => e.type === 'rage_click').length / uxEvents.length;

@@ -1,5 +1,12 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // packages/lucent-sdk/src/connectors/BaseConnector.ts
-import { LucentCollector, SessionEvent } from '../LucentCollector';
+import type { LucentCollector, SessionEvent } from '../LucentCollector';
 
 export interface ConnectorConfig {
   apiKey: string;

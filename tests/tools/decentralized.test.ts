@@ -6,8 +6,6 @@
 
 import assert from 'node:assert';
 import {describe, it, before, after} from 'node:test';
-import {serverHooks} from '../server.js';
-import {html, withMcpContext} from '../utils.js';
 
 import {
   ipfsCat,
@@ -17,6 +15,9 @@ import {
   radListRepos,
   ensResolve,
 } from '../../src/tools/decentralized.js';
+import {serverHooks} from '../server.js';
+import {html, withMcpContext} from '../utils.js';
+
 
 describe('decentralized', () => {
   const server = serverHooks();

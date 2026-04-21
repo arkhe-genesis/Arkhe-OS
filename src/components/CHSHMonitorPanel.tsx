@@ -9,8 +9,8 @@ import { Activity, Gauge, ShieldCheck, Zap, Info, Binary } from 'lucide-react';
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
-import { useArkheSimulation } from '../hooks/useArkheSimulation'
 import type { SimulationState } from '../../server/types';
+import { useArkheSimulation } from '../hooks/useArkheSimulation';
 
 import { Card } from './ui/Card';
 

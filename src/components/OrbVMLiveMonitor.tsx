@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect } from 'react';
-import { X, Activity, Radio, Lock, Zap, RefreshCw, Cpu, Database, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { X, Activity, Radio, Lock, Zap, RefreshCw, Cpu, Database, ChevronRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 interface OrbVMLiveMonitorProps {
   onClose: () => void;

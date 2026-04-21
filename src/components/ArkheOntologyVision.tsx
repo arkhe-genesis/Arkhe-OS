@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useRef, useEffect, useState } from 'react';
 import { X, Activity, Shield, Network, Eye, MousePointer2, AlertTriangle, CheckCircle2, Lock, Fingerprint } from 'lucide-react';
+import React, { useRef, useEffect, useState } from 'react';
 
 const VERTEX_SHADER = `#version 300 es
 in vec4 a_position;
@@ -180,7 +180,7 @@ export default function ArkheOntologyVision({ onClose }: { onClose: () => void }
         const fetchData = async () => {
             try {
                 const response = await fetch('/api/visualization-state');
-                if (!response.ok) throw new Error('Network response was not ok');
+                if (!response.ok) {throw new Error('Network response was not ok');}
                 const data = await response.json();
                 setNodes(data.nodes);
                 setEdges(data.edges);
@@ -223,7 +223,7 @@ export default function ArkheOntologyVision({ onClose }: { onClose: () => void }
     }, [sessionId]);
 
     const handleZKChallenge = async () => {
-        if (!selectedNode) return;
+        if (!selectedNode) {return;}
         setIsProving(true);
         setNotification({type: 'info', message: 'Iniciando Desafio ZK (Commit-and-Prove)...'});
 
@@ -272,7 +272,7 @@ export default function ArkheOntologyVision({ onClose }: { onClose: () => void }
 
     const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
         const canvas = canvasRef.current;
-        if (!canvas) return;
+        if (!canvas) {return;}
         const rect = canvas.getBoundingClientRect();
         const x = ((e.clientX - rect.left) / canvas.clientWidth) * 2 - 1;
         const y = -(((e.clientY - rect.top) / canvas.clientHeight) * 2 - 1);
@@ -305,9 +305,9 @@ export default function ArkheOntologyVision({ onClose }: { onClose: () => void }
 
     useEffect(() => {
         const canvas = canvasRef.current;
-        if (!canvas) return;
+        if (!canvas) {return;}
         const gl = canvas.getContext('webgl2');
-        if (!gl) return;
+        if (!gl) {return;}
 
         const createShader = (gl: WebGL2RenderingContext, type: number, source: string) => {
             const shader = gl.createShader(type)!;
@@ -340,7 +340,7 @@ export default function ArkheOntologyVision({ onClose }: { onClose: () => void }
         const edgeCountLoc = gl.getUniformLocation(program, 'uEdgeCount');
 
         const render = (time: number) => {
-            if (!canvasRef.current) return;
+            if (!canvasRef.current) {return;}
             gl.viewport(0, 0, canvas.width, canvas.height);
             gl.uniform2f(resLoc, canvas.width, canvas.height);
             gl.uniform1f(timeLoc, time * 0.001);

@@ -147,7 +147,7 @@ export interface SimulationState {
     threshold: number;
   };
   metricsHistory: MetricsHistory[];
-  shards: Array<Shard>;
+  shards: Shard[];
   mitigation: {
     nullSteeringActive: boolean;
     kuramotoSyncPhase: number;

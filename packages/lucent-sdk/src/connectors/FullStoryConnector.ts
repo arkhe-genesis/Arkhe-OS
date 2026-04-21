@@ -1,6 +1,14 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // packages/lucent-sdk/src/connectors/FullStoryConnector.ts
+import type { SessionEvent } from '../LucentCollector';
+
 import { BaseConnector } from './BaseConnector';
-import { SessionEvent } from '../LucentCollector';
 
 export class FullStoryConnector extends BaseConnector {
   start(): void {
