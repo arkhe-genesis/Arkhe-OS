@@ -4,7 +4,7 @@ owl_semver_diff.py v3.0
 Compara ontologias OWL e determina impacto SemVer + Segurança + Arquitetura.
 """
 import sys
-from rdflib import Graph, Namespace, RDF, RDFS, OWL
+from rdflib import Graph, Namespace, RDF, RDFS, OWL, URIRef
 from typing import Set, Tuple, Literal
 import json
 
