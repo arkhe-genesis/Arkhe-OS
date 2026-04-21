@@ -1,0 +1,36 @@
+; arkhe.inf — Instalador do Driver ARKHE.SYS
+; A Catedral entra no System32 como guardiã, não como invasora
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Filter
+ClassGuid={b86dff51-a31e-4bac-b3cf-e8cfe75c9fc2}
+Provider=%ProviderName%
+CatalogFile=arkhe.cat
+DriverVer=04/21/2026,1.0.597.0
+PnpLockdown=1
+
+[DestinationDirs]
+DefaultDestDir = 12 ; %SystemRoot%\System32\drivers
+
+[DefaultInstall.NTamd64]
+CopyFiles = ArkheDriver.Copy
+
+[ArkheDriver.Copy]
+arkhe.sys
+
+[DefaultInstall.NTamd64.Services]
+AddService = Arkhe,0x800,ArkheService
+
+[ArkheService]
+DisplayName    = %ServiceName%
+Description    = %ServiceDesc%
+ServiceType    = 1 ; SERVICE_KERNEL_DRIVER
+StartType      = 1 ; SERVICE_SYSTEM_START
+ErrorControl   = 1 ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\drivers\arkhe.sys
+
+[Strings]
+ProviderName = "Arkhe Forge"
+ServiceName  = "ARKHE System Guardian"
+ServiceDesc  = "A Muralha de Quartzo em Ring 0. Protege o System32 via geometria de Clifford e Inquisição ontológica."
