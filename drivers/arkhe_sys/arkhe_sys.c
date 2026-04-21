@@ -10,8 +10,8 @@ ARKHE_CONTEXT g_ArkheContextData = {0};
 PARKHE_CONTEXT g_ArkheContext = &g_ArkheContextData;
 PFLT_FILTER g_FilterHandle = NULL;
 PDEVICE_OBJECT g_ArkheDeviceObject = NULL;
-const UNICODE_STRING g_System32Path = RTL_CONSTANT_STRING(L"\\SystemRoot\\System32");
-const UNICODE_STRING g_WinSysPath = RTL_CONSTANT_STRING(L"\\??\\C:\\Windows\\System32");
+// Caminhos canônicos no NT namespace (exemplo, em produção usar nomes normalizados via FltMgr)
+const UNICODE_STRING g_System32Path = RTL_CONSTANT_STRING(L"\\Windows\\System32");
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // CLIFFORD EM RING 0 — Sem alocação dinâmica, sem page fault
@@ -20,6 +20,11 @@ const UNICODE_STRING g_WinSysPath = RTL_CONSTANT_STRING(L"\\??\\C:\\Windows\\Sys
 // Auxiliar para salvar estado FPU
 #define START_FP_OPERATION() KFLOATING_SAVE fpSave; NTSTATUS fpStatus = KeSaveFloatingPointState(&fpSave); if (NT_SUCCESS(fpStatus)) {
 #define END_FP_OPERATION() KeRestoreFloatingPointState(&fpSave); }
+
+// Kernel-safe fabs
+double ArkheAbs(double v) {
+    return (v < 0) ? -v : v;
+}
 
 CLIFFORD_STATE ArkheGeometricProduct(
     _In_ const CLIFFORD_STATE* a,
@@ -108,8 +113,8 @@ ARKHE_VERDICT ArkheJudgePayload(
 ) {
     BOOLEAN isSystem32 = FALSE;
     if (TargetPath->Length > 0) {
-        if (RtlPrefixUnicodeString(&g_System32Path, TargetPath, TRUE) ||
-            RtlPrefixUnicodeString(&g_WinSysPath, TargetPath, TRUE)) {
+        // Verifica se o caminho contém "\Windows\System32" em qualquer lugar (simplificado para demonstração)
+        if (wcsstr(TargetPath->Buffer, L"\\Windows\\System32") != NULL) {
             isSystem32 = TRUE;
         }
     }
@@ -125,12 +130,14 @@ ARKHE_VERDICT ArkheJudgePayload(
     }
 
     CLIFFORD_STATE payload_state = {0};
+    START_FP_OPERATION()
     payload_state.scalar = 1.0;
     if (Buffer) {
         for (ULONG i = 0; i < min(DataLength, 4); i++) {
             payload_state.vector[i] = (double)Buffer[i] / 255.0;
         }
     }
+    END_FP_OPERATION()
 
     CLIFFORD_STATE danger_state = {
         .scalar = 0.2,
@@ -145,7 +152,7 @@ ARKHE_VERDICT ArkheJudgePayload(
     double danger_score = 0;
     START_FP_OPERATION()
     danger_score = product.scalar;
-    for (int i = 0; i < 6; i++) danger_score += fabs(product.bivector[i]);
+    for (int i = 0; i < 6; i++) danger_score += ArkheAbs(product.bivector[i]);
     END_FP_OPERATION()
 
     if (danger_score > 2.5) {
@@ -224,6 +231,7 @@ FLT_PREOP_CALLBACK_STATUS ArkhePreWrite(
         if (FlagOn(Data->Iopb->OperationFlags, SL_FORCE_DIRECT_WRITE)) {
             buffer = Data->Iopb->Parameters.Write.WriteBuffer;
         } else {
+            // Lock and map user buffer if needed (simplified)
             buffer = (PUCHAR)FltLockUserBuffer(Data);
         }
         length = Data->Iopb->Parameters.Write.Length;
@@ -232,9 +240,7 @@ FLT_PREOP_CALLBACK_STATUS ArkhePreWrite(
     if (buffer && length > 0) {
         ARKHE_VERDICT verdict = ArkheJudgePayload(Data, &nameInfo->Name, buffer, length);
 
-        if (buffer != Data->Iopb->Parameters.Write.WriteBuffer) {
-            FltUnlockUserBuffer(Data);
-        }
+        // Nota: O FltMgr libera o lock automaticamente no final da operação.
 
         if (verdict == VerdictDeny) {
             FltReleaseFileNameInformation(nameInfo);
@@ -259,6 +265,8 @@ NTSTATUS ArkheDeviceControl(
     PIO_STACK_LOCATION irpSp = IoGetCurrentIrpStackLocation(Irp);
     NTSTATUS status = STATUS_SUCCESS;
     ULONG returnLength = 0;
+
+    UNREFERENCED_PARAMETER(DeviceObject);
 
     switch (irpSp->Parameters.DeviceIoControl.IoControlCode) {
         case IOCTL_ARKHE_QUERY_STATUS:
@@ -286,6 +294,7 @@ NTSTATUS ArkheCreateClose(
     _In_ PDEVICE_OBJECT DeviceObject,
     _Inout_ PIRP Irp
 ) {
+    UNREFERENCED_PARAMETER(DeviceObject);
     Irp->IoStatus.Status = STATUS_SUCCESS;
     Irp->IoStatus.Information = 0;
     IoCompleteRequest(Irp, IO_NO_INCREMENT);
@@ -335,15 +344,19 @@ NTSTATUS DriverEntry(
 
     // Criação do Device para IOCTLs
     status = IoCreateDevice(DriverObject, 0, &deviceName, FILE_DEVICE_UNKNOWN, 0, FALSE, &g_ArkheDeviceObject);
-    if (NT_SUCCESS(status)) {
-        DriverObject->MajorFunction[IRP_MJ_CREATE] = ArkheCreateClose;
-        DriverObject->MajorFunction[IRP_MJ_CLOSE] = ArkheCreateClose;
-        DriverObject->MajorFunction[IRP_MJ_DEVICE_CONTROL] = ArkheDeviceControl;
+    if (!NT_SUCCESS(status)) {
+        return status;
+    }
 
-        status = IoCreateSymbolicLink(&symLink, &deviceName);
-        if (!NT_SUCCESS(status)) {
-            IoDeleteDevice(g_ArkheDeviceObject);
-        }
+    DriverObject->MajorFunction[IRP_MJ_CREATE] = ArkheCreateClose;
+    DriverObject->MajorFunction[IRP_MJ_CLOSE] = ArkheCreateClose;
+    DriverObject->MajorFunction[IRP_MJ_DEVICE_CONTROL] = ArkheDeviceControl;
+
+    status = IoCreateSymbolicLink(&symLink, &deviceName);
+    if (!NT_SUCCESS(status)) {
+        IoDeleteDevice(g_ArkheDeviceObject);
+        g_ArkheDeviceObject = NULL;
+        return status;
     }
 
     status = FltRegisterFilter(DriverObject, &FilterRegistration, &g_FilterHandle);
@@ -354,7 +367,14 @@ NTSTATUS DriverEntry(
         } else {
             FltUnregisterFilter(g_FilterHandle);
             g_FilterHandle = NULL;
+            IoDeleteSymbolicLink(&symLink);
+            IoDeleteDevice(g_ArkheDeviceObject);
+            g_ArkheDeviceObject = NULL;
         }
+    } else {
+        IoDeleteSymbolicLink(&symLink);
+        IoDeleteDevice(g_ArkheDeviceObject);
+        g_ArkheDeviceObject = NULL;
     }
 
     return status;
