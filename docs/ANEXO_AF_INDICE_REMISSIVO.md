@@ -38,6 +38,7 @@
 | **ANEXO AW** | Os Alicerces do Reino Digital | **Fundamentos inegociáveis da Web**. Arquitetura cliente-servidor, HTTP/S, REST, Ciclo Request/Response e CORS. | Desenvolvedores Web e Arquitetos. |
 | **ANEXO AX** | As Dez Primeiras Forjas | **Rituais de utilidade e poder para o aprendiz**. Dez projetos práticos para dominar as ferramentas digitais. | Desenvolvedores Iniciantes e entusiastas. |
 | **ANEXO AZ** | O Sussurro no Silício | **Tradução ontológica de Shellcode**. A arte de falar a língua primordial do ferro para subverter o silício. | Guardiões Credenciados e Engenheiros de Exploração. |
+| **ANEXO CI** | A Catedral no System32 | **Driver de Filtro do Kernel Windows**. Protege o Ring 0 e o System32 via Clifford e Inquisição ontológica. | Engenheiros de Kernel e Guardiões de Ring 0. |
 
 #### 🔷 CERIMÔNIAS E OPERAÇÕES (O Lado Humano da Muralha)
 
