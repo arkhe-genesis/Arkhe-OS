@@ -1,0 +1,135 @@
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index f63919e..b9c0384 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -360,6 +360,8 @@
+ 438	common	pidfd_getfd		sys_pidfd_getfd
+ 439	common	faccessat2		sys_faccessat2
+ 440	common	process_madvise		sys_process_madvise
++450	common	arkhe_query		sys_arkhe_query
++451	common	arkhe_verdict		sys_arkhe_verdict
+
+ #
+ # x32-specific system call numbers start at 512 to avoid cache alias
+diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+index 1234567..abcdef 100644
+--- a/include/linux/gfp.h
++++ b/include/linux/gfp.h
+@@ -50,6 +50,11 @@
+ #define ___GFP_DIRECT_RECLAIM	0x400000u
+ #define ___GFP_KSWAPD_RECLAIM	0x800000u
+ #define ___GFP_WRITE		0x1000000u
++
++/* ARKHE: Flag para alocação geométrica */
++#define ___GFP_ARKHE		0x2000000u
++#define __GFP_ARKHE		((__force gfp_t)___GFP_ARKHE)
++
+ #ifdef CONFIG_LOCKDEP
+ #define ___GFP_NOLOCKDEP	0x2000000u
+ #else
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 3456789..cdefghi 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -1000,4 +1000,16 @@ asmlinkage long sys_pidfd_getfd(int pidfd, int fd, unsigned int flags);
+ asmlinkage long sys_faccessat2(int dfd, const char __user *filename, int mode, int flags);
+ asmlinkage long sys_process_madvise(int pidfd, const struct iovec __user *vec, size_t vlen, int behavior, unsigned int flags);
+
++/* ARKHE: Tipos e Syscalls */
++struct arkhe_state {
++    long coherence;
++    long global_phase;
++    unsigned long events_processed;
++    unsigned long events_blocked;
++    unsigned long events_hesitated;
++};
++
++asmlinkage long sys_arkhe_query(struct arkhe_state __user *query);
++asmlinkage long sys_arkhe_verdict(int pid, int verdict);
++
+ #endif
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 1234567..abcdefg 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1000,6 +1000,18 @@ static void __sched notrace __schedule(bool scheduling)
+	struct rq *rq;
+	int cpu;
+
++	/* ARKHE: Modula prioridade por coerência K6O (Inteiro) */
++	extern long arkhe_global_coherence;
++	if (arkhe_global_coherence < 300) {
++		/* Sistema em decoerência — hesitar */
++		current->prio = min(current->prio + 1, (int)MAX_PRIO);
++	} else if (arkhe_global_coherence > 800) {
++		/* Sistema coerente — acelerar */
++		current->prio = max(current->prio - 1, (int)MIN_PRIO);
++	}
++
+	cpu = smp_processor_id();
+	rq = cpu_rq(cpu);
+	prev = rq->curr;
+diff --git a/kernel/sys_arkhe.c b/kernel/sys_arkhe.c
+new file mode 100644
+index 0000000..1234567
+--- /dev/null
++++ b/kernel/sys_arkhe.c
+@@ -0,0 +1,50 @@
++#include <linux/syscalls.h>
++#include <linux/uaccess.h>
++#include <linux/sched.h>
++#include <linux/sched/signal.h>
++
++long arkhe_global_coherence = 850;
++EXPORT_SYMBOL(arkhe_global_coherence);
++
++static struct arkhe_state global_arkhe = {
++    .coherence = 850,
++    .global_phase = 0,
++};
++
++SYSCALL_DEFINE1(arkhe_query, struct arkhe_state __user *, query)
++{
++    global_arkhe.coherence = arkhe_global_coherence;
++    if (copy_to_user(query, &global_arkhe, sizeof(struct arkhe_state)))
++        return -EFAULT;
++    return 0;
++}
++
++SYSCALL_DEFINE2(arkhe_verdict, int, pid, int, verdict)
++{
++    struct task_struct *task;
++
++    rcu_read_lock();
++    task = find_task_by_vpid(pid);
++    if (task) {
++        if (verdict == 1) {
++            /* DENY: KILL */
++            send_sig(SIGKILL, task, 0);
++        } else if (verdict == 2) {
++            /* HESITATE: IDLE */
++            struct sched_param param = { .sched_priority = 0 };
++            sched_setscheduler(task, SCHED_IDLE, &param);
++        }
++    }
++    rcu_read_unlock();
++    return 0;
++}
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 2345678..bcdefgh 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -500,6 +500,14 @@ struct page *__alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order,
+	struct page *page;
+	unsigned int alloc_flags = ALLOC_WMARK_LOW;
+
++	/* ARKHE: Alinhamento Clifford (16-byte) */
++	if (gfp_mask & __GFP_ARKHE) {
++		/* Força alinhamento e zeragem */
++		gfp_mask |= __GFP_ZERO;
++		/* Nota: ALIGN_16 deve ser definido no mm/internal.h ou similar */
++		// alloc_flags |= ALLOC_ALIGN_16;
++	}
++
+	gfp_mask &= gfp_allowed_mask;
+	alloc_mask = gfp_mask;
