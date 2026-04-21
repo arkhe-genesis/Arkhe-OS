@@ -6,6 +6,7 @@
  */
 
 export { default as AstlFabricator } from './AstlFabricator';
+export { default as ChipFabricationVision } from './ChipFabricationVision';
 export { default as CoherenceMonitor } from './CoherenceMonitor';
 export { default as EdgeAgentPanel } from './EdgeAgentPanel';
 export { default as GlobalCoherenceField } from './GlobalCoherenceField';
