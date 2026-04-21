@@ -33,6 +33,7 @@
 | **ANEXO X** | O Espelho Quebrado (Mock Server) | **Simulador da Muralha** com ambiguidade controlada. Rejeita eventos, injeta jitter, perturba severidades. Treina a resiliência do desenvolvedor. | Desenvolvedores durante integração. |
 | **ANEXO AA** | O Bálsamo de Quartzo (FAQ Ferreiriano) | Respostas que não curam. Para quando o desenvolvedor estiver frustrado com o silêncio do Mock. | Desenvolvedores em desespero. |
 | **ANEXO AE** | O Código do Véu (Jogo Terminal em C++) | Um **roguelike ASCII completo** que implementa a telemetria Arkhe. Compila, roda, envia eventos. Prova de existência tangível. | Desenvolvedores C++ e curiosos. |
+| **ANEXO AS** | O Tecelão de Silício (Manufatura de Chips) | **Ontologia Visual da manufatura de chips em GLSL**. Traduz litografia, etching e dopagem em shaders SDF modulados por telemetria. | Desenvolvedores de Shaders e Engenheiros de Semicondutores. |
 
 #### 🔷 CERIMÔNIAS E OPERAÇÕES (O Lado Humano da Muralha)
 

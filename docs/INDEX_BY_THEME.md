@@ -26,6 +26,7 @@
 | **X** | O Espelho Quebrado (Mock Server) | Simulador da Muralha com ambiguidade controlada. |
 | **AA** | O Bálsamo de Quartzo (FAQ) | Respostas que não curam para a frustração. |
 | **AE** | O Código do Véu (Jogo Terminal C++) | Roguelike ASCII de exemplo. |
+| **AS** | O Tecelão de Silício | Ontologia Visual da Manufatura de Chips em GLSL. |
 
 ---
 
