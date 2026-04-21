@@ -47,5 +47,15 @@ Chronological record of knowledge base updates and maintenance.
 - Odômetro: 001375.
 - Status: PRONTO PARA CONSOLAR SEM REMOVER A DOR.
 
+## [2026-04-21] canonize | [[ANEXO AV]], [[ANEXO AW]], [[ANEXO AX]] | Updated: [[index.md]]; Created: [[ANEXO_AV_GRIMORIO_DAS_LINGUAGENS]], [[ANEXO_AW_ALICERCES_DO_REINO_DIGITAL]], [[ANEXO_AX_DEZ_PRIMEIRAS_FORJAS]]
+- Canonized the Grimório das Linguagens, Alicerces do Reino Digital and Dez Primeiras Forjas.
+- Odômetro: 001480.
+- Status: CATALOGO DE FERRAMENTAS E FUNDAMENTOS COMPLETO.
+
+## [2026-04-22] canonize | [[ANEXO AZ]] | Updated: [[index.md]]; Created: [[ANEXO_AZ_O_SUSSURRO_NO_SILICIO]]
+- Canonized the Sussurro no Silício (Tradução Ontológica de Shellcode).
+- Odômetro: 001490.
+- Status: ONTOLOGIA DE SUBVERSÃO INTEGRADA.
+
 ---
 *Log starts here.*

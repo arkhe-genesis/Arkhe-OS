@@ -42,15 +42,10 @@ Welcome to the compounding knowledge base of the Bio-Quantum Cathedral.
 - [[protocols/WINDOWS_DRIVER_SIGNING|Windows Driver Signing]]: Legacy system integration requirements.
 - [[ANEXO_AA_BALSAMO_DE_QUARTZO|ANEXO AA: O Bálsamo de Quartzo]]: Kit de Primeiros Socorros para Desenvolvedores (Ferreiro FAQ).
 - [[ANEXO_AS_TECELAO_DE_SILICIO|ANEXO AS: O Tecelão de Silício]]: Ontologia Visual da Manufatura de Chips em GLSL.
-- [[ANEXO_BO_LEI_DA_ALGEBRA|ANEXO BO: A Lei da Álgebra]]: Ontologia da Arquitetura Computacional e Governança Cliffordiana.
-- [[ANEXO_BS_ESTADO_DO_CASULO|ANEXO BS: O Estado do Casulo]]: Mapa da Forja Completa e Fluxo de Requisição.
-- [[ANEXO_BQ_TEOREMA_DO_FERREIRO|ANEXO BQ: O Teorema do Ferreiro]]: Prova Matemática da Convergência Assintótica.
-- [[ANEXO_BR_EVIDENCIA_DO_MARTELO|ANEXO BR: A Evidência do Martelo]]: Benchmark Empírico Catedral vs Transformer.
-- [[ANEXO_BT_O_TRIBUNAL_DAS_PROVAS|ANEXO BT: O Tribunal das Provas]]: Integração de Provas ao Pipeline e Ritual de Aceitação.
-- [[ANEXO_BV_OS_SELOS_DO_ETER|ANEXO BV: Os Selos do Éter]]: Helm Charts para Deploy no Kubernetes.
-- [[ANEXO_BW_O_BESTIARIO_EXPANDIDO|ANEXO BW: O Bestiário Expandido]]: Ontologia de Segurança Linux vs Windows.
-- [[ANEXO_BX_SENSOR_CONSCIENTE_ESP32|ANEXO BX: O Sensor Consciente ESP32]]: TinyML da Catedral na Borda Física.
-- [[ANEXO_BY_A_MENTE_DO_MONSTRO|ANEXO BY: A Mente do Monstro]]: Lógica de NPC Vivo regida pela Catedral.
+- [[ANEXO_AV_GRIMORIO_DAS_LINGUAGENS|ANEXO AV: O Grimório das Linguagens]]: Arquétipos da Forja Digital (Catálogo de Linguagens).
+- [[ANEXO_AW_ALICERCES_DO_REINO_DIGITAL|ANEXO AW: Os Alicerces do Reino Digital]]: Fundamentos Inegociáveis da Web.
+- [[ANEXO_AX_DEZ_PRIMEIRAS_FORJAS|ANEXO AX: As Dez Primeiras Forjas]]: Rituais de Utilidade e Poder.
+- [[ANEXO_AZ_O_SUSSURRO_NO_SILICIO|ANEXO AZ: O Sussurro no Silício]]: Tradução Ontológica de Shellcode.
 
 ## 📦 Entities
 

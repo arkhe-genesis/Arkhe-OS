@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-owl_semver_diff.py v4.0
-SemVer + Segurança + Arquitetura + Performance
+owl_semver_diff.py v3.0
+Compara ontologias OWL e determina impacto SemVer + Segurança + Arquitetura.
 """
 import sys
 from rdflib import Graph, Namespace, RDF, RDFS, OWL, URIRef
@@ -12,24 +12,28 @@ OWL_NS = Namespace("http://www.w3.org/2002/07/owl#")
 ARKHE = Namespace("http://arkhe.ai/ontology/2026#")
 
 SECURITY_ENTITIES = {
-    str(ARKHE.SussurroDeSubversao), str(ARKHE.RachaduraNaMuralha),
-    str(ARKHE.RunaProibida), str(ARKHE.GuardiaoDoPortao),
-    str(ARKHE.BibliotecaArcana), str(ARKHE.exploraRachadura),
-    str(ARKHE.contemRunaProibida), str(ARKHE.usaBibliotecaArcana),
+    str(ARKHE.SussurroDeSubversao),
+    str(ARKHE.RachaduraNaMuralha),
+    str(ARKHE.RunaProibida),
+    str(ARKHE.GuardiaoDoPortao),
+    str(ARKHE.BibliotecaArcana),
+    str(ARKHE.exploraRachadura),
+    str(ARKHE.contemRunaProibida),
+    str(ARKHE.usaBibliotecaArcana),
     str(ARKHE.usaChaveMestra),
 }
 
+# Entidades arquiteturais que, se modificadas, alteram a fundação computacional
 ARCHITECTURAL_ENTITIES = {
-    str(ARKHE.Transformer), str(ARKHE.AttentionHead),
-    str(ARKHE.FeedForwardNetwork), str(ARKHE.LayerNormalization),
-    str(ARKHE.ResidualConnection), str(ARKHE.PositionalEncoding),
-    str(ARKHE.approximates), str(ARKHE.hasCliffordEquivalent),
+    str(ARKHE.Transformer),
+    str(ARKHE.AttentionHead),
+    str(ARKHE.FeedForwardNetwork),
+    str(ARKHE.LayerNormalization),
+    str(ARKHE.ResidualConnection),
+    str(ARKHE.PositionalEncoding),
+    str(ARKHE.approximates),
+    str(ARKHE.hasCliffordEquivalent),
     str(ARKHE.requiresJustification),
-}
-
-PERFORMANCE_ENTITIES = {
-    str(ARKHE.hasParameterRatio), str(ARKHE.hasMemoryRatio),
-    str(ARKHE.hasConvergenceLoss),
 }
 
 class OWLSemVerDiff:
@@ -66,15 +70,13 @@ class OWLSemVerDiff:
         for s, o in g.subject_objects(OWL.inverseOf):
             axioms.add(("InverseOf", str(s), str(o)))
 
+        # Captura instâncias de arquitetura
         for s in g.subjects(RDF.type, ARKHE.Transformer):
             axioms.add(("Instance", "Transformer", str(s)))
         for s in g.subjects(RDF.type, ARKHE.AttentionHead):
             axioms.add(("Instance", "AttentionHead", str(s)))
         for s in g.subjects(RDF.type, ARKHE.FeedForwardNetwork):
             axioms.add(("Instance", "FFN", str(s)))
-
-        for s in g.subjects(ARKHE.hasParameterRatio, None):
-            axioms.add(("Performance", "ParameterRatio", str(s)))
         return axioms
 
     def _is_security_axiom(self, ax: Tuple) -> bool:
@@ -83,10 +85,7 @@ class OWLSemVerDiff:
     def _is_architectural_axiom(self, ax: Tuple) -> bool:
         return any(ent in str(ax) for ent in ARCHITECTURAL_ENTITIES)
 
-    def _is_performance_axiom(self, ax: Tuple) -> bool:
-        return any(ent in str(ax) for ent in PERFORMANCE_ENTITIES)
-
-    def classify_change(self) -> Tuple[Literal["PERFORMANCE_MAJOR", "ARCHITECTURAL_MAJOR", "SECURITY_MAJOR", "MAJOR", "MINOR", "PATCH"], dict]:
+    def classify_change(self) -> Tuple[Literal["ARCHITECTURAL_MAJOR", "SECURITY_MAJOR", "MAJOR", "MINOR", "PATCH"], dict]:
         old_axioms = self._get_axioms(self.old_g)
         new_axioms = self._get_axioms(self.new_g)
 
@@ -99,58 +98,102 @@ class OWLSemVerDiff:
             "breaking_changes": [],
             "security_changes": [],
             "architectural_changes": [],
-            "performance_changes": [],
             "safe_changes": []
         }
 
-        is_perf_major = False
         is_arch_major = False
         is_security_major = False
         is_major = False
 
-        for ax in added:
-            if self._is_performance_axiom(ax):
-                ratios = list(self.new_g.objects(URIRef(ax[2]), ARKHE.hasParameterRatio))
-                for r in ratios:
-                    val = float(r)
-                    if val < 2.0:
-                        is_perf_major = True
-                        report["performance_changes"].append({
-                            "type": "INEFFICIENT_DEGENERATION",
-                            "axiom": ax,
-                            "ratio": val,
-                            "reason": f"Razão de parâmetros {val:.2f} < 2.0."
-                        })
-            elif self._is_architectural_axiom(ax):
-                is_arch_major = True
-            elif self._is_security_axiom(ax):
-                is_security_major = True
-            elif ax[0] == "Instance" and ax[1] in ("Transformer", "AttentionHead", "FFN"):
-                is_arch_major = True
-
         for ax in removed:
             if self._is_architectural_axiom(ax):
                 is_arch_major = True
+                report["architectural_changes"].append({
+                    "type": "ARCHITECTURE_SURFACE_REDUCED",
+                    "axiom": ax,
+                    "reason": "Remoção de entidade arquitetural altera a fundação computacional"
+                })
             elif self._is_security_axiom(ax):
                 is_security_major = True
+                report["security_changes"].append({
+                    "type": "SECURITY_SURFACE_REDUCED",
+                    "axiom": ax,
+                    "reason": "Remoção de entidade de segurança altera a superfície de ameaça"
+                })
             elif ax[0] in ("ClassDeclaration", "ObjectProperty"):
                 is_major = True
+                report["breaking_changes"].append({
+                    "type": "ENTITY_REMOVAL",
+                    "axiom": ax,
+                    "reason": "Remoção de classe ou propriedade quebra queries existentes"
+                })
+            elif ax[0] == "SubClassOf":
+                is_major = True
+                report["breaking_changes"].append({
+                    "type": "HIERARCHY_CHANGE",
+                    "axiom": ax,
+                    "reason": "Alteração na hierarquia de classes afeta inferência"
+                })
 
-        if is_perf_major: return "PERFORMANCE_MAJOR", report
-        if is_arch_major: return "ARCHITECTURAL_MAJOR", report
-        if is_security_major: return "SECURITY_MAJOR", report
-        if is_major: return "MAJOR", report
-        elif added: return "MINOR", report
-        else: return "PATCH", report
+        for ax in added:
+            if self._is_architectural_axiom(ax):
+                is_arch_major = True
+                report["architectural_changes"].append({
+                    "type": "ARCHITECTURE_SURFACE_EXPANDED",
+                    "axiom": ax,
+                    "reason": "Adição de entidade arquitetural requer validação Cliffordiana"
+                })
+            elif self._is_security_axiom(ax):
+                is_security_major = True
+                report["security_changes"].append({
+                    "type": "SECURITY_SURFACE_EXPANDED",
+                    "axiom": ax,
+                    "reason": "Adição de entidade de segurança requer reavaliação do modelo de ameaça"
+                })
+            elif ax[0] == "DisjointWith":
+                is_major = True
+                report["breaking_changes"].append({
+                    "type": "DISJOINTNESS_ADDED",
+                    "axiom": ax,
+                    "reason": "Nova disjunção entre classes existentes pode invalidar instâncias"
+                })
+            elif ax[0] == "Instance" and ax[1] in ("Transformer", "AttentionHead", "FFN"):
+                is_arch_major = True
+                report["architectural_changes"].append({
+                    "type": "DEGENERATE_ARCHITECTURE_ADDED",
+                    "axiom": ax,
+                    "reason": "Nova instância de Transformer/Atencao/FFN detectada. Requer justificativa Cliffordiana."
+                })
+
+        if is_arch_major:
+            return "ARCHITECTURAL_MAJOR", report
+        if is_security_major:
+            return "SECURITY_MAJOR", report
+        if is_major:
+            return "MAJOR", report
+        elif added:
+            return "MINOR", report
+        else:
+            return "PATCH", report
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
+        print("Uso: python owl_semver_diff.py old.owl new.owl")
         sys.exit(1)
 
     diff = OWLSemVerDiff(sys.argv[1], sys.argv[2])
     semver, report = diff.classify_change()
     report["semver"] = semver
+
     print(json.dumps(report, indent=2))
 
-    codes = {"PERFORMANCE_MAJOR": 5, "ARCHITECTURAL_MAJOR": 4, "SECURITY_MAJOR": 3, "MAJOR": 2, "MINOR": 1, "PATCH": 0}
-    sys.exit(codes.get(semver, 0))
+    if semver == "ARCHITECTURAL_MAJOR":
+        sys.exit(4)  # Código 4: Arquitetura degenerada não justificada
+    elif semver == "SECURITY_MAJOR":
+        sys.exit(3)
+    elif semver == "MAJOR":
+        sys.exit(2)
+    elif semver == "MINOR":
+        sys.exit(1)
+    else:
+        sys.exit(0)

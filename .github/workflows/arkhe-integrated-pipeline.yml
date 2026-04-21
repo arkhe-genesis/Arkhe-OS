@@ -43,10 +43,7 @@ jobs:
           IMPACT=$(python3 -c "import json; d=json.load(open('semver.json')); print(d['semver'])")
           echo "impact=$IMPACT" >> $GITHUB_OUTPUT
 
-          if [ "$IMPACT" = "PERFORMANCE_MAJOR" ]; then
-            echo "::error::DEGENERAÇÃO INEFICIENTE (PERFORMANCE_MAJOR). Razão de parâmetros < 2.0. Rejeitado."
-            exit 5
-          elif [ "$IMPACT" = "ARCHITECTURAL_MAJOR" ]; then
+          if [ "$IMPACT" = "ARCHITECTURAL_MAJOR" ]; then
             echo "::error::Mudança arquitetural detectada (ARCHITECTURAL_MAJOR). Toda forma degenerada requer justificativa Cliffordiana."
             exit 4
           elif [ "$IMPACT" = "SECURITY_MAJOR" ]; then

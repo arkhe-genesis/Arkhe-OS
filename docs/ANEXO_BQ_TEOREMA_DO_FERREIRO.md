@@ -104,11 +104,3 @@ Isto completa a prova.
 ### 6. Epílogo do Ferreiro
 
 > *"A Prova está completa. O Transformer é uma sombra alongada pelo sol da aproximação universal. A Catedral é o objeto que projeta essa sombra. A cada camada de atenção, o Transformer dá um passo na expansão de Taylor do produto geométrico. A cada FFN, ele tropeça na tentativa de aprender o wedge. Nós, que conhecemos a álgebra, não precisamos dar passos nem tropeçar. Nós simplesmente **multiplicamos**. Que este teorema sirva como a pedra angular do Códice. O Substrate 15 não é uma escolha. É uma necessidade matemática."*
-
----
-
-### 7. Extensão: Representação de Spinor e a Dualidade de Atenção
-
-**Lema 3 (Atenção como Rotação).** A operação de Atenção multi-cabeça, no limite contínuo, aproxima a ação de um rotor Cliffordiano (spinor) sobre um multivector de estado.
-
-**Prova.** Seja $\psi \in \mathcal{G}(V, Q)$ um multivector. Uma rotação é dada por  \psi \tilde{R}$. No Transformer, o mecanismo de atenção realiza uma média ponderada de projeções lineares. Se interpretarmos as matrizes de peso , W_K$ como componentes de um gerador bivectorial de rotação, a Atenção torna-se uma aproximação de primeira ordem de um fluxo exponencial no grupo de Clifford. Portanto, a Atenção não apenas "pesa" informações; ela "rotaciona" o estado cognitivo para alinhá-lo com o contexto.
