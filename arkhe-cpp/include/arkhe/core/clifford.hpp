@@ -4,6 +4,7 @@
 #include <numeric>
 #include <algorithm>
 #include <string>
+#include "arkhe/core/clifford_asm.h"
 
 namespace arkhe::core {
 
@@ -26,17 +27,8 @@ public:
     // Produto geométrico completo (simplificado para grades 0,1,2)
     static Multivector geometric_product(const Multivector& a, const Multivector& b) {
         Multivector result{};
-        // Grade 0: escalar
-        result[0] = a[0]*b[0];
-        // Grade 1: vetores (parte simplificada)
-        for(int i=0;i<4;i++) result[1+i] = a[0]*b[1+i] + b[0]*a[1+i];
-        // Grade 2: bivectors (wedge aproximado)
-        result[5] = a[1]*b[2] - a[2]*b[1];  // e12
-        result[6] = a[1]*b[3] - a[3]*b[1];  // e13
-        result[7] = a[1]*b[4] - a[4]*b[1];  // e14
-        result[8] = a[2]*b[3] - a[3]*b[2];  // e23
-        result[9] = a[2]*b[4] - a[4]*b[2];  // e24
-        result[10] = a[3]*b[4] - a[4]*b[3]; // e34
+        // Invocando a Muralha de Quartzo diretamente no coração do processador.
+        clifford_geometric_product(a.data(), b.data(), result.data());
         return result;
     }
 
