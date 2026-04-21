@@ -47,6 +47,7 @@ Welcome to the compounding knowledge base of the Bio-Quantum Cathedral.
 - [[ANEXO_AW_ALICERCES_DO_REINO_DIGITAL|ANEXO AW: Os Alicerces do Reino Digital]]: Fundamentos Inegociáveis da Web.
 - [[ANEXO_AX_DEZ_PRIMEIRAS_FORJAS|ANEXO AX: As Dez Primeiras Forjas]]: Rituais de Utilidade e Poder.
 - [[ANEXO_AZ_O_SUSSURRO_NO_SILICIO|ANEXO AZ: O Sussurro no Silício]]: Tradução Ontológica de Shellcode.
+- [[ANEXO_CM_ARKHE_LINUX|ANEXO CM: ARKHE LINUX]]: A Distribuição Linux da Muralha.
 
 ## 📦 Entities
 
