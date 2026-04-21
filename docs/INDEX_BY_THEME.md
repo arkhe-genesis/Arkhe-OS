@@ -27,10 +27,10 @@
 | **AA** | O Bálsamo de Quartzo (FAQ) | Respostas que não curam para a frustração. |
 | **AE** | O Código do Véu (Jogo Terminal C++) | Roguelike ASCII de exemplo. |
 | **AS** | O Tecelão de Silício | Ontologia Visual da Manufatura de Chips em GLSL. |
-| **BO** | A Lei da Álgebra | Ontologia da Arquitetura Computacional (Transformer → Clifford). |
-| **BQ** | O Teorema do Ferreiro | Prova Matemática de convergência. |
-| **BR** | A Evidência do Martelo | Benchmark Empírico Catedral vs Transformer. |
-| **BS** | O Estado do Casulo | Mapa da Forja Completa. |
+| **AV** | O Grimório das Linguagens | Catálogo de linguagens como arquétipos de forja. |
+| **AW** | Os Alicerces do Reino Digital | Fundamentos inegociáveis da Web. |
+| **AX** | As Dez Primeiras Forjas | Rituais de utilidade e poder para o aprendiz. |
+| **AZ** | O Sussurro no Silício | Tradução ontológica de Shellcode. |
 
 ---
 
