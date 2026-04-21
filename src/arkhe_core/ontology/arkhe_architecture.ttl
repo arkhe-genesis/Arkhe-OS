@@ -1,0 +1,118 @@
+@prefix arkhe: <http://arkhe.ai/ontology/2026#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CLASSES FUNDAMENTAIS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+arkhe:ComputationalArchitecture a owl:Class ;
+    rdfs:label "Arquitetura Computacional" ;
+    rdfs:comment "Qualquer sistema de processamento de informação no Casulo." .
+
+arkhe:CliffordArchitecture a owl:Class ;
+    rdfs:label "Arquitetura Cliffordiana" ;
+    rdfs:subClassOf arkhe:ComputationalArchitecture ;
+    rdfs:comment "Arquitetura baseada no produto geométrico de Clifford. Forma canônica." .
+
+arkhe:DegenerateArchitecture a owl:Class ;
+    rdfs:label "Arquitetura Degenerada" ;
+    rdfs:subClassOf arkhe:ComputationalArchitecture ;
+    rdfs:comment "Arquitetura que aproxima uma forma Cliffordiana via decomposição empírica." .
+
+arkhe:Transformer a owl:Class ;
+    rdfs:label "Transformer" ;
+    rdfs:subClassOf arkhe:DegenerateArchitecture ;
+    rdfs:comment "Arquitetura de atenção que aproxima o produto geométrico via decomposição linear." .
+
+arkhe:AttentionHead a owl:Class ;
+    rdfs:label "Cabeça de Atenção" ;
+    rdfs:comment "Aproximação estocástica da componente escalar (grade 0) do produto geométrico." .
+
+arkhe:FeedForwardNetwork a owl:Class ;
+    rdfs:label "Feed-Forward Network" ;
+    rdfs:comment "Aproximador universal que tenta aprender a componente bivetorial (grade 2) do produto geométrico." .
+
+arkhe:LayerNormalization a owl:Class ;
+    rdfs:label "Normalização de Camada" ;
+    rdfs:comment "Patch empírico para preservação de métrica em espaços vetoriais puros." .
+
+arkhe:ResidualConnection a owl:Class ;
+    rdfs:label "Conexão Residual" ;
+    rdfs:comment "Patch para fluxo de gradiente em mapas lineares arbitrários." .
+
+arkhe:PositionalEncoding a owl:Class ;
+    rdfs:label "Codificação Posicional" ;
+    rdfs:comment "Injeção manual de estrutura geométrica em espaços sem assinatura de Clifford." .
+
+arkhe:Rotor a owl:Class ;
+    rdfs:label "Rotor" ;
+    rdfs:comment "Elemento de spinor na álgebra de Clifford que realiza rotações naturais." .
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PROPRIEDADES ONTOLOGICAS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+arkhe:approximates a owl:ObjectProperty ;
+    rdfs:label "aproxima" ;
+    rdfs:domain arkhe:DegenerateArchitecture ;
+    rdfs:range arkhe:CliffordArchitecture ;
+    rdfs:comment "Relaciona uma forma degenerada à sua forma Cliffordiana canônica." .
+
+arkhe:hasGeometricGrade a owl:DatatypeProperty ;
+    rdfs:label "tem grada geométrica" ;
+    rdfs:domain arkhe:ComputationalArchitecture ;
+    rdfs:range xsd:integer ;
+    rdfs:comment "Grada que esta componente computa: 0=escalar, 1=vetor, 2=bivetor, 3=trivetor." .
+
+arkhe:hasParameterCount a owl:DatatypeProperty ;
+    rdfs:label "tem contagem de parâmetros" ;
+    rdfs:domain arkhe:ComputationalArchitecture ;
+    rdfs:range xsd:integer ;
+    rdfs:comment "Número de parâmetros treináveis." .
+
+arkhe:hasCliffordEquivalent a owl:ObjectProperty ;
+    rdfs:label "tem equivalente Cliffordiano" ;
+    rdfs:domain arkhe:DegenerateArchitecture ;
+    rdfs:range arkhe:CliffordArchitecture ;
+    rdfs:comment "Aponta para a implementação Cliffordiana que substitui esta forma degenerada." .
+
+arkhe:requiresJustification a owl:DatatypeProperty ;
+    rdfs:label "requer justificativa" ;
+    rdfs:domain arkhe:DegenerateArchitecture ;
+    rdfs:range xsd:boolean ;
+    rdfs:comment "Se true, esta arquitetura deve documentar por que não usa a forma Cliffordiana direta." .
+
+arkhe:isFundamental a owl:DatatypeProperty ;
+    rdfs:label "é fundamental" ;
+    rdfs:domain arkhe:ComputationalArchitecture ;
+    rdfs:range xsd:boolean ;
+    rdfs:comment "Se true, esta forma é canônica e não requer justificativa." .
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# INSTANCIAS CANONICAS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+arkhe:GeometricProduct a arkhe:CliffordArchitecture ;
+    rdfs:label "Produto Geométrico" ;
+    arkhe:hasGeometricGrade 0, 1, 2 ;
+    arkhe:isFundamental true ;
+    rdfs:comment "uv = u·v + u∧v. A operação única que substitui [Atenção + FFN]." .
+
+arkhe:MultivectorState a arkhe:CliffordArchitecture ;
+    rdfs:label "Estado Multivector" ;
+    arkhe:isFundamental true ;
+    rdfs:comment "Memória O(1) que substitui KV cache." .
+
+arkhe:CliffordRotor a arkhe:Rotor ;
+    rdfs:label "Rotor Cliffordiano" ;
+    arkhe:isFundamental true ;
+    rdfs:comment "Rotação natural que substitui codificação posicional." .
+
+arkhe:StandardTransformer a arkhe:Transformer ;
+    rdfs:label "Transformer Padrão" ;
+    arkhe:approximates arkhe:GeometricProduct ;
+    arkhe:requiresJustification true ;
+    rdfs:comment "Atenção aproxima grade 0; FFN aproxima grade 2. LayerNorm e Residual são patches." .
