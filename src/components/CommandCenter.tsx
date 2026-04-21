@@ -55,6 +55,7 @@ interface CommandCenterProps {
   setShowAquiferSpectrogram: (show: boolean) => void;
   setShowUnifiedOntology: (show: boolean) => void;
   setShowArkheOntologyVision?: (show: boolean) => void;
+  setShowChipFabricationVision?: (show: boolean) => void;
   setShowSecurityAdvanced: (show: boolean) => void;
   setShowPluralityMCP: (show: boolean) => void;
   setShowVelxioEmulation: (show: boolean) => void;
@@ -119,6 +120,7 @@ export function CommandCenter({
   setShowAquiferSpectrogram,
   setShowUnifiedOntology,
   setShowArkheOntologyVision,
+  setShowChipFabricationVision,
   setShowSecurityAdvanced,
   setShowPluralityMCP,
   setShowVelxioEmulation,
@@ -616,6 +618,12 @@ export function CommandCenter({
               className="w-full py-2 border border-cyan-400/50 text-cyan-400 hover:bg-cyan-400/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(34,211,238,0.4)] animate-pulse"
             >
               Visão Ontológica (GLSL)
+            </button>
+            <button
+              onClick={() => setShowChipFabricationVision && setShowChipFabricationVision(true)}
+              className="w-full py-2 border border-amber-500/50 text-amber-500 hover:bg-amber-500/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(245,158,11,0.4)] animate-pulse"
+            >
+              Tecelão de Silício (Manufatura)
             </button>
             <button
               onClick={() => setShowPluralityMCP(true)}
