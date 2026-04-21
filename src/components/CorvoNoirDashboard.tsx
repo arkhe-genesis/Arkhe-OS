@@ -19,8 +19,8 @@ import {
   Area
 } from 'recharts';
 
-import { useArkheSimulation } from '../hooks/useArkheSimulation'
 import type { SimulationState } from '../../server/types';
+import { useArkheSimulation } from '../hooks/useArkheSimulation';
 
 
 import TemporalLensPanel from './TemporalLensPanel';

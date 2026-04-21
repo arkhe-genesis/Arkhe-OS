@@ -9,8 +9,8 @@ import { X, Database, Activity, AlertCircle, RefreshCcw, Layout, Shield, Network
 import { motion } from 'motion/react';
 import React from 'react';
 
-import { useArkheSimulation } from '../hooks/useArkheSimulation'
 import type { SimulationState } from '../../server/types';
+import { useArkheSimulation } from '../hooks/useArkheSimulation';
 
 interface DataCoherenceDashboardProps {
   onClose: () => void;

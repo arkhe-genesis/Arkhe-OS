@@ -10,8 +10,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import React from 'react';
 
 import type { EnterpriseSubagentState } from '../../server/types';
-import { useArkheSimulation } from '../hooks/useArkheSimulation'
 import type { SimulationState } from '../../server/types';
+import { useArkheSimulation } from '../hooks/useArkheSimulation';
 
 interface DomainSectionProps {
   title: string;

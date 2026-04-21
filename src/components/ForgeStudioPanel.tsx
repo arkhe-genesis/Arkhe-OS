@@ -7,6 +7,7 @@
 
 import { Hammer, X, Terminal, Cpu, Zap, Activity, MessageSquare, Play, ShieldAlert, Code } from 'lucide-react';
 import React, { useState } from 'react';
+
 import { Card } from './ui/Card';
 
 interface ForgeStudioPanelProps {
@@ -27,7 +28,7 @@ export default function ForgeStudioPanel({ onClose }: ForgeStudioPanelProps) {
   };
 
   const handleIgnite = async () => {
-    if (!intent.trim() || isForging) return;
+    if (!intent.trim() || isForging) {return;}
 
     setIsForging(true);
     setStep(1);
@@ -40,7 +41,7 @@ export default function ForgeStudioPanel({ onClose }: ForgeStudioPanelProps) {
         body: JSON.stringify({ intent })
       });
 
-      if (!response.ok) throw new Error('Failed to reach the Council');
+      if (!response.ok) {throw new Error('Failed to reach the Council');}
 
       const data = await response.json();
 

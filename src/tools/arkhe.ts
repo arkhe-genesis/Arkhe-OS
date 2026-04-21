@@ -9,7 +9,6 @@ import {createHash} from 'node:crypto';
 import {promisify} from 'node:util';
 
 import type {McpPage} from '../McpPage.js';
-
 import {zod} from '../third_party/index.js';
 
 import {ToolCategory} from './categories.js';

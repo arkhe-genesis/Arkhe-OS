@@ -1,7 +1,16 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // packages/lucent-sdk/src/connectors/PostHogConnector.ts
 import posthog from 'posthog-js';
+
+import type { SessionEvent } from '../LucentCollector';
+
 import { BaseConnector } from './BaseConnector';
-import { SessionEvent } from '../LucentCollector';
 
 export class PostHogConnector extends BaseConnector {
   start(): void {
@@ -43,9 +52,9 @@ export class PostHogConnector extends BaseConnector {
   }
 
   private mapEventType(eventName: string): SessionEvent['type'] {
-    if (eventName.includes('rage')) return 'rage_click';
-    if (eventName.includes('error')) return 'error';
-    if (eventName.includes('navigation')) return 'navigation';
+    if (eventName.includes('rage')) {return 'rage_click';}
+    if (eventName.includes('error')) {return 'error';}
+    if (eventName.includes('navigation')) {return 'navigation';}
     return 'click';
   }
 }

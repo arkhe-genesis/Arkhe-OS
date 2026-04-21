@@ -7,26 +7,24 @@
 import type {ParsedArguments} from '../bin/chrome-devtools-mcp-cli-options.js';
 
 import * as arkheTools from './arkhe.js';
-import * as decentralizedTools from './decentralized.js';
 import * as arkheGnuTools from './arkhe_gnu.js';
 import * as arkheNetTools from './arkhe_net.js';
-import * as lambdaTools from './lambda_tools.js';
 import * as consoleTools from './console.js';
+import * as decentralizedTools from './decentralized.js';
 import * as emulationTools from './emulation.js';
 import * as extensionTools from './extensions.js';
 import * as inPageTools from './inPage.js';
 import * as inputTools from './input.js';
+import * as lambdaTools from './lambda_tools.js';
 import * as lighthouseTools from './lighthouse.js';
-import * as memoryTools from './memory.js';
 import * as logosLibraryTools from './logos_library.js';
+import * as memoryTools from './memory.js';
+import * as mercuryTools from './mercury.js';
+import * as microsandboxTools from './microsandbox.js';
 import * as nekoTools from './neko.js';
 import * as networkTools from './network.js';
 import * as oasisTools from './oasis.js';
 import * as osCathedralTools from './os_cathedral.js';
-import * as spectraTools from './spectra.js';
-import * as tauTools from './tau.js';
-import * as mercuryTools from './mercury.js';
-import * as microsandboxTools from './microsandbox.js';
 import * as pagesTools from './pages.js';
 import * as performanceTools from './performance.js';
 import * as researchhubTools from './researchhub.js';
@@ -35,7 +33,9 @@ import * as screenshotTools from './screenshot.js';
 import * as scriptTools from './script.js';
 import * as slimTools from './slim/tools.js';
 import * as snapshotTools from './snapshot.js';
+import * as spectraTools from './spectra.js';
 import * as storageTools from './storage.js';
+import * as tauTools from './tau.js';
 import type {ToolDefinition} from './ToolDefinition.js';
 
 export const createTools = (args: ParsedArguments) => {

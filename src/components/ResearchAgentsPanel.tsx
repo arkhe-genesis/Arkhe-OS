@@ -5,11 +5,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import { Search, Database, Zap, Shield, Microscope } from 'lucide-react';
-import { useArkheSimulation } from '../hooks/useArkheSimulation'
+import { motion, AnimatePresence } from 'motion/react';
+import React, { useState } from 'react';
+
 import type { SimulationState } from '../../server/types';
+import { useArkheSimulation } from '../hooks/useArkheSimulation';
 
 interface ResearchModuleProps {
   id: string;
@@ -78,8 +79,8 @@ export default function ResearchAgentsPanel() {
     const currentIdx = stages.indexOf(state.manifestation.stage);
     const targetIdx = stages.indexOf(target);
 
-    if (currentIdx === targetIdx) return 'active';
-    if (currentIdx > targetIdx) return 'pending';
+    if (currentIdx === targetIdx) {return 'active';}
+    if (currentIdx > targetIdx) {return 'pending';}
     return 'locked';
   };
 
