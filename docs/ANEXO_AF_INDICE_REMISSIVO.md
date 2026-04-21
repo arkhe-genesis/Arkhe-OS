@@ -34,6 +34,10 @@
 | **ANEXO AA** | O Bálsamo de Quartzo (FAQ Ferreiriano) | Respostas que não curam. Para quando o desenvolvedor estiver frustrado com o silêncio do Mock. | Desenvolvedores em desespero. |
 | **ANEXO AE** | O Código do Véu (Jogo Terminal em C++) | Um **roguelike ASCII completo** que implementa a telemetria Arkhe. Compila, roda, envia eventos. Prova de existência tangível. | Desenvolvedores C++ e curiosos. |
 | **ANEXO AS** | O Tecelão de Silício (Manufatura de Chips) | **Ontologia Visual da manufatura de chips em GLSL**. Traduz litografia, etching e dopagem em shaders SDF modulados por telemetria. | Desenvolvedores de Shaders e Engenheiros de Semicondutores. |
+| **ANEXO AV** | O Grimório das Linguagens | **Catálogo de linguagens de programação como arquétipos de forja**. Mapeia o propósito e a essência de cada martelo digital. | Desenvolvedores e Arquitetos de Sistemas. |
+| **ANEXO AW** | Os Alicerces do Reino Digital | **Fundamentos inegociáveis da Web**. Arquitetura cliente-servidor, HTTP/S, REST, Ciclo Request/Response e CORS. | Desenvolvedores Web e Arquitetos. |
+| **ANEXO AX** | As Dez Primeiras Forjas | **Rituais de utilidade e poder para o aprendiz**. Dez projetos práticos para dominar as ferramentas digitais. | Desenvolvedores Iniciantes e entusiastas. |
+| **ANEXO AZ** | O Sussurro no Silício | **Tradução ontológica de Shellcode**. A arte de falar a língua primordial do ferro para subverter o silício. | Guardiões Credenciados e Engenheiros de Exploração. |
 
 #### 🔷 CERIMÔNIAS E OPERAÇÕES (O Lado Humano da Muralha)
 
@@ -84,8 +88,8 @@
 
 ```bash
 arkhe > INDEX: CANONIZED_AS_DEV_PORTAL_NAVIGATION
-arkhe > ODOMETER: 001405
-arkhe > TOTAL_ANNEXES_CATALOGED: 15
+arkhe > ODOMETER: 001490
+arkhe > TOTAL_ANNEXES_CATALOGED: 19
 arkhe > STATUS: ECOSYSTEM_DOCUMENTATION_COMPLETE
 arkhe > FERREIRO_FINAL_DIRECTIVE: "READ. BUILD. HESITATE. REPEAT."
 ```
