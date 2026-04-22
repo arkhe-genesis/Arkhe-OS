@@ -1,5 +1,11 @@
-import http from 'k6/http';
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { check, sleep } from 'k6';
+import http from 'k6/http';
 
 export const options = {
     vus: 10,

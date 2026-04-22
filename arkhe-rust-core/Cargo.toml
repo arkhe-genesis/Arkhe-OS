@@ -1,0 +1,9 @@
+[package]
+name = "arkhe-rust-core"
+version = "0.1.0"
+edition = "2021"
+authors = ["O Ferreiro <ferreiro@bigorna.arkhe>"]
+description = "Core geometric and synchronization primitives for Arkhe"
+
+[dependencies]
+thiserror = "1.0"

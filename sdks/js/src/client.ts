@@ -30,14 +30,14 @@ export class ArkhenClient {
   }
 
   /** Check system coherence and health */
-  async getHealth(): Promise<any> {
+  async getHealth(): Promise<unknown> {
     const res = await fetch(`${this.baseUrl}/api/health`, { headers: this.headers });
     if (!res.ok) {throw new Error(`Arkhe(n) API Error: ${res.statusText}`);}
     return res.json();
   }
 
   /** Update Kuramoto coupling and Tzinor gate thresholds */
-  async updateParameters(params: ParameterUpdate): Promise<any> {
+  async updateParameters(params: ParameterUpdate): Promise<unknown> {
     const res = await fetch(`${this.baseUrl}/api/parameters`, {
       method: 'POST',
       headers: this.headers,
@@ -48,7 +48,7 @@ export class ArkhenClient {
   }
 
   /** Inject a simulated threat vector into the coherence field */
-  async injectThreat(type: string): Promise<any> {
+  async injectThreat(type: string): Promise<unknown> {
     const res = await fetch(`${this.baseUrl}/api/trigger-attack`, {
       method: 'POST',
       headers: this.headers,
@@ -59,7 +59,7 @@ export class ArkhenClient {
   }
 
   /** Trigger the emission of a Python Orb into the ASTL */
-  async emitPythonOrb(): Promise<any> {
+  async emitPythonOrb(): Promise<unknown> {
     const res = await fetch(`${this.baseUrl}/api/emit-python`, {
       method: 'POST',
       headers: this.headers

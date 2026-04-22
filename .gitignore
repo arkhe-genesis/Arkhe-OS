@@ -155,3 +155,5 @@ __pycache__/
 log.txt
 
 .DS_Store
+target/
+**/target/

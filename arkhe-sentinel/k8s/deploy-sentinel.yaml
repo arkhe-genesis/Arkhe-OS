@@ -1,0 +1,254 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: arkhe-sentinel
+  namespace: arkhe
+  labels:
+    app: arkhe-sentinel
+    arkhe.horizon: CX
+spec:
+  selector:
+    matchLabels:
+      app: arkhe-sentinel
+  template:
+    metadata:
+      labels:
+        app: arkhe-sentinel
+        arkhe.horizon: CX
+        arkhe.role: sentinel
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "7778"
+    spec:
+      hostNetwork: true  # Acesso direto à rede para RF scanning
+      nodeSelector:
+        arkhe.sentinel: "true"  # Apenas nós com PXN-90 conectado
+      tolerations:
+      - key: "dedicated"
+        operator: "Equal"
+        value: "sentinel"
+        effect: "NoSchedule"
+      containers:
+      # Container principal: Sentinela
+      - name: sentinel
+        image: arkhe-sentinel:latest
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true  # Acesso a dispositivos USB/Serial
+          capabilities:
+            add:
+            - NET_ADMIN
+            - NET_RAW
+        env:
+        - name: SENTINEL_DEVICE
+          value: "192.168.1.100"  # IP do PXN-90 na rede local
+        - name: SENTINEL_PORT
+          value: "5025"
+        - name: SENTINEL_CENTER_FREQ
+          value: "2435000000"  # 2.435 GHz
+        - name: SENTINEL_SPAN
+          value: "50000000"     # 50 MHz
+        - name: SENTINEL_RBW
+          value: "120000"       # 120 kHz
+        - name: SENTINEL_MODE
+          value: "spectrum"
+        - name: SENTINEL_THRESHOLD
+          value: "10.0"
+        - name: K6O_NODE_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: K6O_MESH_ENDPOINT
+          value: "qhttp://mesh.arkhe.svc.cluster.local:7777"
+        ports:
+        - containerPort: 7778
+          name: sentinel-grpc
+        - containerPort: 7779
+          name: sentinel-metrics
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+        volumeMounts:
+        - name: dev-usb
+          mountPath: /dev
+        - name: sentinel-config
+          mountPath: /etc/arkhe/sentinel
+        livenessProbe:
+          grpc:
+            port: 7778
+          initialDelaySeconds: 10
+          periodSeconds: 15
+        readinessProbe:
+          exec:
+            command:
+            - /bin/arkhe_sentinel
+            - --health-check
+          initialDelaySeconds: 5
+          periodSeconds: 5
+
+      # Sidecar: k6od (sincronização RF)
+      - name: k6od-rf
+        image: arkhe-k6od:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: K6O_NODE_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: K6O_MESH_ENDPOINT
+          value: "qhttp://mesh.arkhe.svc.cluster.local:7777"
+        - name: K6O_MODE
+          value: "rf"  # Modo RF (frequência em vez de fase temporal)
+        - name: K6O_INITIAL_PHASE
+          value: "0.0"
+        - name: K6O_COUPLING
+          value: "0.15"
+        resources:
+          limits:
+            memory: "64Mi"
+            cpu: "100m"
+        volumeMounts:
+        - name: arkhe-socket
+          mountPath: /var/run/arkhe
+
+      # Sidecar: Odyssey Oracle (simulação RF)
+      - name: odyssey-oracle
+        image: odyssey-oracle:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ODYSSEY_ENDPOINT
+          value: "https://api.odyssey.ml/v2"
+        - name: ORACLE_MODE
+          value: "rf_simulation"
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "1000m"
+          requests:
+            memory: "256Mi"
+            cpu: "500m"
+
+      volumes:
+      - name: dev-usb
+        hostPath:
+          path: /dev
+      - name: sentinel-config
+        configMap:
+          name: arkhe-sentinel-config
+      - name: arkhe-socket
+        emptyDir: {}
+
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - arkhe-sentinel
+              topologyKey: kubernetes.io/hostname
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: arkhe-sentinel-config
+  namespace: arkhe
+data:
+  sentinel.conf: |
+    # Configuração do Sentinela de Espectro
+    # ANEXO CX | HAROGIC PXN-90
+
+    device_address = "${SENTINEL_DEVICE}"
+    scpi_port = 5025
+
+    # Bandas de monitoramento (Hz)
+    band_1 = 900000000, 930000000      # GSM
+    band_2 = 2400000000, 2500000000    # WiFi/BT
+    band_3 = 5150000000, 5850000000    # WiFi 5G
+    band_4 = 700000000, 800000000      # LTE
+
+    # Thresholds por banda (dB acima do baseline)
+    threshold_band_1 = 15.0
+    threshold_band_2 = 10.0
+    threshold_band_3 = 12.0
+    threshold_band_4 = 15.0
+
+    # Modo de aquisição: spectrum | iq | realtime
+    acquisition_mode = "spectrum"
+
+    # Intervalo de scan (ms)
+    scan_interval = 1000
+
+    # Número de pontos do trace
+    trace_points = 4096
+
+    # Baseline: amostras para estabelecer referência
+    baseline_samples = 10
+
+    # Adaptação do baseline (EWMA alpha)
+    baseline_alpha = 0.1
+
+    # GPS (se disponível via PXN-90)
+    gps_enabled = true
+
+    # Logging
+    log_level = "info"
+    log_coherence = true
+    log_anomalies = true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: arkhe-sentinel
+  namespace: arkhe
+  labels:
+    app: arkhe-sentinel
+spec:
+  selector:
+    app: arkhe-sentinel
+  ports:
+  - port: 7778
+    targetPort: 7778
+    name: sentinel-grpc
+  - port: 7779
+    targetPort: 7779
+    name: sentinel-metrics
+  type: ClusterIP
+---
+# NetworkPolicy: Sentinela pode escanear, mas não pode ser escaneado
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: arkhe-sentinel-policy
+  namespace: arkhe
+spec:
+  podSelector:
+    matchLabels:
+      app: arkhe-sentinel
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: arkhe
+    ports:
+    - protocol: TCP
+      port: 7778
+  egress:
+  - to: []  # Permite todo egress (necessário para SCPI TCP)
+    ports:
+    - protocol: TCP
+      port: 5025
+    - protocol: TCP
+      port: 7777
+    - protocol: TCP
+      port: 443
