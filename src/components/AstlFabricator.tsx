@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Box, Hexagon, Layers, Activity, Clock } from 'lucide-react';
+import { Box, Hexagon, Activity, Clock } from 'lucide-react';
 import React from 'react';
 
 export interface AstlState {

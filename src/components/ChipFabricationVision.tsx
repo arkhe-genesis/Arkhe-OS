@@ -275,7 +275,7 @@ export default function ChipFabricationVision({ onClose }: { onClose: () => void
                     const data = await response.json();
                     // Mapeamento mock de estado para parâmetros de fábrica
                     if (data.nodes && data.nodes.length > 0) {
-                        const alertCount = data.nodes.filter((n: any) => n.securityState > 0).length;
+                        const alertCount = data.nodes.filter((n: { securityState: number }) => n.securityState > 0).length;
                         setTelemetry(prev => ({
                             ...prev,
                             waferDefectRate: 0.05 + alertCount * 0.1,
@@ -283,7 +283,9 @@ export default function ChipFabricationVision({ onClose }: { onClose: () => void
                         }));
                     }
                 }
-            } catch (err) {}
+            } catch {
+                // Silently ignore telemetry fetch errors in mock view
+            }
         };
         const interval = setInterval(fetchTelemetry, 3000);
         return () => clearInterval(interval);

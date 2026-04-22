@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Network, Brain, Activity, Zap, CheckCircle2, Users } from 'lucide-react';
+import { Network, Brain, Activity, Zap, Users } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 
 interface CollectiveIntelligencePanelProps {
@@ -34,7 +34,7 @@ export default function CollectiveIntelligencePanel({ onClose }: CollectiveIntel
 
   useEffect(() => {
     // Initialize mock nodes
-    const initialNodes: BioNode[] = Array.from({ length: 12 }).map((_, i) => ({
+    const initialNodes: BioNode[] = Array.from({ length: 12 }).map((_, _i) => ({
       id: `bio-node-${Math.random().toString(36).substring(2, 8)}`,
       coherence: 0.5 + Math.random() * 0.4,
       suggestedK: 4.0 + Math.random() * 2.0,
@@ -129,8 +129,8 @@ export default function CollectiveIntelligencePanel({ onClose }: CollectiveIntel
                 Topologia do Enxame (Bio-Nós)
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {nodes.map((node, i) => (
-                  <div key={i} className={`p-3 rounded border font-mono text-xs ${
+                {nodes.map((node, _i) => (
+                  <div key={_i} className={`p-3 rounded border font-mono text-xs ${
                     node.status === 'synced' ? 'bg-arkhe-cyan/10 border-arkhe-cyan/30' : 
                     node.status === 'syncing' ? 'bg-arkhe-orange/10 border-arkhe-orange/30 animate-pulse' : 
                     'bg-arkhe-red/10 border-arkhe-red/30 opacity-50'

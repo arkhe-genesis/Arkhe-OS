@@ -59,7 +59,7 @@ const GovernanceManifestoPanel: React.FC<GovernanceManifestoPanelProps> = ({ sta
         </div>
 
         <div className="space-y-3">
-          {(manifesto.directives as any[]).map((d: any) => (
+          {(manifesto.directives as unknown[]).map((d: unknown) => (
             <div key={d.id} className="space-y-1">
               <div className="flex items-center gap-2">
                 <span className="text-arkhe-cyan font-bold text-[10px]">{d.id}.</span>

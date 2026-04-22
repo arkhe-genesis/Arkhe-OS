@@ -166,5 +166,5 @@ const buffer = await Packer.toBuffer(doc);
 fs.writeFileSync("Arkhe_Enterprise_Manual_v1.0.docx", buffer);
 console.log("DOCX generated successfully!");
 
-// @ts-ignore
+// @ts-expect-error: External function not typed in this script context
 console.log(_makeTable);

@@ -159,12 +159,12 @@ export default function SessionReplayViewer() {
                         {event.type}
                       </span>
                       <span className="text-cyan-200">
-                        {(event.payload as any)?.type === 'error' ? (
+                        {(event.payload as unknown)?.type === 'error' ? (
                           <span className="text-red-400 flex items-center gap-1">
-                            <Bug className="w-3 h-3" /> {(event.payload as any).message}
+                            <Bug className="w-3 h-3" /> {(event.payload as unknown).message}
                           </span>
                         ) : (
-                          (event.payload as any)?.type || JSON.stringify(event.payload || {})
+                          (event.payload as unknown)?.type || JSON.stringify(event.payload || {})
                         )}
                       </span>
                     </div>

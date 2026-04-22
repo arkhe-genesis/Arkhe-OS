@@ -21,7 +21,7 @@ export default function ArkheTVPanel({ onClose }: ArkheTVPanelProps) {
 
   // Simulation of the amazonia.ncl playback
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval>;
     if (isPlaying) {
       interval = setInterval(() => {
         setPlaybackTime(prev => {
@@ -142,7 +142,7 @@ export default function ArkheTVPanel({ onClose }: ArkheTVPanelProps) {
 
                 {/* Sensory Event Indicators */}
                 <AnimatePresence>
-                  {sensoryEvents.map((event, i) => (
+                  {sensoryEvents.map((event, _i) => (
                     <motion.div 
                       key={`${event.type}-${event.time}`}
                       initial={{ opacity: 0, y: 20, scale: 0.8 }}

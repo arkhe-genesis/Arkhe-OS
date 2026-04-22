@@ -53,7 +53,7 @@ const ExpansionPanel: React.FC<ExpansionPanelProps> = ({ state }) => {
         </div>
 
         <div className="space-y-2">
-          {expansion.nodes.map((node: any) => (
+          {expansion.nodes.map((node: unknown) => (
             <div key={node.id} className="flex items-center justify-between p-2 bg-black/20 rounded border border-white/5">
               <div className="flex items-center gap-2">
                 <div className={cn(

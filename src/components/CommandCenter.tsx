@@ -69,7 +69,7 @@ interface CommandCenterProps {
   setShowBonsaiPrism?: (show: boolean) => void;
   setShowNeko?: (show: boolean) => void;
   setShowSpectra?: (show: boolean) => void;
-  parameters: any;
+  parameters: unknown;
 }
 
 export function CommandCenter({

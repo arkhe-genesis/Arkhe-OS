@@ -5,9 +5,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { X, Fingerprint, Activity, Cpu, ArrowDown, Zap, Database, BrainCircuit, Triangle } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
-import React, { useState, useEffect } from 'react';
+import { X, Fingerprint, Activity, Zap, Database, BrainCircuit, Triangle } from 'lucide-react';
+import { motion } from 'motion/react';
+import React, { useState } from 'react';
 
 interface ConsciousnessInjectionPanelProps {
   onClose: () => void;

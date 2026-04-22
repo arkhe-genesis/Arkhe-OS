@@ -63,7 +63,7 @@ export default function VideoGenerationPanel({ onClose }: VideoGenerationPanelPr
       const data = await response.json();
       setVideoUrl(data.videoUrl);
       setStage('IDLE');
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err.message || 'An unexpected error occurred.');
       setStage('IDLE');
     }

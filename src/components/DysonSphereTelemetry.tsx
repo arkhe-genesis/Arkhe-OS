@@ -15,15 +15,15 @@ import { Card } from './ui/Card';
 export function DysonSphereTelemetry() {
   const [operatorId, setOperatorId] = useState('BEXORG-OP-001');
   const [brainwaveFreq, setBrainwaveFreq] = useState(40.0);
-  const [mappingResult, setMappingResult] = useState<any>(null);
+  const [mappingResult, setMappingResult] = useState<unknown>(null);
   
-  const [voiceResult, setVoiceResult] = useState<any>(null);
+  const [voiceResult, setVoiceResult] = useState<unknown>(null);
   const [isFiltering, setIsFiltering] = useState(false);
 
-  const [genesisResult, setGenesisResult] = useState<any>(null);
+  const [genesisResult, setGenesisResult] = useState<unknown>(null);
   const [isGenesisLoading, setIsGenesisLoading] = useState(false);
 
-  const [massSyncResult, setMassSyncResult] = useState<any>(null);
+  const [massSyncResult, setMassSyncResult] = useState<unknown>(null);
   const [isMassSyncLoading, setIsMassSyncLoading] = useState(false);
 
   const handleGenesisDIP = async () => {

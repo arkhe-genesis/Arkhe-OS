@@ -12,8 +12,6 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import type { SimulationState } from '../../server/types';
 import { useArkheSimulation } from '../hooks/useArkheSimulation';
 
-import { Card } from './ui/Card';
-
 interface CHSHMonitorPanelProps {
   onClose: () => void;
 }

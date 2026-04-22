@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Eye, Network, ShieldAlert, Activity, CheckCircle2, Server, Lock } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import { Eye, Network, ShieldAlert } from 'lucide-react';
+import React, { useState } from 'react';
 
 interface ArkheVisionPanelProps {
   onClose: () => void;
@@ -46,7 +46,7 @@ export default function ArkheVisionPanel({ onClose }: ArkheVisionPanelProps) {
       addLog('IMAGEM CAPTURADA. ENVIANDO SYNAPSE PARA MINERADORES...');
       
       // Simulate miner responses
-      const mockResponses: MinerResponse[] = Array.from({ length: 5 }).map((_, i) => {
+      const mockResponses: MinerResponse[] = Array.from({ length: 5 }).map((_, _i) => {
         const isIntruder = Math.random() > 0.3; // 70% chance of intruder for drama
         return {
           minerId: `miner-${Math.random().toString(36).substring(2, 6)}`,

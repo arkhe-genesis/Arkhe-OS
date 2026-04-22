@@ -48,8 +48,8 @@ export interface MemoryEngram {
 export interface TzinorMemoryState {
   agentId: string;
   currentEpoch: number;
-  fContext: any[];
-  gMemory: any[];
+  fContext: unknown[];
+  gMemory: unknown[];
   warpFactor: number;
   lambdaCoherence: number;
 }
@@ -283,12 +283,12 @@ export interface SimulationState {
   };
   lucentSessions: UserSession[];
   hydro: {
-    neighborhoods: any[];
+    neighborhoods: unknown[];
     globalMassBalance: number;
     zkAlertsCount: number;
   };
   ramsey: RamseyState;
-  civicSubagents: any[];
+  civicSubagents: unknown[];
   enterpriseSubagents: {
     governance: EnterpriseSubagentState[];
     devops: EnterpriseSubagentState[];
@@ -299,19 +299,19 @@ export interface SimulationState {
   };
   chshMonitor: CHSHMonitorState;
   scaData: ScaDataState;
-  biometrics?: any;
-  nare?: any;
-  populationFeedback: any[];
-  networkInfra: any;
+  biometrics?: unknown;
+  nare?: unknown;
+  populationFeedback: unknown[];
+  networkInfra: unknown;
   bioLinkSync: BioLinkSyncState;
   temporalAudit: TemporalAuditState;
   predictiveForecast: PredictiveForecastState;
   sensors: SensorState[];
-  governanceManifesto?: any;
-  grossHappiness?: any;
-  cellularHealth?: any;
+  governanceManifesto?: unknown;
+  grossHappiness?: unknown;
+  cellularHealth?: unknown;
   expansionStatus?: ExpansionStatus;
-  forecaster?: any;
+  forecaster?: unknown;
   helioState?: HelioState;
   latentCoherence?: LatentCoherenceResults;
   layerSweep?: LayerSweepReport;
@@ -508,7 +508,7 @@ export interface ThermodynamicTrainingReport {
   efficiency: number;
   loss: number;
   method: string;
-  parameters: any;
+  parameters: unknown;
   status: string;
 }
 
@@ -517,5 +517,5 @@ export interface OrbPayload {
   coherence: number;
   originTime: number;
   embedding: number[];
-  industry_convergence?: any;
+  industry_convergence?: unknown;
 }

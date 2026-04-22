@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Link, Shield, Key, Lock, CheckCircle2, Activity, Waves, Compass } from 'lucide-react';
+import { Shield, Key, Lock, CheckCircle2, Activity, Waves, Compass } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 
 interface BermudaAnomalyPanelProps {
