@@ -1024,6 +1024,20 @@ See [Troubleshooting](./docs/troubleshooting.md).
 
 ---
 
+## Installation Assistant
+
+For a complete and automated installation of all components (Core, AI, Systems, and Simulator), use the Arkhe Setup Assistant:
+
+```bash
+python3 arkhe_setup_assistant.py
+```
+
+You can also run verification to ensure system coherence:
+
+```bash
+python3 arkhe_setup_assistant.py --verify
+```
+
 ## Repository Overview
 
 This repository is a monorepo that integrates standard browser automation with the **Arkhe(n)** experimental framework.

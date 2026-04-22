@@ -1,5 +1,15 @@
 # Guia Rápido: Operação do Sistema Arkhe v3.0-Ω
 
+## 🛠️ Instalação Automatizada
+
+Para configurar todo o ecossistema rapidamente:
+
+```bash
+python3 arkhe_setup_assistant.py --full
+```
+
+Este comando irá instalar dependências Node.js, configurar o ambiente Python, compilar componentes Rust/Go/C++ e realizar a verificação de coerência inicial.
+
 ## 🚀 Início Rápido
 
 ### 1. Teste da Topologia (Grau 3)
