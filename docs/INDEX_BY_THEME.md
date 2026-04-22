@@ -31,6 +31,7 @@
 | **AW** | Os Alicerces do Reino Digital | Fundamentos inegociáveis da Web. |
 | **AX** | As Dez Primeiras Forjas | Rituais de utilidade e poder para o aprendiz. |
 | **AZ** | O Sussurro no Silício | Tradução ontológica de Shellcode. |
+| **DA** | A Fiação Que Hesita | Esquema de Ligação Elétrica (Pinagem e I²C). |
 | **CI** | A Catedral no System32 | Driver de Filtro do Kernel Windows (Ring 0). |
 
 ---
