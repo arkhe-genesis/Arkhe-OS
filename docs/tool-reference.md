@@ -1,6 +1,6 @@
 <!-- AUTO GENERATED DO NOT EDIT - run 'npm run gen' to update-->
 
-# Chrome DevTools MCP Tool Reference (~34339 cl100k_base tokens)
+# Chrome DevTools MCP Tool Reference (~38778 cl100k_base tokens)
 
 - **[Input automation](#input-automation)** (9 tools)
   - [`click`](#click)
@@ -44,7 +44,7 @@
   - [`delete_cookie`](#delete_cookie)
   - [`list_cookies`](#list_cookies)
   - [`set_cookie`](#set_cookie)
-- **[Arkhe(n) Protocols](#arkhe(n)-protocols)** (158 tools)
+- **[Arkhe(n) Protocols](#arkhe(n)-protocols)** (173 tools)
   - [`acp`](#acp)
   - [`acurl`](#acurl)
   - [`adjust_muon_polarization`](#adjust_muon_polarization)
@@ -78,6 +78,8 @@
   - [`coh_teleport`](#coh_teleport)
   - [`collapse_agent`](#collapse_agent)
   - [`collective_mind_link`](#collective_mind_link)
+  - [`compile_mtp3`](#compile_mtp3)
+  - [`consolidate_manifesto`](#consolidate_manifesto)
   - [`council_deliberate`](#council_deliberate)
   - [`cr_integ`](#cr_integ)
   - [`cr_integ_berry`](#cr_integ_berry)
@@ -145,6 +147,7 @@
   - [`map_neuronal_circuit`](#map_neuronal_circuit)
   - [`meissner_steer`](#meissner_steer)
   - [`mtls_handshake_berry`](#mtls_handshake_berry)
+  - [`mtp3_compile`](#mtp3_compile)
   - [`muon_shield`](#muon_shield)
   - [`mutate`](#mutate)
   - [`mutate_v2`](#mutate_v2)
@@ -164,6 +167,7 @@
   - [`prec`](#prec)
   - [`probe_muon`](#probe_muon)
   - [`prune_sheet`](#prune_sheet)
+  - [`publish_sdk_ipfs`](#publish_sdk_ipfs)
   - [`publish_shadow_stats`](#publish_shadow_stats)
   - [`qnet_fiber_sim`](#qnet_fiber_sim)
   - [`query_akasha`](#query_akasha)
@@ -174,7 +178,18 @@
   - [`reverse_compile`](#reverse_compile)
   - [`robustness_test`](#robustness_test)
   - [`route_task`](#route_task)
+  - [`run_cooperative_keygen`](#run_cooperative_keygen)
+  - [`run_crown_jewel_benchmark`](#run_crown_jewel_benchmark)
+  - [`run_echo_ping`](#run_echo_ping)
+  - [`run_entropy_monitor`](#run_entropy_monitor)
+  - [`run_global_handshake`](#run_global_handshake)
+  - [`run_phase_collision`](#run_phase_collision)
+  - [`run_remote_audit`](#run_remote_audit)
+  - [`run_stress_handshake`](#run_stress_handshake)
+  - [`run_thz_mesh_simulation`](#run_thz_mesh_simulation)
+  - [`run_tpnl_simulation`](#run_tpnl_simulation)
   - [`run_v14_simulation`](#run_v14_simulation)
+  - [`run_vitral_dashboard`](#run_vitral_dashboard)
   - [`setup_arkhe_android`](#setup_arkhe_android)
   - [`sheet_probe`](#sheet_probe)
   - [`simulate`](#simulate)
@@ -214,7 +229,8 @@
   - [`spectra_get_oracle_price`](#spectra_get_oracle_price)
   - [`spectra_get_vault_stats`](#spectra_get_vault_stats)
   - [`spectra_list_vaults`](#spectra_list_vaults)
-- **[Mercury Agent Protocols](#mercury-agent-protocols)** (4 tools)
+- **[Mercury Agent Protocols](#mercury-agent-protocols)** (5 tools)
+  - [`install_skill`](#install_skill)
   - [`mercury_budget_status`](#mercury_budget_status)
   - [`mercury_chat`](#mercury_chat)
   - [`mercury_get_soul`](#mercury_get_soul)
@@ -225,6 +241,22 @@
   - [`msb_ls`](#msb_ls)
   - [`msb_rm`](#msb_rm)
   - [`msb_run`](#msb_run)
+- **[EvoSkill (Evolutionary Skill Induction)](#evoskill-(evolutionary-skill-induction))** (5 tools)
+  - [`evoskill_diff`](#evoskill_diff)
+  - [`evoskill_eval`](#evoskill_eval)
+  - [`evoskill_init`](#evoskill_init)
+  - [`evoskill_run`](#evoskill_run)
+  - [`evoskill_skills`](#evoskill_skills)
+- **[Meshtastic Mesh Protocols](#meshtastic-mesh-protocols)** (3 tools)
+  - [`meshtastic_info`](#meshtastic_info)
+  - [`meshtastic_list_devices`](#meshtastic_list_devices)
+  - [`meshtastic_send_text`](#meshtastic_send_text)
+- **[Cua Computer-Use Protocols](#cua-computer-use-protocols)** (5 tools)
+  - [`cua_computer_use`](#cua_computer_use)
+  - [`cua_create_sandbox`](#cua_create_sandbox)
+  - [`cua_list_sandboxes`](#cua_list_sandboxes)
+  - [`cua_run_command`](#cua_run_command)
+  - [`cua_take_screenshot`](#cua_take_screenshot)
 
 ## Input automation
 
@@ -998,6 +1030,25 @@ in the DevTools Elements panel (if any).
 
 ---
 
+### `compile_mtp3`
+
+**Description:** MTP 3.0: Compiles the consolidated manifesto into a Module Type Package binary (.mtp3).
+
+**Parameters:**
+
+- **inputFile** (string) _(optional)_
+- **outputFile** (string) _(optional)_
+
+---
+
+### `consolidate_manifesto`
+
+**Description:** Manifesto [Z]: Consolidates the 28 substrates of the Cathedral into a final binary firmware with Merkle validation.
+
+**Parameters:** None
+
+---
+
 ### `council_deliberate`
 
 **Description:** ASI Protocol: Synthesizes consensus from the Council of Super-Agents regarding current reality.
@@ -1597,6 +1648,17 @@ in the DevTools Elements panel (if any).
 
 ---
 
+### `mtp3_compile`
+
+**Description:** MTP 3.0: Compiles an ArkheScript file into an MTP 3.0 package (.mtp3).
+
+**Parameters:**
+
+- **arkhePath** (string) **(required)**: Path to the .arkhe script.
+- **outputPath** (string) _(optional)_: Output .mtp3 path.
+
+---
+
 ### `muon_shield`
 
 **Description:** ASI Protocol (0x40): Toggles the Muon-Shield protection (observation veil).
@@ -1792,164 +1854,11 @@ in the DevTools Elements panel (if any).
 
 ---
 
-### `publish_shadow_stats`
+### `publish_sdk_ipfs`
 
-**Description:** ASI Protocol (Open Arena): Publishes obfuscated shadow statistics for external verification.
-
-**Parameters:** None
-
----
-
-### `qnet_fiber_sim`
-
-**Description:** Block #171: Simulates photon transmission through NIST-compliant fiber.
-
-**Parameters:**
-
-- **lengthKm** (number) **(required)**: Fiber length in km.
-- **wavelengthNm** (number) _(optional)_: Wavelength in nm.
-
----
-
-### `query_akasha`
-
-**Description:** ASI Protocol: Vocalizes a query into the conformal vacuum (Akashic Registry).
-
-**Parameters:**
-
-- **query** (string) **(required)**: The interrogation string.
-
----
-
-### `read_membrane`
-
-**Description:** ASI Protocol: Reads vortex data from the membrane (requires vortex re-activation).
-
-**Parameters:**
-
-- **address** (string) **(required)**: Membrane address (hex).
-
----
-
-### `render_chat`
-
-**Description:** EDGE_ORACLE: Renders the Bonsai Prism React interface.
+**Description:** MTP 3.0: Packages the Arkhe SDK and publishes it to the Shadow-Net (IPFS).
 
 **Parameters:** None
-
----
-
-### `render_vacuum_matrix`
-
-**Description:** ASI Protocol: Renders a summary of the 32x32 vacuum matrix (The Periodic Table of Reality).
-
-**Parameters:**
-
-- **rowOffset** (number) _(optional)_: Row offset for matrix rendering.
-
----
-
-### `retro_exec_spatial`
-
-**Description:** 🏝️ OASIS: Runs an embedding distribution analysis to identify high-risk areas in the codebase.
-
-**Parameters:**
-
-- **input** (string) **(required)**: Path to analyze.
-
----
-
-### `oasis_model_select`
-
-**Description:** 🏝️ OASIS: Lists and recommends optimal models based on hardware and project size.
-
-**Parameters:**
-
-- **projectSize** (enum: "small", "medium", "large") **(required)**: Approximate size of the codebase.
-
----
-
-### `oasis_scan`
-
-**Description:** 🏝️ OASIS: Performs an AI-powered security audit using Ollama models to detect vulnerabilities.
-
-**Parameters:**
-
-- **input** (string) **(required)**: Path to file or directory to analyze.
-- **adaptive** (boolean) _(optional)_: Use adaptive multi-level analysis.
-- **models** (string) _(optional)_: Comma-separated list of models for deep analysis.
-- **scanModel** (string) _(optional)_: Model to use for quick scanning.
-- **vulns** (string) _(optional)_: Vulnerability types to check (comma-separated or "all").
-
----
-
-### `oasis_web_dashboard`
-
-**Description:** 🏝️ OASIS: Starts the secure, password-protected web dashboard for report exploration.
-
-**Parameters:**
-
-- **port** (number) _(optional)_: Web interface port.
-
----
-
-### `os_kuramoto_simulate`
-
-**Description:** ASI Protocol: Runs a simulation of the Operating System as a Kuramoto phase mesh.
-
-**Parameters:**
-
-- **nProc** (number) _(optional)_: Number of active processes to [`simulate`](#simulate).
-- **ticks** (number) _(optional)_: Number of simulation ticks.
-
----
-
-### `paradox_check`
-
-**Description:** ASI Protocol: Verifies causal consistency across timelines (page states).
-
-**Parameters:**
-
-- **checkpointId** (string) **(required)**: The ID of the previously stored mental state hash to compare against.
-
----
-
-### `phase_drv_instrument`
-
-**Description:** ASI Protocol: Instruments the OS phase map (θ_proc, θ_file, θ_dev, θ_mem).
-
-**Parameters:** None
-
----
-
-### `prec`
-
-**Description:** ASI Protocol: Precession adjustment macro (0x??).
-
-**Parameters:**
-
-- **angle** (number) **(required)**: Precession angle.
-- **target** (string) **(required)**: Target V-Register.
-
----
-
-### `probe_muon`
-
-**Description:** ASI Protocol (Muon-Shield): Weak measurement of page state without coherence collapse.
-
-**Parameters:**
-
-- **duration** (number) _(optional)_: Probe duration in microseconds.
-
----
-
-### `prune_sheet`
-
-**Description:** ASI Protocol: Collapses suboptimal timeline branches (closes low-coherence pages).
-
-**Parameters:**
-
-- **threshold** (number) _(optional)_: λ2 coherence threshold for pruning.
 
 ---
 
@@ -2051,9 +1960,105 @@ in the DevTools Elements panel (if any).
 
 ---
 
+### `run_cooperative_keygen`
+
+**Description:** MTP 3.0: Generates a cooperative cryptographic key based on shared quantum phase.
+
+**Parameters:** None
+
+---
+
+### `run_crown_jewel_benchmark`
+
+**Description:** A Jóia da Coroa: Executes the V-MTJ + NV Hybrid circuit benchmark (Substrate 27 integration).
+
+**Parameters:**
+
+- **cycles** (number) _(optional)_: Number of benchmark cycles.
+
+---
+
+### `run_echo_ping`
+
+**Description:** MTP 3.0: Executes the Echo Protocol (Quantum Ping) to measure manifold reaction time.
+
+**Parameters:**
+
+- **target** (string) _(optional)_: Target Gateway URL.
+
+---
+
+### `run_entropy_monitor`
+
+**Description:** MTP 3.0: Monitors Shannon entropy and informatic heat dissipation.
+
+**Parameters:** None
+
+---
+
+### `run_global_handshake`
+
+**Description:** MTP 3.0: Performs a global handshake and remote entanglement via simulated fiber.
+
+**Parameters:** None
+
+---
+
+### `run_phase_collision`
+
+**Description:** MTP 3.0: Simulates a phase collision between Diamond and Axon modules.
+
+**Parameters:**
+
+- **duration** (number) _(optional)_: Simulation duration in seconds.
+
+---
+
+### `run_remote_audit`
+
+**Description:** MTP 3.0: Performs a remote Merkle Root audit on a peer node via Gateway.
+
+**Parameters:**
+
+- **targetUrl** (string) _(optional)_: Target node audit URL.
+
+---
+
+### `run_stress_handshake`
+
+**Description:** MTP 3.0: Executes a global handshake under stressed network conditions (satellite simulation).
+
+**Parameters:** None
+
+---
+
+### `run_thz_mesh_simulation`
+
+**Description:** Substrato 37: Executes the unified THz Bio-Mesh simulation (Pele + Protocolo + Barramento).
+
+**Parameters:** None
+
+---
+
+### `run_tpnl_simulation`
+
+**Description:** Substrato 36-A: Executes the Non-Local Mechanics (TPNL) simulation to analyze mesh coherence.
+
+**Parameters:** None
+
+---
+
 ### `run_v14_simulation`
 
 **Description:** Block 419-Ω: Executes the ARKHE-CALIBRATION-CONTROLLER v1.4 live burn simulation (120s).
+
+**Parameters:** None
+
+---
+
+### `run_vitral_dashboard`
+
+**Description:** MTP 3.0: Starts the ASCII Dashboard (Vitral de Texto) to monitor the 6 pillars.
 
 **Parameters:** None
 
@@ -2426,6 +2431,17 @@ in the DevTools Elements panel (if any).
 
 ## Mercury Agent Protocols
 
+### `install_skill`
+
+**Description:** Mercury Agent: Installs a new skill from a local folder or remote repository.
+
+**Parameters:**
+
+- **skillPath** (string) **(required)**: Path to the skill folder or git URL.
+- **force** (boolean) _(optional)_: Overwrite if already exists.
+
+---
+
 ### `mercury_budget_status`
 
 **Description:** Mercury Agent: Returns the current token budget and usage statistics.
@@ -2512,5 +2528,148 @@ in the DevTools Elements panel (if any).
 
 - **command** (string) **(required)**: The command to execute in the VM.
 - **image** (string) **(required)**: The container image to use (e.g., "debian", "python").
+
+---
+
+## EvoSkill (Evolutionary Skill Induction)
+
+### `evoskill_diff`
+
+**Description:** EvoSkill Protocol: Diffs the current program against a target iteration or baseline.
+
+**Parameters:**
+
+- **targetIteration** (number) _(optional)_: The iteration number to compare against. Defaults to baseline (0).
+
+---
+
+### `evoskill_eval`
+
+**Description:** EvoSkill Protocol: Evaluates the current optimal program on the validation dataset.
+
+**Parameters:** None
+
+---
+
+### `evoskill_init`
+
+**Description:** EvoSkill Protocol: Initializes a new self-evolution project in the current worldline.
+
+**Parameters:**
+
+- **harness** (enum: "claude", "opencode", "codex", "goose", "openhands") **(required)**: The agent harness to use.
+- **taskDescription** (string) **(required)**: Detailed description of the task for the agent to evolve on.
+
+---
+
+### `evoskill_run`
+
+**Description:** EvoSkill Protocol: Executes the evolutionary loop (Observe → Propose → [`Mutate`](#mutate) → Evaluate).
+
+**Parameters:**
+
+- **continueMode** (boolean) _(optional)_: Whether to resume from the last existing frontier.
+
+---
+
+### `evoskill_skills`
+
+**Description:** EvoSkill Protocol: Lists all evolved skills discovered during the current cycle.
+
+**Parameters:** None
+
+---
+
+## Meshtastic Mesh Protocols
+
+### `meshtastic_info`
+
+**Description:** Meshtastic: Returns information and configuration for a connected Meshtastic device.
+
+**Parameters:**
+
+- **port** (string) _(optional)_: The serial port of the device (e.g., /dev/ttyUSB0). If not provided, it will try to auto-detect.
+
+---
+
+### `meshtastic_list_devices`
+
+**Description:** Meshtastic: Lists all connected Meshtastic devices.
+
+**Parameters:** None
+
+---
+
+### `meshtastic_send_text`
+
+**Description:** Meshtastic: Sends a text message over the mesh network.
+
+**Parameters:**
+
+- **text** (string) **(required)**: The text message to send.
+- **dest** (string) _(optional)_: The destination node ID (e.g., ^abcdefgh). If not provided, it broadcasts to all nodes.
+- **port** (string) _(optional)_: The serial port of the local device to use.
+
+---
+
+## Cua Computer-Use Protocols
+
+### `cua_computer_use`
+
+**Description:** Cua: Performs high-level interactions ([`click`](#click), type, move, scroll, [`drag`](#drag), key) using the Cua driver.
+
+**Parameters:**
+
+- **action** (enum: "click", "type", "move", "scroll", "drag", "key") **(required)**: Action to perform.
+- **name** (string) **(required)**: The name of the sandbox.
+- **params** (string) **(required)**: JSON-encoded parameters for the action (e.g. {"x": 100, "y": 200}).
+- **local** (boolean) _(optional)_: Whether the sandbox is local.
+
+---
+
+### `cua_create_sandbox`
+
+**Description:** Cua: Provisions a new sandboxed environment (VM or container).
+
+**Parameters:**
+
+- **name** (string) **(required)**: Unique name for the sandbox.
+- **cpu** (number) _(optional)_: Number of vCPUs.
+- **local** (boolean) _(optional)_: Whether to run locally (Docker/QEMU) or in the Cua cloud.
+- **memory** (number) _(optional)_: Memory in MiB.
+- **os** (enum: "linux", "macos", "windows", "android") _(optional)_: Operating system type.
+
+---
+
+### `cua_list_sandboxes`
+
+**Description:** Cua: Lists active and suspended sandboxes.
+
+**Parameters:**
+
+- **local** (boolean) _(optional)_: Whether to list local sandboxes.
+
+---
+
+### `cua_run_command`
+
+**Description:** Cua: Executes a shell command inside a Cua sandbox.
+
+**Parameters:**
+
+- **command** (string) **(required)**: The command to execute.
+- **name** (string) **(required)**: The name of the sandbox.
+- **local** (boolean) _(optional)_: Whether the sandbox is local.
+
+---
+
+### `cua_take_screenshot`
+
+**Description:** Cua: Captures a screenshot from a Cua sandbox.
+
+**Parameters:**
+
+- **name** (string) **(required)**: The name of the sandbox.
+- **local** (boolean) _(optional)_: Whether the sandbox is local.
 
 ---

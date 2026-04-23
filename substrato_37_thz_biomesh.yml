@@ -1,0 +1,51 @@
+# substrato_37_malha_thz.yml — VERSÃO REALISTA E IMPLANTÁVEL
+services:
+  pele_grafeno:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    container_name: catedral_pele_grafeno
+    environment:
+      - SENSOR_ARRAY_SIZE=64
+      - FUNCIONALIZACAO=/config/aptameros_digitais.yaml
+      - MODO_TRANS=impedimetrico
+      - MCP_ENDPOINT=http://mcp_server:8080
+      - SIMULACAO_FIDELIDADE=alta
+    volumes:
+      - ./certs:/config:ro
+    networks:
+      - catedral_mesh
+
+  protocolo_aptamerico:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    container_name: catedral_protocolo_aptamerico
+    environment:
+      - LIMIAR_MEIA_VIDA=0.5
+      - CLEPSYDRA_CYCLE_MS=720000
+      - K_OFF_JANELA=12
+      - MESH_NODOS=24
+      - KAPPA_TPNL=8.0
+    command: python3 scripts/protocolo_aptamerico.py
+    networks:
+      - catedral_mesh
+
+  barramento_thz:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    container_name: catedral_barramento_thz
+    environment:
+      - FREQ_CENTRAL=2.5e12
+      - MODULACAO=PPM
+      - PULSO_LARGURA_PS=0.1
+      - PATH_LOSS_MODELO=akyildiz_2010
+      - RUIDO_TIPO=levy_truncado
+    command: python3 scripts/transceptor_thz.py
+    networks:
+      - catedral_mesh
+
+networks:
+  catedral_mesh:
+    driver: bridge
