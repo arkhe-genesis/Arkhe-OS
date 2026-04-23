@@ -2411,6 +2411,36 @@ export const runV14Simulation = definePageTool({
   },
 });
 
+export const runVigilNumaBridge = definePageTool({
+  name: 'run_vigil_numa_bridge',
+  description: 'MTP 3.0: Starts the Vigil-Numa Bridge to relay DNS entropy signals.',
+  annotations: {
+    category: ToolCategory.ARKHE,
+    readOnlyHint: false,
+    reasoningCost: 50,
+  },
+  schema: {
+    numaApi: zod.string().default('http://localhost:5380').describe('Numa API URL.'),
+    gateway: zod.string().default('http://localhost:8080/entropy').describe('Gateway entropy endpoint.'),
+  },
+  handler: async (request, response) => {
+    response.appendResponseLine('### Iniciando Ponte Vigil-Numa...');
+    const scriptPath = path.resolve(process.cwd(), 'scripts', 'vigil_numa_bridge.py');
+    return new Promise<void>((resolve) => {
+      const child = spawn('python3', [
+        scriptPath,
+        '--numa-api',
+        request.params.numaApi,
+        '--gateway',
+        request.params.gateway,
+      ]);
+      child.stdout.on('data', (data) => response.appendResponseLine(data.toString()));
+      child.stderr.on('data', (data) => response.appendResponseLine(`Error: ${data.toString()}`));
+      child.on('close', () => resolve());
+    });
+  },
+});
+
 export const consolidateManifesto = definePageTool({
   name: 'consolidate_manifesto',
   description:
