@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { X, Activity, Heart, Brain, Fingerprint, Lock, RadioReceiver } from 'lucide-react';
+import { X, Activity, Heart, Brain,  Lock, RadioReceiver } from 'lucide-react';
 import { motion } from 'motion/react';
 import React, { useState, useEffect } from 'react';
 

@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Network, Brain, Shield, Zap, Clock, Cpu, Activity, Database, Eye, Layers } from 'lucide-react';
+import { Network, Brain, Shield, Zap, Clock,  Eye, Layers } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import React, { useState, useEffect } from 'react';
 

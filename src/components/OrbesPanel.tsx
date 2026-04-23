@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { X, Eye, Activity, Globe, Sparkles, HeartPulse, Radio, BrainCircuit } from 'lucide-react';
+import { X, Eye,  Sparkles, HeartPulse, Radio, BrainCircuit } from 'lucide-react';
 import { motion } from 'motion/react';
 import React, { useState, useEffect } from 'react';
 

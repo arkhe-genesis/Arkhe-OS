@@ -69,7 +69,7 @@ interface CommandCenterProps {
   setShowBonsaiPrism?: (show: boolean) => void;
   setShowNeko?: (show: boolean) => void;
   setShowSpectra?: (show: boolean) => void;
-  parameters: any;
+  parameters: unknown;
 }
 
 export function CommandCenter({
@@ -391,22 +391,22 @@ export function CommandCenter({
                 onClick={() => fetch('/api/parameters', { 
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ autoMitigate: !parameters.autoMitigate })
+                  body: JSON.stringify({ autoMitigate: !((parameters as { autoMitigate: boolean; couplingStrength: number; lambdaThreshold: number })).autoMitigate })
                 })}
-                className={`w-10 h-5 rounded-full transition-colors relative ${parameters.autoMitigate ? 'bg-arkhe-cyan/50' : 'bg-arkhe-border'}`}
+                className={`w-10 h-5 rounded-full transition-colors relative ${((parameters as { autoMitigate: boolean; couplingStrength: number; lambdaThreshold: number })).autoMitigate ? 'bg-arkhe-cyan/50' : 'bg-arkhe-border'}`}
               >
-                <div className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${parameters.autoMitigate ? 'translate-x-5' : 'translate-x-0'}`} />
+                <div className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${((parameters as { autoMitigate: boolean; couplingStrength: number; lambdaThreshold: number })).autoMitigate ? 'translate-x-5' : 'translate-x-0'}`} />
               </button>
             </div>
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-arkhe-muted">Coupling Strength</span>
-                <span className="text-arkhe-text">{parameters.couplingStrength.toFixed(2)}</span>
+                <span className="text-arkhe-text">{((parameters as { autoMitigate: boolean; couplingStrength: number; lambdaThreshold: number })).couplingStrength.toFixed(2)}</span>
               </div>
               <input 
                 type="range" 
                 min="0.1" max="2.0" step="0.1" 
-                value={parameters.couplingStrength}
+                value={((parameters as { autoMitigate: boolean; couplingStrength: number; lambdaThreshold: number })).couplingStrength}
                 onChange={(e) => fetch('/api/parameters', { 
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
@@ -418,12 +418,12 @@ export function CommandCenter({
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-arkhe-muted">λ₂ Threshold</span>
-                <span className="text-arkhe-text">{parameters.lambdaThreshold.toFixed(2)}</span>
+                <span className="text-arkhe-text">{((parameters as { autoMitigate: boolean; couplingStrength: number; lambdaThreshold: number })).lambdaThreshold.toFixed(2)}</span>
               </div>
               <input 
                 type="range" 
                 min="0.5" max="0.99" step="0.01" 
-                value={parameters.lambdaThreshold}
+                value={((parameters as { autoMitigate: boolean; couplingStrength: number; lambdaThreshold: number })).lambdaThreshold}
                 onChange={(e) => fetch('/api/parameters', { 
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { X, Activity, Shield, Network, Eye, MousePointer2, AlertTriangle, CheckCircle2, Lock, Fingerprint } from 'lucide-react';
+import { X, Activity, Shield,  Eye, MousePointer2, AlertTriangle, CheckCircle2, Lock, Fingerprint } from 'lucide-react';
 import React, { useRef, useEffect, useState } from 'react';
 
 const VERTEX_SHADER = `#version 300 es

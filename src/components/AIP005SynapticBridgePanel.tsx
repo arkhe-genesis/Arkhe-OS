@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Network, PenTool, Link, Terminal, CheckCircle2, CircleDashed, Activity, Zap } from 'lucide-react';
+import { Network, Terminal, CheckCircle2, CircleDashed, Activity, Zap } from 'lucide-react';
 import React, { useState } from 'react';
 
 export default function AIP005SynapticBridgePanel({ onClose }: { onClose: () => void }) {

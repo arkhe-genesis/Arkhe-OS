@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MapPin, Signal, Users, Plus } from 'lucide-react';
+import { MapPin, Signal,  Plus } from 'lucide-react';
 import React, { useState } from 'react';
 
 import type { SimulationState } from '../../server/types';
