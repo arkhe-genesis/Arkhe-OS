@@ -26,13 +26,14 @@ import threading
 import time
 import uuid
 from dataclasses import dataclass, field, asdict
-from datetime import datetime
+from datetime import datetime, timezone, timezone
 from typing import Any, Dict, List, Optional
 
 from catedrald_safira import SapphireScaffold, inject_sapphire_into_core
 from catedrald_diamante import NVCenter, inject_diamond_into_core
 from catedrald_bio import BioScaffold, inject_bio_into_core
 from graphene_resonator import GrapheneSubstrate, inject_graphene_into_core
+from catedrald_affine import AffineSubstrate, inject_affine_into_core
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # DETECÇÃO DE DEPENDÊNCIAS
@@ -223,7 +224,7 @@ class CatedralImmuneSystem:
         """
         seq = self._next_seq()
         payload_hash = self._hash_payload(payload_json)
-        timestamp = datetime.utcnow().isoformat() + "Z"
+        timestamp = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
         entry = AuditEntry(
             timestamp=timestamp,
@@ -355,7 +356,7 @@ class BugBountyEngine:
             reporter=payload.get("reporter", "anonymous"),
             severity=severity,
             vector=payload.get("vector", "unknown"),
-            timestamp=datetime.utcnow().isoformat() + "Z",
+            timestamp=datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             reward_quartz=self.REWARD_TABLE[severity],
             status="open"
         )
@@ -410,6 +411,7 @@ class CatedralCore:
         self.diamond = inject_diamond_into_core(self)
         self.bio = inject_bio_into_core(self)
         self.graphene = inject_graphene_into_core(self)
+        self.affine = inject_affine_into_core(self)
         self._running = False
         self._heartbeat_thread: Optional[threading.Thread] = None
 
@@ -442,6 +444,7 @@ class CatedralCore:
                 "diamond": self.diamond.to_dict(),
                 "bio": self.bio.to_dict(),
                 "graphene": self.graphene.to_dict(),
+                "affine": self.affine.to_dict(),
                 "timestamp": datetime.utcnow().isoformat() + "Z",
             }
 
@@ -681,6 +684,12 @@ class CatedralCLI:
                 table.add_row("Graphene Clock", f"{graphene.get('axon_frequency', 0):.2f} Hz")
                 table.add_row("Valley Key Hash", f"{graphene.get('valley_key_hash', '?')}")
 
+            affine = state.get('affine', {})
+            if affine:
+                table.add_row("Substrato 33 (Affine)", f"{affine.get('material', '?')}")
+                table.add_row("Affine Coherence", f"{affine.get('coherence', 0):.4f}")
+                table.add_row("Last Noise Event", f"{affine.get('last_event', '?')}")
+
             table.add_row("Timestamp", state.get('timestamp', '?'))
             self.console.print(table)
         else:
@@ -872,6 +881,10 @@ class CatedralCLI:
                     if graphene:
                         left_table.add_row("Graphene Clock", f"{graphene.get('axon_frequency', 0):.2f} Hz")
                         left_table.add_row("Graphene Anomaly", f"{graphene.get('anomaly_score', 0):.4f}")
+
+                    affine = state.get('affine', {})
+                    if affine:
+                        left_table.add_row("Affine (Sub 33)", f"{affine.get('coherence', 0):.3f}")
 
                     left_table.add_row("QZ Total", f"{state.get('bounty_total_qz', 0):.2f}")
 

@@ -3,7 +3,7 @@ import boto3
 from collections import deque
 from dataclasses import dataclass
 from typing import Literal
-from datetime import datetime
+from datetime import datetime, timezone
 
 @dataclass
 class PipelineState:
@@ -31,7 +31,7 @@ class SBMController:
 
         self.memory.append(PipelineState(
             lambda_score=lambda_current,
-            timestamp=datetime.utcnow().isoformat(),
+            timestamp=datetime.now(timezone.utc).isoformat(),
             resource_utilization=current_metrics.get('credits_used', 0)
         ))
 

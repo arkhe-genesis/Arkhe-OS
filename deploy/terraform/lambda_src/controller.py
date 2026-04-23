@@ -3,7 +3,7 @@ import os
 import boto3
 import snowflake.connector
 from collections import deque
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from dataclasses import dataclass, asdict
 from typing import Dict, Any
 
@@ -78,7 +78,7 @@ class SBMController:
 
         state = CoherenceState(
             lambda_score=lambda_current,
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             latency=metrics['latency_p99'],
             throughput=metrics['throughput_actual'],
             error_rate=metrics['error_rate']

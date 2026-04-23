@@ -9,7 +9,7 @@ Detecta anomalias, isola o nó e tenta restauração automática.
 import time
 import json
 import numpy as np
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 
 class PhaseCollapseCause(Enum):

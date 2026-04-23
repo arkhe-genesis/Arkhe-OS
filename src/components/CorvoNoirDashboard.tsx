@@ -16,10 +16,6 @@ import {
   ResponsiveContainer,
   AreaChart,
   Area,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Tooltip
 } from 'recharts';
 
 import type { SimulationState } from '../../server/types';
@@ -48,6 +44,8 @@ const CorvoNoirDashboard: React.FC = () => {
   }, [state.currentLambda, state.threatLevel]);
 
   const handleRegenerationPulse = () => fetch('/api/governance/apply-regeneration-pulse', { method: 'POST' });
+
+  const handleStressTest = () => fetch('/api/security/stress-test', { method: 'POST' });
 
   return (
     <div className="space-y-6 ricci-flow">
@@ -146,11 +144,11 @@ const CorvoNoirDashboard: React.FC = () => {
                   <div className="mt-4 grid grid-cols-2 gap-4">
                     <div className="space-y-1">
                       <p className="text-[10px] text-arkhe-muted uppercase">Phase Variance</p>
-                      <Progress value={state.currentLambda * 100} color="cerenkov" />
+                      <Progress value={state.currentLambda * 100} variant="default" />
                     </div>
                     <div className="space-y-1">
                       <p className="text-[10px] text-arkhe-muted uppercase">Noise Floor</p>
-                      <Progress value={15} color="cyan" />
+                      <Progress value={15} variant="default" />
                     </div>
                   </div>
                 </Card>
@@ -229,14 +227,14 @@ const CorvoNoirDashboard: React.FC = () => {
                               <span className="text-arkhe-muted">Synchronization Ratio</span>
                               <span className="text-white">{(state.bioLinkSync.syncRatio * 100).toFixed(1)}%</span>
                             </div>
-                            <Progress value={state.bioLinkSync.syncRatio * 100} color="cerenkov" />
+                            <Progress value={state.bioLinkSync.syncRatio * 100} variant="default" />
                          </div>
                          <div className="space-y-1">
                             <div className="flex justify-between text-[10px] uppercase">
                               <span className="text-arkhe-muted">Regeneration Progress</span>
                               <span className="text-white">{(state.bioLinkSync.regenerationProgress).toFixed(1)}%</span>
                             </div>
-                            <Progress value={state.bioLinkSync.regenerationProgress} color="cyan" />
+                            <Progress value={state.bioLinkSync.regenerationProgress} variant="default" />
                          </div>
                        </div>
                     </div>

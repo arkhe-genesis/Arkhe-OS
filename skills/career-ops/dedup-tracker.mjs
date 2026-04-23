@@ -9,8 +9,14 @@
  * Run: node career-ops/dedup-tracker.mjs [--dry-run]
  */
 
-import { readFileSync, writeFileSync, copyFileSync, existsSync } from 'fs';
-import { join } from 'path';
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { readFileSync, writeFileSync, copyFileSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
 
 const CAREER_OPS = new URL('.', import.meta.url).pathname;
 // Support both layouts: data/applications.md (boilerplate) and applications.md (original)
@@ -62,9 +68,13 @@ function parseScore(s) {
 
 function parseAppLine(line) {
   const parts = line.split('|').map(s => s.trim());
-  if (parts.length < 9) return null;
+  if (parts.length < 9) {
+    return null;
+  };
   const num = parseInt(parts[1]);
-  if (isNaN(num)) return null;
+  if (isNaN(num)) {
+    return null;
+  };
   return {
     num,
     date: parts[2],
@@ -92,7 +102,9 @@ const entries = [];
 const entryLineMap = new Map(); // num → line index
 
 for (let i = 0; i < lines.length; i++) {
-  if (!lines[i].startsWith('|')) continue;
+  if (!lines[i].startsWith('|')) {
+    continue;
+  }
   const app = parseAppLine(lines[i]);
   if (app && app.num > 0) {
     entries.push(app);
@@ -106,7 +118,9 @@ console.log(`📊 ${entries.length} entries loaded`);
 const groups = new Map();
 for (const entry of entries) {
   const key = normalizeCompany(entry.company);
-  if (!groups.has(key)) groups.set(key, []);
+  if (!groups.has(key)) {
+    groups.set(key, []);
+  }
   groups.get(key).push(entry);
 }
 
@@ -114,25 +128,33 @@ for (const entry of entries) {
 let removed = 0;
 const linesToRemove = new Set();
 
-for (const [company, companyEntries] of groups) {
-  if (companyEntries.length < 2) continue;
+for (const [_company, companyEntries] of groups) {
+  if (companyEntries.length < 2) {
+    continue;
+  }
 
   // Within same company, find role matches
   const processed = new Set();
   for (let i = 0; i < companyEntries.length; i++) {
-    if (processed.has(i)) continue;
+    if (processed.has(i)) {
+      continue;
+    }
     const cluster = [companyEntries[i]];
     processed.add(i);
 
     for (let j = i + 1; j < companyEntries.length; j++) {
-      if (processed.has(j)) continue;
+      if (processed.has(j)) {
+        continue;
+      }
       if (roleMatch(companyEntries[i].role, companyEntries[j].role)) {
         cluster.push(companyEntries[j]);
         processed.add(j);
       }
     }
 
-    if (cluster.length < 2) continue;
+    if (cluster.length < 2) {
+      continue;
+    }
 
     // Keep the one with highest score
     cluster.sort((a, b) => parseScore(b.score) - parseScore(a.score));

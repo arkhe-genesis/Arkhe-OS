@@ -5,7 +5,7 @@ Anti-Corruption Layer entre AgentContext e ResourceContext.
 
 from dataclasses import dataclass
 from typing import Optional, Dict, List
-from datetime import datetime
+from datetime import datetime, timezone
 
 @dataclass
 class AgentTaskAssigned:

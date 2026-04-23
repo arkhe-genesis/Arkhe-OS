@@ -11,7 +11,7 @@ import time
 import json
 import os
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 
 # Adicionar caminhos para os módulos existentes
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'tzinor-core', 'src', 'physics', 'kuramoto')))

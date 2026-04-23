@@ -6,7 +6,7 @@ Compares CoT vs. CoCT behavior.
 
 import numpy as np
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Tuple
 
 class LayerSweep:

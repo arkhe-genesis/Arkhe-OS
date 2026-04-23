@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 import numpy as np
 import asyncio
-from datetime import datetime
+from datetime import datetime, timezone
 import logging
 import uuid
 

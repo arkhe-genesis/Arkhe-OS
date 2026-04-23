@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 from typing import List, Literal, Optional
 from enum import Enum
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 import os
 import sys
 
@@ -30,7 +30,7 @@ class TaskAssignedEvent(BaseModel):
     complexity: ComplexityLevel
     required_tokens: int
     quantum_preference: bool = False
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class ExecutionPlan(BaseModel):
     plan_id: str

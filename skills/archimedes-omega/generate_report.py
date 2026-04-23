@@ -6,7 +6,7 @@ Generates a PDF report with isomorphism, dosage tables, and protocols.
 """
 
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 try:
     from reportlab.lib.pagesizes import A4
     from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak

@@ -12,6 +12,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { Streamdown } from "streamdown";
 import { cjk } from "@streamdown/cjk";
 import { code } from "@streamdown/code";
 import { createMathPlugin } from "@streamdown/math";

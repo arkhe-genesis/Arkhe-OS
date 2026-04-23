@@ -7,7 +7,7 @@ import numpy as np
 from scipy.stats import entropy, linregress
 from scipy.signal import savgol_filter
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 
 def analyze_solar_entropy():
     # Load data

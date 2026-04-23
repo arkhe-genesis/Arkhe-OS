@@ -1,6 +1,6 @@
 import pytest
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timezone
 from fastapi.testclient import TestClient
 from jose import jwt
 from arkhe_core.api.main import app, SECRET_KEY, ALGORITHM

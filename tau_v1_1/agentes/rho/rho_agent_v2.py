@@ -13,7 +13,7 @@ import json
 import requests
 import numpy as np
 import select
-from datetime import datetime
+from datetime import datetime, timezone
 
 # --- Configurações de Hardware/Scaffold ---
 DDR_ROI_BASE_ADDR = 0x40000000
@@ -94,7 +94,7 @@ class RhoAgentCoherence:
                 "x": int(token['x']), "y": int(token['y']), "z": int(token['z']),
                 "momentum": momentum,
                 "intensity": int(token['intensity']),
-                "timestamp": datetime.utcnow().isoformat()
+                "timestamp": datetime.now(timezone.utc).isoformat()
             }
 
             auth_param = f"?auth={self.db_secret}" if self.db_secret else ""

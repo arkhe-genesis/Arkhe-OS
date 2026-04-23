@@ -1,7 +1,7 @@
 # langchain_qbgp_agent.py - Agente de governança para Q-BGP
 
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from typing import List, Dict, Optional
 import numpy as np
 

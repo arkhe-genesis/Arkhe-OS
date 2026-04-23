@@ -31,14 +31,14 @@ export interface Shard {
   status: 'active' | 'mitigating' | 'compromised' | 'corrupted' | 'recovering';
 }
 
-export interface ContextNode {
+export interface _ContextNode {
   time?: number;
   timestamp?: number;
   embedding: number[];
   salience: number;
 }
 
-export interface MemoryEngram {
+export interface _MemoryEngram {
   originTime: number;
   consolidatedTime: number;
   summaryHash: string;
@@ -48,8 +48,8 @@ export interface MemoryEngram {
 export interface TzinorMemoryState {
   agentId: string;
   currentEpoch: number;
-  fContext: ContextNode[];
-  gMemory: MemoryEngram[];
+  fContext: _ContextNode[];
+  gMemory: _MemoryEngram[];
   warpFactor: number;
   lambdaCoherence: number;
 }
