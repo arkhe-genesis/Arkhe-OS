@@ -4,5 +4,3 @@ rich
 fastapi
 uvicorn
 requests
-cua-sandbox
-cua-agent

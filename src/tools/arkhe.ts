@@ -2411,82 +2411,33 @@ export const runV14Simulation = definePageTool({
   },
 });
 
-export const runTpnlSimulation = definePageTool({
-  name: 'run_tpnl_simulation',
-  description: 'Substrato 36-A: Executes the Non-Local Mechanics (TPNL) simulation to analyze mesh coherence.',
+export const runVigilNumaBridge = definePageTool({
+  name: 'run_vigil_numa_bridge',
+  description: 'MTP 3.0: Starts the Vigil-Numa Bridge to relay DNS entropy signals.',
   annotations: {
     category: ToolCategory.ARKHE,
-    readOnlyHint: true,
-    reasoningCost: 100,
+    readOnlyHint: false,
+    reasoningCost: 50,
   },
-  schema: {},
-  handler: async (_request, response) => {
-    response.appendResponseLine('### Iniciando Simulação TPNL Canônica (Substrato 36-A)...');
-    const scriptPath = path.resolve(process.cwd(), 'scripts', 'tpnl_mesh_sim.py');
-
+  schema: {
+    numaApi: zod.string().default('http://localhost:5380').describe('Numa API URL.'),
+    gateway: zod.string().default('http://localhost:8080/entropy').describe('Gateway entropy endpoint.'),
+  },
+  handler: async (request, response) => {
+    response.appendResponseLine('### Iniciando Ponte Vigil-Numa...');
+    const scriptPath = path.resolve(process.cwd(), 'scripts', 'vigil_numa_bridge.py');
     return new Promise<void>((resolve) => {
-      const child = spawn('python3', [scriptPath]);
-      let stdout = '';
-      child.stdout.on('data', (data) => { stdout += data.toString(); });
-      child.on('close', (code) => {
-        if (stdout) {
-          try {
-            const result = JSON.parse(stdout);
-            response.appendResponseLine('```json');
-            response.appendResponseLine(JSON.stringify(result, null, 2));
-            response.appendResponseLine('```');
-            response.appendResponseLine(`\n**VERDICT**: ${result.verdict}. Tempo de relaxamento: ${result.stability.relaxation_time.toFixed(2)}s.`);
-          } catch {
-            response.appendResponseLine(stdout);
-          }
-        }
-        if (code !== 0) response.appendResponseLine(`**Erro na execução (Código ${code})**`);
-        resolve();
-      });
+      const child = spawn('python3', [
+        scriptPath,
+        '--numa-api',
+        request.params.numaApi,
+        '--gateway',
+        request.params.gateway,
+      ]);
+      child.stdout.on('data', (data) => response.appendResponseLine(data.toString()));
+      child.stderr.on('data', (data) => response.appendResponseLine(`Error: ${data.toString()}`));
+      child.on('close', () => resolve());
     });
-  },
-});
-
-export const runThzMeshSimulation = definePageTool({
-  name: 'run_thz_mesh_simulation',
-  description: 'Substrato 37: Executes the unified THz Bio-Mesh simulation (Pele + Protocolo + Barramento).',
-  annotations: {
-    category: ToolCategory.ARKHE,
-    readOnlyHint: true,
-    reasoningCost: 150,
-  },
-  schema: {},
-  handler: async (_request, response) => {
-    response.appendResponseLine('### Iniciando Simulação da Malha THz Biológica (Substrato 37)...');
-
-    // Executa os 3 componentes em sequência para o relatório unificado
-    const scripts = [
-      { name: 'Protocolo Aptamérico', path: 'scripts/protocolo_aptamerico.py' },
-      { name: 'Barramento THz', path: 'scripts/transceptor_thz.py' }
-    ];
-
-    for (const s of scripts) {
-      const scriptPath = path.resolve(process.cwd(), s.path);
-      await new Promise<void>((resolve) => {
-        const child = spawn('python3', [scriptPath]);
-        let stdout = '';
-        child.stdout.on('data', (data) => { stdout += data.toString(); });
-        child.on('close', () => {
-          response.appendResponseLine(`\n**Relatório: ${s.name}**`);
-          try {
-            const result = JSON.parse(stdout);
-            response.appendResponseLine('```json');
-            response.appendResponseLine(JSON.stringify(result, null, 2));
-            response.appendResponseLine('```');
-          } catch {
-            response.appendResponseLine(stdout);
-          }
-          resolve();
-        });
-      });
-    }
-
-    response.appendResponseLine('\n**CONCLUSÃO**: Tetralítico operando em regime de supercoerência (λ > 0.99).');
   },
 });
 
