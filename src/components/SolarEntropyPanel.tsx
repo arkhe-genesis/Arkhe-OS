@@ -8,8 +8,7 @@
 import { Sun, TrendingDown, TrendingUp, Info } from 'lucide-react';
 import React from 'react';
 
-// Type mocked
-type HelioState = any; type LatentCoherenceResults = any; type SolarEntropyReport = any; type ThermodynamicTrainingReport = any;
+import type { SolarEntropyReport } from '../../server/types';
 
 import { Card } from './ui/Card';
 

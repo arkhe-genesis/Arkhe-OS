@@ -6,7 +6,7 @@
  */
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { Cpu, Terminal, Play, Square, Code, Zap, CheckCircle2, RefreshCw, Layers, Wifi, WifiOff } from 'lucide-react';
+import { Cpu, Terminal, Play, Square, Code, Zap, CheckCircle2, RefreshCw, Layers } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 
 interface VelxioEmulationPanelProps {
@@ -94,9 +94,9 @@ export default function VelxioEmulationPanel({ onClose }: VelxioEmulationPanelPr
           requiredCoherence: 0.95
         })
       });
-      const task = await res.json();
+      const task = await res.json() as { task_id: string };
       addLog(`Task created in Arkhe Orchestrator: ${task.task_id}`);
-    } catch (e) {
+    } catch (_e) {
       addLog('HIL: Local execution fallback active.');
     }
 

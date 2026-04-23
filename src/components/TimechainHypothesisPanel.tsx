@@ -5,9 +5,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { X, Link, Cpu, Database, CheckCircle2, AlertTriangle, Infinity, Clock } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
-import React, { useState, useEffect } from 'react';
+import { X, Link, Infinity as InfinityIcon, Clock } from 'lucide-react';
+import { motion } from 'motion/react';
+import React, { useState } from 'react';
 
 interface TimechainHypothesisPanelProps {
   onClose: () => void;
@@ -79,7 +79,7 @@ export default function TimechainHypothesisPanel({ onClose }: TimechainHypothesi
       >
         <div className={`p-4 border-b ${isSuccess ? 'border-amber-500/30 bg-amber-500/10' : 'border-orange-500/20 bg-orange-500/5'} flex justify-between items-center shrink-0 transition-colors duration-1000`}>
           <div className="flex items-center gap-3">
-            {isSuccess ? <Infinity className="w-5 h-5 text-amber-400 animate-pulse" /> : <Clock className="w-5 h-5 text-orange-400" />}
+            {isSuccess ? <InfinityIcon className="w-5 h-5 text-amber-400 animate-pulse" /> : <Clock className="w-5 h-5 text-orange-400" />}
             <h2 className={`font-mono text-sm uppercase tracking-widest ${isSuccess ? 'text-amber-400' : 'text-orange-400'} font-bold`}>
               Timechain Hypothesis Verification
             </h2>

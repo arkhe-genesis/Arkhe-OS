@@ -22,7 +22,7 @@ interface IntelligencePanelProps {
 
 export default function IntelligencePanel({ onClose }: IntelligencePanelProps) {
   const [alerts, setAlerts] = useState<Alert[]>([]);
-  const [isLive, setIsLive] = useState(true);
+  const isLive = true;
 
   // Simulação de um feed de inteligência ao vivo, inspirado no Crucix
   useEffect(() => {

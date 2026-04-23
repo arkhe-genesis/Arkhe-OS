@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Network, Terminal, CheckCircle2, CircleDashed, Activity, Zap, Code, ShieldCheck, Box } from 'lucide-react';
+import { Terminal, CheckCircle2, CircleDashed, Activity, Zap, Box } from 'lucide-react';
 import React, { useState } from 'react';
 
 import { ArkheSDK } from '../sdk/ArkheSDK';
@@ -54,7 +54,7 @@ export default function SepoliaIntegrationPanel({ onClose }: { onClose: () => vo
       setLogs(prev => [...prev, "> [3/4] INITIALIZING ARKHE TYPESCRIPT SDK..."]);
       
       // Actually instantiate the SDK to prove it works
-      const sdk = new ArkheSDK({ providerUrl: 'https://rpc2.sepolia.org' });
+      const _sdk = new ArkheSDK({ providerUrl: 'https://rpc2.sepolia.org' });
       
       setLogs(prev => [...prev, "> SDK INSTANCE CREATED. CONNECTING TO SEPOLIA RPC..."]);
     }, 7500);

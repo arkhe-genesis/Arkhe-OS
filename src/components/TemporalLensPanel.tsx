@@ -118,7 +118,7 @@ const TemporalLensPanel: React.FC<TemporalLensPanelProps> = ({ state }) => {
             Feedback Populacional (MaxToki)
           </div>
           <div className="h-32 rounded bg-black/20 p-2 border border-white/5 overflow-y-auto scrollbar-hide">
-            {feedback.map((f: any) => (
+            {feedback.map((f) => (
               <div key={f.id} className="mb-3 last:mb-0 text-[11px] leading-tight">
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-[#00FFAA] font-bold">{f.residentName} (2027)</span>

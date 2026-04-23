@@ -3,7 +3,24 @@
 
 #include <stdint.h>
 
-float compute_hybrid_audit_score(float s_value, float integrity_score);
+typedef struct {
+    double s_value;
+    double gate_fidelity;
+    double logical_error;
+    double ghz_fidelity;
+    double wormhole_curvature;
+} EngineeringMetrics;
+
+typedef struct {
+    double narrative_coherence;
+    double semantic_resonance;
+    double observer_stability;
+    double value_alignment;
+} QuartzTestimony;
+
+float compute_hybrid_audit_score_legacy(float s_value, float integrity_score);
+double compute_hybrid_audit_score(EngineeringMetrics *eng, QuartzTestimony *q);
+
 void log_hesitant_operation(const char* op, int ctrl, int target, float delay, float jitter);
 
 #endif // ML_AUDIT_HOOKS_H

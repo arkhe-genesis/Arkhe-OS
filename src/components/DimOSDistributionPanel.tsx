@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Cpu, Network, Activity, Shield, Zap, RefreshCw, CheckCircle2, AlertTriangle, Database } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import { Cpu, Network, Activity, Zap, RefreshCw, CheckCircle2, Database } from 'lucide-react';
+import React, { useState } from 'react';
 
 interface DimOSPanelProps {
   onClose: () => void;

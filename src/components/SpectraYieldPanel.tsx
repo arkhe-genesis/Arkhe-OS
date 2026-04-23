@@ -5,9 +5,8 @@
  */
 
 import { TrendingUp, PieChart, Activity, ShieldCheck, ExternalLink, Coins, Info, BarChart2 } from 'lucide-react';
-import { motion } from 'motion/react';
 import React from 'react';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 import type { SpectraState } from '../../server/types';
 

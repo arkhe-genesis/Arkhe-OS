@@ -7,7 +7,6 @@
 import { X, Video, Activity, Wifi, ShieldAlert, Play, Pause, Maximize, Volume2, VolumeX, Terminal, Eye, Layers } from 'lucide-react';
 import { motion } from 'motion/react';
 import React, { useEffect, useRef, useState } from 'react';
-// @ts-ignore
 import shaka from 'shaka-player';
 
 import { logger } from '../../server/logger';
@@ -41,15 +40,16 @@ export default function TemporalStreamViewer({ onClose }: TemporalStreamViewerPr
       const newPlayer = new shaka.Player(videoRef.current);
       setPlayer(newPlayer);
 
-      newPlayer.addEventListener('error', (event: any) => {
-        logger.error(`Error code ${event.detail.code} object ${JSON.stringify(event.detail)}`);
-        setError(`SHAKA_ERR_${event.detail.code}`);
+      newPlayer.addEventListener('error', (event: unknown) => {
+        const detail = (event as { detail: { code: number } }).detail;
+        logger.error(`Error code ${detail.code} object ${JSON.stringify(detail)}`);
+        setError(`SHAKA_ERR_${detail.code}`);
       });
 
       // Adaptation events -> Coherence changes
       newPlayer.addEventListener('adaptation', () => {
         const tracks = newPlayer.getVariantTracks();
-        const activeTrack = tracks.find((t: any) => t.active);
+        const activeTrack = tracks.find((t) => t.active);
         if (activeTrack) {
           // Estimate coherence based on bandwidth
           const newCoherence = Math.min(1.0, activeTrack.bandwidth / 5000000);
@@ -78,7 +78,7 @@ export default function TemporalStreamViewer({ onClose }: TemporalStreamViewerPr
       // Using the official Shaka Project "Angel One" sci-fi asset for the temporal stream
       const manifestUri = 'https://storage.googleapis.com/shaka-demo-assets/angel-one/dash.mpd';
       
-      newPlayer.load(manifestUri).then(() => {
+      void newPlayer.load(manifestUri).then(() => {
         logger.info('The video has now been loaded!');
         if (videoRef.current) {
           videoRef.current.muted = true;
@@ -176,7 +176,7 @@ export default function TemporalStreamViewer({ onClose }: TemporalStreamViewerPr
     }
   };
 
-  const formatBitrate = (bits: number) => {
+  const formatBitrate = (bits: number | undefined) => {
     if (!bits) {return '0 Mbps';}
     return (bits / 1000000).toFixed(2) + ' Mbps';
   };

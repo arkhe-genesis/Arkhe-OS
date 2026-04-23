@@ -5,28 +5,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Activity, AlertTriangle, Brain, Map as MapIcon, Database, Zap, Satellite, Cpu, MessageSquare, Library } from 'lucide-react';
+import { Activity, AlertTriangle, Brain, Map as MapIcon, Database, Zap, Satellite, Cpu, Library } from 'lucide-react';
 import React from 'react';
 
 import type { SimulationState } from '../../server/types';
 import { useArkheSimulation } from '../hooks/useArkheSimulation';
 
-interface ValidatorData {
-  id: string;
-  omega: number;
-  phase_shift: number;
-}
-
-interface AnomalyData {
-  orbs: Array<{ lat: number; lng: number; intensity: number }>;
-}
-
-interface PhaseData {
-  drift: number;
-  current: string;
-}
-
-const RadarChart = ({ data, focusKey }: { data: unknown[], focusKey: string }) => (
+const RadarChart = ({ focusKey }: { data: unknown[], focusKey: string }) => (
   <div className="h-48 bg-black/40 rounded-lg flex items-center justify-center border border-arkhe-cyan/30">
     <span className="text-arkhe-cyan/50 font-mono text-sm">[Radar Chart Visualization: {focusKey}]</span>
   </div>

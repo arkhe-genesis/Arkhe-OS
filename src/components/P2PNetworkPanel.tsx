@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Network, Activity, CheckCircle2, CircleDashed, Server, Zap } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import { Network, Activity, Server, Zap } from 'lucide-react';
+import React, { useState } from 'react';
 
 const NODES = [
   { id: 'btc', name: 'Bitcoin', protocol: 'TCP/8333', color: 'text-orange-500', bg: 'bg-orange-500/10', border: 'border-orange-500/30' },
@@ -48,7 +48,7 @@ export default function P2PNetworkPanel({ onClose }: { onClose: () => void }) {
         } else {
           setLogs(prev => [...prev, `> [ERROR] FAILED TO CONNECT TO ${node.name.toUpperCase()}`]);
         }
-      } catch (error) {
+      } catch (_error) {
         setLogs(prev => [...prev, `> [ERROR] CONNECTION TIMEOUT FOR ${node.name.toUpperCase()}`]);
       }
     }

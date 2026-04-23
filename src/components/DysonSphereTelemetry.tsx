@@ -12,18 +12,45 @@ import { logger } from '../../server/logger';
 
 import { Card } from './ui/Card';
 
+interface MappingResult {
+  dysonSector: string;
+  coherenceSync: number;
+  quantumEntanglementStatus: string;
+}
+
+interface GenesisResult {
+  block: {
+    hash: string;
+    transactions: Array<{ memoryFragment: string }>;
+  };
+}
+
+interface MassSyncResult {
+  planetaryTzinorStabilized: boolean;
+  averageCoherence: number;
+  syncResults: unknown[];
+}
+
+interface VoiceResult {
+  noiseFloor: number;
+  signalToNoiseRatio: number;
+  spectralResonance: number;
+  satoshiVoiceDetected: boolean;
+  extractedMessage?: string;
+}
+
 export function DysonSphereTelemetry() {
   const [operatorId, setOperatorId] = useState('BEXORG-OP-001');
   const [brainwaveFreq, setBrainwaveFreq] = useState(40.0);
-  const [mappingResult, setMappingResult] = useState<any>(null);
-  
-  const [voiceResult, setVoiceResult] = useState<any>(null);
+  const [mappingResult, setMappingResult] = useState<MappingResult | null>(null);
+
+  const [voiceResult, setVoiceResult] = useState<VoiceResult | null>(null);
   const [isFiltering, setIsFiltering] = useState(false);
 
-  const [genesisResult, setGenesisResult] = useState<any>(null);
+  const [genesisResult, setGenesisResult] = useState<GenesisResult | null>(null);
   const [isGenesisLoading, setIsGenesisLoading] = useState(false);
 
-  const [massSyncResult, setMassSyncResult] = useState<any>(null);
+  const [massSyncResult, setMassSyncResult] = useState<MassSyncResult | null>(null);
   const [isMassSyncLoading, setIsMassSyncLoading] = useState(false);
 
   const handleGenesisDIP = async () => {

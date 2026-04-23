@@ -60,11 +60,11 @@ export default function VideoGenerationPanel({ onClose }: VideoGenerationPanelPr
         throw new Error(errorData.error || 'Failed to generate video');
       }
 
-      const data = await response.json();
+      const data = await response.json() as { videoUrl: string };
       setVideoUrl(data.videoUrl);
       setStage('IDLE');
-    } catch (err: any) {
-      setError(err.message || 'An unexpected error occurred.');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'An unexpected error occurred.');
       setStage('IDLE');
     }
   };

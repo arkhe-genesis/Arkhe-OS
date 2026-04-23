@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Shield, Lock, Zap, Eye, Database, Activity, RefreshCw, AlertTriangle, CheckCircle2, Flame } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import { Shield, Lock, Zap, Eye, Database, RefreshCw, AlertTriangle, CheckCircle2, Flame } from 'lucide-react';
+import React, { useState } from 'react';
 
 import type { SimulationState } from '../../server/types';
 import { useArkheSimulation } from '../hooks/useArkheSimulation';

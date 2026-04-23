@@ -31,31 +31,31 @@ describe('decentralized', () => {
         return {
           ok: true,
           text: async () => 'hello ipfs content',
-        } as any;
+        } as unknown as Response;
       }
       if (urlStr.includes('/api/v0/add')) {
         return {
           ok: true,
           json: async () => ({Name: 'file', Hash: 'QmAdded', Size: '123'}),
-        } as any;
+        } as unknown as Response;
       }
       if (urlStr.includes('/bzz/0xabc/')) {
         return {
           ok: true,
           text: async () => 'hello swarm content',
-        } as any;
+        } as unknown as Response;
       }
       if (urlStr.includes('/bzz') && options?.method === 'POST') {
         return {
           ok: true,
           json: async () => ({reference: '0xSwarmRef'}),
-        } as any;
+        } as unknown as Response;
       }
       if (urlStr.includes('/api/v1/projects')) {
         return {
           ok: true,
           json: async () => [{name: 'test-repo', id: 'z123'}],
-        } as any;
+        } as unknown as Response;
       }
       if (urlStr.includes('127.0.0.1:8545')) {
         const body = JSON.parse(options?.body as string);
@@ -63,16 +63,16 @@ describe('decentralized', () => {
            return {
              ok: true,
              json: async () => ({result: '0xResolverAddr'}),
-           } as any;
+           } as unknown as Response;
         }
         if (body.id === 2) {
            return {
              ok: true,
              json: async () => ({result: '0xContentHash'}),
-           } as any;
+           } as unknown as Response;
         }
       }
-      return {ok: false, status: 404, statusText: 'Not Found'} as any;
+      return {ok: false, status: 404, statusText: 'Not Found'} as unknown as Response;
     };
   });
 
@@ -84,7 +84,7 @@ describe('decentralized', () => {
     server.addHtmlRoute('/decentralized', html`<main>Decentralized Test</main>`);
 
     await withMcpContext(async (response, context) => {
-      const mockArgs = {} as any;
+      const mockArgs = {} as never;
 
       // ipfs_cat
       response.resetResponseLineForTesting();

@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { X, Shield, Cpu, Code, Terminal, Lock, GitBranch, Layers, Eye, Activity } from 'lucide-react';
+import { X, Shield, Code, Terminal, Lock, Layers, Eye, Activity } from 'lucide-react';
 import { motion } from 'motion/react';
 import React, { useState, useEffect } from 'react';
 

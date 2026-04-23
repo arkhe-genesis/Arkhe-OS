@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Network, Server, Activity, Shield, Cpu, Play, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Network, Server, Activity, Shield, Cpu } from 'lucide-react';
 import { motion } from 'motion/react';
 import React, { useEffect, useState } from 'react';
 
@@ -51,8 +51,10 @@ export default function AgentManagementPanel() {
   };
 
   useEffect(() => {
-    fetchData();
-    const interval = setInterval(fetchData, 2000);
+    void fetchData();
+    const interval = setInterval(() => {
+      void fetchData();
+    }, 2000);
     return () => clearInterval(interval);
   }, []);
 
@@ -70,7 +72,7 @@ export default function AgentManagementPanel() {
         })
       });
       setNewTaskType('');
-      fetchData();
+      void fetchData();
     } catch (error) {
       console.error('Failed to create task:', error);
     } finally {

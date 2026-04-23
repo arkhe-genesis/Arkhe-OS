@@ -39,7 +39,7 @@ export default function SessionReplayViewer() {
     const fetchSessions = async () => {
       try {
         const res = await fetch('/api/lucent/sessions');
-        const data = await res.json();
+        const data = await res.json() as UserSession[];
         setSessions(data);
         setLoading(false);
       } catch (e) {
@@ -48,8 +48,10 @@ export default function SessionReplayViewer() {
       }
     };
 
-    fetchSessions();
-    const interval = setInterval(fetchSessions, 5000);
+    void fetchSessions();
+    const interval = setInterval(() => {
+      void fetchSessions();
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
@@ -159,12 +161,12 @@ export default function SessionReplayViewer() {
                         {event.type}
                       </span>
                       <span className="text-cyan-200">
-                        {(event.payload as any)?.type === 'error' ? (
+                        {(event.payload as { type?: string, message?: string })?.type === 'error' ? (
                           <span className="text-red-400 flex items-center gap-1">
-                            <Bug className="w-3 h-3" /> {(event.payload as any).message}
+                            <Bug className="w-3 h-3" /> {(event.payload as { message: string }).message}
                           </span>
                         ) : (
-                          (event.payload as any)?.type || JSON.stringify(event.payload || {})
+                          (event.payload as { type?: string })?.type || JSON.stringify(event.payload || {})
                         )}
                       </span>
                     </div>

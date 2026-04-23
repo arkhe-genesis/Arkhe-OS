@@ -508,7 +508,7 @@ export interface ThermodynamicTrainingReport {
   efficiency: number;
   loss: number;
   method: string;
-  parameters: any;
+  parameters: unknown;
   status: string;
 }
 
