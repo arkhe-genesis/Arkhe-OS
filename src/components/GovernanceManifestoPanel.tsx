@@ -8,7 +8,7 @@
 import { FileText, Download, Fingerprint, Calendar } from 'lucide-react';
 import React from 'react';
 
-import type { SimulationState } from '../../server/types';
+import type { SimulationState, GovernanceDirective } from '../../server/types';
 
 import { Card } from './ui/Card';
 
@@ -59,7 +59,7 @@ const GovernanceManifestoPanel: React.FC<GovernanceManifestoPanelProps> = ({ sta
         </div>
 
         <div className="space-y-3">
-          {(manifesto.directives as unknown[]).map((d: unknown) => (
+          {manifesto.directives.map((d: GovernanceDirective) => (
             <div key={d.id} className="space-y-1">
               <div className="flex items-center gap-2">
                 <span className="text-arkhe-cyan font-bold text-[10px]">{d.id}.</span>

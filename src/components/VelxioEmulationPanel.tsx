@@ -6,7 +6,7 @@
  */
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { Cpu, Terminal, Play, Square, Code, Zap, CheckCircle2, RefreshCw, Layers, Wifi, WifiOff } from 'lucide-react';
+import { Cpu, Terminal, Play, Square, Code, Zap, CheckCircle2, RefreshCw, Layers } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 
 interface VelxioEmulationPanelProps {
@@ -37,20 +37,20 @@ export default function VelxioEmulationPanel({ onClose }: VelxioEmulationPanelPr
         });
         const data = await res.json();
 
-        if (data.success) {
+        if ((data as { success: boolean }).success) {
           setBridgeStatus('connected');
           addLog('Handshake successful. Velxio Bridge registered in Teknet.');
         } else {
           setBridgeStatus('disconnected');
           addLog('ERR_BRIDGE: Connection rejected by Arkhe Sentinel.');
         }
-      } catch (e) {
+      } catch {
         setBridgeStatus('disconnected');
         addLog('ERR_BRIDGE: Failed to reach bridge endpoint.');
       }
     };
 
-    connectBridge();
+    void connectBridge();
   }, []);
 
   const handleStartSimulation = async () => {
@@ -95,8 +95,8 @@ export default function VelxioEmulationPanel({ onClose }: VelxioEmulationPanelPr
         })
       });
       const task = await res.json();
-      addLog(`Task created in Arkhe Orchestrator: ${task.task_id}`);
-    } catch (e) {
+      addLog(`Task created in Arkhe Orchestrator: ${(task as { task_id: string }).task_id}`);
+    } catch {
       addLog('HIL: Local execution fallback active.');
     }
 

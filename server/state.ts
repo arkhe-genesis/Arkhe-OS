@@ -6,7 +6,7 @@
 
 import { v4 as uuidv4 } from 'uuid';
 
-import type { SimulationState, OrbPayload } from './types';
+import type { SimulationState, OrbPayload, ContextNode, MemoryEngram } from './types';
 
 export let state: SimulationState = {
   coherenceData: [],
@@ -308,16 +308,16 @@ class TzinorStore {
             time: payload.originTime,
             embedding: payload.embedding,
             salience: 1.0
-        } as any);
+        } as ContextNode);
         if (state.tzinor.fContext.length > 20) {
             const engram = state.tzinor.fContext.pop();
             if (engram) {
                 state.tzinor.gMemory.unshift({
-                    originTime: (engram as any).time || 0,
+                    originTime: engram.time || 0,
                     consolidatedTime: Date.now() / 1000,
                     summaryHash: '0x' + Math.random().toString(16).substring(2),
                     resonanceWeight: 1.0
-                } as any);
+                } as MemoryEngram);
             }
         }
     }
