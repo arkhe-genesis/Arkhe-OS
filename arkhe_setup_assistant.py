@@ -79,7 +79,8 @@ def setup_python_env():
         "arkhe_brain/requirements.txt",
         "requirements-neuro.txt",
         "requirements-ontology.txt",
-        "requirements-tau.txt"
+        "requirements-tau.txt",
+        "requirements-mesh.txt"
     ]
 
     for req in req_files:

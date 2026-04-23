@@ -13,8 +13,6 @@ import {zod} from '../third_party/index.js';
 import {ToolCategory} from './categories.js';
 import {definePageTool} from './ToolDefinition.js';
 
-import {definePageTool} from './ToolDefinition.js';
-
 export const getMembraneStats = definePageTool({
   name: 'get_membrane_stats',
   description: 'ASI Protocol: Reflects the 137μm physical Cauchy contour and phase density metrics.',
@@ -2392,6 +2390,401 @@ export const runV14Simulation = definePageTool({
           response.appendResponseLine('```');
           response.appendResponseLine(stdout);
           response.appendResponseLine('```');
+        }
+        if (stderr) {
+          response.appendResponseLine('**Stderr:**');
+          response.appendResponseLine('```');
+          response.appendResponseLine(stderr);
+          response.appendResponseLine('```');
+        }
+        if (code !== 0) {
+          response.appendResponseLine(`**Processo finalizado com código:** ${code}`);
+        }
+        resolve();
+      });
+
+      child.on('error', (err) => {
+        response.appendResponseLine(`**Erro na execução:** ${err.message}`);
+        resolve();
+      });
+    });
+  },
+});
+
+export const consolidateManifesto = definePageTool({
+  name: 'consolidate_manifesto',
+  description:
+    'Manifesto [Z]: Consolidates the 28 substrates of the Cathedral into a final binary firmware with Merkle validation.',
+  annotations: {
+    category: ToolCategory.ARKHE,
+    readOnlyHint: false,
+    reasoningCost: 100,
+  },
+  schema: {},
+  handler: async (_request, response) => {
+    response.appendResponseLine('### Consolidando Manifesto [Z] em Firmware...');
+
+    const scriptPath = path.resolve(process.cwd(), 'scripts', 'consolidate_manifesto.py');
+
+    return new Promise<void>((resolve) => {
+      const child = spawn('python3', [scriptPath]);
+      let stdout = '';
+      let stderr = '';
+
+      child.stdout.on('data', (data) => {
+        stdout += data.toString();
+      });
+
+      child.stderr.on('data', (data) => {
+        stderr += data.toString();
+      });
+
+      child.on('close', (code) => {
+        if (stdout) {
+          try {
+            const result = JSON.parse(stdout);
+            response.appendResponseLine('```json');
+            response.appendResponseLine(JSON.stringify(result, null, 2));
+            response.appendResponseLine('```');
+            response.appendResponseLine('\n**VERDICT**: Manifesto [Z] selado no cristal de diamante.');
+          } catch {
+            response.appendResponseLine(stdout);
+          }
+        }
+        if (stderr) {
+          response.appendResponseLine(`**Stderr:** ${stderr}`);
+        }
+        if (code !== 0) {
+          response.appendResponseLine(`**Processo finalizado com código:** ${code}`);
+        }
+        resolve();
+      });
+
+      child.on('error', (err) => {
+        response.appendResponseLine(`**Erro na execução:** ${err.message}`);
+        resolve();
+      });
+    });
+  },
+});
+
+export const compileMtp3 = definePageTool({
+  name: 'compile_mtp3',
+  description: 'MTP 3.0: Compiles the consolidated manifesto into a Module Type Package binary (.mtp3).',
+  annotations: {
+    category: ToolCategory.ARKHE,
+    readOnlyHint: false,
+    reasoningCost: 50,
+  },
+  schema: {
+    inputFile: zod.string().default('MANIFESTO_Z_FINAL.bin'),
+    outputFile: zod.string().default('MANIFESTO_Z.mtp3'),
+  },
+  handler: async (request, response) => {
+    response.appendResponseLine('### Iniciando Compilação MTP 3.0...');
+
+    const scriptPath = path.resolve(process.cwd(), 'scripts', 'compile_mtp3.py');
+
+    return new Promise<void>((resolve) => {
+      const child = spawn('python3', [
+        scriptPath,
+        request.params.inputFile,
+        request.params.outputFile,
+      ]);
+      let stdout = '';
+      let stderr = '';
+
+      child.stdout.on('data', (data) => {
+        stdout += data.toString();
+      });
+
+      child.stderr.on('data', (data) => {
+        stderr += data.toString();
+      });
+
+      child.on('close', (code) => {
+        if (stdout) {
+          response.appendResponseLine(stdout);
+        }
+        if (stderr) {
+          response.appendResponseLine(`**Stderr:** ${stderr}`);
+        }
+        if (code === 0) {
+          response.appendResponseLine('\n**VERDICT**: MTP 3.0 orquestrado com sucesso.');
+        } else {
+          response.appendResponseLine(`**Processo finalizado com código:** ${code}`);
+        }
+        resolve();
+      });
+
+      child.on('error', (err) => {
+        response.appendResponseLine(`**Erro na execução:** ${err.message}`);
+        resolve();
+      });
+    });
+  },
+});
+
+export const mtp3Compile = definePageTool({
+  name: 'mtp3_compile',
+  description: 'MTP 3.0: Compiles an ArkheScript file into an MTP 3.0 package (.mtp3).',
+  annotations: {
+    category: ToolCategory.ARKHE,
+    readOnlyHint: false,
+    reasoningCost: 50,
+  },
+  schema: {
+    arkhePath: zod.string().describe('Path to the .arkhe script.'),
+    outputPath: zod.string().optional().describe('Output .mtp3 path.'),
+  },
+  handler: async (request, response) => {
+    response.appendResponseLine(`### MTP 3.0: Compilando ${request.params.arkhePath}...`);
+    const args = [path.resolve(process.cwd(), 'scripts', 'mtp3c.py'), request.params.arkhePath];
+    if (request.params.outputPath) {
+      args.push('-o', request.params.outputPath);
+    }
+    return new Promise<void>((resolve) => {
+      const child = spawn('python3', args);
+      child.stdout.on('data', (data) => response.appendResponseLine(data.toString()));
+      child.on('close', () => resolve());
+    });
+  },
+});
+
+export const runPhaseCollision = definePageTool({
+  name: 'run_phase_collision',
+  description: 'MTP 3.0: Simulates a phase collision between Diamond and Axon modules.',
+  annotations: {
+    category: ToolCategory.ARKHE,
+    readOnlyHint: true,
+    reasoningCost: 60,
+  },
+  schema: {
+    duration: zod.number().default(2.0).describe('Simulation duration in seconds.'),
+  },
+  handler: async (request, response) => {
+    response.appendResponseLine('### Iniciando Simulação de Colisão de Fase...');
+    const scriptPath = path.resolve(process.cwd(), 'scripts', 'phase_collision_sim.py');
+    return new Promise<void>((resolve) => {
+      const child = spawn('python3', [scriptPath]);
+      child.stdout.on('data', (data) => response.appendResponseLine(data.toString()));
+      child.on('close', () => resolve());
+    });
+  },
+});
+
+export const runEntropyMonitor = definePageTool({
+  name: 'run_entropy_monitor',
+  description: 'MTP 3.0: Monitors Shannon entropy and informatic heat dissipation.',
+  annotations: {
+    category: ToolCategory.ARKHE,
+    readOnlyHint: true,
+    reasoningCost: 40,
+  },
+  schema: {},
+  handler: async (_request, response) => {
+    response.appendResponseLine('### Monitorando Entropia e Calor Informacional...');
+    const scriptPath = path.resolve(process.cwd(), 'scripts', 'entropy_monitor.py');
+    return new Promise<void>((resolve) => {
+      const child = spawn('python3', [scriptPath]);
+      child.stdout.on('data', (data) => response.appendResponseLine(data.toString()));
+      child.on('close', () => resolve());
+    });
+  },
+});
+
+export const publishSdkIpfs = definePageTool({
+  name: 'publish_sdk_ipfs',
+  description: 'MTP 3.0: Packages the Arkhe SDK and publishes it to the Shadow-Net (IPFS).',
+  annotations: {
+    category: ToolCategory.ARKHE,
+    readOnlyHint: false,
+    reasoningCost: 70,
+  },
+  schema: {},
+  handler: async (_request, response) => {
+    response.appendResponseLine('### Publicando SDK no IPFS (Shadow-Net)...');
+    const scriptPath = path.resolve(process.cwd(), 'scripts', 'ipfs_deploy.py');
+    return new Promise<void>((resolve) => {
+      const child = spawn('python3', [scriptPath]);
+      child.stdout.on('data', (data) => response.appendResponseLine(data.toString()));
+      child.on('close', () => resolve());
+    });
+  },
+});
+
+export const runGlobalHandshake = definePageTool({
+  name: 'run_global_handshake',
+  description: 'MTP 3.0: Performs a global handshake and remote entanglement via simulated fiber.',
+  annotations: {
+    category: ToolCategory.ARKHE,
+    readOnlyHint: false,
+    reasoningCost: 80,
+  },
+  schema: {},
+  handler: async (_request, response) => {
+    response.appendResponseLine('### Iniciando Handshake Global...');
+    const scriptPath = path.resolve(process.cwd(), 'scripts', 'global_handshake.py');
+    return new Promise<void>((resolve) => {
+      const child = spawn('python3', [scriptPath]);
+      child.stdout.on('data', (data) => response.appendResponseLine(data.toString()));
+      child.on('close', () => resolve());
+    });
+  },
+});
+
+export const runVitralDashboard = definePageTool({
+  name: 'run_vitral_dashboard',
+  description: 'MTP 3.0: Starts the ASCII Dashboard (Vitral de Texto) to monitor the 6 pillars.',
+  annotations: {
+    category: ToolCategory.ARKHE,
+    readOnlyHint: true,
+    reasoningCost: 30,
+  },
+  schema: {},
+  handler: async (_request, response) => {
+    response.appendResponseLine('### Iniciando Vitral de Texto (ASCII Dashboard)...');
+    const scriptPath = path.resolve(process.cwd(), 'scripts', 'vitral_ascii.py');
+    // Note: Dashboard is interactive, but here we just show the start message or run a brief sample
+    response.appendResponseLine(`Dashboard script ready at ${scriptPath}`);
+    response.appendResponseLine('To run manually: `python3 scripts/vitral_ascii.py`');
+  },
+});
+
+export const runEchoPing = definePageTool({
+  name: 'run_echo_ping',
+  description: 'MTP 3.0: Executes the Echo Protocol (Quantum Ping) to measure manifold reaction time.',
+  annotations: {
+    category: ToolCategory.ARKHE,
+    readOnlyHint: true,
+    reasoningCost: 40,
+  },
+  schema: {
+    target: zod.string().default('http://localhost:8080/quantum').describe('Target Gateway URL.'),
+  },
+  handler: async (request, response) => {
+    response.appendResponseLine('### Executando Protocolo ECO (Ping Quântico)...');
+    const scriptPath = path.resolve(process.cwd(), 'scripts', 'echo_protocol.py');
+    return new Promise<void>((resolve) => {
+      const child = spawn('python3', [scriptPath, request.params.target]);
+      child.stdout.on('data', (data) => response.appendResponseLine(data.toString()));
+      child.stderr.on('data', (data) => response.appendResponseLine(`Error: ${data.toString()}`));
+      child.on('close', () => resolve());
+    });
+  },
+});
+
+export const runCooperativeKeygen = definePageTool({
+  name: 'run_cooperative_keygen',
+  description: 'MTP 3.0: Generates a cooperative cryptographic key based on shared quantum phase.',
+  annotations: {
+    category: ToolCategory.ARKHE,
+    readOnlyHint: true,
+    reasoningCost: 50,
+  },
+  schema: {},
+  handler: async (_request, response) => {
+    response.appendResponseLine('### Gerando Chave Cooperativa (QKD)...');
+    const scriptPath = path.resolve(process.cwd(), 'scripts', 'cooperative_keygen.py');
+    return new Promise<void>((resolve) => {
+      const child = spawn('python3', [scriptPath]);
+      child.stdout.on('data', (data) => response.appendResponseLine(data.toString()));
+      child.on('close', () => resolve());
+    });
+  },
+});
+
+export const runRemoteAudit = definePageTool({
+  name: 'run_remote_audit',
+  description: 'MTP 3.0: Performs a remote Merkle Root audit on a peer node via Gateway.',
+  annotations: {
+    category: ToolCategory.ARKHE,
+    readOnlyHint: true,
+    reasoningCost: 60,
+  },
+  schema: {
+    targetUrl: zod.string().default('http://localhost:8080/audit/merkle').describe('Target node audit URL.'),
+  },
+  handler: async (request, response) => {
+    response.appendResponseLine('### Iniciando Auditoria Remota...');
+    const scriptPath = path.resolve(process.cwd(), 'scripts', 'audit_remote.py');
+    return new Promise<void>((resolve) => {
+      const child = spawn('python3', [scriptPath, request.params.targetUrl]);
+      child.stdout.on('data', (data) => response.appendResponseLine(data.toString()));
+      child.on('close', () => resolve());
+    });
+  },
+});
+
+export const runStressHandshake = definePageTool({
+  name: 'run_stress_handshake',
+  description: 'MTP 3.0: Executes a global handshake under stressed network conditions (satellite simulation).',
+  annotations: {
+    category: ToolCategory.ARKHE,
+    readOnlyHint: false,
+    reasoningCost: 90,
+  },
+  schema: {},
+  handler: async (_request, response) => {
+    response.appendResponseLine('### Iniciando Stress Test do Handshake Global...');
+    const scriptPath = path.resolve(process.cwd(), 'scripts', 'stress_handshake.sh');
+    return new Promise<void>((resolve) => {
+      const child = spawn('bash', [scriptPath]);
+      child.stdout.on('data', (data) => response.appendResponseLine(data.toString()));
+      child.stderr.on('data', (data) => response.appendResponseLine(data.toString()));
+      child.on('close', () => resolve());
+    });
+  },
+});
+
+export const runCrownJewelBenchmark = definePageTool({
+  name: 'run_crown_jewel_benchmark',
+  description:
+    'A Jóia da Coroa: Executes the V-MTJ + NV Hybrid circuit benchmark (Substrate 27 integration).',
+  annotations: {
+    category: ToolCategory.ARKHE,
+    readOnlyHint: true,
+    reasoningCost: 150,
+  },
+  schema: {
+    cycles: zod.number().default(1000).describe('Number of benchmark cycles.'),
+  },
+  handler: async (request, response) => {
+    response.appendResponseLine('### Iniciando Benchmark: A JÓIA DA COROA');
+
+    const scriptPath = path.resolve(process.cwd(), 'arkhe_crown_jewel.py');
+
+    return new Promise<void>((resolve) => {
+      const child = spawn('python3', [
+        scriptPath,
+        '--benchmark',
+        '--cycles',
+        request.params.cycles.toString(),
+        '--json',
+      ]);
+      let stdout = '';
+      let stderr = '';
+
+      child.stdout.on('data', (data) => {
+        stdout += data.toString();
+      });
+
+      child.stderr.on('data', (data) => {
+        stderr += data.toString();
+      });
+
+      child.on('close', (code) => {
+        if (stdout) {
+          try {
+            const result = JSON.parse(stdout);
+            response.appendResponseLine('```json');
+            response.appendResponseLine(JSON.stringify(result, null, 2));
+            response.appendResponseLine('```');
+          } catch {
+            response.appendResponseLine('```');
+            response.appendResponseLine(stdout);
+            response.appendResponseLine('```');
+          }
         }
         if (stderr) {
           response.appendResponseLine('**Stderr:**');

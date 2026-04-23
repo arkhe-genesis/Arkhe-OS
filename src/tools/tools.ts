@@ -20,6 +20,7 @@ import * as lambdaTools from './lambda_tools.js';
 import * as lighthouseTools from './lighthouse.js';
 import * as logosLibraryTools from './logos_library.js';
 import * as memoryTools from './memory.js';
+import * as meshtasticTools from './meshtastic.js';
 import * as mercuryTools from './mercury.js';
 import * as microsandboxTools from './microsandbox.js';
 import * as nekoTools from './neko.js';
@@ -73,6 +74,7 @@ export const createTools = (args: ParsedArguments) => {
         ...Object.values(logosLibraryTools),
         ...Object.values(nekoTools),
         ...Object.values(oasisTools),
+        ...Object.values(meshtasticTools),
       ];
 
   const tools = [];

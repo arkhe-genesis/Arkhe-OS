@@ -20,6 +20,7 @@ export enum ToolCategory {
   AGENT = 'agent',
   SANDBOX = 'sandbox',
   EVOSKILL = 'evoskill',
+  MESHTASTIC = 'meshtastic',
 }
 
 export const labels = {
@@ -38,4 +39,5 @@ export const labels = {
   [ToolCategory.AGENT]: 'Mercury Agent Protocols',
   [ToolCategory.SANDBOX]: 'Microsandbox Protocols',
   [ToolCategory.EVOSKILL]: 'EvoSkill (Evolutionary Skill Induction)',
+  [ToolCategory.MESHTASTIC]: 'Meshtastic Mesh Protocols',
 };
