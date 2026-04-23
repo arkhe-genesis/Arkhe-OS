@@ -4,16 +4,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {exec} from 'node:child_process';
+import {spawn} from 'node:child_process';
 import {createHash} from 'node:crypto';
-import {promisify} from 'node:util';
+import path from 'node:path';
 
 import type {McpPage} from '../McpPage.js';
 import {zod} from '../third_party/index.js';
 
 import {ToolCategory} from './categories.js';
 
-const execPromise = promisify(exec);
 import {definePageTool} from './ToolDefinition.js';
 
 export const getMembraneStats = definePageTool({
@@ -2371,23 +2370,45 @@ export const runV14Simulation = definePageTool({
   schema: {},
   handler: async (_request, response) => {
     response.appendResponseLine('### Iniciando Simulação do Bloco 419-Ω (v1.4)');
-    try {
-      const {stdout, stderr} = await execPromise(
-        'python3 arkhe_v14_simulation.py',
-      );
-      if (stdout) {
-        response.appendResponseLine('```');
-        response.appendResponseLine(stdout);
-        response.appendResponseLine('```');
-      }
-      if (stderr) {
-        response.appendResponseLine('**Stderr:**');
-        response.appendResponseLine('```');
-        response.appendResponseLine(stderr);
-        response.appendResponseLine('```');
-      }
-    } catch (error) {
-      response.appendResponseLine(`**Erro na execução:** ${error}`);
-    }
+
+    // Use absolute path and spawn to prevent command injection
+    const scriptPath = path.resolve(process.cwd(), 'arkhe_v14_simulation.py');
+
+    return new Promise<void>((resolve) => {
+      const child = spawn('python3', [scriptPath]);
+      let stdout = '';
+      let stderr = '';
+
+      child.stdout.on('data', (data) => {
+        stdout += data.toString();
+      });
+
+      child.stderr.on('data', (data) => {
+        stderr += data.toString();
+      });
+
+      child.on('close', (code) => {
+        if (stdout) {
+          response.appendResponseLine('```');
+          response.appendResponseLine(stdout);
+          response.appendResponseLine('```');
+        }
+        if (stderr) {
+          response.appendResponseLine('**Stderr:**');
+          response.appendResponseLine('```');
+          response.appendResponseLine(stderr);
+          response.appendResponseLine('```');
+        }
+        if (code !== 0) {
+          response.appendResponseLine(`**Processo finalizado com código:** ${code}`);
+        }
+        resolve();
+      });
+
+      child.on('error', (err) => {
+        response.appendResponseLine(`**Erro na execução:** ${err.message}`);
+        resolve();
+      });
+    });
   },
 });

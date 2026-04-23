@@ -1,16 +1,49 @@
 
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field
-from typing import List, Dict, Any, Optional
-from datetime import datetime
+import os
 import uuid
+import logging
+from datetime import datetime, timezone
+from typing import List, Dict, Any, Optional
+
+from fastapi import FastAPI, HTTPException, Depends, Header, WebSocket, WebSocketDisconnect
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from pydantic import BaseModel, Field
+from jose import jwt, JWTError
+
 from ..iota_council import IOTACouncil
 from .telemetry_processor import TelemetryProcessor
+from .gameplay_handler import GameplayHandler
+from .stream_gateway import stream_gateway
+
+# Security Configuration
+SECRET_KEY = os.environ.get("ARKHE_CORE_SECRET_KEY", "DEVELOPMENT_SECRET_INSECURE")
+ALGORITHM = "HS256"
+security = HTTPBearer()
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Arkhe(n) Forge API", version="0.1.0")
 council = IOTACouncil()
 telemetry_processor = TelemetryProcessor()
 gameplay_handler = GameplayHandler()
+
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Validates the JWT token and returns the user payload (APTS-HO-001)."""
+    token = credentials.credentials
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except JWTError:
+        raise HTTPException(status_code=403, detail="Invalid or expired token")
+
+async def get_current_game(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Validates the JWT token and returns the game_id."""
+    token = credentials.credentials
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload.get("game_id")
+    except JWTError:
+        raise HTTPException(status_code=403, detail="Invalid token")
 
 class IntentRequest(BaseModel):
     intent: str
@@ -60,9 +93,17 @@ class ZKReportRequest(BaseModel):
     proof: Dict[str, Any]
     public_inputs: Dict[str, Any]
 
+class GameplayEventRequest(BaseModel):
+    game_id: str
+    player_id: str
+    action: str
+    target: Dict[str, Any]
+
 @app.post("/deliberate", response_model=DeliberationResponse)
-async def deliberate(request: IntentRequest):
+async def deliberate(request: IntentRequest, user: Dict[str, Any] = Depends(get_current_user)):
+    """Sensitive governance endpoint secured via JWT (APTS-HO-001)."""
     try:
+        # Audit logs could use 'user' context here if needed
         result = await council.deliberate(request.intent)
         return result
     except Exception as e:
