@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {readdir, access} from 'node:fs/promises';
+import path from 'node:path';
+
 import {zod} from '../third_party/index.js';
 
 import {ToolCategory} from './categories.js';
@@ -69,7 +72,8 @@ export const mercuryBudgetStatus = definePageTool({
 
 export const mercuryListSkills = definePageTool({
   name: 'mercury_list_skills',
-  description: 'Mercury Agent: Lists all currently installed community and built-in skills.',
+  description:
+    'Mercury Agent: Lists all currently installed community and built-in skills.',
   annotations: {
     category: ToolCategory.AGENT,
     readOnlyHint: true,
@@ -78,13 +82,54 @@ export const mercuryListSkills = definePageTool({
   schema: {},
   handler: async (_request, response) => {
     response.appendResponseLine('### Mercury Installed Skills');
-    response.appendResponseLine('| Skill Name | Version | Category | Status |');
-    response.appendResponseLine('|------------|---------|----------|--------|');
-    response.appendResponseLine('| filesystem | 1.2.0 | system | core |');
-    response.appendResponseLine('| git-ops | 0.8.5 | workflow | active |');
-    response.appendResponseLine('| scheduler | 1.0.1 | system | active |');
-    response.appendResponseLine('| posthog-connector | 0.3.0 | analytics | standby |');
-    response.appendResponseLine('\n**Total**: 4 skills loaded. Use `install_skill` to add more.');
+    response.appendResponseLine('| Skill Name | Category | Status |');
+    response.appendResponseLine('|------------|----------|--------|');
+
+    const skillsDir = path.resolve(process.cwd(), 'skills');
+    let totalSkills = 0;
+
+    async function scanSkills(dir: string, category: string = '') {
+      let entries;
+      try {
+        entries = await readdir(dir, {withFileTypes: true});
+      } catch {
+        return;
+      }
+
+      for (const entry of entries) {
+        if (entry.isDirectory()) {
+          const fullPath = path.join(dir, entry.name);
+          const skillMdPath = path.join(fullPath, 'SKILL.md');
+          try {
+            await access(skillMdPath);
+            // Found a skill
+            const skillName = category
+              ? `${category}/${entry.name}`
+              : entry.name;
+            response.appendResponseLine(
+              `| ${skillName} | ${category || 'general'} | active |`,
+            );
+            totalSkills++;
+          } catch {
+            // Not a skill directory directly, maybe it has sub-categories (like cloud/)
+            if (!category) {
+              await scanSkills(fullPath, entry.name);
+            }
+          }
+        }
+      }
+    }
+
+    try {
+      await scanSkills(skillsDir);
+      response.appendResponseLine(
+        `\n**Total**: ${totalSkills} skills loaded. Use \`install_skill\` to add more.`,
+      );
+    } catch (err) {
+      response.appendResponseLine(
+        `\n**Error**: Failed to scan skills directory: ${err}`,
+      );
+    }
   },
 });
 
