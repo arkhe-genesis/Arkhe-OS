@@ -94,6 +94,7 @@
     "@streamdown/math": "^1.0.2",
     "@streamdown/mermaid": "^1.0.2",
     "@tailwindcss/vite": "^4.2.2",
+    "@trycua/cli": "^0.2.0",
     "@types/react": "^19.2.14",
     "@types/react-router-dom": "^5.3.3",
     "@types/three": "^0.183.1",

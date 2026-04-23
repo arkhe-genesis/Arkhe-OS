@@ -21,6 +21,7 @@ export enum ToolCategory {
   SANDBOX = 'sandbox',
   EVOSKILL = 'evoskill',
   MESHTASTIC = 'meshtastic',
+  CUA = 'cua',
 }
 
 export const labels = {
@@ -40,4 +41,5 @@ export const labels = {
   [ToolCategory.SANDBOX]: 'Microsandbox Protocols',
   [ToolCategory.EVOSKILL]: 'EvoSkill (Evolutionary Skill Induction)',
   [ToolCategory.MESHTASTIC]: 'Meshtastic Mesh Protocols',
+  [ToolCategory.CUA]: 'Cua Computer-Use Protocols',
 };
