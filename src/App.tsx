@@ -4,12 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Shield, Settings, Menu, Bell, Search, Info, Terminal, Video, Smartphone, Hammer, TrendingUp } from 'lucide-react';
+import { Shield, Settings, Menu, Bell, Search, Info, Terminal, Video, Smartphone, Hammer, TrendingUp, Play } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import React, { useState } from 'react';
 
 import AquiferSpectrogramPanel from './components/AquiferSpectrogramPanel';
 import ArkheCliPanel from './components/ArkheCliPanel';
+import ArkheGame from './components/ArkheGame';
 import ArkheGridSimulator from './components/ArkheGridSimulator';
 import ForgeStudioPanel from './components/ForgeStudioPanel';
 import ArkheTVPanel from './components/ArkheTVPanel';
@@ -55,7 +56,7 @@ import { useArkheSimulation } from './hooks/useArkheSimulation';
 
 export default function App() {
   const state = useArkheSimulation();
-  const [activePanel, setActivePanel] = useState<'simulation' | 'command' | 'intelligence' | 'network' | 'governance' | 'corvo' | 'enterprise' | 'bonsai' | 'neko' | 'dashboard' | 'forge' | 'spectra'>('simulation');
+  const [activePanel, setActivePanel] = useState<'simulation' | 'command' | 'intelligence' | 'network' | 'governance' | 'corvo' | 'enterprise' | 'bonsai' | 'neko' | 'dashboard' | 'forge' | 'spectra' | 'game'>('simulation');
   const [showTzinor, setShowTzinor] = useState(false);
   const [showTelevision, setShowTelevision] = useState(false);
   const [showVideoGen, setShowVideoGen] = useState(false);
@@ -75,6 +76,7 @@ export default function App() {
     { id: 'neko', label: 'Neko Browser', icon: Shield },
     { id: 'forge', label: 'A-Forge Studio', icon: Hammer },
     { id: 'spectra', label: 'Spectra Yield', icon: TrendingUp },
+    { id: 'game', label: 'Substrate 43', icon: Play },
   ];
 
   return (
@@ -320,6 +322,12 @@ export default function App() {
           { activePanel === 'spectra' && (
             <motion.div key="spectra" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               <SpectraYieldPanel spectra={state.spectra!} onClose={() => setActivePanel("simulation")} />
+            </motion.div>
+          )}
+
+          { activePanel === 'game' && (
+            <motion.div key="game" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <ArkheGame onClose={() => setActivePanel("simulation")} />
             </motion.div>
           )}
         </AnimatePresence>
