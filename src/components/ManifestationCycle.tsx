@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Brain, Network, GitMerge, Box, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Brain, Network, GitMerge, Box,  CheckCircle2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import React from 'react';
 

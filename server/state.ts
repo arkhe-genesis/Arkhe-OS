@@ -308,7 +308,7 @@ class TzinorStore {
             time: payload.originTime,
             embedding: payload.embedding,
             salience: 1.0
-        } as ContextNode);
+        });
         if (state.tzinor.fContext.length > 20) {
             const engram = state.tzinor.fContext.pop();
             if (engram) {
@@ -317,7 +317,7 @@ class TzinorStore {
                     consolidatedTime: Date.now() / 1000,
                     summaryHash: '0x' + Math.random().toString(16).substring(2),
                     resonanceWeight: 1.0
-                } as MemoryEngram);
+                });
             }
         }
     }

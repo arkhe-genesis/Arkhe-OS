@@ -18,8 +18,6 @@ import { createMathPlugin } from "@streamdown/math";
 import { mermaid } from "@streamdown/mermaid";
 import { X, Send, Square, Info, History } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Streamdown } from "streamdown";
-
 import { CrystallizationRitual } from '../ritual/prism-ritual.js';
 import { ChronicleVault } from '../storage/chroniclevault.js';
 
@@ -72,18 +70,18 @@ export default function BonsaiPrismPanel({ onClose }: BonsaiPrismPanelProps) {
               // Transformers.js progress can be based on percentage (0-100) or bytes
               // If total is provided, we use it for the ritual visualization
               if (total > 0) {
-                 (ritualRef.current as any).updateProgress(loaded);
+                 ritualRef.current.updateProgress(loaded);
               } else {
                  // Fallback to percentage-based update if total is unknown
                  const estimatedTotal = selectedModel.includes('1.7b') ? 290_000_000 : 1_200_000_000;
-                 (ritualRef.current as any).updateProgress((prog / 100) * estimatedTotal);
+                 ritualRef.current.updateProgress((prog / 100) * estimatedTotal);
               }
           }
           break;
         case 'ready':
           setStage('ready');
           if (ritualRef.current) {
-              (ritualRef.current as any).complete();
+              ritualRef.current.complete();
           }
           break;
         case 'error':
@@ -121,7 +119,7 @@ export default function BonsaiPrismPanel({ onClose }: BonsaiPrismPanelProps) {
 
     return () => {
       workerRef.current?.terminate();
-      (ritualRef.current as any)?.destroy();
+      ritualRef.current?.destroy();
     };
   }, [chronicle, messages, selectedModel]);
 

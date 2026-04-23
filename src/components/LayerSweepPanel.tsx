@@ -8,7 +8,7 @@
 import { Layers, Activity, Search, Target } from 'lucide-react';
 import React from 'react';
 
-type LayerSweepReport = any;
+import type { LayerSweepReport } from '../../server/types';
 
 import { Card } from './ui/Card';
 
@@ -35,7 +35,7 @@ const LayerSweepPanel: React.FC<LayerSweepPanelProps> = ({ report, onRunSweep })
         </div>
 
         <div className="h-24 flex items-end gap-0.5 border-b border-arkhe-border pb-1">
-          {report.coct_sweep.map((l: any, i: any) => (
+          {report.coct_sweep.map((l, i) => (
             <div
               key={i}
               className="bg-emerald-500/40 hover:bg-emerald-500 transition-colors flex-1"

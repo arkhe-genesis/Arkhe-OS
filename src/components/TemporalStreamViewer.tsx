@@ -49,7 +49,7 @@ export default function TemporalStreamViewer({ onClose }: TemporalStreamViewerPr
       // Adaptation events -> Coherence changes
       newPlayer.addEventListener('adaptation', () => {
         const tracks = newPlayer.getVariantTracks();
-        const activeTrack = tracks.find((t: { active: boolean, bandwidth: number }) => t.active);
+        const activeTrack = tracks.find((t) => t.active);
         if (activeTrack) {
           // Estimate coherence based on bandwidth
           const newCoherence = Math.min(1.0, activeTrack.bandwidth / 5000000);
@@ -78,7 +78,7 @@ export default function TemporalStreamViewer({ onClose }: TemporalStreamViewerPr
       // Using the official Shaka Project "Angel One" sci-fi asset for the temporal stream
       const manifestUri = 'https://storage.googleapis.com/shaka-demo-assets/angel-one/dash.mpd';
       
-      newPlayer.load(manifestUri).then(() => {
+      void newPlayer.load(manifestUri).then(() => {
         logger.info('The video has now been loaded!');
         if (videoRef.current) {
           videoRef.current.muted = true;
@@ -87,7 +87,7 @@ export default function TemporalStreamViewer({ onClose }: TemporalStreamViewerPr
             .catch((_e: unknown) => logger.error("Auto-play prevented"));
         }
         return null;
-      }).catch((e: { code: number }) => {
+      }).catch((e: any) => {
         logger.error('Error loading video: ' + e);
         setError(`LOAD_ERR_${e?.code || 'UNKNOWN'}`);
         return null;
@@ -112,7 +112,7 @@ export default function TemporalStreamViewer({ onClose }: TemporalStreamViewerPr
   const toggleVrMode = () => {
     if (player) {
       const newVrMode = !vrMode;
-      (player as { configure: (config: unknown) => void }).configure({
+      (player as any).configure({
         vr: {
           motionPrediction: newVrMode,
         }
@@ -176,7 +176,7 @@ export default function TemporalStreamViewer({ onClose }: TemporalStreamViewerPr
     }
   };
 
-  const formatBitrate = (bits: number) => {
+  const formatBitrate = (bits: number | undefined) => {
     if (!bits) {return '0 Mbps';}
     return (bits / 1000000).toFixed(2) + ' Mbps';
   };

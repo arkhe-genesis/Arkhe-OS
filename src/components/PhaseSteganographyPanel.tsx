@@ -31,13 +31,13 @@ export default function PhaseSteganographyPanel({ onClose }: PhaseSteganographyP
       const data = await response.json();
       
       // Simulate streaming logs
-      for (let i = 0; i < data.logs.length; i++) {
+      for (const log of (data.logs as string[])) {
         await new Promise(resolve => setTimeout(resolve, 500));
-        setLogs(prev => [...prev, data.logs[i]]);
+        setLogs(prev => [...prev, log]);
       }
       
-      setSignature(data.signature);
-    } catch (error) {
+      setSignature(data.signature as string);
+    } catch (_error) {
       setLogs(prev => [...prev, "🜏 [ERRO] Falha na comunicação com o nó fantasma."]);
     } finally {
       setIsExecuting(false);

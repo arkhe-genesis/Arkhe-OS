@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """
-audit_protocol.py — Protocolo de auditoria híbrida expandido
-Usa funções de hash do Moonlab (SHA3-256, SHAKE128, SHAKE256) para integridade
+audit_protocol.py — Protocolo de auditoria híbrida expandido v2.7
+Usa funções de hash do Moonlab (SHA3-256) para integridade
+Integra a Métrica de Ciccarese-K para curvatura de wormhole
 """
 
 import json
 import hashlib
+import math
 from dataclasses import dataclass, asdict
 from typing import Dict, List, Optional
 
@@ -20,25 +22,44 @@ class MoonlabMock:
 
 ml = MoonlabMock()
 
+def compute_wormhole_curvature(s_value: float) -> float:
+    """Calcula K_ij = (S^2 - 4) / (8 - S^2)"""
+    if s_value < 2.0 or s_value > 2.82842712474619 + 1e-9:
+        return -1.0
+    s_value = min(s_value, 2.82842712474619)
+    s2 = s_value * s_value
+    diff = 8.0 - s2
+    if diff < 1e-15:
+        return float('inf')
+    return (s2 - 4.0) / diff
+
 @dataclass
 class EngineeringMetrics:
     """Métricas de engenharia quântica (mensuráveis)"""
-    s_value: float  # Violação Bell-CHSH ou Mermin-Klyshko
+    s_value: float  # Violação Bell-CHSH
     gate_fidelity: float  # Fidelidade de porta de 2 qubits
     logical_error_rate: float  # Taxa de erro lógico por ciclo
     ghz_fidelity: float  # Fidelidade do estado GHZ7
-    coherence_time_ms: float  # Tempo de coerência efetivo
+    wormhole_curvature: float # K_ij (Ciccarese-K)
 
     def normalize_s_value(self) -> float:
         """Normaliza S-value para [0, 1] (clássico=0, quântico máximo=1)"""
-        # For n=2: Limite clássico: 2.0, Limite Tsirelson: 2.828
-        # For demo, we assume 2.828 is max
         return (self.s_value - 2.0) / (2 * 2**0.5 - 2.0)
 
     def compute_physical_score(self) -> float:
-        """Calcula score físico composto [0, 1]"""
+        """Calcula score físico composto [0, 1] v2.7"""
         s_norm = max(0.0, min(1.0, self.normalize_s_value()))
-        return s_norm * self.gate_fidelity * (1 - self.logical_error_rate) * self.ghz_fidelity
+
+        # k_factor satura em K=10
+        k_factor = min(self.wormhole_curvature / 10.0, 1.0) if self.wormhole_curvature >= 0 else 0
+
+        score_fisico = s_norm * self.gate_fidelity * (1 - self.logical_error_rate) * self.ghz_fidelity * k_factor
+
+        # Anomalia crítica: K < 3
+        if self.wormhole_curvature < 3.0:
+            score_fisico = 0
+
+        return score_fisico
 
 @dataclass
 class QuartzTestimony:
@@ -110,34 +131,22 @@ class HybridAuditor:
 
     def generate_audit_hash(self, result: HybridAuditResult) -> str:
         """Gera hash de auditoria usando SHA3-256 do Moonlab"""
-        # Serializar resultado (excluindo o próprio hash)
         data = result.to_dict()
         data.pop('audit_hash', None)
         json_data = json.dumps(data, sort_keys=True).encode()
-
-        # Calcular SHA3-256
         return ml.sha3_256(json_data).hex()
-
-    def verify_audit_integrity(self, result: HybridAuditResult) -> bool:
-        """Verifica integridade de um resultado de auditoria"""
-        expected_hash = result.audit_hash
-        computed_hash = self.generate_audit_hash(result)
-        return expected_hash == computed_hash
 
     def execute_audit(
         self,
         engineering: EngineeringMetrics,
-        quartz: QuartzTestimony,
-        operation_id: str
+        quartz: QuartzTestimony
     ) -> HybridAuditResult:
         """Executa auditoria híbrida completa"""
-        # Calcular scores
         physical_score = engineering.compute_physical_score()
         quartz_score = quartz.compute_quartz_score()
         fusion_score = self.compute_fusion_score(physical_score, quartz_score)
         classification = self.classify_result(fusion_score)
 
-        # Criar resultado preliminar
         result = HybridAuditResult(
             engineering_metrics=engineering,
             quartz_testimony=quartz,
@@ -145,32 +154,25 @@ class HybridAuditor:
             quartz_score=quartz_score,
             fusion_score=fusion_score,
             classification=classification,
-            audit_hash=""  # Será preenchido abaixo
+            audit_hash=""
         )
 
-        # Gerar hash de auditoria
         result.audit_hash = self.generate_audit_hash(result)
-
-        # Registrar no log
         self.audit_log.append(result)
-
         return result
 
-    def generate_audit_report(self, output_format: str = "ascii") -> str:
-        """Gera relatório de auditoria em formato ASCII ou JSON"""
-        if output_format == "json":
-            return json.dumps([r.to_dict() for r in self.audit_log], indent=2)
-
-        # Formato ASCII
+    def generate_audit_report(self) -> str:
+        """Gera relatório de auditoria em formato ASCII"""
         lines = [
             "╔════════════════════════════════════════════════════╗",
-            "║         RELATÓRIO DE AUDITORIA HÍBRIDA            ║",
+            "║    CATEDRAL GHZ7 — RELATÓRIO DE AUDITORIA v2.7     ║",
             "╠════════════════════════════════════════════════════╣"
         ]
 
         for i, result in enumerate(self.audit_log, 1):
             status_icon = "✓" if result.classification == "VALID" else "⚠" if result.classification == "WARNING" else "✗"
             lines.append(f"║ [{i}] {status_icon} {result.classification:8} | Fusão: {result.fusion_score:.3f} │")
+            lines.append(f"║     K-Curv: {result.engineering_metrics.wormhole_curvature:6.2f} | Bell S: {result.engineering_metrics.s_value:.3f} │")
             lines.append(f"║     Físico: {result.physical_score:.3f} | Quartzo: {result.quartz_score:.3f} │")
             lines.append(f"║     Hash: {result.audit_hash[:32]}... │")
             lines.append("║" + "─" * 48 + "║")
@@ -180,41 +182,28 @@ class HybridAuditor:
 
 # Exemplo de uso
 def demo_audit_protocol():
-    """Demonstra o protocolo de auditoria híbrida"""
     auditor = HybridAuditor()
 
-    # Simular métricas de engenharia
+    s_val = 2.81
+    k_curv = compute_wormhole_curvature(s_val)
+
     engineering = EngineeringMetrics(
-        s_value=2.81,  # Próximo do limite Tsirelson
-        gate_fidelity=0.999,
-        logical_error_rate=1e-11,
-        ghz_fidelity=0.96,
-        coherence_time_ms=15000
+        s_value=s_val,
+        gate_fidelity=0.9992,
+        logical_error_rate=8.3e-12,
+        ghz_fidelity=0.967,
+        wormhole_curvature=k_curv
     )
 
-    # Simular testemunhos de quartzo
     quartz = QuartzTestimony(
         narrative_coherence=0.94,
-        semantic_resonance=0.91,
+        semantic_resonance=0.89,
         observer_stability=0.97,
-        value_alignment=0.92
+        value_alignment=0.91
     )
 
-    # Executar auditoria
-    result = auditor.execute_audit(engineering, quartz, "VQC_JUDGMENT_001")
-
-    # Exibir resultado
+    auditor.execute_audit(engineering, quartz)
     print(auditor.generate_audit_report())
 
-    # Verificar integridade
-    if auditor.verify_audit_integrity(result):
-        print("\n[✓] Integridade da auditoria verificada (SHA3-256)")
-    else:
-        print("\n[✗] Falha na verificação de integridade!")
-
-    return result
-
 if __name__ == "__main__":
-    import sys
     demo_audit_protocol()
-    sys.exit(0)

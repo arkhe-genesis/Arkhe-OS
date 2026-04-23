@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Satellite, Globe, Cpu, Layers, Radio } from 'lucide-react';
+import { Satellite,  Layers, Radio } from 'lucide-react';
 import React from 'react';
 
 export interface OrbitalState {

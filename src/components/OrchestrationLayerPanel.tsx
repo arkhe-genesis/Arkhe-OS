@@ -6,7 +6,7 @@
  */
 
 import { Network, Cpu, Database, Activity, GitBranch, Terminal } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 interface EcosystemNode {
   id: string;

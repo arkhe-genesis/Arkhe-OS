@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { X, Activity, Shield, Eye, MousePointer2, AlertTriangle, CheckCircle2, Lock, Fingerprint } from 'lucide-react';
+import { X, Activity, Shield,  Eye, MousePointer2, AlertTriangle, CheckCircle2, Lock, Fingerprint } from 'lucide-react';
 import React, { useRef, useEffect, useState } from 'react';
 
 const VERTEX_SHADER = `#version 300 es
@@ -215,12 +215,12 @@ export default function ArkheOntologyVision({ onClose }: { onClose: () => void }
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(telemetry)
                 });
-            } catch {
-                // Ignore telemetry errors
-            }
+            } catch (_err) {}
         };
 
-        const interval = setInterval(() => { void sendTelemetry(); }, 1000);
+        const interval = setInterval(() => {
+          void sendTelemetry();
+        }, 1000);
         return () => clearInterval(interval);
     }, [sessionId]);
 
@@ -264,7 +264,7 @@ export default function ArkheOntologyVision({ onClose }: { onClose: () => void }
                     message: `FALHA NA PROVA ZK. O recurso está em conformidade formal.`
                 });
             }
-        } catch {
+        } catch (_err) {
             setNotification({type: 'error', message: 'Erro no protocolo de privacidade ZK.'});
         } finally {
             setIsProving(false);

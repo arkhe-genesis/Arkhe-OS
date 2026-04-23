@@ -8,8 +8,6 @@
 import { Activity, Shield, Zap, Cpu, Heart, Fingerprint, Smile, Users, Radio } from 'lucide-react';
 import React, { useState } from 'react';
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -269,7 +267,7 @@ const CorvoNoirDashboard: React.FC = () => {
 
               <div className="bg-neutral-900 p-3 rounded border border-neutral-800 h-32 overflow-hidden relative">
                  <div className="flex gap-1 h-full items-end">
-                   {state.sensors.map((s: any) => (
+                   {state.sensors.map((s) => (
                      <div
                        key={s.id}
                        className={`w-1 transition-all ${s.status === 'attacked' ? 'bg-red-500 animate-pulse' : s.status === 'isolated' ? 'bg-neutral-700' : 'bg-emerald-500/40'}`}

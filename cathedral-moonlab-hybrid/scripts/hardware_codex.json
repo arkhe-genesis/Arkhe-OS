@@ -1,0 +1,40 @@
+[
+  {
+    "generation": 0,
+    "params": [
+      0.2033,
+      0.6362,
+      0.6908,
+      0.2033,
+      0.6362,
+      0.6908,
+      0.3679
+    ],
+    "fitness": 2.649991,
+    "k_factor_target": 4.42,
+    "bounty_multiplier": 2.27,
+    "audit_threshold": 0.904,
+    "quantum_signature": "134ba094e2c1e0de8c7755cc4dde38a46ed1f0e1b89d304b12d8e5059bdd86ba",
+    "prev_merkle_root": "9ed925dca5b062753a66733f80393c0fb888605d25f37fc7681904ab3abfce5f",
+    "merkle_root": "4539e467232d3f1a493f7b325b964a757a6112df277f46d0bdca436c2628cb51"
+  },
+  {
+    "generation": 1,
+    "params": [
+      0.2033,
+      0.6362,
+      0.6908,
+      0.2033,
+      0.6362,
+      0.6908,
+      0.3679
+    ],
+    "fitness": 10.976759,
+    "k_factor_target": 4.42,
+    "bounty_multiplier": 2.27,
+    "audit_threshold": 0.904,
+    "quantum_signature": "4ce83281539d415b2d6ed039f0b19ebf7f1f6297e33f7bee15ece38b2053d178",
+    "prev_merkle_root": "4539e467232d3f1a493f7b325b964a757a6112df277f46d0bdca436c2628cb51",
+    "merkle_root": "b68f68ea3a9db7453986d557ce284a0009fc6490c2cda1688f1f70fe0fc0867c"
+  }
+]

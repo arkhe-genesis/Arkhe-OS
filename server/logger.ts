@@ -41,7 +41,7 @@ logs.setGlobalLoggerProvider(loggerProvider);
 const otelLogger = logs.getLogger('arkhe-logger');
 
 export const logger = {
-  info: (message: string, attributes?: AnyValueMap) => {
+  info: (message: string, attributes?: Record<string, unknown>) => {
     console.log(`[INFO] ${message}`, attributes || '');
     otelLogger.emit({
       severityNumber: SeverityNumber.INFO,
@@ -50,7 +50,7 @@ export const logger = {
       attributes,
     });
   },
-  warn: (message: string, attributes?: AnyValueMap) => {
+  warn: (message: string, attributes?: Record<string, unknown>) => {
     console.warn(`[WARN] ${message}`, attributes || '');
     otelLogger.emit({
       severityNumber: SeverityNumber.WARN,
@@ -59,7 +59,7 @@ export const logger = {
       attributes,
     });
   },
-  error: (message: string, attributes?: AnyValueMap) => {
+  error: (message: string, attributes?: Record<string, unknown>) => {
     console.error(`[ERROR] ${message}`, attributes || '');
     otelLogger.emit({
       severityNumber: SeverityNumber.ERROR,
@@ -68,7 +68,7 @@ export const logger = {
       attributes,
     });
   },
-  debug: (message: string, attributes?: AnyValueMap) => {
+  debug: (message: string, attributes?: Record<string, unknown>) => {
     console.debug(`[DEBUG] ${message}`, attributes || '');
     otelLogger.emit({
       severityNumber: SeverityNumber.DEBUG,

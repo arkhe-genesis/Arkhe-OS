@@ -94,9 +94,9 @@ export default function VelxioEmulationPanel({ onClose }: VelxioEmulationPanelPr
           requiredCoherence: 0.95
         })
       });
-      const task = await res.json();
-      addLog(`Task created in Arkhe Orchestrator: ${(task as { task_id: string }).task_id}`);
-    } catch {
+      const task = await res.json() as { task_id: string };
+      addLog(`Task created in Arkhe Orchestrator: ${task.task_id}`);
+    } catch (_e) {
       addLog('HIL: Local execution fallback active.');
     }
 

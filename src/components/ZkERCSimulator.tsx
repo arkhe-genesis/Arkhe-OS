@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { X, Activity, Shield, Key } from 'lucide-react';
-import React, { useState, useEffect, useRef } from 'react';
+import { X, Shield } from 'lucide-react';
+import React, { useState } from 'react';
 
 interface ZkERCSimulatorProps {
   onClose: () => void;

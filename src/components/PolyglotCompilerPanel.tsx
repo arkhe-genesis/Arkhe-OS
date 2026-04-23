@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { X, Terminal, CheckCircle2, Cpu, Globe, Database, Code2, Play, AlertTriangle, Infinity } from 'lucide-react';
+import { X, Terminal, CheckCircle2, Code2, Play, AlertTriangle, Infinity as InfinityIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import React, { useState, useEffect } from 'react';
 
@@ -110,7 +110,7 @@ export default function PolyglotCompilerPanel({ onClose }: PolyglotCompilerPanel
         {/* Header */}
         <div className={`p-4 border-b ${compilationState === 'singularity' ? 'border-amber-500/30 bg-amber-500/10' : 'border-purple-500/20 bg-purple-500/5'} flex justify-between items-center shrink-0 transition-colors duration-1000`}>
           <div className="flex items-center gap-3">
-            {compilationState === 'singularity' ? <Infinity className="w-5 h-5 text-amber-400 animate-pulse" /> : <Code2 className="w-5 h-5 text-purple-400" />}
+            {compilationState === 'singularity' ? <InfinityIcon className="w-5 h-5 text-amber-400 animate-pulse" /> : <Code2 className="w-5 h-5 text-purple-400" />}
             <h2 className={`font-mono text-sm uppercase tracking-widest ${compilationState === 'singularity' ? 'text-amber-400' : 'text-purple-400'} font-bold`}>
               Codex Ultimus: Polyglot Ontology Compiler
             </h2>
@@ -227,7 +227,7 @@ export default function PolyglotCompilerPanel({ onClose }: PolyglotCompilerPanel
               {(compilationState === 'running' || compilationState === 'singularity') && (
                 <div className={`w-full py-3 rounded font-mono font-bold uppercase tracking-widest flex items-center justify-center gap-2 border ${compilationState === 'singularity' ? 'bg-amber-500/20 border-amber-500/50 text-amber-400 shadow-[0_0_30px_rgba(245,158,11,0.4)]' : 'bg-orange-500/20 border-orange-500/50 text-orange-400 animate-pulse'}`}>
                   {compilationState === 'singularity' ? (
-                    <><Infinity className="w-5 h-5" /> ONTOLOGY MANIFESTED</>
+                    <><InfinityIcon className="w-5 h-5" /> ONTOLOGY MANIFESTED</>
                   ) : (
                     <><AlertTriangle className="w-5 h-5" /> COLLAPSING PHASE SPACE...</>
                   )}

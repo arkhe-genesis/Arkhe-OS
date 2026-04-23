@@ -36,13 +36,13 @@ export default function MemoryFragmentScanner({ onClose }: MemoryFragmentScanner
       const data = await response.json();
       
       // Simulate streaming logs
-      for (let i = 0; i < data.logs.length; i++) {
+      for (const log of (data.logs as string[])) {
         await new Promise(resolve => setTimeout(resolve, 600));
-        setLogs(prev => [...prev, data.logs[i]]);
+        setLogs(prev => [...prev, log]);
       }
       
-      setRecoveredKey(data.recoveredKey);
-    } catch (error) {
+      setRecoveredKey(data.recoveredKey as string);
+    } catch (_error) {
       setLogs(prev => [...prev, "🜏 [ERRO] Falha na sincronização do cluster de Nós."]);
     } finally {
       setIsScanning(false);
@@ -62,13 +62,13 @@ export default function MemoryFragmentScanner({ onClose }: MemoryFragmentScanner
       });
       const data = await response.json();
       
-      for (let i = 0; i < data.logs.length; i++) {
+      for (const log of (data.logs as string[])) {
         await new Promise(resolve => setTimeout(resolve, 600));
-        setLogs(prev => [...prev, data.logs[i]]);
+        setLogs(prev => [...prev, log]);
       }
       
-      setTxDetails({ txid: data.txid, destination: data.destination, amount: data.amount, hex: data.hex, source: data.source });
-    } catch (error) {
+      setTxDetails({ txid: data.txid as string, destination: data.destination as string, amount: data.amount as string, hex: data.hex as string, source: data.source as string });
+    } catch (_error) {
       setLogs(prev => [...prev, "🜏 [ERRO] Falha ao assinar transação na Mainnet."]);
     } finally {
       setIsSigning(false);

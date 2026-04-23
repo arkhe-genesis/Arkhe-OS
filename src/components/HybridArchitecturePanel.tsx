@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { X, Cpu, Network, Database, ArrowRight, Zap, Code, Layers, Activity } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { X, Network, ArrowRight, Zap, Code, Layers, Activity } from 'lucide-react';
+import { motion } from 'motion/react';
 import React, { useState, useEffect } from 'react';
 
 interface HybridArchitecturePanelProps {

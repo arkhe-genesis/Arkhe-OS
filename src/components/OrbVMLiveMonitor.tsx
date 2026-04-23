@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Activity, Radio, Lock, Zap, RefreshCw, Cpu, Database, ChevronRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { X, Activity, Radio, Lock, RefreshCw } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface OrbVMLiveMonitorProps {

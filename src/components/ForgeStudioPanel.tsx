@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Hammer, X, Terminal, Cpu, Zap, Activity, MessageSquare, Play, ShieldAlert, Code } from 'lucide-react';
+import { Hammer, X, Terminal, Zap, Activity, Play, Code } from 'lucide-react';
 import React, { useState } from 'react';
 
 import { Card } from './ui/Card';

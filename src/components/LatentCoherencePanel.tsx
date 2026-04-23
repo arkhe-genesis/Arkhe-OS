@@ -8,8 +8,7 @@
 import { Brain, FlaskConical, Play } from 'lucide-react';
 import React from 'react';
 
-// Type mocked
-type HelioState = any; type LatentCoherenceResults = any; type SolarEntropyReport = any; type ThermodynamicTrainingReport = any;
+import type { LatentCoherenceResults } from '../../server/types';
 
 import { Card } from './ui/Card';
 

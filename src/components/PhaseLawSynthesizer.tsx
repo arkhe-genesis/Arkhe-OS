@@ -6,7 +6,7 @@
  */
 
 import { X, Zap, Activity, Info, Save, RotateCcw, Layers, Clock } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import React, { useState, useEffect } from 'react';
 
 interface PhaseLawSynthesizerProps {

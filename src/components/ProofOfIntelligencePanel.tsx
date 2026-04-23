@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Brain, Share2, Shield, Zap, Activity, GitCommit, Search, CheckCircle2, TrendingUp, AlertCircle, X } from 'lucide-react';
+import { Brain, Share2, Shield, Zap, Activity, GitCommit, CheckCircle2, TrendingUp, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import React, { useState, useEffect } from 'react';
 

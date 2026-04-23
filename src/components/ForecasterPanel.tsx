@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { AlertTriangle, TrendingDown, Bell, ShieldAlert } from 'lucide-react';
+import {  TrendingDown, Bell, ShieldAlert } from 'lucide-react';
 import React from 'react';
 
 import type { SimulationState } from '../../server/types';

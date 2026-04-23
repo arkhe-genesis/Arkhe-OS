@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Map, Key, Unlock, Shield, Activity, Database, Globe } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import { Key, Unlock, Shield, Activity, Database, Globe } from 'lucide-react';
+import React, { useState } from 'react';
 
 interface GeoKeyDecoderProps {
   onClose: () => void;

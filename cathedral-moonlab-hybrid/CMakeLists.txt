@@ -22,6 +22,10 @@ set(CATEDRAL_SRCS
     src/catedral/quartz_seal.c
     src/catedral/codex.c
     src/catedral/ghz7_mesh.c
+    src/catedral/wormhole_metric.c
+    src/catedral/meta_controller_quantum_kernel.c
+    src/catedral/dbus_interface.c
+    src/catedral/quantum_scheduler.c
 )
 
 set(BRIDGE_SRCS
@@ -36,11 +40,22 @@ add_executable(cathedral_main
     ${BRIDGE_SRCS}
 )
 
-target_link_libraries(cathedral_main m ${MPI_LIBS})
+target_link_libraries(cathedral_main m pthread ${MPI_LIBS})
+
+# Daemon executable
+add_executable(cathedrald
+    src/cathedral_daemon.c
+    ${CATEDRAL_SRCS}
+    ${BRIDGE_SRCS}
+)
+target_link_libraries(cathedrald m pthread ${MPI_LIBS})
 
 # Tests
 add_executable(test_ghz7_preparation tests/test_ghz7_preparation.c ${CATEDRAL_SRCS} ${BRIDGE_SRCS})
-target_link_libraries(test_ghz7_preparation m ${MPI_LIBS})
+target_link_libraries(test_ghz7_preparation m pthread ${MPI_LIBS})
 
 add_executable(test_hybrid_audit tests/test_hybrid_audit.c ${CATEDRAL_SRCS} ${BRIDGE_SRCS})
-target_link_libraries(test_hybrid_audit m ${MPI_LIBS})
+target_link_libraries(test_hybrid_audit m pthread ${MPI_LIBS})
+
+add_executable(test_ciccarese_k tests/test_ciccarese_k.c ${CATEDRAL_SRCS} ${BRIDGE_SRCS})
+target_link_libraries(test_ciccarese_k m pthread ${MPI_LIBS})

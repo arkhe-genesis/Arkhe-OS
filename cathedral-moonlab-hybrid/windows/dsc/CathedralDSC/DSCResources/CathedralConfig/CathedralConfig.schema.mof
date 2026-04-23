@@ -1,0 +1,9 @@
+[ClassVersion("1.0.0"), FriendlyName("CathedralConfig")]
+class CathedralConfig : OMI_BaseResource
+{
+    [Key] String ConfigPath;
+    [Write] Double AuditThreshold;
+    [Write] Double KFactorTarget;
+    [Write] Uint32 MaxMemoryMB;
+    [Write] Boolean EnforceQuarantine;
+};

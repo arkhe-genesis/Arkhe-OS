@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Shield, Zap, AlertTriangle, CheckCircle2, X, Clock } from 'lucide-react';
+import { Shield, Zap,  Clock } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 
 import type { RamseyPendingAction } from '../../server/types';

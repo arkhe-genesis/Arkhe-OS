@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Shield, Cpu, Code, Activity, BarChart, Zap, Globe, Lock, Brain, Database, Network, Server, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { Shield, Code, Activity, BarChart, Globe, Lock, Brain, Network, X } from 'lucide-react';
+import { motion } from 'motion/react';
 import React from 'react';
 
 import type { EnterpriseSubagentState } from '../../server/types';

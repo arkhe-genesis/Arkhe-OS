@@ -52,7 +52,9 @@ export default function AgentManagementPanel() {
 
   useEffect(() => {
     void fetchData();
-    const interval = setInterval(() => { void fetchData(); }, 2000);
+    const interval = setInterval(() => {
+      void fetchData();
+    }, 2000);
     return () => clearInterval(interval);
   }, []);
 
