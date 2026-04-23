@@ -32,6 +32,7 @@ from typing import Any, Dict, List, Optional
 from catedrald_safira import SapphireScaffold, inject_sapphire_into_core
 from catedrald_diamante import NVCenter, inject_diamond_into_core
 from catedrald_bio import BioScaffold, inject_bio_into_core
+from graphene_resonator import GrapheneSubstrate, inject_graphene_into_core
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # DETECÇÃO DE DEPENDÊNCIAS
@@ -408,6 +409,7 @@ class CatedralCore:
         self.sapphire = inject_sapphire_into_core(self)
         self.diamond = inject_diamond_into_core(self)
         self.bio = inject_bio_into_core(self)
+        self.graphene = inject_graphene_into_core(self)
         self._running = False
         self._heartbeat_thread: Optional[threading.Thread] = None
 
@@ -439,6 +441,7 @@ class CatedralCore:
                 "sapphire": self.sapphire.to_dict(),
                 "diamond": self.diamond.to_dict(),
                 "bio": self.bio.to_dict(),
+                "graphene": self.graphene.to_dict(),
                 "timestamp": datetime.utcnow().isoformat() + "Z",
             }
 
@@ -672,6 +675,12 @@ class CatedralCLI:
                 table.add_row("Substrato 28 (Bio)", f"{bio.get('material', '?')}")
                 table.add_row("Bio Homeostase", f"{bio.get('homeostase', 0):.4f}")
 
+            graphene = state.get('graphene', {})
+            if graphene:
+                table.add_row("Substrato Graphene", f"{graphene.get('material', '?')}")
+                table.add_row("Graphene Clock", f"{graphene.get('axon_frequency', 0):.2f} Hz")
+                table.add_row("Valley Key Hash", f"{graphene.get('valley_key_hash', '?')}")
+
             table.add_row("Timestamp", state.get('timestamp', '?'))
             self.console.print(table)
         else:
@@ -858,6 +867,11 @@ class CatedralCLI:
                     bio = state.get('bio', {})
                     if bio:
                         left_table.add_row("Bio (Sub 28)", f"{bio.get('homeostase', 0):.3f}")
+
+                    graphene = state.get('graphene', {})
+                    if graphene:
+                        left_table.add_row("Graphene Clock", f"{graphene.get('axon_frequency', 0):.2f} Hz")
+                        left_table.add_row("Graphene Anomaly", f"{graphene.get('anomaly_score', 0):.4f}")
 
                     left_table.add_row("QZ Total", f"{state.get('bounty_total_qz', 0):.2f}")
 
