@@ -18,8 +18,8 @@ interface TemporalStreamViewerProps {
 
 export default function TemporalStreamViewer({ onClose }: TemporalStreamViewerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [player, setPlayer] = useState<any>(null);
-  const [stats, setStats] = useState<any>({});
+  const [player, setPlayer] = useState<unknown>(null);
+  const [stats, setStats] = useState<Record<string, unknown>>({});
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -82,33 +82,37 @@ export default function TemporalStreamViewer({ onClose }: TemporalStreamViewerPr
         logger.info('The video has now been loaded!');
         if (videoRef.current) {
           videoRef.current.muted = true;
-          void videoRef.current.play().then(() => setIsPlaying(true)).catch(e => logger.error("Auto-play prevented: " + e));
+          void videoRef.current.play()
+            .then(() => setIsPlaying(true))
+            .catch((_e: unknown) => logger.error("Auto-play prevented"));
         }
         return null;
-      }).catch((e: unknown) => {
+      }).catch((e: any) => {
         logger.error('Error loading video: ' + e);
-        setError(`LOAD_ERR_${e.code}`);
+        setError(`LOAD_ERR_${e?.code || 'UNKNOWN'}`);
         return null;
       });
 
       const statTimer = setInterval(() => {
-        setStats(newPlayer.getStats());
+        setStats(newPlayer.getStats() as Record<string, unknown>);
       }, 1000);
 
       return () => {
         clearInterval(statTimer);
-        newPlayer.destroy();
+        void newPlayer.destroy();
       };
     } else {
       setError('BROWSER_UNSUPPORTED');
     }
-    return () => {};
+    return () => {
+      logger.info("TemporalStreamViewer cleanup");
+    };
   }, [coherence]);
 
   const toggleVrMode = () => {
     if (player) {
       const newVrMode = !vrMode;
-      player.configure({
+      (player as any).configure({
         vr: {
           motionPrediction: newVrMode,
         }
@@ -151,7 +155,7 @@ export default function TemporalStreamViewer({ onClose }: TemporalStreamViewerPr
       if (isPlaying) {
         videoRef.current.pause();
       } else {
-        videoRef.current.play();
+        void videoRef.current.play();
       }
       setIsPlaying(!isPlaying);
     }
@@ -167,7 +171,7 @@ export default function TemporalStreamViewer({ onClose }: TemporalStreamViewerPr
   const toggleFullscreen = () => {
     if (videoRef.current) {
       if (videoRef.current.requestFullscreen) {
-        videoRef.current.requestFullscreen();
+        void videoRef.current.requestFullscreen();
       }
     }
   };
@@ -246,7 +250,7 @@ export default function TemporalStreamViewer({ onClose }: TemporalStreamViewerPr
                   
                   <div className="flex items-center gap-2 text-xs font-mono text-cyan-400/70 ml-2">
                     <Activity className="w-4 h-4" />
-                    {stats.width}x{stats.height}
+                    {stats.width as number}x{stats.height as number}
                   </div>
                   
                   <button onClick={toggleFullscreen} className="text-white hover:text-cyan-400 transition-colors ml-2">
@@ -268,11 +272,11 @@ export default function TemporalStreamViewer({ onClose }: TemporalStreamViewerPr
               <div className="grid grid-cols-2 gap-2">
                 <div className="bg-[#111214] border border-arkhe-border rounded p-2">
                   <div className="text-[9px] font-mono text-arkhe-muted uppercase">Bandwidth</div>
-                  <div className="text-xs font-mono text-cyan-400">{formatBitrate(stats.estimatedBandwidth)}</div>
+                  <div className="text-xs font-mono text-cyan-400">{formatBitrate(stats.estimatedBandwidth as number)}</div>
                 </div>
                 <div className="bg-[#111214] border border-arkhe-border rounded p-2">
                   <div className="text-[9px] font-mono text-arkhe-muted uppercase">Resolution</div>
-                  <div className="text-xs font-mono text-cyan-400">{stats.width || 0}x{stats.height || 0}</div>
+                  <div className="text-xs font-mono text-cyan-400">{(stats.width as number) || 0}x{(stats.height as number) || 0}</div>
                 </div>
                 <div className="bg-[#111214] border border-arkhe-border rounded p-2">
                   <div className="text-[9px] font-mono text-arkhe-muted uppercase">Coherence</div>
@@ -288,7 +292,7 @@ export default function TemporalStreamViewer({ onClose }: TemporalStreamViewerPr
                 <div className="text-[10px] font-mono text-arkhe-muted uppercase mb-2">Perception Layer Status</div>
                 <div className="flex justify-between items-center border-b border-arkhe-border/50 pb-1">
                   <span className="text-[10px] font-mono text-arkhe-text">DASH Stream</span>
-                  <span className="text-[10px] font-mono text-cyan-400">{stats.streamBandwidth ? formatBitrate(stats.streamBandwidth) : 'Auto'}</span>
+                  <span className="text-[10px] font-mono text-cyan-400">{stats.streamBandwidth ? formatBitrate(stats.streamBandwidth as number) : 'Auto'}</span>
                 </div>
                 <div className="flex justify-between items-center border-b border-arkhe-border/50 pb-1">
                   <span className="text-[10px] font-mono text-arkhe-text">VR Exploration</span>

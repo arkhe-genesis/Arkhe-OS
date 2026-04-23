@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 from typing import List, Dict, Any, Optional
 
 from fastapi import FastAPI, HTTPException, Depends, Header, WebSocket, WebSocketDisconnect
+from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, Field
 from jose import jwt, JWTError
@@ -93,11 +94,15 @@ class ZKReportRequest(BaseModel):
     proof: Dict[str, Any]
     public_inputs: Dict[str, Any]
 
-class GameplayEventRequest(BaseModel):
+class GameplayTarget(BaseModel):
+    type: str
+    data: Dict[str, Any]
+
+class GameplayEvent(BaseModel):
     game_id: str
     player_id: str
     action: str
-    target: Dict[str, Any]
+    target: GameplayTarget
 
 @app.post("/deliberate", response_model=DeliberationResponse)
 async def deliberate(request: IntentRequest, user: Dict[str, Any] = Depends(get_current_user)):
@@ -152,14 +157,17 @@ async def post_visual_telemetry(telemetry: VisualTelemetryRequest):
 
 @app.post("/api/v1/gameplay/event")
 async def gameplay_event(
-    event: GameplayEventRequest,
+    event: GameplayEvent,
     x_arkhe_async: Optional[bool] = Header(None, alias="X-Arkhe-Async"),
     game_id: str = Depends(get_current_game)
 ):
     try:
         if x_arkhe_async:
             task_id = str(uuid.uuid4())
-            return HTTPException(status_code=202, detail={"task_id": task_id, "status": "pending"})
+            return JSONResponse(
+                status_code=202,
+                content={"task_id": task_id, "status": "pending"}
+            )
 
         # Verify event's game_id matches token's game_id
         if event.game_id != game_id:

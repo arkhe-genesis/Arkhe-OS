@@ -130,7 +130,7 @@ export default function AquiferSpectrogramPanel({ onClose }: { onClose?: () => v
   useEffect(() => {
     const eventSource = new EventSource('/api/stream');
     eventSource.onmessage = (event: MessageEvent) => {
-      const newState = JSON.parse(event.data as unknown as string);
+      const newState = JSON.parse(event.data as string);
       setState(newState);
     };
     return () => eventSource.close();
@@ -193,7 +193,7 @@ export default function AquiferSpectrogramPanel({ onClose }: { onClose?: () => v
       setIsPlaying(false);
     } else {
       if (!audioCtxRef.current) {
-        audioCtxRef.current = new (window.AudioContext || (window as unknown).webkitAudioContext)();
+        audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
         analyserRef.current = audioCtxRef.current.createAnalyser();
         analyserRef.current.fftSize = 128;
       }

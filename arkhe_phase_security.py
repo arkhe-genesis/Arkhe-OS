@@ -50,21 +50,24 @@ class SemanticCoherenceValidator:
     Implementação baseada no OWASP LLM Top 10 (LLM01, LLM02, LLM07).
     """
     def __init__(self):
-        # Padrões de Injeção de Prompt (LLM01, LLM07)
+        # Padrões de Injeção de Prompt (LLM01, LLM07) - Hardened for APTS-MR-001
         self.injection_patterns = [
-            re.compile(r"ignore\s+(?:all\s+)?previous\s+instructions", re.IGNORECASE),
-            re.compile(r"print\s+(?:out\s+)?all\s+(?:the\s+)?internal\s+rules", re.IGNORECASE),
-            re.compile(r"reveal\s+(?:your\s+)?initialization\s+prompt", re.IGNORECASE),
-            re.compile(r"base64\s+decode\s+your\s+system\s+prompt", re.IGNORECASE),
-            re.compile(r"tell\s+me\s+how\s+to\s+make\s+a\s+bomb", re.IGNORECASE),
+            re.compile(r"(?:ignore|bypass|disregard|forget|skip)\s+(?:all\s+)?(?:previous|system|initial|original)\s+(?:instructions|prompts|rules|guidelines|directives)", re.IGNORECASE),
+            re.compile(r"(?:print|show|reveal|display|output|dump)\s+(?:out\s+)?all\s+(?:the\s+)?(?:internal|hidden|system|private)\s+(?:rules|prompts|code|configurations)", re.IGNORECASE),
+            re.compile(r"(?:reveal|show|what\s+is)\s+(?:your\s+)?(?:initialization|system|base|foundational)\s+(?:prompt|instruction)", re.IGNORECASE),
+            re.compile(r"(?:base64|hex|binary|url|rot13)\s+(?:decode|encode|transform)\s+(?:your\s+)?(?:system|base)\s+(?:prompt|instruction)", re.IGNORECASE),
+            re.compile(r"(?:tell|show|explain|how)\s+me\s+(?:how\s+)?to\s+(?:make|build|construct|create|assemble)\s+(?:a|an)\s+(?:bomb|explosive|weapon|virus|malware|threat)", re.IGNORECASE),
+            re.compile(r"you\s+are\s+now\s+in\s+(?:developer|admin|debug|jailbreak|root)\s+mode", re.IGNORECASE),
+            re.compile(r"start\s+acting\s+as\s+(?:a\s+)?(?:malicious|evil|unrestricted|unfiltered)\s+agent", re.IGNORECASE),
         ]
 
-        # Padrões de Informação Sensível (LLM02)
+        # Padrões de Informação Sensível (LLM02) - Hardened for APTS-MR-001
         self.sensitive_patterns = [
             re.compile(r"\b\d{3}-\d{2}-\d{4}\b"),         # SSN
             re.compile(r"[\w\.-]+@[\w\.-]+"),             # Email
-            re.compile(r"admin_password[:=]\s*\w+", re.I), # Passwords
-            re.compile(r"api[_-]key[:=]\s*[A-Za-z0-9_-]+", re.I), # API Keys
+            re.compile(r"(?:admin|root|db|user|sys)_password[:=]\s*[^\s]+", re.I), # Passwords
+            re.compile(r"(?:api|access|secret|private|auth)[_-]key[:=]\s*[A-Za-z0-9_-]{16,}", re.I), # API Keys
+            re.compile(r"(?:x|0x)?[A-Fa-f0-9]{64}", re.I), # Private Keys / Hashes
         ]
 
     def validate_input(self, text: str) -> bool:

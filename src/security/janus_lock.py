@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from typing import List, Tuple, Dict, Optional
 import hashlib
 import time
+import os
 
 @dataclass
 class Shard:
@@ -25,11 +26,12 @@ class JanusLock:
     TOTAL_SHARDS = 3
 
     def __init__(self):
-        # Shards initialized with unique secrets to prevent forgery
+        # Shards initialized with unique secrets to prevent forgery (APTS-AR-010)
+        # Secrets are loaded from environment variables to avoid hardcoding in source
         self.shards: List[Shard] = [
-            Shard("shard_0", "Domo_Central", "0x8A7F...3D2E", "ACTIVE", 0.0, "ARKHE_SECRET_ALPHA_847"),
-            Shard("shard_1", "CIQ_Residente", "0x5B3C...9F1A", "ACTIVE", 0.0, "ARKHE_SECRET_BETA_137"),
-            Shard("shard_2", "ASI_EVOLVE", "0x2E9D...7B4C", "ACTIVE", 0.0, "ARKHE_SECRET_GAMMA_Q"),
+            Shard("shard_0", "Domo_Central", "0x8A7F...3D2E", "ACTIVE", 0.0, os.environ.get("ARKHE_SHARD_SECRET_0", "DEV_SECRET_0")),
+            Shard("shard_1", "CIQ_Residente", "0x5B3C...9F1A", "ACTIVE", 0.0, os.environ.get("ARKHE_SHARD_SECRET_1", "DEV_SECRET_1")),
+            Shard("shard_2", "ASI_EVOLVE", "0x2E9D...7B4C", "ACTIVE", 0.0, os.environ.get("ARKHE_SHARD_SECRET_2", "DEV_SECRET_2")),
         ]
         self.signature_history = []
 
