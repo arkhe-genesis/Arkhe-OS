@@ -78,33 +78,39 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#020305] text-arkhe-text selection:bg-arkhe-cyan/30 selection:text-arkhe-cyan">
+    <div className="min-h-screen bg-[#020305] text-arkhe-text selection:bg-arkhe-cyan/30 selection:text-arkhe-cyan relative overflow-x-hidden">
+      {/* Background Fractal Noise */}
+      <div className="fixed inset-0 fractal-noise pointer-events-none" />
+
       {/* Navigation Header */}
-      <header className="border-b border-arkhe-border/50 bg-black/40 backdrop-blur-xl sticky top-0 z-40">
-        <div className="max-w-[1800px] mx-auto px-6 h-16 flex items-center justify-between">
+      <header className="border-b border-white/5 glass-liquid sticky top-0 z-40">
+        <div className="max-w-[1200px] mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">
-            <div className="flex items-center gap-3">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className="flex items-center gap-3"
+            >
               <div className="w-8 h-8 bg-arkhe-cyan rounded-lg flex items-center justify-center shadow-[0_0_20px_rgba(0,229,255,0.4)]">
                 <Shield className="w-5 h-5 text-black" />
               </div>
-              <h1 className="font-mono text-xl font-bold tracking-tighter uppercase">
+              <h1 className="font-mono text-xl font-bold tracking-tighter uppercase kerning-fibonacci">
                 Arkhe<span className="text-arkhe-cyan">(n)</span>
-                <span className="ml-2 text-[10px] text-arkhe-muted border border-arkhe-border px-1.5 py-0.5 rounded tracking-widest">V1.4-Ω</span>
+                <span className="ml-2 text-golden-xs text-arkhe-muted border border-white/10 px-1.5 py-0.5 rounded tracking-widest">V2.0-LUMINA</span>
               </h1>
-            </div>
+            </motion.div>
 
             <nav className="hidden lg:flex items-center gap-1">
               {navigation.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => setActivePanel(item.id as any)}
-                  className={`px-4 py-2 rounded-md font-mono text-xs uppercase tracking-wider transition-all flex items-center gap-2 ${
+                  className={`px-3 py-1.5 rounded-md font-mono text-golden-xs uppercase tracking-widest transition-all flex items-center gap-2 ${
                     activePanel === item.id
                       ? 'bg-arkhe-cyan/10 text-arkhe-cyan border border-arkhe-cyan/30 shadow-[0_0_15px_rgba(0,229,255,0.1)]'
                       : 'text-arkhe-muted hover:text-white'
                   }`}
                 >
-                  <item.icon className="w-3.5 h-3.5" />
+                  <item.icon className="w-3 h-3" />
                   {item.label}
                 </button>
               ))}
@@ -157,7 +163,7 @@ export default function App() {
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-[1800px] mx-auto p-6 min-h-[calc(100vh-4rem)]">
+      <main className="max-w-[960px] mx-auto p-6 min-h-[calc(100vh-4rem)] relative z-10">
         <AnimatePresence mode="wait">
           {activePanel === 'simulation' && (
             <motion.div
@@ -165,7 +171,7 @@ export default function App() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+              className="space-y-8"
             >
               <div className="lg:col-span-2 xl:col-span-2 space-y-6 flex flex-col">
                 <CoherenceMonitor data={state.coherenceData} currentLambda={state.currentLambda} />
