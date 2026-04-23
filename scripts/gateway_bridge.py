@@ -7,10 +7,13 @@ Dependências: flask, dbus-python (simulado)
 Uso: python gateway_bridge.py --port 8080
 """
 
-import json, time, threading
+import json, time, threading, hashlib, requests
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
+
+# URL do Monitor de Entropia
+ENTROPY_MONITOR_URL = "http://entropy-monitor:5381/update"
 
 # Histórico de traduções
 translation_log = []
@@ -51,7 +54,27 @@ def quantum_endpoint():
 
     result = gateway.translate_request(data)
     translation_log.append({'timestamp': time.time(), 'request': data, 'response': result})
+
+    # Notifica o monitor de entropia sobre a tradução
+    try:
+        requests.post(ENTROPY_MONITOR_URL, json={
+            "source": "gateway",
+            "action": data.get('action', 'observe')
+        }, timeout=0.5)
+    except:
+        pass
+
     return jsonify(result)
+
+@app.route('/entropy', methods=['POST'])
+def relay_entropy():
+    """Relay para dados de entropia externos (ex: Vigil-Numa Bridge)."""
+    data = request.get_json()
+    try:
+        requests.post(ENTROPY_MONITOR_URL, json=data, timeout=0.5)
+        return jsonify({"status": "relayed"}), 202
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/status', methods=['GET'])
 def status():

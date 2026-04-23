@@ -1,20 +1,41 @@
 version: '3.8'
 
 services:
+  # GUARDIAO DO NOME (numa) — Resolve antes de tudo
+  numa:
+    image: ghcr.io/razvandimescu/numa:latest
+    container_name: catedral_numa
+    network_mode: host  # Porta 53/udp + 53/tcp requerem host networking
+    environment:
+      - NUMA_CONFIG=/config/numa.toml
+    volumes:
+      - ./configs/numa:/config:ro
+      - numa_cache:/var/lib/numa/cache
+    # ports: # Redundante com network_mode: host
+    restart: unless-stopped
+
   cathedrald-core:
     build:
       context: .
       dockerfile: Dockerfile
     networks:
       - cathedral-net
+    dns:
+      - 172.17.0.1
     environment:
       - PYTHONPATH=/app
+    depends_on:
+      - numa
 
   quantum-bus:
     build: .
     command: python3 scripts/quantum_bus.py
     networks:
       - cathedral-net
+    dns:
+      - 172.17.0.1
+    depends_on:
+      - numa
 
   gateway:
     build: .
@@ -23,31 +44,47 @@ services:
       - "8080:8080"
     networks:
       - cathedral-net
+    dns:
+      - 172.17.0.1
     depends_on:
       - quantum-bus
+      - numa
 
   entropy-monitor:
     build: .
     command: python3 scripts/entropy_monitor.py
     networks:
       - cathedral-net
+    dns:
+      - 172.17.0.1
     depends_on:
       - gateway
+      - numa
 
   sapphire-node:
     build: .
     command: python3 scripts/global_handshake.py --server
     networks:
       - cathedral-net
+    dns:
+      - 172.17.0.1
+    depends_on:
+      - numa
 
   diamond-node:
     build: .
     command: python3 scripts/global_handshake.py
     networks:
       - cathedral-net
+    dns:
+      - 172.17.0.1
     depends_on:
       - sapphire-node
+      - numa
 
 networks:
   cathedral-net:
     driver: bridge
+
+volumes:
+  numa_cache:

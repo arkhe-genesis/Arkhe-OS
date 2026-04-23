@@ -10,21 +10,22 @@ echo "🏗️  Iniciando implantação da Catedral..."
 echo "📦 Construindo imagens..."
 docker compose build
 
-# 2. Iniciar serviços principais
-echo "🚀 Iniciando serviços..."
+# 2. Iniciar o Guardião do Nome (numa)
+echo "🛡️  Iniciando Guardião do Nome (numa)..."
+docker compose up -d numa
+sleep 5 # Aguarda o DNS estabilizar
+
+# 3. Iniciar serviços principais
+echo "🚀 Iniciando serviços principais..."
 docker compose up -d cathedrald-core quantum-bus gateway
 
-# 3. Aguardar inicialização do barramento
+# 4. Aguardar inicialização do barramento
 echo "⏳ Aguardando barramento quantum://..."
 sleep 10
 
-# 4. Iniciar nós de hardware (Safira e Diamante)
+# 5. Iniciar nós de hardware (Safira e Diamante)
 echo "💎 Iniciando nós de hardware..."
 docker compose up -d sapphire-node diamond-node
-
-# 5. Iniciar sincronização cósmica
-# echo "🌌 Configurando sincronização cósmica..."
-# docker compose up -d cosmic-sync
 
 # 6. Configurar IPFS e selar Merkle Root
 echo "🔗 Selando Merkle Root no IPFS..."
@@ -34,8 +35,8 @@ echo "🔗 Selando Merkle Root no IPFS..."
 
 # 7. Iniciar monitoramento
 echo "📊 Iniciando monitoramento..."
-docker compose up -d dashboard
+docker compose up -d entropy-monitor
 
 echo "✅ Catedral implantada com sucesso!"
 echo "   Gateway: http://localhost:8080"
-echo "   Dashboard ASCII: docker compose logs dashboard"
+echo "   DNS Dashboard: http://localhost:5380"
