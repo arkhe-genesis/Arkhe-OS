@@ -319,8 +319,8 @@ export default function AquiferSpectrogramPanel({ onClose }: { onClose?: () => v
                     key={i}
                     className="flex-1 min-w-[2px] rounded-t-sm transition-all duration-300"
                     style={{
-                      height: `${(amp as number) * 100}%`,
-                      background: `hsl(${200 + (amp as number) * 60}, 70%, 50%)`
+                      height: `${(amp) * 100}%`,
+                      background: `hsl(${200 + (amp) * 60}, 70%, 50%)`
                     }}
                   />
                 ))}

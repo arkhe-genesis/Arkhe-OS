@@ -19,6 +19,7 @@ export enum ToolCategory {
   FINANCE = 'finance',
   AGENT = 'agent',
   SANDBOX = 'sandbox',
+  EVOSKILL = 'evoskill',
 }
 
 export const labels = {
@@ -36,4 +37,5 @@ export const labels = {
   [ToolCategory.FINANCE]: 'Finance Protocols',
   [ToolCategory.AGENT]: 'Mercury Agent Protocols',
   [ToolCategory.SANDBOX]: 'Microsandbox Protocols',
+  [ToolCategory.EVOSKILL]: 'EvoSkill (Evolutionary Skill Induction)',
 };

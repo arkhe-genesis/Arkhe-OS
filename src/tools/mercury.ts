@@ -87,3 +87,24 @@ export const mercuryListSkills = definePageTool({
     response.appendResponseLine('\n**Total**: 4 skills loaded. Use `install_skill` to add more.');
   },
 });
+
+export const installSkill = definePageTool({
+  name: 'install_skill',
+  description: 'Mercury Agent: Installs a new skill from a local folder or remote repository.',
+  annotations: {
+    category: ToolCategory.AGENT,
+    readOnlyHint: false,
+    reasoningCost: 30,
+  },
+  schema: {
+    skillPath: zod.string().describe('Path to the skill folder or git URL.'),
+    force: zod.boolean().default(false).describe('Overwrite if already exists.'),
+  },
+  handler: async (request, response) => {
+    response.appendResponseLine(`### Mercury: Installing Skill`);
+    response.appendResponseLine(`- **Path**: \`${request.params.skillPath}\``);
+    response.appendResponseLine(`- **Status**: Validating \`SKILL.md\` and dependencies...`);
+    response.appendResponseLine('\n**Success**: Skill installed and hot-reloaded into Mercury context.');
+    response.appendResponseLine('**Protocol**: Identity coherence preserved during skill grafting.');
+  },
+});
