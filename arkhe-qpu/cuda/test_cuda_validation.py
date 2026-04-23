@@ -27,7 +27,7 @@ import os
 import numpy as np
 import json
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timezone
 
 # Setup paths — add both cuda dir and src dir to path
 CUDA_DIR = os.path.dirname(os.path.abspath(__file__))

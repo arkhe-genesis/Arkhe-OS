@@ -8,7 +8,7 @@ Utiliza precisão temporal UTC para registro na Arkhe-Chain.
 
 import json
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timezone
 
 class FusionReportGenerator:
     def __init__(self):

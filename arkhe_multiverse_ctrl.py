@@ -4,7 +4,7 @@ import os
 import argparse
 import json
 import numpy as np
-from datetime import datetime
+from datetime import datetime, timezone
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))

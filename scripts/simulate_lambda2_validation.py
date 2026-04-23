@@ -1,7 +1,7 @@
 # simulate_lambda2_validation.py
 import random
 import math
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 
 class ArkheSimulator:
     def __init__(self, scenario='stable', duration_minutes=60):

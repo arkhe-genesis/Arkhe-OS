@@ -8,7 +8,7 @@ import os
 import asyncio
 import numpy as np
 import json
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone, timezone, timedelta
 
 # Add arkhe-brain to path
 sys.path.insert(0, os.path.join(os.getcwd(), 'arkhe-brain'))

@@ -1,7 +1,7 @@
 import numpy as np
 import logging
 from typing import Dict, List, Any
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 
 logger = logging.getLogger(__name__)
 

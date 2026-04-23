@@ -11,7 +11,7 @@ import sys
 # Ensure arkhe-brain is in path
 sys.path.append(os.path.join(os.getcwd(), "arkhe-brain"))
 from latent_coherence import CoCTSimulator, ReasoningMetrics
-from datetime import datetime
+from datetime import datetime, timezone
 
 def run_performance_comparison(num_steps=12, hidden_dim=512):
     print("="*70)

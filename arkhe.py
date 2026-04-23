@@ -4,7 +4,7 @@
 import json
 import hashlib
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timezone
 import argparse
 import sys
 import os

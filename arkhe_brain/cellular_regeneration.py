@@ -6,7 +6,7 @@ Bio-Link 40Hz | Sirtuínas | Estresse Oxidativo
 import numpy as np
 from dataclasses import dataclass, asdict
 from typing import Dict, List, Tuple
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 
 @dataclass
 class CellularHealthMetrics:

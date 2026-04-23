@@ -10,7 +10,7 @@ Synapse-id: 847.765
 import time
 import json
 import numpy as np
-from datetime import datetime
+from datetime import datetime, timezone
 
 class MockHardware:
     def __init__(self):

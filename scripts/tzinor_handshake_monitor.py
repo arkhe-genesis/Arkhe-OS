@@ -9,7 +9,7 @@ import time
 import numpy as np
 import json
 from enum import Enum
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timezone
 
 class SafetyTrigger(str, Enum):
     VIBRATION_ALERT = "VIBRATION_DETECTED"
