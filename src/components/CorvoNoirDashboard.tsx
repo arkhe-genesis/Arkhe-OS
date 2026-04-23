@@ -144,11 +144,11 @@ const CorvoNoirDashboard: React.FC = () => {
                   <div className="mt-4 grid grid-cols-2 gap-4">
                     <div className="space-y-1">
                       <p className="text-[10px] text-arkhe-muted uppercase">Phase Variance</p>
-                      <Progress value={state.currentLambda * 100} variant="default" />
+                        <Progress value={state.currentLambda * 100} />
                     </div>
                     <div className="space-y-1">
                       <p className="text-[10px] text-arkhe-muted uppercase">Noise Floor</p>
-                      <Progress value={15} variant="default" />
+                        <Progress value={15} />
                     </div>
                   </div>
                 </Card>
@@ -181,7 +181,7 @@ const CorvoNoirDashboard: React.FC = () => {
                       </div>
                       <div className="p-3 bg-white/5 rounded border border-white/5">
                         <p className="text-[8px] text-arkhe-muted uppercase">ZK Integrity</p>
-                        <Badge color={state.security.zkProofValid ? 'cyan' : 'fissure'}>
+                        <Badge variant={state.security.zkProofValid ? 'cyan' : 'fissure'}>
                           {state.security.zkProofValid ? 'VERIFIED' : 'BREACH'}
                         </Badge>
                       </div>
@@ -218,7 +218,7 @@ const CorvoNoirDashboard: React.FC = () => {
                              <p className="text-golden-xs text-arkhe-muted uppercase tracking-widest">Gamma Carrier Frequency</p>
                            </div>
                          </div>
-                         <Badge color="omega" variant="glass">Active Mesh</Badge>
+                       <Badge variant="glass">Active Mesh</Badge>
                        </div>
 
                        <div className="space-y-4">
@@ -227,14 +227,14 @@ const CorvoNoirDashboard: React.FC = () => {
                               <span className="text-arkhe-muted">Synchronization Ratio</span>
                               <span className="text-white">{(state.bioLinkSync.syncRatio * 100).toFixed(1)}%</span>
                             </div>
-                            <Progress value={state.bioLinkSync.syncRatio * 100} variant="default" />
+                          <Progress value={state.bioLinkSync.syncRatio * 100} />
                          </div>
                          <div className="space-y-1">
                             <div className="flex justify-between text-[10px] uppercase">
                               <span className="text-arkhe-muted">Regeneration Progress</span>
                               <span className="text-white">{(state.bioLinkSync.regenerationProgress).toFixed(1)}%</span>
                             </div>
-                            <Progress value={state.bioLinkSync.regenerationProgress} variant="default" />
+                          <Progress value={state.bioLinkSync.regenerationProgress} />
                          </div>
                        </div>
                     </div>
