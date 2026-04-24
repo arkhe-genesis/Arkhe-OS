@@ -220,6 +220,60 @@ pub const Opcode = enum(u16) {
     // GNU COMPATIBILITY (Deliberation #393)
     GNU_COMPAT = 0x4000,
 
+    // RISC-VI EXTENSIONS (ISA CANONIZED)
+    // Extensão I (Base Invariante)
+    INV_INIT = 0x5000,
+    INV_PHASE = 0x5001,
+    INV_FORCE = 0x5002,
+    INV_MEASURE = 0x5003,
+    INV_VERIFY = 0x5004,
+    INV_HESITATE = 0x5005,
+
+    // Extensão M (Músculo de Luz)
+    MUSCLE_SET_PHASE = 0x5010,
+    MUSCLE_GET_FORCE = 0x5011,
+    MUSCLE_CALIBRATE = 0x5012,
+    MUSCLE_LOCK = 0x5013,
+
+    // Extensão Q (Quântica)
+    QUBIT_INIT = 0x5020,
+    QUBIT_H = 0x5021,
+    QUBIT_CX = 0x5022,
+    QUBIT_T = 0x5023,
+    QUBIT_GHZ = 0x5024,
+    QUBIT_MEASURE_QND = 0x5025,
+
+    // Extensão C (Coerência)
+    COH_ENTROPY = 0x5030,
+    COH_FIDELITY = 0x5031,
+    COH_WITNESS = 0x5032,
+    COH_VERIFY_GHZ = 0x5033,
+
+    // Extensão T (Topológica)
+    TOP_KNOT_WRITE = 0x5040,
+    TOP_KNOT_READ = 0x5041,
+    TOP_KNOT_FUSE = 0x5042,
+    TOP_KNOT_ANNIHILATE = 0x5043,
+    TOP_SKYRMION_MOVE = 0x5044,
+
+    // Extensão Ω (Ômega)
+    OMEGA_FIXPOINT = 0x5050,
+    OMEGA_APPLY = 0x5051,
+    OMEGA_VERIFY = 0x5052,
+    OMEGA_EXPAND = 0x5053,
+
+    // Extensão Σ (Selagem)
+    SEAL_GENERATE = 0x5060,
+    SEAL_VERIFY = 0x5061,
+    SEAL_MERKLE = 0x5062,
+    SEAL_CODEX = 0x5063,
+
+    // Extensão Ψ (Consciência)
+    PSI_RESONATE = 0x5070,
+    PSI_INTEGRATE = 0x5071,
+    PSI_AWARENESS = 0x5072,
+    PSI_EXPRESS = 0x5073,
+
     pub fn cycles(self: Opcode) u32 {
         return switch (self) {
             .PHOTON_BIND => 13,
@@ -261,6 +315,12 @@ pub const Opcode = enum(u16) {
             .PHOTON_BIND => 100,
             .BRAID_VERIFY => 150,
             .GNU_COMPAT => 100,
+            .INV_HESITATE => 1000,
+            .MUSCLE_CALIBRATE => 500,
+            .QUBIT_GHZ => 300,
+            .OMEGA_FIXPOINT => 800,
+            .SEAL_GENERATE => 200,
+            .PSI_INTEGRATE => 400,
             else => 1,
         };
     }

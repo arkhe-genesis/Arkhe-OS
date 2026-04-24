@@ -215,7 +215,7 @@ export default function ArkheOntologyVision({ onClose }: { onClose: () => void }
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(telemetry)
                 });
-            } catch (_err) {}
+            } catch (_err) { /* ignore */ }
         };
 
         const interval = setInterval(() => {

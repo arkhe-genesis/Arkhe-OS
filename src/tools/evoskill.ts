@@ -86,7 +86,7 @@ export const evoskillRun = defineTool({
     response.appendResponseLine('### EvoSkill: Self-Improvement Loop Active');
 
     const args = ['run'];
-    if (request.params.continueMode) args.push('--continue');
+    if (request.params.continueMode) { args.push('--continue'); }
 
     // In a real environment, this might take a long time.
     // We'll run it and report the outcome.
@@ -185,7 +185,7 @@ export const evoskillDiff = defineTool({
     response.appendResponseLine(`### EvoSkill: Program Diff (${target ?? 'Baseline'} → Current Best)`);
 
     const args = ['diff'];
-    if (target !== undefined) args.push(target.toString());
+    if (target !== undefined) { args.push(target.toString()); }
 
     const {stdout, stderr, code} = await runEvoSkill(args);
 

@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+/**
+ * @license
+ * Copyright 2026 Santiago Fernández de Valderrama
+ * SPDX-License-Identifier: MIT
+ */
 
 /**
  * generate-pdf.mjs — HTML → PDF via Playwright
@@ -10,10 +15,11 @@
  * Uses Chromium headless to render the HTML and produce a clean, ATS-parseable PDF.
  */
 
+import { resolve, dirname } from 'node:path';
+import { readFile, writeFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+
 import { chromium } from 'playwright';
-import { resolve, dirname } from 'path';
-import { readFile } from 'fs/promises';
-import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -93,7 +99,6 @@ async function generatePDF() {
   });
 
   // Write PDF
-  const { writeFile } = await import('fs/promises');
   await writeFile(outputPath, pdfBuffer);
 
   // Count pages (approximate from PDF structure)

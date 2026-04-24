@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Activity, Shield, Zap, Cpu, Heart, Fingerprint, Smile, Users, Radio, Aperture } from 'lucide-react';
+import { Activity, Shield, Zap, Users, Radio, Aperture } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import React, { useState } from 'react';
 import {
@@ -43,7 +43,7 @@ const CorvoNoirDashboard: React.FC = () => {
     }));
   }, [state.currentLambda, state.threatLevel]);
 
-  const handleRegenerationPulse = () => fetch('/api/governance/apply-regeneration-pulse', { method: 'POST' });
+  const _handleRegenerationPulse = () => fetch('/api/governance/apply-regeneration-pulse', { method: 'POST' });
 
   const handleStressTest = () => fetch('/api/security/stress-test', { method: 'POST' });
 

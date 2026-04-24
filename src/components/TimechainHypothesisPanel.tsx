@@ -65,7 +65,7 @@ export default function TimechainHypothesisPanel({ onClose }: TimechainHypothesi
   };
 
   const isSuccess = verificationState === 'success';
-  const themeColor = isSuccess ? 'amber' : 'orange';
+  const _themeColor = isSuccess ? 'amber' : 'orange';
   const borderColor = isSuccess ? 'border-amber-500/50' : 'border-orange-500/30';
   const shadowColor = isSuccess ? 'shadow-[0_0_50px_rgba(245,158,11,0.3)]' : 'shadow-[0_0_30px_rgba(249,115,22,0.15)]';
 

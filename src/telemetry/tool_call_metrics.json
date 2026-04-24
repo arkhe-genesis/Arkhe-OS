@@ -2119,5 +2119,190 @@
         "argType": "number"
       }
     ]
+  },
+  {
+    "name": "compile_mtp3",
+    "args": [
+      {
+        "name": "inputFile_length",
+        "argType": "number"
+      },
+      {
+        "name": "outputFile_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "consolidate_manifesto",
+    "args": []
+  },
+  {
+    "name": "evoskill_diff",
+    "args": [
+      {
+        "name": "targetIteration",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "evoskill_eval",
+    "args": []
+  },
+  {
+    "name": "evoskill_init",
+    "args": [
+      {
+        "name": "harness",
+        "argType": "string"
+      },
+      {
+        "name": "taskDescription_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "evoskill_run",
+    "args": [
+      {
+        "name": "continueMode",
+        "argType": "boolean"
+      }
+    ]
+  },
+  {
+    "name": "evoskill_skills",
+    "args": []
+  },
+  {
+    "name": "install_skill",
+    "args": [
+      {
+        "name": "skillPath_length",
+        "argType": "number"
+      },
+      {
+        "name": "force",
+        "argType": "boolean"
+      }
+    ]
+  },
+  {
+    "name": "meshtastic_info",
+    "args": [
+      {
+        "name": "port_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "meshtastic_list_devices",
+    "args": []
+  },
+  {
+    "name": "meshtastic_send_text",
+    "args": [
+      {
+        "name": "text_length",
+        "argType": "number"
+      },
+      {
+        "name": "dest_length",
+        "argType": "number"
+      },
+      {
+        "name": "port_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "mtp3_compile",
+    "args": [
+      {
+        "name": "arkhePath_length",
+        "argType": "number"
+      },
+      {
+        "name": "outputPath_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "publish_sdk_ipfs",
+    "args": []
+  },
+  {
+    "name": "run_cooperative_keygen",
+    "args": []
+  },
+  {
+    "name": "run_crown_jewel_benchmark",
+    "args": [
+      {
+        "name": "cycles",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "run_echo_ping",
+    "args": [
+      {
+        "name": "target_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "run_entropy_monitor",
+    "args": []
+  },
+  {
+    "name": "run_global_handshake",
+    "args": []
+  },
+  {
+    "name": "run_phase_collision",
+    "args": [
+      {
+        "name": "duration",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "run_remote_audit",
+    "args": [
+      {
+        "name": "targetUrl_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "run_stress_handshake",
+    "args": []
+  },
+  {
+    "name": "run_vigil_numa_bridge",
+    "args": [
+      {
+        "name": "numaApi_length",
+        "argType": "number"
+      },
+      {
+        "name": "gateway_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "run_vitral_dashboard",
+    "args": []
   }
 ]

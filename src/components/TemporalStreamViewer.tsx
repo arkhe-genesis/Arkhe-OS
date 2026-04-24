@@ -87,7 +87,7 @@ export default function TemporalStreamViewer({ onClose }: TemporalStreamViewerPr
             .catch((_e: unknown) => logger.error("Auto-play prevented"));
         }
         return null;
-      }).catch((e: any) => {
+      }).catch((e: unknown) => {
         logger.error('Error loading video: ' + e);
         setError(`LOAD_ERR_${e?.code || 'UNKNOWN'}`);
         return null;
