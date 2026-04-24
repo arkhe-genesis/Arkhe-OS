@@ -1,5 +1,11 @@
 #!/usr/bin/env node
 /**
+ * @license
+ * Copyright 2026 Santiago Fernández de Valderrama
+ * SPDX-License-Identifier: MIT
+ */
+
+/**
  * merge-tracker.mjs — Merge batch tracker additions into applications.md
  *
  * Handles multiple TSV formats:
@@ -15,7 +21,7 @@
  */
 
 import { readFileSync, writeFileSync, readdirSync, mkdirSync, renameSync, existsSync } from 'fs';
-import { join, basename } from 'path';
+import { join } from 'path';
 
 const CAREER_OPS = new URL('.', import.meta.url).pathname;
 // Support both layouts: data/applications.md (boilerplate) and applications.md (original)
@@ -320,7 +326,7 @@ if (VERIFY && !DRY_RUN) {
   const { execSync } = await import('child_process');
   try {
     execSync(`node ${join(CAREER_OPS, 'verify-pipeline.mjs')}`, { stdio: 'inherit' });
-  } catch (e) {
+  } catch (_e) {
     process.exit(1);
   }
 }

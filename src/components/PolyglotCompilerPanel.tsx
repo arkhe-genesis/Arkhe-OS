@@ -6,7 +6,7 @@
  */
 
 import { X, Terminal, CheckCircle2, Code2, Play, AlertTriangle, Infinity as InfinityIcon } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import React, { useState, useEffect } from 'react';
 
 interface PolyglotCompilerPanelProps {

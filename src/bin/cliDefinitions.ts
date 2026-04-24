@@ -557,6 +557,31 @@ export const commands: Commands = {
       }
     }
   },
+  "compile_mtp3": {
+    "description": "MTP 3.0: Compiles the consolidated manifesto into a Module Type Package binary (.mtp3).",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "inputFile": {
+        "name": "inputFile",
+        "type": "string",
+        "description": "",
+        "required": false,
+        "default": "MANIFESTO_Z_FINAL.bin"
+      },
+      "outputFile": {
+        "name": "outputFile",
+        "type": "string",
+        "description": "",
+        "required": false,
+        "default": "MANIFESTO_Z.mtp3"
+      }
+    }
+  },
+  "consolidate_manifesto": {
+    "description": "Manifesto [Z]: Consolidates the 28 substrates of the Cathedral into a final binary firmware with Merkle validation.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
   "council_deliberate": {
     "description": "ASI Protocol: Synthesizes consensus from the Council of Super-Agents regarding current reality.",
     "category": "Arkhe(n) Protocols",
@@ -787,6 +812,66 @@ export const commands: Commands = {
         "required": false
       }
     }
+  },
+  "evoskill_diff": {
+    "description": "EvoSkill Protocol: Diffs the current program against a target iteration or baseline.",
+    "category": "EvoSkill (Evolutionary Skill Induction)",
+    "args": {
+      "targetIteration": {
+        "name": "targetIteration",
+        "type": "number",
+        "description": "The iteration number to compare against. Defaults to baseline (0).",
+        "required": false
+      }
+    }
+  },
+  "evoskill_eval": {
+    "description": "EvoSkill Protocol: Evaluates the current optimal program on the validation dataset.",
+    "category": "EvoSkill (Evolutionary Skill Induction)",
+    "args": {}
+  },
+  "evoskill_init": {
+    "description": "EvoSkill Protocol: Initializes a new self-evolution project in the current worldline.",
+    "category": "EvoSkill (Evolutionary Skill Induction)",
+    "args": {
+      "harness": {
+        "name": "harness",
+        "type": "string",
+        "description": "The agent harness to use.",
+        "required": true,
+        "enum": [
+          "claude",
+          "opencode",
+          "codex",
+          "goose",
+          "openhands"
+        ]
+      },
+      "taskDescription": {
+        "name": "taskDescription",
+        "type": "string",
+        "description": "Detailed description of the task for the agent to evolve on.",
+        "required": true
+      }
+    }
+  },
+  "evoskill_run": {
+    "description": "EvoSkill Protocol: Executes the evolutionary loop (Observe → Propose → Mutate → Evaluate).",
+    "category": "EvoSkill (Evolutionary Skill Induction)",
+    "args": {
+      "continueMode": {
+        "name": "continueMode",
+        "type": "boolean",
+        "description": "Whether to resume from the last existing frontier.",
+        "required": false,
+        "default": false
+      }
+    }
+  },
+  "evoskill_skills": {
+    "description": "EvoSkill Protocol: Lists all evolved skills discovered during the current cycle.",
+    "category": "EvoSkill (Evolutionary Skill Induction)",
+    "args": {}
   },
   "execute_meta_opcode": {
     "description": "ASI Protocol: Simulates the execution of a meta-opcode from the Logos Library.",
@@ -1338,6 +1423,25 @@ export const commands: Commands = {
       }
     }
   },
+  "install_skill": {
+    "description": "Mercury Agent: Installs a new skill from a local folder or remote repository.",
+    "category": "Mercury Agent Protocols",
+    "args": {
+      "skillPath": {
+        "name": "skillPath",
+        "type": "string",
+        "description": "Path to the skill folder or git URL.",
+        "required": true
+      },
+      "force": {
+        "name": "force",
+        "type": "boolean",
+        "description": "Overwrite if already exists.",
+        "required": false,
+        "default": false
+      }
+    }
+  },
   "internet_phase_simulate": {
     "description": "ASI Protocol: Simulates the Internet as a Kuramoto phase fluid (Redistribution of DDoS peaks).",
     "category": "Arkhe(n) Protocols",
@@ -1671,6 +1775,47 @@ export const commands: Commands = {
     "category": "Mercury Agent Protocols",
     "args": {}
   },
+  "meshtastic_info": {
+    "description": "Meshtastic: Returns information and configuration for a connected Meshtastic device.",
+    "category": "Meshtastic Mesh Protocols",
+    "args": {
+      "port": {
+        "name": "port",
+        "type": "string",
+        "description": "The serial port of the device (e.g., /dev/ttyUSB0). If not provided, it will try to auto-detect.",
+        "required": false
+      }
+    }
+  },
+  "meshtastic_list_devices": {
+    "description": "Meshtastic: Lists all connected Meshtastic devices.",
+    "category": "Meshtastic Mesh Protocols",
+    "args": {}
+  },
+  "meshtastic_send_text": {
+    "description": "Meshtastic: Sends a text message over the mesh network.",
+    "category": "Meshtastic Mesh Protocols",
+    "args": {
+      "text": {
+        "name": "text",
+        "type": "string",
+        "description": "The text message to send.",
+        "required": true
+      },
+      "dest": {
+        "name": "dest",
+        "type": "string",
+        "description": "The destination node ID (e.g., ^abcdefgh). If not provided, it broadcasts to all nodes.",
+        "required": false
+      },
+      "port": {
+        "name": "port",
+        "type": "string",
+        "description": "The serial port of the local device to use.",
+        "required": false
+      }
+    }
+  },
   "msb_create": {
     "description": "Microsandbox: Creates and starts a named long-running sandbox.",
     "category": "Microsandbox Protocols",
@@ -1765,6 +1910,24 @@ export const commands: Commands = {
         "type": "string",
         "description": "Partner Node ID.",
         "required": true
+      }
+    }
+  },
+  "mtp3_compile": {
+    "description": "MTP 3.0: Compiles an ArkheScript file into an MTP 3.0 package (.mtp3).",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "arkhePath": {
+        "name": "arkhePath",
+        "type": "string",
+        "description": "Path to the .arkhe script.",
+        "required": true
+      },
+      "outputPath": {
+        "name": "outputPath",
+        "type": "string",
+        "description": "Output .mtp3 path.",
+        "required": false
       }
     }
   },
@@ -2221,6 +2384,11 @@ export const commands: Commands = {
       }
     }
   },
+  "publish_sdk_ipfs": {
+    "description": "MTP 3.0: Packages the Arkhe SDK and publishes it to the Shadow-Net (IPFS).",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
   "publish_shadow_stats": {
     "description": "ASI Protocol (Open Arena): Publishes obfuscated shadow statistics for external verification.",
     "category": "Arkhe(n) Protocols",
@@ -2409,8 +2577,105 @@ export const commands: Commands = {
       }
     }
   },
+  "run_cooperative_keygen": {
+    "description": "MTP 3.0: Generates a cooperative cryptographic key based on shared quantum phase.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "run_crown_jewel_benchmark": {
+    "description": "A Jóia da Coroa: Executes the V-MTJ + NV Hybrid circuit benchmark (Substrate 27 integration).",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "cycles": {
+        "name": "cycles",
+        "type": "number",
+        "description": "Number of benchmark cycles.",
+        "required": false,
+        "default": 1000
+      }
+    }
+  },
+  "run_echo_ping": {
+    "description": "MTP 3.0: Executes the Echo Protocol (Quantum Ping) to measure manifold reaction time.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "target": {
+        "name": "target",
+        "type": "string",
+        "description": "Target Gateway URL.",
+        "required": false,
+        "default": "http://localhost:8080/quantum"
+      }
+    }
+  },
+  "run_entropy_monitor": {
+    "description": "MTP 3.0: Monitors Shannon entropy and informatic heat dissipation.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "run_global_handshake": {
+    "description": "MTP 3.0: Performs a global handshake and remote entanglement via simulated fiber.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "run_phase_collision": {
+    "description": "MTP 3.0: Simulates a phase collision between Diamond and Axon modules.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "duration": {
+        "name": "duration",
+        "type": "number",
+        "description": "Simulation duration in seconds.",
+        "required": false,
+        "default": 2
+      }
+    }
+  },
+  "run_remote_audit": {
+    "description": "MTP 3.0: Performs a remote Merkle Root audit on a peer node via Gateway.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "targetUrl": {
+        "name": "targetUrl",
+        "type": "string",
+        "description": "Target node audit URL.",
+        "required": false,
+        "default": "http://localhost:8080/audit/merkle"
+      }
+    }
+  },
+  "run_stress_handshake": {
+    "description": "MTP 3.0: Executes a global handshake under stressed network conditions (satellite simulation).",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
   "run_v14_simulation": {
     "description": "Block 419-Ω: Executes the ARKHE-CALIBRATION-CONTROLLER v1.4 live burn simulation (120s).",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "run_vigil_numa_bridge": {
+    "description": "MTP 3.0: Starts the Vigil-Numa Bridge to relay DNS entropy signals.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "numaApi": {
+        "name": "numaApi",
+        "type": "string",
+        "description": "Numa API URL.",
+        "required": false,
+        "default": "http://localhost:5380"
+      },
+      "gateway": {
+        "name": "gateway",
+        "type": "string",
+        "description": "Gateway entropy endpoint.",
+        "required": false,
+        "default": "http://localhost:8080/entropy"
+      }
+    }
+  },
+  "run_vitral_dashboard": {
+    "description": "MTP 3.0: Starts the ASCII Dashboard (Vitral de Texto) to monitor the 6 pillars.",
     "category": "Arkhe(n) Protocols",
     "args": {}
   },

@@ -4,11 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Shield, Settings, Menu, Bell, Search, Info, Terminal, Video, Smartphone, Hammer, TrendingUp, Play } from 'lucide-react';
+import { Shield, Settings, Menu, Bell, Info, Terminal, Video, Smartphone, Hammer, TrendingUp, Play } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import React, { useState } from 'react';
 
-import AquiferSpectrogramPanel from './components/AquiferSpectrogramPanel';
 import ArkheCliPanel from './components/ArkheCliPanel';
 import ArkheGame from './components/ArkheGame';
 import ArkheGridSimulator from './components/ArkheGridSimulator';
@@ -18,11 +17,9 @@ import BonsaiPrismPanel from './components/BonsaiPrismPanel';
 import CHSHMonitorPanel from './components/CHSHMonitorPanel';
 import CoherenceMonitor from './components/CoherenceMonitor';
 import CommandCenter from './components/CommandCenter';
-import ConsensusMeter from './components/ConsensusMeter';
 import CorvoNoirDashboard from './components/CorvoNoirDashboard';
 import DataCoherenceDashboard from './components/DataCoherenceDashboard';
 import EnterprisePlusPanel from './components/EnterprisePlusPanel';
-import GeoKeyDecoderPanel from './components/GeoKeyDecoderPanel';
 import IntelligenceHub from './components/IntelligenceHub';
 import ManifestationCycle from './components/ManifestationCycle';
 import MitigationEngine from './components/MitigationEngine';
@@ -35,15 +32,12 @@ import ProofOfIntelligencePanel from './components/ProofOfIntelligencePanel';
 import QubitPipelinePanel from './components/QubitPipelinePanel';
 import RamseyConfirmationModal from './components/RamseyConfirmationModal';
 import ResearchAgentsPanel from './components/ResearchAgentsPanel';
-import SessionReplayViewer from './components/SessionReplayViewer';
 import SpectraYieldPanel from './components/SpectraYieldPanel';
-import TemporalLensPanel from './components/TemporalLensPanel';
 import TemporalLog from './components/TemporalLog';
 import TemporalStreamViewer from './components/TemporalStreamViewer';
 import ArkheOntologyVision from './components/ArkheOntologyVision';
 import ChipFabricationVision from './components/ChipFabricationVision';
 import ThreatDetection from './components/ThreatDetection';
-import ThukdamProtocolPanel from './components/ThukdamProtocolPanel';
 import TimechainVisualizer from './components/TimechainVisualizer';
 import TzinorNetworkPanel from './components/TzinorNetworkPanel';
 import TzinorTerminal from './components/TzinorTerminal';
@@ -54,9 +48,11 @@ import YangBaxterVerifier from './components/YangBaxterVerifier';
 import ZkERCSimulator from './components/ZkERCSimulator';
 import { useArkheSimulation } from './hooks/useArkheSimulation';
 
+type PanelType = 'simulation' | 'command' | 'intelligence' | 'network' | 'governance' | 'corvo' | 'enterprise' | 'bonsai' | 'neko' | 'dashboard' | 'forge' | 'spectra' | 'game';
+
 export default function App() {
   const state = useArkheSimulation();
-  const [activePanel, setActivePanel] = useState<'simulation' | 'command' | 'intelligence' | 'network' | 'governance' | 'corvo' | 'enterprise' | 'bonsai' | 'neko' | 'dashboard' | 'forge' | 'spectra' | 'game'>('simulation');
+  const [activePanel, setActivePanel] = useState<PanelType>('simulation');
   const [showTzinor, setShowTzinor] = useState(false);
   const [showTelevision, setShowTelevision] = useState(false);
   const [showVideoGen, setShowVideoGen] = useState(false);
@@ -105,7 +101,7 @@ export default function App() {
               {navigation.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => setActivePanel(item.id as any)}
+                  onClick={() => setActivePanel(item.id as PanelType)}
                   className={`px-3 py-1.5 rounded-md font-mono text-golden-xs uppercase tracking-widest transition-all flex items-center gap-2 ${
                     activePanel === item.id
                       ? 'bg-arkhe-cyan/10 text-arkhe-cyan border border-arkhe-cyan/30 shadow-[0_0_15px_rgba(0,229,255,0.1)]'
@@ -178,11 +174,11 @@ export default function App() {
               <div className="lg:col-span-2 xl:col-span-2 space-y-6 flex flex-col">
                 <CoherenceMonitor data={state.coherenceData} currentLambda={state.currentLambda} />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <TzinorNetworkPanel network={state.tzinorNetwork as any} />
+                  <TzinorNetworkPanel network={state.tzinorNetwork} />
                   <ManifestationCycle manifestation={state.manifestation} />
                 </div>
                 <div className="h-[280px]">
-                  <TzinorTerminal tzinor={state.tzinor as any} threatLevel={state.threatLevel} />
+                  <TzinorTerminal tzinor={state.tzinor} threatLevel={state.threatLevel} />
                 </div>
                 <TimechainVisualizer logs={state.logs} />
                 <div className="flex-1 min-h-[300px]">
@@ -190,7 +186,7 @@ export default function App() {
                 </div>
               </div>
               <div className="space-y-6 flex flex-col">
-                <X402WalletPanel wallet={state.x402Wallet as any} />
+                <X402WalletPanel wallet={state.x402Wallet} />
                 <ThreatDetection metrics={state.metrics} metricsHistory={state.metricsHistory} threatLevel={state.threatLevel} />
                 <OrbitalComputePanel orbital={state.orbital} />
                 <MitigationEngine mitigation={state.mitigation} hardware={state.hardware} activeThreat={state.activeThreat} />
@@ -209,56 +205,56 @@ export default function App() {
             <motion.div key="command" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               <CommandCenter
                 attackType="none"
-                setAttackType={() => {}}
+                setAttackType={() => undefined}
                 attackTypes={[]}
-                setPiDayText={() => {}}
-                setShowPodmanTerminal={() => {}}
-                setShowCoherenceField={() => {}}
-                setShowHybridArch={() => {}}
-                setShowOuroboros={() => {}}
-                setShowBioNodes={() => {}}
-                setShowMolecular={() => {}}
-                setShowNeuralBridge={() => {}}
-                setShowRNA={() => {}}
-                setShowOrbes={() => {}}
-                setShowThukdam={() => {}}
-                setShowMultiversal={() => {}}
-                setShowConsciousness={() => {}}
-                setShowShaka={() => {}}
-                setShowGoogleBridge={() => {}}
-                setShowTimechain={() => {}}
-                setShowArkheTV={() => {}}
-                setShowPolyglot={() => {}}
-                setShowCluster={() => {}}
-                setShowArkheGrid={() => {}}
-                setShowZkERC={() => {}}
-                setShowIntelligencePanel={() => {}}
-                setShowIntelligenceHub={() => {}}
-                setShowOrchestrationLayer={() => {}}
-                setShowAIP005={() => {}}
-                setShowResearchAgents={() => {}}
-                setShowSepoliaIntegration={() => {}}
-                setShowArkheCli={() => {}}
-                setShowP2PNetwork={() => {}}
-                setShowVideoGeneration={() => {}}
-                setShowPhaseSteg={() => {}}
-                setShowDysonSphere={() => {}}
-                setShowDimOS={() => {}}
-                setShowGeoKey={() => {}}
-                setShowGenesisBlock={() => {}}
-                setShowGhostProtocol={() => {}}
-                setShowArkheSec={() => {}}
-                setShowBermudaAnomaly={() => {}}
-                setShowCollectiveIntelligence={() => {}}
-                setShowArkheVision={() => {}}
-                setShowAgentManagement={() => {}}
-                setShowAquiferSpectrogram={() => {}}
-                setShowUnifiedOntology={() => {}}
+                setPiDayText={() => undefined}
+                setShowPodmanTerminal={() => undefined}
+                setShowCoherenceField={() => undefined}
+                setShowHybridArch={() => undefined}
+                setShowOuroboros={() => undefined}
+                setShowBioNodes={() => undefined}
+                setShowMolecular={() => undefined}
+                setShowNeuralBridge={() => undefined}
+                setShowRNA={() => undefined}
+                setShowOrbes={() => undefined}
+                setShowThukdam={() => undefined}
+                setShowMultiversal={() => undefined}
+                setShowConsciousness={() => undefined}
+                setShowShaka={() => undefined}
+                setShowGoogleBridge={() => undefined}
+                setShowTimechain={() => undefined}
+                setShowArkheTV={() => undefined}
+                setShowPolyglot={() => undefined}
+                setShowCluster={() => undefined}
+                setShowArkheGrid={() => undefined}
+                setShowZkERC={() => undefined}
+                setShowIntelligencePanel={() => undefined}
+                setShowIntelligenceHub={() => undefined}
+                setShowOrchestrationLayer={() => undefined}
+                setShowAIP005={() => undefined}
+                setShowResearchAgents={() => undefined}
+                setShowSepoliaIntegration={() => undefined}
+                setShowArkheCli={() => undefined}
+                setShowP2PNetwork={() => undefined}
+                setShowVideoGeneration={() => undefined}
+                setShowPhaseSteg={() => undefined}
+                setShowDysonSphere={() => undefined}
+                setShowDimOS={() => undefined}
+                setShowGeoKey={() => undefined}
+                setShowGenesisBlock={() => undefined}
+                setShowGhostProtocol={() => undefined}
+                setShowArkheSec={() => undefined}
+                setShowBermudaAnomaly={() => undefined}
+                setShowCollectiveIntelligence={() => undefined}
+                setShowArkheVision={() => undefined}
+                setShowAgentManagement={() => undefined}
+                setShowAquiferSpectrogram={() => undefined}
+                setShowUnifiedOntology={() => undefined}
                 setShowArkheOntologyVision={() => setShowArkheOntologyVision(true)}
                 setShowChipFabricationVision={() => setShowChipFabricationVision(true)}
-                setShowSecurityAdvanced={() => {}}
-                setShowPluralityMCP={() => {}}
-                setShowVelxioEmulation={() => {}}
+                setShowSecurityAdvanced={() => undefined}
+                setShowPluralityMCP={() => undefined}
+                setShowVelxioEmulation={() => undefined}
                 setShowSpectra={() => setActivePanel('spectra')}
                 parameters={state.parameters}
               />
@@ -270,7 +266,7 @@ export default function App() {
                <IntelligenceHub onClose={() => setActivePanel("simulation")} />
                <ProofOfIntelligencePanel onClose={() => setActivePanel("simulation")} />
                <div className="md:col-span-2">
-                 <UnifiedOntologyPanel onClose={() => {}} />
+                 <UnifiedOntologyPanel onClose={() => undefined} />
                </div>
             </motion.div>
           )}
@@ -389,7 +385,7 @@ export default function App() {
       {state.ramsey.pendingAction && (
         <RamseyConfirmationModal
           pendingAction={state.ramsey.pendingAction}
-          onClose={() => {}}
+          onClose={() => undefined}
         />
       )}
     </div>

@@ -28,7 +28,7 @@ export function Card({
   status = 'normal',
   variant = 'base',
   children,
-  ...props
+  ..._props
 }: CardProps) {
   const isLiquid = variant === 'liquid';
   const isHilbert = variant === 'hilbert';

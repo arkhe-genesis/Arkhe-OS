@@ -67,10 +67,10 @@ export default function ArkheGame({ onClose }: { onClose: () => void }) {
   };
 
   useEffect(() => {
-    if (!isPlaying) return;
+    if (!isPlaying) { return; }
 
     const loop = (time: number) => {
-      if (!lastTimeRef.current) lastTimeRef.current = time;
+      if (!lastTimeRef.current) { lastTimeRef.current = time; }
       const deltaTime = time - lastTimeRef.current;
       lastTimeRef.current = time;
 

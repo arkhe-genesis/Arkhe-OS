@@ -1,5 +1,11 @@
 #!/usr/bin/env node
 /**
+ * @license
+ * Copyright 2026 Santiago Fernández de Valderrama
+ * SPDX-License-Identifier: MIT
+ */
+
+/**
  * dedup-tracker.mjs — Remove duplicate entries from applications.md
  *
  * Groups by normalized company + fuzzy role match.
@@ -7,12 +13,6 @@
  * preserves that status. Merges notes.
  *
  * Run: node career-ops/dedup-tracker.mjs [--dry-run]
- */
-
-/**
- * @license
- * Copyright 2026 Google LLC
- * SPDX-License-Identifier: Apache-2.0
  */
 
 import { readFileSync, writeFileSync, copyFileSync, existsSync } from 'node:fs';

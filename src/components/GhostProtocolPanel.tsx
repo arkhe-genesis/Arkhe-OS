@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Shield, Key, Lock, CheckCircle2, Activity, Database, Users, Network } from 'lucide-react';
+import { Shield, Key, Lock, CheckCircle2, Activity, Users, Network } from 'lucide-react';
 import React, { useState } from 'react';
 
 interface GhostProtocolPanelProps {
