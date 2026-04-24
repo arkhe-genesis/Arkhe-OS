@@ -7,7 +7,7 @@
 
 import path from "node:path";
 
-import { ApolloServer, gql } from 'apollo-server-express';
+// import { ApolloServer, gql } from 'apollo-server-express';
 import cors from "cors";
 import express from "express";
 import rateLimit from "express-rate-limit";
@@ -87,12 +87,14 @@ async function startServer() {
   app.use(express.json());
 
   // Setup GraphQL Apollo Server
+  /*
   const apollo = new ApolloServer({
     typeDefs,
     resolvers,
   });
   await apollo.start();
   apollo.applyMiddleware({ app: app as any });
+  */
 
   // Serve static files for the presence field UI
   app.use("/static", express.static(path.join(process.cwd(), "static")));

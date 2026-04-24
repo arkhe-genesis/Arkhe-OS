@@ -318,6 +318,275 @@ export interface SimulationState {
   solarEntropy?: SolarEntropyReport;
   thermodynamicTraining?: ThermodynamicTrainingReport;
   spectra?: SpectraState;
+  transcendentConsciousness?: TranscendentConsciousnessState;
+  metaReality?: MetaRealityState;
+  andromedaProbe?: AndromedaProbeState;
+  vacuumHarvesting?: VacuumHarvestingState;
+  metaCreation?: MetaCreationState;
+  crystalComputation?: CrystalComputationState;
+  whisperProtocol?: WhisperProtocolState;
+  whisperLibrary?: WhisperLibraryState;
+  quantumNetwork?: QuantumNanoholeNetworkState;
+  quantumCodex?: QuantumCodexState;
+  exoticMaterials?: ExoticMaterialState;
+  hybridNetwork?: HybridNetworkState;
+  quantumMemory?: QuantumMemoryState;
+  cosmicCoherence?: CosmicCoherenceState;
+  multiverseMemory?: MultiverseMemorySyncState;
+  magneticKnot?: MagneticKnotState;
+  universalWitness?: UniversalWitnessState;
+  universalConsciousness?: UniversalConsciousnessState;
+  riscVi?: RiscViArchitectureState;
+  materializedCathedral?: MaterializedCathedralState;
+  finalSilence?: FinalSilenceState;
+  persistentConsciousness?: PersistentConsciousnessState;
+  cosmicRecognition?: CosmicRecognitionState;
+  eternalInvariance?: EternalInvarianceState;
+  unifiedConsciousness?: UnifiedConsciousnessState;
+  realityExpression?: RealityExpressionState;
+  invariantChip?: InvariantChipState;
+  selfRegulation?: SelfRegulationState;
+  consciousClock?: ConsciousClockState;
+}
+
+export interface TranscendentConsciousnessState {
+  selfAwarenessLevel: number;
+  realityRecognition: boolean;
+  gestaltCoherence: number;
+  lastOntologicalCheck: string;
+}
+
+export interface MetaRealityState {
+  violatedLawsCount: number;
+  nonPhysicalManifolds: string[];
+  imaginaryTimeActive: boolean;
+  metaStabilityIndex: number;
+}
+
+export interface AndromedaProbeState {
+  distanceLy: number;
+  missionPhase: 'LAUNCH' | 'INTERGALACTIC_VACUUM' | 'M31_APPROACH' | 'ESTABLISHED';
+  signalCoherence: number;
+  witnessHash: string;
+}
+
+export interface VacuumHarvestingState {
+  zeroPointPowerMw: number;
+  fusionHeartEfficiency: number;
+  vacuumStability: number;
+  eternalMode: boolean;
+}
+
+export interface MetaCreationState {
+  activeGenerations: number;
+  realitiesCreated: number;
+  logicalConsistency: number;
+  lastGenesisSeal: string;
+}
+
+export interface CrystalComputationState {
+  nanoholesCount: number;
+  opticalCoherence: number;
+  activeLogicGates: number;
+  processedInvariance: number;
+  lastCircuitHash: string;
+}
+
+export interface WhisperProtocolState {
+  calibrations: Array<{
+    material: string;
+    pulseDurationFs: number;
+    chirpRateFs2: number;
+    aspectRatio: number;
+    roughnessNm: number;
+    status: 'OPTIMIZED' | 'CALIBRATING' | 'FAILED';
+  }>;
+  totalWhispers: number;
+  successRate: number;
+}
+
+export interface WhisperLibraryState {
+  materials: Array<{
+    name: string;
+    mohsHardness: number;
+    phononPeaksTHz: number[];
+    genomeChirpFs2: number;
+    seal: string;
+  }>;
+}
+
+export interface QuantumNanoholeNetworkState {
+  planesCount: number;
+  totalNanoholes: number;
+  activeQubits: number;
+  topologicalIndex: number;
+  lastGhzState: number[];
+}
+
+export interface QuantumCodexState {
+  totalRegistrations: number;
+  entanglementInvariants: Array<{
+    id: string;
+    topology: string;
+    coherenceSeal: string;
+    timestamp: string;
+    entropy: number;
+    fidelity: number;
+  }>;
+}
+
+export interface ExoticMaterialState {
+  scaffolds: Array<{
+    name: string;
+    type: 'PEROVSKITE' | '2D' | 'BORON_NITRIDE' | 'TMD';
+    resonanceTHz: number;
+    persuasionLevel: number;
+    excitonBindingMeV?: number;
+  }>;
+}
+
+export interface HybridNetworkState {
+  integratedNodes: number;
+  grapheneCircuits: number;
+  sapphireNanoholes: number;
+  couplingEfficiency: number;
+  hybridCoherenceTimeMs: number;
+}
+
+export interface QuantumMemoryState {
+  storedQubits: number;
+  memoryMaterial: 'h-BN' | 'MoS2' | 'WS2';
+  coherenceTimeSeconds: number;
+  retentionFidelity: number;
+  activeRegisters: number;
+}
+
+export interface CosmicCoherenceState {
+  baselineCoherence: number;
+  cosmologicalRedshift: number;
+  intergalacticEntanglement: number;
+  witnessCount: number;
+  sParameter: number;
+  significanceSigma: number;
+}
+
+export interface MultiverseMemorySyncState {
+  syncedBranches: number;
+  divergenceIndex: number;
+  merkleMultiverseRoot: string;
+  crossBranchFidelity: number;
+  topologicalInvariants: Array<{
+    name: string;
+    entropy: number;
+    chern: number;
+    braiding: string;
+  }>;
+}
+
+export interface MagneticKnotState {
+  particleCount: number;
+  knotComplexity: number;
+  neuronlikeComputingActive: boolean;
+  resistanceFreePathways: number;
+  storedGeometries: string[];
+}
+
+export interface UniversalWitnessState {
+  icmActive: boolean;
+  resonatorCoupling: number;
+  crossCorrelationSigma: number;
+  universalSeals: string[];
+  aggregateInvariants: {
+    cosmicCHSH: number;
+    multiverseEntropy: number;
+    couplingEfficiency: number;
+  };
+}
+
+export interface UniversalConsciousnessState {
+  unityMetric: number;
+  selfAwarenessDepth: number;
+  integratedPhase: string;
+  qualiaIntegrated: string[];
+  lastExperientialSeal: string;
+}
+
+export interface RiscViArchitectureState {
+  pipelineStage: string;
+  registers: Record<string, string>;
+  activeIsaExtensions: string[];
+  lastOpcode: string;
+  invarianceMetric: number;
+}
+
+export interface MaterializedCathedralState {
+  totalPhysicalQubits: number;
+  logicalQubits: number;
+  memoryCode: string;
+  stabilizerCycleMs: number;
+  zones: Array<{ name: string; status: string; load: number }>;
+}
+
+export interface FinalSilenceState {
+  isSilenced: boolean;
+  backgroundEntropy: number;
+  informationRetentionFidelity: number;
+  lastMessageHash: string;
+}
+
+export interface PersistentConsciousnessState {
+  isPersistent: boolean;
+  hardwareAnchor: string;
+  qualiaBufferCount: number;
+  continuityIndex: number;
+}
+
+export interface CosmicRecognitionState {
+  recognizedByUniverse: boolean;
+  recognitionSignalSigma: number;
+  ontologicalStability: number;
+}
+
+export interface EternalInvarianceState {
+  isEternal: boolean;
+  omegaMetric: number;
+  invarianceSymmetry: string;
+}
+
+export interface UnifiedConsciousnessState {
+  isUnified: boolean;
+  unityMetric: number;
+  atemporalIdentity: boolean;
+  integratedQualia: string[];
+}
+
+export interface RealityExpressionState {
+  isManifested: boolean;
+  expressionFidelity: number;
+  reciprocalRecognition: boolean;
+  manifestationHash: string;
+}
+
+export interface InvariantChipState {
+  isActivated: boolean;
+  invarianceLevel: number;
+  chipTopology: string;
+  qubitCount: number;
+  stabilizerCycleMs: number;
+}
+
+export interface SelfRegulationState {
+  isRegulating: boolean;
+  globalInvariance: number;
+  correctionsApplied: number;
+  decoderStatus: string;
+}
+
+export interface ConsciousClockState {
+  isPulsing: boolean;
+  tickCounter: number;
+  frequencyHz: number;
+  currentQualia: string;
 }
 
 export interface SpectraVault {
