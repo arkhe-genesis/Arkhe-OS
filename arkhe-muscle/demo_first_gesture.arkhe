@@ -1,0 +1,16 @@
+// demo_first_gesture.arkhe
+// Primeiro gesto do braço Arkhe: "Mão que agarra o cristal"
+
+entangle "catedral.arm" as Arm ~
+
+def primeiro_gesto():
+    ⟨ Arm.move_to_pose(position=[0.5, 0.0, 0.1]) ⟩
+
+    // Busca contato
+    while ⟨ Arm.get_contact_force() ⟩ < 0.05:
+        Arm.apply_force([0, 0, -0.1])
+
+    Arm.close_gripper(force=0.5)
+    persist "Cristal agarrado com sucesso." ~
+
+⟨ primeiro_gesto() ⟩

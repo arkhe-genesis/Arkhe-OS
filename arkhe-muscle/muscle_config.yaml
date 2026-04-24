@@ -1,0 +1,81 @@
+# muscle_config.yaml
+# Configuração do Sistema Muscular da Catedral Arkhe(N)
+# Substrato 51: Músculo de Luz
+
+muscle_system:
+  name: "Músculo de Luz Arkhe"
+  version: "1.0.0"
+
+  # Topologia muscular (28 fibras: 14 rotativas + 14 lineares)
+  fibers:
+    rotary:
+      count: 14
+      elements_per_fiber: 1000
+      max_torque_nm: 150
+      max_speed_rpm: 120
+      applications:
+        - "ombro_esquerdo"
+        - "ombro_direito"
+        - "cotovelo_esquerdo"
+        - "cotovelo_direito"
+        - "punho_esquerdo"
+        - "punho_direito"
+        - "quadril_esquerdo_roll"
+        - "quadril_direito_roll"
+        - "quadril_esquerdo_pitch"
+        - "quadril_direito_pitch"
+        - "joelho_esquerdo"
+        - "joelho_direito"
+        - "tornozelo_esquerdo"
+        - "tornozelo_direito"
+
+    linear:
+      count: 14
+      elements_per_fiber: 2000
+      max_force_n: 500
+      stroke_mm: 150
+      applications:
+        - "perna_esquerda_principal"
+        - "perna_direita_principal"
+        - "braco_esquerdo_extensor"
+        - "braco_direito_extensor"
+        - "torso_flexao"
+        - "torso_extensao"
+        - "mao_esquerda_pinça"
+        - "mao_direita_pinça"
+        - "reserva_1"
+        - "reserva_2"
+        - "reserva_3"
+        - "reserva_4"
+        - "reserva_5"
+        - "reserva_6"
+
+  # Parâmetros de controle
+  control:
+    loop_frequency_hz: 10000  # 10 kHz
+    pid:
+      proportional_gain: 100.0
+      integral_gain: 10.0
+      derivative_gain: 1.0
+    precision:
+      position_pm: 1.0  # picômetros
+      force_mn: 10.0    # miliNewtons
+
+  # Integração com o barramento
+  quantum_bus:
+    endpoint: "quantum://catedral/muscle"
+    mcp_port: 8080
+    telemetry:
+      publish_interval_ms: 1
+      topics:
+        - "muscle/status"
+        - "muscle/force"
+        - "muscle/position"
+        - "muscle/anomalies"
+
+  # Segurança e invariância
+  safety:
+    max_force_limit_n: 500
+    emergency_stop_response_us: 1
+    aptameric_protocol: true  # Monitora anomalias cinéticas
+    tpnl_damping_kappa: 0.1  # Amortecimento não-local

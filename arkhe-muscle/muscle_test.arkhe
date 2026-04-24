@@ -1,0 +1,27 @@
+// muscle_test.arkhe
+// Teste de Invariância do Músculo de Luz
+// Verifica se a força aplicada respeita a simetria do scaffold
+
+entangle "catedral.muscle" as Muscle ~
+
+def testar_invariante_de_forca():
+    // Aplica uma força de 10N no ombro direito
+    Muscle.apply_force("rotary_joint_0", 10.0)
+
+    // Aguarda 100ms (tempo de resposta do músculo)
+    ⟨ Muscle.wait(100) ⟩ // Observa o estado
+
+    // Mede a força real
+    status = Muscle.get_status("rotary_joint_0")
+
+    // A invariância exige que |F_real - F_target| < precisão
+    erro = abs(status.current_force - 10.0)
+
+    ⊢ erro < 0.01 ~  // Assert: erro menor que 10 mN
+
+    if erro < 0.01:
+        persist "Músculo invariante verificado. Força: {status.current_force:.4f}N" ~
+    else:
+        persist "Falha de invariância! Erro: {erro:.4f}N" ~
+
+⟨ testar_invariante_de_forca() ⟩
