@@ -142,6 +142,14 @@ class BioScaffold:
         # Retorna a "qualidade" do fragmento
         return float(coherence_factor * np.mean(np.abs(V)))
 
+    def to_dict(self) -> dict:
+        return {
+            "substrato": 28,
+            "material": "Bio-Scaffold",
+            "homeostase": float(self.coherence),
+            "coherence": float(self.coherence)
+        }
+
 
 class AxonClock:
     """Implementa o Relógio de Invariância baseado na equação de fase do AxonWaveguide."""
@@ -235,6 +243,12 @@ class CathedralTime:
         """Avança o relógio mestre."""
         return self.master_clock.update(dt)
 
+
+def inject_bio_into_core(core):
+    bio = BioScaffold()
+    if hasattr(core, 'inject_coherence'):
+        core.inject_coherence(bio.get_coherence_contribution() * 0.05)
+    return bio
 
 if __name__ == "__main__":
     bs = BioScaffold()
