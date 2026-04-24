@@ -1,0 +1,28 @@
+// examples/demo_automated_deploy.arkhe
+// Deploy tri-regional automatizado com validação quântica
+
+entangle "deploy.automation" as Deploy ~
+entangle "codex.crystal" as Codex ~
+
+def deploy_cathedral_automatizado():
+    // === CONFIGURAÇÕES INICIAIS ===
+    config = {
+        version: "v2.4.1",
+        regions: ["sa-east-1", "eu-west-1", "ap-south-1"],
+        quantum_processors: ["rydberg-array", "photonic-chip"],
+        dry_run: false
+    }
+
+    // === EXECUTA DEPLOY AUTOMATIZADO ===
+    receipt = await Deploy.execute_deployment(config)
+
+    ⊢ receipt.receipt_id starts_with "deploy_" ~
+    ⊢ receipt.cathedral_version == "v2.4.1" ~
+    ⊢ len(receipt.regions) == 3 ~
+
+    // === VALIDAÇÃO PÓS-DEPLOY ===
+    ⊢ receipt.omega_score_post_deploy >= 0.95 ~
+
+    persist "Deploy automatizado concluído: Catedral v{config.version} implantada com sucesso." ~
+
+⟨ deploy_cathedral_automatizado() ⟩
