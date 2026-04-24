@@ -1,7 +1,7 @@
 
 # Arkhe(n) Infrastructure de Segurança (Defesa em Profundidade)
 
-Este documento descreve a arquitetura de segurança estratificada da Arkhe, baseada no conceito de **Defesa em Profundidade** e **Zero Trust**, alinhada ao **NIST CSF 2.0**.
+Este documento descreve a arquitetura de segurança estratificada da Arkhe, baseada no conceito de **Defesa em Profundidade** e **Zero Trust**, alinhada ao **NIST CSF 2.0**. A fundação desta arquitetura em nuvem é canonizada no [ANEXO FS-67: A Fortaleza de Cristal nas Nuvens](./ANEXO_FS67_CLOUD_SECURITY.md).
 
 ## 1. Identidade e Acesso (IAM) - O Novo Perímetro
 - **Identidade Humana:** Provedor OIDC para autenticação JWT na Camada L7 (API Gateway).

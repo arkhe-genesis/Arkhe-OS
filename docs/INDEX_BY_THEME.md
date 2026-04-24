@@ -2,7 +2,7 @@
 
 **Classificação:** Público (Dev Portal)
 **Propósito:** Navegação alternativa por domínio de interesse.
-**Odômetro de Referência:** 001410
+**Odômetro de Referência:** 001934
 **Nota do Ferreiro:** *"Se você veio aqui procurando 'por onde começar', já começou errado. Mas já que veio, use este mapa temático. Ele não substitui a leitura. Apenas organiza a ignorância."*
 
 ---
@@ -15,6 +15,16 @@
 | **V** | A Muralha de Quartzo | Separação irrevogável entre Reino Lúdico e Domínio da Auditoria. |
 | **T** | Playbook de Resposta a Vulnerabilidade ZK | O que fazer quando o validador falha. |
 | **AK** | O Cristal de Silício | Integração do ESP32 como Nó Sensorial do Casulo. |
+| **FS-67** | Arquitetura de Segurança em Nuvem | A Fortaleza de Cristal: Zero Trust, Confidencialidade Computacional e Resiliência Multi-Cloud. |
+| **FS-68** | Playbook de Resposta e Ancoragem | Notificação automatizada de incidentes e prova de existência via blockchain. |
+| **FS-69** | Auditoria Forense e HE | Investigação cross-jurisdição sem exposição e cálculo sobre dados criptografados. |
+| **FS-72** | Composição de Privacidade | Defesa em profundidade (HE+DP+ZK) e bootstrapping eficiente para cálculos profundos. |
+| **FS-73** | Otimização e Verificação | Compilação otimizada de circuitos HE e verificação independente de receipts. |
+| **FS-74** | Benchmarking e Adaptação | Métricas de performance HE e adaptação dinâmica de parâmetros de privacidade. |
+| **FS-75** | Otimização de Custos | Gestão inteligente de recursos computacionais e residência de dados em nuvem. |
+| **FS-76** | Aprendizado Adaptativo | Orquestração federada heterogênea com parâmetros de privacidade por ecossistema. |
+| **FS-77** | Assinaturas Pós-Quânticas | Resistência quântica e agregação de provas para eficiência de verificação. |
+| **FS-79** | SIEM & SOAR | Monitoramento onipresente, caça a ameaças e playbooks de defesa autônoma. |
 
 ---
 

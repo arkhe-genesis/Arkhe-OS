@@ -39,10 +39,28 @@ from catedrald_bio import BioScaffold, inject_bio_into_core
 from graphene_resonator import GrapheneSubstrate, inject_graphene_into_core
 from catedrald_affine import AffineSubstrate, inject_affine_into_core
 from catedrald_muscle import LightMuscleSubstrate, inject_muscle_into_core
+from catedrald_cloud_security import CloudSecuritySubstrate, inject_cloud_security_into_core
+from anchoring.temporal_engine import TemporalAnchoringEngine
+from incident.regulatory_notifier import RegulatoryIncidentNotifier
+from forensic.cross_jurisdiction_auditor import CrossJurisdictionForensicAuditor
+from he.processing_engine import HomomorphicProcessingEngine
+from privacy.composition_engine import PrivacyCompositionEngine
+from he.bootstrapping_engine import EfficientBootstrappingEngine
+from he.query_compiler import HEQueryCompiler
+from privacy.receipt_verifier import PrivacyReceiptVerifier
+from he.benchmarking_engine import HEBenchmarkingEngine
+from privacy.parameter_adapter import PrivacyParameterAdapter
+from cloud.cost_optimizer import CostOptimizer
+from federated.adaptive_learning import AdaptiveFederatedLearning
+from arkhe_pqsig_aggregation import PostQuantumSignatureSubstrate
+from cloud.sentinel_watchtower import SentinelWatchtower
+from cloud.migration_engine import ZeroDowntimeMigrator
+from zk.cross_verifier import CrossEcosystemZKVerifier
+from cloud.disaster_recovery import CloudPhoenixEngine
 
 from crypto_shredder import CryptoShredder, MockHSMClient
-from cross_jurisdiction_audit import CrossJurisdictionAuditor, AuditQuery
-from dynamic_consent_protocol import ConsentManager, PrivacyProfile, DataCategory
+from cross_jurisdiction_audit import CrossJurisdictionAuditor
+from dynamic_consent_protocol import DynamicConsentProtocol, PrivacyProfile
 from portability_protocol import PortabilityProtocol
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -242,17 +260,48 @@ class CatedralImmuneSystem:
         """Implementa interface esperada pelo CryptoShredder."""
         seq = self._next_seq()
         timestamp = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+        event_type = kwargs.get("event_type", "GENERIC")
+        if hasattr(event_type, "name"): # Handle Enums
+            event_type = event_type.name
+
         entry = AuditEntry(
             timestamp=timestamp,
             peer_uid=0,  # System
             peer_pid=os.getpid(),
-            action=kwargs.get("event_type", "GENERIC"),
+            action=event_type,
             payload_hash=hashlib.sha256(str(kwargs).encode()).hexdigest(),
             status="accepted",
             details=kwargs
         )
         with self._lock:
             self.audit_log.append(entry)
+
+    async def log_decision(self, decision_type, **kwargs):
+        """Interface de auditoria para os novos motores de privacidade e HE."""
+        # Ensure decision_id is present for later retrieval
+        if "decision_id" not in kwargs:
+            kwargs["decision_id"] = f"dec_{int(time.time() * 1e6)}_{uuid.uuid4().hex[:6]}"
+        await self.record_event(event_type=decision_type, **kwargs)
+        return kwargs["decision_id"]
+
+    async def get_decision(self, decision_id: str) -> Optional[Dict[str, Any]]:
+        """Mock retrieval for compatibility with CrossJurisdictionAuditor."""
+        with self._lock:
+            for entry in self.audit_log:
+                if entry.details.get("decision_id") == decision_id:
+                    # Mock an object that has attributes like decision_type, context, etc.
+                    # or just return a dict if the auditor can handle it.
+                    # Based on cross_jurisdiction_audit.py, it expects an object with attributes.
+                    class MockRecord:
+                        def __init__(self, data):
+                            self.decision_type = type('Enum', (), {'name': data['action']})
+                            self.timestamp = datetime.fromisoformat(data['timestamp'].replace('Z', '+00:00')).timestamp()
+                            self.context = data['details'].get('context', {})
+                            self.compliance_tags = data['details'].get('compliance_tags', [])
+                            self.explainability = data['details'].get('explainability', {})
+                            self.merkle_root = data['payload_hash']
+                    return MockRecord(asdict(entry))
+            return None
 
     def process_payload(self, payload_json: str, peer_info: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -450,19 +499,39 @@ class CatedralCore:
         self.graphene = inject_graphene_into_core(self)
         self.affine = inject_affine_into_core(self)
         self.muscle = inject_muscle_into_core(self)
+        self.cloud_security = inject_cloud_security_into_core(self)
+
+        # Mock managers for dependency injection
+        class MockDIDManager:
+            def sign(self, data): return "mock_sig"
+            def verify(self, sig, data): return True
+
+        class MockExplainabilityEngine:
+            def explain(self, decision): return {"text": "Simulation explain"}
 
         # Substrato 56: Governança e Soberania de Dados
-        self.consent = ConsentManager()
+        self.consent = DynamicConsentProtocol(MockExplainabilityEngine())
         self.shredder = CryptoShredder(MockHSMClient(), self.immune)
 
         # Gerar chave RSA para o Auditor (em produção, viria de um cofre)
-        private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
-        pem = private_key.private_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PrivateFormat.PKCS8,
-            encryption_algorithm=serialization.NoEncryption()
-        )
-        self.auditor = CrossJurisdictionAuditor(pem, self.immune)
+        self.auditor = CrossJurisdictionAuditor(self.immune)
+        self.anchoring = TemporalAnchoringEngine(self.immune, MockDIDManager())
+        self.regulatory_notifier = RegulatoryIncidentNotifier(self.immune)
+        self.forensic_auditor = CrossJurisdictionForensicAuditor(self.immune)
+        self.he_engine = HomomorphicProcessingEngine(self.immune)
+        self.privacy_composition = PrivacyCompositionEngine(self.immune)
+        self.bootstrapping = EfficientBootstrappingEngine(self.immune)
+        self.query_compiler = HEQueryCompiler(self.immune)
+        self.receipt_verifier = PrivacyReceiptVerifier(self.immune)
+        self.benchmarking = HEBenchmarkingEngine(self.immune)
+        self.parameter_adapter = PrivacyParameterAdapter(self.immune)
+        self.cost_optimizer = CostOptimizer(self.immune)
+        self.federated_learning = AdaptiveFederatedLearning(self.immune)
+        self.pq_signatures = PostQuantumSignatureSubstrate(self.immune)
+        self.watchtower = SentinelWatchtower(self.immune)
+        self.migrator = ZeroDowntimeMigrator(self.immune)
+        self.cross_verifier = CrossEcosystemZKVerifier(self.immune)
+        self.recovery = CloudPhoenixEngine(self.immune)
         self.portability = PortabilityProtocol()
 
         self._running = False
@@ -499,6 +568,24 @@ class CatedralCore:
                 "graphene": self.graphene.to_dict(),
                 "affine": self.affine.to_dict(),
                 "muscle": self.muscle.to_dict(),
+                "cloud_security": self.cloud_security.to_dict(),
+                "anchoring": self.anchoring.to_dict(),
+                "regulatory_notifier": self.regulatory_notifier.to_dict(),
+                "forensic_auditor": self.forensic_auditor.to_dict(),
+                "he_engine": self.he_engine.to_dict(),
+                "privacy_composition": self.privacy_composition.to_dict(),
+                "bootstrapping": self.bootstrapping.to_dict(),
+                "query_compiler": self.query_compiler.to_dict(),
+                "receipt_verifier": self.receipt_verifier.to_dict(),
+                "benchmarking": self.benchmarking.to_dict(),
+                "parameter_adapter": self.parameter_adapter.to_dict(),
+                "cost_optimizer": self.cost_optimizer.get_status(),
+                "federated_learning": self.federated_learning.get_status(),
+                "pq_signatures": self.pq_signatures.get_status(),
+                "watchtower": self.watchtower.get_status(),
+                "migrator": self.migrator.get_status(),
+                "cross_verifier": self.cross_verifier.get_status(),
+                "recovery": self.recovery.get_status(),
                 "timestamp": datetime.utcnow().isoformat() + "Z",
             }
 
@@ -751,6 +838,70 @@ class CatedralCLI:
                 force = muscle.get('measured_force_n', [0,0,0])
                 table.add_row("Measured Force (N)", f"[{force[0]:.2f}, {force[1]:.2f}, {force[2]:.2f}]")
 
+            cloud_sec = state.get('cloud_security', {})
+            if cloud_sec:
+                table.add_row("Substrato 67 (Cloud)", f"{cloud_sec.get('name', '?')}")
+                table.add_row("Zero Trust", "ENABLED" if cloud_sec.get('zero_trust') else "DISABLED")
+                table.add_row("Confidential Computing", "ACTIVE" if cloud_sec.get('confidential_computing') else "INACTIVE")
+                table.add_row("Sovereignty Score", f"{cloud_sec.get('sovereignty_score', 0):.4f}")
+
+            anchoring = state.get('anchoring', {})
+            if anchoring:
+                table.add_row("Substrato 68 (Anchoring)", "ACTIVE")
+                table.add_row("Last Anchor", anchoring.get('last_anchor', 'Never'))
+
+            privacy = state.get('privacy_composition', {})
+            if privacy:
+                table.add_row("Substrato 72 (Privacy)", "ACTIVE")
+                table.add_row("Privacy Layers", ", ".join(privacy.get('active_layers', [])))
+
+            comp = state.get('query_compiler', {})
+            if comp:
+                table.add_row("Substrato 73 (Compiler)", "READY")
+                table.add_row("Optimizations", ", ".join(comp.get('optimizations', [])))
+
+            bench = state.get('benchmarking', {})
+            if bench:
+                table.add_row("Substrato 74 (Bench)", "ACTIVE")
+                last_b = bench.get('last_benchmark')
+                throughput = last_b.get('throughput_ops_sec', 0) if last_b else 0
+                table.add_row("HE Throughput", f"{throughput:.2f} ops/s")
+
+            cost = state.get('cost_optimizer', {})
+            if cost:
+                table.add_row("Substrato 75 (Cost)", cost.get('status', 'OFFLINE'))
+                table.add_row("Cost Engine", cost.get('optimization_engine', '?'))
+
+            fed = state.get('federated_learning', {})
+            if fed:
+                table.add_row("Substrato 76 (Fed)", fed.get('status', 'OFFLINE'))
+                table.add_row("Ecosystems", str(fed.get('registered_ecosystems', 0)))
+
+            pq = state.get('pq_signatures', {})
+            if pq:
+                table.add_row("Substrato 77 (PQ)", pq.get('status', 'OFFLINE'))
+                table.add_row("Algorithm", pq.get('algorithm', '?'))
+
+            sentinel = state.get('watchtower', {})
+            if sentinel:
+                table.add_row("Substrato 79 (SIEM)", sentinel.get('status', 'OFFLINE'))
+                table.add_row("Total Incidents", str(sentinel.get('total_incidents', 0)))
+                table.add_row("Remediated", str(sentinel.get('remediated_count', 0)))
+
+            mig = state.get('migrator', {})
+            if mig:
+                table.add_row("Substrato 76-B (Mig)", mig.get('status', 'OFFLINE'))
+
+            rec = state.get('recovery', {})
+            if rec:
+                table.add_row("Substrato 78 (Recovery)", rec.get('status', 'OFFLINE'))
+                table.add_row("Last Failover", str(rec.get('last_failover') or 'None'))
+
+            zk_cross = state.get('cross_verifier', {})
+            if zk_cross:
+                table.add_row("Substrato 77-B (ZK-V)", zk_cross.get('status', 'OFFLINE'))
+                table.add_row("ZK Proof Types", ", ".join(zk_cross.get('proof_types', [])))
+
             table.add_row("Timestamp", state.get('timestamp', '?'))
             self.console.print(table)
         else:
@@ -953,6 +1104,10 @@ class CatedralCLI:
                         f_mag = math.sqrt(sum(x*x for x in force))
                         left_table.add_row("Muscle (Sub 51)", f"{f_mag:.2f} N")
 
+                    cloud_sec = state.get('cloud_security', {})
+                    if cloud_sec:
+                        left_table.add_row("Cloud (Sub 67)", f"{cloud_sec.get('sovereignty_score', 0):.3f}")
+
                     left_table.add_row("QZ Total", f"{state.get('bounty_total_qz', 0):.2f}")
 
                     # Barra de coerência
@@ -981,6 +1136,12 @@ class CatedralCLI:
                     audit_count = state.get('audit_count', 0)
                     right_content = Text(f"Entradas de auditoria: {audit_count}\n", style=COLOR_ARKHE_MUTED)
                     right_content.append("Sistema Imunológico: ATIVO\n", style=COLOR_ARKHE_TEAL)
+
+                    cloud_sec = state.get('cloud_security', {})
+                    if cloud_sec:
+                        q_status = cloud_sec.get('quórum_status', 'unknown')
+                        q_style = COLOR_ARKHE_TEAL if q_status == 'stable' else COLOR_ARKHE_FISSURE
+                        right_content.append(f"Cloud Quórum: {q_status.upper()}\n", style=q_style)
 
                     q_size = state.get('quarantine_size', 0)
                     q_style = COLOR_ARKHE_TEAL if q_size == 0 else COLOR_ARKHE_FISSURE

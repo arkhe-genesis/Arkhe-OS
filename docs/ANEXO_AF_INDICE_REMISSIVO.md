@@ -24,6 +24,16 @@
 | :--- | :--- | :--- | :--- |
 | **—** | Conversas Iniciais | Arquitetura Zero Trust, mTLS, SPIFFE, Falco, Threat Model do Fuseki, exfiltração de T-Box via SPARQL. A base técnica que justifica a Muralha. | Arquitetos de Segurança, CISOs. |
 | **ANEXO V** | A Muralha de Quartzo | A separação irrevogável entre **Reino Lúdico** (jogador vê dragões) e **Domínio da Auditoria** (empresa vê CVEs). O contrato de tradução. | Todos. É o alicerce conceitual. |
+| **ANEXO FS-67** | Arquitetura de Segurança em Nuvem | **A Fortaleza de Cristal**. Implementação de Zero Trust, Confidencialidade Computacional (Enclaves) e Resiliência Multi-Cloud para soberania digital. | Arquitetos de Nuvem, Engenheiros de DevSecOps, CISOs. |
+| **ANEXO FS-68** | Resposta e Ancoragem | **O Mensageiro e o Selo**. Automação de notificações regulatórias e prova de existência de registros via blockchain pública. | Equipes de Resposta a Incidentes, DPOs, Reguladores. |
+| **ANEXO FS-69** | Auditoria e HE | **O Espelho e o Cálculo**. Protocolo de auditoria cross-jurisdição via ZK e processamento homomórfico de dados sensíveis. | Auditores, Cientistas de Dados, Especialistas em Privacidade. |
+| **ANEXO FS-72** | Composição e Bootstrapping | **A Cadeia de Véus e o Refresco**. Defesa em profundidade multi-camada e refresh de cifras HE para circuitos profundos. | Arquitetos de Privacidade, Engenheiros de Criptografia. |
+| **ANEXO FS-73** | Otimização e Verificação | **O Arquiteto e o Espelho**. Compilação otimizada de circuitos homomórficos e auditoria descentralizada de receipts. | Engenheiros de Software, Auditores Independentes. |
+| **ANEXO FS-74** | Benchmarking e Adaptação | **O Odômetro e o Camaleão**. Monitoramento de performance criptográfica e ajuste dinâmico de parâmetros regulatórios. | SREs, Especialistas em Compliance. |
+| **ANEXO FS-75** | Otimização de Custos | **O Economista e a Nuvem**. Gestão inteligente de recursos computacionais e residência de dados. | Cloud Architects, FinOps. |
+| **ANEXO FS-76** | Aprendizado Adaptativo | **O Jardineiro e a Semente**. Orquestração federada heterogênea com parâmetros adaptativos. | ML Engineers, Especialistas em Privacidade. |
+| **ANEXO FS-77** | Assinaturas Pós-Quânticas | **O Selo do Futuro**. Resistência quântica e agregação de provas compactas. | Engenheiros de Criptografia, Auditores. |
+| **ANEXO FS-79** | SIEM & SOAR | **O Vigia das Almas**. Vigilância onipresente, detecção de ameaças e defesa autônoma. | SecOps, CISOs. |
 
 #### 🔷 INTEGRAÇÃO TÉCNICA (Mãos no Código, Olhos no Silêncio)
 
@@ -99,8 +109,8 @@
 
 ```bash
 arkhe > INDEX: CANONIZED_AS_DEV_PORTAL_NAVIGATION
-arkhe > ODOMETER: 001490
-arkhe > TOTAL_ANNEXES_CATALOGED: 19
+arkhe > ODOMETER: 001952
+arkhe > TOTAL_ANNEXES_CATALOGED: 23
 arkhe > STATUS: ECOSYSTEM_DOCUMENTATION_COMPLETE
 arkhe > FERREIRO_FINAL_DIRECTIVE: "READ. BUILD. HESITATE. REPEAT."
 ```
