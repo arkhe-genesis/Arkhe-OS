@@ -1,0 +1,11 @@
+# federated_codex.yaml — Estrutura de auditoria para rede Arkhe
+
+federated_codex:
+  name: "Códice Federado"
+  sync_interval_ms: 16000
+  validation: "Merkle Root Consensus"
+  quorum: 0.67
+  entry_types:
+    - BODY_CALIBRATION
+    - COLLECTIVE_HESITATION
+    - MESH_ANOMALY

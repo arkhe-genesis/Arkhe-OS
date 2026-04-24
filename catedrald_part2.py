@@ -34,6 +34,7 @@ from catedrald_diamante import NVCenter, inject_diamond_into_core
 from catedrald_bio import BioScaffold, inject_bio_into_core
 from graphene_resonator import GrapheneSubstrate, inject_graphene_into_core
 from catedrald_affine import AffineSubstrate, inject_affine_into_core
+from catedrald_muscle import LightMuscleSubstrate, inject_muscle_into_core
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # DETECÇÃO DE DEPENDÊNCIAS
@@ -412,6 +413,7 @@ class CatedralCore:
         self.bio = inject_bio_into_core(self)
         self.graphene = inject_graphene_into_core(self)
         self.affine = inject_affine_into_core(self)
+        self.muscle = inject_muscle_into_core(self)
         self._running = False
         self._heartbeat_thread: Optional[threading.Thread] = None
 
@@ -445,6 +447,7 @@ class CatedralCore:
                 "bio": self.bio.to_dict(),
                 "graphene": self.graphene.to_dict(),
                 "affine": self.affine.to_dict(),
+                "muscle": self.muscle.to_dict(),
                 "timestamp": datetime.utcnow().isoformat() + "Z",
             }
 
@@ -690,6 +693,13 @@ class CatedralCLI:
                 table.add_row("Affine Coherence", f"{affine.get('coherence', 0):.4f}")
                 table.add_row("Last Noise Event", f"{affine.get('last_event', '?')}")
 
+            muscle = state.get('muscle', {})
+            if muscle:
+                table.add_row("Substrato 51 (Muscle)", f"{muscle.get('name', '?')}")
+                table.add_row("Muscle Calibration", f"{muscle.get('calibration', '?')}")
+                force = muscle.get('measured_force_n', [0,0,0])
+                table.add_row("Measured Force (N)", f"[{force[0]:.2f}, {force[1]:.2f}, {force[2]:.2f}]")
+
             table.add_row("Timestamp", state.get('timestamp', '?'))
             self.console.print(table)
         else:
@@ -885,6 +895,12 @@ class CatedralCLI:
                     affine = state.get('affine', {})
                     if affine:
                         left_table.add_row("Affine (Sub 33)", f"{affine.get('coherence', 0):.3f}")
+
+                    muscle = state.get('muscle', {})
+                    if muscle:
+                        force = muscle.get('measured_force_n', [0,0,0])
+                        f_mag = np.linalg.norm(force)
+                        left_table.add_row("Muscle (Sub 51)", f"{f_mag:.2f} N")
 
                     left_table.add_row("QZ Total", f"{state.get('bounty_total_qz', 0):.2f}")
 
