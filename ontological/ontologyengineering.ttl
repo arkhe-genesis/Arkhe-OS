@@ -1,0 +1,52 @@
+@prefix meta: <http://cathedral.ark/ontology/meta/v1#> .
+@prefix ontologyengineering: <http://cathedral.ark/ontology/ontologyengineering#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+meta:Audit a owl:Class .
+
+meta:Proof a owl:Class .
+
+meta:Substrate a owl:Class .
+
+meta:dpEpsilon a owl:DatatypeProperty ;
+    rdfs:domain meta:Entity ;
+    rdfs:range xsd:float .
+
+meta:fulfillsPurpose a owl:ObjectProperty ;
+    rdfs:domain meta:Action ;
+    rdfs:range meta:Purpose .
+
+meta:hasConsent a owl:ObjectProperty ;
+    rdfs:domain meta:Entity ;
+    rdfs:range meta:Consent .
+
+ontologyengineering:AdjustThresholds a owl:Class ;
+    rdfs:subClassOf meta:Action .
+
+ontologyengineering:AnalyzeSuccessPatterns a owl:Class ;
+    rdfs:subClassOf meta:Action .
+
+ontologyengineering:AnchorEvolution a owl:Class ;
+    rdfs:subClassOf meta:Action .
+
+ontologyengineering:EvolutionaryCheckpoint a owl:Class ;
+    meta:dpEpsilon 1e-01 ;
+    rdfs:subClassOf meta:Entity .
+
+ontologyengineering:HistoryAnalyzer a owl:Class ;
+    meta:dpEpsilon 1e-01 ;
+    rdfs:subClassOf meta:Entity .
+
+ontologyengineering:ThresholdOptimizer a owl:Class ;
+    meta:dpEpsilon 1e-01 ;
+    rdfs:subClassOf meta:Entity .
+
+meta:Consent a owl:Class .
+
+meta:Purpose a owl:Class .
+
+meta:Action a owl:Class .
+
+meta:Entity a owl:Class .
