@@ -26,8 +26,12 @@ import threading
 import time
 import uuid
 from dataclasses import dataclass, field, asdict
-from datetime import datetime, timezone, timezone
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
+
+import math
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives import serialization
 
 from catedrald_safira import SapphireScaffold, inject_sapphire_into_core
 from catedrald_diamante import NVCenter, inject_diamond_into_core
@@ -35,6 +39,11 @@ from catedrald_bio import BioScaffold, inject_bio_into_core
 from graphene_resonator import GrapheneSubstrate, inject_graphene_into_core
 from catedrald_affine import AffineSubstrate, inject_affine_into_core
 from catedrald_muscle import LightMuscleSubstrate, inject_muscle_into_core
+
+from crypto_shredder import CryptoShredder, MockHSMClient
+from cross_jurisdiction_audit import CrossJurisdictionAuditor, AuditQuery
+from dynamic_consent_protocol import ConsentManager, PrivacyProfile, DataCategory
+from portability_protocol import PortabilityProtocol
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # DETECÇÃO DE DEPENDÊNCIAS
@@ -217,6 +226,33 @@ class CatedralImmuneSystem:
             # Ações administrativas
             return uid >= 1000  # placeholder: usuários humanos
         return True
+
+    async def query_events(self, start_time: float, end_time: float) -> List[Dict[str, Any]]:
+        """Interface de consulta para auditoria Cross-Jurisdição."""
+        with self._lock:
+            # Em produção, filtraria por timestamp. Aqui retorna histórico completo.
+            return [asdict(e) for e in self.audit_log]
+
+    async def get_all_events_in_period(self, start_time: float, end_time: float) -> List[Dict[str, Any]]:
+        """Interface para árvore de Merkle."""
+        with self._lock:
+            return [asdict(e) for e in self.audit_log]
+
+    async def record_event(self, **kwargs):
+        """Implementa interface esperada pelo CryptoShredder."""
+        seq = self._next_seq()
+        timestamp = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+        entry = AuditEntry(
+            timestamp=timestamp,
+            peer_uid=0,  # System
+            peer_pid=os.getpid(),
+            action=kwargs.get("event_type", "GENERIC"),
+            payload_hash=hashlib.sha256(str(kwargs).encode()).hexdigest(),
+            status="accepted",
+            details=kwargs
+        )
+        with self._lock:
+            self.audit_log.append(entry)
 
     def process_payload(self, payload_json: str, peer_info: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -414,6 +450,21 @@ class CatedralCore:
         self.graphene = inject_graphene_into_core(self)
         self.affine = inject_affine_into_core(self)
         self.muscle = inject_muscle_into_core(self)
+
+        # Substrato 56: Governança e Soberania de Dados
+        self.consent = ConsentManager()
+        self.shredder = CryptoShredder(MockHSMClient(), self.immune)
+
+        # Gerar chave RSA para o Auditor (em produção, viria de um cofre)
+        private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+        pem = private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.NoEncryption()
+        )
+        self.auditor = CrossJurisdictionAuditor(pem, self.immune)
+        self.portability = PortabilityProtocol()
+
         self._running = False
         self._heartbeat_thread: Optional[threading.Thread] = None
 
@@ -899,7 +950,7 @@ class CatedralCLI:
                     muscle = state.get('muscle', {})
                     if muscle:
                         force = muscle.get('measured_force_n', [0,0,0])
-                        f_mag = np.linalg.norm(force)
+                        f_mag = math.sqrt(sum(x*x for x in force))
                         left_table.add_row("Muscle (Sub 51)", f"{f_mag:.2f} N")
 
                     left_table.add_row("QZ Total", f"{state.get('bounty_total_qz', 0):.2f}")
