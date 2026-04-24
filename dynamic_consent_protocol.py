@@ -1,101 +1,100 @@
-# dynamic_consent_protocol.py — Gestão de consentimento granular
+# dynamic_consent_protocol.py — Protocolo de consentimento dinâmico e adaptativo
 
-import json
-import time
-from enum import Enum
-from typing import Dict, List, Any, Optional
-from dataclasses import dataclass, field
+import logging
+from enum import Enum, auto
+from dataclasses import dataclass
+from typing import Dict, Any, List, Optional
+from explainability_engine import ExplanationPersona
 
 class PrivacyProfile(Enum):
-    CONSERVATIVE = "CONSERVATIVE"
-    BALANCED = "BALANCED"
-    OPEN = "OPEN"
-
-class DataCategory(Enum):
-    IDENTIFIERS = "identificadores"
-    CONTACT = "contato"
-    FINANCIAL = "financeiros"
-    LOCATION = "localizacao"
-    HEALTH = "saude"
-    BEHAVIORAL = "comportamental"
-    BIOMETRIC = "biometrico"
-    JUDICIAL = "judicial"
-    POLITICAL = "opiniao_politica"
-
-class Purpose(Enum):
-    SERVICE_PROVISION = "prestacao_servico"
-    SECURITY = "seguranca"
-    PRODUCT_IMPROVEMENT = "melhoria_produto"
-    MARKETING = "marketing"
-    RESEARCH = "pesquisa"
-    LEGAL_OBLIGATION = "obrigacao_legal"
-    THIRD_PARTY_ANALYTICS = "terceiro_analise"
-    AI_TRAINING = "ia_treinamento"
+    CONSERVATIVE = auto()  # Alta privacidade, uso mínimo de dados, explicações focadas em direitos
+    BALANCED = auto()      # Privacidade média, uso padrão, explicações claras e diretas
+    OPEN = auto()          # Menor privacidade para maior personalização, explicações detalhadas
 
 @dataclass
-class CitizenConsent:
+class CitizenPrivacyProfile:
     citizen_id: str
-    profile: PrivacyProfile = PrivacyProfile.BALANCED
-    # Matrix: matrix[category][purpose] = bool
-    matrix: Dict[str, Dict[str, bool]] = field(default_factory=dict)
-    updated_at: float = field(default_factory=time.time)
+    profile: PrivacyProfile
+    consents: Dict[str, bool] # Mapeamento de propósito para consentimento dado
 
-    def __post_init__(self):
-        if not self.matrix:
-            self.apply_profile_defaults(self.profile)
-
-    def apply_profile_defaults(self, profile: PrivacyProfile):
-        self.profile = profile
-        self.matrix = {}
-
-        essential_purposes = {Purpose.SERVICE_PROVISION.value, Purpose.SECURITY.value, Purpose.LEGAL_OBLIGATION.value}
-
-        for cat in DataCategory:
-            self.matrix[cat.value] = {}
-            for pur in Purpose:
-                if profile == PrivacyProfile.OPEN:
-                    self.matrix[cat.value][pur.value] = True
-                elif profile == PrivacyProfile.CONSERVATIVE:
-                    self.matrix[cat.value][pur.value] = pur.value in essential_purposes
-                else: # BALANCED
-                    if pur.value in essential_purposes:
-                        self.matrix[cat.value][pur.value] = True
-                    elif pur in {Purpose.PRODUCT_IMPROVEMENT, Purpose.RESEARCH}:
-                        self.matrix[cat.value][pur.value] = cat not in {DataCategory.BIOMETRIC, DataCategory.HEALTH, DataCategory.FINANCIAL}
-                    else:
-                        self.matrix[cat.value][pur.value] = False
-        self.updated_at = time.time()
-
-class ConsentManager:
+class DynamicConsentProtocol:
     """
-    Gerencia o consentimento granular (Matriz Categoria x Finalidade).
+    Protocolo de consentimento dinâmico que adapta explicações e ações
+    com base no perfil de privacidade do cidadão.
     """
-    def __init__(self):
-        self._citizen_consents: Dict[str, CitizenConsent] = {}
 
-    def get_consent(self, citizen_id: str) -> CitizenConsent:
-        if citizen_id not in self._citizen_consents:
-            self._citizen_consents[citizen_id] = CitizenConsent(citizen_id=citizen_id)
-        return self._citizen_consents[citizen_id]
+    def __init__(self, explainability_engine: Any):
+        self.explainability = explainability_engine
+        self.citizen_profiles: Dict[str, CitizenPrivacyProfile] = {}
 
-    def update_entry(self, citizen_id: str, category: DataCategory, purpose: Purpose, allowed: bool):
-        consent = self.get_consent(citizen_id)
-        consent.matrix.setdefault(category.value, {})[purpose.value] = allowed
-        consent.updated_at = time.time()
+    def set_citizen_profile(self, citizen_id: str, profile: PrivacyProfile, consents: Dict[str, bool]):
+        """Define ou atualiza o perfil de um cidadão."""
+        self.citizen_profiles[citizen_id] = CitizenPrivacyProfile(
+            citizen_id=citizen_id,
+            profile=profile,
+            consents=consents
+        )
+        logging.info(f"[CONSENT] Perfil do cidadão {citizen_id} definido como {profile.name}")
 
-    def update_profile(self, citizen_id: str, profile: PrivacyProfile):
-        consent = self.get_consent(citizen_id)
-        consent.apply_profile_defaults(profile)
+    def get_adapted_persona(self, citizen_id: str) -> ExplanationPersona:
+        """
+        Determina qual persona de explicação usar com base no perfil de privacidade.
+        """
+        profile_data = self.citizen_profiles.get(citizen_id)
+        if not profile_data:
+            return ExplanationPersona.CITIZEN # Padrão seguro
 
-    def is_allowed(self, citizen_id: str, category: DataCategory, purpose: Purpose) -> bool:
-        consent = self.get_consent(citizen_id)
-        return consent.matrix.get(category.value, {}).get(purpose.value, False)
+        if profile_data.profile == PrivacyProfile.CONSERVATIVE:
+            # Para perfis conservadores, focamos na linguagem de direitos do cidadão
+            return ExplanationPersona.CITIZEN
+        elif profile_data.profile == PrivacyProfile.OPEN:
+            # Para perfis abertos, podemos fornecer detalhes mais técnicos ou executivos
+            return ExplanationPersona.TECHNICAL
+        else:
+            return ExplanationPersona.CITIZEN
 
-    def to_dict(self) -> Dict[str, Any]:
-        return {
-            cid: {
-                "profile": c.profile.value,
-                "matrix": c.matrix,
-                "updated_at": c.updated_at
-            } for cid, c in self._citizen_consents.items()
-        }
+    def validate_action(self, citizen_id: str, action_purpose: str) -> bool:
+        """
+        Verifica se uma ação pretendida possui consentimento dinâmico.
+        """
+        profile_data = self.citizen_profiles.get(citizen_id)
+        if not profile_data:
+            logging.warning(f"[CONSENT] Cidadão {citizen_id} não encontrado. Ação {action_purpose} negada.")
+            return False
+
+        has_consent = profile_data.consents.get(action_purpose, False)
+
+        if not has_consent:
+            logging.warning(f"[CONSENT] Cidadão {citizen_id} não deu consentimento para {action_purpose}.")
+
+        return has_consent
+
+    def adapt_data_retention(self, citizen_id: str, base_days: int) -> int:
+        """
+        Adapta o prazo de retenção de dados com base no perfil.
+        """
+        profile_data = self.citizen_profiles.get(citizen_id)
+        if not profile_data:
+            return min(base_days, 7) # Padrão restritivo
+
+        if profile_data.profile == PrivacyProfile.CONSERVATIVE:
+            return min(base_days, 3) # Retenção curta
+        elif profile_data.profile == PrivacyProfile.OPEN:
+            return max(base_days, 30) # Permite retenção longa para análise
+        else:
+            return base_days
+
+    def get_privacy_notice(self, citizen_id: str) -> str:
+        """
+        Gera um aviso de privacidade adaptado ao perfil.
+        """
+        profile_data = self.citizen_profiles.get(citizen_id)
+        if not profile_data:
+            return "Seus dados são protegidos pela Catedral sob a LGPD."
+
+        if profile_data.profile == PrivacyProfile.CONSERVATIVE:
+            return "Privacidade Total: Seus dados são usados apenas para o estritamente necessário e apagados rapidamente."
+        elif profile_data.profile == PrivacyProfile.OPEN:
+            return "Experiência Personalizada: Utilizamos seus dados para otimizar sua interação com a Catedral."
+        else:
+            return "Uso Equilibrado: Seus dados são usados com transparência para melhorar nossos serviços."
