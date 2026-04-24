@@ -13,7 +13,9 @@ from cathedral_ternary.bitzk import TernaryCircuitBuilder
 from dynamic_consent_protocol import DynamicConsentProtocol, PrivacyProfile
 from src.arkhe_core.quantum.codex import QuantumCodex
 from protocol_forge import ProtocolForge
+import pytest
 
+@pytest.mark.asyncio
 async def test_photonic_sovereignty_workflow():
     logging.basicConfig(level=logging.INFO)
     print("=== INICIANDO TESTE CATEDRAL TRANSLÚCIDA (FS-87) ===")

@@ -17,6 +17,20 @@ class CitizenPrivacyProfile:
     profile: PrivacyProfile
     consents: Dict[str, bool] # Mapeamento de propósito para consentimento dado
 
+class DataCategory(Enum):
+    HEALTH = auto()
+    SENSORIAL = auto()
+    TOPOLOGICAL = auto()
+    GENERIC = auto()
+
+class ConsentManager:
+    """Mock for ConsentManager if it's expected by other parts of the system."""
+    def __init__(self):
+        self.profiles: Dict[str, Any] = {}
+
+    def validate_action(self, citizen_id: str, action_purpose: str) -> bool:
+        return True # Default to True for the mock
+
 class DynamicConsentProtocol:
     """
     Protocolo de consentimento dinâmico que adapta explicações e ações

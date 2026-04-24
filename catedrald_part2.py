@@ -62,6 +62,8 @@ from crypto_shredder import CryptoShredder, MockHSMClient
 from cross_jurisdiction_audit import CrossJurisdictionAuditor
 from dynamic_consent_protocol import DynamicConsentProtocol, PrivacyProfile
 from portability_protocol import PortabilityProtocol
+from topological_photonics_protocol import TopologicalSovereigntyProtocol
+from audit_logger import AuditLogger
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # DETECÇÃO DE DEPENDÊNCIAS
@@ -512,6 +514,9 @@ class CatedralCore:
         # Substrato 56: Governança e Soberania de Dados
         self.consent = DynamicConsentProtocol(MockExplainabilityEngine())
         self.shredder = CryptoShredder(MockHSMClient(), self.immune)
+
+        # Substrato 89: Fotônica Topológica Integrada
+        self.topological = TopologicalSovereigntyProtocol(self.audit_logger, self.consent)
 
         # Gerar chave RSA para o Auditor (em produção, viria de um cofre)
         self.auditor = CrossJurisdictionAuditor(self.immune)

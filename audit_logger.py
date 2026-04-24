@@ -21,6 +21,10 @@ class DecisionType(Enum):
     FEDERATED_LEARNING_ROUND = auto()
     DATA_RECONCILIATION = auto()
     COUNCIL_OF_MIRRORS_AUDIT = auto()
+    TOPOLOGICAL_CONFIG_REPROG = auto()
+    ZK_MESH_VERIFICATION = auto()
+    DISORDER_BENCHMARK = auto()
+    FEDTERNARY_AGGREGATION = auto()
 
 @dataclass
 class AuditRecord:
