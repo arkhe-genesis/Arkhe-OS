@@ -15,6 +15,7 @@ from rich.text import Text
 # Import base components
 from audit_logger import AuditLogger, DecisionType
 from compliance_engine import ComplianceEngine
+from forensic_audit_protocol import ForensicAuditManager, ForensicEvidence
 from explainability_engine import ExplainabilityEngine, ExplanationPersona
 from explainability_protocol import DecisionNarrator
 
@@ -30,6 +31,7 @@ class ArkheAuditCLI:
         self.compliance = ComplianceEngine()
         self.explain = ExplainabilityEngine(self.audit, self.compliance)
         self.narrator = DecisionNarrator()
+        self.forensic = ForensicAuditManager(self.audit, self.compliance)
 
     async def _mock_data(self):
         """Populates with some sample data for demonstration."""
@@ -185,6 +187,35 @@ class ArkheAuditCLI:
         narrative = self.narrator.generate_narrative(decision, args.audience.upper())
         self.console.print(Panel(narrative, title=f"Narrativa para {args.audience.upper()}"))
 
+    async def cmd_forensic_verify(self, args):
+        """Executa verificação forense cross-jurisdiction."""
+        decision = await self.audit.get_decision(args.id)
+        if not decision:
+            self.console.print(f"[bold red]Erro:[/bold red] Decisão {args.id} não encontrada.")
+            return
+
+        self.console.print(f"Iniciando investigação forense para a decisão [bold]{args.id}[/bold]...")
+        inv_id = await self.forensic.request_investigation(args.id, args.jurisdiction, "CLI Audit")
+
+        evidence = await self.forensic.generate_forensic_evidence(inv_id, args.id, args.jurisdiction)
+
+        # Simula a verificação por uma autoridade externa
+        # O hash esperado "bf0ee..." representa a versão canônica da lógica do Substrato 79
+        is_valid = self.forensic.verify_forensic_evidence(evidence, expected_logic_hash="bf0ee428d47ad9f5f336e5fe193918ec")
+
+        table = Table(title=f"Resultado da Auditoria Forense: {inv_id}")
+        table.add_column("Métrica")
+        table.add_column("Valor")
+
+        table.add_row("Jurisdição Alvo", args.jurisdiction)
+        table.add_row("Blind Replay Hash", evidence.blind_replay_output[:32] + "...")
+        table.add_row("ZK Logic Proof", "[green]VERIFICADO[/green]" if is_valid else "[red]FALHOU[/red]")
+
+        self.console.print(table)
+
+        if is_valid:
+            self.console.print(Panel("[bold green]CONFORMIDADE TRANSFRONTEIRIÇA CONFIRMADA[/bold green]\nA evidência prova que a decisão seguiu rigorosamente os protocolos de privacidade e lógica, sem vazar dados brutos.", border_style="green"))
+
 async def main():
     cli = ArkheAuditCLI()
     await cli._mock_data()
@@ -218,6 +249,11 @@ async def main():
     narrate_parser.add_argument("id", help="ID da decisão")
     narrate_parser.add_argument("-a", "--audience", choices=["citizen", "regulatory", "executive", "technical"], default="citizen")
 
+    # Forensic Verify
+    forensic_parser = subparsers.add_parser("forensic-verify", help="Executa verificação forense cross-jurisdiction")
+    forensic_parser.add_argument("id", help="ID da decisão")
+    forensic_parser.add_argument("-j", "--jurisdiction", choices=["BR", "EU", "US"], default="BR")
+
     args = parser.parse_args()
 
     if args.command == "list":
@@ -232,6 +268,8 @@ async def main():
         await cli.cmd_explain(args)
     elif args.command == "narrate":
         await cli.cmd_narrate(args)
+    elif args.command == "forensic-verify":
+        await cli.cmd_forensic_verify(args)
     else:
         parser.print_help()
 

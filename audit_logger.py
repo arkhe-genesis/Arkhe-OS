@@ -12,6 +12,15 @@ class DecisionType(Enum):
     MANUAL_OVERRIDE = auto()
     POLICY_CHANGE = auto()
     DATA_PROCESSING = auto()
+    FIRMWARE_CHECKPOINT = auto()
+    FIRMWARE_COMMIT = auto()
+    FIRMWARE_ROLLBACK = auto()
+    FORENSIC_INVESTIGATION = auto()
+    CROSS_JURISDICTION_AUDIT = auto()
+    CROSS_BORDER_MIGRATION = auto()
+    FEDERATED_LEARNING_ROUND = auto()
+    DATA_RECONCILIATION = auto()
+    COUNCIL_OF_MIRRORS_AUDIT = auto()
 
 @dataclass
 class AuditRecord:
