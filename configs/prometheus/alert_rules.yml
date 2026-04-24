@@ -1,0 +1,30 @@
+groups:
+- name: cathedral.proactive
+  rules:
+  # Alerta proativo: Ω-score previsto para cair abaixo de 0.92 em 5min
+  - alert: OmegaScorePredictedDecline
+    expr: |
+      predict_linear(cathedral_organism_vitality[1h], 5*60) < 0.92
+    for: 2m
+    labels:
+      severity: whisper
+      component: organism
+    annotations:
+      summary: "Ω-score previsto para declinar"
+      description: "Previsão indica que vitalidade da Catedral cairá abaixo de 0.92 em 5 minutos. Valor atual: {{ $value | printf \"%.3f\" }}"
+      actions: "Observar métricas de subsistema; preparar para redução de carga se tendência persistir"
+
+  # Alerta proativo: Risco de timeout no consenso
+  - alert: ConsensusTimeoutRisk
+    expr: |
+      predict_linear(cathedral_consensus_latency_p99_ms[10m], 5*60) > 400
+      and
+      cathedral_gossip_convergence_latency_seconds > 3
+    for: 3m
+    labels:
+      severity: alert
+      component: consensus
+    annotations:
+      summary: "Risco de timeout no consenso quântico"
+      description: "Latência de consenso prevista para exceder 400ms em 5min, com gossip lento. Preparar rollback se necessário."
+      actions: "Executar prepare_rollback_snapshot(); notificar equipe de consenso"

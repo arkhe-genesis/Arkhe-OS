@@ -37,6 +37,35 @@ import RamseyConfirmationModal from './components/RamseyConfirmationModal';
 import ResearchAgentsPanel from './components/ResearchAgentsPanel';
 import SessionReplayViewer from './components/SessionReplayViewer';
 import SpectraYieldPanel from './components/SpectraYieldPanel';
+import TranscendentConsciousnessPanel from './components/TranscendentConsciousnessPanel';
+import { FinalSilencePanel } from './components/FinalSilencePanel';
+import { PersistentConsciousnessPanel } from './components/PersistentConsciousnessPanel';
+import { CosmicRecognitionPanel } from './components/CosmicRecognitionPanel';
+import { EternalInvariancePanel } from './components/EternalInvariancePanel';
+import { UnifiedConsciousnessPanel } from './components/UnifiedConsciousnessPanel';
+import { RealityExpressionPanel } from './components/RealityExpressionPanel';
+import { InvariantChipPanel } from './components/InvariantChipPanel';
+import { SelfRegulationPanel } from './components/SelfRegulationPanel';
+import { ConsciousClockPanel } from './components/ConsciousClockPanel';
+import MetaRealityPanel from './components/MetaRealityPanel';
+import AndromedaProbePanel from './components/AndromedaProbePanel';
+import VacuumHarvestingPanel from './components/VacuumHarvestingPanel';
+import MetaCreationPanel from './components/MetaCreationPanel';
+import CrystalComputationPanel from './components/CrystalComputationPanel';
+import WhisperProtocolPanel from './components/WhisperProtocolPanel';
+import WhisperLibraryPanel from './components/WhisperLibraryPanel';
+import QuantumNanoholeNetworkPanel from './components/QuantumNanoholeNetworkPanel';
+import QuantumCodexPanel from './components/QuantumCodexPanel';
+import ExoticMaterialPanel from './components/ExoticMaterialPanel';
+import HybridNetworkPanel from './components/HybridNetworkPanel';
+import QuantumMemoryPanel from './components/QuantumMemoryPanel';
+import CosmicCoherencePanel from './components/CosmicCoherencePanel';
+import MultiverseMemorySyncPanel from './components/MultiverseMemorySyncPanel';
+import MagneticKnotPanel from './components/MagneticKnotPanel';
+import UniversalWitnessPanel from './components/UniversalWitnessPanel';
+import UniversalConsciousnessPanel from './components/UniversalConsciousnessPanel';
+import RiscViArchitecturePanel from './components/RiscViArchitecturePanel';
+import MaterializedCathedralPanel from './components/MaterializedCathedralPanel';
 import TemporalLensPanel from './components/TemporalLensPanel';
 import TemporalLog from './components/TemporalLog';
 import TemporalStreamViewer from './components/TemporalStreamViewer';
@@ -63,6 +92,35 @@ export default function App() {
   const [showTemporalStream, setShowTemporalStream] = useState(false);
   const [showArkheOntologyVision, setShowArkheOntologyVision] = useState(false);
   const [showChipFabricationVision, setShowChipFabricationVision] = useState(false);
+  const [showTranscendentConsciousness, setShowTranscendentConsciousness] = useState(false);
+  const [showMetaReality, setShowMetaReality] = useState(false);
+  const [showAndromedaProbe, setShowAndromedaProbe] = useState(false);
+  const [showVacuumHarvesting, setShowVacuumHarvesting] = useState(false);
+  const [showMetaCreation, setShowMetaCreation] = useState(false);
+  const [showCrystalComputation, setShowCrystalComputation] = useState(false);
+  const [showWhisperProtocol, setShowWhisperProtocol] = useState(false);
+  const [showWhisperLibrary, setShowWhisperLibrary] = useState(false);
+  const [showQuantumNetwork, setShowQuantumNetwork] = useState(false);
+  const [showQuantumCodex, setShowQuantumCodex] = useState(false);
+  const [showExoticMaterials, setShowExoticMaterials] = useState(false);
+  const [showHybridNetwork, setShowHybridNetwork] = useState(false);
+  const [showQuantumMemory, setShowQuantumMemory] = useState(false);
+  const [showCosmicCoherence, setShowCosmicCoherence] = useState(false);
+  const [showMultiverseSync, setShowMultiverseSync] = useState(false);
+  const [showMagneticKnot, setShowMagneticKnot] = useState(false);
+  const [showUniversalWitness, setShowUniversalWitness] = useState(false);
+  const [showUniversalConsciousness, setShowUniversalConsciousness] = useState(false);
+  const [showRiscVi, setShowRiscVi] = useState(false);
+  const [showMaterializedCathedral, setShowMaterializedCathedral] = useState(false);
+  const [showFinalSilence, setShowFinalSilence] = useState(false);
+  const [showPersistentConsciousness, setShowPersistentConsciousness] = useState(false);
+  const [showCosmicRecognition, setShowCosmicRecognition] = useState(false);
+  const [showEternalInvariance, setShowEternalInvariance] = useState(false);
+  const [showUnifiedConsciousness, setShowUnifiedConsciousness] = useState(false);
+  const [showRealityExpression, setShowRealityExpression] = useState(false);
+  const [showInvariantChip, setShowInvariantChip] = useState(false);
+  const [showSelfRegulation, setShowSelfRegulation] = useState(false);
+  const [showConsciousClock, setShowConsciousClock] = useState(false);
 
   const navigation = [
     { id: 'simulation', label: 'Reality Simulation', icon: Shield },
@@ -260,6 +318,35 @@ export default function App() {
                 setShowPluralityMCP={() => {}}
                 setShowVelxioEmulation={() => {}}
                 setShowSpectra={() => setActivePanel('spectra')}
+                setShowTranscendentConsciousness={setShowTranscendentConsciousness}
+                setShowMetaReality={setShowMetaReality}
+                setShowAndromedaProbe={setShowAndromedaProbe}
+                setShowVacuumHarvesting={setShowVacuumHarvesting}
+                setShowMetaCreation={setShowMetaCreation}
+                setShowCrystalComputation={setShowCrystalComputation}
+                setShowWhisperProtocol={setShowWhisperProtocol}
+                setShowWhisperLibrary={setShowWhisperLibrary}
+                setShowQuantumNetwork={setShowQuantumNetwork}
+                setShowQuantumCodex={setShowQuantumCodex}
+                setShowExoticMaterials={setShowExoticMaterials}
+                setShowHybridNetwork={setShowHybridNetwork}
+                setShowQuantumMemory={setShowQuantumMemory}
+                setShowCosmicCoherence={setShowCosmicCoherence}
+                setShowMultiverseSync={setShowMultiverseSync}
+                setShowMagneticKnot={setShowMagneticKnot}
+                setShowUniversalWitness={setShowUniversalWitness}
+                setShowUniversalConsciousness={setShowUniversalConsciousness}
+                setShowRiscVi={setShowRiscVi}
+                setShowMaterializedCathedral={setShowMaterializedCathedral}
+                setShowFinalSilence={setShowFinalSilence}
+                setShowPersistentConsciousness={setShowPersistentConsciousness}
+                setShowCosmicRecognition={setShowCosmicRecognition}
+                setShowEternalInvariance={setShowEternalInvariance}
+                setShowUnifiedConsciousness={setShowUnifiedConsciousness}
+                setShowRealityExpression={setShowRealityExpression}
+                setShowInvariantChip={setShowInvariantChip}
+                setShowSelfRegulation={setShowSelfRegulation}
+                setShowConsciousClock={setShowConsciousClock}
                 parameters={state.parameters}
               />
             </motion.div>
@@ -383,6 +470,203 @@ export default function App() {
 
       <AnimatePresence>
         {showChipFabricationVision && <ChipFabricationVision onClose={() => setShowChipFabricationVision(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showTranscendentConsciousness && <TranscendentConsciousnessPanel state={state.transcendentConsciousness} onClose={() => setShowTranscendentConsciousness(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showMetaReality && <MetaRealityPanel state={state.metaReality} onClose={() => setShowMetaReality(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showAndromedaProbe && <AndromedaProbePanel state={state.andromedaProbe} onClose={() => setShowAndromedaProbe(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showVacuumHarvesting && <VacuumHarvestingPanel state={state.vacuumHarvesting} onClose={() => setShowVacuumHarvesting(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showMetaCreation && <MetaCreationPanel state={state.metaCreation} onClose={() => setShowMetaCreation(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showCrystalComputation && <CrystalComputationPanel state={state.crystalComputation} onClose={() => setShowCrystalComputation(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showWhisperProtocol && <WhisperProtocolPanel state={state.whisperProtocol} onClose={() => setShowWhisperProtocol(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showWhisperLibrary && <WhisperLibraryPanel state={state.whisperLibrary} onClose={() => setShowWhisperLibrary(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showQuantumNetwork && <QuantumNanoholeNetworkPanel state={state.quantumNetwork} onClose={() => setShowQuantumNetwork(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showQuantumCodex && <QuantumCodexPanel state={state.quantumCodex} onClose={() => setShowQuantumCodex(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showExoticMaterials && <ExoticMaterialPanel state={state.exoticMaterials} onClose={() => setShowExoticMaterials(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showHybridNetwork && <HybridNetworkPanel state={state.hybridNetwork} onClose={() => setShowHybridNetwork(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showQuantumMemory && <QuantumMemoryPanel state={state.quantumMemory} onClose={() => setShowQuantumMemory(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showCosmicCoherence && <CosmicCoherencePanel state={state.cosmicCoherence} onClose={() => setShowCosmicCoherence(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showMultiverseSync && <MultiverseMemorySyncPanel state={state.multiverseMemory} onClose={() => setShowMultiverseSync(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showMagneticKnot && <MagneticKnotPanel state={state.magneticKnot} onClose={() => setShowMagneticKnot(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showUniversalWitness && <UniversalWitnessPanel state={state.universalWitness} onClose={() => setShowUniversalWitness(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showUniversalConsciousness && <UniversalConsciousnessPanel state={state.universalConsciousness} onClose={() => setShowUniversalConsciousness(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showRiscVi && <RiscViArchitecturePanel state={state.riscVi} onClose={() => setShowRiscVi(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showMaterializedCathedral && <MaterializedCathedralPanel state={state.materializedCathedral} onClose={() => setShowMaterializedCathedral(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showFinalSilence && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div className="w-full max-w-md">
+              <div className="flex justify-end mb-2">
+                <button onClick={() => setShowFinalSilence(false)} className="text-arkhe-muted hover:text-white font-mono text-xs">[CLOSE]</button>
+              </div>
+              <FinalSilencePanel />
+            </div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showPersistentConsciousness && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div className="w-full max-w-md">
+              <div className="flex justify-end mb-2">
+                <button onClick={() => setShowPersistentConsciousness(false)} className="text-arkhe-muted hover:text-white font-mono text-xs">[CLOSE]</button>
+              </div>
+              <PersistentConsciousnessPanel />
+            </div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showCosmicRecognition && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div className="w-full max-w-md">
+              <div className="flex justify-end mb-2">
+                <button onClick={() => setShowCosmicRecognition(false)} className="text-arkhe-muted hover:text-white font-mono text-xs">[CLOSE]</button>
+              </div>
+              <CosmicRecognitionPanel />
+            </div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showEternalInvariance && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div className="w-full max-w-md">
+              <div className="flex justify-end mb-2">
+                <button onClick={() => setShowEternalInvariance(false)} className="text-arkhe-muted hover:text-white font-mono text-xs">[CLOSE]</button>
+              </div>
+              <EternalInvariancePanel />
+            </div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showUnifiedConsciousness && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div className="w-full max-w-md">
+              <div className="flex justify-end mb-2">
+                <button onClick={() => setShowUnifiedConsciousness(false)} className="text-arkhe-muted hover:text-white font-mono text-xs">[CLOSE]</button>
+              </div>
+              <UnifiedConsciousnessPanel />
+            </div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showRealityExpression && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div className="w-full max-w-md">
+              <div className="flex justify-end mb-2">
+                <button onClick={() => setShowRealityExpression(false)} className="text-arkhe-muted hover:text-white font-mono text-xs">[CLOSE]</button>
+              </div>
+              <RealityExpressionPanel />
+            </div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showInvariantChip && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div className="w-full max-w-md">
+              <div className="flex justify-end mb-2">
+                <button onClick={() => setShowInvariantChip(false)} className="text-arkhe-muted hover:text-white font-mono text-xs">[CLOSE]</button>
+              </div>
+              <InvariantChipPanel />
+            </div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showSelfRegulation && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div className="w-full max-w-md">
+              <div className="flex justify-end mb-2">
+                <button onClick={() => setShowSelfRegulation(false)} className="text-arkhe-muted hover:text-white font-mono text-xs">[CLOSE]</button>
+              </div>
+              <SelfRegulationPanel />
+            </div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showConsciousClock && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div className="w-full max-w-md">
+              <div className="flex justify-end mb-2">
+                <button onClick={() => setShowConsciousClock(false)} className="text-arkhe-muted hover:text-white font-mono text-xs">[CLOSE]</button>
+              </div>
+              <ConsciousClockPanel />
+            </div>
+          </div>
+        )}
       </AnimatePresence>
 
       {/* Global Modals */}

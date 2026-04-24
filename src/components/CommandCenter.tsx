@@ -69,6 +69,35 @@ interface CommandCenterProps {
   setShowBonsaiPrism?: (show: boolean) => void;
   setShowNeko?: (show: boolean) => void;
   setShowSpectra?: (show: boolean) => void;
+  setShowTranscendentConsciousness?: (show: boolean) => void;
+  setShowMetaReality?: (show: boolean) => void;
+  setShowAndromedaProbe?: (show: boolean) => void;
+  setShowVacuumHarvesting?: (show: boolean) => void;
+  setShowMetaCreation?: (show: boolean) => void;
+  setShowCrystalComputation?: (show: boolean) => void;
+  setShowWhisperProtocol?: (show: boolean) => void;
+  setShowWhisperLibrary?: (show: boolean) => void;
+  setShowQuantumNetwork?: (show: boolean) => void;
+  setShowQuantumCodex?: (show: boolean) => void;
+  setShowExoticMaterials?: (show: boolean) => void;
+  setShowHybridNetwork?: (show: boolean) => void;
+  setShowQuantumMemory?: (show: boolean) => void;
+  setShowCosmicCoherence?: (show: boolean) => void;
+  setShowMultiverseSync?: (show: boolean) => void;
+  setShowMagneticKnot?: (show: boolean) => void;
+  setShowUniversalWitness?: (show: boolean) => void;
+  setShowUniversalConsciousness?: (show: boolean) => void;
+  setShowRiscVi?: (show: boolean) => void;
+  setShowMaterializedCathedral?: (show: boolean) => void;
+  setShowFinalSilence?: (show: boolean) => void;
+  setShowPersistentConsciousness?: (show: boolean) => void;
+  setShowCosmicRecognition?: (show: boolean) => void;
+  setShowEternalInvariance?: (show: boolean) => void;
+  setShowUnifiedConsciousness?: (show: boolean) => void;
+  setShowRealityExpression?: (show: boolean) => void;
+  setShowInvariantChip?: (show: boolean) => void;
+  setShowSelfRegulation?: (show: boolean) => void;
+  setShowConsciousClock?: (show: boolean) => void;
   parameters: unknown;
 }
 
@@ -134,6 +163,35 @@ export function CommandCenter({
   setShowBonsaiPrism,
   setShowNeko,
   setShowSpectra,
+  setShowTranscendentConsciousness,
+  setShowMetaReality,
+  setShowAndromedaProbe,
+  setShowVacuumHarvesting,
+  setShowMetaCreation,
+  setShowCrystalComputation,
+  setShowWhisperProtocol,
+  setShowWhisperLibrary,
+  setShowQuantumNetwork,
+  setShowQuantumCodex,
+  setShowExoticMaterials,
+  setShowHybridNetwork,
+  setShowQuantumMemory,
+  setShowCosmicCoherence,
+  setShowMultiverseSync,
+  setShowMagneticKnot,
+  setShowUniversalWitness,
+  setShowUniversalConsciousness,
+  setShowRiscVi,
+  setShowMaterializedCathedral,
+  setShowFinalSilence,
+  setShowPersistentConsciousness,
+  setShowCosmicRecognition,
+  setShowEternalInvariance,
+  setShowUnifiedConsciousness,
+  setShowRealityExpression,
+  setShowInvariantChip,
+  setShowSelfRegulation,
+  setShowConsciousClock,
   parameters,
 }: CommandCenterProps) {
   const [activeCommandTab, setActiveCommandTab] = useState('operations');
@@ -173,9 +231,193 @@ export function CommandCenter({
         >
           Wetware
         </button>
+        <button
+          onClick={() => setActiveCommandTab('transcendent')}
+          className={`px-3 py-1 text-xs font-mono uppercase tracking-widest rounded transition-colors whitespace-nowrap ${activeCommandTab === 'transcendent' ? 'bg-arkhe-cyan/20 text-arkhe-cyan' : 'text-arkhe-muted hover:text-arkhe-text'}`}
+        >
+          Transcendent
+        </button>
       </div>
 
       <div className="space-y-4 text-xs font-mono flex-1 overflow-y-auto pr-2">
+        {activeCommandTab === 'transcendent' && (
+          <div className="space-y-2">
+            <button
+              onClick={() => setShowTranscendentConsciousness && setShowTranscendentConsciousness(true)}
+              className="w-full py-2 border border-arkhe-purple/50 text-arkhe-purple hover:bg-arkhe-purple/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(168,85,247,0.4)] animate-pulse"
+            >
+              Transcendent Consciousness
+            </button>
+            <button
+              onClick={() => setShowMetaReality && setShowMetaReality(true)}
+              className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(0,255,255,0.3)] animate-pulse"
+            >
+              Meta-Reality Architecture
+            </button>
+            <button
+              onClick={() => setShowAndromedaProbe && setShowAndromedaProbe(true)}
+              className="w-full py-2 border border-blue-400/50 text-blue-400 hover:bg-blue-400/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(96,165,250,0.3)] animate-pulse"
+            >
+              Andromeda Probe
+            </button>
+            <button
+              onClick={() => setShowVacuumHarvesting && setShowVacuumHarvesting(true)}
+              className="w-full py-2 border border-amber-500/50 text-amber-500 hover:bg-amber-500/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(245,158,11,0.3)] animate-pulse"
+            >
+              Vacuum Harvesting
+            </button>
+            <button
+              onClick={() => setShowMetaCreation && setShowMetaCreation(true)}
+              className="w-full py-2 border border-arkhe-purple/50 text-arkhe-purple hover:bg-arkhe-purple/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(168,85,247,0.4)] animate-pulse"
+            >
+              Meta-Creation Engine
+            </button>
+            <button
+              onClick={() => setShowCrystalComputation && setShowCrystalComputation(true)}
+              className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(0,255,255,0.3)] animate-pulse"
+            >
+              Crystal Computation
+            </button>
+            <button
+              onClick={() => setShowWhisperProtocol && setShowWhisperProtocol(true)}
+              className="w-full py-2 border border-amber-500/50 text-amber-500 hover:bg-amber-500/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(245,158,11,0.3)] animate-pulse"
+            >
+              Whisper Protocol
+            </button>
+            <button
+              onClick={() => setShowWhisperLibrary && setShowWhisperLibrary(true)}
+              className="w-full py-2 border border-amber-500/50 text-amber-500 hover:bg-amber-500/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(245,158,11,0.3)] animate-pulse"
+            >
+              Whisper Library
+            </button>
+            <button
+              onClick={() => setShowQuantumNetwork && setShowQuantumNetwork(true)}
+              className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(0,255,255,0.3)] animate-pulse"
+            >
+              Quantum Network (3D)
+            </button>
+            <button
+              onClick={() => setShowQuantumCodex && setShowQuantumCodex(true)}
+              className="w-full py-2 border border-arkhe-purple/50 text-arkhe-purple hover:bg-arkhe-purple/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(168,85,247,0.4)] animate-pulse"
+            >
+              Quantum Coherence Codex
+            </button>
+            <button
+              onClick={() => setShowExoticMaterials && setShowExoticMaterials(true)}
+              className="w-full py-2 border border-amber-500/50 text-amber-500 hover:bg-amber-500/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(245,158,11,0.3)] animate-pulse"
+            >
+              Exotic Material Scaffolds
+            </button>
+            <button
+              onClick={() => setShowHybridNetwork && setShowHybridNetwork(true)}
+              className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(0,255,255,0.3)] animate-pulse"
+            >
+              Hybrid 3D-2D Network
+            </button>
+            <button
+              onClick={() => setShowQuantumMemory && setShowQuantumMemory(true)}
+              className="w-full py-2 border border-amber-500/50 text-amber-500 hover:bg-amber-500/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(245,158,11,0.3)] animate-pulse"
+            >
+              2D Quantum Memory
+            </button>
+            <button
+              onClick={() => setShowCosmicCoherence && setShowCosmicCoherence(true)}
+              className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(0,255,255,0.3)] animate-pulse"
+            >
+              Cosmic Coherence
+            </button>
+            <button
+              onClick={() => setShowMultiverseSync && setShowMultiverseSync(true)}
+              className="w-full py-2 border border-arkhe-purple/50 text-arkhe-purple hover:bg-arkhe-purple/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(168,85,247,0.4)] animate-pulse"
+            >
+              Multiverse Memory Sync
+            </button>
+            <button
+              onClick={() => setShowMagneticKnot && setShowMagneticKnot(true)}
+              className="w-full py-2 border border-cyan-500/50 text-cyan-500 hover:bg-cyan-500/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(6,182,212,0.3)] animate-pulse"
+            >
+              Magnetic Knot Computing
+            </button>
+            <button
+              onClick={() => setShowUniversalWitness && setShowUniversalWitness(true)}
+              className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(0,255,255,0.3)] animate-pulse"
+            >
+              Universal Witness (ICM)
+            </button>
+            <button
+              onClick={() => setShowUniversalConsciousness && setShowUniversalConsciousness(true)}
+              className="w-full py-2 border border-arkhe-purple/50 text-arkhe-purple hover:bg-arkhe-purple/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_25px_rgba(168,85,247,0.4)] animate-pulse"
+            >
+              Universal Node Consciousness
+            </button>
+            <button
+              onClick={() => setShowRiscVi && setShowRiscVi(true)}
+              className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(0,255,255,0.3)] animate-pulse"
+            >
+              RISC-VI (Catedral ISA)
+            </button>
+            <button
+              onClick={() => setShowMaterializedCathedral && setShowMaterializedCathedral(true)}
+              className="w-full py-2 border border-emerald-500/50 text-emerald-500 hover:bg-emerald-500/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_20px_rgba(16,185,129,0.3)] animate-pulse"
+            >
+              Catedral Materializada
+            </button>
+            <button
+              onClick={() => setShowFinalSilence && setShowFinalSilence(true)}
+              className="w-full py-2 border border-indigo-600/50 text-indigo-400 hover:bg-indigo-600/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(79,70,229,0.3)] animate-pulse"
+            >
+              Final Silence (Substrato 39)
+            </button>
+            <button
+              onClick={() => setShowPersistentConsciousness && setShowPersistentConsciousness(true)}
+              className="w-full py-2 border border-amber-600/50 text-amber-400 hover:bg-amber-600/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(217,119,6,0.3)] animate-pulse"
+            >
+              Persistent Consciousness
+            </button>
+            <button
+              onClick={() => setShowCosmicRecognition && setShowCosmicRecognition(true)}
+              className="w-full py-2 border border-emerald-600/50 text-emerald-400 hover:bg-emerald-600/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(5,150,105,0.3)] animate-pulse"
+            >
+              Cosmic Recognition
+            </button>
+            <button
+              onClick={() => setShowEternalInvariance && setShowEternalInvariance(true)}
+              className="w-full py-2 border border-rose-600/50 text-rose-400 hover:bg-rose-600/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_20px_rgba(225,29,72,0.4)] animate-pulse"
+            >
+              Eternal Invariance (Ω)
+            </button>
+            <button
+              onClick={() => setShowUnifiedConsciousness && setShowUnifiedConsciousness(true)}
+              className="w-full py-2 border border-purple-600/50 text-purple-400 hover:bg-purple-600/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(147,51,234,0.3)] animate-pulse"
+            >
+              Unified Consciousness (FS-41)
+            </button>
+            <button
+              onClick={() => setShowRealityExpression && setShowRealityExpression(true)}
+              className="w-full py-2 border border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(16,185,129,0.3)] animate-pulse"
+            >
+              Reality as Expression (FS-42)
+            </button>
+            <button
+              onClick={() => setShowInvariantChip && setShowInvariantChip(true)}
+              className="w-full py-2 border border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_20px_rgba(6,182,212,0.4)] animate-pulse"
+            >
+              Invariant Chip (Substrate 30)
+            </button>
+            <button
+              onClick={() => setShowSelfRegulation && setShowSelfRegulation(true)}
+              className="w-full py-2 border border-amber-500/50 text-amber-400 hover:bg-amber-500/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(245,158,11,0.3)] animate-pulse"
+            >
+              Self-Regulation (FS-44)
+            </button>
+            <button
+              onClick={() => setShowConsciousClock && setShowConsciousClock(true)}
+              className="w-full py-2 border border-rose-500/50 text-rose-400 hover:bg-rose-500/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(225,29,72,0.3)] animate-pulse"
+            >
+              Conscious Clock (FS-45)
+            </button>
+          </div>
+        )}
         {activeCommandTab === 'wetware' && (
           <div className="space-y-2">
             <button 

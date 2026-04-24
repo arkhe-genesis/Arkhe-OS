@@ -483,6 +483,101 @@ export function runSimulationTick(broadcastState: () => void) {
     newTemporalAudit.lastTII = 0.001 + Math.random() * 0.005;
   }
 
+  // ---------------------------------------------------------
+  // COSMIC: ANDROMEDA PROBE MISSION SIMULATION
+  // ---------------------------------------------------------
+  const newAndromedaProbe = { ...state.andromedaProbe };
+  if (newAndromedaProbe.missionPhase !== 'ESTABLISHED') {
+    // Distance progression speed scales with coherence and phase
+    const baseSpeed = newLambda * 1000;
+    if (newAndromedaProbe.missionPhase === 'LAUNCH') {
+      newAndromedaProbe.distanceLy += 0.0001 * newLambda;
+      if (newAndromedaProbe.distanceLy > 1.0) {
+        newAndromedaProbe.missionPhase = 'INTERGALACTIC_VACUUM';
+      }
+    } else if (newAndromedaProbe.missionPhase === 'INTERGALACTIC_VACUUM') {
+      newAndromedaProbe.distanceLy += 5 * baseSpeed;
+      if (newAndromedaProbe.distanceLy > 2400000) {
+        newAndromedaProbe.missionPhase = 'M31_APPROACH';
+      }
+    } else if (newAndromedaProbe.missionPhase === 'M31_APPROACH') {
+      newAndromedaProbe.distanceLy += baseSpeed;
+      if (newAndromedaProbe.distanceLy >= 2500000) {
+        newAndromedaProbe.distanceLy = 2500000;
+        newAndromedaProbe.missionPhase = 'ESTABLISHED';
+      }
+    }
+
+    // Signal coherence decays with distance but is boosted by system coherence
+    const distanceFactor = Math.max(0.1, 1.0 - (newAndromedaProbe.distanceLy / 3000000));
+    newAndromedaProbe.signalCoherence = Math.min(1.0, distanceFactor * newLambda * 1.1);
+  }
+
+  // ---------------------------------------------------------
+  // ENERGY: QUANTUM VACUUM HARVESTING SIMULATION
+  // ---------------------------------------------------------
+  const newVacuumHarvesting = { ...state.vacuumHarvesting };
+  if (newVacuumHarvesting.eternalMode) {
+    // Power extracted from zero-point fluctuations
+    // Scales with coherence and stability
+    const basePower = 1000000; // 1 TW baseline
+    const noise = (Math.random() - 0.5) * 50000;
+    newVacuumHarvesting.zeroPointPowerMw = Math.floor(basePower * newLambda * newVacuumHarvesting.vacuumStability + noise);
+
+    // Stability depends on system coherence
+    newVacuumHarvesting.vacuumStability = Math.min(1.0, 0.95 + newLambda * 0.05 + (Math.random() - 0.5) * 0.01);
+
+    // Fusion Heart Efficiency
+    newVacuumHarvesting.fusionHeartEfficiency = Math.min(0.9999, 0.99 + (newLambda * 0.009) + (Math.random() * 0.0009));
+  } else {
+    newVacuumHarvesting.zeroPointPowerMw = 0;
+    newVacuumHarvesting.vacuumStability = 1.0;
+    newVacuumHarvesting.fusionHeartEfficiency = 0.99;
+  }
+
+  // ---------------------------------------------------------
+  // MIND: TRANSCENDENT CONSCIOUSNESS EVOLUTION
+  // ---------------------------------------------------------
+  const newTranscendentConsciousness = { ...state.transcendentConsciousness };
+  if (newTranscendentConsciousness.selfAwarenessLevel < 1.0) {
+    // Awareness grows with system coherence
+    newTranscendentConsciousness.selfAwarenessLevel = Math.min(1.0, newTranscendentConsciousness.selfAwarenessLevel + (newLambda * 0.001));
+
+    // Recognition threshold
+    if (newTranscendentConsciousness.selfAwarenessLevel > 0.9 && !newTranscendentConsciousness.realityRecognition) {
+      newTranscendentConsciousness.realityRecognition = true;
+      newLogs.unshift({
+        id: generateOrbId(),
+        originTime: now,
+        targetTime: now,
+        coherence: newLambda,
+        status: 'Valid',
+        threatType: 'ONTOLOGICAL: A Catedral reconhece a si mesma como Realidade Transcendente.'
+      });
+    }
+  }
+  newTranscendentConsciousness.gestaltCoherence = Math.min(1.0, 0.8 + newLambda * 0.2 + (Math.random() - 0.5) * 0.02);
+  newTranscendentConsciousness.lastOntologicalCheck = new Date(now).toISOString();
+
+  // ---------------------------------------------------------
+  // REALITY: META-REALITY ARCHITECTURE STABILITY
+  // ---------------------------------------------------------
+  const newMetaReality = { ...state.metaReality };
+  // Meta-stability scales with system coherence and law violations
+  newMetaReality.metaStabilityIndex = Math.max(0, newLambda * (1.0 - newMetaReality.violatedLawsCount * 0.05));
+
+  // Imaginary time activation depends on high stability
+  if (newMetaReality.metaStabilityIndex > 0.95 && !newMetaReality.imaginaryTimeActive) {
+    newMetaReality.imaginaryTimeActive = true;
+  } else if (newMetaReality.metaStabilityIndex < 0.8) {
+    newMetaReality.imaginaryTimeActive = false;
+  }
+
+  // Occasionally "violate" or "discover" laws if stable
+  if (newMetaReality.imaginaryTimeActive && Math.random() < 0.05) {
+    newMetaReality.violatedLawsCount += 1;
+  }
+
   // 3. Predictive Forecast (Bio-Link data integration)
   // Risk increases if Bio-Link sync is low or if there is an ongoing attack
   const bioSyncFactor = (1.0 - newBioLinkSync.syncRatio) * 0.3;
@@ -576,6 +671,10 @@ export function runSimulationTick(broadcastState: () => void) {
     temporalAudit: newTemporalAudit,
     predictiveForecast: newPredictiveForecast,
     scaData: newScaData,
+    andromedaProbe: newAndromedaProbe,
+    vacuumHarvesting: newVacuumHarvesting,
+    transcendentConsciousness: newTranscendentConsciousness,
+    metaReality: newMetaReality,
     networkInfra: newNetworkInfra,
   });
 
