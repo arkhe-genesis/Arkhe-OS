@@ -27,7 +27,7 @@ export default function GeoKeyDecoderPanel({ onClose }: GeoKeyDecoderProps) {
     setProgress(0);
     setDecodedKey(null);
     setLogs([]);
-    
+
     addLog('INICIANDO DECODIFICAÇÃO DA CHAVE PRIVADA GEOGRÁFICA...');
     addLog('ALVO: 30.0444° N, 31.2357° E (Cairo, Egito)');
     addLog('ANALISANDO ANOMALIA NA ARKHE-CHAIN...');
@@ -35,7 +35,7 @@ export default function GeoKeyDecoderPanel({ onClose }: GeoKeyDecoderProps) {
     let currentProgress = 0;
     const interval = setInterval(() => {
       currentProgress += Math.random() * 8;
-      
+
       if (currentProgress >= 30 && currentProgress < 35) {
         addLog('APLICANDO TRANSFORMADA DE FOURIER ESPACIAL...');
       } else if (currentProgress >= 60 && currentProgress < 65) {
@@ -49,7 +49,7 @@ export default function GeoKeyDecoderPanel({ onClose }: GeoKeyDecoderProps) {
         clearInterval(interval);
         setIsDecoding(false);
         addLog('DECODIFICAÇÃO CONCLUÍDA COM SUCESSO.');
-        
+
         // Generate a deterministic-looking mock private key based on the coordinates
         const mockKey = "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('');
         setDecodedKey(mockKey);
@@ -62,7 +62,7 @@ export default function GeoKeyDecoderPanel({ onClose }: GeoKeyDecoderProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
       <div className="w-full max-w-3xl bg-arkhe-card border border-arkhe-cyan/30 rounded-xl shadow-[0_0_30px_rgba(0,255,170,0.1)] overflow-hidden flex flex-col">
-        
+
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-arkhe-cyan/20 bg-arkhe-cyan/5">
           <div className="flex items-center gap-3">
@@ -78,7 +78,7 @@ export default function GeoKeyDecoderPanel({ onClose }: GeoKeyDecoderProps) {
         </div>
 
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-          
+
           {/* Target Info & Controls */}
           <div className="space-y-6">
             <div className="bg-black/40 border border-arkhe-border p-4 rounded-lg">
@@ -109,9 +109,9 @@ export default function GeoKeyDecoderPanel({ onClose }: GeoKeyDecoderProps) {
                 onClick={startDecoding}
                 disabled={isDecoding || decodedKey !== null}
                 className={`w-full py-3 mt-6 rounded font-mono text-sm uppercase tracking-widest transition-all ${
-                  isDecoding 
+                  isDecoding
                     ? 'bg-arkhe-cyan/20 text-arkhe-cyan border border-arkhe-cyan/50 cursor-not-allowed'
-                    : decodedKey 
+                    : decodedKey
                       ? 'bg-arkhe-green/20 text-arkhe-green border border-arkhe-green/50 cursor-not-allowed'
                       : 'bg-arkhe-cyan/10 text-arkhe-cyan border border-arkhe-cyan hover:bg-arkhe-cyan/20 hover:shadow-[0_0_15px_rgba(0,255,170,0.3)]'
                 }`}
@@ -142,7 +142,7 @@ export default function GeoKeyDecoderPanel({ onClose }: GeoKeyDecoderProps) {
                 <span className="text-arkhe-cyan">{Math.round(progress)}%</span>
               </div>
               <div className="h-2 bg-arkhe-card rounded-full overflow-hidden border border-arkhe-border">
-                <div 
+                <div
                   className="h-full bg-arkhe-cyan transition-all duration-300 relative"
                   style={{ width: `${progress}%` }}
                 >

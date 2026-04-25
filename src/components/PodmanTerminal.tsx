@@ -93,13 +93,13 @@ export default function PodmanTerminal({ onClose }: PodmanTerminalProps) {
         clearInterval(interval);
       }
     }, 150); // Speed of log appearance
-    
+
     return () => clearInterval(interval);
   }, []);
 
   return (
     <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 md:p-8 backdrop-blur-md">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
@@ -110,15 +110,15 @@ export default function PodmanTerminal({ onClose }: PodmanTerminalProps) {
             <span className="text-arkhe-cyan animate-pulse">⎈</span>
             <h2 className="text-arkhe-cyan font-mono font-bold tracking-widest text-sm md:text-base">PODMAN :: ARKHE(N) DEPLOYMENT</h2>
           </div>
-          <button 
-            onClick={onClose} 
+          <button
+            onClick={onClose}
             className="text-arkhe-cyan/70 hover:text-arkhe-cyan font-mono text-sm tracking-wider transition-colors"
           >
             [ CLOSE ]
           </button>
         </div>
-        
-        <div 
+
+        <div
           ref={scrollRef}
           className="p-6 overflow-y-auto flex-1 font-mono text-xs md:text-sm text-arkhe-cyan/90 whitespace-pre-wrap leading-relaxed"
           style={{ textShadow: '0 0 5px rgba(0,255,255,0.3)' }}

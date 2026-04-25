@@ -40,7 +40,7 @@ export default function BermudaAnomalyPanel({ onClose }: BermudaAnomalyPanelProp
     setIsDecoded(false);
     setLogs([]);
     setMagneticField(42450);
-    
+
     addLog('INICIANDO VARREDURA GEOESPACIAL...');
     addLog('ALVO: TRIÂNGULO DAS BERMUDAS (25.0000° N, 71.0000° W)');
     addLog('CALIBRANDO SENSORES BATIMÉTRICOS E MAGNÉTICOS...');
@@ -48,7 +48,7 @@ export default function BermudaAnomalyPanel({ onClose }: BermudaAnomalyPanelProp
     let currentProgress = 0;
     const interval = setInterval(() => {
       currentProgress += Math.random() * 8;
-      
+
       if (currentProgress >= 20 && currentProgress < 30) {
         addLog('ANOMALIA DETECTADA: QUEDA ABRUPTA NO CAMPO MAGNÉTICO LOCAL.');
       } else if (currentProgress >= 45 && currentProgress < 55) {
@@ -72,7 +72,7 @@ export default function BermudaAnomalyPanel({ onClose }: BermudaAnomalyPanelProp
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
       <div className="w-full max-w-4xl bg-arkhe-card border border-blue-500/30 rounded-xl shadow-[0_0_30px_rgba(59,130,246,0.1)] overflow-hidden flex flex-col">
-        
+
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-blue-500/20 bg-blue-500/5">
           <div className="flex items-center gap-3">
@@ -88,7 +88,7 @@ export default function BermudaAnomalyPanel({ onClose }: BermudaAnomalyPanelProp
         </div>
 
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-          
+
           {/* Target Info & Controls */}
           <div className="space-y-6">
             <div className="bg-black/40 border border-arkhe-border p-4 rounded-lg">
@@ -127,9 +127,9 @@ export default function BermudaAnomalyPanel({ onClose }: BermudaAnomalyPanelProp
                 onClick={startScan}
                 disabled={isScanning || isDecoded}
                 className={`w-full py-3 mt-6 rounded font-mono text-sm uppercase tracking-widest transition-all ${
-                  isScanning 
+                  isScanning
                     ? 'bg-blue-500/20 text-blue-500 border border-blue-500/50 cursor-not-allowed'
-                    : isDecoded 
+                    : isDecoded
                       ? 'bg-arkhe-green/20 text-arkhe-green border border-arkhe-green/50 cursor-not-allowed'
                       : 'bg-blue-500/10 text-blue-500 border border-blue-500 hover:bg-blue-500/20 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]'
                 }`}
@@ -160,7 +160,7 @@ export default function BermudaAnomalyPanel({ onClose }: BermudaAnomalyPanelProp
                 <span className="text-blue-500">{Math.round(progress)}%</span>
               </div>
               <div className="h-2 bg-arkhe-card rounded-full overflow-hidden border border-arkhe-border">
-                <div 
+                <div
                   className="h-full bg-blue-500 transition-all duration-300 relative"
                   style={{ width: `${progress}%` }}
                 >

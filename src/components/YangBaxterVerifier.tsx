@@ -24,8 +24,8 @@ interface YangBaxterVerifierProps {
 
 export default function YangBaxterVerifier({ topology, security }: YangBaxterVerifierProps) {
   return (
-    <Card 
-      title="Topological Consensus" 
+    <Card
+      title="Topological Consensus"
       icon={<GitMerge className="w-4 h-4" />}
       status={!topology.yangBaxterValid || !security.zkProofValid ? 'critical' : 'normal'}
     >

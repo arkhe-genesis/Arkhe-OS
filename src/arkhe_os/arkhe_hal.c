@@ -28,7 +28,7 @@ int arkhe_hal_init(arkhe_node_t* node, const char* rf_device_path) {
 
     // Map FPGA BRAM (Sacks LUT and Control Registers)
     node->bram_base = mmap(NULL, 0x10000, PROT_READ | PROT_WRITE, MAP_SHARED, node->fd_rf, 0x40000000);
-    
+
     // Map Graphene-TPU memory space
     node->tpu_base = mmap(NULL, 0x10000, PROT_READ | PROT_WRITE, MAP_SHARED, node->fd_rf, 0x50000000);
 
@@ -70,17 +70,17 @@ uint32_t arkhe_hal_lml_decode(arkhe_node_t* node, double rx_phase) {
     volatile uint32_t* regs = (volatile uint32_t*)node->bram_base;
     // Write received phase to trigger hardware LML transform
     regs[REG_LML_DECODE / 4] = (uint32_t)(rx_phase * 1000000.0);
-    
+
     // Wait for valid bit (simplified)
-    usleep(1); 
-    
+    usleep(1);
+
     // Read decoded prime node
     return regs[(REG_LML_DECODE + 4) / 4];
 }
 
 void arkhe_hal_tpu_octonion_mul(arkhe_node_t* node, void* o1_addr, void* o2_addr, void* res_addr) {
     if (!node->tpu_base) return; // Sim mode: do nothing
-    
+
     volatile uint32_t* tpu_regs = (volatile uint32_t*)node->tpu_base;
     // Trigger non-associative multiplication in hardware
     tpu_regs[0] = (uintptr_t)o1_addr;

@@ -32,16 +32,16 @@ export default function P2PNetworkPanel({ onClose }: { onClose: () => void }) {
     for (const node of NODES) {
       setConnectingTo(node.id);
       setLogs(prev => [...prev, `> DIALING ${node.name.toUpperCase()} PEERS ON ${node.protocol}...`]);
-      
+
       try {
         const response = await fetch('/api/p2p/connect', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ targetNode: node })
         });
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
           setConnectedNodes(prev => [...prev, node.id]);
           setLogs(prev => [...prev, `> [SUCCESS] ${data.message}`]);
@@ -89,7 +89,7 @@ export default function P2PNetworkPanel({ onClose }: { onClose: () => void }) {
                 const radius = 140; // Distance from center
                 const x = Math.cos(angle) * radius;
                 const y = Math.sin(angle) * radius;
-                
+
                 const isConnected = connectedNodes.includes(node.id);
                 const isConnecting = connectingTo === node.id;
 
@@ -97,10 +97,10 @@ export default function P2PNetworkPanel({ onClose }: { onClose: () => void }) {
                   <React.Fragment key={node.id}>
                     {/* Connection Line */}
                     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
-                      <line 
-                        x1="50%" y1="50%" 
-                        x2={`calc(50% + ${x}px)`} y2={`calc(50% + ${y}px)`} 
-                        stroke={isConnected ? 'currentColor' : '#2a2b2e'} 
+                      <line
+                        x1="50%" y1="50%"
+                        x2={`calc(50% + ${x}px)`} y2={`calc(50% + ${y}px)`}
+                        stroke={isConnected ? 'currentColor' : '#2a2b2e'}
                         strokeWidth={isConnected ? 2 : 1}
                         strokeDasharray={isConnecting ? "4 4" : "none"}
                         className={`${isConnected ? node.color : ''} ${isConnecting ? 'animate-pulse text-arkhe-muted' : ''} transition-all duration-1000`}
@@ -108,9 +108,9 @@ export default function P2PNetworkPanel({ onClose }: { onClose: () => void }) {
                     </svg>
 
                     {/* Node Circle */}
-                    <div 
+                    <div
                       className={`absolute flex flex-col items-center transition-all duration-500`}
-                      style={{ 
+                      style={{
                         transform: `translate(${x}px, ${y}px)`,
                         zIndex: 5
                       }}
@@ -127,8 +127,8 @@ export default function P2PNetworkPanel({ onClose }: { onClose: () => void }) {
                 );
               })}
             </div>
-            
-            <button 
+
+            <button
               onClick={connectNodes}
               disabled={connectedNodes.length > 0 || connectingTo !== null}
               className={`w-full py-3 rounded uppercase tracking-widest font-bold transition-all flex items-center justify-center gap-2 ${connectedNodes.length > 0 || connectingTo !== null ? 'bg-arkhe-cyan/20 text-arkhe-cyan border border-arkhe-cyan/50 cursor-not-allowed' : 'bg-arkhe-cyan text-black hover:bg-arkhe-cyan/80 shadow-[0_0_15px_rgba(0,255,170,0.3)]'}`}
@@ -148,7 +148,7 @@ export default function P2PNetworkPanel({ onClose }: { onClose: () => void }) {
                 let colorClass = 'text-arkhe-cyan/80';
                 if (log.includes('[SUCCESS]')) {colorClass = 'text-arkhe-green font-bold';}
                 if (log.includes('DIALING')) {colorClass = 'text-yellow-500/80';}
-                
+
                 return (
                   <div key={i} className={`animate-fade-in ${colorClass}`}>
                     {log}

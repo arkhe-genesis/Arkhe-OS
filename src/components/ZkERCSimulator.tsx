@@ -18,7 +18,7 @@ export default function ZkERCSimulator({ onClose }: ZkERCSimulatorProps) {
   const [selectedUtxo, setSelectedUtxo] = useState(0);
   const [isExecuting, setIsExecuting] = useState(false);
   const [step, setStep] = useState(0);
-  
+
   const utxos = [
     { id: 0, amount: 100, commitment: 'C_100_a8f9...' },
     { id: 1, amount: 50, commitment: 'C_50_b2c1...' },
@@ -32,16 +32,16 @@ export default function ZkERCSimulator({ onClose }: ZkERCSimulatorProps) {
     if (amount > currentUtxo.amount) {return;}
     setIsExecuting(true);
     setStep(1);
-    
+
     // Step 1: Burn to Nullifier
     setTimeout(() => setStep(2), 1500);
-    
+
     // Step 2: Generate Commitments
     setTimeout(() => setStep(3), 3000);
-    
+
     // Step 3: STARK Proof
     setTimeout(() => setStep(4), 4500);
-    
+
     // Step 4: Done
     setTimeout(() => {
       setIsExecuting(false);
@@ -67,11 +67,11 @@ export default function ZkERCSimulator({ onClose }: ZkERCSimulatorProps) {
           <div className="w-full md:w-80 border-r border-[#1f2024] p-6 flex flex-col gap-6 bg-black/10">
             <div>
               <h3 className="text-xs font-mono uppercase tracking-widest text-arkhe-muted mb-4">Transaction Intent</h3>
-              
+
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-mono text-arkhe-muted mb-1">Select UTXO to Spend</label>
-                  <select 
+                  <select
                     value={selectedUtxo}
                     onChange={(e) => setSelectedUtxo(Number(e.target.value))}
                     disabled={isExecuting}
@@ -85,8 +85,8 @@ export default function ZkERCSimulator({ onClose }: ZkERCSimulatorProps) {
 
                 <div>
                   <label className="block text-xs font-mono text-arkhe-muted mb-1">Amount to Send (SPEC)</label>
-                  <input 
-                    type="number" 
+                  <input
+                    type="number"
                     value={amount}
                     onChange={(e) => setAmount(Number(e.target.value))}
                     disabled={isExecuting}
@@ -101,8 +101,8 @@ export default function ZkERCSimulator({ onClose }: ZkERCSimulatorProps) {
 
                 <div>
                   <label className="block text-xs font-mono text-arkhe-muted mb-1">Receiver Identity (Hidden)</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={receiver}
                     onChange={(e) => setReceiver(e.target.value)}
                     disabled={isExecuting}
@@ -110,7 +110,7 @@ export default function ZkERCSimulator({ onClose }: ZkERCSimulatorProps) {
                   />
                 </div>
 
-                <button 
+                <button
                   onClick={executeTransaction}
                   disabled={isExecuting || amount > currentUtxo.amount}
                   className="w-full py-3 mt-4 bg-arkhe-cyan/10 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/20 rounded transition-colors uppercase tracking-widest font-bold disabled:opacity-50 disabled:cursor-not-allowed"
@@ -130,9 +130,9 @@ export default function ZkERCSimulator({ onClose }: ZkERCSimulatorProps) {
           {/* Center Panel: The Cryptographic Furnace */}
           <div className="flex-1 border-r border-[#1f2024] p-6 flex flex-col items-center justify-center relative overflow-hidden bg-[#0a0a0c]">
             <h3 className="absolute top-6 left-6 text-xs font-mono uppercase tracking-widest text-arkhe-muted">The Cryptographic Furnace</h3>
-            
+
             <div className="relative w-full max-w-md h-96 flex flex-col items-center justify-between">
-              
+
               {/* Input UTXO */}
               <div className={`transition-all duration-1000 flex flex-col items-center ${step >= 1 ? 'opacity-0 scale-50 translate-y-20' : 'opacity-100 scale-100'}`}>
                 <div className="w-32 h-20 border-2 border-arkhe-text/50 bg-[#1a1b1e] rounded-lg flex flex-col items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)]">
@@ -163,7 +163,7 @@ export default function ZkERCSimulator({ onClose }: ZkERCSimulatorProps) {
                   </div>
                   <span className="text-[10px] font-mono text-arkhe-muted mt-2">Commitment A</span>
                 </div>
-                
+
                 <div className="flex flex-col items-center">
                   <div className="w-32 h-20 border-2 border-arkhe-cyan bg-arkhe-cyan/10 rounded-lg flex flex-col items-center justify-center shadow-[0_0_20px_rgba(0,255,255,0.3)]">
                     <span className="text-[10px] font-mono text-arkhe-cyan uppercase">Change</span>
@@ -179,7 +179,7 @@ export default function ZkERCSimulator({ onClose }: ZkERCSimulatorProps) {
           {/* Right Panel: Blockchain Output */}
           <div className="w-full md:w-96 p-6 flex flex-col bg-[#111214] overflow-y-auto">
             <h3 className="text-xs font-mono uppercase tracking-widest text-arkhe-muted mb-4">Blockchain Output (Public)</h3>
-            
+
             <div className="space-y-6">
               {/* Nullifier */}
               <div className={`transition-opacity duration-500 ${step >= 2 ? 'opacity-100' : 'opacity-20'}`}>
@@ -217,7 +217,7 @@ export default function ZkERCSimulator({ onClose }: ZkERCSimulatorProps) {
                     ))}
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black pointer-events-none" />
-                  
+
                   {step >= 4 && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
                       <div className="px-3 py-1 border border-arkhe-green text-arkhe-green text-xs font-mono uppercase font-bold rounded bg-arkhe-green/10">

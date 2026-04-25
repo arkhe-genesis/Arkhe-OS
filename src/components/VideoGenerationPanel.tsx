@@ -159,12 +159,12 @@ export default function VideoGenerationPanel({ onClose }: VideoGenerationPanelPr
                 </div>
               </div>
             ) : videoUrl ? (
-              <video 
+              <video
                 ref={videoRef}
-                src={videoUrl} 
-                controls 
-                autoPlay 
-                loop 
+                src={videoUrl}
+                controls
+                autoPlay
+                loop
                 className="w-full h-full object-contain shadow-[0_0_50px_rgba(0,255,170,0.1)]"
               />
             ) : (
@@ -173,7 +173,7 @@ export default function VideoGenerationPanel({ onClose }: VideoGenerationPanelPr
                 Awaiting Projection Proof
               </div>
             )}
-            
+
             {videoUrl && stage === 'IDLE' && (
               <button
                 className="absolute top-4 right-4 p-2 rounded-md bg-black/50 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/20 transition-colors"

@@ -20,20 +20,20 @@ pub enum Expr {
     Literal(f64),
     PhaseLiteral(f64, f64), // Real, Imaginary
     Identifier(String),
-    
+
     // A function that executes retrocausally (future determines present)
     RetrocausalBlock {
         condition: Box<Expr>,
         body: Vec<Stmt>,
         future_context: String,
     },
-    
+
     // Interferometric collapse of multiple branches
     InterferenceMax {
         branches: Vec<Expr>,
         evaluator: Box<Expr>,
     },
-    
+
     // ZK-STARK generation for a specific expression
     Prove(Box<Expr>),
 
@@ -51,13 +51,13 @@ pub enum Expr {
 #[derive(Debug, Clone)]
 pub enum Stmt {
     Let(String, ArkheType, Expr),
-    
+
     // A variable that persists across timeline forks
     BranchVar(String, ArkheType, Expr),
-    
+
     Assign(String, Expr),
     Expr(Expr),
-    
+
     // Commits a timeline, pruning divergent branches in FractalDB
     Commit(Expr),
 }

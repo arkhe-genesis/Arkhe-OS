@@ -31,7 +31,7 @@ export default function AstlFabricator({ astl }: { astl: AstlState }) {
           {isManifestable ? 'MANIFESTING ℝ³' : 'PHASE ALIGNING ℂ'}
         </div>
       </div>
-      
+
       <div className="space-y-4 flex-1">
         <div className="bg-black/40 p-3 rounded-lg border border-arkhe-border/50">
           <div className="flex justify-between items-center mb-2">
@@ -82,7 +82,7 @@ export default function AstlFabricator({ astl }: { astl: AstlState }) {
             <span>{astl.manifestationProgress.toFixed(1)}%</span>
           </div>
           <div className="h-2 bg-black rounded-full overflow-hidden border border-arkhe-border">
-            <div 
+            <div
               className={`h-full transition-all duration-500 ${isManifestable ? 'bg-arkhe-green shadow-[0_0_10px_rgba(34,197,94,0.5)]' : 'bg-arkhe-orange'}`}
               style={{ width: `${astl.manifestationProgress}%` }}
             />

@@ -60,7 +60,7 @@ export default function X402WalletPanel({ wallet }: X402WalletPanelProps) {
           provider: 'arkhe.node'
         })
       });
-      
+
       const data = await response.json();
       if (data.success) {
         setPaymentStatus({ success: true, message: `Paid ${data.transaction.amount.toFixed(4)} USDC` });
@@ -129,7 +129,7 @@ export default function X402WalletPanel({ wallet }: X402WalletPanelProps) {
           </a>
         </div>
         <div className="text-xs font-mono text-arkhe-text break-all">{wallet.address}</div>
-        
+
         <div className="mt-2 flex items-end justify-between">
           <div>
             <div className="text-[10px] font-mono text-arkhe-muted uppercase mb-1">Available Balance</div>

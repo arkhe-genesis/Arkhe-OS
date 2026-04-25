@@ -191,7 +191,7 @@ export default function App() {
             >
               <Terminal className="w-5 h-5 text-cyan-500" />
             </button>
-            <button 
+            <button
               onClick={() => setShowVideoGen(true)}
               className="px-3 py-1.5 bg-arkhe-cyan/10 border border-arkhe-cyan/50 text-arkhe-cyan rounded font-mono text-[10px] uppercase hover:bg-arkhe-cyan/20 transition-all flex items-center gap-2"
             >

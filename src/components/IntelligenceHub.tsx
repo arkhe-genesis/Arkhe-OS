@@ -39,13 +39,13 @@ const Heatmap = ({ data, thresholds }: { data: number[], thresholds: number[] })
     <span className="text-green-500/50 font-mono text-sm mb-4">[Coherence Heatmap]</span>
     <div className="flex space-x-2 w-full">
       {data.map((val, i) => (
-        <div 
-          key={i} 
+        <div
+          key={i}
           className="flex-1 h-8 rounded"
-          style={{ 
-            backgroundColor: val > thresholds[0] ? 'rgba(34, 197, 94, 0.5)' : 
-                             val > thresholds[1] ? 'rgba(234, 179, 8, 0.5)' : 
-                             'rgba(239, 68, 68, 0.5)' 
+          style={{
+            backgroundColor: val > thresholds[0] ? 'rgba(34, 197, 94, 0.5)' :
+                             val > thresholds[1] ? 'rgba(234, 179, 8, 0.5)' :
+                             'rgba(239, 68, 68, 0.5)'
           }}
         />
       ))}
@@ -59,7 +59,7 @@ interface IntelligenceHubProps {
 
 export const IntelligenceHub: React.FC<IntelligenceHubProps> = ({ onClose }) => {
   const state: SimulationState = useArkheSimulation();
-  
+
   // Map real simulation state to the hub's expected format
   const phase = { drift: 1.0 - state.currentLambda, current: 'Voyager' };
   const anomalies = {
@@ -73,19 +73,19 @@ export const IntelligenceHub: React.FC<IntelligenceHubProps> = ({ onClose }) => 
     { id: 'val-2', omega: state.currentLambda * 0.9, phase_shift: (1.0 - state.currentLambda) * 1.2 },
     { id: 'val-3', omega: state.currentLambda * 0.95, phase_shift: (1.0 - state.currentLambda) * 1.1 }
   ];
-  
+
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 md:p-8">
       <div className="bg-[#111214] border border-[#1f2024] rounded-xl w-full max-w-6xl h-[85vh] flex flex-col shadow-2xl overflow-hidden relative">
         {onClose && (
-          <button 
+          <button
             onClick={onClose}
             className="absolute top-4 right-4 text-arkhe-muted hover:text-white transition-colors z-10"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
           </button>
         )}
-        
+
         <div className="p-6 border-b border-[#1f2024] flex items-center space-x-3 bg-black/40">
           <Brain className="w-6 h-6 text-arkhe-cyan" />
           <h2 className="text-xl font-bold text-white tracking-widest uppercase">Crucix Intelligence Hub</h2>
@@ -111,9 +111,9 @@ export const IntelligenceHub: React.FC<IntelligenceHubProps> = ({ onClose }) => 
                 <h3 className="text-sm font-semibold text-white uppercase tracking-wider">Orb Monitor</h3>
               </div>
               <p className="text-xs text-white/50 mb-4">Transient Events (Pre-Sputnik)</p>
-              <MapLayer 
-                source="https://plate-archive.org/tiles" 
-                markers={anomalies.orbs} 
+              <MapLayer
+                source="https://plate-archive.org/tiles"
+                markers={anomalies.orbs}
               />
             </div>
 
@@ -124,9 +124,9 @@ export const IntelligenceHub: React.FC<IntelligenceHubProps> = ({ onClose }) => 
                 <h3 className="text-sm font-semibold text-white uppercase tracking-wider">Consensus Health</h3>
               </div>
               <p className="text-xs text-white/50 mb-4">Network Coherence (Ω') Heatmap</p>
-              <Heatmap 
-                data={validators.map(v => v.omega)} 
-                thresholds={[0.95, 0.85, 0.75]} 
+              <Heatmap
+                data={validators.map(v => v.omega)}
+                thresholds={[0.95, 0.85, 0.75]}
               />
             </div>
 
@@ -147,7 +147,7 @@ export const IntelligenceHub: React.FC<IntelligenceHubProps> = ({ onClose }) => 
                   <div className="w-full bg-yellow-900/30 h-1.5 rounded-full overflow-hidden mb-4">
                     <div className="bg-green-500 h-full" style={{ width: '98.5%' }}></div>
                   </div>
-                  
+
                   <div className="space-y-2 font-mono text-[10px] text-white/60">
                     <div className="flex justify-between">
                       <span className="text-red-400">T-120ms</span>
@@ -211,7 +211,7 @@ export const IntelligenceHub: React.FC<IntelligenceHubProps> = ({ onClose }) => 
                     <span className="text-xs font-mono text-cyan-400">Anchor: VOYAGER-1</span>
                     <span className="text-xs font-mono text-white/60">Delay: 22h 34m (Entangled)</span>
                   </div>
-                  
+
                   <div className="space-y-3">
                     <div>
                       <div className="flex justify-between text-[10px] font-mono mb-1">
@@ -222,7 +222,7 @@ export const IntelligenceHub: React.FC<IntelligenceHubProps> = ({ onClose }) => 
                         <div className="bg-green-500 h-full" style={{ width: '99%' }}></div>
                       </div>
                     </div>
-                    
+
                     <div>
                       <div className="flex justify-between text-[10px] font-mono mb-1">
                         <span className="text-white/80">GEO-SAT-04 (Solar Array)</span>
@@ -280,7 +280,7 @@ export const IntelligenceHub: React.FC<IntelligenceHubProps> = ({ onClose }) => 
                 <h3 className="text-sm font-semibold text-white uppercase tracking-wider">Arkhe-QPU & Timechain</h3>
               </div>
               <p className="text-xs text-white/50 mb-4">Quantum Coherence Orchestrator & Phase State Commitments</p>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 {/* L1: Virtual QPU */}
                 <div className="bg-black/40 border border-indigo-500/20 rounded p-3">

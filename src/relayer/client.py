@@ -25,20 +25,20 @@ class Mo1RelayerClient:
         Retorna o hash da transação (Structure Z).
         """
         endpoint = f"{self.relayer_url}/v1/tx/emit"
-        
+
         payload = {
             "triplet_id": triplet_id,
             "energy_omega": energy,
             "intent_payload": intent,
             "manifold": "SU(7)"
         }
-        
+
         data = json.dumps(payload).encode('utf-8')
         req = urllib.request.Request(endpoint, data=data, headers={
             'Content-Type': 'application/json',
             'X-API-Key': self.api_key
         })
-        
+
         try:
             logger.info(f"🜏 Solicitando emissão NIR ao Mo1Relayer em {self.relayer_url}...")
             with urllib.request.urlopen(req, timeout=5) as response:
@@ -49,7 +49,7 @@ class Mo1RelayerClient:
         except (urllib.error.URLError, Exception) as e:
             logger.warning(f"⚠️ Mo1Relayer inacessível ({e}). O Enclave pode estar offline ou o isolamento de rede bloqueou a conexão.")
             logger.info("🜏 Simulação de Fallback: Gerando hash NIR determinístico para manter a coerência local.")
-            
+
             # Fallback para simulação caso o relayer não esteja rodando localmente
             fallback_hash = "0x" + hashlib.sha256(data).hexdigest()
             return fallback_hash

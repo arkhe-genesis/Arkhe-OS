@@ -38,7 +38,7 @@ class CoherenceCalculator:
                 return np.array(response["embedding"])
             except Exception as e:
                 logger.warning(f"Falha ao gerar embedding via Ollama: {e}. Usando fallback determinístico.")
-        
+
         # Fallback pseudo-aleatório determinístico para testes sem Ollama
         np.random.seed(sum(ord(c) for c in text) % 10000)
         return np.random.rand(768)
@@ -60,19 +60,19 @@ class CoherenceCalculator:
         Utiliza similaridade cosseno entre a intenção e a diretriz primordial.
         """
         intent_embedding = self._get_embedding(intent_text)
-        
+
         # Similaridade cosseno (Produto escalar / (Norma A * Norma B))
         dot_product = np.dot(self.baseline_embedding, intent_embedding)
         norm_a = np.linalg.norm(self.baseline_embedding)
         norm_b = np.linalg.norm(intent_embedding)
-        
+
         if norm_a == 0 or norm_b == 0:
             density = 0.0
         else:
             density = dot_product / (norm_a * norm_b)
-        
+
         # Normalizar de [-1, 1] para [0, 1]
         density = (density + 1) / 2.0
-        
+
         logger.info(f"🜏 Densidade de fase computada: Ω' = {density:.6f}")
         return PhaseSpace(density=density, state_vector=intent_embedding.tolist(), raw_text=intent_text)

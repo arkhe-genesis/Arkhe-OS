@@ -21,8 +21,8 @@ export default function TimechainVisualizer({ logs }: TimechainVisualizerProps) 
   const blocks = logs.slice(0, 10).reverse();
 
   return (
-    <Card 
-      title="Timechain Topology" 
+    <Card
+      title="Timechain Topology"
       icon={<Link className="w-4 h-4" />}
     >
       <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-arkhe-border scrollbar-track-transparent">
@@ -34,7 +34,7 @@ export default function TimechainVisualizer({ logs }: TimechainVisualizerProps) 
           return (
             <div key={block.id} className="flex items-center shrink-0">
               {/* Block */}
-              <div 
+              <div
                 className={`w-24 p-2 rounded border flex flex-col gap-1 relative ${
                   isRejected ? 'bg-arkhe-red/10 border-arkhe-red/50' :
                   isMitigated ? 'bg-arkhe-orange/10 border-arkhe-orange/50' :

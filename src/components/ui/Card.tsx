@@ -61,7 +61,7 @@ export function Card({
 
       {status === 'warning' && <div className="absolute top-0 left-0 w-full h-0.5 bg-arkhe-amber animate-pulse" />}
       {status === 'omega' && <div className="absolute top-0 left-0 w-full h-0.5 bg-arkhe-omega" />}
-      
+
       {(title || icon || action) && (
         <div className={cn(
           "px-4 py-3 border-b flex items-center justify-between",

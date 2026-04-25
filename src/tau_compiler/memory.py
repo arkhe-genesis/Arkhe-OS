@@ -35,16 +35,16 @@ class WalnutMemory:
     def append(self, state_vector: list, metadata: dict):
         """Salva um novo estado na memória viva (Cristalização)."""
         self.vectors.append(state_vector)
-        
+
         walnut_id = metadata.get("id", str(int(time.time() * 1000)))
         filepath = os.path.join(self.storage_dir, f"walnut_{walnut_id}.json")
-        
+
         payload = {
             "timestamp": time.time(),
             "metadata": metadata,
             "state_vector": state_vector
         }
-        
+
         try:
             with open(filepath, "w") as f:
                 json.dump(payload, f)
