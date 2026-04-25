@@ -27,6 +27,7 @@ class SovereignGnoAuditor(BaseSecOpsTool):
 
         receipt_id = await self.anchor_receipt("gno_contract_audit", "success", metadata)
 
+        # Simulated audit findings based on Gno principles
         findings = [
             {"type": "info", "message": "Deterministic Go variant (Gno) confirmed."},
             {"type": "pass", "message": "Automatic state-persistence of global variables verified."},
