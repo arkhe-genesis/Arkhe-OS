@@ -1,0 +1,50 @@
+# citizen-consent-portal/frontend/.gitignore
+# =====================================
+# Dependências
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+*.map
+
+# Environment variables (NUNCA commitar .env real)
+.env*.local
+!.env.example
+.env.development*.local
+
+# Cathedral-specific (chaves e provas)
+.cathedral/
+*.cathedral-key
+*.zk-proof
+*.merkle-proof
+receipts/
+
+# IDE e editores
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Testing
+coverage/
+.nyc_output/
+
+# Cache
+.eslintcache
+.prettierrc.cache
+
+# TypeScript
+*.tsbuildinfo

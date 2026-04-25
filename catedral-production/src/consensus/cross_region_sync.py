@@ -1,0 +1,1 @@
+class CrossRegionSyncer: pass

@@ -1,0 +1,59 @@
+{
+  "name": "cathedral-citizen-portal",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Portal do Cidadão para a Catedral Arkhe — consentimento granular com soberania",
+  "author": "Cathedral Contributors",
+  "license": "Apache-2.0",
+  "homepage": "https://cathedral.ark",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cathedral/citizen-consent-portal.git"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint src --ext .js,.jsx --fix",
+    "lint:strict": "eslint src --ext .js,.jsx",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "build:sdk": "node scripts/build-sdk-components.js",
+    "audit": "npm audit --audit-level=moderate",
+    "prepare": "cd .. && husky install frontend/.husky"
+  },
+  "dependencies": {
+    "cathedral-sdk": "^1.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.1.5",
+    "@testing-library/react": "^14.1.2",
+    "@testing-library/user-event": "^14.5.1",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^8.56.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "husky": "^8.0.3",
+    "jsdom": "^23.0.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.10",
+    "vitest": "^1.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not op_mini all"
+  ]
+}

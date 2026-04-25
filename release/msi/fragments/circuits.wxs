@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <ComponentGroup Id="CircuitComponents" Directory="CircuitsFolder">
+      <Component Id="CircuitR1CS" Guid="D8A20852-3570-9391-4C5D-6E7F8A9B0C1D" Win64="yes">
+        <File Source="..\..\circuits\build\quantum_state_hash_v2.r1cs" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

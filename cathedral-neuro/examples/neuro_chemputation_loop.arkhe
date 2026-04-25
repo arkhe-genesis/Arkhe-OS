@@ -1,0 +1,65 @@
+// examples/neuro_chemputation_loop.arkhe
+// Cientista projeta molécula via pensamento soberano
+
+entangle "neuro.decoder" as Neuro ~
+entangle "chemputation.module" as Chem ~
+entangle "feedback.tactile" as Tactile ~
+
+def projetar_molecula_com_pensamento():
+    // 1. Aquisição neural com consentimento granular
+    neural_intent = await Neuro.acquire_with_consent(
+        participant: "did:cathedral:scientist:dr_silva",
+        channels: ["M1_right_hand", "PMC_planning"],
+        intention_type: "molecular_design",
+        revocable_by: "mental_stop_command"
+    )
+
+    // 2. Decodificação com prova ZK
+    arkhe_spec, zk_proof = await Neuro.decode_to_arkhe(
+        neural_data: neural_intent.encrypted_signal,
+        model_version: "fedneuro_molecular_v1.2"
+    )
+
+    ⊢ zk_proof.verify(
+        public_inputs: {
+            "signal_hash": neural_intent.signal_hash,
+            "spec_hash": hash(arkhe_spec)
+        }
+    ) == true ~
+
+    // 3. NeuroReceipt para auditoria do pensamento
+    neuro_receipt = await Receipt.build_neuro_receipt(
+        participant: neural_intent.participant,
+        signal_hash: neural_intent.signal_hash,
+        decoded_intent: arkhe_spec,
+        zk_proof: zk_proof,
+        consent_ref: neural_intent.consent_ref
+    )
+
+    // 4. Executar chemputation com a especificação decodificada
+    chem_result = await Chem.optimize_molecule(
+        arkhe_specification: arkhe_spec,
+        quantum_backend: "hybrid_40qubit",
+        federation_participants: ["lab_pku", "lab_upv"]
+    )
+
+    // 5. Converter resultados em feedback tátil soberano
+    tactile_pattern = await Tactile.encode_properties(
+        molecular_properties: chem_result.properties,
+        consent_scope: "tactile_feedback_only"
+    )
+
+    // 6. Entregar feedback com novo consentimento
+    await Tactile.deliver_with_consent(
+        participant: neural_intent.participant,
+        pattern: tactile_pattern,
+        duration_ms: 2000,
+        intensity_limit: 0.3  // Limite de segurança
+    )
+
+    return {
+        "molecule": chem_result.molecule,
+        "thought_to_molecule_audit_trail": "https://codex.cathedral.ark/neuro/neuro_abc123"
+    }
+
+⟨ projetar_molecula_com_pensamento() ⟩

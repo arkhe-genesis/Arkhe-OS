@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <ComponentGroup Id="DependencyComponents" Directory="INSTALLFOLDER">
+      <Component Id="OpenSSL" Guid="2D375D07-8A25-E8E6-90AB-1C2D3E4F5A6B" Win64="yes">
+        <File Source="..\..\redist\libssl-3-x64.dll" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

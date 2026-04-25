@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "5173:80"
+    environment:
+      - VITE_CATHEDRAL_API=${CATHEDRAL_API:-http://backend:3001/api/v1}
+    depends_on:
+      - backend
+    networks:
+      - cathedral-net
+
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - MONGODB_URI=mongodb://mongo:27017/cathedral
+    depends_on:
+      - mongo
+    networks:
+      - cathedral-net
+
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    networks:
+      - cathedral-net
+
+networks:
+  cathedral-net:
+    driver: bridge

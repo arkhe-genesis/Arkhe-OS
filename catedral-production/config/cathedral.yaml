@@ -1,0 +1,215 @@
+# config/cathedral.yaml
+# Configuração base da Catedral — valores padrão por região
+
+# Identificação
+cathedral:
+  name: "Catedral Planetária"
+  version: "2.4.1"
+  invariant: "catedral.mesh"
+
+# Regiões suportadas
+regions:
+  - id: "sa-east-1"
+    name: "São Paulo"
+    timezone: "America/Sao_Paulo"
+    primary: true
+    shards: [0, 85]  # Hash range
+  - id: "eu-west-1"
+    name: "Frankfurt"
+    timezone: "Europe/Berlin"
+    primary: false
+    shards: [86, 170]
+  - id: "ap-south-1"
+    name: "Mumbai"
+    timezone: "Asia/Kolkata"
+    primary: false
+    shards: [171, 255]
+
+# Rede e comunicação
+network:
+  quantum_bus:
+    protocol: "gRPC"
+    tls_version: "1.3"
+    mtls: true
+    topics:
+      - "mesh/health"
+      - "mesh/consensus"
+      - "mesh/route"
+      - "mesh/mitigation"
+    gossip:
+      fanout: 3
+      interval_seconds: 10
+      vector_clock_enabled: true
+  cross_region:
+    bandwidth_gbps: 10
+    latency_target_ms: 200
+    protocol: "Cloud_Interconnect"
+    fallback: "Starlink_Satellite"
+    circuit_breaker:
+      failure_threshold: 3
+      recovery_timeout_seconds: 30
+
+# Consenso quântico
+consensus:
+  engine: "QuantumConsensusEngine"
+  quorum_type: "weighted_by_omega"
+  timeout_seconds: 30
+  retry_attempts: 3
+  criticality_levels:
+    - "COMMON"
+    - "ELEVATED"
+    - "CRITICAL"
+  critical_thresholds:
+    ghost_operator: "CRITICAL"
+    ss7_attack: "CRITICAL"
+    sim_jacking: "ELEVATED"
+    smishing: "ELEVATED"
+
+# Segurança e Vigil
+security:
+  vigil_adapter:
+    mode: "active"  # active, alert_only, disabled
+    confidence_threshold: 0.95
+    false_positive_target: 0.001
+  firewalls:
+    ss7:
+      enabled: true
+      blocklist_path: "/data/iocs/ss7_blocklist.json"
+      rate_limit_per_minute: 1000
+    diameter:
+      enabled: true
+      realm_whitelist_path: "/data/ir21/realms.json"
+    sms:
+      enabled: true
+      sim_jacker_detection: true
+      smishing_detection: true
+
+# Shard manager e rebalanceamento
+sharding:
+  algorithm: "consistent_hash"
+  replication_factor: 3
+  rebalancer:
+    enabled: true
+    cooldown_seconds: 300
+    load_threshold: 0.80
+    migration_batch_size: 10
+    zero_downtime: true
+
+# Rollback de emergência
+rollback:
+  enabled: true
+  automatic: true
+  check_interval_seconds: 5
+  thresholds:
+    omega_critical: 0.70
+    latency_spike_ms: 500
+    error_rate_max: 0.05
+  actions:
+    consensus: "disable_global_quorum"
+    rebalancer: "freeze_migrations"
+    vigil: "mode:alert_only"
+    firewall: "mode:log_only"
+
+# Observabilidade
+observability:
+  metrics:
+    endpoint: "prometheus.cathedral.internal:9090"
+    scrape_interval: "10s"
+    retention_days: 30
+  logs:
+    endpoint: "loki.cathedral.internal:3100"
+    format: "structured_json"
+    correlation_id_enabled: true
+  traces:
+    endpoint: "jaeger.cathedral.internal:14268"
+    sampling_rate: 0.1
+  alerts:
+    pagerduty:
+      enabled: true
+      integration_key_env: "PAGERDUTY_INTEGRATION_KEY"
+    slack:
+      enabled: true
+      webhook_env: "SLACK_WEBHOOK_URL"
+    thresholds:
+      omega_warning: 0.80
+      omega_critical: 0.70
+      error_rate_warning: 0.02
+      error_rate_critical: 0.05
+
+# Transição de fases (dual-mode)
+transition:
+  dual_mode_enabled: true
+  validation:
+    shadow_accuracy_threshold: 0.98
+    hybrid_fp_threshold: 0.001
+    active_block_rate_threshold: 0.99
+  phases:
+    - name: "PREPARATION"
+      duration_weeks: 2
+      validation: "health_check"
+    - name: "SHADOW"
+      duration_weeks: 2
+      validation: "dual_mode_accuracy"
+    - name: "HYBRID"
+      duration_weeks: 4
+      validation: "false_positive_rate"
+    - name: "ACTIVE"
+      duration_weeks: 4
+      validation: "block_rate"
+    - name: "AUTONOMOUS"
+      duration_weeks: 4
+      validation: "latency_stability"
+    - name: "FEDERATED"
+      duration_weeks: 4
+      validation: "cross_operator_consensus"
+    - name: "PLANETARY"
+      duration_weeks: null  # Indefinido
+      validation: "global_omega"
+
+# FedTernary (aprendizado federado)
+fedternary:
+  enabled: true
+  aggregation:
+    strategy: "xor_ternary"
+    min_participants: 3
+    reputation_threshold: 0.80
+  privacy:
+    dp_epsilon: 0.5
+    secure_aggregation: true
+  domains:
+    - "medical_diagnosis"
+    - "threat_intelligence"
+    - "fraud_detection"
+
+# Receipts unificados qhttp
+receipt:
+  unified_schema_version: "v1.2"
+  required_fields:
+    - "receipt_id"
+    - "timestamp"
+    - "domain"
+    - "data_hash"
+    - "zk_proof"
+    - "consent_ref"
+    - "merkle_root"
+  domains_supported:
+    - "guardian"
+    - "translucent"
+    - "sensorial"
+    - "topological"
+    - "meta"
+  qhttp:
+    content_type: "application/qhttp+json"
+    encryption: "hybrid_ecies"
+    compression: "zstd"
+
+# Hardware quântico (simulado para desenvolvimento)
+quantum:
+  architecture: "rydberg_array"
+  qubit_count: 248
+  gate_fidelity_target: 0.999
+  coherence_time_target_ms: 500
+  calibration:
+    schedule: "daily"
+    auto_recalibrate: true
+    fidelity_threshold: 0.995
