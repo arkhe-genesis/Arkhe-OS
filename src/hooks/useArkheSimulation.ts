@@ -7,7 +7,7 @@
 
 import { useState, useEffect } from 'react';
 
-import { logger } from '../../server/logger.ts';
+import { logger } from '../../server/logger';
 import type { SimulationState } from '../../server/types';
 
 export function useArkheSimulation() {

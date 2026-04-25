@@ -25,12 +25,12 @@ describe('PageCollector', () => {
     const browser = getMockBrowser();
     const page = (await browser.pages())[0];
     const request = getMockRequest();
-    const collector = new PageCollector(browser, collect => {
+    const collector = new PageCollector(browser as any, collect => {
       return {
-        request: req => {
+        request: (req: any) => {
           collect(req);
         },
-      } as ListenerMap;
+      } as any;
     });
     await collector.init([page]);
     page.emit('request', request);
@@ -43,12 +43,12 @@ describe('PageCollector', () => {
     const page = (await browser.pages())[0];
     const mainFrame = page.mainFrame();
     const request = getMockRequest();
-    const collector = new PageCollector(browser, collect => {
+    const collector = new PageCollector(browser as any, collect => {
       return {
-        request: req => {
+        request: (req: any) => {
           collect(req);
         },
-      } as ListenerMap;
+      } as any;
     });
     await collector.init([page]);
     page.emit('request', request);
@@ -63,12 +63,12 @@ describe('PageCollector', () => {
     const browser = getMockBrowser();
     const page = (await browser.pages())[0];
     const request = getMockRequest();
-    const collector = new PageCollector(browser, collect => {
+    const collector = new PageCollector(browser as any, collect => {
       return {
-        request: req => {
+        request: (req: any) => {
           collect(req);
         },
-      } as ListenerMap;
+      } as any;
     });
     await collector.init([page]);
     page.emit('request', request);
@@ -82,12 +82,12 @@ describe('PageCollector', () => {
     const page = (await browser.pages())[0];
     const mainFrame = page.mainFrame();
     const request = getMockRequest();
-    const collector = new PageCollector(browser, collect => {
+    const collector = new PageCollector(browser as any, collect => {
       return {
-        request: req => {
+        request: (req: any) => {
           collect(req);
         },
-      } as ListenerMap;
+      } as any;
     });
     await collector.init([page]);
     page.emit('request', request);
@@ -106,12 +106,12 @@ describe('PageCollector', () => {
     const browser = getMockBrowser();
     const page = (await browser.pages())[0];
     const request = getMockRequest();
-    const collector = new PageCollector(browser, collect => {
+    const collector = new PageCollector(browser as any, collect => {
       return {
-        request: req => {
+        request: (req: any) => {
           collect(req);
         },
-      } as ListenerMap;
+      } as any;
     });
     await collector.init([page]);
     browser.emit('targetcreated', {
@@ -138,12 +138,12 @@ describe('PageCollector', () => {
     const browser = getMockBrowser();
     const page = (await browser.pages())[0];
     const request = getMockRequest();
-    const collector = new PageCollector(browser, collect => {
+    const collector = new PageCollector(browser as any, collect => {
       return {
-        request: req => {
+        request: (req: any) => {
           collect(req);
         },
-      } as ListenerMap;
+      } as any;
     });
     await collector.init([page]);
 
@@ -168,12 +168,12 @@ describe('PageCollector', () => {
     const page = (await browser.pages())[0];
     const request1 = getMockRequest();
     const request2 = getMockRequest();
-    const collector = new PageCollector<HTTPRequest>(browser, collect => {
+    const collector = new PageCollector<any>(browser as any, collect => {
       return {
-        request: req => {
+        request: (req: any) => {
           collect(req);
         },
-      } as ListenerMap;
+      } as any;
     });
     await collector.init([page]);
 
@@ -198,7 +198,7 @@ describe('NetworkCollector', () => {
       frame: page.mainFrame(),
     });
     const request2 = getMockRequest();
-    const collector = new NetworkCollector(browser);
+    const collector = new NetworkCollector(browser as any);
     await collector.init([page]);
     page.emit('request', request);
     page.emit('request', navRequest);
@@ -338,12 +338,12 @@ describe('ConsoleCollector', () => {
 
     page.on('issue', onIssuesListener);
 
-    const collector = new ConsoleCollector(browser, collect => {
+    const collector = new ConsoleCollector(browser as any, collect => {
       return {
-        issue: issue => {
-          collect(issue as DevTools.AggregatedIssue);
+        issue: (issue: any) => {
+          collect(issue as any);
         },
-      } as ListenerMap;
+      } as any;
     });
     await collector.init([page]);
     cdpSession.emit('Audits.issueAdded', {issue});
@@ -359,12 +359,12 @@ describe('ConsoleCollector', () => {
     // @ts-expect-error internal API.
     const cdpSession = page._client();
 
-    const collector = new ConsoleCollector(browser, collect => {
+    const collector = new ConsoleCollector(browser as any, collect => {
       return {
-        issue: issue => {
-          collect(issue as DevTools.AggregatedIssue);
+        issue: (issue: any) => {
+          collect(issue as any);
         },
-      } as ListenerMap;
+      } as any;
     });
     await collector.init([page]);
 
@@ -391,12 +391,12 @@ describe('ConsoleCollector', () => {
     // @ts-expect-error internal API.
     const cdpSession = page._client();
 
-    const collector = new ConsoleCollector(browser, collect => {
+    const collector = new ConsoleCollector(browser as any, collect => {
       return {
-        issue: issue => {
-          collect(issue as DevTools.AggregatedIssue);
+        issue: (issue: any) => {
+          collect(issue as any);
         },
-      } as ListenerMap;
+      } as any;
     });
     await collector.init([page]);
 
@@ -416,10 +416,10 @@ describe('ConsoleCollector', () => {
     // @ts-expect-error internal API.
     const cdpSession = page._client();
     const onUncaughtErrorListener = sinon.spy();
-    const collector = new ConsoleCollector(browser, () => {
+    const collector = new ConsoleCollector(browser as any, () => {
       return {
         uncaughtError: onUncaughtErrorListener,
-      } as ListenerMap;
+      } as any;
     });
     await collector.init([page]);
 

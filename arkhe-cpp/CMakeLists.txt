@@ -14,9 +14,13 @@ add_executable(arkhe
     src/core/clifford.cpp
     src/core/clifford_product.s
     src/core/biocomputer.cpp
+    src/core/arena.cpp
+    src/core/safety_guardian.cpp
     src/k6o/node.cpp
     src/mind/monster.cpp
+    src/mind/cathedral_llm.cpp
     src/quantum/qhttp.cpp
+    src/zk/allocator.cpp
     src/merkabah/geometry.cpp
     src/transliterator.cpp
 )

@@ -12,7 +12,7 @@
 
 export interface ContextNode {
   /** Tempo de origem da informação (Onda Avançada) */
-  timestamp: number;
+  timestamp?: number;
   /** Representação vetorial no espaço latente */
   embedding: number[];
   /** Relevância atual (sujeita ao decaimento de Warp) */

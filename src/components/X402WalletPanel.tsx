@@ -21,7 +21,7 @@ interface X402WalletPanelProps {
       amount: number;
       resource: string;
       provider: string;
-      timestamp: string;
+      timestamp?: string;
     }>;
     moltxLink?: {
       status: 'unlinked' | 'linked';
@@ -283,7 +283,7 @@ export default function X402WalletPanel({ wallet }: X402WalletPanelProps) {
                   </div>
                   <div className="flex justify-between items-center">
                     <div className="text-[9px] font-mono text-arkhe-muted truncate max-w-[150px]">{tx.provider}</div>
-                    <div className="text-[9px] font-mono text-arkhe-muted/50">{new Date(tx.timestamp).toLocaleTimeString()}</div>
+                    <div className="text-[9px] font-mono text-arkhe-muted/50">{tx.timestamp ? new Date(tx.timestamp).toLocaleTimeString() : '00:00:00'}</div>
                   </div>
                 </motion.div>
               ))}
