@@ -1,0 +1,35 @@
+[
+  {
+    "filename": "gdrv.sys",
+    "name": "GIGABYTE GDrv Driver",
+    "vendor": "GIGABYTE",
+    "kernel_memory_access": true,
+    "firmware_access": false,
+    "msr_access": true,
+    "cr_access": false,
+    "registry_access": false,
+    "cve": "CVE-2018-19320"
+  },
+  {
+    "filename": "rtcore64.sys",
+    "name": "MSI Afterburner RTCore",
+    "vendor": "MSI",
+    "kernel_memory_access": true,
+    "firmware_access": false,
+    "msr_access": true,
+    "cr_access": true,
+    "registry_access": false,
+    "cve": "CVE-2021-21551"
+  },
+  {
+    "filename": "iqvw64e.sys",
+    "name": "Intel Extreme Tuning Utility",
+    "vendor": "Intel",
+    "kernel_memory_access": true,
+    "firmware_access": false,
+    "msr_access": true,
+    "cr_access": false,
+    "registry_access": false,
+    "cve": "CVE-2021-21551"
+  }
+]
