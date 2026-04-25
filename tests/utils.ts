@@ -317,11 +317,10 @@ export function getMockPage(): Page {
       return mainFrame;
     },
     ...mockListener(),
-    // @ts-expect-error internal API.
     _client() {
       return cdpSession;
     },
-  } satisfies Page;
+  } as any;
 }
 
 export function getMockBrowser(): Browser {
