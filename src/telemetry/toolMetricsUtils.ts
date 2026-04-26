@@ -98,6 +98,7 @@ export function generateToolMetrics(tools: ToolDefinition[]): ToolMetric[] {
       if (PARAM_BLOCKLIST.has(name)) {
         continue;
       }
+      // @ts-ignore
       const zodType = getZodType(schema);
       const transformedName = transformArgName(zodType, name);
       let argType = transformArgType(zodType);

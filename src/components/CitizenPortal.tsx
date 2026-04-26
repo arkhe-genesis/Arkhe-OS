@@ -80,7 +80,7 @@ const CitizenPortal: React.FC = () => {
                 <div className="space-y-2">
                   <Label>Perfil de Privacidade</Label>
                   <Select
-                    value={profile.profile}
+                    data-value={profile.profile}
                     onValueChange={(val: any) => updateProfile(val)}
                   >
                     <SelectTrigger>

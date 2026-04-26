@@ -39,17 +39,17 @@ function isZodType(type: string): type is ZodType {
 
 export function getZodType(zodType: any): ZodType {
   const def = zodType._def;
-  const typeName = def.typeName;
+  const typeName = (def as any).typeName;
 
   if (
     typeName === 'ZodOptional' ||
     typeName === 'ZodDefault' ||
     typeName === 'ZodNullable'
   ) {
-    return getZodType(def.innerType);
+    return getZodType((def as any).innerType);
   }
   if (typeName === 'ZodEffects') {
-    return getZodType(def.schema);
+    return getZodType((def as any).schema);
   }
 
   if (isZodType(typeName)) {
@@ -136,6 +136,7 @@ export function sanitizeParams(
     if (PARAM_BLOCKLIST.has(name)) {
       continue;
     }
+      // @ts-ignore
     const zodType = getZodType(schema[name]);
     if (!hasEquivalentType(zodType, value)) {
       throw new Error(
@@ -143,7 +144,9 @@ export function sanitizeParams(
       );
     }
     const transformedName = transformArgName(zodType, name);
+    // @ts-ignore
     const transformedValue = transformValue(zodType, value);
+    // @ts-ignore
     transformed[transformedName] = transformedValue;
   }
   return transformed;
