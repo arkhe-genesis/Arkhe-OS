@@ -98,16 +98,42 @@ export function generateToolMetrics(tools: ToolDefinition[]): ToolMetric[] {
       if (PARAM_BLOCKLIST.has(name)) {
         continue;
       }
-      const zodType = getZodType(schema);
+      let zodType;
+      try {
+        // @ts-ignore
+        zodType = getZodType(schema);
+      } catch (err) {
+        console.error(`Error getting zod type for tool ${tool.name} arg ${name}:`, err);
+        throw err;
+      }
       const transformedName = transformArgName(zodType, name);
       let argType = transformArgType(zodType);
 
       if (argType === 'enum') {
         let values;
-        if ((schema as any)._def.values?.length > 0) {
-          values = (schema as any)._def.values;
-        } else {
-          values = (schema as any)._def.innerType._def.values;
+        const findValues = (s: any): any[] | undefined => {
+          const d = s._def || s.def;
+          if (d?.values?.length > 0) {
+            return d.values;
+          }
+          if (d?.entries?.length > 0) {
+            return d.entries;
+          }
+          if (s.options?.length > 0) {
+            return s.options;
+          }
+          if (d?.innerType) {
+            return findValues(d.innerType);
+          }
+          if (s.innerType) {
+            return findValues(s.innerType);
+          }
+          return undefined;
+        };
+        values = findValues(schema);
+        if (!values) {
+          console.error(`Could not find values for enum tool ${tool.name} arg ${name}`, schema);
+          throw new Error(`Missing enum values for ${tool.name}.${name}`);
         }
         argType = validateEnumHomogeneity(values);
       }

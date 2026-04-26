@@ -705,7 +705,7 @@ export class McpContext implements Context {
         },
       );
       return {cdpBackendNodeId, cdpRequestId};
-    } catch (err) {
+    } catch (err: any) {
       this.logger('error getting devtools data', err);
     }
     return {};
@@ -816,7 +816,7 @@ export class McpContext implements Context {
       await fs.mkdir(path.dirname(filePath), {recursive: true});
       await fs.writeFile(filePath, data);
       return {filename: filePath};
-    } catch (err) {
+    } catch (err: any) {
       this.logger(err);
       throw new Error('Could not save a file', {cause: err});
     }
@@ -878,7 +878,7 @@ export class McpContext implements Context {
           if (req.url().includes('favicon.ico')) {
             return;
           }
-          collect(req);
+          collect(req as any);
         },
       } as ListenerMap;
     });

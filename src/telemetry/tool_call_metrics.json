@@ -2304,5 +2304,60 @@
   {
     "name": "run_vitral_dashboard",
     "args": []
+  },
+  {
+    "name": "gno_call",
+    "args": [
+      {
+        "name": "pkgPath_length",
+        "argType": "number"
+      },
+      {
+        "name": "func_length",
+        "argType": "number"
+      },
+      {
+        "name": "args_count",
+        "argType": "number"
+      },
+      {
+        "name": "gasFee_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "gno_deploy",
+    "args": [
+      {
+        "name": "path_length",
+        "argType": "number"
+      },
+      {
+        "name": "remote_length",
+        "argType": "number"
+      },
+      {
+        "name": "pkgPath_length",
+        "argType": "number"
+      },
+      {
+        "name": "deposit_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "gno_query",
+    "args": [
+      {
+        "name": "pkgPath_length",
+        "argType": "number"
+      },
+      {
+        "name": "func_length",
+        "argType": "number"
+      }
+    ]
   }
 ]

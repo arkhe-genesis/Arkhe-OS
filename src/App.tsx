@@ -47,9 +47,7 @@ import OrbitalComputePanel from './components/OrbitalComputePanel';
 import { PersistentConsciousnessPanel } from './components/PersistentConsciousnessPanel';
 import PolyglotCompilerPanel from './components/PolyglotCompilerPanel';
 import ProofOfIntelligencePanel from './components/ProofOfIntelligencePanel';
-import QuantumCodexPanel from './components/QuantumCodexPanel';
-import QuantumMemoryPanel from './components/QuantumMemoryPanel';
-import QuantumNanoholeNetworkPanel from './components/QuantumNanoholeNetworkPanel';
+import NeuralSimulationPanel from './components/NeuralSimulationPanel';
 import QubitPipelinePanel from './components/QubitPipelinePanel';
 import RamseyConfirmationModal from './components/RamseyConfirmationModal';
 import { RealityExpressionPanel } from './components/RealityExpressionPanel';
@@ -231,6 +229,7 @@ export default function App() {
               className="space-y-8"
             >
               <div className="lg:col-span-2 xl:col-span-2 space-y-6 flex flex-col">
+                <NeuralSimulationPanel />
                 <CoherenceMonitor data={state.coherenceData} currentLambda={state.currentLambda} />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <TzinorNetworkPanel network={state.tzinorNetwork as TzinorNetworkState} />

@@ -17,6 +17,7 @@ from utils.cathedral_secops.honeypot import SovereignDecoy
 from utils.cathedral_secops.forensics import ImmutableInvestigator
 from utils.cathedral_secops.headi import SovereignHeadi
 from utils.cathedral_secops.gno_auditor import SovereignGnoAuditor
+from utils.cathedral_secops.dork_forge import SovereignDorkForge
 
 def print_banner():
     banner = """
@@ -87,6 +88,11 @@ async def handle_headi(args):
 async def handle_gno(args):
     auditor = SovereignGnoAuditor(args.consent_id)
     result = await auditor.audit_contract(args.path)
+    print(json.dumps(result, indent=2))
+
+async def handle_dork(args):
+    forge = SovereignDorkForge(args.consent_id)
+    result = await forge.process_dork(args.domain, args.type)
     print(json.dumps(result, indent=2))
 
 def main():
@@ -173,6 +179,11 @@ def main():
     gno_p.add_argument("op", choices=["audit"])
     gno_p.add_argument("--path", required=True, help="Contract Path")
 
+    # 13. Dork Forge
+    dork_p = subparsers.add_parser("dork", parents=[common_parser])
+    dork_p.add_argument("--domain", required=True, help="Target Domain")
+    dork_p.add_argument("--type", choices=["files", "open_dirs", "login_pages", "exposed_config"], required=True)
+
     args = parser.parse_args()
     print_banner()
 
@@ -200,6 +211,8 @@ def main():
         asyncio.run(handle_headi(args))
     elif args.command == "gno":
         asyncio.run(handle_gno(args))
+    elif args.command == "dork":
+        asyncio.run(handle_dork(args))
 
 if __name__ == "__main__":
     main()
