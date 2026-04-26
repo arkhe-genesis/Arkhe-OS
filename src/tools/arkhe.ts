@@ -6,7 +6,7 @@
 
 import {spawn} from 'node:child_process';
 import {createHash} from 'node:crypto';
-import path from 'node:path';
+import * as path from 'node:path';
 
 import type {McpPage} from '../McpPage.js';
 import {zod} from '../third_party/index.js';
