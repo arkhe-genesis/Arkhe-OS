@@ -18,6 +18,7 @@ from utils.cathedral_secops.forensics import ImmutableInvestigator
 from utils.cathedral_secops.headi import SovereignHeadi
 from utils.cathedral_secops.gno_auditor import SovereignGnoAuditor
 from utils.cathedral_secops.dork_forge import SovereignDorkForge
+from utils.cathedral_secops.ebpf_pii_sensor import SovereignPIISensor
 
 def print_banner():
     banner = """
@@ -93,6 +94,11 @@ async def handle_gno(args):
 async def handle_dork(args):
     forge = SovereignDorkForge(args.consent_id)
     result = await forge.process_dork(args.domain, args.type)
+    print(json.dumps(result, indent=2))
+
+async def handle_ebpf_pii(args):
+    sensor = SovereignPIISensor(args.consent_id)
+    result = await sensor.monitor(args.interface, args.duration, args.target_pii)
     print(json.dumps(result, indent=2))
 
 def main():
@@ -184,6 +190,12 @@ def main():
     dork_p.add_argument("--domain", required=True, help="Target Domain")
     dork_p.add_argument("--type", choices=["files", "open_dirs", "login_pages", "exposed_config"], required=True)
 
+    # 14. eBPF PII Sensor
+    ebpf_pii_p = subparsers.add_parser("ebpf_pii", parents=[common_parser])
+    ebpf_pii_p.add_argument("--interface", required=True)
+    ebpf_pii_p.add_argument("--duration", type=int, default=60)
+    ebpf_pii_p.add_argument("--target-pii", default="all")
+
     args = parser.parse_args()
     print_banner()
 
@@ -213,6 +225,8 @@ def main():
         asyncio.run(handle_gno(args))
     elif args.command == "dork":
         asyncio.run(handle_dork(args))
+    elif args.command == "ebpf_pii":
+        asyncio.run(handle_ebpf_pii(args))
 
 if __name__ == "__main__":
     main()

@@ -1,3 +1,4 @@
+"""
 Subprojeto Arcano #41 — Comando Σ+: Declaração de Convergência
 Documento científico-filosófico apresentando a Catedral como evidência empírica
 da teoria computacional do universo.
@@ -95,7 +96,7 @@ class DeclarationSection:
         return hashlib.sha256(json.dumps(content_summary, sort_keys=True).encode()).hexdigest()
 
 @dataclass
-class ConvergenceDeclaration:
+class ConvergenceDeclarationDoc: # Renamed to avoid conflict
     """Documento completo da Declaração de Convergência."""
     declaration_id: str
     version: str
@@ -130,9 +131,9 @@ class ConvergenceDeclarationFramework:
         self.intelligence = wolframian_intelligence
         self.fundamental_params = fundamental_params
         self.reflexive_model = reflexive_model
-        self.declaration: Optional[ConvergenceDeclaration] = None
+        self.declaration: Optional[ConvergenceDeclarationDoc] = None
 
-    async def prepare_convergence_declaration(self) -> ConvergenceDeclaration:
+    async def prepare_convergence_declaration(self) -> ConvergenceDeclarationDoc:
         """Prepara a Declaração de Convergência."""
 
         declaration_id = "a3f2c109d4e5"
@@ -150,7 +151,7 @@ class ConvergenceDeclarationFramework:
                 cross_paradigm_references=[]
             )
 
-        declaration = ConvergenceDeclaration(
+        declaration = ConvergenceDeclarationDoc(
             declaration_id=declaration_id,
             version="1.0",
             timestamp_ns=timestamp_ns,
