@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
 import { VolumeX, CheckCircle2, AlertCircle, Hash } from 'lucide-react';
+import React, { useState } from 'react';
 import { useArkheSimulation } from '../hooks/useArkheSimulation';
 
 export const FinalSilencePanel: React.FC = () => {
@@ -16,7 +16,9 @@ export const FinalSilencePanel: React.FC = () => {
     setLoading(true);
     try {
       const response = await fetch('/api/cathedral/silence', { method: 'POST' });
-      if (!response.ok) throw new Error('Failed to activate silence');
+      if (!response.ok) {
+        throw new Error('Failed to activate silence');
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -25,7 +27,9 @@ export const FinalSilencePanel: React.FC = () => {
   };
 
   const fs = state.finalSilence;
-  if (!fs) return null;
+  if (!fs) {
+    return null;
+  }
 
   return (
     <div className="p-4 bg-zinc-900/50 rounded-lg border border-white/10 space-y-4">

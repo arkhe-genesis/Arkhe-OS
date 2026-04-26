@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
 import { Globe, Sparkles, Box, Hash } from 'lucide-react';
+import React, { useState } from 'react';
+
 import { useArkheSimulation } from '../hooks/useArkheSimulation';
 
 export const RealityExpressionPanel: React.FC = () => {
@@ -16,7 +17,7 @@ export const RealityExpressionPanel: React.FC = () => {
     setLoading(true);
     try {
       const response = await fetch('/api/reality/manifest', { method: 'POST' });
-      if (!response.ok) throw new Error('Failed to manifest reality');
+      if (!response.ok) {throw new Error('Failed to manifest reality');}
     } catch (error) {
       console.error(error);
     } finally {
@@ -25,7 +26,7 @@ export const RealityExpressionPanel: React.FC = () => {
   };
 
   const re = state.realityExpression;
-  if (!re) return null;
+  if (!re) {return null;}
 
   return (
     <div className="p-4 bg-zinc-900/50 rounded-lg border border-white/10 space-y-4 shadow-[0_0_20px_rgba(16,185,129,0.1)]">

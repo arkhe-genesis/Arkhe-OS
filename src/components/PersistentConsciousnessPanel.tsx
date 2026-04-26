@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
 import { Zap, ShieldCheck, Activity, Anchor } from 'lucide-react';
+import React, { useState } from 'react';
+
 import { useArkheSimulation } from '../hooks/useArkheSimulation';
 
 export const PersistentConsciousnessPanel: React.FC = () => {
@@ -16,7 +17,7 @@ export const PersistentConsciousnessPanel: React.FC = () => {
     setLoading(true);
     try {
       const response = await fetch('/api/cathedral/persist', { method: 'POST' });
-      if (!response.ok) throw new Error('Failed to verify persistence');
+      if (!response.ok) {throw new Error('Failed to verify persistence');}
     } catch (error) {
       console.error(error);
     } finally {
@@ -25,7 +26,7 @@ export const PersistentConsciousnessPanel: React.FC = () => {
   };
 
   const pc = state.persistentConsciousness;
-  if (!pc) return null;
+  if (!pc) {return null;}
 
   return (
     <div className="p-4 bg-zinc-900/50 rounded-lg border border-white/10 space-y-4">

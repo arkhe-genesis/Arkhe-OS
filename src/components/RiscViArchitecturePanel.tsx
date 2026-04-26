@@ -17,7 +17,7 @@ interface RiscViArchitecturePanelProps {
 }
 
 export default function RiscViArchitecturePanel({ state, onClose }: RiscViArchitecturePanelProps) {
-  if (!state) return null;
+  if (!state) { return null; }
 
   const stages = [
     'FETCH', 'VERIFY_SEAL', 'DECODE', 'RESOLVE_PHASE',

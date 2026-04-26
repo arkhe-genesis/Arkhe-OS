@@ -17,7 +17,7 @@ interface MaterializedCathedralPanelProps {
 }
 
 export default function MaterializedCathedralPanel({ state, onClose }: MaterializedCathedralPanelProps) {
-  if (!state) return null;
+  if (!state) { return null; }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">

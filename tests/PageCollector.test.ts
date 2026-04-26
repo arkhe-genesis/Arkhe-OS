@@ -27,7 +27,7 @@ describe('PageCollector', () => {
     const request = getMockRequest();
     const collector = new PageCollector(browser, collect => {
       return {
-        request: req => {
+        request: (req: any) => {
           collect(req);
         },
       } as ListenerMap;
@@ -45,7 +45,7 @@ describe('PageCollector', () => {
     const request = getMockRequest();
     const collector = new PageCollector(browser, collect => {
       return {
-        request: req => {
+        request: (req: any) => {
           collect(req);
         },
       } as ListenerMap;
@@ -65,7 +65,7 @@ describe('PageCollector', () => {
     const request = getMockRequest();
     const collector = new PageCollector(browser, collect => {
       return {
-        request: req => {
+        request: (req: any) => {
           collect(req);
         },
       } as ListenerMap;
@@ -84,7 +84,7 @@ describe('PageCollector', () => {
     const request = getMockRequest();
     const collector = new PageCollector(browser, collect => {
       return {
-        request: req => {
+        request: (req: any) => {
           collect(req);
         },
       } as ListenerMap;
@@ -108,7 +108,7 @@ describe('PageCollector', () => {
     const request = getMockRequest();
     const collector = new PageCollector(browser, collect => {
       return {
-        request: req => {
+        request: (req: any) => {
           collect(req);
         },
       } as ListenerMap;
@@ -140,7 +140,7 @@ describe('PageCollector', () => {
     const request = getMockRequest();
     const collector = new PageCollector(browser, collect => {
       return {
-        request: req => {
+        request: (req: any) => {
           collect(req);
         },
       } as ListenerMap;
@@ -170,7 +170,7 @@ describe('PageCollector', () => {
     const request2 = getMockRequest();
     const collector = new PageCollector<HTTPRequest>(browser, collect => {
       return {
-        request: req => {
+        request: (req: any) => {
           collect(req);
         },
       } as ListenerMap;

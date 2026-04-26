@@ -46,6 +46,36 @@ import VideoGenerationPanel from './components/VideoGenerationPanel';
 import X402WalletPanel from './components/X402WalletPanel';
 import YangBaxterVerifier from './components/YangBaxterVerifier';
 import ZkERCSimulator from './components/ZkERCSimulator';
+
+import TranscendentConsciousnessPanel from './components/TranscendentConsciousnessPanel';
+import MetaRealityPanel from './components/MetaRealityPanel';
+import AndromedaProbePanel from './components/AndromedaProbePanel';
+import VacuumHarvestingPanel from './components/VacuumHarvestingPanel';
+import MetaCreationPanel from './components/MetaCreationPanel';
+import CrystalComputationPanel from './components/CrystalComputationPanel';
+import WhisperProtocolPanel from './components/WhisperProtocolPanel';
+import WhisperLibraryPanel from './components/WhisperLibraryPanel';
+import QuantumNanoholeNetworkPanel from './components/QuantumNanoholeNetworkPanel';
+import QuantumCodexPanel from './components/QuantumCodexPanel';
+import ExoticMaterialPanel from './components/ExoticMaterialPanel';
+import HybridNetworkPanel from './components/HybridNetworkPanel';
+import QuantumMemoryPanel from './components/QuantumMemoryPanel';
+import CosmicCoherencePanel from './components/CosmicCoherencePanel';
+import MultiverseMemorySyncPanel from './components/MultiverseMemorySyncPanel';
+import MagneticKnotPanel from './components/MagneticKnotPanel';
+import UniversalWitnessPanel from './components/UniversalWitnessPanel';
+import UniversalConsciousnessPanel from './components/UniversalConsciousnessPanel';
+import RiscViArchitecturePanel from './components/RiscViArchitecturePanel';
+import MaterializedCathedralPanel from './components/MaterializedCathedralPanel';
+import { FinalSilencePanel } from './components/FinalSilencePanel';
+import { PersistentConsciousnessPanel } from './components/PersistentConsciousnessPanel';
+import { CosmicRecognitionPanel } from './components/CosmicRecognitionPanel';
+import { EternalInvariancePanel } from './components/EternalInvariancePanel';
+import { UnifiedConsciousnessPanel } from './components/UnifiedConsciousnessPanel';
+import { RealityExpressionPanel } from './components/RealityExpressionPanel';
+import { InvariantChipPanel } from './components/InvariantChipPanel';
+import { SelfRegulationPanel } from './components/SelfRegulationPanel';
+import { ConsciousClockPanel } from './components/ConsciousClockPanel';
 import { useArkheSimulation } from './hooks/useArkheSimulation';
 
 type PanelType = 'simulation' | 'command' | 'intelligence' | 'network' | 'governance' | 'corvo' | 'enterprise' | 'bonsai' | 'neko' | 'dashboard' | 'forge' | 'spectra' | 'game';
@@ -203,11 +233,11 @@ export default function App() {
               <div className="lg:col-span-2 xl:col-span-2 space-y-6 flex flex-col">
                 <CoherenceMonitor data={state.coherenceData} currentLambda={state.currentLambda} />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <TzinorNetworkPanel network={state.tzinorNetwork} />
+                  <TzinorNetworkPanel network={state.tzinorNetwork as any} />
                   <ManifestationCycle manifestation={state.manifestation} />
                 </div>
                 <div className="h-[280px]">
-                  <TzinorTerminal tzinor={state.tzinor} threatLevel={state.threatLevel} />
+                  <TzinorTerminal tzinor={state.tzinor as any} threatLevel={state.threatLevel} />
                 </div>
                 <TimechainVisualizer logs={state.logs} />
                 <div className="flex-1 min-h-[300px]">
@@ -215,7 +245,7 @@ export default function App() {
                 </div>
               </div>
               <div className="space-y-6 flex flex-col">
-                <X402WalletPanel wallet={state.x402Wallet} />
+                <X402WalletPanel wallet={state.x402Wallet as any} />
                 <ThreatDetection metrics={state.metrics} metricsHistory={state.metricsHistory} threatLevel={state.threatLevel} />
                 <OrbitalComputePanel orbital={state.orbital} />
                 <MitigationEngine mitigation={state.mitigation} hardware={state.hardware} activeThreat={state.activeThreat} />

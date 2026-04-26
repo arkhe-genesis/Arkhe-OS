@@ -20,8 +20,8 @@
  * Run: node career-ops/merge-tracker.mjs [--dry-run] [--verify]
  */
 
-import { readFileSync, writeFileSync, readdirSync, mkdirSync, renameSync, existsSync } from 'fs';
-import { join } from 'path';
+import { readFileSync, writeFileSync, readdirSync, mkdirSync, renameSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
 
 const CAREER_OPS = new URL('.', import.meta.url).pathname;
 // Support both layouts: data/applications.md (boilerplate) and applications.md (original)
@@ -41,7 +41,9 @@ function validateStatus(status) {
   const lower = clean.toLowerCase();
 
   for (const valid of CANONICAL_STATES) {
-    if (valid.toLowerCase() === lower) return valid;
+    if (valid.toLowerCase() === lower) {
+      return valid;
+    }
   }
 
   // Aliases
@@ -54,10 +56,14 @@ function validateStatus(status) {
     'geo blocker': 'NO APLICAR',
   };
 
-  if (aliases[lower]) return aliases[lower];
+  if (aliases[lower]) {
+    return aliases[lower];
+  }
 
   // DUPLICADO/Repost → Descartado
-  if (/^(duplicado|dup|repost)/i.test(lower)) return 'Descartado';
+  if (/^(duplicado|dup|repost)/i.test(lower)) {
+    return 'Descartado';
+  }
 
   console.warn(`⚠️  Non-canonical status "${status}" → defaulting to "Evaluada"`);
   return 'Evaluada';
@@ -86,9 +92,13 @@ function parseScore(s) {
 
 function parseAppLine(line) {
   const parts = line.split('|').map(s => s.trim());
-  if (parts.length < 9) return null;
+  if (parts.length < 9) {
+    return null;
+  }
   const num = parseInt(parts[1]);
-  if (isNaN(num) || num === 0) return null;
+  if (isNaN(num) || num === 0) {
+    return null;
+  }
   return {
     num, date: parts[2], company: parts[3], role: parts[4],
     score: parts[5], status: parts[6], pdf: parts[7], report: parts[8],
@@ -102,7 +112,9 @@ function parseAppLine(line) {
  */
 function parseTsvContent(content, filename) {
   content = content.trim();
-  if (!content) return null;
+  if (!content) {
+    return null;
+  }
 
   let parts;
   let addition;
@@ -196,7 +208,9 @@ for (const line of appLines) {
     const app = parseAppLine(line);
     if (app) {
       existingApps.push(app);
-      if (app.num > maxNum) maxNum = app.num;
+      if (app.num > maxNum) {
+        maxNum = app.num;
+      }
     }
   }
 }

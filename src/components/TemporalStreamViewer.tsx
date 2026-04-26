@@ -89,6 +89,7 @@ export default function TemporalStreamViewer({ onClose }: TemporalStreamViewerPr
         return null;
       }).catch((e: unknown) => {
         logger.error('Error loading video: ' + e);
+// @ts-ignore
         setError(`LOAD_ERR_${e?.code || 'UNKNOWN'}`);
         return null;
       });

@@ -14,7 +14,7 @@ export interface TzinorEnvelope {
   recipient: string;
   type: 'PHASE' | 'COHERENCE' | 'TEMPORAL' | 'GEOMETRY' | 'CONSCIOUSNESS';
   lambda: number;
-  timestamp: string;
+  timestamp?: string;
 }
 
 export interface TzinorNetworkState {
