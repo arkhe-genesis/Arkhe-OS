@@ -88,7 +88,7 @@ export const mercuryListSkills = definePageTool({
     const skillsDir = path.resolve(process.cwd(), 'skills');
     let totalSkills = 0;
 
-    async function scanSkills(dir: string, category: string = '') {
+    async function scanSkills(dir: string, category = '') {
       let entries;
       try {
         entries = await readdir(dir, {withFileTypes: true});

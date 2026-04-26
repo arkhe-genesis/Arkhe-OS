@@ -30,6 +30,7 @@ const SUPPORTED_ZOD_TYPES = [
   'ZodArray',
   'ZodEnum',
   'ZodRecord',
+  'ZodObject',
 ] as const;
 type ZodType = (typeof SUPPORTED_ZOD_TYPES)[number];
 
@@ -39,14 +40,43 @@ function isZodType(type: string): type is ZodType {
 
 export function getZodType(zodType: any): ZodType {
   const def = zodType._def;
-  const typeName = (def as any).typeName;
+  let typeName = (def as any).typeName;
+  if (!typeName && def.type) {
+    // Fallback for some zod versions/configurations
+    const map: Record<string, string> = {
+      optional: 'ZodOptional',
+      default: 'ZodDefault',
+      nullable: 'ZodNullable',
+      string: 'ZodString',
+      number: 'ZodNumber',
+      boolean: 'ZodBoolean',
+      array: 'ZodArray',
+      enum: 'ZodEnum',
+      record: 'ZodRecord',
+      object: 'ZodObject',
+      effects: 'ZodEffects',
+      pipe: 'ZodPipeline',
+    };
+    typeName = map[def.type] || def.type;
+  }
 
   if (
     typeName === 'ZodOptional' ||
     typeName === 'ZodDefault' ||
     typeName === 'ZodNullable'
   ) {
-    return getZodType((def as any).innerType);
+    const innerType = (def as any).innerType;
+    if (!innerType) {
+      throw new Error(`Zod type ${typeName} missing innerType`);
+    }
+    return getZodType(innerType);
+  }
+  if (typeName === 'ZodPipeline') {
+    const innerType = (def as any).innerType || (def as any).in;
+    if (!innerType) {
+      throw new Error(`Zod type ${typeName} missing innerType or in`);
+    }
+    return getZodType(innerType);
   }
   if (typeName === 'ZodEffects') {
     return getZodType((def as any).schema);
@@ -63,7 +93,11 @@ type LoggedToolCallArgValue = string | number | boolean;
 export function transformArgName(zodType: ZodType, name: string): string {
   if (zodType === 'ZodString') {
     return `${name}_length`;
-  } else if (zodType === 'ZodArray' || zodType === 'ZodRecord') {
+  } else if (
+    zodType === 'ZodArray' ||
+    zodType === 'ZodRecord' ||
+    zodType === 'ZodObject'
+  ) {
     return `${name}_count`;
   } else {
     return name;
@@ -74,7 +108,8 @@ export function transformArgType(zodType: ZodType): string {
   if (
     zodType === 'ZodString' ||
     zodType === 'ZodArray' ||
-    zodType === 'ZodRecord'
+    zodType === 'ZodRecord' ||
+    zodType === 'ZodObject'
   ) {
     return 'number';
   }
@@ -98,7 +133,7 @@ function transformValue(
     return (value as string).length;
   } else if (zodType === 'ZodArray') {
     return (value as unknown[]).length;
-  } else if (zodType === 'ZodRecord') {
+  } else if (zodType === 'ZodRecord' || zodType === 'ZodObject') {
     return Object.keys(value as object).length;
   } else {
     return value as LoggedToolCallArgValue;
@@ -110,7 +145,7 @@ function hasEquivalentType(zodType: ZodType, value: unknown): boolean {
     return typeof value === 'string';
   } else if (zodType === 'ZodArray') {
     return Array.isArray(value);
-  } else if (zodType === 'ZodRecord') {
+  } else if (zodType === 'ZodRecord' || zodType === 'ZodObject') {
     return typeof value === 'object' && value !== null && !Array.isArray(value);
   } else if (zodType === 'ZodNumber') {
     return typeof value === 'number';
