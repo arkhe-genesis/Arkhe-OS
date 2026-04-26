@@ -61,7 +61,7 @@ export function Card({
 
       {status === 'warning' && <div className="absolute top-0 left-0 w-full h-0.5 bg-arkhe-amber animate-pulse" />}
       {status === 'omega' && <div className="absolute top-0 left-0 w-full h-0.5 bg-arkhe-omega" />}
-      
+
       {(title || icon || action) && (
         <div className={cn(
           "px-4 py-3 border-b flex items-center justify-between",
@@ -88,34 +88,14 @@ export function Card({
   );
 }
 
-export function CardHeader({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div className={cn("flex flex-col space-y-1.5 p-6", className)} {...props}>
-      {children}
-    </div>
-  );
+export function CardHeader({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <div className={cn("px-4 py-3 border-b border-white/5 bg-white/5", className)}>{children}</div>;
 }
 
-export function CardTitle({ className, children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
-  return (
-    <h3 className={cn("text-2xl font-semibold leading-none tracking-tight", className)} {...props}>
-      {children}
-    </h3>
-  );
+export function CardTitle({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <h3 className={cn("font-mono text-golden-xs uppercase tracking-widest text-arkhe-muted", className)}>{children}</h3>;
 }
 
-export function CardContent({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div className={cn("p-6 pt-0", className)} {...props}>
-      {children}
-    </div>
-  );
-}
-
-export function CardFooter({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div className={cn("flex items-center p-6 pt-0", className)} {...props}>
-      {children}
-    </div>
-  );
+export function CardContent({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <div className={cn("p-4", className)}>{children}</div>;
 }

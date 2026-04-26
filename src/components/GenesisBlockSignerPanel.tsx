@@ -27,7 +27,7 @@ export default function GenesisBlockSignerPanel({ onClose }: GenesisBlockSignerP
     setProgress(0);
     setIsSigned(false);
     setLogs([]);
-    
+
     addLog('INICIANDO ASSINATURA DO GENESIS BLOCK...');
     addLog('CARREGANDO CHAVE PRIVADA GEOESPACIAL (GIZA)...');
     addLog('PREPARANDO EVENTO DE ANCORAGEM ESPAÇO-TEMPORAL (EAET)...');
@@ -35,7 +35,7 @@ export default function GenesisBlockSignerPanel({ onClose }: GenesisBlockSignerP
     let currentProgress = 0;
     const interval = setInterval(() => {
       currentProgress += Math.random() * 10;
-      
+
       if (currentProgress >= 25 && currentProgress < 35) {
         addLog('INJETANDO ENTROPIA MAGNÉTICA (42,450,000 nT)...');
       } else if (currentProgress >= 50 && currentProgress < 60) {
@@ -59,7 +59,7 @@ export default function GenesisBlockSignerPanel({ onClose }: GenesisBlockSignerP
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
       <div className="w-full max-w-4xl bg-arkhe-card border border-arkhe-cyan/30 rounded-xl shadow-[0_0_30px_rgba(0,255,170,0.1)] overflow-hidden flex flex-col">
-        
+
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-arkhe-cyan/20 bg-arkhe-cyan/5">
           <div className="flex items-center gap-3">
@@ -75,7 +75,7 @@ export default function GenesisBlockSignerPanel({ onClose }: GenesisBlockSignerP
         </div>
 
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-          
+
           {/* Block Info & Controls */}
           <div className="space-y-6">
             <div className="bg-black/40 border border-arkhe-border p-4 rounded-lg">
@@ -110,9 +110,9 @@ export default function GenesisBlockSignerPanel({ onClose }: GenesisBlockSignerP
                 onClick={startSigning}
                 disabled={isSigning || isSigned}
                 className={`w-full py-3 mt-6 rounded font-mono text-sm uppercase tracking-widest transition-all ${
-                  isSigning 
+                  isSigning
                     ? 'bg-arkhe-cyan/20 text-arkhe-cyan border border-arkhe-cyan/50 cursor-not-allowed'
-                    : isSigned 
+                    : isSigned
                       ? 'bg-arkhe-green/20 text-arkhe-green border border-arkhe-green/50 cursor-not-allowed'
                       : 'bg-arkhe-cyan/10 text-arkhe-cyan border border-arkhe-cyan hover:bg-arkhe-cyan/20 hover:shadow-[0_0_15px_rgba(0,255,170,0.3)]'
                 }`}
@@ -143,7 +143,7 @@ export default function GenesisBlockSignerPanel({ onClose }: GenesisBlockSignerP
                 <span className="text-arkhe-cyan">{Math.round(progress)}%</span>
               </div>
               <div className="h-2 bg-arkhe-card rounded-full overflow-hidden border border-arkhe-border">
-                <div 
+                <div
                   className="h-full bg-arkhe-cyan transition-all duration-300 relative"
                   style={{ width: `${progress}%` }}
                 >

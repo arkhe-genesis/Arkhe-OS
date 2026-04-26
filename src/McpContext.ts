@@ -874,7 +874,7 @@ export class McpContext implements Context {
   async setUpNetworkCollectorForTesting() {
     this.#networkCollector = new NetworkCollector(this.browser, collect => {
       return {
-        request:  (req: any) => {
+        request: (req: any) => {
           if (req.url().includes('favicon.ico')) {
             return;
           }

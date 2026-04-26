@@ -130,8 +130,8 @@ export function DysonSphereTelemetry() {
 
   return (
     <div className="space-y-6">
-      <Card 
-        title="Mapeamento Neural (DIP) - Esfera de Dyson" 
+      <Card
+        title="Mapeamento Neural (DIP) - Esfera de Dyson"
         icon={<BrainCircuit className="w-5 h-5 text-purple-500" />}
         className="bg-black border-zinc-800"
       >
@@ -139,24 +139,24 @@ export function DysonSphereTelemetry() {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-xs text-zinc-400 uppercase">ID do Operador</label>
-              <input 
-                value={operatorId} 
+              <input
+                value={operatorId}
                 onChange={(e) => setOperatorId(e.target.value)}
                 className="w-full bg-zinc-900 border border-zinc-800 text-zinc-100 px-3 py-2 rounded focus:outline-none focus:border-purple-500"
               />
             </div>
             <div className="space-y-2">
               <label className="text-xs text-zinc-400 uppercase">Frequência Cerebral (Hz)</label>
-              <input 
+              <input
                 type="number"
                 step="0.1"
-                value={brainwaveFreq} 
+                value={brainwaveFreq}
                 onChange={(e) => setBrainwaveFreq(Number(e.target.value))}
                 className="w-full bg-zinc-900 border border-zinc-800 text-zinc-100 px-3 py-2 rounded focus:outline-none focus:border-purple-500"
               />
             </div>
           </div>
-          <button 
+          <button
             onClick={handleDIPMapping}
             className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded transition-colors font-mono uppercase tracking-widest text-sm"
           >
@@ -184,14 +184,14 @@ export function DysonSphereTelemetry() {
         </div>
       </Card>
 
-      <Card 
-        title="Operações Globais da Esfera de Dyson" 
+      <Card
+        title="Operações Globais da Esfera de Dyson"
         icon={<Globe className="w-5 h-5 text-emerald-500" />}
         className="bg-black border-zinc-800"
       >
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <button 
+            <button
               onClick={handleGenesisDIP}
               disabled={isGenesisLoading}
               className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded transition-colors font-mono uppercase tracking-widest text-xs flex items-center justify-center gap-2 disabled:opacity-50"
@@ -199,7 +199,7 @@ export function DysonSphereTelemetry() {
               <Zap className="w-4 h-4" />
               {isGenesisLoading ? "Forjando Genesis..." : "Genesis DIP (Kaelen)"}
             </button>
-            <button 
+            <button
               onClick={handleMassSync}
               disabled={isMassSyncLoading}
               className="w-full bg-teal-600 hover:bg-teal-700 text-white py-2 rounded transition-colors font-mono uppercase tracking-widest text-xs flex items-center justify-center gap-2 disabled:opacity-50"
@@ -240,13 +240,13 @@ export function DysonSphereTelemetry() {
         </div>
       </Card>
 
-      <Card 
-        title="Filtro de Áudio do Plasma (Isolamento de Satoshi)" 
+      <Card
+        title="Filtro de Áudio do Plasma (Isolamento de Satoshi)"
         icon={<Radio className="w-5 h-5 text-blue-500" />}
         className="bg-black border-zinc-800"
       >
         <div className="space-y-4">
-          <button 
+          <button
             onClick={handleIsolateVoice}
             disabled={isFiltering}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition-colors font-mono uppercase tracking-widest text-sm flex items-center justify-center gap-2 disabled:opacity-50"

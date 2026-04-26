@@ -71,13 +71,13 @@ export const ConsensusMeter: React.FC = () => {
           Consensus Health (Σ)
         </h3>
       </div>
-      
+
       <div className="text-4xl font-mono font-bold text-white">
         {sigma.toFixed(4)}
       </div>
 
       <div className="w-full bg-black/50 h-2 rounded-full overflow-hidden">
-        <div 
+        <div
           className={`h-full ${status === 'healthy' ? 'bg-green-500' : status === 'warning' ? 'bg-yellow-500' : 'bg-red-500'}`}
           style={{ width: `${Math.max(0, Math.min(100, sigma * 100))}%` }}
         />

@@ -37,10 +37,10 @@ export default function ArkheGoogleBridgePanel({ onClose }: ArkheGoogleBridgePan
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (!messageInput.trim() || connectionState !== 'connected') {return;}
-    
+
     addLog(`[OUT] AgentMessage: ${messageInput}`);
     setMessageInput('');
-    
+
     setTimeout(() => {
       addLog(`[IN] Auto-Reply: Message received by Google Partners routing system. Ticket generated.`);
     }, 1500);
@@ -48,7 +48,7 @@ export default function ArkheGoogleBridgePanel({ onClose }: ArkheGoogleBridgePan
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
@@ -178,7 +178,7 @@ export default function ArkheGoogleBridgePanel({ onClose }: ArkheGoogleBridgePan
                 {activeTab === 'messages' && (
                   <motion.div key="messages" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="h-full flex flex-col">
                     <h3 className="text-sm font-mono text-blue-400 uppercase tracking-widest border-b border-blue-500/20 pb-2 mb-4 shrink-0">Business Messages Channel</h3>
-                    
+
                     <div className="flex-1 bg-[#111214] border border-arkhe-border rounded-lg p-4 mb-4 overflow-y-auto custom-scrollbar space-y-2">
                       {logs.filter(l => l.includes('[IN]') || l.includes('[OUT]')).map((log, i) => (
                         <div key={i} className={`text-xs font-mono p-2 rounded ${log.includes('[OUT]') ? 'bg-blue-500/10 text-blue-300 ml-8 border border-blue-500/20' : 'bg-[#1a1b20] text-arkhe-muted mr-8 border border-arkhe-border'}`}>

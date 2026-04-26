@@ -77,7 +77,7 @@ export default function TemporalStreamViewer({ onClose }: TemporalStreamViewerPr
 
       // Using the official Shaka Project "Angel One" sci-fi asset for the temporal stream
       const manifestUri = 'https://storage.googleapis.com/shaka-demo-assets/angel-one/dash.mpd';
-      
+
       void newPlayer.load(manifestUri).then(() => {
         logger.info('The video has now been loaded!');
         if (videoRef.current) {
@@ -89,6 +89,7 @@ export default function TemporalStreamViewer({ onClose }: TemporalStreamViewerPr
         return null;
       }).catch((e: any) => {
         logger.error('Error loading video: ' + e);
+// @ts-ignore
         setError(`LOAD_ERR_${e?.code || 'UNKNOWN'}`);
         return null;
       });
@@ -131,7 +132,7 @@ export default function TemporalStreamViewer({ onClose }: TemporalStreamViewerPr
       if (ctx) {
         ctx.drawImage(videoRef.current, 0, 0);
         const frameData = canvas.toDataURL('image/jpeg', 0.8);
-        
+
         // Dispatch event for Ouroboros Engine
         const event = new CustomEvent('ouroboros-frame-capture', {
           detail: {
@@ -141,10 +142,10 @@ export default function TemporalStreamViewer({ onClose }: TemporalStreamViewerPr
           }
         });
         window.dispatchEvent(event);
-        
+
         setIsFlashing(true);
         setTimeout(() => setIsFlashing(false), 300);
-        
+
         logger.info('🜏 [PERCEPTION] Frame captured for Ouroboros analysis.');
       }
     }
@@ -183,7 +184,7 @@ export default function TemporalStreamViewer({ onClose }: TemporalStreamViewerPr
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
@@ -215,21 +216,21 @@ export default function TemporalStreamViewer({ onClose }: TemporalStreamViewerPr
               </div>
             ) : (
               <>
-                <video 
-                  ref={videoRef} 
+                <video
+                  ref={videoRef}
                   className={`w-full h-full object-contain ${vrMode ? 'scale-110' : ''} transition-transform duration-700`}
                   poster="https://storage.googleapis.com/shaka-demo-assets/angel-one/poster.jpg"
                 />
                 <canvas ref={canvasRef} className="hidden" />
-                
+
                 {/* Scanlines Overlay */}
                 <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] opacity-20"></div>
-                
+
                 {/* Capture Flash */}
                 {isFlashing && (
                   <div className="absolute inset-0 bg-white/80 z-10 pointer-events-none animate-pulse"></div>
                 )}
-                
+
                 {/* Custom Controls */}
                 <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-4">
                   <button onClick={togglePlay} className="text-white hover:text-cyan-400 transition-colors">
@@ -238,21 +239,21 @@ export default function TemporalStreamViewer({ onClose }: TemporalStreamViewerPr
                   <button onClick={toggleMute} className="text-white hover:text-cyan-400 transition-colors">
                     {isMuted ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
                   </button>
-                  
+
                   <div className="flex-1"></div>
-                  
+
                   <button onClick={captureFrame} className="text-white hover:text-cyan-400 transition-colors" title="Capture Frame for Ouroboros">
                     <Eye className="w-5 h-5" />
                   </button>
                   <button onClick={toggleVrMode} className={`transition-colors ${vrMode ? 'text-cyan-400' : 'text-white hover:text-cyan-400'}`} title="Toggle VR Exploration Mode">
                     <Layers className="w-5 h-5" />
                   </button>
-                  
+
                   <div className="flex items-center gap-2 text-xs font-mono text-cyan-400/70 ml-2">
                     <Activity className="w-4 h-4" />
                     {stats.width as number}x{stats.height as number}
                   </div>
-                  
+
                   <button onClick={toggleFullscreen} className="text-white hover:text-cyan-400 transition-colors ml-2">
                     <Maximize className="w-5 h-5" />
                   </button>
@@ -268,7 +269,7 @@ export default function TemporalStreamViewer({ onClose }: TemporalStreamViewerPr
                 <Terminal className="w-3 h-3" />
                 Stream Telemetry
               </h3>
-              
+
               <div className="grid grid-cols-2 gap-2">
                 <div className="bg-[#111214] border border-arkhe-border rounded p-2">
                   <div className="text-[9px] font-mono text-arkhe-muted uppercase">Bandwidth</div>

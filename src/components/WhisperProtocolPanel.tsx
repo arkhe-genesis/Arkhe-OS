@@ -19,7 +19,7 @@ interface WhisperProtocolPanelProps {
 export default function WhisperProtocolPanel({ state, onClose }: WhisperProtocolPanelProps) {
   const [selectedMaterial, setSelectedMaterial] = useState('Sapphire');
 
-  if (!state) return null;
+  if (!state) {return null;}
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">

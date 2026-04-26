@@ -41,7 +41,7 @@ class ArkheCollapser(Collapser):
         self.ontology = OntologyXParser()
         threshold = self.ontology.get_threshold() # 0.61803398875 (Razão Áurea)
         super().__init__(threshold=threshold)
-        
+
         self.fission_engine = SingletFissionEngine(coupling_type)
         self.relayer_client = Mo1RelayerClient()
         logger.info(f"🜏 ArkheCollapser inicializado com K_c = {self.threshold:.6f}")
@@ -58,7 +58,7 @@ class ArkheCollapser(Collapser):
         if c.density < self.threshold:
             logger.warning(f"⚠️ Decoerência: Ω' ({c.density:.4f}) < K_c ({self.threshold:.4f}). Abortando colapso.")
             return None
-            
+
         # 2. Criar exciton a partir do espaço de fase (Singlet)
         singlet = Exciton(
             energy=c.density, # Ω' como energia do exciton
@@ -66,10 +66,10 @@ class ArkheCollapser(Collapser):
             lifetime=0.1,
             id=c.raw_text[:32] if c.raw_text else "intent_0"
         )
-        
+
         # 3. Executar fissão (1 Singlet -> 2 Triplets)
         excitons = self.fission_engine.fission(singlet)
-        
+
         # 4. Projetar em Z (Estrutura / Transação blockchain)
         structures = []
         for ex in excitons:
@@ -77,10 +77,10 @@ class ArkheCollapser(Collapser):
                 # O Spin-Flip: Triplet -> Doublet (Transação)
                 tx_hash = self._project_to_blockchain(ex, c.raw_text)
                 structures.append(Structure(value=tx_hash, metadata={"omega": c.density, "spin": ex.spin}))
-        
+
         # Axioma 2: M ∈ C (O medidor guarda a fase na memória viva - Walnuts)
         self.memory.append(c.state_vector, metadata={"intent": c.raw_text, "omega": c.density})
-        
+
         # Retorna a primeira estrutura colapsada (a transação principal)
         return structures[0] if structures else None
 

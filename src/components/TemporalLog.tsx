@@ -23,8 +23,8 @@ export default function TemporalLog({ logs }: TemporalLogProps) {
   };
 
   return (
-    <Card 
-      title="Temporal Orb Log (HTTP/4 PNT)" 
+    <Card
+      title="Temporal Orb Log (HTTP/4 PNT)"
       icon={<Clock className="w-4 h-4" />}
       className="h-full"
     >
@@ -43,7 +43,7 @@ export default function TemporalLog({ logs }: TemporalLogProps) {
             {logs.map((log, i) => {
               const isRejected = log.status === 'Rejected';
               const isMitigated = log.status === 'Mitigated';
-              
+
               return (
                 <tr key={`${log.id}-${i}`} className="border-b border-arkhe-border/50 hover:bg-[#151619] transition-colors">
                   <td className="py-2 px-2 text-arkhe-muted truncate max-w-[80px]" title={log.id}>

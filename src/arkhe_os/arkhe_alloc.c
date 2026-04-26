@@ -49,7 +49,7 @@ static arkhe_block_t* request_space(arkhe_block_t* last, size_t size) {
     arkhe_block_t* block = sbrk(0);
     void* request = sbrk(size + BLOCK_SIZE);
     if (request == (void*) -1) return NULL;
-    
+
     if (last) last->next = block;
     block->size = size;
     block->next = NULL;
@@ -66,7 +66,7 @@ static arkhe_block_t* request_space(arkhe_block_t* last, size_t size) {
 
 void* malloc(size_t size) {
     if (!real_malloc) return NULL; // Bootstrap phase
-    
+
     // For small/system allocations, fallback to real_malloc to prevent crashes in printf/dlsym
     // In a true bare-metal ArkheOS, this fallback is removed.
     if (size < 1024) return real_malloc(size);
@@ -100,7 +100,7 @@ void* malloc(size_t size) {
 
 void free(void* ptr) {
     if (!ptr) return;
-    
+
     // Check if pointer is in our heap range
     void* heap_end = sbrk(0);
     if (ptr >= global_base && ptr < heap_end) {
@@ -121,12 +121,12 @@ void* calloc(size_t nelem, size_t elsize) {
 
 void* realloc(void* ptr, size_t size) {
     if (!ptr) return malloc(size);
-    
+
     void* heap_end = sbrk(0);
     if (ptr >= global_base && ptr < heap_end) {
         arkhe_block_t* block = (arkhe_block_t*)ptr - 1;
         if (block->size >= size) return ptr;
-        
+
         void* new_ptr = malloc(size);
         if (!new_ptr) return NULL;
         memcpy(new_ptr, ptr, block->size);

@@ -15,8 +15,8 @@
  * Uses Chromium headless to render the HTML and produce a clean, ATS-parseable PDF.
  */
 
-import { resolve, dirname } from 'node:path';
 import { readFile, writeFile } from 'node:fs/promises';
+import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { chromium } from 'playwright';

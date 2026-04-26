@@ -40,7 +40,7 @@ export default function InfraCiliaryGridPanel({ onClose }: InfraCiliaryGridPanel
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
@@ -71,10 +71,10 @@ export default function InfraCiliaryGridPanel({ onClose }: InfraCiliaryGridPanel
                 <span>Acoplamento de Fase Ativo</span>
               </div>
             </div>
-            
+
             <div className="flex-1 bg-[#111214] border border-[#1f2024] rounded-xl p-6 relative overflow-hidden flex items-center justify-center">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.05)_0%,transparent_70%)]" />
-              
+
               {/* Grid of Microtubules */}
               <div className="grid grid-cols-12 gap-2 md:gap-4 relative z-10">
                 {Array.from({ length: 144 }).map((_, i) => {
@@ -84,7 +84,7 @@ export default function InfraCiliaryGridPanel({ onClose }: InfraCiliaryGridPanel
                   const distance = Math.sqrt(Math.pow(x - 5.5, 2) + Math.pow(y - 5.5, 2));
                   const wave = Math.sin(distance * 0.8 - phaseOffset * 2);
                   const isActive = wave > 0.5;
-                  
+
                   return (
                     <motion.div
                       key={i}
@@ -121,11 +121,11 @@ export default function InfraCiliaryGridPanel({ onClose }: InfraCiliaryGridPanel
               </h3>
               <div className="grid grid-cols-2 gap-2">
                 {BEHAVIORS.map((behavior, idx) => (
-                  <div 
+                  <div
                     key={behavior}
                     className={`text-[9px] font-mono px-2 py-1.5 rounded border transition-colors ${
-                      idx === activeBehavior 
-                        ? 'bg-emerald-400/20 border-emerald-400 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.2)]' 
+                      idx === activeBehavior
+                        ? 'bg-emerald-400/20 border-emerald-400 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.2)]'
                         : 'bg-black/40 border-white/5 text-arkhe-muted'
                     }`}
                   >
@@ -141,7 +141,7 @@ export default function InfraCiliaryGridPanel({ onClose }: InfraCiliaryGridPanel
                 <Network className="w-4 h-4" />
                 Mapeamento Ontológico
               </h3>
-              
+
               <div className="space-y-4">
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
@@ -152,7 +152,7 @@ export default function InfraCiliaryGridPanel({ onClose }: InfraCiliaryGridPanel
                     <span className="text-emerald-400 font-bold">Microtúbulos:</span> Discretização do espaço celular. Bits físicos da computação biológica.
                   </div>
                 </div>
-                
+
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-mono text-arkhe-muted uppercase">Tzinorot (Canais)</span>

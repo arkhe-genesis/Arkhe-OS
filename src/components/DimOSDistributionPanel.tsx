@@ -55,7 +55,7 @@ export default function DimOSDistributionPanel({ onClose }: DimOSPanelProps) {
         clearInterval(interval);
         setIsDeploying(false);
         addLog('DimOS DISTRIBUTION COMPLETE. FLEET SYNCHRONIZED.');
-        
+
         // Final state update
         setFleet(prev => prev.map(node => ({
           ...node,
@@ -91,7 +91,7 @@ export default function DimOSDistributionPanel({ onClose }: DimOSPanelProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
       <div className="w-full max-w-4xl bg-arkhe-card border border-arkhe-cyan/30 rounded-xl shadow-[0_0_30px_rgba(0,255,170,0.1)] overflow-hidden flex flex-col max-h-[90vh]">
-        
+
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-arkhe-cyan/20 bg-arkhe-cyan/5">
           <div className="flex items-center gap-3">
@@ -107,7 +107,7 @@ export default function DimOSDistributionPanel({ onClose }: DimOSPanelProps) {
         </div>
 
         <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6 overflow-y-auto">
-          
+
           {/* Control Panel */}
           <div className="md:col-span-1 space-y-6">
             <div className="bg-black/40 border border-arkhe-border p-4 rounded-lg">
@@ -115,7 +115,7 @@ export default function DimOSDistributionPanel({ onClose }: DimOSPanelProps) {
                 <Activity className="w-4 h-4" />
                 Deployment Control
               </h3>
-              
+
               <div className="space-y-4">
                 <div className="flex justify-between text-xs font-mono">
                   <span className="text-arkhe-muted">Target OS:</span>
@@ -134,7 +134,7 @@ export default function DimOSDistributionPanel({ onClose }: DimOSPanelProps) {
                   onClick={initiateDeployment}
                   disabled={isDeploying || deploymentProgress === 100}
                   className={`w-full py-3 mt-4 rounded font-mono text-sm uppercase tracking-widest transition-all ${
-                    isDeploying 
+                    isDeploying
                       ? 'bg-arkhe-cyan/20 text-arkhe-cyan border border-arkhe-cyan/50 cursor-not-allowed'
                       : Math.round(deploymentProgress) === 100
                         ? 'bg-arkhe-green/20 text-arkhe-green border border-arkhe-green/50 cursor-not-allowed'
@@ -168,7 +168,7 @@ export default function DimOSDistributionPanel({ onClose }: DimOSPanelProps) {
                 <span className="text-arkhe-cyan">{Math.round(deploymentProgress)}%</span>
               </div>
               <div className="h-2 bg-arkhe-card rounded-full overflow-hidden border border-arkhe-border">
-                <div 
+                <div
                   className="h-full bg-arkhe-cyan transition-all duration-500 relative"
                   style={{ width: `${deploymentProgress}%` }}
                 >
@@ -185,7 +185,7 @@ export default function DimOSDistributionPanel({ onClose }: DimOSPanelProps) {
                 <Network className="w-4 h-4" />
                 Fleet Topology
               </h3>
-              
+
               <div className="grid grid-cols-2 gap-3">
                 {fleet.map(node => (
                   <div key={node.id} className={`p-3 rounded border text-xs font-mono flex flex-col gap-2 transition-colors ${

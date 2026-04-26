@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { X, Layers, Cpu, ShieldCheck, Zap, Activity, Share2 } from 'lucide-react';
+import { X, ShieldCheck, Activity, Share2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import React from 'react';
 
@@ -17,7 +17,7 @@ interface HybridNetworkPanelProps {
 }
 
 export default function HybridNetworkPanel({ state, onClose }: HybridNetworkPanelProps) {
-  if (!state) return null;
+  if (!state) { return null; }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">

@@ -21,12 +21,12 @@ cronos_thread_t* cronos_spawn(void* entry_point, double natural_freq) {
     t->id = ++thread_counter;
     t->instruction_ptr = entry_point;
     t->natural_freq = natural_freq;
-    
+
     // Tag with current hardware coherence
     t->lambda_alloc = arkhe_hal_read_lambda2(hw_context);
     t->phase = arkhe_hal_read_phase(hw_context);
     t->state = THREAD_RESONATING;
-    
+
     // Insert into the Phase Ring (Circular Doubly-Linked List)
     if (!thread_ring_root) {
         thread_ring_root = t;
@@ -39,7 +39,7 @@ cronos_thread_t* cronos_spawn(void* entry_point, double natural_freq) {
         t->next = thread_ring_root;
         thread_ring_root->prev = t;
     }
-    
+
     return t;
 }
 
@@ -74,17 +74,17 @@ cronos_thread_t* cronos_tick(void) {
         }
 
         double t_angle = get_angle(t->phase);
-        
+
         // Kuramoto coupling: Thread phase is pulled toward global hardware phase
         // dθ_i/dt = ω_i + K * sin(θ_global - θ_i)
         double d_theta = t->natural_freq + K_COUPLING * sin(global_angle - t_angle);
         t_angle += d_theta; // dt is implicit per tick
-        
+
         t->phase = from_angle(t_angle);
 
         // Calculate resonance (Cosine similarity between thread phase and global phase)
         double alignment = cos(global_angle - t_angle);
-        
+
         // Boost alignment if the thread was created during high coherence
         alignment *= (t->lambda_alloc / PHI);
 
@@ -103,7 +103,7 @@ cronos_thread_t* cronos_tick(void) {
         }
         best_thread->state = THREAD_EXECUTING;
         current_thread = best_thread;
-        
+
         // In a real OS, we would trigger the assembly context switch here:
         // switch_context(&current_thread->stack_ptr, &best_thread->stack_ptr);
     }

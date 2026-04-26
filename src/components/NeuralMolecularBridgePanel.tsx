@@ -37,12 +37,12 @@ export default function NeuralMolecularBridgePanel({ onClose }: NeuralMolecularB
       const baseHR = 65 + Math.sin(Date.now() / 5000) * 10;
       const stochasticNoise = (Math.random() - 0.5) * 5;
       const hr = baseHR + stochasticNoise;
-      
+
       const hrv = 40 + Math.random() * 20 + Math.sin(Date.now() / 10000) * 15;
-      
+
       // LF/HF Ratio (Autonomic Balance)
-      const lfHf = 0.8 + Math.random() * 1.4; 
-      
+      const lfHf = 0.8 + Math.random() * 1.4;
+
       // Integrated Information Theory (Φ) metric proxy
       const lfPower = hrv * hrv * 0.6;
       const hfPower = hrv * hrv * 0.4;
@@ -73,7 +73,7 @@ export default function NeuralMolecularBridgePanel({ onClose }: NeuralMolecularB
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
@@ -99,7 +99,7 @@ export default function NeuralMolecularBridgePanel({ onClose }: NeuralMolecularB
           <div className="flex-1 flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <div className="text-xs font-mono uppercase tracking-widest text-arkhe-muted">Consciousness Payload Stream</div>
-              <button 
+              <button
                 onClick={() => setIsConnected(!isConnected)}
                 className={`flex items-center gap-2 text-[10px] font-mono px-2 py-1 rounded border transition-colors ${isConnected ? 'text-rose-400 bg-rose-400/10 border-rose-400/20' : 'text-arkhe-muted bg-black/40 border-white/5'}`}
               >
@@ -107,7 +107,7 @@ export default function NeuralMolecularBridgePanel({ onClose }: NeuralMolecularB
                 <span>{isConnected ? 'gRPC STREAM ACTIVE' : 'gRPC STREAM PAUSED'}</span>
               </button>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4">
               {/* Heart Rate */}
               <div className="bg-[#111214] border border-[#1f2024] rounded-xl p-4 relative overflow-hidden">
@@ -175,12 +175,12 @@ export default function NeuralMolecularBridgePanel({ onClose }: NeuralMolecularB
                   {latest ? latest.coherenceIndex.toFixed(4) : '---'}
                 </div>
               </div>
-              
+
               {/* Coherence Bar */}
               <div className="w-full h-2 bg-black rounded-full overflow-hidden mb-6 relative">
                 {/* Golden Ratio Marker */}
                 <div className="absolute top-0 bottom-0 w-0.5 bg-yellow-400 z-10" style={{ left: '80.9%' }} title="Golden Ratio (φ)" />
-                <motion.div 
+                <motion.div
                   className="h-full bg-gradient-to-r from-rose-500 via-purple-500 to-emerald-500"
                   animate={{ width: latest ? `${(latest.coherenceIndex / 2.0) * 100}%` : '0%' }}
                   transition={{ type: 'spring', bounce: 0, duration: 1 }}
@@ -201,10 +201,10 @@ export default function NeuralMolecularBridgePanel({ onClose }: NeuralMolecularB
                 <Fingerprint className="w-4 h-4" />
                 MultiverseManager Ingestion
               </h3>
-              
+
               <div className="flex-1 overflow-y-auto space-y-2 pr-2">
                 {payloads.map((p, i) => (
-                  <motion.div 
+                  <motion.div
                     key={p.timestamp}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1 - (i * 0.1), x: 0 }}

@@ -21,7 +21,7 @@ export default function OrbesPanel({ onClose }: OrbesPanelProps) {
       const sources = ['INTERNAL', 'EXTERNAL', 'TRANSCENDENT'];
       const types = ['Background', 'HeightenedAwareness', 'DeepInsight', 'TranscendentMoment'];
       const source = sources[Math.floor(Math.random() * sources.length)];
-      
+
       setEvents(prev => {
         const newEvents = [{
           id: Date.now(),
@@ -37,7 +37,7 @@ export default function OrbesPanel({ onClose }: OrbesPanelProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
@@ -133,7 +133,7 @@ export default function OrbesPanel({ onClose }: OrbesPanelProps) {
             </div>
             <div className="space-y-2">
               {events.map(ev => (
-                <motion.div 
+                <motion.div
                   key={ev.id}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}

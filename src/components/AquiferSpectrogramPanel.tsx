@@ -96,7 +96,7 @@ export default function AquiferSpectrogramPanel({ onClose }: { onClose?: () => v
 
     const ambientLight = new THREE.AmbientLight(0x404040);
     scene.add(ambientLight);
-    
+
     const pointLight = new THREE.PointLight(0xffffff, 1, 100);
     pointLight.position.set(10, 10, 10);
     scene.add(pointLight);
@@ -207,7 +207,7 @@ export default function AquiferSpectrogramPanel({ onClose }: { onClose?: () => v
     if (!isPlaying || !analyserRef.current) {return;}
     const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
     analyserRef.current.getByteFrequencyData(dataArray);
-    
+
     // Simulate some "hydro-acoustic" data if no real input
     const simulated = new Float32Array(64);
     for (let i = 0; i < 64; i++) {

@@ -37,7 +37,7 @@ function isZodType(type: string): type is ZodType {
   return SUPPORTED_ZOD_TYPES.includes(type as ZodType);
 }
 
-export function getZodType(zodType: zod.ZodTypeAny): ZodType {
+export function getZodType(zodType: any): ZodType {
   const def = zodType._def;
   const typeName = (def as any).typeName;
 
@@ -128,10 +128,10 @@ function hasEquivalentType(zodType: ZodType, value: unknown): boolean {
 }
 
 export function sanitizeParams(
-  params: ShapeOutput<zod.ZodRawShape>,
-  schema: zod.ZodRawShape,
-): ShapeOutput<zod.ZodRawShape> {
-  const transformed: ShapeOutput<zod.ZodRawShape> = {};
+  params: any,
+  schema: any,
+): any {
+  const transformed: any = {};
   for (const [name, value] of Object.entries(params)) {
     if (PARAM_BLOCKLIST.has(name)) {
       continue;

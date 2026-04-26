@@ -75,7 +75,7 @@ export default function UnifiedOntologyPanel({ onClose }: { onClose?: () => void
   return (
     <div className="bg-[#0a0a0c] border border-cyan-500/30 rounded-xl p-6 flex flex-col gap-6 relative overflow-hidden min-h-[600px]">
       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-5 pointer-events-none"></div>
-      
+
       <div className="flex items-center justify-between border-b border-cyan-500/30 pb-3 relative z-10">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-cyan-500/10 rounded-lg border border-cyan-500/30">
@@ -101,9 +101,9 @@ export default function UnifiedOntologyPanel({ onClose }: { onClose?: () => void
         {/* Grafo Ontológico */}
         <div className="flex-1 relative flex items-center justify-center min-h-[400px]">
           {/* Nó Central (A=A) */}
-          <motion.div 
+          <motion.div
             className="absolute z-20 w-32 h-32 rounded-full bg-black border-2 border-cyan-400 flex flex-col items-center justify-center shadow-[0_0_30px_rgba(6,182,212,0.4)] cursor-pointer"
-            animate={{ 
+            animate={{
               boxShadow: ['0 0 20px rgba(6,182,212,0.2)', '0 0 50px rgba(6,182,212,0.6)', '0 0 20px rgba(6,182,212,0.2)'],
               scale: [1, 1.02, 1]
             }}
@@ -128,8 +128,8 @@ export default function UnifiedOntologyPanel({ onClose }: { onClose?: () => void
               <React.Fragment key={node.id}>
                 {/* Linha de conexão */}
                 <svg className="absolute inset-0 w-full h-full pointer-events-none z-0">
-                  <motion.line 
-                    x1="50%" y1="50%" 
+                  <motion.line
+                    x1="50%" y1="50%"
                     x2={`calc(50% + ${x}px)`} y2={`calc(50% + ${y}px)`}
                     stroke={isActive ? 'rgba(6, 182, 212, 0.8)' : 'rgba(6, 182, 212, 0.2)'}
                     strokeWidth={isActive ? 2 : 1}
@@ -158,10 +158,10 @@ export default function UnifiedOntologyPanel({ onClose }: { onClose?: () => void
           <h3 className="font-mono text-sm uppercase tracking-widest text-arkhe-muted mb-4 border-b border-arkhe-border pb-2">
             Definição Ontológica
           </h3>
-          
+
           <AnimatePresence mode="wait">
             {activeNode ? (
-              <motion.div 
+              <motion.div
                 key={activeNode}
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -192,7 +192,7 @@ export default function UnifiedOntologyPanel({ onClose }: { onClose?: () => void
                 ))}
               </motion.div>
             ) : (
-              <motion.div 
+              <motion.div
                 key="empty"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}

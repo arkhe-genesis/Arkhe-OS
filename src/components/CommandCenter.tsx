@@ -199,33 +199,33 @@ export function CommandCenter({
   return (
     <div className="bg-arkhe-card border border-arkhe-border rounded-xl p-4 flex-1 flex flex-col">
       <h3 className="font-mono text-xs uppercase tracking-widest text-arkhe-muted mb-4 border-b border-arkhe-border pb-2">Command Center</h3>
-      
+
       <div className="flex gap-2 mb-4 border-b border-arkhe-border pb-2 overflow-x-auto">
-        <button 
+        <button
           onClick={() => setActiveCommandTab('operations')}
           className={`px-3 py-1 text-xs font-mono uppercase tracking-widest rounded transition-colors whitespace-nowrap ${activeCommandTab === 'operations' ? 'bg-arkhe-cyan/20 text-arkhe-cyan' : 'text-arkhe-muted hover:text-arkhe-text'}`}
         >
           Ops
         </button>
-        <button 
+        <button
           onClick={() => setActiveCommandTab('settings')}
           className={`px-3 py-1 text-xs font-mono uppercase tracking-widest rounded transition-colors whitespace-nowrap ${activeCommandTab === 'settings' ? 'bg-arkhe-cyan/20 text-arkhe-cyan' : 'text-arkhe-muted hover:text-arkhe-text'}`}
         >
           Settings
         </button>
-        <button 
+        <button
           onClick={() => setActiveCommandTab('core')}
           className={`px-3 py-1 text-xs font-mono uppercase tracking-widest rounded transition-colors whitespace-nowrap ${activeCommandTab === 'core' ? 'bg-arkhe-cyan/20 text-arkhe-cyan' : 'text-arkhe-muted hover:text-arkhe-text'}`}
         >
           Core
         </button>
-        <button 
+        <button
           onClick={() => setActiveCommandTab('integrations')}
           className={`px-3 py-1 text-xs font-mono uppercase tracking-widest rounded transition-colors whitespace-nowrap ${activeCommandTab === 'integrations' ? 'bg-arkhe-cyan/20 text-arkhe-cyan' : 'text-arkhe-muted hover:text-arkhe-text'}`}
         >
           Integrations
         </button>
-        <button 
+        <button
           onClick={() => setActiveCommandTab('wetware')}
           className={`px-3 py-1 text-xs font-mono uppercase tracking-widest rounded transition-colors whitespace-nowrap ${activeCommandTab === 'wetware' ? 'bg-arkhe-cyan/20 text-arkhe-cyan' : 'text-arkhe-muted hover:text-arkhe-text'}`}
         >
@@ -420,67 +420,67 @@ export function CommandCenter({
         )}
         {activeCommandTab === 'wetware' && (
           <div className="space-y-2">
-            <button 
+            <button
               onClick={() => setShowBioNodes(true)}
               className="w-full py-2 border border-emerald-500/50 text-emerald-500 hover:bg-emerald-500/10 rounded transition-colors uppercase tracking-widest"
             >
               Active Bio-Nodes
             </button>
-            <button 
+            <button
               onClick={() => setShowMolecular(true)}
               className="w-full py-2 border border-cyan-500/50 text-cyan-500 hover:bg-cyan-500/10 rounded transition-colors uppercase tracking-widest"
             >
               IoNT Density
             </button>
-            <button 
+            <button
               onClick={() => setShowNeuralBridge(true)}
               className="w-full py-2 border border-rose-500/50 text-rose-500 hover:bg-rose-500/10 rounded transition-colors uppercase tracking-widest"
             >
               Layer 7 Bridge
             </button>
-            <button 
+            <button
               onClick={() => setShowRNA(true)}
               className="w-full py-2 border border-fuchsia-500/50 text-fuchsia-500 hover:bg-fuchsia-500/10 rounded transition-colors uppercase tracking-widest"
             >
               OrbVM Wetware
             </button>
-            <button 
+            <button
               onClick={() => setShowGeoKey(true)}
               className="w-full py-2 border border-arkhe-orange/50 text-arkhe-orange hover:bg-arkhe-orange/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_10px_rgba(255,153,0,0.2)] animate-pulse"
             >
               Decodificador Geográfico (Cairo)
             </button>
-            <button 
+            <button
               onClick={() => setShowBermudaAnomaly(true)}
               className="w-full py-2 border border-blue-500/50 text-blue-500 hover:bg-blue-500/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_10px_rgba(59,130,246,0.2)] animate-pulse"
             >
               Exploração Geoespacial (Bermudas)
             </button>
-            <button 
+            <button
               onClick={() => setShowCollectiveIntelligence(true)}
               className="w-full py-2 border border-arkhe-purple/50 text-arkhe-purple hover:bg-arkhe-purple/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_10px_rgba(153,51,255,0.2)] animate-pulse"
             >
               Inteligência Coletiva (Phase Slicer)
             </button>
-            <button 
+            <button
               onClick={() => setShowGenesisBlock(true)}
               className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_10px_rgba(0,255,170,0.2)] animate-pulse"
             >
               Ancoragem do Genesis Block
             </button>
-            <button 
+            <button
               onClick={() => setShowGhostProtocol(true)}
               className="w-full py-2 border border-arkhe-purple/50 text-arkhe-purple hover:bg-arkhe-purple/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_10px_rgba(168,85,247,0.2)] animate-pulse"
             >
               Ghost Protocol (Escalar Dyson)
             </button>
-            <button 
+            <button
               onClick={() => setShowArkheVision(true)}
               className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_10px_rgba(0,255,170,0.2)] animate-pulse"
             >
               Arkhe-Vision (Subnet 44)
             </button>
-            <button 
+            <button
               onClick={() => setShowArkheSec(true)}
               className="w-full py-2 border border-arkhe-green/50 text-arkhe-green hover:bg-arkhe-green/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_10px_rgba(0,255,102,0.2)] animate-pulse"
             >
@@ -492,13 +492,13 @@ export function CommandCenter({
             >
               Arquiteto HYDRO-Ω (Aegis)
             </button>
-            <button 
+            <button
               onClick={() => setShowDimOS(true)}
               className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_10px_rgba(0,255,170,0.2)] animate-pulse"
             >
               DimOS Fleet Distribution
             </button>
-            <button 
+            <button
               onClick={() => setShowDysonSphere(true)}
               className="w-full py-2 border border-purple-500/50 text-purple-500 hover:bg-purple-500/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_10px_rgba(168,85,247,0.2)] animate-pulse"
             >
@@ -557,7 +557,7 @@ export function CommandCenter({
         )}
         {activeCommandTab === 'operations' && (
           <div className="space-y-2">
-            <button 
+            <button
               onClick={async () => {
                 const res = await fetch('/api/pi-day', { method: 'POST' });
                 const data = await res.json();
@@ -567,19 +567,19 @@ export function CommandCenter({
             >
               Initiate Pi Day
             </button>
-            <button 
+            <button
               onClick={() => fetch('/api/emit-python', { method: 'POST' })}
               className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest"
             >
               Emit Python Orb
             </button>
-            <button 
+            <button
               onClick={() => setShowPodmanTerminal(true)}
               className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest"
             >
               Deploy Podman
             </button>
-            <button 
+            <button
               onClick={() => setShowCoherenceField(true)}
               className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest"
             >
@@ -591,13 +591,13 @@ export function CommandCenter({
             >
               SCA-Data Coherence
             </button>
-            <button 
+            <button
               onClick={() => setShowHybridArch(true)}
               className="w-full py-2 border border-arkhe-purple/50 text-arkhe-purple hover:bg-arkhe-purple/10 rounded transition-colors uppercase tracking-widest"
             >
               Arkhe(n) Hybrid Arch
             </button>
-            <button 
+            <button
               onClick={() => setShowOuroboros(true)}
               className="w-full py-2 border border-amber-500/50 text-amber-500 hover:bg-amber-500/10 rounded transition-colors uppercase tracking-widest animate-pulse"
             >
@@ -605,15 +605,15 @@ export function CommandCenter({
             </button>
             <div className="pt-4 border-t border-arkhe-border space-y-2">
               <span className="text-arkhe-muted">Threat Injection</span>
-              <select 
-                value={attackType} 
+              <select
+                value={attackType}
                 onChange={(e) => setAttackType(e.target.value)}
                 className="w-full bg-arkhe-card border border-arkhe-border text-arkhe-text px-2 py-2 rounded text-xs font-mono outline-none focus:border-arkhe-red"
               >
                 {attackTypes.map(type => <option key={type} value={type}>{type}</option>)}
               </select>
-              <button 
-                onClick={() => fetch('/api/trigger-attack', { 
+              <button
+                onClick={() => fetch('/api/trigger-attack', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ type: attackType })
@@ -629,8 +629,8 @@ export function CommandCenter({
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-arkhe-muted">Auto-Mitigate</span>
-              <button 
-                onClick={() => fetch('/api/parameters', { 
+              <button
+                onClick={() => fetch('/api/parameters', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ autoMitigate: !((parameters as { autoMitigate: boolean; couplingStrength: number; lambdaThreshold: number })).autoMitigate })
@@ -645,11 +645,11 @@ export function CommandCenter({
                 <span className="text-arkhe-muted">Coupling Strength</span>
                 <span className="text-arkhe-text">{((parameters as { autoMitigate: boolean; couplingStrength: number; lambdaThreshold: number })).couplingStrength.toFixed(2)}</span>
               </div>
-              <input 
-                type="range" 
-                min="0.1" max="2.0" step="0.1" 
+              <input
+                type="range"
+                min="0.1" max="2.0" step="0.1"
                 value={((parameters as { autoMitigate: boolean; couplingStrength: number; lambdaThreshold: number })).couplingStrength}
-                onChange={(e) => fetch('/api/parameters', { 
+                onChange={(e) => fetch('/api/parameters', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ couplingStrength: parseFloat(e.target.value) })
@@ -662,11 +662,11 @@ export function CommandCenter({
                 <span className="text-arkhe-muted">λ₂ Threshold</span>
                 <span className="text-arkhe-text">{((parameters as { autoMitigate: boolean; couplingStrength: number; lambdaThreshold: number })).lambdaThreshold.toFixed(2)}</span>
               </div>
-              <input 
-                type="range" 
-                min="0.5" max="0.99" step="0.01" 
+              <input
+                type="range"
+                min="0.5" max="0.99" step="0.01"
                 value={((parameters as { autoMitigate: boolean; couplingStrength: number; lambdaThreshold: number })).lambdaThreshold}
-                onChange={(e) => fetch('/api/parameters', { 
+                onChange={(e) => fetch('/api/parameters', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ lambdaThreshold: parseFloat(e.target.value) })
@@ -675,7 +675,7 @@ export function CommandCenter({
               />
             </div>
             <div className="pt-4 border-t border-arkhe-border">
-              <button 
+              <button
                 onClick={() => fetch('/api/reset', { method: 'POST' })}
                 className="w-full py-2 border border-arkhe-border text-arkhe-muted hover:text-arkhe-text hover:bg-white/5 rounded transition-colors uppercase tracking-widest"
               >
@@ -686,19 +686,19 @@ export function CommandCenter({
         )}
         {activeCommandTab === 'core' && (
           <div className="space-y-2">
-            <button 
+            <button
               onClick={() => setShowOrbes(true)}
               className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest"
             >
               Orbes
             </button>
-            <button 
+            <button
               onClick={() => setShowThukdam(true)}
               className="w-full py-2 border border-arkhe-purple/50 text-arkhe-purple hover:bg-arkhe-purple/10 rounded transition-colors uppercase tracking-widest"
             >
               Thukdam Protocol
             </button>
-            <button 
+            <button
               onClick={() => setShowMultiversal(true)}
               className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest"
             >
@@ -710,7 +710,7 @@ export function CommandCenter({
             >
               Sintetizador de Leis de Fase
             </button>
-            <button 
+            <button
               onClick={() => setShowConsciousness(true)}
               className="w-full py-2 border border-arkhe-purple/50 text-arkhe-purple hover:bg-arkhe-purple/10 rounded transition-colors uppercase tracking-widest"
             >
@@ -720,13 +720,13 @@ export function CommandCenter({
         )}
         {activeCommandTab === 'integrations' && (
           <div className="space-y-2">
-            <button 
+            <button
               onClick={() => setShowShaka(true)}
               className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest"
             >
               Shaka-Protocol Stream
             </button>
-            <button 
+            <button
               onClick={() => setShowGoogleBridge(true)}
               className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest"
             >
@@ -738,63 +738,63 @@ export function CommandCenter({
             >
               Protocolo Bio-Sync (NIR)
             </button>
-            <button 
+            <button
               onClick={() => setShowTimechain(true)}
               className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest"
             >
               Timechain Hypothesis
             </button>
-            <button 
+            <button
               onClick={() => setShowArkheTV(true)}
               className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest"
             >
               ArkheTV
             </button>
-            <button 
+            <button
               onClick={() => setShowPolyglot(true)}
               className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest"
             >
               Polyglot Compiler
             </button>
-            <button 
+            <button
               onClick={() => setShowCluster(true)}
               className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest"
             >
               Cluster Orchestration
             </button>
-            <button 
+            <button
               onClick={() => setShowArkheGrid(true)}
               className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest"
             >
               Arkhe-Grid Simulator
             </button>
-            <button 
+            <button
               onClick={() => setShowZkERC(true)}
               className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest"
             >
               zkERC Specter Visualizer
             </button>
-            <button 
+            <button
               onClick={() => setShowIntelligencePanel(true)}
               className="w-full py-2 border border-purple-500/50 text-purple-500 hover:bg-purple-500/10 rounded transition-colors uppercase tracking-widest flex items-center justify-center space-x-2"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-brain"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/><path d="M17.599 6.5a3 3 0 0 0 .399-1.375"/></svg>
               <span>Intelligence Sentinel</span>
             </button>
-            <button 
+            <button
               onClick={() => setShowIntelligenceHub(true)}
               className="w-full py-2 border border-green-500/50 text-green-500 hover:bg-green-500/10 rounded transition-colors uppercase tracking-widest flex items-center justify-center space-x-2"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-activity"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
               <span>Intelligence Hub</span>
             </button>
-            <button 
+            <button
               onClick={() => setShowOrchestrationLayer(true)}
               className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_10px_rgba(0,255,170,0.2)] animate-pulse"
             >
               ASI Orchestration Layer
             </button>
-            <button 
+            <button
               onClick={() => setShowAIP005(true)}
               className="w-full py-2 border border-yellow-500/50 text-yellow-500 hover:bg-yellow-500/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_10px_rgba(234,179,8,0.2)] animate-pulse"
             >
@@ -807,49 +807,49 @@ export function CommandCenter({
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-microscope"><path d="M6 18h8"/><path d="M3 22h18"/><path d="M14 22a7 7 0 1 0-14 0"/><path d="M9 14h2"/><path d="M9 12a2 2 0 1 1-4 0V6a2 2 0 1 1 4 0v6Z"/><path d="M12 6a3 3 0 0 0-3-3H6"/><path d="M14 13h1a4 4 0 0 0 4-4V6"/><path d="M20 3h2v2"/><path d="M20 5v2h-2"/></svg>
               <span>Research Agents</span>
             </button>
-            <button 
+            <button
               onClick={() => setShowSepoliaIntegration(true)}
               className="w-full py-2 border border-arkhe-purple/50 text-arkhe-purple hover:bg-arkhe-purple/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_10px_rgba(168,85,247,0.2)] animate-pulse"
             >
               Sepolia & SDK Integration
             </button>
-            <button 
+            <button
               onClick={() => setShowArkheCli(true)}
               className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_10px_rgba(0,255,170,0.2)] animate-pulse"
             >
               Arkhe CLI Setup
             </button>
-            <button 
+            <button
               onClick={() => setShowP2PNetwork(true)}
               className="w-full py-2 border border-blue-500/50 text-blue-500 hover:bg-blue-500/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_10px_rgba(59,130,246,0.2)] animate-pulse"
             >
               Omnichain P2P Topology
             </button>
-            <button 
+            <button
               onClick={() => setShowVideoGeneration(true)}
               className="w-full py-2 border border-pink-500/50 text-pink-500 hover:bg-pink-500/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_10px_rgba(236,72,153,0.2)] animate-pulse"
             >
               Veo-3.1 Synthesis
             </button>
-            <button 
+            <button
               onClick={() => setShowPhaseSteg(true)}
               className="w-full py-2 border border-arkhe-orange/50 text-arkhe-orange hover:bg-arkhe-orange/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_10px_rgba(255,153,0,0.2)] animate-pulse"
             >
               Phase Steganography (Ghost Node)
             </button>
-            <button 
+            <button
               onClick={() => setShowAgentManagement(true)}
               className="w-full py-2 border border-cyan-500/50 text-cyan-500 hover:bg-cyan-500/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_10px_rgba(6,182,212,0.2)] animate-pulse"
             >
               Agent Management (gRPC)
             </button>
-            <button 
+            <button
               onClick={() => setShowAquiferSpectrogram(true)}
               className="w-full py-2 border border-blue-500/50 text-blue-500 hover:bg-blue-500/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_10px_rgba(59,130,246,0.2)] animate-pulse"
             >
               Aquifer Spectrogram
             </button>
-            <button 
+            <button
               onClick={() => setShowUnifiedOntology(true)}
               className="w-full py-2 border border-purple-500/50 text-purple-500 hover:bg-purple-500/10 rounded transition-colors uppercase tracking-widest font-bold shadow-[0_0_10px_rgba(168,85,247,0.2)] animate-pulse"
             >

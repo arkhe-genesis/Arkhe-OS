@@ -36,7 +36,7 @@ export default function ArkheSecTelemetryPanel({ onClose }: ArkheSecTelemetryPan
     setIsMigrating(true);
     addLog('INICIANDO MIGRAÇÃO DE CHAIN ID (ARKHE-GENESIS)...');
     addLog('ALVO: 0xCAFEBABE (3405691582)');
-    
+
     setTimeout(() => {
       addLog('ATUALIZANDO RESOURCE ATTRIBUTES NO OTLP COLLECTOR...');
     }, 1000);
@@ -55,9 +55,9 @@ export default function ArkheSecTelemetryPanel({ onClose }: ArkheSecTelemetryPan
   const testRedaction = () => {
     setRedactionTestActive(true);
     addLog('INJETANDO LOG COM DADOS SENSÍVEIS (RAW)...');
-    
+
     const rawLog = 'User authentication failed. IP: 192.168.1.45, Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
-    
+
     setTimeout(() => {
       addLog(`RAW: ${rawLog.substring(0, 60)}...`);
     }, 500);
@@ -87,7 +87,7 @@ export default function ArkheSecTelemetryPanel({ onClose }: ArkheSecTelemetryPan
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
       <div className="w-full max-w-5xl bg-arkhe-card border border-arkhe-green/30 rounded-xl shadow-[0_0_30px_rgba(0,255,102,0.1)] overflow-hidden flex flex-col max-h-[90vh]">
-        
+
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-arkhe-green/20 bg-arkhe-green/5">
           <div className="flex items-center gap-3">
@@ -103,7 +103,7 @@ export default function ArkheSecTelemetryPanel({ onClose }: ArkheSecTelemetryPan
         </div>
 
         <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 overflow-y-auto">
-          
+
           {/* Status & Migration */}
           <div className="space-y-6 lg:col-span-1">
             <div className="bg-black/40 border border-arkhe-border p-4 rounded-lg">
@@ -151,7 +151,7 @@ export default function ArkheSecTelemetryPanel({ onClose }: ArkheSecTelemetryPan
                 onClick={executeMigration}
                 disabled={isMigrating || !chainId.includes('Conflito')}
                 className={`w-full py-3 rounded font-mono text-sm uppercase tracking-widest transition-all ${
-                  isMigrating 
+                  isMigrating
                     ? 'bg-arkhe-orange/20 text-arkhe-orange border border-arkhe-orange/50 cursor-not-allowed'
                     : !chainId.includes('Conflito')
                       ? 'bg-arkhe-green/20 text-arkhe-green border border-arkhe-green/50 cursor-not-allowed'
@@ -207,7 +207,7 @@ export default function ArkheSecTelemetryPanel({ onClose }: ArkheSecTelemetryPan
                 <Shield className="w-4 h-4" />
                 Módulos de Segurança (Consórcio Archimedes)
               </h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {securityModules.map((mod, i) => (
                   <div key={i} className="bg-arkhe-card border border-arkhe-border p-3 rounded flex flex-col gap-2">

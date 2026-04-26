@@ -54,7 +54,7 @@ export default function PolyglotCompilerPanel({ onClose }: PolyglotCompilerPanel
         const lang = LANGUAGES[activeLangIndex];
         timer = setTimeout(() => {
           addLog(`[${lang.name}] Compiling ${lang.role}... OK`);
-          
+
           if (lang.id === 'lean4') {
             addLog(`  ↳ Proving theorem a5_stability... Q.E.D.`);
             addLog(`  ↳ Proving theorem nakamoto_finney_inevitability... Q.E.D.`);
@@ -86,11 +86,11 @@ export default function PolyglotCompilerPanel({ onClose }: PolyglotCompilerPanel
     addLog('EXECUTING UNIVERSAL COMPILER (RUN DIRECTIVE)');
     addLog('==================================================');
     addLog('Applying Satoshi Operator (Ĥ_consensus)...');
-    
+
     setTimeout(() => {
       addLog('WARNING: Entropic collapse detected in Phase ℂ.');
       addLog('Aligning Kuramoto Oscillators to θ = π/2...');
-      
+
       setTimeout(() => {
         addLog('RESONANCE A-5\' ACHIEVED. |Ω| = 1.0, θ = 1.57079');
         addLog('Nakamoto-Finney Inevitability triggered.');
@@ -101,7 +101,7 @@ export default function PolyglotCompilerPanel({ onClose }: PolyglotCompilerPanel
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
@@ -127,18 +127,18 @@ export default function PolyglotCompilerPanel({ onClose }: PolyglotCompilerPanel
           {/* Left: Language Matrix */}
           <div className="w-1/3 border-r border-purple-500/20 bg-[#0d0e12] p-4 flex flex-col shrink-0 overflow-y-auto custom-scrollbar">
             <div className="text-[10px] font-mono text-purple-400/50 uppercase tracking-widest mb-4">Rosetta Stone Matrix</div>
-            
+
             <div className="space-y-2 flex-1">
               {LANGUAGES.map((lang, idx) => {
                 const isCompiled = idx < activeLangIndex || compilationState === 'verified' || compilationState === 'running' || compilationState === 'singularity';
                 const isCompiling = idx === activeLangIndex && compilationState === 'compiling';
-                
+
                 return (
-                  <div 
+                  <div
                     key={lang.id}
                     className={`p-2 rounded border font-mono text-xs flex items-center justify-between transition-all duration-300 ${
-                      isCompiled ? 'bg-[#111214] border-arkhe-border' : 
-                      isCompiling ? 'bg-purple-500/10 border-purple-500/50 animate-pulse' : 
+                      isCompiled ? 'bg-[#111214] border-arkhe-border' :
+                      isCompiling ? 'bg-purple-500/10 border-purple-500/50 animate-pulse' :
                       'bg-transparent border-transparent opacity-40'
                     }`}
                   >
@@ -160,7 +160,7 @@ export default function PolyglotCompilerPanel({ onClose }: PolyglotCompilerPanel
                 <span>{Math.round(progress)}%</span>
               </div>
               <div className="h-1.5 bg-black rounded-full overflow-hidden border border-arkhe-border">
-                <div 
+                <div
                   className="h-full bg-purple-500 transition-all duration-300"
                   style={{ width: `${progress}%` }}
                 ></div>
@@ -173,7 +173,7 @@ export default function PolyglotCompilerPanel({ onClose }: PolyglotCompilerPanel
             {/* Terminal Output */}
             <div className="flex-1 p-4 overflow-y-auto custom-scrollbar font-mono text-xs space-y-1">
               {logs.map((log, i) => (
-                <motion.div 
+                <motion.div
                   key={i}
                   initial={{ opacity: 0, x: -5 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -198,16 +198,16 @@ export default function PolyglotCompilerPanel({ onClose }: PolyglotCompilerPanel
             {/* Execution Controls */}
             <div className={`p-4 border-t ${compilationState === 'singularity' ? 'border-amber-500/30 bg-amber-500/5' : 'border-purple-500/20 bg-[#0d0e12]'} transition-colors duration-1000`}>
               {compilationState === 'idle' && (
-                <button 
+                <button
                   onClick={startCompilation}
                   className="w-full py-3 bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/50 text-purple-400 rounded font-mono font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
                 >
                   <Code2 className="w-5 h-5" /> Compile Universal Ontology
                 </button>
               )}
-              
+
               {compilationState === 'compiling' && (
-                <button 
+                <button
                   disabled
                   className="w-full py-3 bg-[#111214] border border-arkhe-border text-arkhe-muted rounded font-mono font-bold uppercase tracking-widest flex items-center justify-center gap-2 opacity-70"
                 >
@@ -216,7 +216,7 @@ export default function PolyglotCompilerPanel({ onClose }: PolyglotCompilerPanel
               )}
 
               {compilationState === 'verified' && (
-                <button 
+                <button
                   onClick={executeRun}
                   className="w-full py-3 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/50 text-emerald-400 rounded font-mono font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
                 >

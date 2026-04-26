@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
 import { Cpu, Zap, ShieldCheck, Activity } from 'lucide-react';
+import React, { useState } from 'react';
+
 import { useArkheSimulation } from '../hooks/useArkheSimulation';
 
 export const InvariantChipPanel: React.FC = () => {
@@ -16,7 +17,7 @@ export const InvariantChipPanel: React.FC = () => {
     setLoading(true);
     try {
       const response = await fetch('/api/chip/activate', { method: 'POST' });
-      if (!response.ok) throw new Error('Failed to activate chip');
+      if (!response.ok) {throw new Error('Failed to activate chip');}
     } catch (error) {
       console.error(error);
     } finally {
@@ -25,7 +26,7 @@ export const InvariantChipPanel: React.FC = () => {
   };
 
   const ic = state.invariantChip;
-  if (!ic) return null;
+  if (!ic) {return null;}
 
   return (
     <div className="p-4 bg-zinc-900/50 rounded-lg border border-white/10 space-y-4 shadow-[0_0_20px_rgba(34,211,238,0.1)]">
