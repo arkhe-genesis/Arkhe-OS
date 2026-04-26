@@ -247,7 +247,7 @@ export default function App() {
                 </div>
               </div>
               <div className="space-y-6 flex flex-col">
-                <X402WalletPanel wallet={state.x402Wallet} />
+                <X402WalletPanel wallet={state.x402Wallet as any} />
                 <ThreatDetection metrics={state.metrics} metricsHistory={state.metricsHistory} threatLevel={state.threatLevel} />
                 <OrbitalComputePanel orbital={state.orbital} />
                 <MitigationEngine mitigation={state.mitigation} hardware={state.hardware} activeThreat={state.activeThreat} />

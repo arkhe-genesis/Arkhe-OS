@@ -10,7 +10,7 @@ import {describe, it} from 'node:test';
 
 import {Client} from '@modelcontextprotocol/sdk/client/index.js';
 import {StdioClientTransport} from '@modelcontextprotocol/sdk/client/stdio.js';
-import {executablePath} from 'puppeteer';
+import {executablePath} from 'puppeteer-core';
 
 import type {ToolDefinition} from '../src/tools/ToolDefinition';
 

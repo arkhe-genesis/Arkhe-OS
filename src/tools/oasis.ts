@@ -90,7 +90,7 @@ export const oasisScan = definePageTool({
       if (stdout) {
         response.appendResponseLine(stdout);
       }
-    } catch (_error) {
+    } catch (error) {
       response.appendResponseLine(`- **Error**: Failed to execute scan sequence.`);
       if (error instanceof Error) {
         response.appendResponseLine(`  ${error.message}`);

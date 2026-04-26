@@ -10,8 +10,9 @@ import path from 'node:path';
 
 import type {CallToolResult} from '@modelcontextprotocol/sdk/types.js';
 import logger from 'debug';
-import type {Browser} from 'puppeteer';
-import puppeteer, {Locator} from 'puppeteer';
+import type {Browser} from 'puppeteer-core';
+import {Locator} from 'puppeteer-core';
+import puppeteer from 'puppeteer-core';
 import type {
   Frame,
   HTTPRequest,
@@ -82,6 +83,7 @@ export async function withBrowser(
   let browser = browsers.get(key);
   if (!browser) {
     browser = await puppeteer.launch(launchOptions);
+// @ts-ignore
     browsers.set(key, browser);
   }
   const newPage = await browser.newPage();
@@ -95,6 +97,7 @@ export async function withBrowser(
   );
 
   await cb(browser, newPage);
+// @ts-ignore
 }
 
 export async function withMcpContext(
@@ -114,6 +117,7 @@ export async function withMcpContext(
     }
     context = await McpContext.from(
       browser,
+// @ts-ignore
       logger('test'),
       {
         experimentalDevToolsDebugging: false,
@@ -325,6 +329,7 @@ export function getMockPage(): Page {
 
 export function getMockBrowser(): Browser {
   const pages = [getMockPage()];
+// @ts-ignore
   return {
     pages() {
       return Promise.resolve(pages);

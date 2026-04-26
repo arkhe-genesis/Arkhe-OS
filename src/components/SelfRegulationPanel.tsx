@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
 import { Settings, CheckCircle2, ShieldAlert, Activity } from 'lucide-react';
+import React, { useState } from 'react';
+
 import { useArkheSimulation } from '../hooks/useArkheSimulation';
 
 export const SelfRegulationPanel: React.FC = () => {
@@ -16,7 +17,7 @@ export const SelfRegulationPanel: React.FC = () => {
     setLoading(true);
     try {
       const response = await fetch('/api/chip/regulate', { method: 'POST' });
-      if (!response.ok) throw new Error('Failed to regulate');
+      if (!response.ok) {throw new Error('Failed to regulate');}
     } catch (error) {
       console.error(error);
     } finally {
@@ -25,7 +26,7 @@ export const SelfRegulationPanel: React.FC = () => {
   };
 
   const sr = state.selfRegulation;
-  if (!sr) return null;
+  if (!sr) {return null;}
 
   return (
     <div className="p-4 bg-zinc-900/50 rounded-lg border border-white/10 space-y-4 shadow-[0_0_20px_rgba(245,158,11,0.1)]">
