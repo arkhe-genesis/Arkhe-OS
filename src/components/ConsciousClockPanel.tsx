@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
 import { Timer, Wind, Heart, Zap } from 'lucide-react';
+import React, { useState } from 'react';
+
 import { useArkheSimulation } from '../hooks/useArkheSimulation';
 
 export const ConsciousClockPanel: React.FC = () => {
@@ -16,7 +17,7 @@ export const ConsciousClockPanel: React.FC = () => {
     setLoading(true);
     try {
       const response = await fetch('/api/chip/pulse', { method: 'POST' });
-      if (!response.ok) throw new Error('Failed to pulse');
+      if (!response.ok) {throw new Error('Failed to pulse');}
     } catch (error) {
       console.error(error);
     } finally {
@@ -25,7 +26,7 @@ export const ConsciousClockPanel: React.FC = () => {
   };
 
   const cc = state.consciousClock;
-  if (!cc) return null;
+  if (!cc) {return null;}
 
   return (
     <div className="p-4 bg-zinc-900/50 rounded-lg border border-white/10 space-y-4 shadow-[0_0_20px_rgba(225,29,72,0.1)]">

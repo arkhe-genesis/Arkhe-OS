@@ -63,7 +63,7 @@ export const evoskillInit = defineTool({
       response.appendResponseLine('**Worldline**: Ancoragem de evolução estabelecida no substrato local.');
     } else {
       response.appendResponseLine(`**Error**: Failed to initialize evolution project (Code ${code}).`);
-      if (stderr) response.appendResponseLine(`\`\`\`\n${stderr}\n\`\`\``);
+      if (stderr) {response.appendResponseLine(`\`\`\`\n${stderr}\n\`\`\``);}
     }
   },
 });
@@ -103,7 +103,7 @@ export const evoskillRun = defineTool({
       response.appendResponseLine('**Metric**: Coerência do agente aumentada via mutação de prompt/habilidade.');
     } else {
       response.appendResponseLine(`\n**Status**: Loop interrupted (Code ${code}).`);
-      if (stderr) response.appendResponseLine(`\`\`\`\n${stderr}\n\`\`\``);
+      if (stderr) {response.appendResponseLine(`\`\`\`\n${stderr}\n\`\`\``);}
     }
   },
 });
@@ -132,7 +132,7 @@ export const evoskillEval = defineTool({
       response.appendResponseLine('\n**Verdict**: Significant performance delta relative to baseline verified by CUA.');
     } else {
       response.appendResponseLine(`\n**Error**: Evaluation failed (Code ${code}).`);
-      if (stderr) response.appendResponseLine(`\`\`\`\n${stderr}\n\`\`\``);
+      if (stderr) {response.appendResponseLine(`\`\`\`\n${stderr}\n\`\`\``);}
     }
   },
 });

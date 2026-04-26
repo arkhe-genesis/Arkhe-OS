@@ -6,6 +6,7 @@
 
 import { VolumeX, CheckCircle2, AlertCircle, Hash } from 'lucide-react';
 import React, { useState } from 'react';
+
 import { useArkheSimulation } from '../hooks/useArkheSimulation';
 
 export const FinalSilencePanel: React.FC = () => {

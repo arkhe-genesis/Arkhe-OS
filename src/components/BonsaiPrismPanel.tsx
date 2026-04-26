@@ -12,13 +12,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Streamdown } from "streamdown";
 import { cjk } from "@streamdown/cjk";
 import { code } from "@streamdown/code";
 import { createMathPlugin } from "@streamdown/math";
 import { mermaid } from "@streamdown/mermaid";
 import { X, Send, Square, Info, History } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { Streamdown } from "streamdown";
+
 import { CrystallizationRitual } from '../ritual/prism-ritual.js';
 import { ChronicleVault } from '../storage/chroniclevault.js';
 

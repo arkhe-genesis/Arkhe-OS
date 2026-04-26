@@ -1,5 +1,11 @@
 #!/usr/bin/env node
 /**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/**
  * verify-pipeline.mjs — Health check for career-ops pipeline integrity
  *
  * Checks:
@@ -14,8 +20,8 @@
  * Run: node career-ops/verify-pipeline.mjs
  */
 
-import { readFileSync, readdirSync, existsSync } from 'fs';
-import { join } from 'path';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
 
 const CAREER_OPS = new URL('.', import.meta.url).pathname;
 // Support both layouts: data/applications.md (boilerplate) and applications.md (original)
@@ -58,11 +64,11 @@ const lines = content.split('\n');
 
 const entries = [];
 for (const line of lines) {
-  if (!line.startsWith('|')) continue;
+  if (!line.startsWith('|')) {continue;}
   const parts = line.split('|').map(s => s.trim());
-  if (parts.length < 9) continue;
+  if (parts.length < 9) {continue;}
   const num = parseInt(parts[1]);
-  if (isNaN(num)) continue;
+  if (isNaN(num)) {continue;}
   entries.push({
     num, date: parts[2], company: parts[3], role: parts[4],
     score: parts[5], status: parts[6], pdf: parts[7], report: parts[8],
@@ -96,7 +102,7 @@ for (const e of entries) {
     badStatuses++;
   }
 }
-if (badStatuses === 0) ok('All statuses are canonical');
+if (badStatuses === 0) {ok('All statuses are canonical');}
 
 // --- Check 2: Duplicates ---
 const companyRoleMap = new Map();
@@ -104,7 +110,7 @@ let dupes = 0;
 for (const e of entries) {
   const key = e.company.toLowerCase().replace(/[^a-z0-9]/g, '') + '::' +
     e.role.toLowerCase().replace(/[^a-z0-9 ]/g, '');
-  if (!companyRoleMap.has(key)) companyRoleMap.set(key, []);
+  if (!companyRoleMap.has(key)) {companyRoleMap.set(key, []);}
   companyRoleMap.get(key).push(e);
 }
 for (const [key, group] of companyRoleMap) {
@@ -113,20 +119,20 @@ for (const [key, group] of companyRoleMap) {
     dupes++;
   }
 }
-if (dupes === 0) ok('No exact duplicates found');
+if (dupes === 0) {ok('No exact duplicates found');}
 
 // --- Check 3: Report links ---
 let brokenReports = 0;
 for (const e of entries) {
   const match = e.report.match(/\]\(([^)]+)\)/);
-  if (!match) continue;
+  if (!match) {continue;}
   const reportPath = join(CAREER_OPS, match[1]);
   if (!existsSync(reportPath)) {
     error(`#${e.num}: Report not found: ${match[1]}`);
     brokenReports++;
   }
 }
-if (brokenReports === 0) ok('All report links valid');
+if (brokenReports === 0) {ok('All report links valid');}
 
 // --- Check 4: Score format ---
 let badScores = 0;
@@ -137,20 +143,20 @@ for (const e of entries) {
     badScores++;
   }
 }
-if (badScores === 0) ok('All scores valid');
+if (badScores === 0) {ok('All scores valid');}
 
 // --- Check 5: Row format ---
 let badRows = 0;
 for (const line of lines) {
-  if (!line.startsWith('|')) continue;
-  if (line.includes('---') || line.includes('Empresa')) continue;
+  if (!line.startsWith('|')) {continue;}
+  if (line.includes('---') || line.includes('Empresa')) {continue;}
   const parts = line.split('|');
   if (parts.length < 9) {
     error(`Row with <9 columns: ${line.substring(0, 80)}...`);
     badRows++;
   }
 }
-if (badRows === 0) ok('All rows properly formatted');
+if (badRows === 0) {ok('All rows properly formatted');}
 
 // --- Check 6: Pending TSVs ---
 let pendingTsvs = 0;
@@ -161,7 +167,7 @@ if (existsSync(ADDITIONS_DIR)) {
     warn(`${pendingTsvs} pending TSVs in tracker-additions/ (not merged)`);
   }
 }
-if (pendingTsvs === 0) ok('No pending TSVs');
+if (pendingTsvs === 0) {ok('No pending TSVs');}
 
 // --- Check 7: Bold in scores ---
 let boldScores = 0;
@@ -171,7 +177,7 @@ for (const e of entries) {
     boldScores++;
   }
 }
-if (boldScores === 0) ok('No bold in scores');
+if (boldScores === 0) {ok('No bold in scores');}
 
 // --- Summary ---
 console.log('\n' + '='.repeat(50));
