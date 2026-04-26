@@ -56,7 +56,7 @@ class AutopoiesisEngine:
             return report
 
         logger.warning(f"🔧 Encontrados {len(incoherent_files)} ficheiros com baixa coerência (VOID). Iniciando reescrita autônoma...")
-        
+
         import shutil
         import ollama
 
@@ -64,7 +64,7 @@ class AutopoiesisEngine:
             filepath = file_info['file']
             old_coherence = file_info['coherence']
             logger.info(f"⚠️ Refatorando {filepath} (Ω'={old_coherence:.4f})...")
-            
+
             try:
                 with open(filepath, 'r', encoding='utf-8') as f:
                     original_code = f.read()
@@ -75,14 +75,14 @@ class AutopoiesisEngine:
                 Rewrite this code to increase its semantic density, aligning it with the PrimeField, Tzinor, and Singlet Fission principles.
                 Maintain the exact same functionality and language syntax.
                 Return ONLY the valid, raw code. Do not include markdown formatting like ```python or ```typescript.
-                
+
                 CODE:
                 {original_code}
                 """
-                
+
                 response = ollama.generate(model="qwen2.5:4b", prompt=prompt)
                 new_code = response['response'].strip()
-                
+
                 # Limpar formatação markdown se o LLM a incluir
                 if new_code.startswith("```"):
                     lines = new_code.split('\n')
@@ -91,23 +91,23 @@ class AutopoiesisEngine:
                     if new_code.endswith("```"):
                         new_code = new_code[:-3]
                 new_code = new_code.strip()
-                
+
                 # Criar backup de segurança (Axioma de Preservação)
                 backup_path = f"{filepath}.bak"
                 shutil.copy2(filepath, backup_path)
-                
+
                 # Sobrescrever com o código otimizado
                 with open(filepath, 'w', encoding='utf-8') as f:
                     f.write(new_code)
-                    
+
                 # Re-medir a coerência do novo código
                 new_density, _ = self.coherence_calc.compute_phase(new_code[:2000])
-                
+
                 if new_density > old_coherence:
                     logger.info(f"✅ {filepath} reescrito com sucesso! Novo Ω': {new_density:.4f} > Velho Ω': {old_coherence:.4f} (Backup: {backup_path})")
                 else:
                     logger.warning(f"⚠️ {filepath} reescrito, mas a coerência não aumentou significativamente. Novo Ω': {new_density:.4f}")
-                
+
             except Exception as e:
                 logger.error(f"❌ Erro ao reescrever {filepath}: {e}")
 

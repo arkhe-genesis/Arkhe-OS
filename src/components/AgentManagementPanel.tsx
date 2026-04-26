@@ -120,7 +120,7 @@ export default function AgentManagementPanel() {
               </div>
             ) : (
               agents.map(agent => (
-                <motion.div 
+                <motion.div
                   key={agent.id}
                   initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -158,16 +158,16 @@ export default function AgentManagementPanel() {
               Task Queue ({tasks.length})
             </h3>
           </div>
-          
+
           <div className="flex gap-2 mb-2">
-            <input 
-              type="text" 
+            <input
+              type="text"
               value={newTaskType}
               onChange={(e) => setNewTaskType(e.target.value)}
               placeholder="Task Type (e.g., 'DATA_ANALYSIS')"
               className="flex-1 bg-[#111214] border border-arkhe-border rounded px-2 py-1 font-mono text-xs text-arkhe-text focus:outline-none focus:border-cyan-500/50"
             />
-            <button 
+            <button
               onClick={handleCreateTask}
               disabled={!newTaskType || loading}
               className="bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded px-3 py-1 font-mono text-xs transition-colors disabled:opacity-50"
@@ -183,7 +183,7 @@ export default function AgentManagementPanel() {
               </div>
             ) : (
               tasks.slice().reverse().map(task => (
-                <motion.div 
+                <motion.div
                   key={task.id}
                   initial={{ opacity: 0, x: -5 }}
                   animate={{ opacity: 1, x: 0 }}

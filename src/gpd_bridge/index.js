@@ -61,12 +61,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     case "arkhe_verify_phase": {
       const calcId = request.params.arguments.calculation_id;
       const targetLambda = request.params.arguments.target_lambda;
-      
+
       // Simulate calling the Arkhe HAL to verify phase
       // In a real deployment, this would interface with the C HAL
       const currentLambda = 1.618033; // Simulated optimal coherence
       const isCoherent = currentLambda >= targetLambda;
-      
+
       return {
         content: [{
           type: "text",
@@ -80,11 +80,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         }]
       };
     }
-    
+
     case "arkhe_sync_gpd_state": {
       const projectPath = request.params.arguments.project_path;
       const phaseTag = request.params.arguments.phase_tag || 1.618;
-      
+
       // Simulate syncing GPD state to FractalDB
       return {
         content: [{

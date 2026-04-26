@@ -112,13 +112,13 @@ export class McpContext implements Context {
 
     this.#consoleCollector = new ConsoleCollector(this.browser, collect => {
       return {
-        console: event => {
+        console: (event: any) => {
           collect(event);
         },
-        uncaughtError: event => {
+        uncaughtError: (event: any) => {
           collect(event);
         },
-        issue: event => {
+        issue: (event: any) => {
           collect(event);
         },
       } as ListenerMap;
@@ -874,7 +874,7 @@ export class McpContext implements Context {
   async setUpNetworkCollectorForTesting() {
     this.#networkCollector = new NetworkCollector(this.browser, collect => {
       return {
-        request: req => {
+        request: (req: any) => {
           if (req.url().includes('favicon.ico')) {
             return;
           }

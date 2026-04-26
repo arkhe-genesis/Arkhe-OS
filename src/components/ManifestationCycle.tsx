@@ -49,13 +49,13 @@ export default function ManifestationCycle({ manifestation }: ManifestationCycle
       <div className="flex-1 flex flex-col justify-center relative px-4">
         {/* Connecting Line */}
         <div className="absolute top-5 left-8 right-8 h-[1px] bg-arkhe-border/30 z-0" />
-        
+
         <div className="flex items-start justify-between relative z-10">
           {stages.map((stage, idx) => {
             const Icon = stage.icon;
             const isActive = idx === currentIndex;
             const isPast = idx < currentIndex;
-            
+
             return (
               <div key={stage.id} className="flex flex-col items-center gap-3 w-16">
                 <motion.div

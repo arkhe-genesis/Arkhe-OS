@@ -1,6 +1,10 @@
-import * as React from "react"
-import { cn } from "../../lib/utils"
+import React from 'react';
 
 export const Switch = ({ checked, onCheckedChange, ...props }: any) => (
-  <button type="button" role="switch" aria-checked={checked} onClick={() => onCheckedChange?.(!checked)} {...props} />
-)
+  <input
+    type="checkbox"
+    checked={checked}
+    onChange={e => onCheckedChange(e.target.checked)}
+    {...props}
+  />
+);

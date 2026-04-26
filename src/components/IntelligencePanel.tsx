@@ -90,13 +90,13 @@ export default function IntelligencePanel({ onClose }: IntelligencePanelProps) {
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 md:p-8">
       <div className="bg-[#111214] border border-[#1f2024] rounded-xl w-full max-w-4xl h-[80vh] flex flex-col shadow-2xl overflow-hidden relative">
-        <button 
+        <button
           onClick={onClose}
           className="absolute top-4 right-4 text-arkhe-muted hover:text-white transition-colors z-10"
         >
           <X className="w-6 h-6" />
         </button>
-        
+
         <div className="p-6 border-b border-[#1f2024] flex items-center justify-between bg-black/40">
           <div className="flex items-center space-x-3">
             <Brain className="w-6 h-6 text-purple-400" />

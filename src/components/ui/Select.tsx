@@ -1,8 +1,14 @@
-import * as React from "react"
-import { cn } from "../../lib/utils"
+import React from 'react';
 
-export const Select = ({ children, ...props }: any) => <div {...props}>{children}</div>
-export const SelectTrigger = ({ children, ...props }: any) => <button {...props}>{children}</button>
-export const SelectValue = ({ children, ...props }: any) => <span {...props}>{children}</span>
-export const SelectContent = ({ children, ...props }: any) => <div {...props}>{children}</div>
-export const SelectItem = ({ children, ...props }: any) => <div {...props}>{children}</div>
+export const Select = ({ children, value, onValueChange }: any) => {
+  return (
+    <select value={value} onChange={e => onValueChange(e.target.value)}>
+      {children}
+    </select>
+  );
+};
+
+export const SelectTrigger = ({ children }: any) => <>{children}</>;
+export const SelectValue = ({ placeholder }: any) => <option value="" disabled>{placeholder}</option>;
+export const SelectContent = ({ children }: any) => <>{children}</>;
+export const SelectItem = ({ children, value }: any) => <option value={value}>{children}</option>;

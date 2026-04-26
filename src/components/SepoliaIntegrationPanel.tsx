@@ -20,7 +20,7 @@ export default function SepoliaIntegrationPanel({ onClose }: { onClose: () => vo
   const executeSequence = async () => {
     if (step > 0) {return;}
     setStep(1);
-    
+
     // Step 1: Deploy Contracts to Sepolia
     setTimeout(() => {
       setLogs(prev => [...prev, "> [1/4] COMPILING TZINOR.SOL & THUKDAM.SOL..."]);
@@ -52,10 +52,10 @@ export default function SepoliaIntegrationPanel({ onClose }: { onClose: () => vo
     // Step 3: Init TypeScript SDK
     setTimeout(() => {
       setLogs(prev => [...prev, "> [3/4] INITIALIZING ARKHE TYPESCRIPT SDK..."]);
-      
+
       // Actually instantiate the SDK to prove it works
       const _sdk = new ArkheSDK({ providerUrl: 'https://rpc2.sepolia.org' });
-      
+
       setLogs(prev => [...prev, "> SDK INSTANCE CREATED. CONNECTING TO SEPOLIA RPC..."]);
     }, 7500);
 
@@ -67,10 +67,10 @@ export default function SepoliaIntegrationPanel({ onClose }: { onClose: () => vo
     // Step 4: Test OrbVM Integration
     setTimeout(async () => {
       setLogs(prev => [...prev, "> [4/4] TESTING ORBVM INTEGRATION VIA SDK..."]);
-      
+
       const sdk = new ArkheSDK({ providerUrl: 'https://rpc2.sepolia.org' });
       const orbVmRes = await sdk.queryOrbVM('VERIFY_COHERENCE');
-      
+
       setLogs(prev => [...prev, `> ORBVM RESPONSE: ${orbVmRes.result}`]);
       setLogs(prev => [...prev, `> GAS USED: ${orbVmRes.gasUsed} | LAMBDA: ${orbVmRes.lambda}`]);
     }, 10500);
@@ -100,7 +100,7 @@ export default function SepoliaIntegrationPanel({ onClose }: { onClose: () => vo
           <div className="space-y-6">
             <div className="bg-black/40 border border-[#1f2024] rounded-lg p-4">
               <h3 className="font-mono text-xs uppercase tracking-widest text-arkhe-muted mb-4">Deployment Sequence</h3>
-              
+
               <div className="space-y-4">
                 {/* Step 1 */}
                 <div className={`flex items-center gap-3 p-3 rounded border ${step >= 2 ? 'bg-arkhe-green/10 border-arkhe-green/30 text-arkhe-green' : step === 1 ? 'bg-arkhe-purple/10 border-arkhe-purple/30 text-arkhe-purple' : 'bg-[#1a1b1e] border-[#2a2b2e] text-arkhe-muted'}`}>
@@ -139,8 +139,8 @@ export default function SepoliaIntegrationPanel({ onClose }: { onClose: () => vo
                 </div>
               </div>
             </div>
-            
-            <button 
+
+            <button
               onClick={executeSequence}
               disabled={step > 0}
               className={`w-full py-3 rounded uppercase tracking-widest font-bold transition-all flex items-center justify-center gap-2 ${step > 0 ? 'bg-arkhe-purple/20 text-arkhe-purple border border-arkhe-purple/50 cursor-not-allowed' : 'bg-arkhe-purple text-white hover:bg-arkhe-purple/80 shadow-[0_0_15px_rgba(168,85,247,0.3)]'}`}

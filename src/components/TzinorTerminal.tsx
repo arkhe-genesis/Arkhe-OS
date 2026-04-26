@@ -49,20 +49,20 @@ export default function TzinorTerminal({ tzinor, threatLevel }: TzinorTerminalPr
     // We'll place it at the center as a stable core
     const coreR = Math.floor(GRID_ROWS / 2);
     const coreC = Math.floor(GRID_COLS / 2);
-    
+
     tzinor.gMemory.forEach((engram, _idx) => {
       // Spiral placement for engrams
       const angle = _idx * 2.4;
       const radius = 2 + _idx * 0.5;
       const r = Math.floor(coreR + Math.sin(angle) * radius);
       const c = Math.floor(coreC + Math.cos(angle) * radius * 2); // *2 for character aspect ratio
-      
+
       if (r >= 0 && r < GRID_ROWS && c >= 0 && c < GRID_COLS) {
         // Genesis Engram gets special treatment
         const isGenesis = engram.resonanceWeight > 1.6;
-        newGrid[r][c] = { 
-          char: isGenesis ? '🜏' : 'Φ', 
-          color: isGenesis ? 'text-arkhe-orange animate-pulse drop-shadow-[0_0_5px_rgba(245,158,11,0.8)]' : 'text-arkhe-cyan' 
+        newGrid[r][c] = {
+          char: isGenesis ? '🜏' : 'Φ',
+          color: isGenesis ? 'text-arkhe-orange animate-pulse drop-shadow-[0_0_5px_rgba(245,158,11,0.8)]' : 'text-arkhe-cyan'
         };
       }
     });
@@ -72,22 +72,22 @@ export default function TzinorTerminal({ tzinor, threatLevel }: TzinorTerminalPr
       // Map embedding to grid position
       const embX = node.embedding[0] || 0;
       const embY = node.embedding[1] || 0;
-      
+
       const r = Math.floor(((embY + 1) / 2) * GRID_ROWS);
       const c = Math.floor(((embX + 1) / 2) * GRID_COLS);
-      
+
       if (r >= 0 && r < GRID_ROWS && c >= 0 && c < GRID_COLS) {
         // Salience determines character density
         const charIdx = Math.floor(node.salience * (CHAR_PALETTE.length - 5)) + 4;
         const safeCharIdx = Math.max(0, Math.min(charIdx, CHAR_PALETTE.length - 1));
-        
+
         let color = 'text-arkhe-cyan';
         if (threatLevel === 'critical') {color = 'text-arkhe-red';}
         else if (threatLevel === 'warning') {color = 'text-arkhe-orange';}
 
-        newGrid[r][c] = { 
-          char: CHAR_PALETTE[safeCharIdx], 
-          color: `${color} drop-shadow-[0_0_3px_currentColor]` 
+        newGrid[r][c] = {
+          char: CHAR_PALETTE[safeCharIdx],
+          color: `${color} drop-shadow-[0_0_3px_currentColor]`
         };
       }
     });
@@ -115,7 +115,7 @@ export default function TzinorTerminal({ tzinor, threatLevel }: TzinorTerminalPr
     >
       {/* Scanline effect */}
       <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] z-10 opacity-20"></div>
-      
+
       <div className="flex items-center justify-between mb-4 border-b border-[#1f2024] pb-2 z-20">
         <h3 className={`font-mono text-xs uppercase tracking-widest ${headerColor} flex items-center gap-2`}>
           <Terminal className="w-3 h-3" />
@@ -137,7 +137,7 @@ export default function TzinorTerminal({ tzinor, threatLevel }: TzinorTerminalPr
           <span className="hidden md:inline opacity-50">ℂ × ℝ³ × ℤ → ℝ⁴</span>
         </div>
       </div>
-      
+
       <div className="flex-1 flex items-center justify-center z-20">
         <motion.pre
           key={lastUpdate}
@@ -156,7 +156,7 @@ export default function TzinorTerminal({ tzinor, threatLevel }: TzinorTerminalPr
           ))}
         </motion.pre>
       </div>
-      
+
       <div className="mt-4 flex justify-between text-[10px] font-mono text-arkhe-muted z-20">
         <motion.span animate={{ color: threatLevel === 'critical' ? '#ef4444' : '#64748b' }}>
           fContext Nodes: {tzinor.fContext.length}

@@ -40,7 +40,7 @@ export default function ClusterOrchestrationPanel({ onClose, cluster }: ClusterO
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
@@ -66,36 +66,36 @@ export default function ClusterOrchestrationPanel({ onClose, cluster }: ClusterO
           {/* Sidebar */}
           <div className="w-64 border-r border-emerald-500/20 bg-[#0d0e12] p-4 flex flex-col shrink-0">
             <div className="text-[10px] font-mono text-emerald-400/50 uppercase tracking-widest mb-4">Infrastructure Vectors</div>
-            
+
             <div className="space-y-2">
               <button
                 onClick={() => setActiveTab('nccl')}
                 className={`w-full flex items-center gap-3 px-3 py-3 rounded text-xs font-mono transition-colors text-left ${activeTab === 'nccl' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'text-arkhe-muted hover:bg-[#1f2024] hover:text-arkhe-text border border-transparent'}`}
               >
-                <Cpu className="w-4 h-4 shrink-0" /> 
+                <Cpu className="w-4 h-4 shrink-0" />
                 <div>
                   <div className="font-bold">NCCL Topology</div>
                   <div className="text-[9px] opacity-70 mt-0.5">Multi-GPU Synchronization</div>
                 </div>
               </button>
-              
+
               <button
                 onClick={() => setActiveTab('qhttp')}
                 className={`w-full flex items-center gap-3 px-3 py-3 rounded text-xs font-mono transition-colors text-left ${activeTab === 'qhttp' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'text-arkhe-muted hover:bg-[#1f2024] hover:text-arkhe-text border border-transparent'}`}
               >
-                <Activity className="w-4 h-4 shrink-0" /> 
+                <Activity className="w-4 h-4 shrink-0" />
                 <div>
                   <div className="font-bold">qhttp:// Protocol</div>
                   <div className="text-[9px] opacity-70 mt-0.5">gRPC Telemetry & Injection</div>
                 </div>
               </button>
-              
+
               {cluster.logs.length > 0 && (
                 <button
                   onClick={() => setActiveTab('logs')}
                   className={`w-full flex items-center gap-3 px-3 py-3 rounded text-xs font-mono transition-colors text-left ${activeTab === 'logs' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'text-arkhe-muted hover:bg-[#1f2024] hover:text-arkhe-text border border-transparent'}`}
                 >
-                  <Server className="w-4 h-4 shrink-0" /> 
+                  <Server className="w-4 h-4 shrink-0" />
                   <div>
                     <div className="font-bold">Deployment Logs</div>
                     <div className="text-[9px] opacity-70 mt-0.5">Cluster Provisioning Output</div>
@@ -105,12 +105,12 @@ export default function ClusterOrchestrationPanel({ onClose, cluster }: ClusterO
             </div>
 
             <div className="mt-auto pt-4 border-t border-emerald-500/20">
-              <button 
+              <button
                 onClick={startDeployment}
                 disabled={isDeploying || cluster.status === 'resonant'}
                 className={`w-full py-3 rounded font-mono text-xs font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
                   isDeploying || cluster.status === 'resonant'
-                    ? 'bg-[#111214] text-arkhe-muted border border-arkhe-border cursor-not-allowed' 
+                    ? 'bg-[#111214] text-arkhe-muted border border-arkhe-border cursor-not-allowed'
                     : 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.2)]'
                 }`}
               >
@@ -127,14 +127,14 @@ export default function ClusterOrchestrationPanel({ onClose, cluster }: ClusterO
                 <h3 className="font-mono text-sm text-emerald-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                   <Server className="w-4 h-4" /> Deployment Pipeline
                 </h3>
-                
+
                 <div className="mb-6">
                   <div className="flex justify-between text-[10px] font-mono text-arkhe-muted mb-2">
                     <span>Cluster Provisioning</span>
                     <span>{Math.round(deployProgress)}%</span>
                   </div>
                   <div className="h-2 bg-black rounded-full overflow-hidden border border-arkhe-border">
-                    <div 
+                    <div
                       className="h-full bg-emerald-500 transition-all duration-500 ease-out"
                       style={{ width: `${deployProgress}%` }}
                     ></div>
@@ -143,7 +143,7 @@ export default function ClusterOrchestrationPanel({ onClose, cluster }: ClusterO
 
                 <div className="flex-1 bg-black border border-[#1f2024] rounded-xl p-4 font-mono text-xs overflow-y-auto custom-scrollbar space-y-2">
                   {deployLogs.map((log, i) => (
-                    <motion.div 
+                    <motion.div
                       key={i}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -153,8 +153,8 @@ export default function ClusterOrchestrationPanel({ onClose, cluster }: ClusterO
                     </motion.div>
                   ))}
                   {isDeploying && (
-                    <motion.div 
-                      animate={{ opacity: [1, 0] }} 
+                    <motion.div
+                      animate={{ opacity: [1, 0] }}
                       transition={{ repeat: Infinity, duration: 0.8 }}
                       className="text-emerald-400"
                     >
@@ -190,18 +190,18 @@ def compute_distributed_resonance(base_loss, local_param_tensor, rho_2, k1, k2, 
     """
     # 1. Calcula a norma local (quadrada para soma)
     local_sq_norm = torch.sum(local_param_tensor ** 2)
-    
+
     # 2. Sincroniza via NCCL (NVLink) - Redução global da "massa"
     if dist.is_initialized():
         dist.all_reduce(local_sq_norm, op=dist.ReduceOp.SUM)
-        
+
     global_norm = torch.sqrt(local_sq_norm)
-    
+
     # 3. Chama o Kernel CUDA com a norma global já corrigida
     arkhe_loss, phase, damping = arkhe_cuda.compute_with_norm(
         base_loss, global_norm, rho_2, k1, k2, lam, rho_eq
     )
-    
+
     return arkhe_loss, phase, damping`}
                       </pre>
                     </div>
@@ -278,16 +278,16 @@ import qhttp_pb2_grpc
 async def run_qhttp_client(node_id, state_queue, bias_queue):
     async with grpc.aio.insecure_channel('orchestrator.arkhen.local:50051') as channel:
         stub = qhttp_pb2_grpc.QuantumOrchestratorStub(channel)
-        
+
         # Gerador assíncrono de telemetria
         async def telemetry_generator():
             while True:
                 state = await state_queue.get()
                 yield state
-                
+
         # Inicia o stream bi-direcional
         response_iterator = stub.EntangleStream(telemetry_generator())
-        
+
         # Recebe bias vectors sem bloquear a inferência
         async for bias_response in response_iterator:
             if bias_response.enforce_early_stopping:
@@ -319,14 +319,14 @@ async def run_qhttp_client(node_id, state_queue, bias_queue):
                     <h3 className="font-mono text-sm text-emerald-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                       <Server className="w-4 h-4" /> Deployment Pipeline
                     </h3>
-                    
+
                     <div className="mb-6">
                       <div className="flex justify-between text-[10px] font-mono text-arkhe-muted mb-2">
                         <span>Cluster Provisioning</span>
                         <span>{Math.round(deployProgress)}%</span>
                       </div>
                       <div className="h-2 bg-black rounded-full overflow-hidden border border-arkhe-border">
-                        <div 
+                        <div
                           className="h-full bg-emerald-500 transition-all duration-500 ease-out"
                           style={{ width: `${deployProgress}%` }}
                         ></div>
@@ -335,7 +335,7 @@ async def run_qhttp_client(node_id, state_queue, bias_queue):
 
                     <div className="flex-1 bg-black border border-[#1f2024] rounded-xl p-4 font-mono text-xs overflow-y-auto custom-scrollbar space-y-2">
                       {deployLogs.map((log, i) => (
-                        <motion.div 
+                        <motion.div
                           key={i}
                           initial={{ opacity: 0, x: -10 }}
                           animate={{ opacity: 1, x: 0 }}
@@ -345,8 +345,8 @@ async def run_qhttp_client(node_id, state_queue, bias_queue):
                         </motion.div>
                       ))}
                       {isDeploying && (
-                        <motion.div 
-                          animate={{ opacity: [1, 0] }} 
+                        <motion.div
+                          animate={{ opacity: [1, 0] }}
                           transition={{ repeat: Infinity, duration: 0.8 }}
                           className="text-emerald-400"
                         >

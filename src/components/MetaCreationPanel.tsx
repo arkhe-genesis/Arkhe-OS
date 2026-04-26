@@ -20,7 +20,7 @@ export default function MetaCreationPanel({ state, onClose }: MetaCreationPanelP
   const [isGenerating, setIsGenerating] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
 
-  if (!state) return null;
+  if (!state) {return null;}
 
   const handleGenerate = async () => {
     setIsGenerating(true);

@@ -19,14 +19,14 @@ interface NetworkStatusProps {
 export default function NetworkStatus({ shards }: NetworkStatusProps) {
   const totalShards = 24;
   const dataShards = 16;
-  
+
   const activeCount = shards.filter(s => s.status === 'active').length;
   const isDegraded = activeCount < totalShards;
   const isCritical = activeCount < dataShards;
 
   return (
-    <Card 
-      title="Tzinor GNSS Network" 
+    <Card
+      title="Tzinor GNSS Network"
       icon={<Network className="w-4 h-4" />}
       status={isCritical ? 'critical' : isDegraded ? 'warning' : 'normal'}
     >
@@ -35,7 +35,7 @@ export default function NetworkStatus({ shards }: NetworkStatusProps) {
         <div className="grid grid-cols-8 gap-1">
           {shards.map((shard, i) => {
             const isData = i < dataShards;
-            
+
             let bgColor = 'bg-[#1f2024]';
             if (shard.status === 'active') {
               bgColor = isData ? 'bg-arkhe-cyan' : 'bg-arkhe-green';
@@ -46,8 +46,8 @@ export default function NetworkStatus({ shards }: NetworkStatusProps) {
             }
 
             return (
-              <div 
-                key={shard.id} 
+              <div
+                key={shard.id}
                 className={`h-6 rounded-sm ${bgColor} border border-black/20 transition-colors duration-300`}
                 title={isData ? `Data Shard ${i+1} - ${shard.status}` : `Parity Shard ${i-dataShards+1} - ${shard.status}`}
               />
@@ -70,7 +70,7 @@ export default function NetworkStatus({ shards }: NetworkStatusProps) {
             {isCritical ? 'FAILED' : 'REACHED'}
           </span>
         </div>
-        
+
         <div className="flex justify-between items-center p-2 bg-[#151619] rounded border border-arkhe-border">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full border-2 border-arkhe-muted flex items-center justify-center">

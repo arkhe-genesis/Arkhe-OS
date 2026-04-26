@@ -32,8 +32,8 @@ export class UncaughtError {
   }
 }
 
-interface PageEvents extends Omit<PuppeteerPageEvents, "issue"> {
-  issue: DevTools.AggregatedIssue;
+interface PageEvents extends Omit<PuppeteerPageEvents, 'issue'> {
+  issue: any;
   uncaughtError: UncaughtError;
 }
 
@@ -137,7 +137,7 @@ export class PageCollector<T> {
       navigations[0].push(withId);
     });
 
-    listeners['framenavigated'] = (frame: Frame) => {
+    listeners['framenavigated'] = (frame: any) => {
       // Only split the storage on main frame navigation
       if (frame !== page.mainFrame()) {
         return;
@@ -378,7 +378,7 @@ export class NetworkCollector extends PageCollector<HTTPRequest> {
       collector: (item: HTTPRequest) => void,
     ) => ListenerMap<PageEvents> = collect => {
       return {
-        request: req => {
+        request: (req: any) => {
           collect(req);
         },
       } as ListenerMap;

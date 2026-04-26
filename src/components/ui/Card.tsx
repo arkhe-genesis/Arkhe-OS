@@ -61,7 +61,7 @@ export function Card({
 
       {status === 'warning' && <div className="absolute top-0 left-0 w-full h-0.5 bg-arkhe-amber animate-pulse" />}
       {status === 'omega' && <div className="absolute top-0 left-0 w-full h-0.5 bg-arkhe-omega" />}
-      
+
       {(title || icon || action) && (
         <div className={cn(
           "px-4 py-3 border-b flex items-center justify-between",
@@ -86,4 +86,16 @@ export function Card({
       </div>
     </motion.div>
   );
+}
+
+export function CardHeader({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <div className={cn("px-4 py-3 border-b border-white/5 bg-white/5", className)}>{children}</div>;
+}
+
+export function CardTitle({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <h3 className={cn("font-mono text-golden-xs uppercase tracking-widest text-arkhe-muted", className)}>{children}</h3>;
+}
+
+export function CardContent({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <div className={cn("p-4", className)}>{children}</div>;
 }

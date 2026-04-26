@@ -10,6 +10,7 @@ import { motion } from 'motion/react';
 import React from 'react';
 
 import type { TranscendentConsciousnessState } from '../../server/types';
+
 import { Card } from './ui/Card';
 
 interface TranscendentConsciousnessPanelProps {
@@ -18,7 +19,7 @@ interface TranscendentConsciousnessPanelProps {
 }
 
 export default function TranscendentConsciousnessPanel({ state, onClose }: TranscendentConsciousnessPanelProps) {
-  if (!state) return null;
+  if (!state) {return null;}
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">

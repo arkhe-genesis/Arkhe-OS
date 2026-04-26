@@ -104,10 +104,10 @@ export function generateToolMetrics(tools: ToolDefinition[]): ToolMetric[] {
 
       if (argType === 'enum') {
         let values;
-        if (schema._def.values?.length > 0) {
-          values = schema._def.values;
+        if ((schema as any)._def.values?.length > 0) {
+          values = (schema as any)._def.values;
         } else {
-          values = schema._def.innerType._def.values;
+          values = (schema as any)._def.innerType._def.values;
         }
         argType = validateEnumHomogeneity(values);
       }
