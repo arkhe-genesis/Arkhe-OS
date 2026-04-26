@@ -264,7 +264,7 @@ export async function createMcpServer(
               serverArgs.experimentalPageIdRouting &&
               params.pageId &&
               !serverArgs.slim
-                ? context.getPageById(params.pageId)
+                ? context.getPageById(params.pageId as any)
                 : context.getSelectedMcpPage();
             response.setPage(page);
             await tool.handler(

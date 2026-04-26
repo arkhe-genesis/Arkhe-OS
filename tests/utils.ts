@@ -56,10 +56,10 @@ export function extractExtensionId(response: McpResponse) {
 }
 
 const browsers = new Map<string, Browser>();
-let context: McpContext | undefined;
+let context: any | undefined;
 
 export async function withBrowser(
-  cb: (browser: Browser, page: Page) => Promise<void>,
+  cb: (browser: any, page: Page) => Promise<void>,
   options: {
     debug?: boolean;
     autoOpenDevTools?: boolean;
@@ -81,7 +81,7 @@ export async function withBrowser(
 
   let browser = browsers.get(key);
   if (!browser) {
-    browser = await puppeteer.launch(launchOptions);
+    browser: any = await puppeteer.launch(launchOptions);
     browsers.set(key, browser);
   }
   const newPage = await browser.newPage();
@@ -330,7 +330,7 @@ export function getMockBrowser(): Browser {
       return Promise.resolve(pages);
     },
     ...mockListener(),
-  } as Browser;
+  } as any;
 }
 
 export const CLI_PATH = path.resolve('build/src/bin/chrome-devtools.js');

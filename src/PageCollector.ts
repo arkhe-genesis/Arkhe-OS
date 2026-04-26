@@ -32,7 +32,7 @@ export class UncaughtError {
   }
 }
 
-interface PageEvents extends PuppeteerPageEvents {
+interface PageEvents extends Omit<PuppeteerPageEvents, "issue"> {
   issue: DevTools.AggregatedIssue;
   uncaughtError: UncaughtError;
 }
@@ -318,7 +318,7 @@ class PageEventSubscriber {
       return;
     }
     this.#seenIssues.add(event.data);
-    this.#page.emit('issue', event.data);
+    this.#page.emit('issue', event.data as any);
   };
 
   #onExceptionThrown = (event: Protocol.Runtime.ExceptionThrownEvent) => {

@@ -17,6 +17,7 @@ import * as extensionTools from './extensions.js';
 import * as inPageTools from './inPage.js';
 import * as inputTools from './input.js';
 import * as lambdaTools from './lambda_tools.js';
+import * as gnoTools from './gno.js';
 import * as lighthouseTools from './lighthouse.js';
 import * as logosLibraryTools from './logos_library.js';
 import * as memoryTools from './memory.js';
@@ -75,6 +76,7 @@ export const createTools = (args: ParsedArguments) => {
         ...Object.values(nekoTools),
         ...Object.values(oasisTools),
         ...Object.values(meshtasticTools),
+        ...Object.values(gnoTools),
       ];
 
   const tools = [];
