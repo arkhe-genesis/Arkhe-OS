@@ -20,12 +20,13 @@ import {
 
 import type { SimulationState } from '../../server/types';
 import { useArkheSimulation } from '../hooks/useArkheSimulation';
-import { Card } from './ui/Card';
-import { Progress } from './ui/Progress';
-import { Badge } from './ui/Badge';
 import { cn } from '../lib/utils';
 
 import TemporalLensPanel from './TemporalLensPanel';
+import { Badge } from './ui/Badge';
+import { Card } from './ui/Card';
+import { Progress } from './ui/Progress';
+
 
 const CorvoNoirDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'coherence' | 'governance' | 'biolink' | 'security'>('coherence');

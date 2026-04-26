@@ -21,7 +21,7 @@ export default function ArkheGame({ onClose }: { onClose: () => void }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [coherence, setCoherence] = useState(100);
   const [score, setScore] = useState(0);
-  const [anomalies, setAnomalies] = useState<{ id: number; x: number; y: number }[]>([]);
+  const [anomalies, setAnomalies] = useState<Array<{ id: number; x: number; y: number }>>([]);
   const [message, setMessage] = useState("Inicie o Ritual de Coerência (Substrato 43)");
 
   const [substrates, setSubstrates] = useState<SubstrateState[]>([

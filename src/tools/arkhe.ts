@@ -10,6 +10,7 @@ import * as path from 'node:path';
 
 import type {McpPage} from '../McpPage.js';
 import {zod} from '../third_party/index.js';
+
 import {ToolCategory} from './categories.js';
 import {definePageTool} from './ToolDefinition.js';
 

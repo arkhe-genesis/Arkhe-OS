@@ -1,4 +1,12 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import React from 'react';
+
 import { cn } from '../../lib/utils';
 
 export const Button = ({ children, className, variant: _variant, size: _size, ...props }: any) => (

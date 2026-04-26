@@ -1,3 +1,10 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import React from 'react';
 
 export const Tabs = ({ children, defaultValue, className }: any) => {
@@ -32,6 +39,6 @@ export const TabsTrigger = ({ children, value, activeTab, setActiveTab }: any) =
 );
 
 export const TabsContent = ({ children, value, activeTab }: any) => {
-  if (activeTab !== value) return null;
+  if (activeTab !== value) {return null;}
   return <div>{children}</div>;
 };

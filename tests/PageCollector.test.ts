@@ -34,7 +34,7 @@ describe('PageCollector', () => {
       } as any;
     });
     await collector.init([page as any]);
-     (page as any).emit('request', request);
+    (page as any).emit('request', request);
 
     assert.equal(collector.getData(page)[0], request);
   });
@@ -52,10 +52,10 @@ describe('PageCollector', () => {
       } as any;
     });
     await collector.init([page as any]);
-     (page as any).emit('request', request);
+    (page as any).emit('request', request);
 
     assert.equal(collector.getData(page)[0], request);
-     (page as any).emit('framenavigated', mainFrame);
+    (page as any).emit('framenavigated', mainFrame);
 
     assert.equal(collector.getData(page).length, 0);
   });
@@ -72,8 +72,8 @@ describe('PageCollector', () => {
       } as any;
     });
     await collector.init([page as any]);
-     (page as any).emit('request', request);
-     (page as any).emit('framenavigated', {} as Frame);
+    (page as any).emit('request', request);
+    (page as any).emit('framenavigated', {} as Frame);
 
     assert.equal(collector.getData(page).length, 1);
   });
@@ -91,14 +91,14 @@ describe('PageCollector', () => {
       } as any;
     });
     await collector.init([page as any]);
-     (page as any).emit('request', request);
+    (page as any).emit('request', request);
 
     assert.equal(collector.getData(page)[0], request);
-     (page as any).emit('framenavigated', mainFrame);
+    (page as any).emit('framenavigated', mainFrame);
 
     assert.equal(collector.getData(page).length, 0);
 
-     (page as any).emit('request', request);
+    (page as any).emit('request', request);
 
     assert.equal(collector.getData(page).length, 1);
   });
@@ -115,7 +115,7 @@ describe('PageCollector', () => {
       } as any;
     });
     await collector.init([page as any]);
-     (browser as any).emit('targetcreated', {
+    (browser as any).emit('targetcreated', {
       page() {
         return Promise.resolve(page as any);
       },
@@ -126,11 +126,11 @@ describe('PageCollector', () => {
 
     assert.equal(collector.getData(page).length, 0);
 
-     (page as any).emit('request', request);
+    (page as any).emit('request', request);
 
     assert.equal(collector.getData(page).length, 1);
 
-     (page as any).emit('request', request);
+    (page as any).emit('request', request);
 
     assert.equal(collector.getData(page).length, 2);
   });
@@ -148,11 +148,11 @@ describe('PageCollector', () => {
     });
     await collector.init([page as any]);
 
-     (page as any).emit('request', request);
+    (page as any).emit('request', request);
 
     assert.equal(collector.getData(page).length, 1);
 
-     (browser as any).emit('targetdestroyed', {
+    (browser as any).emit('targetdestroyed', {
       page() {
         return Promise.resolve(page as any);
       },
@@ -178,8 +178,8 @@ describe('PageCollector', () => {
     });
     await collector.init([page as any]);
 
-     (page as any).emit('request', request1);
-     (page as any).emit('request', request2);
+    (page as any).emit('request', request1);
+    (page as any).emit('request', request2);
 
     assert.equal(collector.getData(page).length, 2);
 
@@ -201,17 +201,17 @@ describe('NetworkCollector', () => {
     const request2 = getMockRequest();
     const collector = new NetworkCollector(browser as any);
     await collector.init([page as any]);
-     (page as any).emit('request', request);
-     (page as any).emit('request', navRequest);
+    (page as any).emit('request', request);
+    (page as any).emit('request', navRequest);
 
     assert.equal(collector.getData(page)[0], request);
     assert.equal(collector.getData(page)[1], navRequest);
-     (page as any).emit('framenavigated', mainFrame);
+    (page as any).emit('framenavigated', mainFrame);
 
     assert.equal(collector.getData(page).length, 1);
     assert.equal(collector.getData(page)[0], navRequest);
 
-     (page as any).emit('request', request2);
+    (page as any).emit('request', request2);
 
     assert.equal(collector.getData(page).length, 2);
     assert.equal(collector.getData(page)[0], navRequest);
@@ -234,23 +234,23 @@ describe('NetworkCollector', () => {
 
     const collector = new NetworkCollector(browser as any);
     await collector.init([page as any]);
-     (page as any).emit('request', navRequest);
+    (page as any).emit('request', navRequest);
     assert.equal(collector.getData(page)[0], navRequest);
 
-     (page as any).emit('framenavigated', mainFrame);
+    (page as any).emit('framenavigated', mainFrame);
     assert.equal(collector.getData(page).length, 1);
     assert.equal(collector.getData(page)[0], navRequest);
 
-     (page as any).emit('request', navRequest2);
+    (page as any).emit('request', navRequest2);
     assert.equal(collector.getData(page).length, 2);
     assert.equal(collector.getData(page)[0], navRequest);
     assert.equal(collector.getData(page)[1], navRequest2);
 
-     (page as any).emit('framenavigated', mainFrame);
+    (page as any).emit('framenavigated', mainFrame);
     assert.equal(collector.getData(page).length, 1);
     assert.equal(collector.getData(page)[0], navRequest2);
 
-     (page as any).emit('request', request);
+    (page as any).emit('request', request);
     assert.equal(collector.getData(page).length, 2);
   });
 
@@ -270,19 +270,19 @@ describe('NetworkCollector', () => {
 
     const collector = new NetworkCollector(browser as any);
     await collector.init([page as any]);
-     (page as any).emit('request', navRequest);
+    (page as any).emit('request', navRequest);
     assert.equal(collector.getData(page, true).length, 1);
 
-     (page as any).emit('framenavigated', mainFrame);
+    (page as any).emit('framenavigated', mainFrame);
     assert.equal(collector.getData(page, true).length, 1);
 
-     (page as any).emit('request', navRequest2);
+    (page as any).emit('request', navRequest2);
     assert.equal(collector.getData(page, true).length, 2);
 
-     (page as any).emit('framenavigated', mainFrame);
+    (page as any).emit('framenavigated', mainFrame);
     assert.equal(collector.getData(page, true).length, 2);
 
-     (page as any).emit('request', request);
+    (page as any).emit('request', request);
     assert.equal(collector.getData(page, true).length, 3);
   });
 
@@ -300,8 +300,8 @@ describe('NetworkCollector', () => {
         navigationRequest: true,
         frame: mainFrame,
       });
-       (page as any).emit('request', req);
-       (page as any).emit('framenavigated', mainFrame);
+      (page as any).emit('request', req);
+      (page as any).emit('framenavigated', mainFrame);
     }
 
     // We expect 3 arrays in navigations (current + 2 saved)
@@ -333,7 +333,6 @@ describe('ConsoleCollector', () => {
   it('emits issues on page', async () => {
     const browser: any = getMockBrowser();
     const page: any = (await browser.pages())[0];
-    // @ts-expect-error internal API.
     const cdpSession: any = page._client();
     const onIssuesListener = sinon.spy();
 
@@ -357,7 +356,7 @@ describe('ConsoleCollector', () => {
   it('collects issues', async () => {
     const browser: any = getMockBrowser();
     const page: any = (await browser.pages())[0];
-    // @ts-expect-error internal API.
+
     const cdpSession: any = page._client();
 
     const collector = new ConsoleCollector(browser as any, collect => {
@@ -389,7 +388,7 @@ describe('ConsoleCollector', () => {
   it('filters duplicated issues', async () => {
     const browser: any = getMockBrowser();
     const page: any = (await browser.pages())[0];
-    // @ts-expect-error internal API.
+
     const cdpSession: any = page._client();
 
     const collector = new ConsoleCollector(browser as any, collect => {
@@ -414,7 +413,7 @@ describe('ConsoleCollector', () => {
   it('emits UncaughtErrors for Runtime.exceptionThrown CDP events', async () => {
     const browser: any = getMockBrowser();
     const page: any = (await browser.pages())[0];
-    // @ts-expect-error internal API.
+
     const cdpSession: any = page._client();
     const onUncaughtErrorListener = sinon.spy();
     const collector = new ConsoleCollector(browser as any, () => {
@@ -436,8 +435,8 @@ describe('ConsoleCollector', () => {
       onUncaughtErrorListener,
       sinon.match(e => {
         return (
-          e.details.exception.description === 'SyntaxError: Expected {',
-          e.details.text === 'Uncaught',
+          e.details.exception.description === 'SyntaxError: Expected {' &&
+          e.details.text === 'Uncaught' &&
           e.details.stackTrace.callFrames.length === 0
         );
       }),

@@ -11,9 +11,9 @@ import path from 'node:path';
 
 import type {CallToolResult} from '@modelcontextprotocol/sdk/types.js';
 import logger from 'debug';
-import type {Browser} from 'puppeteer-core';
 import {Locator} from 'puppeteer-core';
 import puppeteer from 'puppeteer-core';
+import type {Browser} from 'puppeteer-core';
 import type {
   Frame,
   HTTPRequest,
