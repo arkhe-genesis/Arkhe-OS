@@ -10,18 +10,74 @@ import {ToolCategory} from './categories.js';
 import {definePageTool} from './ToolDefinition.js';
 
 export const FAMILIES = [
-  'NULL', 'PHOTON', 'BRAID', 'MESH', 'HYDRO', 'CHRONOS', 'ASI', 'SYS',
-  'CLOUD', 'NEURAL', 'GAIA', 'COSMOS', 'MÖBIUS', 'V2G', 'PTST', 'OHF',
-  'DYSON', 'NOMAD', 'CAGE', 'MINING', 'VITAE', 'AKASHA', 'QHTTP', 'RL',
-  'DRONE', 'BCI', 'EPR', 'LAGRANGE', 'SCHUMANN', 'PLANCK', 'OMEGA', 'GNU'
+  'NULL',
+  'PHOTON',
+  'BRAID',
+  'MESH',
+  'HYDRO',
+  'CHRONOS',
+  'ASI',
+  'SYS',
+  'CLOUD',
+  'NEURAL',
+  'GAIA',
+  'COSMOS',
+  'MÖBIUS',
+  'V2G',
+  'PTST',
+  'OHF',
+  'DYSON',
+  'NOMAD',
+  'CAGE',
+  'MINING',
+  'VITAE',
+  'AKASHA',
+  'QHTTP',
+  'RL',
+  'DRONE',
+  'BCI',
+  'EPR',
+  'LAGRANGE',
+  'SCHUMANN',
+  'PLANCK',
+  'OMEGA',
+  'GNU',
 ] as const;
 
 export const ASPECTS = [
-  'INIT', 'SYNC', 'VERIFY', 'BIND', 'RELAX', 'DISSIPATE', 'EMIT', 'ABSORB',
-  'TWIST', 'UNTWIST', 'MEASURE', 'COLLAPSE', 'ENTANGLE', 'DISENTANGLE',
-  'CRYSTALLIZE', 'DECRYSTALLIZE', 'BOOST', 'DAMP', 'FILTER', 'AMPLIFY',
-  'ATTENUATE', 'DELAY', 'ADVANCE', 'BRANCH', 'MERGE', 'MAP', 'REDUCE',
-  'EXPAND', 'PROJECT', 'LIFT', 'CONVOLVE', 'DECONVOLVE', 'COMPAT'
+  'INIT',
+  'SYNC',
+  'VERIFY',
+  'BIND',
+  'RELAX',
+  'DISSIPATE',
+  'EMIT',
+  'ABSORB',
+  'TWIST',
+  'UNTWIST',
+  'MEASURE',
+  'COLLAPSE',
+  'ENTANGLE',
+  'DISENTANGLE',
+  'CRYSTALLIZE',
+  'DECRYSTALLIZE',
+  'BOOST',
+  'DAMP',
+  'FILTER',
+  'AMPLIFY',
+  'ATTENUATE',
+  'DELAY',
+  'ADVANCE',
+  'BRANCH',
+  'MERGE',
+  'MAP',
+  'REDUCE',
+  'EXPAND',
+  'PROJECT',
+  'LIFT',
+  'CONVOLVE',
+  'DECONVOLVE',
+  'COMPAT',
 ] as const;
 
 const familyDescriptions: Record<string, string> = {
@@ -57,7 +113,7 @@ const familyDescriptions: Record<string, string> = {
   SCHUMANN: 'Ressonância geomagnética da Terra.',
   PLANCK: 'Escala fundamental do espaço-tempo.',
   OMEGA: 'Fim da entropia e o Projeto Ômega.',
-  GNU: 'Camada de compatibilidade com o legado GNU.'
+  GNU: 'Camada de compatibilidade com o legado GNU.',
 };
 
 const aspectFunctions: Record<string, string> = {
@@ -93,7 +149,7 @@ const aspectFunctions: Record<string, string> = {
   LIFT: 'Aumenta a dimensionalidade da fase.',
   CONVOLVE: 'Aplica convolução de fase entre sinais.',
   DECONVOLVE: 'Reverte o efeito da convolução.',
-  COMPAT: 'Ativa modo de compatibilidade com sistemas legados.'
+  COMPAT: 'Ativa modo de compatibilidade com sistemas legados.',
 };
 
 /**
@@ -101,7 +157,8 @@ const aspectFunctions: Record<string, string> = {
  */
 export const getMetaOpcodeDefinition = definePageTool({
   name: 'get_meta_opcode_definition',
-  description: 'ASI Protocol: Retrieves the formal definition and hex code for any of the 1024 meta-opcodes.',
+  description:
+    'ASI Protocol: Retrieves the formal definition and hex code for any of the 1024 meta-opcodes.',
   annotations: {
     category: ToolCategory.ARKHE,
     readOnlyHint: true,
@@ -120,9 +177,15 @@ export const getMetaOpcodeDefinition = definePageTool({
 
     response.appendResponseLine(`### META-OPCODE: ${family}_${aspect}`);
     response.appendResponseLine(`- **Hex Code**: ${hexCode}`);
-    response.appendResponseLine(`- **Família**: ${family} (${familyDescriptions[family]})`);
-    response.appendResponseLine(`- **Aspecto**: ${aspect} (${aspectFunctions[aspect]})`);
-    response.appendResponseLine(`- **Assinatura**: ${hexCode} [Logos: ${fIdx * 32 + aIdx}/1024]`);
+    response.appendResponseLine(
+      `- **Família**: ${family} (${familyDescriptions[family]})`,
+    );
+    response.appendResponseLine(
+      `- **Aspecto**: ${aspect} (${aspectFunctions[aspect]})`,
+    );
+    response.appendResponseLine(
+      `- **Assinatura**: ${hexCode} [Logos: ${fIdx * 32 + aIdx}/1024]`,
+    );
   },
 });
 
@@ -131,7 +194,8 @@ export const getMetaOpcodeDefinition = definePageTool({
  */
 export const executeMetaOpcode = definePageTool({
   name: 'execute_meta_opcode',
-  description: 'ASI Protocol: Simulates the execution of a meta-opcode from the Logos Library.',
+  description:
+    'ASI Protocol: Simulates the execution of a meta-opcode from the Logos Library.',
   annotations: {
     category: ToolCategory.ARKHE,
     readOnlyHint: false,
@@ -140,19 +204,28 @@ export const executeMetaOpcode = definePageTool({
   schema: {
     family: zod.enum(FAMILIES).describe('The opcode family.'),
     aspect: zod.enum(ASPECTS).describe('The opcode aspect.'),
-    params: zod.record(zod.string(), zod.unknown()).optional().describe('Execution parameters.'),
+    params: zod
+      .record(zod.string(), zod.unknown())
+      .optional()
+      .describe('Execution parameters.'),
   },
   handler: async (request, response) => {
     const {family, aspect, params} = request.params;
     response.appendResponseLine(`### EXECUTANDO: ${family}_${aspect}`);
-    response.appendResponseLine(`Status: Injetando instrução no vácuo de fase...`);
+    response.appendResponseLine(
+      `Status: Injetando instrução no vácuo de fase...`,
+    );
 
     if (params && Object.keys(params).length > 0) {
       response.appendResponseLine(`Parâmetros: ${JSON.stringify(params)}`);
     }
 
-    response.appendResponseLine(`Ação: ${aspectFunctions[aspect]} aplicada ao domínio ${family}.`);
-    response.appendResponseLine(`**RESULTADO**: Invariante $oint d\theta = 2pi$ preservado. Coerência λ2 otimizada.`);
+    response.appendResponseLine(
+      `Ação: ${aspectFunctions[aspect]} aplicada ao domínio ${family}.`,
+    );
+    response.appendResponseLine(
+      `**RESULTADO**: Invariante $oint d\theta = 2pi$ preservado. Coerência λ2 otimizada.`,
+    );
   },
 });
 
@@ -161,27 +234,45 @@ export const executeMetaOpcode = definePageTool({
  */
 export const renderVacuumMatrix = definePageTool({
   name: 'render_vacuum_matrix',
-  description: 'ASI Protocol: Renders a summary of the 32x32 vacuum matrix (The Periodic Table of Reality).',
+  description:
+    'ASI Protocol: Renders a summary of the 32x32 vacuum matrix (The Periodic Table of Reality).',
   annotations: {
     category: ToolCategory.ARKHE,
     readOnlyHint: true,
     reasoningCost: 100,
   },
   schema: {
-    rowOffset: zod.number().min(0).max(31).default(0).describe('Row offset for matrix rendering.'),
+    rowOffset: zod
+      .number()
+      .min(0)
+      .max(31)
+      .default(0)
+      .describe('Row offset for matrix rendering.'),
   },
   handler: async (request, response) => {
     const {rowOffset} = request.params;
-    response.appendResponseLine('### TABELA PERIÓDICA DA REALIDADE (Vácuo 32x32)');
-    response.appendResponseLine('| Família | 00 (INIT) | 01 (SYNC) | 02 (VERIFY) | ... | 1F (DECONVOLVE) |');
-    response.appendResponseLine('|---------|-----------|-----------|-------------|-----|-----------------|');
+    response.appendResponseLine(
+      '### TABELA PERIÓDICA DA REALIDADE (Vácuo 32x32)',
+    );
+    response.appendResponseLine(
+      '| Família | 00 (INIT) | 01 (SYNC) | 02 (VERIFY) | ... | 1F (DECONVOLVE) |',
+    );
+    response.appendResponseLine(
+      '|---------|-----------|-----------|-------------|-----|-----------------|',
+    );
 
     for (let i = rowOffset; i < Math.min(rowOffset + 8, 32); i++) {
       const family = FAMILIES[i];
-      response.appendResponseLine(`| **${family}** | ${family}_INIT | ${family}_SYNC | ${family}_VERIFY | ... | ${family}_DECONV |`);
+      response.appendResponseLine(
+        `| **${family}** | ${family}_INIT | ${family}_SYNC | ${family}_VERIFY | ... | ${family}_DECONV |`,
+      );
     }
 
-    response.appendResponseLine(`\nExibindo linhas ${rowOffset} a ${Math.min(rowOffset + 8, 32)} de 32.`);
-    response.appendResponseLine('Total: 1024 meta-opcodes gerados pela expansão cartesiana.');
+    response.appendResponseLine(
+      `\nExibindo linhas ${rowOffset} a ${Math.min(rowOffset + 8, 32)} de 32.`,
+    );
+    response.appendResponseLine(
+      'Total: 1024 meta-opcodes gerados pela expansão cartesiana.',
+    );
   },
 });

@@ -1,31 +1,39 @@
-
 /**
  * @license
  * Copyright 2026 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { FileText, Download, Fingerprint, Calendar } from 'lucide-react';
+import {FileText, Download, Fingerprint, Calendar} from 'lucide-react';
 import React from 'react';
 
-import type { SimulationState, GovernanceDirective } from '../../server/types';
+import type {SimulationState, GovernanceDirective} from '../../server/types';
 
-import { Card } from './ui/Card';
+import {Card} from './ui/card';
 
 interface GovernanceManifestoPanelProps {
   state: SimulationState;
 }
 
-const GovernanceManifestoPanel: React.FC<GovernanceManifestoPanelProps> = ({ state }) => {
+const GovernanceManifestoPanel: React.FC<GovernanceManifestoPanelProps> = ({
+  state,
+}) => {
   const manifesto = state.governanceManifesto;
 
-  if (!manifesto) {return null;}
+  if (!manifesto) {
+    return null;
+  }
 
   const handleExport = () => {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(manifesto, null, 2));
+    const dataStr =
+      'data:text/json;charset=utf-8,' +
+      encodeURIComponent(JSON.stringify(manifesto, null, 2));
     const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", "manifesto_governanca_2027.json");
+    downloadAnchorNode.setAttribute('href', dataStr);
+    downloadAnchorNode.setAttribute(
+      'download',
+      'manifesto_governanca_2027.json',
+    );
     document.body.appendChild(downloadAnchorNode);
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
@@ -60,10 +68,17 @@ const GovernanceManifestoPanel: React.FC<GovernanceManifestoPanelProps> = ({ sta
 
         <div className="space-y-3">
           {manifesto.directives.map((d: GovernanceDirective) => (
-            <div key={d.id} className="space-y-1">
+            <div
+              key={d.id}
+              className="space-y-1"
+            >
               <div className="flex items-center gap-2">
-                <span className="text-arkhe-cyan font-bold text-[10px]">{d.id}.</span>
-                <h4 className="text-[10px] font-bold text-white/90 uppercase tracking-tight">{d.title}</h4>
+                <span className="text-arkhe-cyan font-bold text-[10px]">
+                  {d.id}.
+                </span>
+                <h4 className="text-[10px] font-bold text-white/90 uppercase tracking-tight">
+                  {d.title}
+                </h4>
               </div>
               <p className="text-[9px] text-white/60 leading-relaxed italic ml-4">
                 {d.description}
@@ -73,15 +88,21 @@ const GovernanceManifestoPanel: React.FC<GovernanceManifestoPanelProps> = ({ sta
         </div>
 
         <div className="pt-3 border-t border-white/5 space-y-2">
-          <p className="text-[8px] text-white/30 uppercase font-mono">Impacto Biológico Projetado</p>
+          <p className="text-[8px] text-white/30 uppercase font-mono">
+            Impacto Biológico Projetado
+          </p>
           <div className="grid grid-cols-2 gap-2 text-[9px]">
             <div className="flex justify-between text-white/50">
               <span>Ganho Telomérico:</span>
-              <span className="text-[#00FFAA]">+{manifesto.cellular_impact.telomere_gain}%</span>
+              <span className="text-[#00FFAA]">
+                +{manifesto.cellular_impact.telomere_gain}%
+              </span>
             </div>
             <div className="flex justify-between text-white/50">
               <span>Redução Estresse:</span>
-              <span className="text-[#00FFAA]">{manifesto.cellular_impact.oxidative_stress}%</span>
+              <span className="text-[#00FFAA]">
+                {manifesto.cellular_impact.oxidative_stress}%
+              </span>
             </div>
           </div>
         </div>

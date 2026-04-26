@@ -36,7 +36,9 @@ export default function ArkheGoogleBridgePanel({ onClose }: ArkheGoogleBridgePan
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!messageInput.trim() || connectionState !== 'connected') {return;}
+    if (!messageInput.trim() {
+    || connectionState !== 'connected') {return;
+  }}
     
     addLog(`[OUT] AgentMessage: ${messageInput}`);
     setMessageInput('');

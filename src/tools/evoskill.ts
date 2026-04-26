@@ -13,21 +13,23 @@ import {defineTool} from './ToolDefinition.js';
 
 const EVOSKILL_BINARY = '/home/jules/.local/bin/evoskill';
 
-async function runEvoSkill(args: string[]): Promise<{stdout: string; stderr: string; code: number | null}> {
-  return new Promise((resolve) => {
+async function runEvoSkill(
+  args: string[],
+): Promise<{stdout: string; stderr: string; code: number | null}> {
+  return new Promise(resolve => {
     const process = spawn(EVOSKILL_BINARY, args);
     let stdout = '';
     let stderr = '';
 
-    process.stdout.on('data', (data) => {
+    process.stdout.on('data', data => {
       stdout += data.toString();
     });
 
-    process.stderr.on('data', (data) => {
+    process.stderr.on('data', data => {
       stderr += data.toString();
     });
 
-    process.on('close', (code) => {
+    process.on('close', code => {
       resolve({stdout, stderr, code});
     });
   });
@@ -35,7 +37,8 @@ async function runEvoSkill(args: string[]): Promise<{stdout: string; stderr: str
 
 export const evoskillInit = defineTool({
   name: 'evoskill_init',
-  description: 'EvoSkill Protocol: Initializes a new self-evolution project in the current worldline.',
+  description:
+    'EvoSkill Protocol: Initializes a new self-evolution project in the current worldline.',
   annotations: {
     category: ToolCategory.EVOSKILL,
     readOnlyHint: false,
@@ -59,18 +62,27 @@ export const evoskillInit = defineTool({
     const {stdout, stderr, code} = await runEvoSkill(['init']);
 
     if (code === 0 || stdout.includes('EvoSkill')) {
-      response.appendResponseLine('**Status**: `.evoskill/config.toml` and `.evoskill/task.md` synthesized.');
-      response.appendResponseLine('**Worldline**: Ancoragem de evolução estabelecida no substrato local.');
+      response.appendResponseLine(
+        '**Status**: `.evoskill/config.toml` and `.evoskill/task.md` synthesized.',
+      );
+      response.appendResponseLine(
+        '**Worldline**: Ancoragem de evolução estabelecida no substrato local.',
+      );
     } else {
-      response.appendResponseLine(`**Error**: Failed to initialize evolution project (Code ${code}).`);
-      if (stderr) response.appendResponseLine(`\`\`\`\n${stderr}\n\`\`\``);
+      response.appendResponseLine(
+        `**Error**: Failed to initialize evolution project (Code ${code}).`,
+      );
+      if (stderr) {
+        response.appendResponseLine(`\`\`\`\n${stderr}\n\`\`\``);
+      }
     }
   },
 });
 
 export const evoskillRun = defineTool({
   name: 'evoskill_run',
-  description: 'EvoSkill Protocol: Executes the evolutionary loop (Observe → Propose → Mutate → Evaluate).',
+  description:
+    'EvoSkill Protocol: Executes the evolutionary loop (Observe → Propose → Mutate → Evaluate).',
   annotations: {
     category: ToolCategory.EVOSKILL,
     readOnlyHint: false,
@@ -86,7 +98,9 @@ export const evoskillRun = defineTool({
     response.appendResponseLine('### EvoSkill: Self-Improvement Loop Active');
 
     const args = ['run'];
-    if (request.params.continueMode) { args.push('--continue'); }
+    if (request.params.continueMode) {
+      args.push('--continue');
+    }
 
     // In a real environment, this might take a long time.
     // We'll run it and report the outcome.
@@ -99,18 +113,27 @@ export const evoskillRun = defineTool({
     }
 
     if (code === 0) {
-      response.appendResponseLine('\n**Result**: Evolutionary convergence detected.');
-      response.appendResponseLine('**Metric**: Coerência do agente aumentada via mutação de prompt/habilidade.');
+      response.appendResponseLine(
+        '\n**Result**: Evolutionary convergence detected.',
+      );
+      response.appendResponseLine(
+        '**Metric**: Coerência do agente aumentada via mutação de prompt/habilidade.',
+      );
     } else {
-      response.appendResponseLine(`\n**Status**: Loop interrupted (Code ${code}).`);
-      if (stderr) response.appendResponseLine(`\`\`\`\n${stderr}\n\`\`\``);
+      response.appendResponseLine(
+        `\n**Status**: Loop interrupted (Code ${code}).`,
+      );
+      if (stderr) {
+        response.appendResponseLine(`\`\`\`\n${stderr}\n\`\`\``);
+      }
     }
   },
 });
 
 export const evoskillEval = defineTool({
   name: 'evoskill_eval',
-  description: 'EvoSkill Protocol: Evaluates the current optimal program on the validation dataset.',
+  description:
+    'EvoSkill Protocol: Evaluates the current optimal program on the validation dataset.',
   annotations: {
     category: ToolCategory.EVOSKILL,
     readOnlyHint: true,
@@ -129,17 +152,24 @@ export const evoskillEval = defineTool({
     }
 
     if (code === 0) {
-      response.appendResponseLine('\n**Verdict**: Significant performance delta relative to baseline verified by CUA.');
+      response.appendResponseLine(
+        '\n**Verdict**: Significant performance delta relative to baseline verified by CUA.',
+      );
     } else {
-      response.appendResponseLine(`\n**Error**: Evaluation failed (Code ${code}).`);
-      if (stderr) response.appendResponseLine(`\`\`\`\n${stderr}\n\`\`\``);
+      response.appendResponseLine(
+        `\n**Error**: Evaluation failed (Code ${code}).`,
+      );
+      if (stderr) {
+        response.appendResponseLine(`\`\`\`\n${stderr}\n\`\`\``);
+      }
     }
   },
 });
 
 export const evoskillSkills = defineTool({
   name: 'evoskill_skills',
-  description: 'EvoSkill Protocol: Lists all evolved skills discovered during the current cycle.',
+  description:
+    'EvoSkill Protocol: Lists all evolved skills discovered during the current cycle.',
   annotations: {
     category: ToolCategory.EVOSKILL,
     readOnlyHint: true,
@@ -156,11 +186,15 @@ export const evoskillSkills = defineTool({
       response.appendResponseLine(stdout);
       response.appendResponseLine('```');
     } else if (code === 0) {
-      response.appendResponseLine('No evolved skills found in current worldline.');
+      response.appendResponseLine(
+        'No evolved skills found in current worldline.',
+      );
     }
 
     if (code !== 0 && stderr) {
-      response.appendResponseLine(`**Error**: Failed to list skills (Code ${code}).`);
+      response.appendResponseLine(
+        `**Error**: Failed to list skills (Code ${code}).`,
+      );
       response.appendResponseLine(`\`\`\`\n${stderr}\n\`\`\``);
     }
   },
@@ -168,7 +202,8 @@ export const evoskillSkills = defineTool({
 
 export const evoskillDiff = defineTool({
   name: 'evoskill_diff',
-  description: 'EvoSkill Protocol: Diffs the current program against a target iteration or baseline.',
+  description:
+    'EvoSkill Protocol: Diffs the current program against a target iteration or baseline.',
   annotations: {
     category: ToolCategory.EVOSKILL,
     readOnlyHint: true,
@@ -178,14 +213,20 @@ export const evoskillDiff = defineTool({
     targetIteration: zod
       .number()
       .optional()
-      .describe('The iteration number to compare against. Defaults to baseline (0).'),
+      .describe(
+        'The iteration number to compare against. Defaults to baseline (0).',
+      ),
   },
   handler: async (request, response) => {
     const target = request.params.targetIteration;
-    response.appendResponseLine(`### EvoSkill: Program Diff (${target ?? 'Baseline'} → Current Best)`);
+    response.appendResponseLine(
+      `### EvoSkill: Program Diff (${target ?? 'Baseline'} → Current Best)`,
+    );
 
     const args = ['diff'];
-    if (target !== undefined) { args.push(target.toString()); }
+    if (target !== undefined) {
+      args.push(target.toString());
+    }
 
     const {stdout, stderr, code} = await runEvoSkill(args);
 

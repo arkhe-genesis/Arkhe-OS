@@ -1,4 +1,3 @@
-
 /**
  * @license
  * Copyright 2026 Google LLC
@@ -9,7 +8,7 @@ export class ArkheSDK {
   private providerUrl: string;
   private coherenceThreshold: number;
 
-  constructor(config: { providerUrl: string; coherenceThreshold?: number }) {
+  constructor(config: {providerUrl: string; coherenceThreshold?: number}) {
     this.providerUrl = config.providerUrl;
     this.coherenceThreshold = config.coherenceThreshold || 0.7;
   }
@@ -20,7 +19,7 @@ export class ArkheSDK {
       status: 'SENSORY_ACTIVE',
       coherence: 0.985,
       activeNodes: 128,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
   }
 
@@ -31,7 +30,7 @@ export class ArkheSDK {
     // Simulate contract interaction
     return {
       txHash: '0x' + Math.random().toString(16).slice(2, 64),
-      status: 'confirmed'
+      status: 'confirmed',
     };
   }
 
@@ -41,7 +40,7 @@ export class ArkheSDK {
     return {
       stateHash,
       anchored: true,
-      txHash: '0x' + Math.random().toString(16).slice(2, 64)
+      txHash: '0x' + Math.random().toString(16).slice(2, 64),
     };
   }
 
@@ -50,7 +49,7 @@ export class ArkheSDK {
     return {
       result: `OrbVM executed: ${query}`,
       gasUsed: Math.floor(Math.random() * 100000),
-      lambda: 0.99
+      lambda: 0.99,
     };
   }
 }

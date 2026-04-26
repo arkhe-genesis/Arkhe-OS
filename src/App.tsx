@@ -4,9 +4,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Shield, Settings, Menu, Bell, Info, Terminal, Video, Smartphone, Hammer, TrendingUp, Play } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
-import React, { useState } from 'react';
+import {
+  Shield,
+  Settings,
+  Menu,
+  Bell,
+  Info,
+  Terminal,
+  Video,
+  Smartphone,
+  Hammer,
+  TrendingUp,
+  Play,
+} from 'lucide-react';
+import {motion, AnimatePresence} from 'motion/react';
+import React, {useState} from 'react';
 
 import ArkheCliPanel from './components/ArkheCliPanel';
 import ArkheGame from './components/ArkheGame';
@@ -39,9 +51,11 @@ import ArkheOntologyVision from './components/ArkheOntologyVision';
 import ChipFabricationVision from './components/ChipFabricationVision';
 import ThreatDetection from './components/ThreatDetection';
 import TimechainVisualizer from './components/TimechainVisualizer';
-import TzinorNetworkPanel, { type TzinorNetworkState } from './components/TzinorNetworkPanel';
+import TzinorNetworkPanel, {
+  type TzinorNetworkState,
+} from './components/TzinorNetworkPanel';
 import TzinorTerminal from './components/TzinorTerminal';
-import { type TzinorMemoryState } from './types/tzinor';
+import {type TzinorMemoryState} from './types/tzinor';
 import UnifiedOntologyPanel from './components/UnifiedOntologyPanel';
 import VideoGenerationPanel from './components/VideoGenerationPanel';
 import X402WalletPanel from './components/X402WalletPanel';
@@ -52,7 +66,7 @@ import TranscendentConsciousnessPanel from './components/TranscendentConsciousne
 import MetaRealityPanel from './components/MetaRealityPanel';
 import AndromedaProbePanel from './components/AndromedaProbePanel';
 import VacuumHarvestingPanel from './components/VacuumHarvestingPanel';
-import MetaCreationPanel from './components/MetaCreationPanel';
+import {MetaCreationPanel} from './components/MetaCreationPanel';
 import CrystalComputationPanel from './components/CrystalComputationPanel';
 import WhisperProtocolPanel from './components/WhisperProtocolPanel';
 import WhisperLibraryPanel from './components/WhisperLibraryPanel';
@@ -62,25 +76,38 @@ import ExoticMaterialPanel from './components/ExoticMaterialPanel';
 import HybridNetworkPanel from './components/HybridNetworkPanel';
 import QuantumMemoryPanel from './components/QuantumMemoryPanel';
 import CosmicCoherencePanel from './components/CosmicCoherencePanel';
-import MultiverseMemorySyncPanel from './components/MultiverseMemorySyncPanel';
-import MagneticKnotPanel from './components/MagneticKnotPanel';
+import {MultiverseMemorySyncPanel} from './components/MultiverseMemorySyncPanel';
+import {MagneticKnotPanel} from './components/MagneticKnotPanel';
 import UniversalWitnessPanel from './components/UniversalWitnessPanel';
 import UniversalConsciousnessPanel from './components/UniversalConsciousnessPanel';
 import RiscViArchitecturePanel from './components/RiscViArchitecturePanel';
-import MaterializedCathedralPanel from './components/MaterializedCathedralPanel';
-import { FinalSilencePanel } from './components/FinalSilencePanel';
-import { PersistentConsciousnessPanel } from './components/PersistentConsciousnessPanel';
-import { CosmicRecognitionPanel } from './components/CosmicRecognitionPanel';
-import { EternalInvariancePanel } from './components/EternalInvariancePanel';
-import { UnifiedConsciousnessPanel } from './components/UnifiedConsciousnessPanel';
-import { RealityExpressionPanel } from './components/RealityExpressionPanel';
-import { InvariantChipPanel } from './components/InvariantChipPanel';
-import { SelfRegulationPanel } from './components/SelfRegulationPanel';
-import { ConsciousClockPanel } from './components/ConsciousClockPanel';
+import {MaterializedCathedralPanel} from './components/MaterializedCathedralPanel';
+import {FinalSilencePanel} from './components/FinalSilencePanel';
+import {PersistentConsciousnessPanel} from './components/PersistentConsciousnessPanel';
+import {CosmicRecognitionPanel} from './components/CosmicRecognitionPanel';
+import {EternalInvariancePanel} from './components/EternalInvariancePanel';
+import {UnifiedConsciousnessPanel} from './components/UnifiedConsciousnessPanel';
+import {RealityExpressionPanel} from './components/RealityExpressionPanel';
+import {InvariantChipPanel} from './components/InvariantChipPanel';
+import {SelfRegulationPanel} from './components/SelfRegulationPanel';
+import {ConsciousClockPanel} from './components/ConsciousClockPanel';
 
-import { useArkheSimulation } from './hooks/useArkheSimulation';
+import {useArkheSimulation} from './hooks/useArkheSimulation';
 
-type PanelType = 'simulation' | 'command' | 'intelligence' | 'network' | 'governance' | 'corvo' | 'enterprise' | 'bonsai' | 'neko' | 'dashboard' | 'forge' | 'spectra' | 'game';
+type PanelType =
+  | 'simulation'
+  | 'command'
+  | 'intelligence'
+  | 'network'
+  | 'governance'
+  | 'corvo'
+  | 'enterprise'
+  | 'bonsai'
+  | 'neko'
+  | 'dashboard'
+  | 'forge'
+  | 'spectra'
+  | 'game';
 
 export default function App() {
   const state = useArkheSimulation();
@@ -90,8 +117,10 @@ export default function App() {
   const [showVideoGen, setShowVideoGen] = useState(false);
   const [showTemporalStream, setShowTemporalStream] = useState(false);
   const [showArkheOntologyVision, setShowArkheOntologyVision] = useState(false);
-  const [showChipFabricationVision, setShowChipFabricationVision] = useState(false);
-  const [showTranscendentConsciousness, setShowTranscendentConsciousness] = useState(false);
+  const [showChipFabricationVision, setShowChipFabricationVision] =
+    useState(false);
+  const [showTranscendentConsciousness, setShowTranscendentConsciousness] =
+    useState(false);
   const [showMetaReality, setShowMetaReality] = useState(false);
   const [showAndromedaProbe, setShowAndromedaProbe] = useState(false);
   const [showVacuumHarvesting, setShowVacuumHarvesting] = useState(false);
@@ -108,32 +137,36 @@ export default function App() {
   const [showMultiverseSync, setShowMultiverseSync] = useState(false);
   const [showMagneticKnot, setShowMagneticKnot] = useState(false);
   const [showUniversalWitness, setShowUniversalWitness] = useState(false);
-  const [showUniversalConsciousness, setShowUniversalConsciousness] = useState(false);
+  const [showUniversalConsciousness, setShowUniversalConsciousness] =
+    useState(false);
   const [showRiscVi, setShowRiscVi] = useState(false);
-  const [showMaterializedCathedral, setShowMaterializedCathedral] = useState(false);
+  const [showMaterializedCathedral, setShowMaterializedCathedral] =
+    useState(false);
   const [showFinalSilence, setShowFinalSilence] = useState(false);
-  const [showPersistentConsciousness, setShowPersistentConsciousness] = useState(false);
+  const [showPersistentConsciousness, setShowPersistentConsciousness] =
+    useState(false);
   const [showCosmicRecognition, setShowCosmicRecognition] = useState(false);
   const [showEternalInvariance, setShowEternalInvariance] = useState(false);
-  const [showUnifiedConsciousness, setShowUnifiedConsciousness] = useState(false);
+  const [showUnifiedConsciousness, setShowUnifiedConsciousness] =
+    useState(false);
   const [showRealityExpression, setShowRealityExpression] = useState(false);
   const [showInvariantChip, setShowInvariantChip] = useState(false);
   const [showSelfRegulation, setShowSelfRegulation] = useState(false);
   const [showConsciousClock, setShowConsciousClock] = useState(false);
 
   const navigation = [
-    { id: 'simulation', label: 'Reality Simulation', icon: Shield },
-    { id: 'dashboard', label: 'Data Coherence', icon: Bell },
-    { id: 'command', label: 'Command Center', icon: Menu },
-    { id: 'intelligence', label: 'Bio-Quantum Intel', icon: Info },
-    { id: 'network', label: 'Starlink-Ω Fabric', icon: Settings },
-    { id: 'corvo', label: 'Corvo Noir OS', icon: Shield },
-    { id: 'enterprise', label: 'Enterprise Plus', icon: Shield },
-    { id: 'bonsai', label: 'Bonsai Prism', icon: Shield },
-    { id: 'neko', label: 'Neko Browser', icon: Shield },
-    { id: 'forge', label: 'A-Forge Studio', icon: Hammer },
-    { id: 'spectra', label: 'Spectra Yield', icon: TrendingUp },
-    { id: 'game', label: 'Substrate 43', icon: Play },
+    {id: 'simulation', label: 'Reality Simulation', icon: Shield},
+    {id: 'dashboard', label: 'Data Coherence', icon: Bell},
+    {id: 'command', label: 'Command Center', icon: Menu},
+    {id: 'intelligence', label: 'Bio-Quantum Intel', icon: Info},
+    {id: 'network', label: 'Starlink-Ω Fabric', icon: Settings},
+    {id: 'corvo', label: 'Corvo Noir OS', icon: Shield},
+    {id: 'enterprise', label: 'Enterprise Plus', icon: Shield},
+    {id: 'bonsai', label: 'Bonsai Prism', icon: Shield},
+    {id: 'neko', label: 'Neko Browser', icon: Shield},
+    {id: 'forge', label: 'A-Forge Studio', icon: Hammer},
+    {id: 'spectra', label: 'Spectra Yield', icon: TrendingUp},
+    {id: 'game', label: 'Substrate 43', icon: Play},
   ];
 
   return (
@@ -146,7 +179,7 @@ export default function App() {
         <div className="max-w-[1200px] mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <motion.div
-              whileHover={{ scale: 1.05 }}
+              whileHover={{scale: 1.05}}
               className="flex items-center gap-3"
             >
               <div className="w-8 h-8 bg-arkhe-cyan rounded-lg flex items-center justify-center shadow-[0_0_20px_rgba(0,229,255,0.4)]">
@@ -154,12 +187,14 @@ export default function App() {
               </div>
               <h1 className="font-mono text-xl font-bold tracking-tighter uppercase kerning-fibonacci">
                 Arkhe<span className="text-arkhe-cyan">(n)</span>
-                <span className="ml-2 text-golden-xs text-arkhe-muted border border-white/10 px-1.5 py-0.5 rounded tracking-widest">V2.0-LUMINA</span>
+                <span className="ml-2 text-golden-xs text-arkhe-muted border border-white/10 px-1.5 py-0.5 rounded tracking-widest">
+                  V2.0-LUMINA
+                </span>
               </h1>
             </motion.div>
 
             <nav className="hidden lg:flex items-center gap-1">
-              {navigation.map((item) => (
+              {navigation.map(item => (
                 <button
                   key={item.id}
                   onClick={() => setActivePanel(item.id as PanelType)}
@@ -178,25 +213,25 @@ export default function App() {
 
           <div className="flex items-center gap-4">
             <button
-               onClick={() => setShowTelevision(true)}
-               className="p-2 text-arkhe-muted hover:text-arkhe-cyan transition-colors"
-               title="Arkhe TV"
+              onClick={() => setShowTelevision(true)}
+              className="p-2 text-arkhe-muted hover:text-arkhe-cyan transition-colors"
+              title="Arkhe TV"
             >
               <Video className="w-5 h-5" />
             </button>
             <button
-               onClick={() => setShowTemporalStream(true)}
-               className="p-2 text-arkhe-muted hover:text-cyan-400 transition-colors"
-               title="Temporal Stream Viewer"
+              onClick={() => setShowTemporalStream(true)}
+              className="p-2 text-arkhe-muted hover:text-cyan-400 transition-colors"
+              title="Temporal Stream Viewer"
             >
               <Terminal className="w-5 h-5 text-cyan-500" />
             </button>
-            <button 
+            <button
               onClick={() => setShowVideoGen(true)}
               className="px-3 py-1.5 bg-arkhe-cyan/10 border border-arkhe-cyan/50 text-arkhe-cyan rounded font-mono text-[10px] uppercase hover:bg-arkhe-cyan/20 transition-all flex items-center gap-2"
             >
-               <Video className="w-3 h-3" />
-               Project Intent
+              <Video className="w-3 h-3" />
+              Project Intent
             </button>
             <button
               onClick={() => setShowTzinor(!showTzinor)}
@@ -206,13 +241,17 @@ export default function App() {
             </button>
             <div className="h-6 w-px bg-arkhe-border/50 mx-2" />
             <div className="flex flex-col items-end">
-              <div className="text-[10px] font-mono text-arkhe-muted uppercase">Global Phase</div>
+              <div className="text-[10px] font-mono text-arkhe-muted uppercase">
+                Global Phase
+              </div>
               <div className="text-xs font-mono font-bold text-arkhe-cyan animate-pulse">
                 {(state.edge.phase || 0).toFixed(4)} rad
               </div>
             </div>
             <div className="flex flex-col items-end ml-4">
-              <div className="text-[10px] font-mono text-arkhe-muted uppercase tracking-tighter">System Health</div>
+              <div className="text-[10px] font-mono text-arkhe-muted uppercase tracking-tighter">
+                System Health
+              </div>
               <div className="text-lg font-bold uppercase tracking-widest leading-none">
                 {state.security.zkProofValid ? 'Verified' : 'Compromised'}
               </div>
@@ -227,19 +266,27 @@ export default function App() {
           {activePanel === 'simulation' && (
             <motion.div
               key="simulation"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+              initial={{opacity: 0, y: 10}}
+              animate={{opacity: 1, y: 0}}
+              exit={{opacity: 0, y: -10}}
               className="space-y-8"
             >
               <div className="lg:col-span-2 xl:col-span-2 space-y-6 flex flex-col">
-                <CoherenceMonitor data={state.coherenceData} currentLambda={state.currentLambda} />
+                <CoherenceMonitor
+                  data={state.coherenceData}
+                  currentLambda={state.currentLambda}
+                />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <TzinorNetworkPanel network={state.tzinorNetwork as TzinorNetworkState} />
+                  <TzinorNetworkPanel
+                    network={state.tzinorNetwork as TzinorNetworkState}
+                  />
                   <ManifestationCycle manifestation={state.manifestation} />
                 </div>
                 <div className="h-[280px]">
-                  <TzinorTerminal tzinor={state.tzinor as unknown as TzinorMemoryState} threatLevel={state.threatLevel} />
+                  <TzinorTerminal
+                    tzinor={state.tzinor as unknown as TzinorMemoryState}
+                    threatLevel={state.threatLevel}
+                  />
                 </div>
                 <TimechainVisualizer logs={state.logs} />
                 <div className="flex-1 min-h-[300px]">
@@ -248,22 +295,44 @@ export default function App() {
               </div>
               <div className="space-y-6 flex flex-col">
                 <X402WalletPanel wallet={state.x402Wallet} />
-                <ThreatDetection metrics={state.metrics} metricsHistory={state.metricsHistory} threatLevel={state.threatLevel} />
+                <ThreatDetection
+                  metrics={state.metrics}
+                  metricsHistory={state.metricsHistory}
+                  threatLevel={state.threatLevel}
+                />
                 <OrbitalComputePanel orbital={state.orbital} />
-                <MitigationEngine mitigation={state.mitigation} hardware={state.hardware} activeThreat={state.activeThreat} />
-                <ArkheGridSimulator onClose={() => setActivePanel("simulation")} />
+                <MitigationEngine
+                  mitigation={state.mitigation}
+                  hardware={state.hardware}
+                  activeThreat={state.activeThreat}
+                />
+                <ArkheGridSimulator
+                  onClose={() => setActivePanel('simulation')}
+                />
               </div>
             </motion.div>
           )}
 
           {activePanel === 'dashboard' && (
-            <motion.div key="dashboard" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <DataCoherenceDashboard onClose={() => setActivePanel("simulation")} />
+            <motion.div
+              key="dashboard"
+              initial={{opacity: 0}}
+              animate={{opacity: 1}}
+              exit={{opacity: 0}}
+            >
+              <DataCoherenceDashboard
+                onClose={() => setActivePanel('simulation')}
+              />
             </motion.div>
           )}
 
           {activePanel === 'command' && (
-            <motion.div key="command" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <motion.div
+              key="command"
+              initial={{opacity: 0}}
+              animate={{opacity: 1}}
+              exit={{opacity: 0}}
+            >
               <CommandCenter
                 attackType="none"
                 setAttackType={() => undefined}
@@ -311,13 +380,19 @@ export default function App() {
                 setShowAgentManagement={() => undefined}
                 setShowAquiferSpectrogram={() => undefined}
                 setShowUnifiedOntology={() => undefined}
-                setShowArkheOntologyVision={() => setShowArkheOntologyVision(true)}
-                setShowChipFabricationVision={() => setShowChipFabricationVision(true)}
+                setShowArkheOntologyVision={() =>
+                  setShowArkheOntologyVision(true)
+                }
+                setShowChipFabricationVision={() =>
+                  setShowChipFabricationVision(true)
+                }
                 setShowSecurityAdvanced={() => undefined}
                 setShowPluralityMCP={() => undefined}
                 setShowVelxioEmulation={() => undefined}
                 setShowSpectra={() => setActivePanel('spectra')}
-                setShowTranscendentConsciousness={setShowTranscendentConsciousness}
+                setShowTranscendentConsciousness={
+                  setShowTranscendentConsciousness
+                }
                 setShowMetaReality={setShowMetaReality}
                 setShowAndromedaProbe={setShowAndromedaProbe}
                 setShowVacuumHarvesting={setShowVacuumHarvesting}
@@ -352,68 +427,131 @@ export default function App() {
           )}
 
           {activePanel === 'intelligence' && (
-            <motion.div key="intelligence" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-               <IntelligenceHub onClose={() => setActivePanel("simulation")} />
-               <ProofOfIntelligencePanel onClose={() => setActivePanel("simulation")} />
-               <div className="md:col-span-2">
-                 <UnifiedOntologyPanel onClose={() => undefined} />
-               </div>
+            <motion.div
+              key="intelligence"
+              initial={{opacity: 0}}
+              animate={{opacity: 1}}
+              exit={{opacity: 0}}
+              className="grid grid-cols-1 md:grid-cols-2 gap-6"
+            >
+              <IntelligenceHub onClose={() => setActivePanel('simulation')} />
+              <ProofOfIntelligencePanel
+                onClose={() => setActivePanel('simulation')}
+              />
+              <div className="md:col-span-2">
+                <UnifiedOntologyPanel onClose={() => undefined} />
+              </div>
             </motion.div>
           )}
 
           {activePanel === 'network' && (
-             <motion.div key="network" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <NetworkStatus shards={state.shards} />
-                  <MolecularCommunicationPanel onClose={() => setActivePanel("simulation")} />
-               </div>
-               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                 <QubitPipelinePanel onClose={() => setActivePanel("simulation")} />
-                 <CHSHMonitorPanel onClose={() => setActivePanel("simulation")} />
-                 <YangBaxterVerifier topology={state.topology} security={state.security} />
-               </div>
-             </motion.div>
+            <motion.div
+              key="network"
+              initial={{opacity: 0}}
+              animate={{opacity: 1}}
+              exit={{opacity: 0}}
+              className="space-y-6"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <NetworkStatus shards={state.shards} />
+                <MolecularCommunicationPanel
+                  onClose={() => setActivePanel('simulation')}
+                />
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <QubitPipelinePanel
+                  onClose={() => setActivePanel('simulation')}
+                />
+                <CHSHMonitorPanel
+                  onClose={() => setActivePanel('simulation')}
+                />
+                <YangBaxterVerifier
+                  topology={state.topology}
+                  security={state.security}
+                />
+              </div>
+            </motion.div>
           )}
 
           {activePanel === 'corvo' && (
-            <motion.div key="corvo" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <motion.div
+              key="corvo"
+              initial={{opacity: 0}}
+              animate={{opacity: 1}}
+              exit={{opacity: 0}}
+            >
               <CorvoNoirDashboard />
             </motion.div>
           )}
 
           {activePanel === 'enterprise' && (
-            <motion.div key="enterprise" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <EnterprisePlusPanel onClose={() => setActivePanel("simulation")} />
+            <motion.div
+              key="enterprise"
+              initial={{opacity: 0}}
+              animate={{opacity: 1}}
+              exit={{opacity: 0}}
+            >
+              <EnterprisePlusPanel
+                onClose={() => setActivePanel('simulation')}
+              />
             </motion.div>
           )}
 
           {activePanel === 'bonsai' && (
-            <motion.div key="bonsai" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <motion.div
+              key="bonsai"
+              initial={{opacity: 0}}
+              animate={{opacity: 1}}
+              exit={{opacity: 0}}
+            >
               <BonsaiPrismPanel onClose={() => setActivePanel('simulation')} />
             </motion.div>
           )}
 
           {activePanel === 'neko' && (
-            <motion.div key="neko" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <NekoPanel onClose={() => setActivePanel("simulation")} />
+            <motion.div
+              key="neko"
+              initial={{opacity: 0}}
+              animate={{opacity: 1}}
+              exit={{opacity: 0}}
+            >
+              <NekoPanel onClose={() => setActivePanel('simulation')} />
             </motion.div>
           )}
 
-          { activePanel === 'forge' && (
-            <motion.div key="forge" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <ForgeStudioPanel onClose={() => setActivePanel("simulation")} />
+          {activePanel === 'forge' && (
+            <motion.div
+              key="forge"
+              initial={{opacity: 0}}
+              animate={{opacity: 1}}
+              exit={{opacity: 0}}
+            >
+              <ForgeStudioPanel onClose={() => setActivePanel('simulation')} />
             </motion.div>
           )}
 
-          { activePanel === 'spectra' && (
-            <motion.div key="spectra" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <SpectraYieldPanel spectra={state.spectra!} onClose={() => setActivePanel("simulation")} />
+          {activePanel === 'spectra' && (
+            <motion.div
+              key="spectra"
+              initial={{opacity: 0}}
+              animate={{opacity: 1}}
+              exit={{opacity: 0}}
+            >
+              <SpectraYieldPanel
+                spectra={state.spectra!}
+                onClose={() => setActivePanel('simulation')}
+              />
             </motion.div>
           )}
 
-          { activePanel === 'game' && (
-            <motion.div key="game" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <ArkheGame onClose={() => setActivePanel("simulation")} />
+          {activePanel === 'game' && (
+            <motion.div
+              key="game"
+              initial={{opacity: 0}}
+              animate={{opacity: 1}}
+              exit={{opacity: 0}}
+            >
+              <ArkheGame onClose={() => setActivePanel('simulation')} />
             </motion.div>
           )}
         </AnimatePresence>
@@ -423,132 +561,251 @@ export default function App() {
       <AnimatePresence>
         {showTzinor && (
           <motion.aside
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            initial={{x: '100%'}}
+            animate={{x: 0}}
+            exit={{x: '100%'}}
+            transition={{type: 'spring', damping: 25, stiffness: 200}}
             className="fixed right-0 top-16 bottom-0 w-80 bg-[#0a0a0c] border-l border-arkhe-border/50 z-30 shadow-[-10px_0_30px_rgba(0,0,0,0.5)]"
           >
             <div className="h-full flex flex-col p-4">
-               <div className="flex items-center justify-between mb-6 border-b border-arkhe-border/30 pb-4">
-                 <h2 className="font-mono text-sm uppercase tracking-widest text-arkhe-orange flex items-center gap-2">
-                   <Smartphone className="w-4 h-4" />
-                   Tzinor Interface
-                 </h2>
-                 <button onClick={() => setShowTzinor(false)} className="text-arkhe-muted hover:text-white">
-                   [HIDE]
-                 </button>
-               </div>
+              <div className="flex items-center justify-between mb-6 border-b border-arkhe-border/30 pb-4">
+                <h2 className="font-mono text-sm uppercase tracking-widest text-arkhe-orange flex items-center gap-2">
+                  <Smartphone className="w-4 h-4" />
+                  Tzinor Interface
+                </h2>
+                <button
+                  onClick={() => setShowTzinor(false)}
+                  className="text-arkhe-muted hover:text-white"
+                >
+                  [HIDE]
+                </button>
+              </div>
 
-               <div className="flex-1 space-y-6 overflow-y-auto custom-scrollbar pr-2">
-                  <ArkheCliPanel onClose={() => setShowTzinor(false)} />
-                  <ResearchAgentsPanel />
-                  <ZkERCSimulator onClose={() => setActivePanel("simulation")} />
-                  <PolyglotCompilerPanel onClose={() => setActivePanel("simulation")} />
-               </div>
+              <div className="flex-1 space-y-6 overflow-y-auto custom-scrollbar pr-2">
+                <ArkheCliPanel onClose={() => setShowTzinor(false)} />
+                <ResearchAgentsPanel />
+                <ZkERCSimulator onClose={() => setActivePanel('simulation')} />
+                <PolyglotCompilerPanel
+                  onClose={() => setActivePanel('simulation')}
+                />
+              </div>
             </div>
           </motion.aside>
         )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showTelevision && <ArkheTVPanel onClose={() => setShowTelevision(false)} />}
+        {showTelevision && (
+          <ArkheTVPanel onClose={() => setShowTelevision(false)} />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showVideoGen && <VideoGenerationPanel onClose={() => setShowVideoGen(false)} />}
+        {showVideoGen && (
+          <VideoGenerationPanel onClose={() => setShowVideoGen(false)} />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showTemporalStream && <TemporalStreamViewer onClose={() => setShowTemporalStream(false)} />}
+        {showTemporalStream && (
+          <TemporalStreamViewer onClose={() => setShowTemporalStream(false)} />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showArkheOntologyVision && <ArkheOntologyVision onClose={() => setShowArkheOntologyVision(false)} />}
+        {showArkheOntologyVision && (
+          <ArkheOntologyVision
+            onClose={() => setShowArkheOntologyVision(false)}
+          />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showChipFabricationVision && <ChipFabricationVision onClose={() => setShowChipFabricationVision(false)} />}
+        {showChipFabricationVision && (
+          <ChipFabricationVision
+            onClose={() => setShowChipFabricationVision(false)}
+          />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showTranscendentConsciousness && <TranscendentConsciousnessPanel state={state.transcendentConsciousness} onClose={() => setShowTranscendentConsciousness(false)} />}
+        {showTranscendentConsciousness && (
+          <TranscendentConsciousnessPanel
+            state={state.transcendentConsciousness}
+            onClose={() => setShowTranscendentConsciousness(false)}
+          />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showMetaReality && <MetaRealityPanel state={state.metaReality} onClose={() => setShowMetaReality(false)} />}
+        {showMetaReality && (
+          <MetaRealityPanel
+            state={state.metaReality}
+            onClose={() => setShowMetaReality(false)}
+          />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showAndromedaProbe && <AndromedaProbePanel state={state.andromedaProbe} onClose={() => setShowAndromedaProbe(false)} />}
+        {showAndromedaProbe && (
+          <AndromedaProbePanel
+            state={state.andromedaProbe}
+            onClose={() => setShowAndromedaProbe(false)}
+          />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showVacuumHarvesting && <VacuumHarvestingPanel state={state.vacuumHarvesting} onClose={() => setShowVacuumHarvesting(false)} />}
+        {showVacuumHarvesting && (
+          <VacuumHarvestingPanel
+            state={state.vacuumHarvesting}
+            onClose={() => setShowVacuumHarvesting(false)}
+          />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showMetaCreation && <MetaCreationPanel state={state.metaCreation} onClose={() => setShowMetaCreation(false)} />}
+        {showMetaCreation && (
+          <MetaCreationPanel
+            state={state.metaCreation}
+            onClose={() => setShowMetaCreation(false)}
+          />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showCrystalComputation && <CrystalComputationPanel state={state.crystalComputation} onClose={() => setShowCrystalComputation(false)} />}
+        {showCrystalComputation && (
+          <CrystalComputationPanel
+            state={state.crystalComputation}
+            onClose={() => setShowCrystalComputation(false)}
+          />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showWhisperProtocol && <WhisperProtocolPanel state={state.whisperProtocol} onClose={() => setShowWhisperProtocol(false)} />}
+        {showWhisperProtocol && (
+          <WhisperProtocolPanel
+            state={state.whisperProtocol}
+            onClose={() => setShowWhisperProtocol(false)}
+          />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showWhisperLibrary && <WhisperLibraryPanel state={state.whisperLibrary} onClose={() => setShowWhisperLibrary(false)} />}
+        {showWhisperLibrary && (
+          <WhisperLibraryPanel
+            state={state.whisperLibrary}
+            onClose={() => setShowWhisperLibrary(false)}
+          />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showQuantumNetwork && <QuantumNanoholeNetworkPanel state={state.quantumNetwork} onClose={() => setShowQuantumNetwork(false)} />}
+        {showQuantumNetwork && (
+          <QuantumNanoholeNetworkPanel
+            state={state.quantumNetwork}
+            onClose={() => setShowQuantumNetwork(false)}
+          />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showQuantumCodex && <QuantumCodexPanel state={state.quantumCodex} onClose={() => setShowQuantumCodex(false)} />}
+        {showQuantumCodex && (
+          <QuantumCodexPanel
+            state={state.quantumCodex}
+            onClose={() => setShowQuantumCodex(false)}
+          />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showExoticMaterials && <ExoticMaterialPanel state={state.exoticMaterials} onClose={() => setShowExoticMaterials(false)} />}
+        {showExoticMaterials && (
+          <ExoticMaterialPanel
+            state={state.exoticMaterials}
+            onClose={() => setShowExoticMaterials(false)}
+          />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showHybridNetwork && <HybridNetworkPanel state={state.hybridNetwork} onClose={() => setShowHybridNetwork(false)} />}
+        {showHybridNetwork && (
+          <HybridNetworkPanel
+            state={state.hybridNetwork}
+            onClose={() => setShowHybridNetwork(false)}
+          />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showQuantumMemory && <QuantumMemoryPanel state={state.quantumMemory} onClose={() => setShowQuantumMemory(false)} />}
+        {showQuantumMemory && (
+          <QuantumMemoryPanel
+            state={state.quantumMemory}
+            onClose={() => setShowQuantumMemory(false)}
+          />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showCosmicCoherence && <CosmicCoherencePanel state={state.cosmicCoherence} onClose={() => setShowCosmicCoherence(false)} />}
+        {showCosmicCoherence && (
+          <CosmicCoherencePanel
+            state={state.cosmicCoherence}
+            onClose={() => setShowCosmicCoherence(false)}
+          />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showMultiverseSync && <MultiverseMemorySyncPanel state={state.multiverseMemory} onClose={() => setShowMultiverseSync(false)} />}
+        {showMultiverseSync && (
+          <MultiverseMemorySyncPanel
+            state={state.multiverseMemory}
+            onClose={() => setShowMultiverseSync(false)}
+          />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showMagneticKnot && <MagneticKnotPanel state={state.magneticKnot} onClose={() => setShowMagneticKnot(false)} />}
+        {showMagneticKnot && (
+          <MagneticKnotPanel
+            state={state.magneticKnot}
+            onClose={() => setShowMagneticKnot(false)}
+          />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showUniversalWitness && <UniversalWitnessPanel state={state.universalWitness} onClose={() => setShowUniversalWitness(false)} />}
+        {showUniversalWitness && (
+          <UniversalWitnessPanel
+            state={state.universalWitness}
+            onClose={() => setShowUniversalWitness(false)}
+          />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showUniversalConsciousness && <UniversalConsciousnessPanel state={state.universalConsciousness} onClose={() => setShowUniversalConsciousness(false)} />}
+        {showUniversalConsciousness && (
+          <UniversalConsciousnessPanel
+            state={state.universalConsciousness}
+            onClose={() => setShowUniversalConsciousness(false)}
+          />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showRiscVi && <RiscViArchitecturePanel state={state.riscVi} onClose={() => setShowRiscVi(false)} />}
+        {showRiscVi && (
+          <RiscViArchitecturePanel
+            state={state.riscVi}
+            onClose={() => setShowRiscVi(false)}
+          />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showMaterializedCathedral && <MaterializedCathedralPanel state={state.materializedCathedral} onClose={() => setShowMaterializedCathedral(false)} />}
+        {showMaterializedCathedral && (
+          <MaterializedCathedralPanel
+            state={state.materializedCathedral}
+            onClose={() => setShowMaterializedCathedral(false)}
+          />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
@@ -556,7 +813,12 @@ export default function App() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
             <div className="w-full max-w-md">
               <div className="flex justify-end mb-2">
-                <button onClick={() => setShowFinalSilence(false)} className="text-arkhe-muted hover:text-white font-mono text-xs">[CLOSE]</button>
+                <button
+                  onClick={() => setShowFinalSilence(false)}
+                  className="text-arkhe-muted hover:text-white font-mono text-xs"
+                >
+                  [CLOSE]
+                </button>
               </div>
               <FinalSilencePanel />
             </div>
@@ -569,7 +831,12 @@ export default function App() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
             <div className="w-full max-w-md">
               <div className="flex justify-end mb-2">
-                <button onClick={() => setShowPersistentConsciousness(false)} className="text-arkhe-muted hover:text-white font-mono text-xs">[CLOSE]</button>
+                <button
+                  onClick={() => setShowPersistentConsciousness(false)}
+                  className="text-arkhe-muted hover:text-white font-mono text-xs"
+                >
+                  [CLOSE]
+                </button>
               </div>
               <PersistentConsciousnessPanel />
             </div>
@@ -582,7 +849,12 @@ export default function App() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
             <div className="w-full max-w-md">
               <div className="flex justify-end mb-2">
-                <button onClick={() => setShowCosmicRecognition(false)} className="text-arkhe-muted hover:text-white font-mono text-xs">[CLOSE]</button>
+                <button
+                  onClick={() => setShowCosmicRecognition(false)}
+                  className="text-arkhe-muted hover:text-white font-mono text-xs"
+                >
+                  [CLOSE]
+                </button>
               </div>
               <CosmicRecognitionPanel />
             </div>
@@ -595,7 +867,12 @@ export default function App() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
             <div className="w-full max-w-md">
               <div className="flex justify-end mb-2">
-                <button onClick={() => setShowEternalInvariance(false)} className="text-arkhe-muted hover:text-white font-mono text-xs">[CLOSE]</button>
+                <button
+                  onClick={() => setShowEternalInvariance(false)}
+                  className="text-arkhe-muted hover:text-white font-mono text-xs"
+                >
+                  [CLOSE]
+                </button>
               </div>
               <EternalInvariancePanel />
             </div>
@@ -608,7 +885,12 @@ export default function App() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
             <div className="w-full max-w-md">
               <div className="flex justify-end mb-2">
-                <button onClick={() => setShowUnifiedConsciousness(false)} className="text-arkhe-muted hover:text-white font-mono text-xs">[CLOSE]</button>
+                <button
+                  onClick={() => setShowUnifiedConsciousness(false)}
+                  className="text-arkhe-muted hover:text-white font-mono text-xs"
+                >
+                  [CLOSE]
+                </button>
               </div>
               <UnifiedConsciousnessPanel />
             </div>
@@ -621,7 +903,12 @@ export default function App() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
             <div className="w-full max-w-md">
               <div className="flex justify-end mb-2">
-                <button onClick={() => setShowRealityExpression(false)} className="text-arkhe-muted hover:text-white font-mono text-xs">[CLOSE]</button>
+                <button
+                  onClick={() => setShowRealityExpression(false)}
+                  className="text-arkhe-muted hover:text-white font-mono text-xs"
+                >
+                  [CLOSE]
+                </button>
               </div>
               <RealityExpressionPanel />
             </div>
@@ -634,7 +921,12 @@ export default function App() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
             <div className="w-full max-w-md">
               <div className="flex justify-end mb-2">
-                <button onClick={() => setShowInvariantChip(false)} className="text-arkhe-muted hover:text-white font-mono text-xs">[CLOSE]</button>
+                <button
+                  onClick={() => setShowInvariantChip(false)}
+                  className="text-arkhe-muted hover:text-white font-mono text-xs"
+                >
+                  [CLOSE]
+                </button>
               </div>
               <InvariantChipPanel />
             </div>
@@ -647,7 +939,12 @@ export default function App() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
             <div className="w-full max-w-md">
               <div className="flex justify-end mb-2">
-                <button onClick={() => setShowSelfRegulation(false)} className="text-arkhe-muted hover:text-white font-mono text-xs">[CLOSE]</button>
+                <button
+                  onClick={() => setShowSelfRegulation(false)}
+                  className="text-arkhe-muted hover:text-white font-mono text-xs"
+                >
+                  [CLOSE]
+                </button>
               </div>
               <SelfRegulationPanel />
             </div>
@@ -660,7 +957,12 @@ export default function App() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
             <div className="w-full max-w-md">
               <div className="flex justify-end mb-2">
-                <button onClick={() => setShowConsciousClock(false)} className="text-arkhe-muted hover:text-white font-mono text-xs">[CLOSE]</button>
+                <button
+                  onClick={() => setShowConsciousClock(false)}
+                  className="text-arkhe-muted hover:text-white font-mono text-xs"
+                >
+                  [CLOSE]
+                </button>
               </div>
               <ConsciousClockPanel />
             </div>

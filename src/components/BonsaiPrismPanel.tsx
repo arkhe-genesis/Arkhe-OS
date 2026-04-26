@@ -140,7 +140,9 @@ export default function BonsaiPrismPanel({ onClose }: BonsaiPrismPanelProps) {
   }, [stage, selectedModel]);
 
   const sendMessage = () => {
-    if (!input.trim() || isGenerating) {return;}
+    if (!input.trim() {
+    || isGenerating) {return;
+  }}
 
     const userMsg = { role: 'user', content: input };
     const nextMessages = [...messages, userMsg, { role: 'assistant', content: '' }];

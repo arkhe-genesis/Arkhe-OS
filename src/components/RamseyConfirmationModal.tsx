@@ -1,21 +1,23 @@
-
 /**
  * @license
  * Copyright 2026 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Shield, Zap,  Clock } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import {Shield, Zap, Clock} from 'lucide-react';
+import React, {useState, useEffect} from 'react';
 
-import type { RamseyPendingAction } from '../../server/types';
+import type {RamseyPendingAction} from '../../server/types';
 
 interface RamseyConfirmationModalProps {
   pendingAction: RamseyPendingAction;
   onClose: () => void;
 }
 
-export default function RamseyConfirmationModal({ pendingAction, onClose }: RamseyConfirmationModalProps) {
+export default function RamseyConfirmationModal({
+  pendingAction,
+  onClose,
+}: RamseyConfirmationModalProps) {
   const [timeLeft, setTimeLeft] = useState(30);
 
   useEffect(() => {
@@ -35,21 +37,26 @@ export default function RamseyConfirmationModal({ pendingAction, onClose }: Rams
   const [justification, setJustification] = useState('');
   const [showDetails, setShowDetails] = useState(false);
 
-  const handleConfirm = async (status: 'approved' | 'rejected' | 'postponed') => {
+  const handleConfirm = async (
+    status: 'approved' | 'rejected' | 'postponed',
+  ) => {
     try {
       await fetch('/api/ramsey/confirm', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
           actionId: pendingAction.id,
           status: status,
           justification: justification,
-          signature: status === 'approved' ? "0x" + Math.random().toString(16).slice(2, 130) : undefined // Simulated ECDSA signature
-        })
+          signature:
+            status === 'approved'
+              ? '0x' + Math.random().toString(16).slice(2, 130)
+              : undefined, // Simulated ECDSA signature
+        }),
       });
       onClose();
     } catch (e) {
-      console.error("Failed to confirm Ramsey action:", e);
+      console.error('Failed to confirm Ramsey action:', e);
     }
   };
 
@@ -60,11 +67,15 @@ export default function RamseyConfirmationModal({ pendingAction, onClose }: Rams
         <div className="bg-arkhe-cyan/10 border-b border-arkhe-cyan/30 p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Zap className="w-5 h-5 text-arkhe-cyan animate-pulse" />
-            <h2 className="text-arkhe-cyan font-bold tracking-[0.2em] uppercase text-sm">Protocolo Archimedes-Ω</h2>
+            <h2 className="text-arkhe-cyan font-bold tracking-[0.2em] uppercase text-sm">
+              Protocolo Archimedes-Ω
+            </h2>
           </div>
           <div className="flex items-center gap-2 text-arkhe-muted">
             <Clock className="w-4 h-4" />
-            <span className={`text-xs font-bold ${timeLeft < 10 ? 'text-arkhe-red' : 'text-arkhe-text'}`}>
+            <span
+              className={`text-xs font-bold ${timeLeft < 10 ? 'text-arkhe-red' : 'text-arkhe-text'}`}
+            >
               {timeLeft}s
             </span>
           </div>
@@ -77,37 +88,58 @@ export default function RamseyConfirmationModal({ pendingAction, onClose }: Rams
               <Shield className="w-8 h-8 text-arkhe-cyan" />
             </div>
             <div>
-              <h3 className="text-arkhe-text font-bold uppercase tracking-widest mb-1">Confirmação de Injeção Global</h3>
+              <h3 className="text-arkhe-text font-bold uppercase tracking-widest mb-1">
+                Confirmação de Injeção Global
+              </h3>
               <p className="text-[10px] text-arkhe-muted leading-relaxed uppercase">
-                O SISTEMA DETECTOU UM PICO DE COERÊNCIA EM UM ÂNGULO CRÍTICO DE VARREDURA RAMSEY. AÇÃO GLOBAL REQUERIDA.
+                O SISTEMA DETECTOU UM PICO DE COERÊNCIA EM UM ÂNGULO CRÍTICO DE
+                VARREDURA RAMSEY. AÇÃO GLOBAL REQUERIDA.
               </p>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-black/40 border border-arkhe-border p-3 rounded-lg">
-              <div className="text-[10px] text-arkhe-muted uppercase mb-1 tracking-tighter">Ângulo θ</div>
-              <div className="text-sm font-bold text-arkhe-cyan">{pendingAction.angle.toFixed(4)} rad</div>
+              <div className="text-[10px] text-arkhe-muted uppercase mb-1 tracking-tighter">
+                Ângulo θ
+              </div>
+              <div className="text-sm font-bold text-arkhe-cyan">
+                {pendingAction.angle.toFixed(4)} rad
+              </div>
             </div>
             <div className="bg-black/40 border border-arkhe-border p-3 rounded-lg">
-              <div className="text-[10px] text-arkhe-muted uppercase mb-1 tracking-tighter">Coerência R(θ)</div>
-              <div className="text-sm font-bold text-arkhe-green">{pendingAction.coherence.toFixed(4)}</div>
+              <div className="text-[10px] text-arkhe-muted uppercase mb-1 tracking-tighter">
+                Coerência R(θ)
+              </div>
+              <div className="text-sm font-bold text-arkhe-green">
+                {pendingAction.coherence.toFixed(4)}
+              </div>
             </div>
           </div>
 
           <div className="bg-black/60 border border-arkhe-border p-4 rounded-lg">
-            <div className="text-[10px] text-arkhe-muted uppercase mb-2">Ação Sugerida</div>
-            <div className="text-xs font-bold text-arkhe-text mb-2 tracking-widest">{pendingAction.type}</div>
+            <div className="text-[10px] text-arkhe-muted uppercase mb-2">
+              Ação Sugerida
+            </div>
+            <div className="text-xs font-bold text-arkhe-text mb-2 tracking-widest">
+              {pendingAction.type}
+            </div>
             <div className="text-[10px] text-arkhe-muted leading-relaxed mb-3">
-              APLICAÇÃO DE SEQUÊNCIA DE PULSOS PARA SINCRONIZAÇÃO DISCRETA SL(3,ℤ).
+              APLICAÇÃO DE SEQUÊNCIA DE PULSOS PARA SINCRONIZAÇÃO DISCRETA
+              SL(3,ℤ).
             </div>
 
             {Math.abs(pendingAction.angle - 0.6283) < 0.01 && (
               <div className="border-t border-arkhe-border/30 pt-3 space-y-2">
-                <div className="text-[9px] text-arkhe-cyan font-bold uppercase tracking-widest">Injeção Fibonacci (π/5)</div>
+                <div className="text-[9px] text-arkhe-cyan font-bold uppercase tracking-widest">
+                  Injeção Fibonacci (π/5)
+                </div>
                 <div className="flex flex-wrap gap-2">
-                  {["S", "T", "S⁻¹", "T", "S"].map((gen, i) => (
-                    <div key={i} className="px-2 py-1 bg-arkhe-cyan/10 border border-arkhe-cyan/30 rounded text-[9px] text-arkhe-cyan font-bold">
+                  {['S', 'T', 'S⁻¹', 'T', 'S'].map((gen, i) => (
+                    <div
+                      key={i}
+                      className="px-2 py-1 bg-arkhe-cyan/10 border border-arkhe-cyan/30 rounded text-[9px] text-arkhe-cyan font-bold"
+                    >
                       {gen}
                     </div>
                   ))}
@@ -121,10 +153,12 @@ export default function RamseyConfirmationModal({ pendingAction, onClose }: Rams
           </div>
 
           <div className="space-y-2">
-            <div className="text-[10px] text-arkhe-muted uppercase tracking-tighter">Justificativa (Opcional)</div>
+            <div className="text-[10px] text-arkhe-muted uppercase tracking-tighter">
+              Justificativa (Opcional)
+            </div>
             <textarea
               value={justification}
-              onChange={(e) => setJustification(e.target.value)}
+              onChange={e => setJustification(e.target.value)}
               className="w-full bg-black/40 border border-arkhe-border rounded p-2 text-[10px] text-arkhe-text outline-none focus:border-arkhe-cyan/50 h-16 resize-none"
               placeholder="Descreva o motivo da decisão..."
             />
@@ -132,7 +166,9 @@ export default function RamseyConfirmationModal({ pendingAction, onClose }: Rams
 
           {showDetails && (
             <div className="p-3 bg-arkhe-cyan/5 border border-arkhe-cyan/20 rounded-lg animate-in fade-in slide-in-from-top-2">
-              <div className="text-[10px] text-arkhe-cyan font-bold uppercase mb-2">Metadados de Detecção</div>
+              <div className="text-[10px] text-arkhe-cyan font-bold uppercase mb-2">
+                Metadados de Detecção
+              </div>
               <div className="grid grid-cols-2 gap-2 text-[9px] font-mono text-arkhe-muted">
                 <div>TIMESTAMP: {pendingAction.timestamp}</div>
                 <div>ID: {pendingAction.id}</div>
@@ -175,7 +211,9 @@ export default function RamseyConfirmationModal({ pendingAction, onClose }: Rams
         </div>
 
         <div className="p-2 text-center border-t border-arkhe-border/50">
-          <span className="text-[8px] text-arkhe-muted uppercase tracking-[0.3em]">Signature Verification Pending (ECDSA/TEE)</span>
+          <span className="text-[8px] text-arkhe-muted uppercase tracking-[0.3em]">
+            Signature Verification Pending (ECDSA/TEE)
+          </span>
         </div>
       </div>
     </div>

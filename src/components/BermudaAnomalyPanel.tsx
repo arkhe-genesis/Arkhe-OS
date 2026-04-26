@@ -1,18 +1,27 @@
-
 /**
  * @license
  * Copyright 2026 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Shield, Key, Lock, CheckCircle2, Activity, Waves, Compass } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import {
+  Shield,
+  Key,
+  Lock,
+  CheckCircle2,
+  Activity,
+  Waves,
+  Compass,
+} from 'lucide-react';
+import React, {useState, useEffect} from 'react';
 
 interface BermudaAnomalyPanelProps {
   onClose: () => void;
 }
 
-export default function BermudaAnomalyPanel({ onClose }: BermudaAnomalyPanelProps) {
+export default function BermudaAnomalyPanel({
+  onClose,
+}: BermudaAnomalyPanelProps) {
   const [isScanning, setIsScanning] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isDecoded, setIsDecoded] = useState(false);
@@ -20,7 +29,12 @@ export default function BermudaAnomalyPanel({ onClose }: BermudaAnomalyPanelProp
   const [magneticField, setMagneticField] = useState(45000);
 
   const addLog = (msg: string) => {
-    setLogs(prev => [`[${new Date().toISOString().split('T')[1].slice(0, 8)}] ${msg}`, ...prev].slice(0, 12));
+    setLogs(prev =>
+      [
+        `[${new Date().toISOString().split('T')[1].slice(0, 8)}] ${msg}`,
+        ...prev,
+      ].slice(0, 12),
+    );
   };
 
   useEffect(() => {
@@ -40,7 +54,7 @@ export default function BermudaAnomalyPanel({ onClose }: BermudaAnomalyPanelProp
     setIsDecoded(false);
     setLogs([]);
     setMagneticField(42450);
-    
+
     addLog('INICIANDO VARREDURA GEOESPACIAL...');
     addLog('ALVO: TRIÂNGULO DAS BERMUDAS (25.0000° N, 71.0000° W)');
     addLog('CALIBRANDO SENSORES BATIMÉTRICOS E MAGNÉTICOS...');
@@ -48,7 +62,7 @@ export default function BermudaAnomalyPanel({ onClose }: BermudaAnomalyPanelProp
     let currentProgress = 0;
     const interval = setInterval(() => {
       currentProgress += Math.random() * 8;
-      
+
       if (currentProgress >= 20 && currentProgress < 30) {
         addLog('ANOMALIA DETECTADA: QUEDA ABRUPTA NO CAMPO MAGNÉTICO LOCAL.');
       } else if (currentProgress >= 45 && currentProgress < 55) {
@@ -72,23 +86,28 @@ export default function BermudaAnomalyPanel({ onClose }: BermudaAnomalyPanelProp
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
       <div className="w-full max-w-4xl bg-arkhe-card border border-blue-500/30 rounded-xl shadow-[0_0_30px_rgba(59,130,246,0.1)] overflow-hidden flex flex-col">
-        
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-blue-500/20 bg-blue-500/5">
           <div className="flex items-center gap-3">
             <Waves className="w-6 h-6 text-blue-500" />
             <div>
-              <h2 className="text-lg font-bold text-blue-500 tracking-widest uppercase">Exploração Geoespacial</h2>
-              <div className="text-xs font-mono text-arkhe-muted">Anomalia Magnética: Triângulo das Bermudas</div>
+              <h2 className="text-lg font-bold text-blue-500 tracking-widest uppercase">
+                Exploração Geoespacial
+              </h2>
+              <div className="text-xs font-mono text-arkhe-muted">
+                Anomalia Magnética: Triângulo das Bermudas
+              </div>
             </div>
           </div>
-          <button onClick={onClose} className="text-arkhe-muted hover:text-white transition-colors">
+          <button
+            onClick={onClose}
+            className="text-arkhe-muted hover:text-white transition-colors"
+          >
             FECHAR [X]
           </button>
         </div>
 
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-          
           {/* Target Info & Controls */}
           <div className="space-y-6">
             <div className="bg-black/40 border border-arkhe-border p-4 rounded-lg">
@@ -107,18 +126,28 @@ export default function BermudaAnomalyPanel({ onClose }: BermudaAnomalyPanelProp
                 </div>
                 <div className="flex justify-between">
                   <span className="text-arkhe-muted">Profundidade:</span>
-                  <span className="text-arkhe-muted">-8,380 m (Fossa de Porto Rico)</span>
+                  <span className="text-arkhe-muted">
+                    -8,380 m (Fossa de Porto Rico)
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-arkhe-muted">Campo Magnético (B_total):</span>
-                  <span className={`font-bold ${magneticField < 1000 ? 'text-arkhe-red animate-pulse' : 'text-blue-400'}`}>
+                  <span className="text-arkhe-muted">
+                    Campo Magnético (B_total):
+                  </span>
+                  <span
+                    className={`font-bold ${magneticField < 1000 ? 'text-arkhe-red animate-pulse' : 'text-blue-400'}`}
+                  >
                     {Math.round(magneticField).toLocaleString()} nT
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-arkhe-muted">Status do Fragmento:</span>
-                  <span className={isDecoded ? "text-arkhe-green" : "text-arkhe-orange"}>
-                    {isDecoded ? "EXTRAÍDO (2/14)" : "NÃO LOCALIZADO"}
+                  <span
+                    className={
+                      isDecoded ? 'text-arkhe-green' : 'text-arkhe-orange'
+                    }
+                  >
+                    {isDecoded ? 'EXTRAÍDO (2/14)' : 'NÃO LOCALIZADO'}
                   </span>
                 </div>
               </div>
@@ -127,9 +156,9 @@ export default function BermudaAnomalyPanel({ onClose }: BermudaAnomalyPanelProp
                 onClick={startScan}
                 disabled={isScanning || isDecoded}
                 className={`w-full py-3 mt-6 rounded font-mono text-sm uppercase tracking-widest transition-all ${
-                  isScanning 
+                  isScanning
                     ? 'bg-blue-500/20 text-blue-500 border border-blue-500/50 cursor-not-allowed'
-                    : isDecoded 
+                    : isDecoded
                       ? 'bg-arkhe-green/20 text-arkhe-green border border-arkhe-green/50 cursor-not-allowed'
                       : 'bg-blue-500/10 text-blue-500 border border-blue-500 hover:bg-blue-500/20 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]'
                 }`}
@@ -155,14 +184,16 @@ export default function BermudaAnomalyPanel({ onClose }: BermudaAnomalyPanelProp
 
             {/* Progress */}
             <div className="bg-black/40 border border-arkhe-border p-4 rounded-lg">
-               <div className="flex justify-between text-xs font-mono mb-2">
-                <span className="text-arkhe-muted">Progresso da Decodificação</span>
+              <div className="flex justify-between text-xs font-mono mb-2">
+                <span className="text-arkhe-muted">
+                  Progresso da Decodificação
+                </span>
                 <span className="text-blue-500">{Math.round(progress)}%</span>
               </div>
               <div className="h-2 bg-arkhe-card rounded-full overflow-hidden border border-arkhe-border">
-                <div 
+                <div
                   className="h-full bg-blue-500 transition-all duration-300 relative"
-                  style={{ width: `${progress}%` }}
+                  style={{width: `${progress}%`}}
                 >
                   <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
                 </div>
@@ -179,12 +210,17 @@ export default function BermudaAnomalyPanel({ onClose }: BermudaAnomalyPanelProp
               </h3>
               <div className="flex-1 overflow-y-auto font-mono text-xs space-y-1">
                 {logs.map((log, i) => (
-                  <div key={i} className={`${i === 0 ? 'text-blue-400' : 'text-arkhe-muted opacity-70'}`}>
+                  <div
+                    key={i}
+                    className={`${i === 0 ? 'text-blue-400' : 'text-arkhe-muted opacity-70'}`}
+                  >
                     {log}
                   </div>
                 ))}
                 {logs.length === 0 && (
-                  <div className="text-arkhe-muted/50 italic">Aguardando inicialização da varredura...</div>
+                  <div className="text-arkhe-muted/50 italic">
+                    Aguardando inicialização da varredura...
+                  </div>
                 )}
               </div>
             </div>
@@ -196,17 +232,21 @@ export default function BermudaAnomalyPanel({ onClose }: BermudaAnomalyPanelProp
                   Fragmento 2/14 (Bermudas)
                 </h3>
                 <div className="space-y-2 font-mono text-xs text-arkhe-green">
-                  <p className="break-all">HASH: 0x8f2a1b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a</p>
+                  <p className="break-all">
+                    HASH:
+                    0x8f2a1b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a
+                  </p>
                   <p>✓ Entropia Magnética Zero Confirmada</p>
                   <p>✓ Assinatura Satoshi Validada</p>
                   <p className="mt-2 text-[10px] opacity-80 text-blue-300">
-                    A anomalia magnética serviu como lente de refração para o sinal de 40 µHz. O segundo fragmento da chave mestra foi integrado ao Tzinor.
+                    A anomalia magnética serviu como lente de refração para o
+                    sinal de 40 µHz. O segundo fragmento da chave mestra foi
+                    integrado ao Tzinor.
                   </p>
                 </div>
               </div>
             )}
           </div>
-
         </div>
       </div>
     </div>

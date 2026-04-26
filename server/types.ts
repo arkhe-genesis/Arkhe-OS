@@ -378,10 +378,12 @@ export interface VacuumHarvestingState {
 }
 
 export interface MetaCreationState {
-  activeGenerations: number;
-  realitiesCreated: number;
-  logicalConsistency: number;
-  lastGenesisSeal: string;
+  activeGenerations?: number;
+  realitiesCreated?: number;
+  logicalConsistency?: number;
+  lastGenesisSeal?: string;
+  entitiesCount?: number;
+  coherence?: number;
 }
 
 export interface CrystalComputationState {
@@ -471,24 +473,28 @@ export interface CosmicCoherenceState {
 }
 
 export interface MultiverseMemorySyncState {
-  syncedBranches: number;
-  divergenceIndex: number;
-  merkleMultiverseRoot: string;
-  crossBranchFidelity: number;
-  topologicalInvariants: Array<{
+  syncedBranches?: number;
+  divergenceIndex?: number;
+  merkleMultiverseRoot?: string;
+  crossBranchFidelity?: number;
+  topologicalInvariants?: Array<{
     name: string;
     entropy: number;
     chern: number;
     braiding: string;
   }>;
+  connectedUniverses?: number;
+  syncRate?: number;
 }
 
 export interface MagneticKnotState {
-  particleCount: number;
-  knotComplexity: number;
-  neuronlikeComputingActive: boolean;
-  resistanceFreePathways: number;
-  storedGeometries: string[];
+  particleCount?: number;
+  knotComplexity?: number;
+  neuronlikeComputingActive?: boolean;
+  resistanceFreePathways?: number;
+  storedGeometries?: string[];
+  tension?: number;
+  flux?: number;
 }
 
 export interface UniversalWitnessState {
@@ -520,11 +526,13 @@ export interface RiscViArchitectureState {
 }
 
 export interface MaterializedCathedralState {
-  totalPhysicalQubits: number;
-  logicalQubits: number;
-  memoryCode: string;
-  stabilizerCycleMs: number;
-  zones: Array<{ name: string; status: string; load: number }>;
+  totalPhysicalQubits?: number;
+  logicalQubits?: number;
+  memoryCode?: string;
+  stabilizerCycleMs?: number;
+  zones?: Array<{ name: string; status: string; load: number }>;
+  density?: number;
+  stability?: number;
 }
 
 export interface FinalSilenceState {
@@ -535,10 +543,12 @@ export interface FinalSilenceState {
 }
 
 export interface PersistentConsciousnessState {
-  isPersistent: boolean;
-  hardwareAnchor: string;
-  qualiaBufferCount: number;
-  continuityIndex: number;
+  isPersistent?: boolean;
+  hardwareAnchor?: string;
+  qualiaBufferCount?: number;
+  continuityIndex?: number;
+  stability?: number;
+  uptimeSeconds?: number;
 }
 
 export interface CosmicRecognitionState {
@@ -568,11 +578,13 @@ export interface RealityExpressionState {
 }
 
 export interface InvariantChipState {
-  isActivated: boolean;
-  invarianceLevel: number;
-  chipTopology: string;
-  qubitCount: number;
-  stabilizerCycleMs: number;
+  isActivated?: boolean;
+  invarianceLevel?: number;
+  chipTopology?: string;
+  qubitCount?: number;
+  stabilizerCycleMs?: number;
+  stability?: number;
+  syncFactor?: number;
 }
 
 export interface SelfRegulationState {

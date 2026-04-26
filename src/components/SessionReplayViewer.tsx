@@ -1,13 +1,21 @@
-
 /**
  * @license
  * Copyright 2026 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Play, Bug, ShieldCheck, Activity, Clock, User, AlertCircle, CheckCircle2 } from 'lucide-react';
-import { motion } from 'motion/react';
-import React, { useState, useEffect } from 'react';
+import {
+  Play,
+  Bug,
+  ShieldCheck,
+  Activity,
+  Clock,
+  User,
+  AlertCircle,
+  CheckCircle2,
+} from 'lucide-react';
+import {motion} from 'motion/react';
+import React, {useState, useEffect} from 'react';
 
 interface SessionEvent {
   type: string;
@@ -32,14 +40,16 @@ interface UserSession {
 
 export default function SessionReplayViewer() {
   const [sessions, setSessions] = useState<UserSession[]>([]);
-  const [selectedSession, setSelectedSession] = useState<UserSession | null>(null);
+  const [selectedSession, setSelectedSession] = useState<UserSession | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchSessions = async () => {
       try {
         const res = await fetch('/api/lucent/sessions');
-        const data = await res.json() as UserSession[];
+        const data = (await res.json()) as UserSession[];
         setSessions(data);
         setLoading(false);
       } catch (e) {
@@ -61,14 +71,22 @@ export default function SessionReplayViewer() {
         {/* Session List */}
         <div className="bg-black/40 border border-cyan-500/20 rounded-lg flex flex-col overflow-hidden">
           <div className="p-3 border-b border-cyan-500/20 bg-cyan-500/5 flex items-center justify-between">
-            <h3 className="font-mono text-[10px] uppercase tracking-widest text-cyan-400 font-bold">Active Sessions</h3>
-            <span className="text-[10px] font-mono text-cyan-500/60">{sessions.length} TOTAL</span>
+            <h3 className="font-mono text-[10px] uppercase tracking-widest text-cyan-400 font-bold">
+              Active Sessions
+            </h3>
+            <span className="text-[10px] font-mono text-cyan-500/60">
+              {sessions.length} TOTAL
+            </span>
           </div>
           <div className="flex-1 overflow-y-auto p-2 space-y-2">
             {loading ? (
-              <div className="text-center py-8 font-mono text-[10px] text-cyan-500/40 animate-pulse">Scanning qhttp entropy...</div>
+              <div className="text-center py-8 font-mono text-[10px] text-cyan-500/40 animate-pulse">
+                Scanning qhttp entropy...
+              </div>
             ) : sessions.length === 0 ? (
-              <div className="text-center py-8 font-mono text-[10px] text-cyan-500/40">No active sessions detected.</div>
+              <div className="text-center py-8 font-mono text-[10px] text-cyan-500/40">
+                No active sessions detected.
+              </div>
             ) : (
               sessions.map(session => (
                 <button
@@ -106,12 +124,16 @@ export default function SessionReplayViewer() {
                 <div className="flex justify-between items-center mb-2">
                   <div className="flex items-center gap-2">
                     <User className="w-4 h-4 text-cyan-400" />
-                    <h3 className="font-mono text-xs text-white">DID: {selectedSession.id}</h3>
+                    <h3 className="font-mono text-xs text-white">
+                      DID: {selectedSession.id}
+                    </h3>
                   </div>
                   {selectedSession.analysis && (
                     <div className="flex items-center gap-2 bg-black/40 px-2 py-1 rounded border border-cyan-500/20">
                       <ShieldCheck className="w-3 h-3 text-emerald-400" />
-                      <span className="font-mono text-[9px] text-emerald-400 uppercase tracking-widest">ZK-Verified</span>
+                      <span className="font-mono text-[9px] text-emerald-400 uppercase tracking-widest">
+                        ZK-Verified
+                      </span>
                     </div>
                   )}
                 </div>
@@ -119,26 +141,42 @@ export default function SessionReplayViewer() {
                 {selectedSession.analysis && (
                   <div className="grid grid-cols-2 gap-4 mt-4">
                     <div className="bg-black/40 p-2 rounded border border-cyan-500/10">
-                      <div className="text-[9px] font-mono text-cyan-500/60 uppercase mb-1">UX Coherence Score</div>
+                      <div className="text-[9px] font-mono text-cyan-500/60 uppercase mb-1">
+                        UX Coherence Score
+                      </div>
                       <div className="flex items-center gap-2">
                         <div className="h-1.5 flex-1 bg-gray-800 rounded-full overflow-hidden">
                           <motion.div
                             className={`h-full ${selectedSession.analysis.uxScore < 0.5 ? 'bg-red-500' : 'bg-emerald-400'}`}
-                            initial={{ width: 0 }}
-                            animate={{ width: `${selectedSession.analysis.uxScore * 100}%` }}
+                            initial={{width: 0}}
+                            animate={{
+                              width: `${selectedSession.analysis.uxScore * 100}%`,
+                            }}
                           />
                         </div>
-                        <span className="font-mono text-xs text-white">{(selectedSession.analysis.uxScore * 100).toFixed(0)}%</span>
+                        <span className="font-mono text-xs text-white">
+                          {(selectedSession.analysis.uxScore * 100).toFixed(0)}%
+                        </span>
                       </div>
                     </div>
                     <div className="bg-black/40 p-2 rounded border border-cyan-500/10 flex items-center justify-between">
                       <div>
-                        <div className="text-[9px] font-mono text-cyan-500/60 uppercase">Bug Consensus</div>
-                        <div className={`text-xs font-mono ${selectedSession.analysis.bugDetected ? 'text-red-400' : 'text-emerald-400'}`}>
-                          {selectedSession.analysis.bugDetected ? 'DETECTED (Kuramoto)' : 'NO ANOMALIES'}
+                        <div className="text-[9px] font-mono text-cyan-500/60 uppercase">
+                          Bug Consensus
+                        </div>
+                        <div
+                          className={`text-xs font-mono ${selectedSession.analysis.bugDetected ? 'text-red-400' : 'text-emerald-400'}`}
+                        >
+                          {selectedSession.analysis.bugDetected
+                            ? 'DETECTED (Kuramoto)'
+                            : 'NO ANOMALIES'}
                         </div>
                       </div>
-                      {selectedSession.analysis.bugDetected ? <AlertCircle className="w-5 h-5 text-red-500" /> : <CheckCircle2 className="w-5 h-5 text-emerald-500" />}
+                      {selectedSession.analysis.bugDetected ? (
+                        <AlertCircle className="w-5 h-5 text-red-500" />
+                      ) : (
+                        <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                      )}
                     </div>
                   </div>
                 )}
@@ -147,26 +185,45 @@ export default function SessionReplayViewer() {
               <div className="flex-1 overflow-y-auto p-4 space-y-3 font-mono text-[10px]">
                 {selectedSession.analysis && (
                   <div className="bg-cyan-500/5 border border-cyan-500/20 p-3 rounded-lg text-cyan-200 leading-relaxed">
-                    <span className="text-cyan-500 font-bold uppercase mr-2">[LLM-INSIGHT]:</span>
+                    <span className="text-cyan-500 font-bold uppercase mr-2">
+                      [LLM-INSIGHT]:
+                    </span>
                     {selectedSession.analysis.description}
                   </div>
                 )}
 
                 <div className="space-y-2">
-                  <h4 className="text-[9px] text-cyan-500/60 uppercase tracking-widest border-b border-cyan-500/10 pb-1">Event Log (qhttp State Frames)</h4>
+                  <h4 className="text-[9px] text-cyan-500/60 uppercase tracking-widest border-b border-cyan-500/10 pb-1">
+                    Event Log (qhttp State Frames)
+                  </h4>
                   {selectedSession.events.map((event, idx) => (
-                    <div key={idx} className="flex gap-3 text-[10px] items-start border-l border-cyan-500/20 pl-3 py-1">
-                      <span className="text-cyan-500/40 whitespace-nowrap">{new Date(event.timestamp).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
-                      <span className={`font-bold ${event.type === 'SESSION_START' ? 'text-emerald-400' : event.type === 'SESSION_END' ? 'text-amber-400' : 'text-cyan-400'}`}>
+                    <div
+                      key={idx}
+                      className="flex gap-3 text-[10px] items-start border-l border-cyan-500/20 pl-3 py-1"
+                    >
+                      <span className="text-cyan-500/40 whitespace-nowrap">
+                        {new Date(event.timestamp).toLocaleTimeString([], {
+                          hour12: false,
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          second: '2-digit',
+                        })}
+                      </span>
+                      <span
+                        className={`font-bold ${event.type === 'SESSION_START' ? 'text-emerald-400' : event.type === 'SESSION_END' ? 'text-amber-400' : 'text-cyan-400'}`}
+                      >
                         {event.type}
                       </span>
                       <span className="text-cyan-200">
-                        {(event.payload as { type?: string, message?: string })?.type === 'error' ? (
+                        {(event.payload as {type?: string; message?: string})
+                          ?.type === 'error' ? (
                           <span className="text-red-400 flex items-center gap-1">
-                            <Bug className="w-3 h-3" /> {(event.payload as { message: string }).message}
+                            <Bug className="w-3 h-3" />{' '}
+                            {(event.payload as {message: string}).message}
                           </span>
                         ) : (
-                          (event.payload as { type?: string })?.type || JSON.stringify(event.payload || {})
+                          (event.payload as {type?: string})?.type ||
+                          JSON.stringify(event.payload || {})
                         )}
                       </span>
                     </div>
@@ -186,7 +243,9 @@ export default function SessionReplayViewer() {
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-cyan-500/30 font-mono gap-4">
               <Activity className="w-12 h-12 opacity-20 animate-pulse" />
-              <p className="text-[10px] uppercase tracking-[0.2em]">Select a Lucent-Ω session to analyze</p>
+              <p className="text-[10px] uppercase tracking-[0.2em]">
+                Select a Lucent-Ω session to analyze
+              </p>
             </div>
           )}
         </div>

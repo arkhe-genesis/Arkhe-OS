@@ -67,7 +67,9 @@ export const getDodecagramShader = definePageTool({
     response.appendResponseLine('uniform float u_ram_usage;');
     response.appendResponseLine('void main() {');
     response.appendResponseLine('  vec3 color = mix(vec3(1,0,0), vec3(0,1,1), u_lambda_mesh);');
-    response.appendResponseLine('  if (u_ram_usage > 0.8) color = mix(color, vec3(1,1,0), step(0.5, fract(u_time*2.0)));');
+    response.appendResponseLine('  if (u_ram_usage > 0.8) {
+    color = mix(color, vec3(1,1,0), step(0.5, fract(u_time*2.0)));
+  }');
     response.appendResponseLine('  gl_FragColor = vec4(color, 1.0);');
     response.appendResponseLine('}');
     response.appendResponseLine('```');

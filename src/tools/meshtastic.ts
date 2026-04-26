@@ -15,15 +15,15 @@ async function runMeshtasticCmd(args: string[]): Promise<string> {
     let stdout = '';
     let stderr = '';
 
-    child.stdout.on('data', (data) => {
+    child.stdout.on('data', data => {
       stdout += data.toString();
     });
 
-    child.stderr.on('data', (data) => {
+    child.stderr.on('data', data => {
       stderr += data.toString();
     });
 
-    child.on('close', (code) => {
+    child.on('close', code => {
       if (code === 0) {
         resolve(stdout);
       } else {
@@ -31,7 +31,7 @@ async function runMeshtasticCmd(args: string[]): Promise<string> {
       }
     });
 
-    child.on('error', (err) => {
+    child.on('error', err => {
       reject(err);
     });
   });
@@ -53,8 +53,12 @@ export const meshtasticListDevices = defineTool(() => {
         response.appendResponseLine('### Meshtastic Devices');
         response.appendResponseLine(output);
       } catch (error) {
-        response.appendResponseLine(`Error listing Meshtastic devices: ${(error as Error).message}`);
-        response.appendResponseLine('\nNote: Ensure the `meshtastic` Python package is installed and in your PATH.');
+        response.appendResponseLine(
+          `Error listing Meshtastic devices: ${(error as Error).message}`,
+        );
+        response.appendResponseLine(
+          '\nNote: Ensure the `meshtastic` Python package is installed and in your PATH.',
+        );
       }
     },
   };
@@ -63,14 +67,20 @@ export const meshtasticListDevices = defineTool(() => {
 export const meshtasticInfo = defineTool(() => {
   return {
     name: 'meshtastic_info',
-    description: 'Meshtastic: Returns information and configuration for a connected Meshtastic device.',
+    description:
+      'Meshtastic: Returns information and configuration for a connected Meshtastic device.',
     annotations: {
       category: ToolCategory.MESHTASTIC,
       readOnlyHint: true,
       reasoningCost: 20,
     },
     schema: {
-      port: zod.string().optional().describe('The serial port of the device (e.g., /dev/ttyUSB0). If not provided, it will try to auto-detect.'),
+      port: zod
+        .string()
+        .optional()
+        .describe(
+          'The serial port of the device (e.g., /dev/ttyUSB0). If not provided, it will try to auto-detect.',
+        ),
     },
     handler: async (request, response) => {
       const args = ['--info'];
@@ -82,7 +92,9 @@ export const meshtasticInfo = defineTool(() => {
         response.appendResponseLine('### Meshtastic Device Info');
         response.appendResponseLine(output);
       } catch (error) {
-        response.appendResponseLine(`Error getting Meshtastic info: ${(error as Error).message}`);
+        response.appendResponseLine(
+          `Error getting Meshtastic info: ${(error as Error).message}`,
+        );
       }
     },
   };
@@ -99,8 +111,16 @@ export const meshtasticSendText = defineTool(() => {
     },
     schema: {
       text: zod.string().describe('The text message to send.'),
-      dest: zod.string().optional().describe('The destination node ID (e.g., ^abcdefgh). If not provided, it broadcasts to all nodes.'),
-      port: zod.string().optional().describe('The serial port of the local device to use.'),
+      dest: zod
+        .string()
+        .optional()
+        .describe(
+          'The destination node ID (e.g., ^abcdefgh). If not provided, it broadcasts to all nodes.',
+        ),
+      port: zod
+        .string()
+        .optional()
+        .describe('The serial port of the local device to use.'),
     },
     handler: async (request, response) => {
       const {text, dest, port} = request.params;
@@ -116,9 +136,13 @@ export const meshtasticSendText = defineTool(() => {
         const output = await runMeshtasticCmd(args);
         response.appendResponseLine('### Meshtastic Send Text');
         response.appendResponseLine(output);
-        response.appendResponseLine(`\nMessage "${text}" sent ${dest ? `to ${dest}` : 'as broadcast'}.`);
+        response.appendResponseLine(
+          `\nMessage "${text}" sent ${dest ? `to ${dest}` : 'as broadcast'}.`,
+        );
       } catch (error) {
-        response.appendResponseLine(`Error sending Meshtastic text: ${(error as Error).message}`);
+        response.appendResponseLine(
+          `Error sending Meshtastic text: ${(error as Error).message}`,
+        );
       }
     },
   };

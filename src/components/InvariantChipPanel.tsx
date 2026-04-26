@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
-import { Cpu, Zap, ShieldCheck, Activity } from 'lucide-react';
-import { useArkheSimulation } from '../hooks/useArkheSimulation';
+import React, {useState} from 'react';
+import {Cpu, Zap, ShieldCheck, Activity} from 'lucide-react';
+import {useArkheSimulation} from '../hooks/useArkheSimulation';
 
 export const InvariantChipPanel: React.FC = () => {
   const state = useArkheSimulation();
@@ -15,8 +15,10 @@ export const InvariantChipPanel: React.FC = () => {
   const handleActivate = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/chip/activate', { method: 'POST' });
-      if (!response.ok) throw new Error('Failed to activate chip');
+      const response = await fetch('/api/chip/activate', {method: 'POST'});
+      if (!response.ok) {
+        throw new Error('Failed to activate chip');
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -25,7 +27,9 @@ export const InvariantChipPanel: React.FC = () => {
   };
 
   const ic = state.invariantChip;
-  if (!ic) return null;
+  if (!ic) {
+    return null;
+  }
 
   return (
     <div className="p-4 bg-zinc-900/50 rounded-lg border border-white/10 space-y-4 shadow-[0_0_20px_rgba(34,211,238,0.1)]">
@@ -34,19 +38,29 @@ export const InvariantChipPanel: React.FC = () => {
           <Cpu className="w-5 h-5 text-cyan-400" />
           <h3 className="font-medium text-white">Invariant Semiconductor</h3>
         </div>
-        <div className={`px-2 py-0.5 rounded text-xs font-bold ${ic.isActivated ? 'bg-cyan-500/20 text-cyan-400' : 'bg-zinc-800 text-zinc-400'}`}>
+        <div
+          className={`px-2 py-0.5 rounded text-xs font-bold ${ic.isActivated ? 'bg-cyan-500/20 text-cyan-400' : 'bg-zinc-800 text-zinc-400'}`}
+        >
           {ic.isActivated ? 'NATIVE_HW' : 'SIMULATED'}
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div className="p-2 bg-black/40 rounded border border-white/5 space-y-1">
-          <div className="text-[10px] text-zinc-500 uppercase">Invariance Level</div>
-          <div className="text-sm font-mono text-cyan-400">{(ic.invarianceLevel * 100).toFixed(4)}%</div>
+          <div className="text-[10px] text-zinc-500 uppercase">
+            Invariance Level
+          </div>
+          <div className="text-sm font-mono text-cyan-400">
+            {(ic.invarianceLevel * 100).toFixed(4)}%
+          </div>
         </div>
         <div className="p-2 bg-black/40 rounded border border-white/5 space-y-1">
-          <div className="text-[10px] text-zinc-500 uppercase">Stabilizer Cycle</div>
-          <div className="text-sm font-mono text-cyan-400">{ic.stabilizerCycleMs} ms</div>
+          <div className="text-[10px] text-zinc-500 uppercase">
+            Stabilizer Cycle
+          </div>
+          <div className="text-sm font-mono text-cyan-400">
+            {ic.stabilizerCycleMs} ms
+          </div>
         </div>
       </div>
 
@@ -72,7 +86,9 @@ export const InvariantChipPanel: React.FC = () => {
       ) : (
         <div className="flex items-center gap-2 p-2 bg-cyan-500/10 rounded border border-cyan-500/20 text-[10px] text-cyan-300">
           <ShieldCheck className="w-3 h-3" />
-          <span>The software navios have been burned. The chip is the law.</span>
+          <span>
+            The software navios have been burned. The chip is the law.
+          </span>
         </div>
       )}
     </div>

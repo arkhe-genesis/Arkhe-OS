@@ -18,15 +18,15 @@ function runPythonScript(scriptPath: string, args: string[]): Promise<string> {
     let stdout = '';
     let stderr = '';
 
-    pythonProcess.stdout.on('data', (data) => {
+    pythonProcess.stdout.on('data', data => {
       stdout += data.toString();
     });
 
-    pythonProcess.stderr.on('data', (data) => {
+    pythonProcess.stderr.on('data', data => {
       stderr += data.toString();
     });
 
-    pythonProcess.on('close', (code) => {
+    pythonProcess.on('close', code => {
       if (code === 0) {
         resolve(stdout);
       } else {
@@ -41,7 +41,8 @@ const SIMULATE_PATH = 'scripts/simulate_oasis_scan.py';
 
 export const oasisScan = definePageTool({
   name: 'oasis_scan',
-  description: '🏝️ OASIS: Performs an AI-powered security audit using Ollama models to detect vulnerabilities.',
+  description:
+    '🏝️ OASIS: Performs an AI-powered security audit using Ollama models to detect vulnerabilities.',
   annotations: {
     category: ToolCategory.ARKHE,
     readOnlyHint: true,
@@ -49,22 +50,41 @@ export const oasisScan = definePageTool({
   },
   schema: {
     input: zod.string().describe('Path to file or directory to analyze.'),
-    models: zod.string().optional().describe('Comma-separated list of models for deep analysis.'),
-    scanModel: zod.string().optional().describe('Model to use for quick scanning.'),
-    vulns: zod.string().optional().describe('Vulnerability types to check (comma-separated or "all").'),
-    adaptive: zod.boolean().optional().default(false).describe('Use adaptive multi-level analysis.'),
+    models: zod
+      .string()
+      .optional()
+      .describe('Comma-separated list of models for deep analysis.'),
+    scanModel: zod
+      .string()
+      .optional()
+      .describe('Model to use for quick scanning.'),
+    vulns: zod
+      .string()
+      .optional()
+      .describe('Vulnerability types to check (comma-separated or "all").'),
+    adaptive: zod
+      .boolean()
+      .optional()
+      .default(false)
+      .describe('Use adaptive multi-level analysis.'),
   },
   handler: async (request, response) => {
-    response.appendResponseLine('### OASIS: Ollama Automated Security Intelligence Scanner');
+    response.appendResponseLine(
+      '### OASIS: Ollama Automated Security Intelligence Scanner',
+    );
     response.appendResponseLine(`Target: ${request.params.input}`);
 
     const useRealOasis = existsSync(OASIS_PATH);
     const scriptPath = useRealOasis ? OASIS_PATH : SIMULATE_PATH;
 
     if (useRealOasis) {
-      response.appendResponseLine('Status: Executing real OASIS scanner integration...');
+      response.appendResponseLine(
+        'Status: Executing real OASIS scanner integration...',
+      );
     } else {
-      response.appendResponseLine('Status: Initializing Simulated Two-Phase Scanning Sequence...');
+      response.appendResponseLine(
+        'Status: Initializing Simulated Two-Phase Scanning Sequence...',
+      );
     }
 
     const args = ['--input', request.params.input];
@@ -91,19 +111,24 @@ export const oasisScan = definePageTool({
         response.appendResponseLine(stdout);
       }
     } catch (_error) {
-      response.appendResponseLine(`- **Error**: Failed to execute scan sequence.`);
+      response.appendResponseLine(
+        `- **Error**: Failed to execute scan sequence.`,
+      );
       if (error instanceof Error) {
         response.appendResponseLine(`  ${error.message}`);
       }
     }
 
-    response.appendResponseLine('\n**Quantum Oasis Effect**: Coherence maintained during recursive audit.');
+    response.appendResponseLine(
+      '\n**Quantum Oasis Effect**: Coherence maintained during recursive audit.',
+    );
   },
 });
 
 export const oasisAudit = definePageTool({
   name: 'oasis_audit',
-  description: '🏝️ OASIS: Runs an embedding distribution analysis to identify high-risk areas in the codebase.',
+  description:
+    '🏝️ OASIS: Runs an embedding distribution analysis to identify high-risk areas in the codebase.',
   annotations: {
     category: ToolCategory.ARKHE,
     readOnlyHint: true,
@@ -113,7 +138,9 @@ export const oasisAudit = definePageTool({
     input: zod.string().describe('Path to analyze.'),
   },
   handler: async (request, response) => {
-    response.appendResponseLine('### OASIS Audit Mode: Embedding Distribution Analysis');
+    response.appendResponseLine(
+      '### OASIS Audit Mode: Embedding Distribution Analysis',
+    );
     response.appendResponseLine(`Target: ${request.params.input}`);
 
     const useRealOasis = existsSync(OASIS_PATH);
@@ -122,9 +149,18 @@ export const oasisAudit = definePageTool({
 
     if (!useRealOasis) {
       // Simulate mode handles --audit via --mode audit
-      await runPythonScript(SIMULATE_PATH, ['--mode', 'audit', '--input', request.params.input])
+      await runPythonScript(SIMULATE_PATH, [
+        '--mode',
+        'audit',
+        '--input',
+        request.params.input,
+      ])
         .then(stdout => response.appendResponseLine(stdout))
-        .catch(() => response.appendResponseLine(`- **Error**: Failed to execute audit sequence.`));
+        .catch(() =>
+          response.appendResponseLine(
+            `- **Error**: Failed to execute audit sequence.`,
+          ),
+        );
     } else {
       try {
         const stdout = await runPythonScript(scriptPath, args);
@@ -132,24 +168,31 @@ export const oasisAudit = definePageTool({
           response.appendResponseLine(stdout);
         }
       } catch (_error) {
-        response.appendResponseLine(`- **Error**: Failed to execute audit sequence.`);
+        response.appendResponseLine(
+          `- **Error**: Failed to execute audit sequence.`,
+        );
       }
     }
 
-    response.appendResponseLine('\n**Status**: Pre-Scan Intelligence localized to the sheet.');
+    response.appendResponseLine(
+      '\n**Status**: Pre-Scan Intelligence localized to the sheet.',
+    );
   },
 });
 
 export const oasisModelSelect = definePageTool({
   name: 'oasis_model_select',
-  description: '🏝️ OASIS: Lists and recommends optimal models based on hardware and project size.',
+  description:
+    '🏝️ OASIS: Lists and recommends optimal models based on hardware and project size.',
   annotations: {
     category: ToolCategory.ARKHE,
     readOnlyHint: true,
     reasoningCost: 10,
   },
   schema: {
-    projectSize: zod.enum(['small', 'medium', 'large']).describe('Approximate size of the codebase.'),
+    projectSize: zod
+      .enum(['small', 'medium', 'large'])
+      .describe('Approximate size of the codebase.'),
   },
   handler: async (request, response) => {
     response.appendResponseLine('### OASIS Model Selection Strategy');
@@ -163,16 +206,21 @@ export const oasisModelSelect = definePageTool({
       response.appendResponseLine('- **Recommended Analysis**: gemma3:27b');
     } else {
       response.appendResponseLine('- **Recommended Scan**: phi3:mini');
-      response.appendResponseLine('- **Recommended Analysis**: deepseek-r1:32b, codestral');
+      response.appendResponseLine(
+        '- **Recommended Analysis**: deepseek-r1:32b, codestral',
+      );
     }
 
-    response.appendResponseLine('\n**Requirement**: Ollama backend must be active.');
+    response.appendResponseLine(
+      '\n**Requirement**: Ollama backend must be active.',
+    );
   },
 });
 
 export const oasisWebDashboard = definePageTool({
   name: 'oasis_web_dashboard',
-  description: '🏝️ OASIS: Starts the secure, password-protected web dashboard for report exploration.',
+  description:
+    '🏝️ OASIS: Starts the secure, password-protected web dashboard for report exploration.',
   annotations: {
     category: ToolCategory.ARKHE,
     readOnlyHint: false,
@@ -189,14 +237,24 @@ export const oasisWebDashboard = definePageTool({
     if (useRealOasis) {
       // In a real environment, we would start the process in the background
       // Here we simulate the initiation and provide the expected link
-      response.appendResponseLine(`Action: Initiating OASIS web server on port ${port}...`);
+      response.appendResponseLine(
+        `Action: Initiating OASIS web server on port ${port}...`,
+      );
       // spawn('python3', [OASIS_PATH, '--input', '.', '--web', '--web-port', port.toString()], { detached: true, stdio: 'ignore' }).unref();
     } else {
-      response.appendResponseLine(`Action: Materializing dashboard at http://localhost:${port}`);
+      response.appendResponseLine(
+        `Action: Materializing dashboard at http://localhost:${port}`,
+      );
     }
 
-    response.appendResponseLine('- **Security**: Password-protected (Quantum Entropy Seed generated).');
-    response.appendResponseLine('- **Exposure**: Local interface only (127.0.0.1).');
-    response.appendResponseLine(`\n**Status**: Dashboard active on port ${port}.`);
+    response.appendResponseLine(
+      '- **Security**: Password-protected (Quantum Entropy Seed generated).',
+    );
+    response.appendResponseLine(
+      '- **Exposure**: Local interface only (127.0.0.1).',
+    );
+    response.appendResponseLine(
+      `\n**Status**: Dashboard active on port ${port}.`,
+    );
   },
 });

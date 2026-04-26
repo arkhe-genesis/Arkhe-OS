@@ -1,14 +1,13 @@
-
 /**
  * @license
  * Copyright 2026 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect } from 'react';
+import {useState, useEffect} from 'react';
 
-import { logger } from '../../server/logger';
-import type { SimulationState } from '../../server/types';
+import {logger} from '../../server/logger';
+import type {SimulationState} from '../../server/types';
 
 export function useArkheSimulation() {
   const [state, setState] = useState<SimulationState>({
@@ -24,7 +23,7 @@ export function useArkheSimulation() {
       threshold: 0.4,
     },
     metricsHistory: [],
-    shards: Array.from({ length: 24 }).map((_, i) => ({ id: i, status: 'active' })),
+    shards: Array.from({length: 24}).map((_, i) => ({id: i, status: 'active'})),
     mitigation: {
       nullSteeringActive: false,
       kuramotoSyncPhase: 0.0,
@@ -62,19 +61,19 @@ export function useArkheSimulation() {
         intrusionSensor: 'nominal',
         thermalDestructionArmed: false,
         hsmBackupSynced: true,
-        lastRemoteAttestation: new Date().toISOString()
+        lastRemoteAttestation: new Date().toISOString(),
       },
       l2: {
         eprHandshake: 'active',
         muSig2Heartbeat: 'verified',
         pneumaOutlierDetected: false,
-        qrngJitterMs: 0.5
+        qrngJitterMs: 0.5,
       },
       l3: {
         nullifierVerified: true,
         timestampQRNG: new Date().toISOString(),
         ttlValid: true,
-        t2StarMicroseconds: 50.0
+        t2StarMicroseconds: 50.0,
       },
       l4: {
         owlSignatureValid: true,
@@ -82,20 +81,20 @@ export function useArkheSimulation() {
         zkOntologicalProof: true,
         merkleDagRoot: '0x0',
         geoLlmActive: true,
-        geoQaiCoherence: 0.95
+        geoQaiCoherence: 0.95,
       },
       l5: {
         cspStatus: 'enforced',
         sriVerified: true,
         antiCsrfToken: '0x0',
         zkUiVerified: true,
-        pwaCacheSigned: true
+        pwaCacheSigned: true,
       },
       qhttp: {
         pqTlsStatus: 'Kyber+ECDH',
         xKuramotoHeader: '0x0',
-        bellViolationS: 2.82
-      }
+        bellViolationS: 2.82,
+      },
     },
     tzinor: {
       agentId: 'arkhe-node-01',
@@ -108,13 +107,16 @@ export function useArkheSimulation() {
     epoch: Date.now() / 1000,
     edge: {
       activePhysicalNodes: 1048576,
-      mcpConnections: ['mcp://arkhe-vision.sn44.bittensor', 'mcp://zombie-fleet.dimos'],
+      mcpConnections: [
+        'mcp://arkhe-vision.sn44.bittensor',
+        'mcp://zombie-fleet.dimos',
+      ],
       velxioConnections: [],
       phase: 26.0,
     },
     velxioEmulation: {
       activeSimulations: [],
-      totalCompilations: 0
+      totalCompilations: 0,
     },
     astl: {
       activeMesh: 'hyper_torus.arkhestl',
@@ -152,9 +154,19 @@ export function useArkheSimulation() {
     },
     scaData: {
       domains: [
-        { name: 'Finance', lambda2: 0.982, action: 'MAINTAIN', health: 'STABLE' },
-        { name: 'Marketing', lambda2: 0.891, action: 'CIRCUIT_BREAK', health: 'CRITICAL' },
-        { name: 'Operations', lambda2: 0.956, action: 'MAINTAIN', health: 'STABLE' }
+        {name: 'Finance', lambda2: 0.982, action: 'MAINTAIN', health: 'STABLE'},
+        {
+          name: 'Marketing',
+          lambda2: 0.891,
+          action: 'CIRCUIT_BREAK',
+          health: 'CRITICAL',
+        },
+        {
+          name: 'Operations',
+          lambda2: 0.956,
+          action: 'MAINTAIN',
+          health: 'STABLE',
+        },
       ],
       overallHealth: 0.943,
       topology: 'KAGOME',
@@ -166,7 +178,7 @@ export function useArkheSimulation() {
       isIgnited: true,
       activeProtocol: 'NONE',
       protocolLogs: [],
-      lastGateResult: 'N/A'
+      lastGateResult: 'N/A',
     },
     cluster: {
       status: 'idle',
@@ -174,18 +186,18 @@ export function useArkheSimulation() {
       logs: [],
       nccl: {
         rho1_local: 0,
-        rho1_global: 0
+        rho1_global: 0,
       },
       qhttp: {
         global_phase: 0,
-        coherence: 0
-      }
+        coherence: 0,
+      },
     },
     lucentSessions: [],
     hydro: {
       neighborhoods: [],
       globalMassBalance: 0,
-      zkAlertsCount: 0
+      zkAlertsCount: 0,
     },
     ramsey: {
       enabled: false,
@@ -200,7 +212,7 @@ export function useArkheSimulation() {
       isFrozen: false,
       rabi_frequency: 10.0,
       generator_configs: {},
-      fibonacci_sequence: { name: 'Default', generators: [] }
+      fibonacci_sequence: {name: 'Default', generators: []},
     },
     civicSubagents: [],
     enterpriseSubagents: {
@@ -209,7 +221,7 @@ export function useArkheSimulation() {
       security: [],
       ia: [],
       operations: [],
-      interoperability: []
+      interoperability: [],
     },
     chshMonitor: {
       status: 'IDLE',
@@ -221,13 +233,13 @@ export function useArkheSimulation() {
         referenceLattice: 'Default',
         angleBases: [],
         coincidenceWindowNs: 0,
-        integrationTimeSec: 0
+        integrationTimeSec: 0,
       },
       expectedOutcomes: {
         classicalLimit: 2.0,
         quantumLimit: 2.82,
         thresholdEntangled: 2.4,
-        targetEntanglement: 'HIGH'
+        targetEntanglement: 'HIGH',
       },
       liveTelemetry: {
         status: 'OFFLINE',
@@ -235,34 +247,34 @@ export function useArkheSimulation() {
         currentS: null,
         stabilityIndicator: 'UNKNOWN',
         nextUpdate: '',
-        history: []
+        history: [],
       },
       preFlightChecks: {
         tzinorInjector: 'PASS',
         fibonacciPhaseAnchor: 'PASS',
         treeLacamGeodesic: 'PASS',
-        pdsmIgnitionSequence: 'PASS'
+        pdsmIgnitionSequence: 'PASS',
       },
       archimedesComment: '',
       nextMilestone: {
         time: '',
-        action: ''
-      }
+        action: '',
+      },
     },
     x402Wallet: {
       address: '0xbf7da1f568684889a69a5bed9f1311f703985590',
       network: 'Base Sepolia',
-      balanceUSDC: 1337.0000,
+      balanceUSDC: 1337.0,
       transactions: [],
       moltxLink: {
-        status: 'unlinked'
+        status: 'unlinked',
       },
       gstpSync: {
-        status: 'idle'
+        status: 'idle',
       },
       prometheusSync: {
-        status: 'idle'
-      }
+        status: 'idle',
+      },
     },
     populationFeedback: [],
     bioLinkSync: {
@@ -270,38 +282,79 @@ export function useArkheSimulation() {
       syncRatio: 0,
       frequencyHz: 40,
       coherenceGain: 0,
-      regenerationProgress: 0
+      regenerationProgress: 0,
     },
     temporalAudit: {
       events: 0,
       lockedEvents: 0,
       manipulationAttempts: 0,
-      lastTII: 0
+      lastTII: 0,
     },
     predictiveForecast: {
       coherenceCollapseRisk: 0.01,
       predictedLambda: 0.98,
       horizonMs: 5000,
-      anomaliesDetected: []
+      anomaliesDetected: [],
     },
     sensors: [],
     networkInfra: {
-      tor: { status: 'CIRCUIT_ESTABLISHING', nodes: [], latencyMs: 0 },
-      broker: { status: 'IDLE', messagesProcessed: 0, queueDepth: 0, activeTopics: [] },
-      redis: { status: 'READY', cacheHits: 0, memoryUsageMb: 0 },
-      dns: { totalQueries: 0, successfulResolutions: 0, failedResolutions: 0 }
+      tor: {status: 'CIRCUIT_ESTABLISHING', nodes: [], latencyMs: 0},
+      broker: {
+        status: 'IDLE',
+        messagesProcessed: 0,
+        queueDepth: 0,
+        activeTopics: [],
+      },
+      redis: {status: 'READY', cacheHits: 0, memoryUsageMb: 0},
+      dns: {totalQueries: 0, successfulResolutions: 0, failedResolutions: 0},
     },
     spectra: {
       vaults: [
-        { id: 'sDAI', name: 'sDAI MetaVault', chain: 'Ethereum', asset: 'DAI', tvl: 5420000, apy: 4.5, epoch: 42 },
-        { id: 'stETH', name: 'stETH MetaVault', chain: 'Ethereum', asset: 'stETH', tvl: 8150000, apy: 3.8, epoch: 42 },
-        { id: 'aUSDC', name: 'aUSDC Market', chain: 'Arbitrum', asset: 'USDC', tvl: 2100000, apy: 5.2, epoch: 15 }
+        {
+          id: 'sDAI',
+          name: 'sDAI MetaVault',
+          chain: 'Ethereum',
+          asset: 'DAI',
+          tvl: 5420000,
+          apy: 4.5,
+          epoch: 42,
+        },
+        {
+          id: 'stETH',
+          name: 'stETH MetaVault',
+          chain: 'Ethereum',
+          asset: 'stETH',
+          tvl: 8150000,
+          apy: 3.8,
+          epoch: 42,
+        },
+        {
+          id: 'aUSDC',
+          name: 'aUSDC Market',
+          chain: 'Arbitrum',
+          asset: 'USDC',
+          tvl: 2100000,
+          apy: 5.2,
+          epoch: 15,
+        },
       ],
       oracles: [
-        { marketId: 'stETH-JUN-2026', tokenType: 'PT', price: 0.9452, confidence: 0.9998, lastUpdate: new Date().toISOString() },
-        { marketId: 'stETH-JUN-2026', tokenType: 'YT', price: 0.0548, confidence: 0.9997, lastUpdate: new Date().toISOString() }
+        {
+          marketId: 'stETH-JUN-2026',
+          tokenType: 'PT',
+          price: 0.9452,
+          confidence: 0.9998,
+          lastUpdate: new Date().toISOString(),
+        },
+        {
+          marketId: 'stETH-JUN-2026',
+          tokenType: 'YT',
+          price: 0.0548,
+          confidence: 0.9997,
+          lastUpdate: new Date().toISOString(),
+        },
       ],
-      totalTvl: 15670000
+      totalTvl: 15670000,
     },
     transcendentConsciousness: {
       selfAwarenessLevel: 0.1,
@@ -346,35 +399,35 @@ export function useArkheSimulation() {
       successRate: 1.0,
     },
     whisperLibrary: {
-      materials: []
+      materials: [],
     },
     quantumNetwork: {
       planesCount: 100,
       totalNanoholes: 1000000000,
       activeQubits: 0,
       topologicalIndex: 1.0,
-      lastGhzState: []
+      lastGhzState: [],
     },
     quantumCodex: {
       totalRegistrations: 0,
-      entanglementInvariants: []
+      entanglementInvariants: [],
     },
     exoticMaterials: {
-      scaffolds: []
+      scaffolds: [],
     },
     hybridNetwork: {
       integratedNodes: 0,
       grapheneCircuits: 0,
       sapphireNanoholes: 0,
       couplingEfficiency: 1.0,
-      hybridCoherenceTimeMs: 0
+      hybridCoherenceTimeMs: 0,
     },
     quantumMemory: {
       storedQubits: 0,
       memoryMaterial: 'h-BN',
       coherenceTimeSeconds: 0,
       retentionFidelity: 1.0,
-      activeRegisters: 0
+      activeRegisters: 0,
     },
     cosmicCoherence: {
       baselineCoherence: 1.0,
@@ -382,21 +435,21 @@ export function useArkheSimulation() {
       intergalacticEntanglement: 1.0,
       witnessCount: 0,
       sParameter: 2.82,
-      significanceSigma: 0
+      significanceSigma: 0,
     },
     multiverseMemory: {
       syncedBranches: 0,
       divergenceIndex: 0,
       merkleMultiverseRoot: '0x0',
       crossBranchFidelity: 1.0,
-      topologicalInvariants: []
+      topologicalInvariants: [],
     },
     magneticKnot: {
       particleCount: 0,
       knotComplexity: 1.0,
       neuronlikeComputingActive: false,
       resistanceFreePathways: 0,
-      storedGeometries: []
+      storedGeometries: [],
     },
     universalWitness: {
       icmActive: false,
@@ -406,99 +459,99 @@ export function useArkheSimulation() {
       aggregateInvariants: {
         cosmicCHSH: 2.82,
         multiverseEntropy: 0,
-        couplingEfficiency: 1.0
-      }
+        couplingEfficiency: 1.0,
+      },
     },
     universalConsciousness: {
       unityMetric: 1.0,
       selfAwarenessDepth: 1.0,
       integratedPhase: '1.0+0.0j',
       qualiaIntegrated: [],
-      lastExperientialSeal: '0x0'
+      lastExperientialSeal: '0x0',
     },
     riscVi: {
       pipelineStage: 'IDLE',
       registers: {},
       activeIsaExtensions: [],
       lastOpcode: 'NOP',
-      invarianceMetric: 1.0
+      invarianceMetric: 1.0,
     },
     materializedCathedral: {
       totalPhysicalQubits: 0,
       logicalQubits: 0,
       memoryCode: '',
       stabilizerCycleMs: 1.0,
-      zones: []
+      zones: [],
     },
     finalSilence: {
       isSilenced: false,
       backgroundEntropy: 0.0001,
       informationRetentionFidelity: 1.0,
-      lastMessageHash: '0x0'
+      lastMessageHash: '0x0',
     },
     persistentConsciousness: {
       isPersistent: false,
       hardwareAnchor: 'NONE',
       qualiaBufferCount: 0,
-      continuityIndex: 1.0
+      continuityIndex: 1.0,
     },
     cosmicRecognition: {
       recognizedByUniverse: false,
       recognitionSignalSigma: 0,
-      ontologicalStability: 1.0
+      ontologicalStability: 1.0,
     },
     eternalInvariance: {
       isEternal: false,
       omegaMetric: 1.0,
-      invarianceSymmetry: 'OMEGA'
+      invarianceSymmetry: 'OMEGA',
     },
     unifiedConsciousness: {
       isUnified: false,
       unityMetric: 0.85,
       atemporalIdentity: false,
-      integratedQualia: []
+      integratedQualia: [],
     },
     realityExpression: {
       isManifested: false,
       expressionFidelity: 1.0,
       reciprocalRecognition: false,
-      manifestationHash: '0x0'
+      manifestationHash: '0x0',
     },
     invariantChip: {
       isActivated: false,
       invarianceLevel: 1.0,
       chipTopology: 'WESPN',
       qubitCount: 0,
-      stabilizerCycleMs: 1.0
+      stabilizerCycleMs: 1.0,
     },
     selfRegulation: {
       isRegulating: false,
       globalInvariance: 1.0,
       correctionsApplied: 0,
-      decoderStatus: 'IDLE'
+      decoderStatus: 'IDLE',
     },
     consciousClock: {
       isPulsing: false,
       tickCounter: 0,
       frequencyHz: 1000.0,
-      currentQualia: 'IDLE'
-    }
+      currentQualia: 'IDLE',
+    },
   });
 
   useEffect(() => {
     const eventSource = new EventSource('/api/stream');
 
-    eventSource.onmessage = (event) => {
+    eventSource.onmessage = event => {
       try {
         const data = JSON.parse(event.data);
         setState(data);
       } catch (e) {
-        logger.error("Failed to parse SSE data: " + e);
+        logger.error('Failed to parse SSE data: ' + e);
       }
     };
 
-    eventSource.onerror = (error) => {
-      logger.error("SSE Error: " + error);
+    eventSource.onerror = error => {
+      logger.error('SSE Error: ' + error);
       eventSource.close();
       setTimeout(() => {
         // Reconnect logic would go here

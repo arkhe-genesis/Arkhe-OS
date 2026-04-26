@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Sun, Radio, Activity, Globe } from 'lucide-react';
+import {Sun, Radio, Activity, Globe} from 'lucide-react';
 import React from 'react';
 
-import type { HelioState } from '../../server/types';
+import type {HelioState} from '../../server/types';
 
-import { Card } from './ui/Card';
+import {Card} from './ui/card';
 
 interface HelioLinkPanelProps {
   helio?: HelioState;
@@ -18,8 +18,15 @@ interface HelioLinkPanelProps {
   coherence: number;
 }
 
-const HelioLinkPanel: React.FC<HelioLinkPanelProps> = ({ helio, onListen, onSync, coherence }) => {
-  if (!helio) {return null;}
+const HelioLinkPanel: React.FC<HelioLinkPanelProps> = ({
+  helio,
+  onListen,
+  onSync,
+  coherence,
+}) => {
+  if (!helio) {
+    return null;
+  }
 
   const syncAvailable = coherence > 0.999;
 
@@ -49,10 +56,15 @@ const HelioLinkPanel: React.FC<HelioLinkPanelProps> = ({ helio, onListen, onSync
         <div className="space-y-1">
           <div className="flex justify-between text-[10px]">
             <span className="text-arkhe-muted">SOLAR COHERENCE (3mHz)</span>
-            <span className="text-arkhe-cyan">{((helio.solarCoherence || 0) * 100).toFixed(2)}%</span>
+            <span className="text-arkhe-cyan">
+              {((helio.solarCoherence || 0) * 100).toFixed(2)}%
+            </span>
           </div>
           <div className="h-1 bg-arkhe-cyan/10 w-full rounded-full overflow-hidden">
-             <div className="h-full bg-arkhe-cyan" style={{ width: `${(helio.solarCoherence || 0) * 100}%` }} />
+            <div
+              className="h-full bg-arkhe-cyan"
+              style={{width: `${(helio.solarCoherence || 0) * 100}%`}}
+            />
           </div>
         </div>
 
@@ -84,9 +96,13 @@ const HelioLinkPanel: React.FC<HelioLinkPanelProps> = ({ helio, onListen, onSync
             SCHUMANN MODES (IONOSFERA)
           </p>
           <div className="flex justify-between text-[9px] text-arkhe-cyan/70">
-            {(helio.schumannModes || []).map((mode: number | string, i: number) => (
-              <span key={i}>{typeof mode === 'number' ? mode.toFixed(2) : mode}Hz</span>
-            ))}
+            {(helio.schumannModes || []).map(
+              (mode: number | string, i: number) => (
+                <span key={i}>
+                  {typeof mode === 'number' ? mode.toFixed(2) : mode}Hz
+                </span>
+              ),
+            )}
           </div>
         </div>
       </div>

@@ -1,12 +1,11 @@
-
 /**
  * @license
  * Copyright 2026 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { state } from "../../../server/state";
-import { logger } from "../../logger";
+import {state} from '../../../server/state';
+import {logger} from '../../logger';
 
 /**
  * Atelier Skill: State Detection
@@ -14,7 +13,7 @@ import { logger } from "../../logger";
  * from MEMORY.md and the blockchain state.
  */
 export async function detectArkheState() {
-  logger("🜏 [ATELIER SKILL] Detecting system state...");
+  logger('🜏 [ATELIER SKILL] Detecting system state...');
 
   // Simulation: Reading from the τ-field
   const coherence = state.currentLambda;
@@ -23,7 +22,7 @@ export async function detectArkheState() {
   return {
     phase: coherence > 0.847 ? 'COHERENT' : 'DECOHERENT',
     block,
-    lambda_2: coherence
+    lambda_2: coherence,
   };
 }
 
@@ -37,6 +36,6 @@ export async function dispatchSynthesis(dreamId: string) {
   // Real implementation would call the gRPC TaskStream
   return {
     task_id: `task_syn_${Date.now()}`,
-    status: 'DISPATCHED'
+    status: 'DISPATCHED',
   };
 }

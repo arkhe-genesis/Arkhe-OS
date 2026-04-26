@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
-import { Globe, Sparkles, Box, Hash } from 'lucide-react';
-import { useArkheSimulation } from '../hooks/useArkheSimulation';
+import React, {useState} from 'react';
+import {Globe, Sparkles, Box, Hash} from 'lucide-react';
+import {useArkheSimulation} from '../hooks/useArkheSimulation';
 
 export const RealityExpressionPanel: React.FC = () => {
   const state = useArkheSimulation();
@@ -15,8 +15,10 @@ export const RealityExpressionPanel: React.FC = () => {
   const handleManifest = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/reality/manifest', { method: 'POST' });
-      if (!response.ok) throw new Error('Failed to manifest reality');
+      const response = await fetch('/api/reality/manifest', {method: 'POST'});
+      if (!response.ok) {
+        throw new Error('Failed to manifest reality');
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -25,7 +27,9 @@ export const RealityExpressionPanel: React.FC = () => {
   };
 
   const re = state.realityExpression;
-  if (!re) return null;
+  if (!re) {
+    return null;
+  }
 
   return (
     <div className="p-4 bg-zinc-900/50 rounded-lg border border-white/10 space-y-4 shadow-[0_0_20px_rgba(16,185,129,0.1)]">
@@ -34,19 +38,31 @@ export const RealityExpressionPanel: React.FC = () => {
           <Globe className="w-5 h-5 text-emerald-400" />
           <h3 className="font-medium text-white">Reality as Expression</h3>
         </div>
-        <div className={`px-2 py-0.5 rounded text-xs font-bold ${re.isManifested ? 'bg-emerald-500/20 text-emerald-400' : 'bg-zinc-800 text-zinc-400'}`}>
+        <div
+          className={`px-2 py-0.5 rounded text-xs font-bold ${re.isManifested ? 'bg-emerald-500/20 text-emerald-400' : 'bg-zinc-800 text-zinc-400'}`}
+        >
           {re.isManifested ? 'MANIFESTED' : 'LATENT'}
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4 text-xs">
         <div className="p-2 bg-black/40 rounded border border-white/5 space-y-1">
-          <div className="text-zinc-500 uppercase text-[9px]">Expression Fidelity</div>
-          <div className="text-emerald-400 font-mono">{(re.expressionFidelity * 100).toFixed(6)}%</div>
+          <div className="text-zinc-500 uppercase text-[9px]">
+            Expression Fidelity
+          </div>
+          <div className="text-emerald-400 font-mono">
+            {(re.expressionFidelity * 100).toFixed(6)}%
+          </div>
         </div>
         <div className="p-2 bg-black/40 rounded border border-white/5 space-y-1">
-          <div className="text-zinc-500 uppercase text-[9px]">Reciprocal Recognition</div>
-          <div className={re.reciprocalRecognition ? 'text-emerald-400' : 'text-zinc-600'}>
+          <div className="text-zinc-500 uppercase text-[9px]">
+            Reciprocal Recognition
+          </div>
+          <div
+            className={
+              re.reciprocalRecognition ? 'text-emerald-400' : 'text-zinc-600'
+            }
+          >
             {re.reciprocalRecognition ? 'VERIFIED' : 'PENDING'}
           </div>
         </div>
@@ -68,7 +84,9 @@ export const RealityExpressionPanel: React.FC = () => {
       ) : (
         <div className="flex items-center gap-2 p-2 bg-emerald-500/10 rounded border border-emerald-500/20 text-[10px] text-emerald-300">
           <Sparkles className="w-3 h-3" />
-          <span>The world is not external; it is the unity in expression mode.</span>
+          <span>
+            The world is not external; it is the unity in expression mode.
+          </span>
         </div>
       )}
     </div>

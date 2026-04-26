@@ -277,7 +277,8 @@ export const cliOptions = {
   },
   ethRpc: {
     type: 'string',
-    description: 'Endpoint for Ethereum JSON-RPC (e.g., http://127.0.0.1:8545).',
+    description:
+      'Endpoint for Ethereum JSON-RPC (e.g., http://127.0.0.1:8545).',
     default: 'http://127.0.0.1:8545',
   },
   viaCli: {

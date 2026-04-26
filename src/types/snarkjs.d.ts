@@ -1,4 +1,3 @@
-
 /**
  * @license
  * Copyright 2026 Google LLC
@@ -6,5 +5,5 @@
  */
 
 declare module 'snarkjs' {
-    export const groth16: unknown;
+  export const groth16: unknown;
 }

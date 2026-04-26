@@ -8,7 +8,7 @@
 import { Hammer, X, Terminal, Zap, Activity, Play, Code } from 'lucide-react';
 import React, { useState } from 'react';
 
-import { Card } from './ui/Card';
+import { Card } from './ui/card';
 
 interface ForgeStudioPanelProps {
   onClose: () => void;
@@ -28,7 +28,9 @@ export default function ForgeStudioPanel({ onClose }: ForgeStudioPanelProps) {
   };
 
   const handleIgnite = async () => {
-    if (!intent.trim() || isForging) {return;}
+    if (!intent.trim() {
+    || isForging) {return;
+  }}
 
     setIsForging(true);
     setStep(1);

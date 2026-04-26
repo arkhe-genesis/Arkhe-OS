@@ -1,24 +1,28 @@
-
 /**
  * @license
  * Copyright 2026 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Sun, TrendingDown, TrendingUp, Info } from 'lucide-react';
+import {Sun, TrendingDown, TrendingUp, Info} from 'lucide-react';
 import React from 'react';
 
-import type { SolarEntropyReport } from '../../server/types';
+import type {SolarEntropyReport} from '../../server/types';
 
-import { Card } from './ui/Card';
+import {Card} from './ui/card';
 
 interface SolarEntropyPanelProps {
   report?: SolarEntropyReport;
   onRunAnalysis: () => void;
 }
 
-const SolarEntropyPanel: React.FC<SolarEntropyPanelProps> = ({ report, onRunAnalysis }) => {
-  if (!report) {return null;}
+const SolarEntropyPanel: React.FC<SolarEntropyPanelProps> = ({
+  report,
+  onRunAnalysis,
+}) => {
+  if (!report) {
+    return null;
+  }
 
   return (
     <Card
@@ -29,8 +33,14 @@ const SolarEntropyPanel: React.FC<SolarEntropyPanelProps> = ({ report, onRunAnal
       <div className="space-y-4">
         <div className="flex justify-between items-center text-[10px]">
           <span className="text-arkhe-muted">ENTROPY SLOPE (dS/dt)</span>
-          <span className={`font-bold flex items-center gap-1 ${report.slope < 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-            {report.slope < 0 ? <TrendingDown className="w-3 h-3" /> : <TrendingUp className="w-3 h-3" />}
+          <span
+            className={`font-bold flex items-center gap-1 ${report.slope < 0 ? 'text-emerald-400' : 'text-red-400'}`}
+          >
+            {report.slope < 0 ? (
+              <TrendingDown className="w-3 h-3" />
+            ) : (
+              <TrendingUp className="w-3 h-3" />
+            )}
             {report.slope.toFixed(6)} bits/yr
           </span>
         </div>
@@ -41,14 +51,16 @@ const SolarEntropyPanel: React.FC<SolarEntropyPanelProps> = ({ report, onRunAnal
             Vopson's 2nd Law
           </p>
           <div className="flex justify-between items-center">
-             <span className="text-[10px] text-white">Validation Status:</span>
-             <span className={`text-[10px] font-bold ${report.confirmed ? 'text-emerald-400' : 'text-arkhe-muted'}`}>
-               {report.confirmed ? '✅ CONFIRMED' : 'WAITING FOR DATA'}
-             </span>
+            <span className="text-[10px] text-white">Validation Status:</span>
+            <span
+              className={`text-[10px] font-bold ${report.confirmed ? 'text-emerald-400' : 'text-arkhe-muted'}`}
+            >
+              {report.confirmed ? '✅ CONFIRMED' : 'WAITING FOR DATA'}
+            </span>
           </div>
           <p className="text-[8px] text-arkhe-muted mt-2 leading-relaxed">
-            The Solar system exhibits information self-compression.
-            Information is conserved as magnetic phase coherence.
+            The Solar system exhibits information self-compression. Information
+            is conserved as magnetic phase coherence.
           </p>
         </div>
 

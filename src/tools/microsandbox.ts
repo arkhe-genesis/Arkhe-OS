@@ -11,24 +11,31 @@ import {definePageTool} from './ToolDefinition.js';
 
 export const msbRun = definePageTool({
   name: 'msb_run',
-  description: 'Microsandbox: Instantly boots a microVM and executes a command.',
+  description:
+    'Microsandbox: Instantly boots a microVM and executes a command.',
   annotations: {
     category: ToolCategory.SANDBOX,
     readOnlyHint: false,
     reasoningCost: 50,
   },
   schema: {
-    image: zod.string().describe('The container image to use (e.g., "debian", "python").'),
+    image: zod
+      .string()
+      .describe('The container image to use (e.g., "debian", "python").'),
     command: zod.string().describe('The command to execute in the VM.'),
   },
   handler: async (request, response) => {
-    response.appendResponseLine(`### Microsandbox Run: ${request.params.image}`);
+    response.appendResponseLine(
+      `### Microsandbox Run: ${request.params.image}`,
+    );
     response.appendResponseLine('- **Boot Time**: 85ms');
     response.appendResponseLine('- **Isolation**: MicroVM (KVM)');
     response.appendResponseLine(`- **Command**: \`${request.params.command}\``);
     response.appendResponseLine('\n**Stdout**:');
     response.appendResponseLine('```');
-    response.appendResponseLine(`Hello from a secure ${request.params.image} environment!`);
+    response.appendResponseLine(
+      `Hello from a secure ${request.params.image} environment!`,
+    );
     response.appendResponseLine('Execution completed successfully.');
     response.appendResponseLine('```');
     response.appendResponseLine('\n**Status**: Sandbox terminated (One-shot).');
@@ -50,12 +57,20 @@ export const msbCreate = definePageTool({
     memory: zod.number().default(512).describe('Memory in MiB.'),
   },
   handler: async (request, response) => {
-    response.appendResponseLine(`### Microsandbox Created: ${request.params.name}`);
+    response.appendResponseLine(
+      `### Microsandbox Created: ${request.params.name}`,
+    );
     response.appendResponseLine(`- **Image**: ${request.params.image}`);
-    response.appendResponseLine(`- **Resources**: ${request.params.cpus} vCPU, ${request.params.memory} MiB RAM`);
+    response.appendResponseLine(
+      `- **Resources**: ${request.params.cpus} vCPU, ${request.params.memory} MiB RAM`,
+    );
     response.appendResponseLine('- **State**: RUNNING');
-    response.appendResponseLine(`- **Sandbox ID**: msb-${Math.random().toString(36).substring(2, 9)}`);
-    response.appendResponseLine('\n**Note**: Use `msb_exec` to run commands in this sandbox.');
+    response.appendResponseLine(
+      `- **Sandbox ID**: msb-${Math.random().toString(36).substring(2, 9)}`,
+    );
+    response.appendResponseLine(
+      '\n**Note**: Use `msb_exec` to run commands in this sandbox.',
+    );
   },
 });
 
@@ -72,14 +87,20 @@ export const msbExec = definePageTool({
     command: zod.string().describe('The command to execute.'),
   },
   handler: async (request, response) => {
-    response.appendResponseLine(`### Microsandbox Exec: ${request.params.name}`);
+    response.appendResponseLine(
+      `### Microsandbox Exec: ${request.params.name}`,
+    );
     response.appendResponseLine(`- **Command**: \`${request.params.command}\``);
     response.appendResponseLine('\n**Stdout**:');
     response.appendResponseLine('```');
-    response.appendResponseLine(`[msb@${request.params.name}]:$ ${request.params.command}`);
+    response.appendResponseLine(
+      `[msb@${request.params.name}]:$ ${request.params.command}`,
+    );
     response.appendResponseLine('Mock output from long-running microVM.');
     response.appendResponseLine('```');
-    response.appendResponseLine('\n**Status**: Command completed (Exit Code: 0).');
+    response.appendResponseLine(
+      '\n**Status**: Command completed (Exit Code: 0).',
+    );
   },
 });
 
@@ -96,10 +117,14 @@ export const msbLs = definePageTool({
     response.appendResponseLine('### Active Microsandboxes');
     response.appendResponseLine('| Name | Image | Status | Uptime |');
     response.appendResponseLine('|------|-------|--------|--------|');
-    response.appendResponseLine('| dev-env | debian:latest | RUNNING | 2h 15m |');
+    response.appendResponseLine(
+      '| dev-env | debian:latest | RUNNING | 2h 15m |',
+    );
     response.appendResponseLine('| test-db | redis:alpine | STOPPED | - |');
     response.appendResponseLine('| api-mock | node:20 | RUNNING | 45m |');
-    response.appendResponseLine('\n**Infrastructure**: Rootless microVMs powered by libkrun.');
+    response.appendResponseLine(
+      '\n**Infrastructure**: Rootless microVMs powered by libkrun.',
+    );
   },
 });
 
@@ -115,9 +140,13 @@ export const msbRm = definePageTool({
     name: zod.string().describe('The name of the sandbox to remove.'),
   },
   handler: async (request, response) => {
-    response.appendResponseLine(`### Microsandbox Removed: ${request.params.name}`);
+    response.appendResponseLine(
+      `### Microsandbox Removed: ${request.params.name}`,
+    );
     response.appendResponseLine('- **Action**: SIGTERM sent to microVM.');
-    response.appendResponseLine('- **Cleanup**: Ephemeral layers and volumes purged.');
+    response.appendResponseLine(
+      '- **Cleanup**: Ephemeral layers and volumes purged.',
+    );
     response.appendResponseLine('**Status**: OK');
   },
 });

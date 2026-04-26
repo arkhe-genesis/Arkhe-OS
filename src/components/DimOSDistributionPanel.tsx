@@ -69,7 +69,9 @@ export default function DimOSDistributionPanel({ onClose }: DimOSPanelProps) {
       // Update node statuses randomly during deployment
       if (progress < 100) {
         setFleet(prev => prev.map(node => {
-          if ((node.status as string) === 'active') {return node;}
+          if ((node.status as string) {
+    === 'active') {return node;
+  }}
           if (Math.random() > 0.7) {
              const newStatus = Math.random() > 0.5 ? 'syncing' : 'active';
              if (newStatus === 'active' && (node.status as string) !== 'active') {

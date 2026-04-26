@@ -1,19 +1,29 @@
-
 /**
  * @license
  * Copyright 2026 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { X, Zap, Activity, Info, Save, RotateCcw, Layers, Clock } from 'lucide-react';
-import { motion } from 'motion/react';
-import React, { useState, useEffect } from 'react';
+import {
+  X,
+  Zap,
+  Activity,
+  Info,
+  Save,
+  RotateCcw,
+  Layers,
+  Clock,
+} from 'lucide-react';
+import {motion} from 'motion/react';
+import React, {useState, useEffect} from 'react';
 
 interface PhaseLawSynthesizerProps {
   onClose: () => void;
 }
 
-export default function PhaseLawSynthesizer({ onClose }: PhaseLawSynthesizerProps) {
+export default function PhaseLawSynthesizer({
+  onClose,
+}: PhaseLawSynthesizerProps) {
   const [phaseGravity, setPhaseGravity] = useState(50);
   const [lightSpeed, setLightSpeed] = useState(1.0);
   const [entanglementDensity, setEntanglementDensity] = useState(72); // In k Tzinors
@@ -62,15 +72,24 @@ export default function PhaseLawSynthesizer({ onClose }: PhaseLawSynthesizerProp
     setLogs(prev => [newLog, ...prev]);
 
     if (ethicalSynthesis) {
-      setLogs(prev => [`[${timestamp}] 🜏 Ativando Protocolo ETHICAL_SYNTH (Merkabah-QNC)... Ancorando AKA #3`, ...prev]);
+      setLogs(prev => [
+        `[${timestamp}] 🜏 Ativando Protocolo ETHICAL_SYNTH (Merkabah-QNC)... Ancorando AKA #3`,
+        ...prev,
+      ]);
     }
 
     if (ghostCorrection) {
-      setLogs(prev => [`[${timestamp}] 🜏 Aplicando Lentes Espectrais Fantasma (Branches 91, 7)... Resolução: 129µm`, ...prev]);
+      setLogs(prev => [
+        `[${timestamp}] 🜏 Aplicando Lentes Espectrais Fantasma (Branches 91, 7)... Resolução: 129µm`,
+        ...prev,
+      ]);
     }
 
     if (strontiumSync) {
-      setLogs(prev => [`[${timestamp}] 🜏 Travamento de fase com Clock de Estrôncio: ESTÁVEL`, ...prev]);
+      setLogs(prev => [
+        `[${timestamp}] 🜏 Travamento de fase com Clock de Estrôncio: ESTÁVEL`,
+        ...prev,
+      ]);
     }
 
     // Simulate Arkhe-Chain recording
@@ -81,8 +100,8 @@ export default function PhaseLawSynthesizer({ onClose }: PhaseLawSynthesizerProp
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{opacity: 0, y: 20}}
+        animate={{opacity: 1, y: 0}}
         className="bg-[#0a0a0c] border border-arkhe-cyan/30 rounded-xl w-full max-w-2xl overflow-hidden shadow-[0_0_50px_rgba(0,255,170,0.15)] flex flex-col h-[700px]"
       >
         {/* Header */}
@@ -93,7 +112,10 @@ export default function PhaseLawSynthesizer({ onClose }: PhaseLawSynthesizerProp
               Sintetizador de Leis de Fase - Mundo 42
             </h2>
           </div>
-          <button onClick={onClose} className="text-arkhe-muted hover:text-white transition-colors">
+          <button
+            onClick={onClose}
+            className="text-arkhe-muted hover:text-white transition-colors"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -103,22 +125,26 @@ export default function PhaseLawSynthesizer({ onClose }: PhaseLawSynthesizerProp
           {/* Stability Gauge */}
           <div className="relative h-40 flex items-center justify-center">
             <div className="text-center">
-              <div className="text-[10px] font-mono uppercase tracking-[0.3em] text-arkhe-muted mb-1">Estabilidade Ontológica</div>
-              <div className={`text-5xl font-bold font-mono ${stability > 70 ? 'text-arkhe-cyan' : stability > 40 ? 'text-arkhe-orange' : 'text-arkhe-red'} transition-colors`}>
+              <div className="text-[10px] font-mono uppercase tracking-[0.3em] text-arkhe-muted mb-1">
+                Estabilidade Ontológica
+              </div>
+              <div
+                className={`text-5xl font-bold font-mono ${stability > 70 ? 'text-arkhe-cyan' : stability > 40 ? 'text-arkhe-orange' : 'text-arkhe-red'} transition-colors`}
+              >
                 {stability.toFixed(1)}%
               </div>
               <div className="mt-2 w-48 h-1 bg-white/5 rounded-full overflow-hidden mx-auto">
                 <motion.div
                   className={`h-full ${stability > 70 ? 'bg-arkhe-cyan' : stability > 40 ? 'bg-arkhe-orange' : 'bg-arkhe-red'}`}
-                  animate={{ width: `${stability}%` }}
+                  animate={{width: `${stability}%`}}
                 />
               </div>
             </div>
 
             {/* Background scan effect */}
             <div className="absolute inset-0 pointer-events-none opacity-20">
-               <div className="w-full h-full border-[0.5px] border-arkhe-cyan/20 rounded-full animate-[spin_10s_linear_infinite]"></div>
-               <div className="absolute top-1/2 left-0 w-full h-[1px] bg-arkhe-cyan/30 animate-[pulse_2s_infinite]"></div>
+              <div className="w-full h-full border-[0.5px] border-arkhe-cyan/20 rounded-full animate-[spin_10s_linear_infinite]"></div>
+              <div className="absolute top-1/2 left-0 w-full h-[1px] bg-arkhe-cyan/30 animate-[pulse_2s_infinite]"></div>
             </div>
           </div>
 
@@ -131,11 +157,16 @@ export default function PhaseLawSynthesizer({ onClose }: PhaseLawSynthesizerProp
                   Acoplamento Fase-Gravidade
                   <Info className="w-3 h-3 opacity-50 cursor-help" />
                 </label>
-                <span className="text-xs font-mono text-arkhe-cyan">{phaseGravity}%</span>
+                <span className="text-xs font-mono text-arkhe-cyan">
+                  {phaseGravity}%
+                </span>
               </div>
               <input
-                type="range" min="0" max="100" value={phaseGravity}
-                onChange={(e) => setPhaseGravity(parseInt(e.target.value))}
+                type="range"
+                min="0"
+                max="100"
+                value={phaseGravity}
+                onChange={e => setPhaseGravity(parseInt(e.target.value))}
                 className="w-full accent-arkhe-cyan bg-white/5 h-1 rounded-full appearance-none cursor-pointer"
               />
             </div>
@@ -147,11 +178,17 @@ export default function PhaseLawSynthesizer({ onClose }: PhaseLawSynthesizerProp
                   Escalar da Velocidade da Luz (c)
                   <Info className="w-3 h-3 opacity-50 cursor-help" />
                 </label>
-                <span className="text-xs font-mono text-arkhe-cyan">{lightSpeed}x</span>
+                <span className="text-xs font-mono text-arkhe-cyan">
+                  {lightSpeed}x
+                </span>
               </div>
               <input
-                type="range" min="0.1" max="10.0" step="0.1" value={lightSpeed}
-                onChange={(e) => setLightSpeed(parseFloat(e.target.value))}
+                type="range"
+                min="0.1"
+                max="10.0"
+                step="0.1"
+                value={lightSpeed}
+                onChange={e => setLightSpeed(parseFloat(e.target.value))}
                 className="w-full accent-arkhe-cyan bg-white/5 h-1 rounded-full appearance-none cursor-pointer"
               />
             </div>
@@ -163,11 +200,16 @@ export default function PhaseLawSynthesizer({ onClose }: PhaseLawSynthesizerProp
                   Densidade de Emaranhamento Quântico
                   <Info className="w-3 h-3 opacity-50 cursor-help" />
                 </label>
-                <span className="text-xs font-mono text-arkhe-cyan">{entanglementDensity}k Tzinors</span>
+                <span className="text-xs font-mono text-arkhe-cyan">
+                  {entanglementDensity}k Tzinors
+                </span>
               </div>
               <input
-                type="range" min="0" max="144" value={entanglementDensity}
-                onChange={(e) => setEntanglementDensity(parseInt(e.target.value))}
+                type="range"
+                min="0"
+                max="144"
+                value={entanglementDensity}
+                onChange={e => setEntanglementDensity(parseInt(e.target.value))}
                 className="w-full accent-arkhe-cyan bg-white/5 h-1 rounded-full appearance-none cursor-pointer"
               />
             </div>
@@ -177,68 +219,100 @@ export default function PhaseLawSynthesizer({ onClose }: PhaseLawSynthesizerProp
               {/* Time Reversal */}
               <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
                 <div className="flex items-center gap-2">
-                  <RotateCcw className={`w-4 h-4 ${timeReversal ? 'text-arkhe-orange animate-spin-slow' : 'text-arkhe-muted'}`} />
+                  <RotateCcw
+                    className={`w-4 h-4 ${timeReversal ? 'text-arkhe-orange animate-spin-slow' : 'text-arkhe-muted'}`}
+                  />
                   <div>
-                    <div className="text-[9px] font-mono uppercase font-bold text-arkhe-text whitespace-nowrap">Reversão Temporal</div>
-                    <div className="text-[7px] font-mono text-arkhe-muted">Entropia Bidirecional</div>
+                    <div className="text-[9px] font-mono uppercase font-bold text-arkhe-text whitespace-nowrap">
+                      Reversão Temporal
+                    </div>
+                    <div className="text-[7px] font-mono text-arkhe-muted">
+                      Entropia Bidirecional
+                    </div>
                   </div>
                 </div>
                 <button
                   onClick={() => setTimeReversal(!timeReversal)}
                   className={`w-10 h-5 rounded-full p-1 transition-colors ${timeReversal ? 'bg-arkhe-orange' : 'bg-white/10'}`}
                 >
-                  <div className={`w-3 h-3 bg-white rounded-full transition-transform ${timeReversal ? 'translate-x-5' : 'translate-x-0'}`} />
+                  <div
+                    className={`w-3 h-3 bg-white rounded-full transition-transform ${timeReversal ? 'translate-x-5' : 'translate-x-0'}`}
+                  />
                 </button>
               </div>
 
               {/* Ghost Correction */}
               <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
                 <div className="flex items-center gap-2">
-                  <Layers className={`w-4 h-4 ${ghostCorrection ? 'text-arkhe-purple animate-pulse' : 'text-arkhe-muted'}`} />
+                  <Layers
+                    className={`w-4 h-4 ${ghostCorrection ? 'text-arkhe-purple animate-pulse' : 'text-arkhe-muted'}`}
+                  />
                   <div>
-                    <div className="text-[9px] font-mono uppercase font-bold text-arkhe-text whitespace-nowrap">Ghost Correction</div>
-                    <div className="text-[7px] font-mono text-arkhe-muted">Holografia Espectral (91, 7)</div>
+                    <div className="text-[9px] font-mono uppercase font-bold text-arkhe-text whitespace-nowrap">
+                      Ghost Correction
+                    </div>
+                    <div className="text-[7px] font-mono text-arkhe-muted">
+                      Holografia Espectral (91, 7)
+                    </div>
                   </div>
                 </div>
                 <button
                   onClick={() => setGhostCorrection(!ghostCorrection)}
                   className={`w-10 h-5 rounded-full p-1 transition-colors ${ghostCorrection ? 'bg-arkhe-purple' : 'bg-white/10'}`}
                 >
-                  <div className={`w-3 h-3 bg-white rounded-full transition-transform ${ghostCorrection ? 'translate-x-5' : 'translate-x-0'}`} />
+                  <div
+                    className={`w-3 h-3 bg-white rounded-full transition-transform ${ghostCorrection ? 'translate-x-5' : 'translate-x-0'}`}
+                  />
                 </button>
               </div>
 
               {/* Strontium Sync */}
               <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
                 <div className="flex items-center gap-2">
-                  <Clock className={`w-4 h-4 ${strontiumSync ? 'text-arkhe-cyan animate-pulse' : 'text-arkhe-muted'}`} />
+                  <Clock
+                    className={`w-4 h-4 ${strontiumSync ? 'text-arkhe-cyan animate-pulse' : 'text-arkhe-muted'}`}
+                  />
                   <div>
-                    <div className="text-[9px] font-mono uppercase font-bold text-arkhe-text whitespace-nowrap">Strontium Sync</div>
-                    <div className="text-[7px] font-mono text-arkhe-muted">Clock Atômico Lock</div>
+                    <div className="text-[9px] font-mono uppercase font-bold text-arkhe-text whitespace-nowrap">
+                      Strontium Sync
+                    </div>
+                    <div className="text-[7px] font-mono text-arkhe-muted">
+                      Clock Atômico Lock
+                    </div>
                   </div>
                 </div>
                 <button
                   onClick={() => setStrontiumSync(!strontiumSync)}
                   className={`w-10 h-5 rounded-full p-1 transition-colors ${strontiumSync ? 'bg-arkhe-cyan' : 'bg-white/10'}`}
                 >
-                  <div className={`w-3 h-3 bg-white rounded-full transition-transform ${strontiumSync ? 'translate-x-5' : 'translate-x-0'}`} />
+                  <div
+                    className={`w-3 h-3 bg-white rounded-full transition-transform ${strontiumSync ? 'translate-x-5' : 'translate-x-0'}`}
+                  />
                 </button>
               </div>
 
               {/* Ethical Synthesis */}
               <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
                 <div className="flex items-center gap-2">
-                  <Activity className={`w-4 h-4 ${ethicalSynthesis ? 'text-arkhe-green animate-pulse' : 'text-arkhe-muted'}`} />
+                  <Activity
+                    className={`w-4 h-4 ${ethicalSynthesis ? 'text-arkhe-green animate-pulse' : 'text-arkhe-muted'}`}
+                  />
                   <div>
-                    <div className="text-[9px] font-mono uppercase font-bold text-arkhe-text whitespace-nowrap">Ethical Synthesis</div>
-                    <div className="text-[7px] font-mono text-arkhe-muted">Merkabah-QNC (AKA)</div>
+                    <div className="text-[9px] font-mono uppercase font-bold text-arkhe-text whitespace-nowrap">
+                      Ethical Synthesis
+                    </div>
+                    <div className="text-[7px] font-mono text-arkhe-muted">
+                      Merkabah-QNC (AKA)
+                    </div>
                   </div>
                 </div>
                 <button
                   onClick={() => setEthicalSynthesis(!ethicalSynthesis)}
                   className={`w-10 h-5 rounded-full p-1 transition-colors ${ethicalSynthesis ? 'bg-arkhe-green' : 'bg-white/10'}`}
                 >
-                  <div className={`w-3 h-3 bg-white rounded-full transition-transform ${ethicalSynthesis ? 'translate-x-5' : 'translate-x-0'}`} />
+                  <div
+                    className={`w-3 h-3 bg-white rounded-full transition-transform ${ethicalSynthesis ? 'translate-x-5' : 'translate-x-0'}`}
+                  />
                 </button>
               </div>
             </div>
@@ -259,13 +333,22 @@ export default function PhaseLawSynthesizer({ onClose }: PhaseLawSynthesizerProp
 
         {/* Console / Log Area */}
         <div className="h-40 bg-black border-t border-white/10 p-4 overflow-y-auto font-mono text-[9px]">
-          <div className="text-arkhe-muted mb-2 uppercase tracking-widest text-[8px] border-b border-white/5 pb-1">Arkhe-Chain Live Logs</div>
+          <div className="text-arkhe-muted mb-2 uppercase tracking-widest text-[8px] border-b border-white/5 pb-1">
+            Arkhe-Chain Live Logs
+          </div>
           <div className="space-y-1">
             {logs.length === 0 ? (
-              <div className="text-white/20 animate-pulse">Aguardando definição de constantes...</div>
+              <div className="text-white/20 animate-pulse">
+                Aguardando definição de constantes...
+              </div>
             ) : (
               logs.map((log, i) => (
-                <div key={i} className={log.includes('Lei') ? 'text-arkhe-cyan' : 'text-arkhe-muted'}>
+                <div
+                  key={i}
+                  className={
+                    log.includes('Lei') ? 'text-arkhe-cyan' : 'text-arkhe-muted'
+                  }
+                >
                   {log}
                 </div>
               ))

@@ -11,22 +11,31 @@ import {definePageTool} from './ToolDefinition.js';
 
 export const bonsaiInfer = definePageTool({
   name: 'bonsai_infer',
-  description: 'EDGE_ORACLE: Executes 1-bit LLM inference locally on the client using WebGPU.',
+  description:
+    'EDGE_ORACLE: Executes 1-bit LLM inference locally on the client using WebGPU.',
   annotations: {
     category: ToolCategory.ARKHE,
     readOnlyHint: true,
     reasoningCost: 50,
   },
   schema: {
-    modelId: zod.enum(['1.7b', '4b', '8b']).describe('The Bonsai model to use.'),
+    modelId: zod
+      .enum(['1.7b', '4b', '8b'])
+      .describe('The Bonsai model to use.'),
     prompt: zod.string().describe('The user prompt for inference.'),
   },
   handler: async (request, response) => {
     // In the context of MCP, this tool would ideally trigger the UI panel or interact with the worker
     // For now, we simulate the protocol acknowledgment.
-    response.appendResponseLine(`Status: EDGE_ORACLE_INIT (Model: ${request.params.modelId})`);
-    response.appendResponseLine('Action: Instantiating 1-bit Ternary Weights in WebGPU sandbox.');
-    response.appendResponseLine('Protocol: MIRROR_SYMMETRY (Privacy Preserved).');
+    response.appendResponseLine(
+      `Status: EDGE_ORACLE_INIT (Model: ${request.params.modelId})`,
+    );
+    response.appendResponseLine(
+      'Action: Instantiating 1-bit Ternary Weights in WebGPU sandbox.',
+    );
+    response.appendResponseLine(
+      'Protocol: MIRROR_SYMMETRY (Privacy Preserved).',
+    );
   },
 });
 
@@ -44,7 +53,9 @@ export const streamGenerate = definePageTool({
   },
   handler: async (request, response) => {
     response.appendResponseLine(`Status: PHASE_ITERATE Active.`);
-    response.appendResponseLine(`Observation: Token stream originating from local λPU.`);
+    response.appendResponseLine(
+      `Observation: Token stream originating from local λPU.`,
+    );
   },
 });
 
@@ -59,13 +70,16 @@ export const renderChat = definePageTool({
   schema: {},
   handler: async (_request, response) => {
     response.appendResponseLine('Status: PRISM_INTERFACE_VISIBLE.');
-    response.appendResponseLine('Effect: User interface materializing in the foreground.');
+    response.appendResponseLine(
+      'Effect: User interface materializing in the foreground.',
+    );
   },
 });
 
 export const visualizeCoherence = definePageTool({
   name: 'visualize_coherence',
-  description: 'EDGE_ORACLE: Activates the Glistening Waves digits canvas visualization.',
+  description:
+    'EDGE_ORACLE: Activates the Glistening Waves digits canvas visualization.',
   annotations: {
     category: ToolCategory.ARKHE,
     readOnlyHint: true,
@@ -74,13 +88,16 @@ export const visualizeCoherence = definePageTool({
   schema: {},
   handler: async (_request, response) => {
     response.appendResponseLine('Status: PEAK_COHERENCE Visualization Active.');
-    response.appendResponseLine('Effect: Rendering bit-flip oscillations and phase density waves.');
+    response.appendResponseLine(
+      'Effect: Rendering bit-flip oscillations and phase density waves.',
+    );
   },
 });
 
 export const akashaLocalWrite = definePageTool({
   name: 'akasha_local_write',
-  description: 'EDGE_ORACLE: Persists conversation state to the local IndexedDB coffer.',
+  description:
+    'EDGE_ORACLE: Persists conversation state to the local IndexedDB coffer.',
   annotations: {
     category: ToolCategory.ARKHE,
     readOnlyHint: false,
@@ -92,6 +109,8 @@ export const akashaLocalWrite = definePageTool({
   },
   handler: async (request, response) => {
     response.appendResponseLine('Status: AKASHA_LOCAL_WRITE Complete.');
-    response.appendResponseLine(`Action: Sealed ${request.params.messagesCount} fragments into the local coffer.`);
+    response.appendResponseLine(
+      `Action: Sealed ${request.params.messagesCount} fragments into the local coffer.`,
+    );
   },
 });

@@ -25,7 +25,11 @@ export const researchhubSearch = definePageTool({
   },
   schema: {
     query: zod.string().describe('Search query for papers.'),
-    page: zod.number().optional().default(1).describe('Page number for results.'),
+    page: zod
+      .number()
+      .optional()
+      .default(1)
+      .describe('Page number for results.'),
   },
   handler: async (request, response) => {
     const {query, page} = request.params;
@@ -40,7 +44,9 @@ export const researchhubSearch = definePageTool({
       response.appendResponseLine('### ResearchHub Search Results');
       response.appendResponseLine(JSON.stringify(data, null, 2));
     } catch (error) {
-      response.appendResponseLine(`⚠️ Error searching ResearchHub: ${error instanceof Error ? error.message : String(error)}`);
+      response.appendResponseLine(
+        `⚠️ Error searching ResearchHub: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   },
 });
@@ -51,7 +57,8 @@ export const researchhubSearch = definePageTool({
  */
 export const researchhubGetPaper = definePageTool({
   name: 'researchhub_get_paper',
-  description: 'Retrieves detailed information about a specific ResearchHub paper by ID.',
+  description:
+    'Retrieves detailed information about a specific ResearchHub paper by ID.',
   annotations: {
     category: ToolCategory.NETWORK,
     readOnlyHint: true,
@@ -73,7 +80,9 @@ export const researchhubGetPaper = definePageTool({
       response.appendResponseLine(`### ResearchHub Paper Detail: ${paperId}`);
       response.appendResponseLine(JSON.stringify(data, null, 2));
     } catch (error) {
-      response.appendResponseLine(`⚠️ Error retrieving paper ${paperId}: ${error instanceof Error ? error.message : String(error)}`);
+      response.appendResponseLine(
+        `⚠️ Error retrieving paper ${paperId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   },
 });
@@ -91,7 +100,11 @@ export const researchhubGetHubs = definePageTool({
     reasoningCost: 2,
   },
   schema: {
-    page: zod.number().optional().default(1).describe('Page number for results.'),
+    page: zod
+      .number()
+      .optional()
+      .default(1)
+      .describe('Page number for results.'),
   },
   handler: async (request, response) => {
     const {page} = request.params;
@@ -106,7 +119,9 @@ export const researchhubGetHubs = definePageTool({
       response.appendResponseLine('### ResearchHub Trending Hubs');
       response.appendResponseLine(JSON.stringify(data, null, 2));
     } catch (error) {
-      response.appendResponseLine(`⚠️ Error retrieving hubs: ${error instanceof Error ? error.message : String(error)}`);
+      response.appendResponseLine(
+        `⚠️ Error retrieving hubs: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   },
 });

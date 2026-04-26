@@ -1,4 +1,3 @@
-
 /**
  * @license
  * Copyright 2026 Google LLC
@@ -6,7 +5,7 @@
  */
 
 import React from 'react';
-import { cn } from '../../lib/utils';
+import {cn} from '../../lib/utils';
 
 interface ProgressProps {
   value: number;
@@ -19,7 +18,7 @@ export const Progress = ({
   value,
   className,
   color = 'cyan',
-  showLabel = false
+  showLabel = false,
 }: ProgressProps) => {
   const colorMap = {
     cyan: 'bg-arkhe-cyan shadow-[0_0_8px_rgba(0,229,255,0.4)]',
@@ -31,7 +30,7 @@ export const Progress = ({
   const clampedValue = Math.min(Math.max(value, 0), 100);
 
   return (
-    <div className={cn("w-full space-y-1", className)}>
+    <div className={cn('w-full space-y-1', className)}>
       {showLabel && (
         <div className="flex justify-between text-[8px] font-mono uppercase tracking-tighter text-arkhe-muted">
           <span>Coherence</span>
@@ -40,8 +39,11 @@ export const Progress = ({
       )}
       <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
         <div
-          className={cn("h-full transition-all duration-700 ease-out", colorMap[color])}
-          style={{ width: `${clampedValue}%` }}
+          className={cn(
+            'h-full transition-all duration-700 ease-out',
+            colorMap[color],
+          )}
+          style={{width: `${clampedValue}%`}}
         />
       </div>
     </div>

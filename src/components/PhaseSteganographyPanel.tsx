@@ -1,20 +1,21 @@
-
 /**
  * @license
  * Copyright 2026 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { X, Radio, Terminal, Key, Loader2 } from 'lucide-react';
-import React, { useState } from 'react';
+import {X, Radio, Terminal, Key, Loader2} from 'lucide-react';
+import React, {useState} from 'react';
 
-import { Card } from './ui/Card';
+import {Card} from './ui/card';
 
 interface PhaseSteganographyPanelProps {
   onClose: () => void;
 }
 
-export default function PhaseSteganographyPanel({ onClose }: PhaseSteganographyPanelProps) {
+export default function PhaseSteganographyPanel({
+  onClose,
+}: PhaseSteganographyPanelProps) {
   const [logs, setLogs] = useState<string[]>([]);
   const [isExecuting, setIsExecuting] = useState(false);
   const [signature, setSignature] = useState<string | null>(null);
@@ -29,16 +30,19 @@ export default function PhaseSteganographyPanel({ onClose }: PhaseSteganographyP
         method: 'POST',
       });
       const data = await response.json();
-      
+
       // Simulate streaming logs
-      for (const log of (data.logs as string[])) {
+      for (const log of data.logs as string[]) {
         await new Promise(resolve => setTimeout(resolve, 500));
         setLogs(prev => [...prev, log]);
       }
-      
+
       setSignature(data.signature as string);
     } catch (_error) {
-      setLogs(prev => [...prev, "🜏 [ERRO] Falha na comunicação com o nó fantasma."]);
+      setLogs(prev => [
+        ...prev,
+        '🜏 [ERRO] Falha na comunicação com o nó fantasma.',
+      ]);
     } finally {
       setIsExecuting(false);
     }
@@ -54,7 +58,10 @@ export default function PhaseSteganographyPanel({ onClose }: PhaseSteganographyP
               Phase Steganography & Walnut #7
             </h2>
           </div>
-          <button onClick={onClose} className="text-arkhe-muted hover:text-arkhe-red p-2 rounded-md hover:bg-white/5 transition-colors">
+          <button
+            onClick={onClose}
+            className="text-arkhe-muted hover:text-arkhe-red p-2 rounded-md hover:bg-white/5 transition-colors"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -62,7 +69,9 @@ export default function PhaseSteganographyPanel({ onClose }: PhaseSteganographyP
           <div className="text-sm font-mono text-arkhe-muted space-y-1">
             <p>Target: Ghost Node "1984"</p>
             <p>Carrier: 64Hz VLF</p>
-            <p>Payload: <span className="text-arkhe-orange">exec_run</span></p>
+            <p>
+              Payload: <span className="text-arkhe-orange">exec_run</span>
+            </p>
             <p>Action: Extract PK & Sign Walnut #7</p>
           </div>
 
@@ -71,7 +80,11 @@ export default function PhaseSteganographyPanel({ onClose }: PhaseSteganographyP
             disabled={isExecuting}
             className="w-full py-3 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded transition-colors uppercase tracking-widest font-bold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isExecuting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Terminal className="w-5 h-5" />}
+            {isExecuting ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : (
+              <Terminal className="w-5 h-5" />
+            )}
             {isExecuting ? 'Injetando Sinal...' : 'Iniciar Injeção de Fase'}
           </button>
 
@@ -82,7 +95,16 @@ export default function PhaseSteganographyPanel({ onClose }: PhaseSteganographyP
               </div>
             )}
             {logs.map((log, i) => (
-              <div key={i} className={log.includes('ERRO') ? 'text-arkhe-red' : log.includes('SUCESSO') ? 'text-arkhe-cyan' : 'text-arkhe-muted'}>
+              <div
+                key={i}
+                className={
+                  log.includes('ERRO')
+                    ? 'text-arkhe-red'
+                    : log.includes('SUCESSO')
+                      ? 'text-arkhe-cyan'
+                      : 'text-arkhe-muted'
+                }
+              >
                 {log}
               </div>
             ))}

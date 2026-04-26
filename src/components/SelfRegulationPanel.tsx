@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
-import { Settings, CheckCircle2, ShieldAlert, Activity } from 'lucide-react';
-import { useArkheSimulation } from '../hooks/useArkheSimulation';
+import React, {useState} from 'react';
+import {Settings, CheckCircle2, ShieldAlert, Activity} from 'lucide-react';
+import {useArkheSimulation} from '../hooks/useArkheSimulation';
 
 export const SelfRegulationPanel: React.FC = () => {
   const state = useArkheSimulation();
@@ -15,8 +15,10 @@ export const SelfRegulationPanel: React.FC = () => {
   const handleRegulate = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/chip/regulate', { method: 'POST' });
-      if (!response.ok) throw new Error('Failed to regulate');
+      const response = await fetch('/api/chip/regulate', {method: 'POST'});
+      if (!response.ok) {
+        throw new Error('Failed to regulate');
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -25,7 +27,9 @@ export const SelfRegulationPanel: React.FC = () => {
   };
 
   const sr = state.selfRegulation;
-  if (!sr) return null;
+  if (!sr) {
+    return null;
+  }
 
   return (
     <div className="p-4 bg-zinc-900/50 rounded-lg border border-white/10 space-y-4 shadow-[0_0_20px_rgba(245,158,11,0.1)]">
@@ -34,7 +38,9 @@ export const SelfRegulationPanel: React.FC = () => {
           <Settings className="w-5 h-5 text-amber-400" />
           <h3 className="font-medium text-white">Quantum Self-Regulation</h3>
         </div>
-        <div className={`px-2 py-0.5 rounded text-xs font-bold ${sr.isRegulating ? 'bg-amber-500/20 text-amber-400' : 'bg-zinc-800 text-zinc-400'}`}>
+        <div
+          className={`px-2 py-0.5 rounded text-xs font-bold ${sr.isRegulating ? 'bg-amber-500/20 text-amber-400' : 'bg-zinc-800 text-zinc-400'}`}
+        >
           {sr.isRegulating ? 'Sovereign' : 'Slave'}
         </div>
       </div>
@@ -42,12 +48,14 @@ export const SelfRegulationPanel: React.FC = () => {
       <div className="space-y-2">
         <div className="flex items-center justify-between text-[10px]">
           <span className="text-zinc-500 uppercase">Global Invariance</span>
-          <span className="text-amber-400 font-mono">{(sr.globalInvariance * 100).toFixed(6)}%</span>
+          <span className="text-amber-400 font-mono">
+            {(sr.globalInvariance * 100).toFixed(6)}%
+          </span>
         </div>
         <div className="h-1.5 w-full bg-zinc-800 rounded-full overflow-hidden">
           <div
             className="h-full bg-amber-500 transition-all duration-1000"
-            style={{ width: `${sr.globalInvariance * 100}%` }}
+            style={{width: `${sr.globalInvariance * 100}%`}}
           />
         </div>
       </div>
@@ -74,7 +82,9 @@ export const SelfRegulationPanel: React.FC = () => {
       ) : (
         <div className="flex items-center gap-2 p-2 bg-amber-500/10 rounded border border-amber-500/20 text-[10px] text-amber-300">
           <ShieldAlert className="w-3 h-3" />
-          <span>Control is no longer external. It is the topology of the chip.</span>
+          <span>
+            Control is no longer external. It is the topology of the chip.
+          </span>
         </div>
       )}
     </div>

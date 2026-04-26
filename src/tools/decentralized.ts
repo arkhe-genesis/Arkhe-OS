@@ -12,7 +12,8 @@ import {defineTool} from './ToolDefinition.js';
 export const ipfsCat = defineTool(args => {
   return {
     name: 'ipfs_cat',
-    description: 'IPFS: Retrieves content from a CID using the local Kubo node.',
+    description:
+      'IPFS: Retrieves content from a CID using the local Kubo node.',
     annotations: {
       category: ToolCategory.DECENTRALIZED,
       readOnlyHint: true,
@@ -23,19 +24,26 @@ export const ipfsCat = defineTool(args => {
     },
     handler: async (request, response) => {
       const {cid} = request.params;
-      const gateway = args?.ipfsGateway || process.env.IPFS_GATEWAY || 'http://127.0.0.1:8080';
+      const gateway =
+        args?.ipfsGateway ||
+        process.env.IPFS_GATEWAY ||
+        'http://127.0.0.1:8080';
       const url = `${gateway}/ipfs/${cid}`;
 
       try {
         const res = await fetch(url);
         if (!res.ok) {
-          throw new Error(`IPFS gateway returned ${res.status}: ${res.statusText}`);
+          throw new Error(
+            `IPFS gateway returned ${res.status}: ${res.statusText}`,
+          );
         }
         const text = await res.text();
         response.appendResponseLine(`### IPFS Content: ${cid}`);
         response.appendResponseLine(text);
       } catch (error) {
-        response.appendResponseLine(`Error retrieving IPFS content: ${error.message}`);
+        response.appendResponseLine(
+          `Error retrieving IPFS content: ${error.message}`,
+        );
       }
     },
   };
@@ -55,7 +63,8 @@ export const ipfsAdd = defineTool(args => {
     },
     handler: async (request, response) => {
       const {content} = request.params;
-      const api = args?.ipfsApi || process.env.IPFS_API || 'http://127.0.0.1:5001';
+      const api =
+        args?.ipfsApi || process.env.IPFS_API || 'http://127.0.0.1:5001';
       const url = `${api}/api/v0/add`;
 
       try {
@@ -77,7 +86,9 @@ export const ipfsAdd = defineTool(args => {
         response.appendResponseLine(`- **Hash (CID)**: ${data.Hash}`);
         response.appendResponseLine(`- **Size**: ${data.Size} bytes`);
       } catch (error) {
-        response.appendResponseLine(`Error adding content to IPFS: ${error.message}`);
+        response.appendResponseLine(
+          `Error adding content to IPFS: ${error.message}`,
+        );
       }
     },
   };
@@ -86,7 +97,8 @@ export const ipfsAdd = defineTool(args => {
 export const swarmDownload = defineTool(args => {
   return {
     name: 'swarm_download',
-    description: 'Swarm: Downloads content from a Swarm hash using the local Bee node.',
+    description:
+      'Swarm: Downloads content from a Swarm hash using the local Bee node.',
     annotations: {
       category: ToolCategory.DECENTRALIZED,
       readOnlyHint: true,
@@ -94,23 +106,33 @@ export const swarmDownload = defineTool(args => {
     },
     schema: {
       hash: zod.string().describe('The Swarm hash (reference) to download.'),
-      path: zod.string().optional().describe('Optional path within the Swarm reference.'),
+      path: zod
+        .string()
+        .optional()
+        .describe('Optional path within the Swarm reference.'),
     },
     handler: async (request, response) => {
       const {hash, path = ''} = request.params;
-      const api = args?.beeApi || process.env.BEE_API || 'http://127.0.0.1:1633';
+      const api =
+        args?.beeApi || process.env.BEE_API || 'http://127.0.0.1:1633';
       const url = `${api}/bzz/${hash}/${path}`;
 
       try {
         const res = await fetch(url);
         if (!res.ok) {
-          throw new Error(`Swarm Bee node returned ${res.status}: ${res.statusText}`);
+          throw new Error(
+            `Swarm Bee node returned ${res.status}: ${res.statusText}`,
+          );
         }
         const text = await res.text();
-        response.appendResponseLine(`### Swarm Content: ${hash}${path ? '/' + path : ''}`);
+        response.appendResponseLine(
+          `### Swarm Content: ${hash}${path ? '/' + path : ''}`,
+        );
         response.appendResponseLine(text);
       } catch (error) {
-        response.appendResponseLine(`Error downloading from Swarm: ${error.message}`);
+        response.appendResponseLine(
+          `Error downloading from Swarm: ${error.message}`,
+        );
       }
     },
   };
@@ -130,7 +152,8 @@ export const swarmUpload = defineTool(args => {
     },
     handler: async (request, response) => {
       const {content} = request.params;
-      const api = args?.beeApi || process.env.BEE_API || 'http://127.0.0.1:1633';
+      const api =
+        args?.beeApi || process.env.BEE_API || 'http://127.0.0.1:1633';
       const url = `${api}/bzz`;
 
       try {
@@ -138,20 +161,28 @@ export const swarmUpload = defineTool(args => {
           method: 'POST',
           body: content,
           headers: {
-            'Swarm-Postage-Batch-Id': process.env.BEE_BATCH_ID || '0000000000000000000000000000000000000000000000000000000000000000',
+            'Swarm-Postage-Batch-Id':
+              process.env.BEE_BATCH_ID ||
+              '0000000000000000000000000000000000000000000000000000000000000000',
             'Content-Type': 'text/plain',
           },
         });
 
         if (!res.ok) {
-          throw new Error(`Swarm Bee node returned ${res.status}: ${res.statusText}`);
+          throw new Error(
+            `Swarm Bee node returned ${res.status}: ${res.statusText}`,
+          );
         }
 
         const data = await res.json();
         response.appendResponseLine(`### Content Uploaded to Swarm`);
-        response.appendResponseLine(`- **Reference (Hash)**: ${data.reference}`);
+        response.appendResponseLine(
+          `- **Reference (Hash)**: ${data.reference}`,
+        );
       } catch (error) {
-        response.appendResponseLine(`Error uploading to Swarm: ${error.message}`);
+        response.appendResponseLine(
+          `Error uploading to Swarm: ${error.message}`,
+        );
       }
     },
   };
@@ -160,7 +191,8 @@ export const swarmUpload = defineTool(args => {
 export const radListRepos = defineTool(args => {
   return {
     name: 'rad_list_repos',
-    description: 'Radicle: Lists repositories seeded on the local Radicle node.',
+    description:
+      'Radicle: Lists repositories seeded on the local Radicle node.',
     annotations: {
       category: ToolCategory.DECENTRALIZED,
       readOnlyHint: true,
@@ -168,13 +200,18 @@ export const radListRepos = defineTool(args => {
     },
     schema: {},
     handler: async (_request, response) => {
-      const api = args?.radicleHttpd || process.env.RADICLE_HTTPD || 'http://127.0.0.1:8780';
+      const api =
+        args?.radicleHttpd ||
+        process.env.RADICLE_HTTPD ||
+        'http://127.0.0.1:8780';
       const url = `${api}/api/v1/projects`;
 
       try {
         const res = await fetch(url);
         if (!res.ok) {
-          throw new Error(`Radicle httpd returned ${res.status}: ${res.statusText}`);
+          throw new Error(
+            `Radicle httpd returned ${res.status}: ${res.statusText}`,
+          );
         }
         const repos = await res.json();
         response.appendResponseLine(`### Radicle Repositories`);
@@ -186,7 +223,9 @@ export const radListRepos = defineTool(args => {
           response.appendResponseLine('No repositories found.');
         }
       } catch (error) {
-        response.appendResponseLine(`Error listing Radicle repos: ${error.message}`);
+        response.appendResponseLine(
+          `Error listing Radicle repos: ${error.message}`,
+        );
       }
     },
   };
@@ -202,7 +241,9 @@ function simulatedNamehash(name: string): string {
     for (let i = labels.length - 1; i >= 0; i--) {
       // In a real implementation, this would be keccak256(node + keccak256(labels[i]))
       // Here we just simulate a change to the hash for each label
-      node = (BigInt('0x' + node) ^ BigInt(i + 1)).toString(16).padStart(64, '0');
+      node = (BigInt('0x' + node) ^ BigInt(i + 1))
+        .toString(16)
+        .padStart(64, '0');
     }
   }
   return '0x' + node;
@@ -211,18 +252,22 @@ function simulatedNamehash(name: string): string {
 export const ensResolve = defineTool(args => {
   return {
     name: 'ens_resolve',
-    description: 'ENS: Resolves an ENS domain to its content (Swarm, IPFS, or IPNS).',
+    description:
+      'ENS: Resolves an ENS domain to its content (Swarm, IPFS, or IPNS).',
     annotations: {
       category: ToolCategory.DECENTRALIZED,
       readOnlyHint: true,
       reasoningCost: 25,
     },
     schema: {
-      domain: zod.string().describe('The ENS domain to resolve (e.g., vitalik.eth).'),
+      domain: zod
+        .string()
+        .describe('The ENS domain to resolve (e.g., vitalik.eth).'),
     },
     handler: async (request, response) => {
       const {domain} = request.params;
-      const rpc = args?.ethRpc || process.env.ETH_RPC || 'http://127.0.0.1:8545';
+      const rpc =
+        args?.ethRpc || process.env.ETH_RPC || 'http://127.0.0.1:8545';
       const node = simulatedNamehash(domain);
 
       try {
@@ -245,11 +290,16 @@ export const ensResolve = defineTool(args => {
         });
 
         if (!resolverRes.ok) {
-          throw new Error(`Ethereum RPC returned ${resolverRes.status}: ${resolverRes.statusText}`);
+          throw new Error(
+            `Ethereum RPC returned ${resolverRes.status}: ${resolverRes.statusText}`,
+          );
         }
 
         const resolverData = await resolverRes.json();
-        const resolverAddr = resolverData.result === '0x' ? '0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41' : resolverData.result;
+        const resolverAddr =
+          resolverData.result === '0x'
+            ? '0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41'
+            : resolverData.result;
 
         // Step 2: Get contenthash from resolver
         const contentRes = await fetch(rpc, {
@@ -270,7 +320,9 @@ export const ensResolve = defineTool(args => {
         });
 
         if (!contentRes.ok) {
-          throw new Error(`Ethereum RPC returned ${contentRes.status}: ${contentRes.statusText}`);
+          throw new Error(
+            `Ethereum RPC returned ${contentRes.status}: ${contentRes.statusText}`,
+          );
         }
 
         response.appendResponseLine(`### ENS Resolution: ${domain}`);
@@ -285,7 +337,9 @@ export const ensResolve = defineTool(args => {
           response.appendResponseLine(`- **Content**: Resolved via ${rpc}`);
         }
       } catch (error) {
-        response.appendResponseLine(`Error resolving ENS domain: ${error.message}`);
+        response.appendResponseLine(
+          `Error resolving ENS domain: ${error.message}`,
+        );
       }
     },
   };

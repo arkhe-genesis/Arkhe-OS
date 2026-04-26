@@ -15,7 +15,8 @@ import {defineTool} from './ToolDefinition.js';
 export const spectraListVaults = defineTool(() => {
   return {
     name: 'spectra_list_vaults',
-    description: 'Spectra Finance: Lists active MetaVaults and Yield-bearing markets across supported chains.',
+    description:
+      'Spectra Finance: Lists active MetaVaults and Yield-bearing markets across supported chains.',
     annotations: {
       category: ToolCategory.FINANCE,
       readOnlyHint: true,
@@ -24,13 +25,23 @@ export const spectraListVaults = defineTool(() => {
     schema: {},
     handler: async (_request, response) => {
       response.appendResponseLine('### Spectra MetaVaults & Markets');
-      response.appendResponseLine('| Vault/Market | Chain | Asset | Protocol |');
-      response.appendResponseLine('|--------------|-------|-------|----------|');
-      response.appendResponseLine('| sDAI MetaVault | Mainnet | DAI | MakerDAO |');
-      response.appendResponseLine('| stETH MetaVault | Mainnet | stETH | Lido |');
+      response.appendResponseLine(
+        '| Vault/Market | Chain | Asset | Protocol |',
+      );
+      response.appendResponseLine(
+        '|--------------|-------|-------|----------|',
+      );
+      response.appendResponseLine(
+        '| sDAI MetaVault | Mainnet | DAI | MakerDAO |',
+      );
+      response.appendResponseLine(
+        '| stETH MetaVault | Mainnet | stETH | Lido |',
+      );
       response.appendResponseLine('| aUSDC Market | Arbitrum | USDC | Aave |');
       response.appendResponseLine('| glpUSDC Market | Arbitrum | GLP | GMX |');
-      response.appendResponseLine('\n**Status**: 4 Active MetaVaults detected. 12 Yield Markets available.');
+      response.appendResponseLine(
+        '\n**Status**: 4 Active MetaVaults detected. 12 Yield Markets available.',
+      );
     },
   };
 });
@@ -41,14 +52,17 @@ export const spectraListVaults = defineTool(() => {
 export const spectraGetVaultStats = defineTool(() => {
   return {
     name: 'spectra_get_vault_stats',
-    description: 'Spectra Finance: Returns TVL, APY, and current epoch information for a MetaVault.',
+    description:
+      'Spectra Finance: Returns TVL, APY, and current epoch information for a MetaVault.',
     annotations: {
       category: ToolCategory.FINANCE,
       readOnlyHint: true,
       reasoningCost: 20,
     },
     schema: {
-      vaultId: zod.string().describe('The identifier of the MetaVault (e.g., "sDAI").'),
+      vaultId: zod
+        .string()
+        .describe('The identifier of the MetaVault (e.g., "sDAI").'),
     },
     handler: async (request, response) => {
       const {vaultId} = request.params;
@@ -62,7 +76,9 @@ export const spectraGetVaultStats = defineTool(() => {
       response.appendResponseLine(`- **TVL**: $${(tvl / 1e6).toFixed(2)}M`);
       response.appendResponseLine(`- **Current APY**: ${apy.toFixed(2)}%`);
       response.appendResponseLine(`- **Current Epoch**: ${epoch}`);
-      response.appendResponseLine('- **Settlement Model**: Asynchronous (ERC-7540)');
+      response.appendResponseLine(
+        '- **Settlement Model**: Asynchronous (ERC-7540)',
+      );
       response.appendResponseLine('- **Curator**: Spectra DAO');
     },
   };
@@ -74,29 +90,52 @@ export const spectraGetVaultStats = defineTool(() => {
 export const spectraGetOraclePrice = defineTool(() => {
   return {
     name: 'spectra_get_oracle_price',
-    description: 'Spectra Finance: Queries PT/YT prices from Deterministic, TWAP, or Hybrid oracles.',
+    description:
+      'Spectra Finance: Queries PT/YT prices from Deterministic, TWAP, or Hybrid oracles.',
     annotations: {
       category: ToolCategory.FINANCE,
       readOnlyHint: true,
       reasoningCost: 30,
     },
     schema: {
-      tokenType: zod.enum(['PT', 'YT']).describe('The type of token (PT or YT).'),
-      marketId: zod.string().describe('The market identifier (e.g., "stETH-JUN-2026").'),
-      oracleType: zod.enum(['deterministic', 'twap', 'hybrid']).default('hybrid').describe('The type of oracle to query.'),
+      tokenType: zod
+        .enum(['PT', 'YT'])
+        .describe('The type of token (PT or YT).'),
+      marketId: zod
+        .string()
+        .describe('The market identifier (e.g., "stETH-JUN-2026").'),
+      oracleType: zod
+        .enum(['deterministic', 'twap', 'hybrid'])
+        .default('hybrid')
+        .describe('The type of oracle to query.'),
     },
     handler: async (request, response) => {
       const {tokenType, marketId, oracleType} = request.params;
-      response.appendResponseLine(`### Spectra Oracle Query: ${tokenType} @ ${marketId}`);
+      response.appendResponseLine(
+        `### Spectra Oracle Query: ${tokenType} @ ${marketId}`,
+      );
 
-      const price = tokenType === 'PT' ? 0.94 + Math.random() * 0.02 : 0.05 + Math.random() * 0.01;
+      const price =
+        tokenType === 'PT'
+          ? 0.94 + Math.random() * 0.02
+          : 0.05 + Math.random() * 0.01;
       const confidence = 0.999 + Math.random() * 0.0009;
 
-      response.appendResponseLine(`- **Oracle Source**: ${oracleType.toUpperCase()}`);
-      response.appendResponseLine(`- **Latest Price**: ${price.toFixed(6)} Underlying`);
-      response.appendResponseLine(`- **Confidence (λ2)**: ${confidence.toFixed(4)}`);
-      response.appendResponseLine(`- **Round ID**: 0x${Math.floor(Math.random() * 1e12).toString(16)}`);
-      response.appendResponseLine(`\n**Verification**: Price validated against Chainlink reference and EMA-TWAP.`);
+      response.appendResponseLine(
+        `- **Oracle Source**: ${oracleType.toUpperCase()}`,
+      );
+      response.appendResponseLine(
+        `- **Latest Price**: ${price.toFixed(6)} Underlying`,
+      );
+      response.appendResponseLine(
+        `- **Confidence (λ2)**: ${confidence.toFixed(4)}`,
+      );
+      response.appendResponseLine(
+        `- **Round ID**: 0x${Math.floor(Math.random() * 1e12).toString(16)}`,
+      );
+      response.appendResponseLine(
+        `\n**Verification**: Price validated against Chainlink reference and EMA-TWAP.`,
+      );
     },
   };
 });

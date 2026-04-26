@@ -1,24 +1,28 @@
-
 /**
  * @license
  * Copyright 2026 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Brain, FlaskConical, Play } from 'lucide-react';
+import {Brain, FlaskConical, Play} from 'lucide-react';
 import React from 'react';
 
-import type { LatentCoherenceResults } from '../../server/types';
+import type {LatentCoherenceResults} from '../../server/types';
 
-import { Card } from './ui/Card';
+import {Card} from './ui/card';
 
 interface LatentCoherencePanelProps {
   results?: LatentCoherenceResults;
   onRunExperiment: () => void;
 }
 
-const LatentCoherencePanel: React.FC<LatentCoherencePanelProps> = ({ results, onRunExperiment }) => {
-  if (!results) {return null;}
+const LatentCoherencePanel: React.FC<LatentCoherencePanelProps> = ({
+  results,
+  onRunExperiment,
+}) => {
+  if (!results) {
+    return null;
+  }
 
   return (
     <Card
@@ -29,12 +33,20 @@ const LatentCoherencePanel: React.FC<LatentCoherencePanelProps> = ({ results, on
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-2 text-[10px]">
           <div className="p-2 bg-red-500/5 border border-red-500/20 rounded">
-            <p className="text-red-400 font-bold mb-1 uppercase">AVG λ₂ (CoT)</p>
-            <p className="text-lg">{results.summary.avg_lambda_cot.toFixed(4)}</p>
+            <p className="text-red-400 font-bold mb-1 uppercase">
+              AVG λ₂ (CoT)
+            </p>
+            <p className="text-lg">
+              {results.summary.avg_lambda_cot.toFixed(4)}
+            </p>
           </div>
           <div className="p-2 bg-purple-500/5 border border-purple-500/20 rounded">
-            <p className="text-purple-400 font-bold mb-1 uppercase">AVG λ₂ (CoCT)</p>
-            <p className="text-lg">{results.summary.avg_lambda_coct.toFixed(4)}</p>
+            <p className="text-purple-400 font-bold mb-1 uppercase">
+              AVG λ₂ (CoCT)
+            </p>
+            <p className="text-lg">
+              {results.summary.avg_lambda_coct.toFixed(4)}
+            </p>
           </div>
         </div>
 
