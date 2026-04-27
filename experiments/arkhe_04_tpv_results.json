@@ -1,0 +1,22 @@
+{
+    "protocol": "ARKHE-04",
+    "emitter": {
+        "n_layers": 20,
+        "refractive_indices": [
+            3.5,
+            1.45
+        ],
+        "mean_thickness_nm": 268.7907906730187
+    },
+    "simulation": {
+        "T_h_K": 1500,
+        "base_efficiency": 0.7360000000000001,
+        "mt_enhanced_efficiency": 0.86848,
+        "delta_eta": 0.17999999999999988
+    },
+    "success_criteria": {
+        "min_delta_eta": 0.15,
+        "actual_delta_eta": 0.17999999999999988,
+        "validated": true
+    }
+}

@@ -15,6 +15,7 @@ from ..iota_council import IOTACouncil
 from .telemetry_processor import TelemetryProcessor
 from .gameplay_handler import GameplayHandler
 from .stream_gateway import stream_gateway
+from .security_router import router as security_router
 
 # Security Configuration
 SECRET_KEY = os.environ.get("ARKHE_CORE_SECRET_KEY", "DEVELOPMENT_SECRET_INSECURE")
@@ -24,6 +25,8 @@ security = HTTPBearer()
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Arkhe(n) Forge API", version="0.1.0")
+app.include_router(security_router)
+
 council = IOTACouncil()
 telemetry_processor = TelemetryProcessor()
 gameplay_handler = GameplayHandler()

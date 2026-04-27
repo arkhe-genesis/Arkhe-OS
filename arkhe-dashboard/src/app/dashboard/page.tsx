@@ -21,6 +21,7 @@ import InterCathedralPanel from '@/components/quantum/InterCathedralPanel';
 import SafeCorePanel from '@/components/security/SafeCorePanel';
 import RetrocausalWisdomPanel from '@/components/retrocausality/RetrocausalWisdomPanel';
 import QuantumMarketplacePanel from '@/components/marketplace/QuantumMarketplacePanel';
+import NeuralCoherenceBar from '@/components/security/NeuralCoherenceBar';
 
 const ArkheCore3D = dynamic(() => import('@/components/ArkheCore3D'), { ssr: false });
 const QuantumARViewer = dynamic(() => import('@/components/ar/QuantumARViewer'), { ssr: false });
@@ -29,8 +30,7 @@ export default function DashboardPage() {
   const { metrics, setMetrics, predictions, setPredictions } = useZustandStore();
   const [isTraining, setIsTraining] = useState(false);
   const [federatedMetrics, setFederatedMetrics] = useState<any>(null);
-  const [arActive, setArActive] = useState(false);
-  const [activeTab, setActiveTab] = useState<'3d' | 'ar'>('3d');
+  const [activeTab, setActiveTab] = useState<'3d' | 'ar' | 'scaffold'>('3d');
 
   // Conexão WebSocket Simulada
   useEffect(() => {
@@ -110,7 +110,7 @@ export default function DashboardPage() {
               Arkhe OS <span className="text-cyan-400">v19-Collective</span>
             </h1>
             <p className="text-[10px] font-mono text-slate-500 tracking-[0.2em]">
-              ODÔMETRO: 002145 | STATUS: COERENTE
+              ODÔMETRO: 002186 | STATUS: ACT_IV_SCAFFOLD
             </p>
           </div>
         </div>
@@ -144,6 +144,12 @@ export default function DashboardPage() {
                 CAMPO Ω 3D
               </button>
               <button
+                onClick={() => setActiveTab('scaffold')}
+                className={`px-4 py-1.5 rounded-full text-[10px] font-bold tracking-widest transition-all ${activeTab === 'scaffold' ? 'bg-indigo-600 text-white shadow-[0_0_15px_rgba(79,70,229,0.5)]' : 'bg-white/5 text-slate-400'}`}
+              >
+                SCAFFOLD INTERNO
+              </button>
+              <button
                 onClick={() => setActiveTab('ar')}
                 className={`px-4 py-1.5 rounded-full text-[10px] font-bold tracking-widest transition-all ${activeTab === 'ar' ? 'bg-purple-500 text-white' : 'bg-white/5 text-slate-400'}`}
               >
@@ -153,16 +159,15 @@ export default function DashboardPage() {
 
             {activeTab === '3d' ? (
               <ArkheCore3D omega={metrics.omega} kEth={metrics.kEth} />
+            ) : activeTab === 'scaffold' ? (
+              <ArkheCore3D omega={metrics.omega} kEth={metrics.kEth} scaffoldMode={true} />
             ) : (
-              <QuantumARViewer metrics={metrics} onSessionChange={setArActive} />
+              <QuantumARViewer metrics={metrics} onSessionChange={() => {}} />
             )}
 
             {/* Bottom Metrics Overlay */}
             <div className="absolute bottom-8 left-8 right-8 grid grid-cols-4 gap-4 pointer-events-none">
-              <div className="bg-black/60 backdrop-blur-md p-4 rounded-2xl border border-white/5">
-                <p className="text-[10px] text-slate-500 mb-1">COERÊNCIA</p>
-                <p className="text-lg font-bold text-cyan-400">{(metrics.omega * 100).toFixed(2)}%</p>
-              </div>
+              <NeuralCoherenceBar />
               <div className="bg-black/60 backdrop-blur-md p-4 rounded-2xl border border-white/5">
                 <p className="text-[10px] text-slate-500 mb-1">CONSTANTE K</p>
                 <p className="text-lg font-bold text-purple-400">{metrics.kEth.toFixed(4)}</p>

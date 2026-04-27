@@ -1,0 +1,21 @@
+{
+    "protocol": "ARKHE-04",
+    "predictions": {
+        "P1_AnestheticShift": {
+            "measured_pm": 0.59100374807433,
+            "precision_pm": 0.5,
+            "success": true
+        },
+        "P2_TPVYield": {
+            "base_eta": 0.684,
+            "measured_eta": 0.8071200000000001,
+            "delta_pct": 18.0,
+            "success": true
+        },
+        "P3_FibonacciModes": {
+            "picos": 4,
+            "success": true
+        }
+    },
+    "zk_proof_ready": true
+}
