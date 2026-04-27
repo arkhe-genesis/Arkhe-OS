@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arkhe OS — Campo de Coerência Multiversal Ω</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <style>
+        * { margin: 0; padding: 0; overflow: hidden; background: #000; color: #0ff; font-family: 'Courier New', monospace; }
+        #hud { position: absolute; top: 20px; left: 20px; z-index: 10; pointer-events: none; }
+        .panel { background: rgba(0, 10, 20, 0.85); border: 1px solid #0ff; padding: 15px; margin-bottom: 10px; }
+        .metric { display: flex; justify-content: space-between; margin: 5px 0; font-size: 12px; }
+        .value { color: #fff; font-weight: bold; }
+    </style>
+</head>
+<body>
+<div id="hud">
+    <div class="panel">
+        <h1>🔮 Arkhe OS v17 — Telemetry Ω</h1>
+        <div class="metric"><span>Ω (Coerência):</span><span class="value" id="omega-display">--</span></div>
+        <div class="metric"><span>K_eth (Ética):</span><span class="value" id="keth-display">--</span></div>
+        <div class="metric"><span>DQC (Emaranhamento):</span><span class="value" id="dqc-display">Active</span></div>
+    </div>
+</div>
+<script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Torus de Klein
+    const geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16);
+    const material = new THREE.MeshPhongMaterial({ color: 0x00ffff, emissive: 0x003333, wireframe: true });
+    const torus = new THREE.Mesh(geometry, material);
+    scene.add(torus);
+
+    scene.add(new THREE.AmbientLight(0x444444));
+    const light = new THREE.PointLight(0xffffff, 1, 100);
+    light.position.set(10, 10, 10);
+    scene.add(light);
+
+    camera.position.z = 40;
+
+    function animate() {
+        requestAnimationFrame(animate);
+        torus.rotation.x += 0.005;
+        torus.rotation.y += 0.01;
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    async function update() {
+        try {
+            const r = await fetch('http://' + window.location.hostname + ':9080/metrics');
+            const d = await r.json();
+            document.getElementById('omega-display').innerText = d.omega.current_value.toFixed(4);
+            document.getElementById('keth-display').innerText = d.k_eth.current_value.toFixed(4);
+        } catch(e) {}
+    }
+    setInterval(update, 2000);
+</script>
+</body>
+</html>
