@@ -1,0 +1,285 @@
+{
+  "awg_config": {
+    "center_wavelength_nm": 842.0,
+    "channel_spacing_nm": 0.5,
+    "num_channels": 16,
+    "channel_crosstalk_dB": -28,
+    "thermal_sensitivity_pm_per_C": 11.1,
+    "precision_pm": 0.5,
+    "temperature_C": 25.0
+  },
+  "fibonacci_modes_hz": [
+    37.1,
+    60.0,
+    97.1,
+    157.1,
+    254.2
+  ],
+  "fibonacci_amplitudes": [
+    0.28,
+    0.48,
+    1.0,
+    0.83,
+    0.36
+  ],
+  "conditions": {
+    "C1_baseline": {
+      "label": "Baseline (MTs polimerizados)",
+      "description": "Microt\u00fabulos polimerizados, sem estimula\u00e7\u00e3o",
+      "channel_centers_nm": [
+        838.25,
+        838.75,
+        839.25,
+        839.75,
+        840.25,
+        840.75,
+        841.25,
+        841.75,
+        842.25,
+        842.75,
+        843.25,
+        843.75,
+        844.25,
+        844.75,
+        845.25,
+        845.75
+      ],
+      "channel_counts": [
+        620,
+        619,
+        646,
+        584,
+        617,
+        638,
+        590,
+        607,
+        580,
+        553,
+        603,
+        586,
+        602,
+        624,
+        614,
+        581
+      ],
+      "detected_peaks_channels": [
+        2,
+        5,
+        7,
+        10,
+        13
+      ],
+      "metadata": {
+        "anesthetic_shift_pm": 0.0,
+        "fib_amplitude_scale": 1.0,
+        "snr_dB": 40
+      }
+    },
+    "C2_fibonacci_stim": {
+      "label": "Estimula\u00e7\u00e3o Fibonacci",
+      "description": "ELF Fibonacci (37-254 Hz), 400 nT, pulsado",
+      "channel_centers_nm": [
+        838.25,
+        838.75,
+        839.25,
+        839.75,
+        840.25,
+        840.75,
+        841.25,
+        841.75,
+        842.25,
+        842.75,
+        843.25,
+        843.75,
+        844.25,
+        844.75,
+        845.25,
+        845.75
+      ],
+      "channel_counts": [
+        611,
+        603,
+        593,
+        601,
+        644,
+        573,
+        593,
+        570,
+        609,
+        564,
+        627,
+        578,
+        615,
+        623,
+        631,
+        592
+      ],
+      "detected_peaks_channels": [
+        4,
+        6,
+        8,
+        10,
+        14
+      ],
+      "metadata": {
+        "anesthetic_shift_pm": 0.0,
+        "fib_amplitude_scale": 1.8,
+        "snr_dB": 55
+      }
+    },
+    "C3_halothane": {
+      "label": "Sob Halotano 1.5%",
+      "description": "Anest\u00e9sico bloqueia canais de acoplamento",
+      "channel_centers_nm": [
+        838.25,
+        838.75,
+        839.25,
+        839.75,
+        840.25,
+        840.75,
+        841.25,
+        841.75,
+        842.25,
+        842.75,
+        843.25,
+        843.75,
+        844.25,
+        844.75,
+        845.25,
+        845.75
+      ],
+      "channel_counts": [
+        611,
+        582,
+        602,
+        616,
+        604,
+        620,
+        633,
+        565,
+        625,
+        612,
+        604,
+        620,
+        613,
+        562,
+        613,
+        616
+      ],
+      "detected_peaks_channels": [
+        3,
+        6,
+        8,
+        11
+      ],
+      "metadata": {
+        "anesthetic_shift_pm": 0.45,
+        "fib_amplitude_scale": 0.3,
+        "snr_dB": 25
+      }
+    },
+    "C4_dehydrated": {
+      "label": "Desidrata\u00e7\u00e3o (PEG 10%)",
+      "description": "\u00c1gua confinada removida \u2192 perda de coer\u00eancia",
+      "channel_centers_nm": [
+        838.25,
+        838.75,
+        839.25,
+        839.75,
+        840.25,
+        840.75,
+        841.25,
+        841.75,
+        842.25,
+        842.75,
+        843.25,
+        843.75,
+        844.25,
+        844.75,
+        845.25,
+        845.75
+      ],
+      "channel_counts": [
+        621,
+        581,
+        628,
+        603,
+        576,
+        597,
+        599,
+        590,
+        570,
+        605,
+        606,
+        591,
+        594,
+        593,
+        596,
+        570
+      ],
+      "detected_peaks_channels": [
+        2,
+        6,
+        10,
+        12,
+        14
+      ],
+      "metadata": {
+        "anesthetic_shift_pm": 0.0,
+        "fib_amplitude_scale": 0.5,
+        "snr_dB": 30
+      }
+    },
+    "C5_free_tubulin": {
+      "label": "Tubulina Livre (Controle)",
+      "description": "Sem polimeriza\u00e7\u00e3o \u2192 sem superradi\u00e2ncia",
+      "channel_centers_nm": [
+        838.25,
+        838.75,
+        839.25,
+        839.75,
+        840.25,
+        840.75,
+        841.25,
+        841.75,
+        842.25,
+        842.75,
+        843.25,
+        843.75,
+        844.25,
+        844.75,
+        845.25,
+        845.75
+      ],
+      "channel_counts": [
+        642,
+        603,
+        575,
+        598,
+        598,
+        624,
+        611,
+        568,
+        575,
+        631,
+        585,
+        603,
+        602,
+        605,
+        660,
+        599
+      ],
+      "detected_peaks_channels": [
+        5,
+        9,
+        11,
+        14
+      ],
+      "metadata": {
+        "anesthetic_shift_pm": 0.0,
+        "fib_amplitude_scale": 0.05,
+        "snr_dB": 15
+      }
+    }
+  }
+}
