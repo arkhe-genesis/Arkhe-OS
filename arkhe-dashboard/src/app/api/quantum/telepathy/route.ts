@@ -1,5 +1,13 @@
+/**
+ * @license
+ * Copyright 2025 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/app/api/quantum/telepathy/route.ts
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+
+import type { NextRequest } from 'next/server';
 import { EthicalQuantumTelepathy } from '@/lib/quantum/ethical-telepathy';
 
 const telepathyInstances = new Map<string, EthicalQuantumTelepathy>();
@@ -27,7 +35,7 @@ export async function POST(request: NextRequest) {
       case 'transmit_intention': {
         const { intention, targetConsciousnessId } = payload;
         const success = await telepathy.transmitIntention(intention, targetConsciousnessId);
-        return NextResponse.json({ success, intentionId: (intention as any).intentionId });
+        return NextResponse.json({ success, intentionId: (intention as unknown as { intentionId: string }).intentionId });
       }
 
       case 'get_dashboard': {
@@ -53,7 +61,7 @@ export async function DELETE(request: NextRequest) {
       telepathyInstances.delete(consciousnessId);
     }
     return NextResponse.json({ success: true, message: 'Disconnected' });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: 'Disconnect failed' }, { status: 500 });
   }
 }

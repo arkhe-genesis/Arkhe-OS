@@ -1,7 +1,14 @@
-// arkhe-dashboard/src/app/api/federated/aggregate/route.ts
-import { NextRequest, NextResponse } from 'next/server';
+/**
+ * @license
+ * Copyright 2025 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+
 import { ethicalFederatedLearner } from '@/lib/federated/ethicalFederatedLearning';
-import { ClientUpdate } from '@/types/ethics';
+import type { ClientUpdate } from '@/types/ethics';
 
 export async function POST(request: NextRequest) {
   try {
@@ -55,10 +62,10 @@ export async function POST(request: NextRequest) {
       default:
         return NextResponse.json({ error: 'Unknown federated action' }, { status: 400 });
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('❌ Federated learning error:', error);
     return NextResponse.json(
-      { error: 'Federated operation failed', details: error.message },
+      { error: 'Federated operation failed', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

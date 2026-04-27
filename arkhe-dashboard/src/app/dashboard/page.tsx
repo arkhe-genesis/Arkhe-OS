@@ -3,7 +3,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import dynamic from 'next/dynamic';
-import { io, Socket } from 'socket.io-client';
+import type { Socket } from 'socket.io-client';
 import { EthicalMetrics, PredictionResult } from '@/types/ethics';
 import { ethicalFederatedLearner } from '@/lib/federated/ethicalFederatedLearning';
 import { useZustandStore } from '@/hooks/useZustandStore';

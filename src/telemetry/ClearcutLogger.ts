@@ -171,7 +171,7 @@ export function sanitizeParams(
     if (PARAM_BLOCKLIST.has(name)) {
       continue;
     }
-      // @ts-ignore
+      // @ts-expect-error
     const zodType = getZodType(schema[name]);
     if (!hasEquivalentType(zodType, value)) {
       throw new Error(
@@ -179,9 +179,9 @@ export function sanitizeParams(
       );
     }
     const transformedName = transformArgName(zodType, name);
-    // @ts-ignore
+    // @ts-expect-error
     const transformedValue = transformValue(zodType, value);
-    // @ts-ignore
+    // @ts-expect-error
     transformed[transformedName] = transformedValue;
   }
   return transformed;

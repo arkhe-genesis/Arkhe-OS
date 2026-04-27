@@ -1,5 +1,13 @@
+/**
+ * @license
+ * Copyright 2025 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/app/api/inter-cathedral/route.ts
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+
+import type { NextRequest } from 'next/server';
 import { interCathedralProtocol } from '@/lib/quantum/interCathedralProtocol';
 
 export async function POST(request: NextRequest) {
@@ -50,7 +58,7 @@ export async function POST(request: NextRequest) {
       default:
         return NextResponse.json({ error: 'Unknown inter-cathedral action' }, { status: 400 });
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('❌ Inter-cathedral protocol error:', error);
     return NextResponse.json(
       { error: 'Protocol operation failed', details: error.message },

@@ -71,7 +71,7 @@ export const ebpfMonitorTraffic = definePageTool({
         duration.toString(),
       ]);
       response.appendResponseLine(output);
-    } catch (error: any) {
+    } catch (error: unknown) {
       response.appendResponseLine(`Error: ${error.message}`);
     }
   },
@@ -98,7 +98,7 @@ export const ebpfCheckReadiness = definePageTool({
         consent_id,
       ]);
       response.appendResponseLine(output);
-    } catch (error: any) {
+    } catch (error: unknown) {
       response.appendResponseLine(`Error: ${error.message}`);
     }
   },
@@ -131,7 +131,7 @@ export const ebpfRunBenchmark = definePageTool({
         benchmark_name,
       ]);
       response.appendResponseLine(output);
-    } catch (error: any) {
+    } catch (error: unknown) {
       response.appendResponseLine(`Error: ${error.message}`);
     }
   },
@@ -161,7 +161,7 @@ export const ebpfLoadProgram = definePageTool({
         elf_path,
       ]);
       response.appendResponseLine(output);
-    } catch (error: any) {
+    } catch (error: unknown) {
       response.appendResponseLine(`Error: ${error.message}`);
     }
   },
@@ -191,7 +191,7 @@ export const ebpfVerifyIntegrity = definePageTool({
         batch_id,
       ]);
       response.appendResponseLine(output);
-    } catch (error: any) {
+    } catch (error: unknown) {
       response.appendResponseLine(`Error: ${error.message}`);
     }
   },

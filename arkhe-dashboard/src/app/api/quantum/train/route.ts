@@ -1,5 +1,13 @@
+/**
+ * @license
+ * Copyright 2025 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/app/api/quantum/train/route.ts
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+
+import type { NextRequest } from 'next/server';
 import { federatedHomomorphicQuantum } from '@/lib/quantum/federatedHomomorphicQuantum';
 
 export async function POST(request: NextRequest) {
@@ -18,7 +26,7 @@ export async function POST(request: NextRequest) {
       default:
         return NextResponse.json({ error: 'Unknown action' }, { status: 400 });
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }

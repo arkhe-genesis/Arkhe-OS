@@ -63,7 +63,7 @@ export interface ToolDefinition<
 }
 
 export interface Request<Schema extends zod.ZodRawShape> {
-// @ts-ignore
+// @ts-expect-error
   params: zod.objectOutputType<Schema, zod.ZodTypeAny>;
 }
 

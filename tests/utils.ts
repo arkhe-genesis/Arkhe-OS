@@ -84,7 +84,7 @@ export async function withBrowser(
   let browser = browsers.get(key);
   if (!browser) {
     browser = await puppeteer.launch(launchOptions);
-// @ts-ignore
+// @ts-expect-error
     browsers.set(key, browser);
   }
   const newPage = await browser.newPage();
@@ -98,7 +98,7 @@ export async function withBrowser(
   );
 
   await cb(browser, newPage);
-// @ts-ignore
+// @ts-expect-error
 }
 
 export async function withMcpContext(
@@ -118,7 +118,7 @@ export async function withMcpContext(
     }
     context = await McpContext.from(
       browser,
-// @ts-ignore
+// @ts-expect-error
       logger('test'),
       {
         experimentalDevToolsDebugging: false,
@@ -330,7 +330,7 @@ export function getMockPage(): Page {
 
 export function getMockBrowser(): Browser {
   const pages = [getMockPage()];
-// @ts-ignore
+// @ts-expect-error
   return {
     pages() {
       return Promise.resolve(pages);

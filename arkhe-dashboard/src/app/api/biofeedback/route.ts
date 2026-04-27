@@ -5,7 +5,9 @@
  */
 
 // arkhe-dashboard/src/app/api/biofeedback/route.ts
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+
+import type { NextRequest } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {

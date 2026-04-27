@@ -100,7 +100,7 @@ export function generateToolMetrics(tools: ToolDefinition[]): ToolMetric[] {
       }
       let zodType;
       try {
-        // @ts-ignore
+        // @ts-expect-error
         zodType = getZodType(schema);
       } catch (err) {
         console.error(`Error getting zod type for tool ${tool.name} arg ${name}:`, err);
@@ -110,27 +110,26 @@ export function generateToolMetrics(tools: ToolDefinition[]): ToolMetric[] {
       let argType = transformArgType(zodType);
 
       if (argType === 'enum') {
-        let values;
-        const findValues = (s: any): any[] | undefined => {
-          const d = s._def || s.def;
+        const findValues = (s: unknown): unknown[] | undefined => {
+          const d = ((s as { _def?: unknown })._def) || ((s as { def?: unknown }).def);
           if (d?.values?.length > 0) {
             return d.values;
           }
           if (d?.entries?.length > 0) {
             return d.entries;
           }
-          if (s.options?.length > 0) {
-            return s.options;
+          if (((s as { options?: unknown[] }).options)?.length > 0) {
+            return ((s as { options?: unknown[] }).options);
           }
-          if (d?.innerType) {
+          if (((d as { innerType?: unknown })?.innerType)) {
             return findValues(d.innerType);
           }
-          if (s.innerType) {
-            return findValues(s.innerType);
+          if (((s as { innerType?: unknown }).innerType)) {
+            return findValues(((s as { innerType?: unknown }).innerType));
           }
           return undefined;
         };
-        values = findValues(schema);
+        const values = findValues(schema);
         if (!values) {
           console.error(`Could not find values for enum tool ${tool.name} arg ${name}`, schema);
           throw new Error(`Missing enum values for ${tool.name}.${name}`);

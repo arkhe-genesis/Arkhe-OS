@@ -1,5 +1,13 @@
+/**
+ * @license
+ * Copyright 2025 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/app/api/simulate/route.ts
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+
+import type { NextRequest } from 'next/server';
 import { ethicalSimulator } from '@/lib/simulator/ethicalSimulator';
 
 export async function POST(request: NextRequest) {
@@ -7,7 +15,7 @@ export async function POST(request: NextRequest) {
     const { scenario, baseMetrics } = await request.json();
     const result = await ethicalSimulator.simulate(scenario, baseMetrics);
     return NextResponse.json({ success: true, result });
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }

@@ -1,5 +1,13 @@
+/**
+ * @license
+ * Copyright 2025 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/app/api/meditation/route.ts
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+
+import type { NextRequest } from 'next/server';
 import { coherentMeditationEngine } from '@/lib/meditation/coherentMeditation';
 
 export async function POST(request: NextRequest) {
@@ -37,7 +45,7 @@ export async function POST(request: NextRequest) {
       default:
         return NextResponse.json({ error: 'Unknown meditation action' }, { status: 400 });
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('❌ Meditation API error:', error);
     return NextResponse.json(
       { error: 'Meditation operation failed', details: error.message },

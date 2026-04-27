@@ -1,5 +1,13 @@
+/**
+ * @license
+ * Copyright 2025 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/app/api/zkp/verify/route.ts
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+
+import type { NextRequest } from 'next/server';
 import { postQuantumZKP } from '@/lib/zkp/post-quantum-zkp';
 import { ZKPProof } from '@/types/ethics';
 
@@ -15,7 +23,7 @@ export async function POST(request: NextRequest) {
       }
 
       case 'verify_proof': {
-        const { zkpProof, publicInputs } = payload as { zkpProof: ZKPProof; publicInputs: Record<string, any> };
+        const { zkpProof, publicInputs } = payload as { zkpProof: ZKPProof; publicInputs: Record<string, unknown> };
         const isValid = await postQuantumZKP.verifyProof(zkpProof, publicInputs);
         return NextResponse.json({ success: true, isValid });
       }
