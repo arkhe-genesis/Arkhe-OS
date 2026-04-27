@@ -1,6 +1,16 @@
 {
   "project": "TAU (Teleonomic Autonomous Unit)",
   "version": "1.1.0",
+  "primary_provider": "BayOfAssets",
+  "customProviders": [
+    {
+      "name": "BayOfAssets",
+      "baseUrl": "https://api.bayofassets.com/v1",
+      "apiKey": "${BOA_API_KEY}",
+      "model": "claude-haiku-4-5",
+      "tier": 1
+    }
+  ],
   "infrastructure": {
     "provider": "Oracle Cloud Always Free",
     "specs": {

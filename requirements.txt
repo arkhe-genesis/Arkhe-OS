@@ -3,4 +3,5 @@ scipy
 rich
 fastapi
 uvicorn
-requests
+httpx
+msgpack-python
