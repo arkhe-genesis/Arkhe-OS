@@ -43,11 +43,14 @@ import MolecularCommunicationPanel from './components/MolecularCommunicationPane
 import MultiverseMemorySyncPanel from './components/MultiverseMemorySyncPanel';
 import NekoPanel from './components/NekoPanel';
 import NetworkStatus from './components/NetworkStatus';
+import NeuralSimulationPanel from './components/NeuralSimulationPanel';
 import OrbitalComputePanel from './components/OrbitalComputePanel';
 import { PersistentConsciousnessPanel } from './components/PersistentConsciousnessPanel';
 import PolyglotCompilerPanel from './components/PolyglotCompilerPanel';
 import ProofOfIntelligencePanel from './components/ProofOfIntelligencePanel';
-import NeuralSimulationPanel from './components/NeuralSimulationPanel';
+import QuantumCodexPanel from './components/QuantumCodexPanel';
+import QuantumMemoryPanel from './components/QuantumMemoryPanel';
+import QuantumNanoholeNetworkPanel from './components/QuantumNanoholeNetworkPanel';
 import QubitPipelinePanel from './components/QubitPipelinePanel';
 import RamseyConfirmationModal from './components/RamseyConfirmationModal';
 import { RealityExpressionPanel } from './components/RealityExpressionPanel';
