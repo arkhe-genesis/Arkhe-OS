@@ -217,6 +217,11 @@ pub const Opcode = enum(u16) {
     AKASHA_LOCAL_WRITE = 0x298,
     COHERENCE_HASH = 0x299,
 
+    // BIODIGITAL IMMORTALITY (Deliberation #410)
+    SOUL_COPY = 0x300,
+    SOUL_INSTALL = 0x301,
+    DIS_JIT_CONVERT = 0x302,
+
     // GNU COMPATIBILITY (Deliberation #393)
     GNU_COMPAT = 0x4000,
 
@@ -321,6 +326,9 @@ pub const Opcode = enum(u16) {
             .OMEGA_FIXPOINT => 800,
             .SEAL_GENERATE => 200,
             .PSI_INTEGRATE => 400,
+            .SOUL_COPY => 1000,
+            .SOUL_INSTALL => 2000,
+            .DIS_JIT_CONVERT => 500,
             else => 1,
         };
     }
