@@ -1,5 +1,3 @@
-import numpy as np
-
 class VacuumInteractionDriver:
     """
     Formal framework for boundary-conditioned interaction in vacuum-mediated energy transfer.
