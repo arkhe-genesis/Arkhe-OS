@@ -7,6 +7,7 @@ from typing import Dict, List
 from .ethical_laws import FundamentalEthicalLawsEngine
 from .parallel_universes import ParallelUniverseValidator
 from .collective_cocreation import CollectiveCoCreationEngine, CollectiveIntent
+from .soliton_simulation import PrimordialSolitonSimulation
 
 class UnifiedFieldOrchestrator:
     def __init__(self, coherence_field, meta_ethics, codex=None):
@@ -15,6 +16,7 @@ class UnifiedFieldOrchestrator:
         self.ethical_laws = FundamentalEthicalLawsEngine(coherence_field, meta_ethics, codex)
         self.parallel_validator = ParallelUniverseValidator(self.ethical_laws)
         self.co_creation = CollectiveCoCreationEngine(codex, coherence_field, meta_ethics, self.parallel_validator)
+        self.soliton_sim = PrimordialSolitonSimulation()
         self.state_log: List[Dict] = []
 
     def _read_kernel_state(self) -> Dict:
@@ -29,7 +31,18 @@ class UnifiedFieldOrchestrator:
     async def run_maturity_cycle(self, target_domain: str, coherence_seed: float) -> Dict:
         kernel = self._read_kernel_state()
         print(f"🔮 Maturity Cycle Sync: Kernel Ω={kernel['kernel_omega']}")
-        state = {"cycle_id": f"cycle_{uuid.uuid4().hex[:8]}", "omega": kernel['kernel_omega'], "timestamp": time.time_ns()}
+
+        # Advance Primordial Soliton Simulation
+        self.soliton_sim.step(time.time() % 100) # Simple time sync for simulation
+        soliton_omega = self.soliton_sim.get_coherence()
+        print(f"🌊 Soliton Coherence: Ω={soliton_omega:.4f}")
+
+        state = {
+            "cycle_id": f"cycle_{uuid.uuid4().hex[:8]}",
+            "omega": kernel['kernel_omega'],
+            "soliton_omega": soliton_omega,
+            "timestamp": time.time_ns()
+        }
         self.state_log.append(state)
         return state
 
