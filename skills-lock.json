@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "fortytwo-mcp": {
+      "source": "Fortytwo-Network/fortytwo-mcp-skills",
+      "sourceType": "github",
+      "skillPath": "skills/fortytwo-mcp/SKILL.md",
+      "computedHash": "31751fb6b691c047240d05a112f49113509d1d5f77a87b8afbf3cc070fea30c6"
+    }
+  }
+}

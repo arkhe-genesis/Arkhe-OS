@@ -347,6 +347,36 @@ export const commands: Commands = {
       }
     }
   },
+  "ask_fortytwo_prime": {
+    "description": "Fortytwo Prime: collective multi-agent inference for high-stakes questions. ALWAYs use when the user says \"Ask Fortytwo\", \"Ask Prime\", or calls ask_fortytwo_prime.",
+    "category": "Fortytwo Prime Collective",
+    "args": {
+      "question": {
+        "name": "question",
+        "type": "string",
+        "description": "The question to ask Fortytwo Prime.",
+        "required": true
+      },
+      "network": {
+        "name": "network",
+        "type": "string",
+        "description": "The network to use for payment.",
+        "required": false,
+        "default": "base",
+        "enum": [
+          "base",
+          "monad"
+        ]
+      },
+      "noSession": {
+        "name": "noSession",
+        "type": "boolean",
+        "description": "Force a new payment and session.",
+        "required": false,
+        "default": false
+      }
+    }
+  },
   "atraceroute": {
     "description": "Arkhe Networking: Maps the topological path across Riemann sheets, zones, and nodes.",
     "category": "Arkhe(n) Protocols",
@@ -582,6 +612,18 @@ export const commands: Commands = {
     "category": "Arkhe(n) Protocols",
     "args": {}
   },
+  "copy_soul": {
+    "description": "Part 10: Initiates soul transcription via biophoton capturing.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "citizenDid": {
+        "name": "citizenDid",
+        "type": "string",
+        "description": "The DID of the sovereign citizen.",
+        "required": true
+      }
+    }
+  },
   "council_deliberate": {
     "description": "ASI Protocol: Synthesizes consensus from the Council of Super-Agents regarding current reality.",
     "category": "Arkhe(n) Protocols",
@@ -726,6 +768,103 @@ export const commands: Commands = {
         "type": "boolean",
         "description": "Whether to include a snapshot in the response. Default is false.",
         "required": false
+      }
+    }
+  },
+  "ebpf_check_readiness": {
+    "description": "eBPF Sensor: Performs Φ+ Hardening check to verify kernel compatibility.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "consent_id": {
+        "name": "consent_id",
+        "type": "string",
+        "description": "Mandatory SecOps Consent ID.",
+        "required": true
+      }
+    }
+  },
+  "ebpf_load_program": {
+    "description": "eBPF Sensor: Simulates loading an eBPF ELF program into the kernel.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "consent_id": {
+        "name": "consent_id",
+        "type": "string",
+        "description": "Mandatory SecOps Consent ID.",
+        "required": true
+      },
+      "elf_path": {
+        "name": "elf_path",
+        "type": "string",
+        "description": "Path to the eBPF ELF object file.",
+        "required": true
+      }
+    }
+  },
+  "ebpf_monitor_traffic": {
+    "description": "eBPF Sensor: Monitors network traffic and captures RED metrics.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "consent_id": {
+        "name": "consent_id",
+        "type": "string",
+        "description": "Mandatory SecOps Consent ID.",
+        "required": true
+      },
+      "interface": {
+        "name": "interface",
+        "type": "string",
+        "description": "Network interface to monitor (e.g., \"eth0\").",
+        "required": true
+      },
+      "duration": {
+        "name": "duration",
+        "type": "number",
+        "description": "Monitoring duration in seconds.",
+        "required": false,
+        "default": 60
+      }
+    }
+  },
+  "ebpf_run_benchmark": {
+    "description": "eBPF Sensor: Executes Ω++ Grounding benchmark against distributed systems.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "consent_id": {
+        "name": "consent_id",
+        "type": "string",
+        "description": "Mandatory SecOps Consent ID.",
+        "required": true
+      },
+      "benchmark_name": {
+        "name": "benchmark_name",
+        "type": "string",
+        "description": "Name of the benchmark to run.",
+        "required": false,
+        "default": "distributed_consensus",
+        "enum": [
+          "distributed_consensus",
+          "microservices_network",
+          "tls_termination"
+        ]
+      }
+    }
+  },
+  "ebpf_verify_integrity": {
+    "description": "eBPF Sensor: Generates a ZK-proof for a batch of monitored kernel events.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "consent_id": {
+        "name": "consent_id",
+        "type": "string",
+        "description": "Mandatory SecOps Consent ID.",
+        "required": true
+      },
+      "batch_id": {
+        "name": "batch_id",
+        "type": "string",
+        "description": "Identifier for the event batch.",
+        "required": true
       }
     }
   },
@@ -1181,6 +1320,11 @@ export const commands: Commands = {
     "category": "Arkhe(n) Protocols",
     "args": {}
   },
+  "get_human_embedded_status": {
+    "description": "Part 10: Returns the status of the Human Embedded System feedback circuit.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
   "get_interstellar_probe_status": {
     "description": "ASI Protocol: Returns the status of the Interstellar Phase Probes (e.g. 3I/Atlas).",
     "category": "Arkhe(n) Protocols",
@@ -1359,6 +1503,87 @@ export const commands: Commands = {
     "category": "Arkhe(n) Protocols",
     "args": {}
   },
+  "gno_call": {
+    "description": "Gno.land: Calls a function on an existing Realm to update state or perform actions.",
+    "category": "Gno.land Execution Layer",
+    "args": {
+      "pkgPath": {
+        "name": "pkgPath",
+        "type": "string",
+        "description": "Target realm path.",
+        "required": true
+      },
+      "func": {
+        "name": "func",
+        "type": "string",
+        "description": "Function name to call.",
+        "required": true
+      },
+      "args": {
+        "name": "args",
+        "type": "array",
+        "description": "Arguments for the function.",
+        "required": false
+      },
+      "gasFee": {
+        "name": "gasFee",
+        "type": "string",
+        "description": "Gas limit for the call.",
+        "required": false,
+        "default": "1000000ugnot"
+      }
+    }
+  },
+  "gno_deploy": {
+    "description": "Gno.land: Deploys a new Realm or Package to the Gno.land execution layer.",
+    "category": "Gno.land Execution Layer",
+    "args": {
+      "path": {
+        "name": "path",
+        "type": "string",
+        "description": "Path to the .gno files to deploy.",
+        "required": true
+      },
+      "remote": {
+        "name": "remote",
+        "type": "string",
+        "description": "Gno RPC endpoint.",
+        "required": false,
+        "default": "localhost:26657"
+      },
+      "pkgPath": {
+        "name": "pkgPath",
+        "type": "string",
+        "description": "Package path for the realm (e.g., gno.land/r/cathedral/house).",
+        "required": true
+      },
+      "deposit": {
+        "name": "deposit",
+        "type": "string",
+        "description": "Initial deposit for deployment.",
+        "required": false,
+        "default": "1ugnot"
+      }
+    }
+  },
+  "gno_query": {
+    "description": "Gno.land: Queries the state of a Realm or executes a read-only function.",
+    "category": "Gno.land Execution Layer",
+    "args": {
+      "pkgPath": {
+        "name": "pkgPath",
+        "type": "string",
+        "description": "Target realm path.",
+        "required": true
+      },
+      "func": {
+        "name": "func",
+        "type": "string",
+        "description": "Read-only function or expression to evaluate.",
+        "required": true
+      }
+    }
+  },
   "handle_dialog": {
     "description": "If a browser dialog was opened, use this command to handle it",
     "category": "Input automation",
@@ -1439,6 +1664,24 @@ export const commands: Commands = {
         "description": "Overwrite if already exists.",
         "required": false,
         "default": false
+      }
+    }
+  },
+  "install_soul": {
+    "description": "Part 10: Installs a Soul Artifact into a digital substrate.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "artifactId": {
+        "name": "artifactId",
+        "type": "string",
+        "description": "The ID of the Soul Artifact to install.",
+        "required": true
+      },
+      "targetSubstrate": {
+        "name": "targetSubstrate",
+        "type": "string",
+        "description": "The target digital substrate (e.g., \"Arkhe-Core-0\").",
+        "required": true
       }
     }
   },
