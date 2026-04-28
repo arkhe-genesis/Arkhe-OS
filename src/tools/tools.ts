@@ -14,6 +14,7 @@ import * as decentralizedTools from './decentralized.js';
 import * as ebpfTools from './ebpf.js';
 import * as emulationTools from './emulation.js';
 import * as evoskillTools from './evoskill.js';
+import * as fortytwoTools from './fortytwo.js';
 import * as extensionTools from './extensions.js';
 import * as gnoTools from './gno.js';
 import * as inPageTools from './inPage.js';
@@ -63,6 +64,7 @@ export const createTools = (args: ParsedArguments) => {
         ...Object.values(snapshotTools),
         ...Object.values(storageTools),
         ...Object.values(evoskillTools),
+        ...Object.values(fortytwoTools),
         ...Object.values(arkheTools),
         ...Object.values(decentralizedTools),
         ...Object.values(arkheGnuTools),

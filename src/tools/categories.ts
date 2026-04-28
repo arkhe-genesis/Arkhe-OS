@@ -22,6 +22,7 @@ export enum ToolCategory {
   EVOSKILL = 'evoskill',
   MESHTASTIC = 'meshtastic',
   GNO = 'gno',
+  FORTYTWO = 'fortytwo',
 }
 
 export const labels = {
@@ -42,4 +43,5 @@ export const labels = {
   [ToolCategory.EVOSKILL]: 'EvoSkill (Evolutionary Skill Induction)',
   [ToolCategory.MESHTASTIC]: 'Meshtastic Mesh Protocols',
   [ToolCategory.GNO]: 'Gno.land Execution Layer',
+  [ToolCategory.FORTYTWO]: 'Fortytwo Prime Collective',
 };
