@@ -1,7 +1,8 @@
 pragma circom 2.1.0;
 
-include "circuits/comparators.circom";
-include "circuits/hash/poseidon.circom";
+include "circomlib/comparators.circom";
+include "circomlib/bitify.circom";
+include "circomlib/poseidon.circom";
 
 // BioPhotonVerifier: ARKHE-03 and ARKHE-04 Validation
 template BioPhotonVerifier() {
@@ -17,6 +18,19 @@ template BioPhotonVerifier() {
     signal input nullifier;
 
     signal output proof_valid;
+
+    // 0. Range checks to prevent field wrap-around exploits
+    component eta_bits = Num2Bits(64);
+    eta_bits.in <== measured_eta;
+
+    component threshold_bits = Num2Bits(64);
+    threshold_bits.in <== threshold;
+
+    component omega_bits = Num2Bits(64);
+    omega_bits.in <== omega_spec;
+
+    component shift_bits = Num2Bits(64);
+    shift_bits.in <== peak_shift_pm;
 
     // 1. Common Efficiency Check (Superradiance / TPV Yield)
     component check_eta = LessThan(64);

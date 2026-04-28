@@ -1,7 +1,8 @@
 pragma circom 2.1.0;
 
-include "circuits/comparators.circom";
-include "circuits/hash/poseidon.circom";
+include "circomlib/comparators.circom";
+include "circomlib/bitify.circom";
+include "circomlib/poseidon.circom";
 
 template HumanCoherenceProof() {
     // Inputs (Scaled by 1e9)
@@ -18,6 +19,28 @@ template HumanCoherenceProof() {
 
     // Output
     signal output commitment;
+
+    // 0. Range checks to prevent field wrap-around exploits
+    component omega_bits = Num2Bits(64);
+    omega_bits.in <== omega_behavior;
+
+    component entropy_bits = Num2Bits(64);
+    entropy_bits.in <== entropy_timing;
+
+    component fractal_bits = Num2Bits(64);
+    fractal_bits.in <== fractal_dim;
+
+    component min_omega_bits = Num2Bits(64);
+    min_omega_bits.in <== min_omega;
+
+    component max_omega_bits = Num2Bits(64);
+    max_omega_bits.in <== max_omega;
+
+    component min_entropy_bits = Num2Bits(64);
+    min_entropy_bits.in <== min_entropy;
+
+    component max_fractal_bits = Num2Bits(64);
+    max_fractal_bits.in <== max_fractal;
 
     // 1. Check Omega range [min, max]
     component check_omega_min = LessThan(64);

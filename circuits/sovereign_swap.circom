@@ -1,5 +1,7 @@
 pragma circom 2.1.0;
 
+include "circomlib/bitify.circom";
+
 // circuits/sovereign_swap.circom
 // ZK Proof that an AMM trade maintains the product constant K
 // without revealing the specific reserves or trade direction.
@@ -17,6 +19,19 @@ template SovereignSwapProof() {
     signal input public_consent_id_commitment;
 
     // CONSTRAINTS
+    // 0. Range checks to prevent field overflow/wrap-around
+    component x_in_bits = Num2Bits(64);
+    x_in_bits.in <== private_x_in;
+
+    component y_in_bits = Num2Bits(64);
+    y_in_bits.in <== private_y_in;
+
+    component x_out_bits = Num2Bits(64);
+    x_out_bits.in <== private_x_out;
+
+    component y_out_bits = Num2Bits(64);
+    y_out_bits.in <== private_y_out;
+
     // 1. K-Invariant: X * Y = K must hold (ignoring fees for simplicity)
     signal k_before;
     k_before <== private_x_in * private_y_in;
@@ -28,8 +43,8 @@ template SovereignSwapProof() {
     k_before === k_after;
 
     // 2. Amount In sanity check
-    signal amount_positive;
-    amount_positive <== private_amount_in * 1; // dummy constraint
+    component amount_bits = Num2Bits(64);
+    amount_bits.in <== private_amount_in;
 
     // 3. Direction Check (Simplified)
     // Proof that private_x_out = private_x_in + private_amount_in

@@ -2,6 +2,7 @@ pragma circom 2.0.0;
 
 include "circomlib/poseidon.circom";
 include "circomlib/comparators.circom";
+include "circomlib/bitify.circom";
 
 /**
  * FederatedConsensus.circom
@@ -20,6 +21,16 @@ template FederatedConsensus() {
 
     signal output is_federated_consensus;
     signal output combined_data_commitment;
+
+    // 0. Range checks to prevent field wrap-around exploits
+    component p_a_bits = Num2Bits(252);
+    p_a_bits.in <== p_occ_survey_A;
+
+    component p_b_bits = Num2Bits(252);
+    p_b_bits.in <== p_occ_survey_B;
+
+    component delta_bits = Num2Bits(252);
+    delta_bits.in <== delta_p_max_allowed;
 
     component method_check = IsEqual();
     method_check.in[0] <== methodology_id_A;
@@ -47,6 +58,10 @@ template FederatedConsensus() {
     is_neg.in[0] <== p_occ_survey_A;
     is_neg.in[1] <== p_occ_survey_B;
     signal abs_diff <== is_neg.out * (p_occ_survey_B - p_occ_survey_A) + (1 - is_neg.out) * diff;
+
+    // Ensure abs_diff is also properly constrained
+    component abs_diff_bits = Num2Bits(252);
+    abs_diff_bits.in <== abs_diff;
 
     component within_tolerance = LessThan(252);
     within_tolerance.in[0] <== abs_diff;
