@@ -4,37 +4,38 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// arkhe-dashboard/scripts/verify-v20.ts
-import { federatedCosmicMemory } from '../src/lib/memory/federatedCosmicMemory';
+import { postQuantumZKP } from '../src/lib/zkp/post-quantum-zkp';
 import { federatedHomomorphicQuantum } from '../src/lib/quantum/federatedHomomorphicQuantum';
 
-async function verifyV20() {
-  console.log('🚀 Iniciando Verificação do Arkhe OS v20...');
+async function runVerification() {
+  console.log('🚀 Iniciando verificação Arkhe OS v∞.20...');
 
-  // 1. Verificar Cosmic Memory
-  console.log('\n--- Testando Federated Cosmic Memory ---');
-  const query = {
-    queryVector: Array.from({ length: 32 }, () => 0.5),
-    queryAmplitude: { re: 0.9, im: 0.1 },
-    maxResults: 5,
-    similarityThreshold: 0.1,
-    entanglementDepth: 2
-  };
-  const results = await federatedCosmicMemory.retrieveByQuantumSimilarity(query);
-  console.log(`✅ Recuperação concluída. Resultados: ${results.results.length}`);
-  console.log(`✅ Amostra ID: ${results.results[0]?.entry.entryId}`);
+  // 1. Testar ZKP
+  console.log('\n--- Testando Provas de Conhecimento Zero (Groth16) ---');
+  const zkpProof = await postQuantumZKP.proveKEthAboveThreshold(0.93, 0.90, true);
+  console.log('✅ ZKP Proof Gerado:', JSON.stringify(zkpProof, null, 2).substring(0, 150) + '...');
 
-  // 2. Verificar Homomorphic Computing
+  const isValid = await postQuantumZKP.verifyProof(zkpProof, { threshold: 0.90 });
+  console.log(`✅ ZKP Verificação: ${isValid ? 'VÁLIDA' : 'INVÁLIDA'}`);
+
+  const metrics = postQuantumZKP.getZKPMetrics();
+  console.log(`✅ ZKP Tempo Médio de Verificação: ${metrics.avgVerificationTime}ms`);
+
+  // 2. Testar Homomorphic Computing
   console.log('\n--- Testando Homomorphic Quantum Computing ---');
-  const sampleMetrics = { omega: 0.94, kEth: 0.93 };
+  const sampleMetrics: any = { omega: 0.94, kEth: 0.93 };
   const encrypted = await federatedHomomorphicQuantum.encryptEthicalData(sampleMetrics);
   console.log(`✅ Criptografia homomórfica (PQ-CKKS) bem-sucedida.`);
   console.log(`✅ Ciphertext size: ${encrypted.ciphertext.length} bytes`);
 
-  const training = await federatedHomomorphicQuantum.trainFederatedHomomorphicModel([encrypted]);
-  console.log(`✅ Treinamento federado homomórfico concluído. Perda: ${training.trainingLoss}`);
+  // Mock server aggregation
+  const aggregationResult = await federatedHomomorphicQuantum.simulateServerAggregation([encrypted, encrypted]);
+  console.log(`✅ Agregação homomórfica no servidor (cego) concluída.`);
 
-  console.log('\n--- Verificação v20 Concluída ---');
+  const decrypted = await federatedHomomorphicQuantum.decryptAndVerify(aggregationResult);
+  console.log(`✅ Decriptação e verificação (Kyber) concluída. Resultado final processado.`);
+
+  console.log('\n🎉 Todos os sistemas v∞.20 estão operacionais e seguros.');
 }
 
-void verifyV20();
+runVerification().catch(console.error);

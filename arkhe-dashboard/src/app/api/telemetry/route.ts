@@ -1,6 +1,13 @@
+/**
+ * @license
+ * Copyright 2025 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/app/api/telemetry/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import {EthicalMetrics as _EthicalMetrics} from '@/types/ethics';
+import { NextResponse } from 'next/server';
+
+import type { NextRequest } from 'next/server';
 
 export async function GET(_request: NextRequest) {
   try {

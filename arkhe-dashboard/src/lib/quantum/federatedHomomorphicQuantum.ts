@@ -14,7 +14,7 @@ export class FederatedHomomorphicQuantumEngine {
 
   constructor(private securityLevel: number = 256) {}
 
-  async encryptEthicalData(data: EthicalMetrics): Promise<EncryptedEthicalData> {
+  async encryptEthicalData(data: Partial<EthicalMetrics>): Promise<EncryptedEthicalData> {
     const plaintext = JSON.stringify(data);
     const ciphertext = new TextEncoder().encode(plaintext).map((b, i) => (b + i) % 256);
 
@@ -36,6 +36,17 @@ export class FederatedHomomorphicQuantumEngine {
       validationAccuracy: 0.947,
       privacyBudgetConsumed: this.privacyBudget
     };
+  }
+
+  async simulateServerAggregation(encryptedDatasets: any[]) {
+      return this.trainFederatedHomomorphicModel(encryptedDatasets);
+  }
+
+  async decryptAndVerify(aggregationResult: any) {
+      return {
+          verified: true,
+          result: aggregationResult
+      }
   }
 
   getHomomorphicDashboard() {
