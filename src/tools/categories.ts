@@ -24,6 +24,7 @@ export enum ToolCategory {
   GNO = 'gno',
   FORTYTWO = 'fortytwo',
   GRID = 'grid',
+  NASH = 'nash',
 }
 
 export const labels = {
@@ -46,4 +47,5 @@ export const labels = {
   [ToolCategory.GNO]: 'Gno.land Execution Layer',
   [ToolCategory.FORTYTWO]: 'Fortytwo Prime Collective',
   [ToolCategory.GRID]: 'Lightspark Grid API',
+  [ToolCategory.NASH]: 'Nash Identity Safe',
 };

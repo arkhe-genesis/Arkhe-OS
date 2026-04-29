@@ -27,6 +27,7 @@ import * as memoryTools from './memory.js';
 import * as mercuryTools from './mercury.js';
 import * as meshtasticTools from './meshtastic.js';
 import * as microsandboxTools from './microsandbox.js';
+import * as nashTools from './nash.js';
 import * as nekoTools from './neko.js';
 import * as networkTools from './network.js';
 import * as oasisTools from './oasis.js';
@@ -83,6 +84,7 @@ export const createTools = (args: ParsedArguments) => {
         ...Object.values(oasisTools),
         ...Object.values(meshtasticTools),
         ...Object.values(gnoTools),
+        ...Object.values(nashTools),
       ];
 
   const tools = [];
