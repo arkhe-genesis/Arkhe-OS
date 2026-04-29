@@ -23,6 +23,7 @@ export enum ToolCategory {
   MESHTASTIC = 'meshtastic',
   GNO = 'gno',
   FORTYTWO = 'fortytwo',
+  GRID = 'grid',
 }
 
 export const labels = {
@@ -44,4 +45,5 @@ export const labels = {
   [ToolCategory.MESHTASTIC]: 'Meshtastic Mesh Protocols',
   [ToolCategory.GNO]: 'Gno.land Execution Layer',
   [ToolCategory.FORTYTWO]: 'Fortytwo Prime Collective',
+  [ToolCategory.GRID]: 'Lightspark Grid API',
 };

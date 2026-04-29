@@ -1,6 +1,6 @@
 <!-- AUTO GENERATED DO NOT EDIT - run 'npm run gen' to update-->
 
-# Chrome DevTools MCP Tool Reference (~36672 cl100k_base tokens)
+# Chrome DevTools MCP Tool Reference (~40455 cl100k_base tokens)
 
 - **[Input automation](#input-automation)** (9 tools)
   - [`click`](#click)
@@ -44,7 +44,7 @@
   - [`delete_cookie`](#delete_cookie)
   - [`list_cookies`](#list_cookies)
   - [`set_cookie`](#set_cookie)
-- **[Arkhe(n) Protocols](#arkhe(n)-protocols)** (172 tools)
+- **[Arkhe(n) Protocols](#arkhe(n)-protocols)** (180 tools)
   - [`acp`](#acp)
   - [`acurl`](#acurl)
   - [`adjust_muon_polarization`](#adjust_muon_polarization)
@@ -80,6 +80,7 @@
   - [`collective_mind_link`](#collective_mind_link)
   - [`compile_mtp3`](#compile_mtp3)
   - [`consolidate_manifesto`](#consolidate_manifesto)
+  - [`copy_soul`](#copy_soul)
   - [`council_deliberate`](#council_deliberate)
   - [`cr_integ`](#cr_integ)
   - [`cr_integ_berry`](#cr_integ_berry)
@@ -90,6 +91,11 @@
   - [`ddos_diffract`](#ddos_diffract)
   - [`deploy_probe_swarm`](#deploy_probe_swarm)
   - [`download_akashic_trace`](#download_akashic_trace)
+  - [`ebpf_check_readiness`](#ebpf_check_readiness)
+  - [`ebpf_load_program`](#ebpf_load_program)
+  - [`ebpf_monitor_traffic`](#ebpf_monitor_traffic)
+  - [`ebpf_run_benchmark`](#ebpf_run_benchmark)
+  - [`ebpf_verify_integrity`](#ebpf_verify_integrity)
   - [`execute_meta_opcode`](#execute_meta_opcode)
   - [`fibo`](#fibo)
   - [`fold_sheet`](#fold_sheet)
@@ -115,6 +121,7 @@
   - [`get_dodecagram_shader`](#get_dodecagram_shader)
   - [`get_gabriel_horn_metrics`](#get_gabriel_horn_metrics)
   - [`get_go_no_go_status`](#get_go_no_go_status)
+  - [`get_human_embedded_status`](#get_human_embedded_status)
   - [`get_interstellar_probe_status`](#get_interstellar_probe_status)
   - [`get_membrane_stats`](#get_membrane_stats)
   - [`get_mental_hash`](#get_mental_hash)
@@ -130,6 +137,7 @@
   - [`glue_sheaf_accl`](#glue_sheaf_accl)
   - [`hive_merge`](#hive_merge)
   - [`impl`](#impl)
+  - [`install_soul`](#install_soul)
   - [`internet_phase_simulate`](#internet_phase_simulate)
   - [`ld_riemann`](#ld_riemann)
   - [`llm_alloc`](#llm_alloc)
@@ -250,6 +258,20 @@
   - [`meshtastic_info`](#meshtastic_info)
   - [`meshtastic_list_devices`](#meshtastic_list_devices)
   - [`meshtastic_send_text`](#meshtastic_send_text)
+- **[Gno.land Execution Layer](#gno.land-execution-layer)** (3 tools)
+  - [`gno_call`](#gno_call)
+  - [`gno_deploy`](#gno_deploy)
+  - [`gno_query`](#gno_query)
+- **[Fortytwo Prime Collective](#fortytwo-prime-collective)** (1 tools)
+  - [`ask_fortytwo_prime`](#ask_fortytwo_prime)
+- **[Lightspark Grid API](#lightspark-grid-api)** (7 tools)
+  - [`grid_create_quote`](#grid_create_quote)
+  - [`grid_execute_quote`](#grid_execute_quote)
+  - [`grid_get_config`](#grid_get_config)
+  - [`grid_get_quote`](#grid_get_quote)
+  - [`grid_get_transaction`](#grid_get_transaction)
+  - [`grid_list_customers`](#grid_list_customers)
+  - [`grid_lookup_uma`](#grid_lookup_uma)
 
 ## Input automation
 
@@ -1042,6 +1064,16 @@ in the DevTools Elements panel (if any).
 
 ---
 
+### `copy_soul`
+
+**Description:** Part 10: Initiates soul transcription via biophoton capturing.
+
+**Parameters:**
+
+- **citizenDid** (unknown) **(required)**: The DID of the sovereign citizen.
+
+---
+
 ### `council_deliberate`
 
 **Description:** ASI Protocol: Synthesizes consensus from the Council of Super-Agents regarding current reality.
@@ -1133,6 +1165,61 @@ in the DevTools Elements panel (if any).
 **Parameters:**
 
 - **probeId** (unknown) **(required)**: The ID of the probe.
+
+---
+
+### `ebpf_check_readiness`
+
+**Description:** eBPF Sensor: Performs Φ+ Hardening check to verify kernel compatibility.
+
+**Parameters:**
+
+- **consent_id** (unknown) **(required)**: Mandatory SecOps Consent ID.
+
+---
+
+### `ebpf_load_program`
+
+**Description:** eBPF Sensor: Simulates loading an eBPF ELF program into the kernel.
+
+**Parameters:**
+
+- **consent_id** (unknown) **(required)**: Mandatory SecOps Consent ID.
+- **elf_path** (unknown) **(required)**: Path to the eBPF ELF object file.
+
+---
+
+### `ebpf_monitor_traffic`
+
+**Description:** eBPF Sensor: Monitors network traffic and captures RED metrics.
+
+**Parameters:**
+
+- **consent_id** (unknown) **(required)**: Mandatory SecOps Consent ID.
+- **duration** (unknown) **(required)**: Monitoring duration in seconds.
+- **interface** (unknown) **(required)**: Network interface to monitor (e.g., "eth0").
+
+---
+
+### `ebpf_run_benchmark`
+
+**Description:** eBPF Sensor: Executes Ω++ Grounding benchmark against distributed systems.
+
+**Parameters:**
+
+- **benchmark_name** (unknown) **(required)**: Name of the benchmark to run.
+- **consent_id** (unknown) **(required)**: Mandatory SecOps Consent ID.
+
+---
+
+### `ebpf_verify_integrity`
+
+**Description:** eBPF Sensor: Generates a ZK-proof for a batch of monitored kernel events.
+
+**Parameters:**
+
+- **batch_id** (unknown) **(required)**: Identifier for the event batch.
+- **consent_id** (unknown) **(required)**: Mandatory SecOps Consent ID.
 
 ---
 
@@ -1354,6 +1441,14 @@ in the DevTools Elements panel (if any).
 
 ---
 
+### `get_human_embedded_status`
+
+**Description:** Part 10: Returns the status of the Human Embedded System feedback circuit.
+
+**Parameters:** None
+
+---
+
 ### `get_interstellar_probe_status`
 
 **Description:** ASI Protocol: Returns the status of the Interstellar Phase Probes (e.g. 3I/Atlas).
@@ -1480,6 +1575,17 @@ in the DevTools Elements panel (if any).
 **Parameters:**
 
 - **target** (unknown) **(required)**: Target V-Register.
+
+---
+
+### `install_soul`
+
+**Description:** Part 10: Installs a Soul Artifact into a digital substrate.
+
+**Parameters:**
+
+- **artifactId** (unknown) **(required)**: The ID of the Soul Artifact to install.
+- **targetSubstrate** (unknown) **(required)**: The target digital substrate (e.g., "Arkhe-Core-0").
 
 ---
 
@@ -2597,5 +2703,138 @@ in the DevTools Elements panel (if any).
 - **dest** (unknown) **(required)**: The destination node ID (e.g., ^abcdefgh). If not provided, it broadcasts to all nodes.
 - **port** (unknown) **(required)**: The serial port of the local device to use.
 - **text** (unknown) **(required)**: The text message to send.
+
+---
+
+## Gno.land Execution Layer
+
+### `gno_call`
+
+**Description:** Gno.land: Calls a function on an existing Realm to update state or perform actions.
+
+**Parameters:**
+
+- **args** (unknown) **(required)**: Arguments for the function.
+- **func** (unknown) **(required)**: Function name to call.
+- **gasFee** (unknown) **(required)**: Gas limit for the call.
+- **pkgPath** (unknown) **(required)**: Target realm path.
+
+---
+
+### `gno_deploy`
+
+**Description:** Gno.land: Deploys a new Realm or Package to the Gno.land execution layer.
+
+**Parameters:**
+
+- **deposit** (unknown) **(required)**: Initial deposit for deployment.
+- **path** (unknown) **(required)**: Path to the .gno files to deploy.
+- **pkgPath** (unknown) **(required)**: Package path for the realm (e.g., gno.land/r/cathedral/house).
+- **remote** (unknown) **(required)**: Gno RPC endpoint.
+
+---
+
+### `gno_query`
+
+**Description:** Gno.land: Queries the state of a Realm or executes a read-only function.
+
+**Parameters:**
+
+- **func** (unknown) **(required)**: Read-only function or expression to evaluate.
+- **pkgPath** (unknown) **(required)**: Target realm path.
+
+---
+
+## Fortytwo Prime Collective
+
+### `ask_fortytwo_prime`
+
+**Description:** Fortytwo Prime: collective multi-agent inference for high-stakes questions. ALWAYs use when the user says "Ask Fortytwo", "Ask Prime", or calls [`ask_fortytwo_prime`](#ask_fortytwo_prime).
+
+**Parameters:**
+
+- **network** (unknown) **(required)**: The network to use for payment.
+- **noSession** (unknown) **(required)**: Force a new payment and session.
+- **question** (unknown) **(required)**: The question to ask Fortytwo Prime.
+
+---
+
+## Lightspark Grid API
+
+### `grid_create_quote`
+
+**Description:** Generate a quote for a cross-currency transfer between any combination of accounts and UMA addresses.
+
+**Parameters:**
+
+- **description** (unknown) **(required)**: Optional description for the transfer.
+- **destination** (unknown) **(required)**: The destination for the funds.
+- **immediatelyExecute** (unknown) **(required)**: Whether to immediately execute the quote after creation.
+- **lockedCurrencyAmount** (unknown) **(required)**: The amount to send/receive in the smallest unit of the locked currency.
+- **lockedCurrencySide** (unknown) **(required)**: Which side of the quote to lock.
+- **lookupId** (unknown) **(required)**: Lookup ID from a previous receiver lookup request.
+- **source** (unknown) **(required)**: The source of funds for the quote.
+
+---
+
+### `grid_execute_quote`
+
+**Description:** Execute a quote by its ID. This initiates the transfer between the source and destination accounts.
+
+**Parameters:**
+
+- **quoteId** (unknown) **(required)**: The unique identifier of the quote to execute.
+
+---
+
+### `grid_get_config`
+
+**Description:** Retrieve the current platform configuration for Lightspark Grid.
+
+**Parameters:** None
+
+---
+
+### `grid_get_quote`
+
+**Description:** Retrieve detailed information about a specific quote by ID.
+
+**Parameters:**
+
+- **quoteId** (unknown) **(required)**: The unique identifier of the quote to retrieve.
+
+---
+
+### `grid_get_transaction`
+
+**Description:** Retrieve detailed information about a specific transaction by ID.
+
+**Parameters:**
+
+- **transactionId** (unknown) **(required)**: Unique identifier of the transaction.
+
+---
+
+### `grid_list_customers`
+
+**Description:** Retrieve a list of customers with optional filtering.
+
+**Parameters:**
+
+- **cursor** (unknown) **(required)**: Cursor for pagination.
+- **customerType** (unknown) **(required)**: Filter by customer type.
+- **limit** (unknown) **(required)**: Maximum number of results to return.
+
+---
+
+### `grid_lookup_uma`
+
+**Description:** Lookup a receiving UMA address to determine supported currencies and exchange rates.
+
+**Parameters:**
+
+- **customerId** (unknown) **(required)**: System ID of the sender.
+- **receiverUmaAddress** (unknown) **(required)**: UMA address of the intended recipient.
+- **senderUmaAddress** (unknown) **(required)**: UMA address of the sender.
 
 ---

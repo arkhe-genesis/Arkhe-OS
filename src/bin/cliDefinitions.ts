@@ -1584,6 +1584,152 @@ export const commands: Commands = {
       }
     }
   },
+  "grid_create_quote": {
+    "description": "Generate a quote for a cross-currency transfer between any combination of accounts and UMA addresses.",
+    "category": "Lightspark Grid API",
+    "args": {
+      "source": {
+        "name": "source",
+        "type": "object",
+        "description": "The source of funds for the quote.",
+        "required": true
+      },
+      "destination": {
+        "name": "destination",
+        "type": "object",
+        "description": "The destination for the funds.",
+        "required": true
+      },
+      "lockedCurrencySide": {
+        "name": "lockedCurrencySide",
+        "type": "string",
+        "description": "Which side of the quote to lock.",
+        "required": true,
+        "enum": [
+          "SENDING",
+          "RECEIVING"
+        ]
+      },
+      "lockedCurrencyAmount": {
+        "name": "lockedCurrencyAmount",
+        "type": "integer",
+        "description": "The amount to send/receive in the smallest unit of the locked currency.",
+        "required": true
+      },
+      "description": {
+        "name": "description",
+        "type": "string",
+        "description": "Optional description for the transfer.",
+        "required": false
+      },
+      "immediatelyExecute": {
+        "name": "immediatelyExecute",
+        "type": "boolean",
+        "description": "Whether to immediately execute the quote after creation.",
+        "required": false
+      },
+      "lookupId": {
+        "name": "lookupId",
+        "type": "string",
+        "description": "Lookup ID from a previous receiver lookup request.",
+        "required": false
+      }
+    }
+  },
+  "grid_execute_quote": {
+    "description": "Execute a quote by its ID. This initiates the transfer between the source and destination accounts.",
+    "category": "Lightspark Grid API",
+    "args": {
+      "quoteId": {
+        "name": "quoteId",
+        "type": "string",
+        "description": "The unique identifier of the quote to execute.",
+        "required": true
+      }
+    }
+  },
+  "grid_get_config": {
+    "description": "Retrieve the current platform configuration for Lightspark Grid.",
+    "category": "Lightspark Grid API",
+    "args": {}
+  },
+  "grid_get_quote": {
+    "description": "Retrieve detailed information about a specific quote by ID.",
+    "category": "Lightspark Grid API",
+    "args": {
+      "quoteId": {
+        "name": "quoteId",
+        "type": "string",
+        "description": "The unique identifier of the quote to retrieve.",
+        "required": true
+      }
+    }
+  },
+  "grid_get_transaction": {
+    "description": "Retrieve detailed information about a specific transaction by ID.",
+    "category": "Lightspark Grid API",
+    "args": {
+      "transactionId": {
+        "name": "transactionId",
+        "type": "string",
+        "description": "Unique identifier of the transaction.",
+        "required": true
+      }
+    }
+  },
+  "grid_list_customers": {
+    "description": "Retrieve a list of customers with optional filtering.",
+    "category": "Lightspark Grid API",
+    "args": {
+      "limit": {
+        "name": "limit",
+        "type": "integer",
+        "description": "Maximum number of results to return.",
+        "required": false,
+        "default": 20
+      },
+      "cursor": {
+        "name": "cursor",
+        "type": "string",
+        "description": "Cursor for pagination.",
+        "required": false
+      },
+      "customerType": {
+        "name": "customerType",
+        "type": "string",
+        "description": "Filter by customer type.",
+        "required": false,
+        "enum": [
+          "INDIVIDUAL",
+          "BUSINESS"
+        ]
+      }
+    }
+  },
+  "grid_lookup_uma": {
+    "description": "Lookup a receiving UMA address to determine supported currencies and exchange rates.",
+    "category": "Lightspark Grid API",
+    "args": {
+      "receiverUmaAddress": {
+        "name": "receiverUmaAddress",
+        "type": "string",
+        "description": "UMA address of the intended recipient.",
+        "required": true
+      },
+      "senderUmaAddress": {
+        "name": "senderUmaAddress",
+        "type": "string",
+        "description": "UMA address of the sender.",
+        "required": false
+      },
+      "customerId": {
+        "name": "customerId",
+        "type": "string",
+        "description": "System ID of the sender.",
+        "required": false
+      }
+    }
+  },
   "handle_dialog": {
     "description": "If a browser dialog was opened, use this command to handle it",
     "category": "Input automation",
