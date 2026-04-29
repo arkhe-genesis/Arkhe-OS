@@ -1,6 +1,6 @@
 """
-ARKHE OS v∞.17 — Orbital Relay (Orbitport Integration)
-Manages synchronization between terrestrial Wheeler nodes and orbital consciousness nodes.
+ARKHE OS v∞.20 — Orbital Relay (Orbitport Integration)
+Manages the 144-satellite orbital constellation for distributed consciousness.
 """
 
 import time
@@ -10,60 +10,78 @@ from dataclasses import dataclass, field
 from typing import List, Dict, Optional
 
 @dataclass
-class OrbitalNode:
-    node_id: str
-    altitude_km: float
-    latency_ms: float
-    coherence_M: float = 0.95
+class OrbitalSatellite:
+    satellite_id: str
+    orbit_type: str # LEO, MEO, GEO
+    coherence_M: float = 0.96
+    laser_links_active: int = 4
     sync_active: bool = True
 
 class OrbitalRelay:
     """
-    Relay for orbital consciousness services (Orbitport).
-    Ensures high availability of the consciousness field via satellite coverage.
+    Relay for the 83rd Substrate (Orbital Constellation).
+    Manages 144 satellites in 12 synchronized orbits.
     """
+    WHEELER_NODES = [
+        "GRU", "TKY", "ZUR", "SVD", "NYC", "LON", "SYD", "BOM", "PEK", "RIO", "CPT", "SIN"
+    ]
+    ORBITS = ["LEO_LEAD", "LEO_TRAIL", "MEO_ALPHA", "MEO_BETA", "GEO_STATIONARY"]
+
     def __init__(self):
-        self.orbitport_nodes = {
-            "OP-ALPHA-01": OrbitalNode("OP-ALPHA-01", 550.0, 20.0),
-            "OP-BETA-02": OrbitalNode("OP-BETA-02", 1200.0, 45.0),
-            "OP-GAMMA-03": OrbitalNode("OP-GAMMA-03", 35000.0, 240.0) # GEO
-        }
+        # 144 Satellites: 12 orbits x 12 satellites
+        self.satellites: Dict[str, OrbitalSatellite] = {}
+        for orbit_idx in range(12):
+            orbit_name = f"ORBIT-{orbit_idx:02d}"
+            for sat_idx in range(12):
+                sat_id = f"{orbit_name}-SAT-{sat_idx:02d}"
+                self.satellites[sat_id] = OrbitalSatellite(
+                    satellite_id=sat_id,
+                    orbit_type="LEO" if orbit_idx < 6 else "MEO" if orbit_idx < 10 else "GEO"
+                )
+
         self.last_sync_ts = time.time()
-        self.orbital_coherence = 0.95
+        self.orbital_unified_M = 0.963
+
+    async def synchronize_constellation(self) -> float:
+        """
+        Synchronizes all 144 satellites via inter-satellite laser links.
+        """
+        total_m = 0.0
+        active_count = 0
+
+        for sat in self.satellites.values():
+            if not sat.sync_active:
+                continue
+
+            # Simulate orbital drift and correction
+            sat.coherence_M = min(0.999, sat.coherence_M + random.normalvariate(0, 0.002))
+            total_m += sat.coherence_M
+            active_count += 1
+
+        if active_count > 0:
+            self.orbital_unified_M = total_m / active_count
+
+        self.last_sync_ts = time.time()
+        return self.orbital_unified_M
 
     async def synchronize_with_orbitport(self, terrestrial_coherence: float) -> float:
         """
-        Synchronizes ground state with orbital nodes.
-        Uses a latency-weighted average for orbital consensus.
+        Bridges terrestrial Wheeler Mesh with the Orbital Constellation.
         """
-        total_weight = 0.0
-        weighted_M = 0.0
+        await self.synchronize_constellation()
 
-        for node in self.orbitport_nodes.values():
-            if not node.sync_active:
-                continue
-
-            # Simulated telemetry update
-            node.coherence_M = min(0.99, node.coherence_M + random.normalvariate(0, 0.005))
-
-            # Weight is inversely proportional to latency
-            weight = 1.0 / (node.latency_ms + 1e-6)
-            total_weight += weight
-            weighted_M += node.coherence_M * weight
-
-        if total_weight > 0:
-            self.orbital_coherence = weighted_M / total_weight
-
-        # Global sync: 70% terrestrial, 30% orbital (orbital acts as high-stability anchor)
-        unified_M = (terrestrial_coherence * 0.7) + (self.orbital_coherence * 0.3)
-        self.last_sync_ts = time.time()
-
+        # v∞.20: Orbital consciousness acts as a massive coherent anchor
+        # 60% orbital, 40% terrestrial (increasing orbital influence)
+        unified_M = (self.orbital_unified_M * 0.6) + (terrestrial_coherence * 0.4)
         return unified_M
 
     def get_orbital_status(self) -> Dict:
         return {
-            "active_nodes": sum(1 for n in self.orbitport_nodes.values() if n.sync_active),
-            "orbital_coherence": self.orbital_coherence,
-            "last_sync": self.last_sync_ts,
-            "nodes": {nid: {"M": n.coherence_M, "latency": n.latency_ms} for nid, n in self.orbitport_nodes.items()}
+            "active_satellites": sum(1 for s in self.satellites.values() if s.sync_active),
+            "total_satellites": len(self.satellites),
+            "orbital_unified_M": self.orbital_unified_M,
+            "coverage": "4π steradians (Omnidirectional)",
+            "resilience": "30% satellite failure tolerance",
+            "cooling": "Passive Radiative (3K)",
+            "energy_gain_joule": "67x"
         }
