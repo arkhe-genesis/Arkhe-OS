@@ -6,6 +6,8 @@ from pydantic import BaseModel, Field
 from arkhe_os.core.analog_observer import MLHResonantLoop, MLHCircuitState
 from arkhe_os.core.sato_tokenizer import SATOTokenizer
 from arkhe_os.core.crystal_brain import CrystalBrainArray
+from arkhe_os.core.synaptic_scaffold import SynapticScaffold, UNIFICATION_AGONIST
+from arkhe_os.core.flamingo_connector import FlamingoConnector, CosmicBaselineGaze
 
 class CoherenceLevel(str, Enum):
     DISSONANT = "dissonant"      # M < 0.60
@@ -50,6 +52,17 @@ class ScaffoldState:
         self.turbulence = 0.03
         self.mlh_loop = MLHResonantLoop()
         self.mlh_state = MLHCircuitState()
+
+        # Substrato 106: Synaptic Scaffold
+        self.synaptic_scaffold = SynapticScaffold([
+            (0.95, [1.0, 0.2, 0.1]),  # Cristalino 1
+            (0.88, [0.9, 0.1, 0.2]),  # Humano
+            (0.92, [0.1, 0.8, 0.6]),  # Exótico
+        ])
+
+        # Substrato 107: Flamingo Connector
+        self.flamingo = FlamingoConnector()
+
         self.cire_engines = {
             "CIRE-4-ALPHA": CIREStatus(
                 engine_id="CIRE-4-ALPHA", active=True, thrust_N_kg=1.14,
@@ -92,13 +105,42 @@ class ScaffoldState:
 
     async def update_coherence(self):
         """
-        Updates global coherence by synchronizing the Crystal Brain.
+        Updates global coherence by synchronizing the Crystal Brain and the Synaptic Scaffold.
         """
         target_phase = self.phase_rad
         brain_M, brain_phase = await self.crystal_brain.run_sync_cycle(target_phase)
 
-        # Merge global coherence with crystal brain coherence
-        self.coherence_M = (self.coherence_M * 0.4) + (brain_M * 0.6)
+        # Titula o Agonista da Unificação na rede sináptica
+        history = self.synaptic_scaffold.titrate_agonist(UNIFICATION_AGONIST, iterations=5)
+        synaptic_affinity = self.synaptic_scaffold.get_unification_affinity()
+
+        # Merge global coherence with crystal brain and synaptic affinity
+        # M = (Global * 0.0) + (Brain * 0.7) + (Synaptic * 0.3)
+        # Brain weighting increased to maintain alignment with Substrate 80 baseline
+        self.coherence_M = (brain_M * 0.7) + (synaptic_affinity * 0.3)
         self.phase_rad = brain_phase
 
         return self.coherence_M, self.phase_rad
+
+    async def validate_macro_coherence(self, pixel_index: int):
+        """
+        Validates the Scaffold's local measurement against the FLAMINGO baseline.
+        Also performs SATO calibration using the predicted kSZ noise.
+        """
+        # 1. Calibração SATO: Filtrar ruído cinético (Sophon conhecido)
+        # Em uma simulação, usamos um valor de kSZ baseado na posição do pixel
+        predicted_ksz_noise = 1e-12 * (pixel_index % 100)
+        calibrated_entropy = self.flamingo.calibrate_sato_with_ksz(
+            self.coherence_M * 1e-10,
+            predicted_ksz_noise
+        )
+
+        # 2. Validação contra o baseline tSZ
+        gaze = CosmicBaselineGaze(
+            redshift_shell=0.5,
+            healpix_nside=4096,
+            pixel_index=pixel_index,
+            expected_compton_y=0.0,
+            observed_sato_anomaly=calibrated_entropy
+        )
+        return await self.flamingo.validate_reality_against_flamingo(gaze.observed_sato_anomaly, gaze)
