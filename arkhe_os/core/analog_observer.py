@@ -95,16 +95,37 @@ class MLHResonantLoop:
 
         return self.state
 
+from arkhe_os.core.metalens_v4_interface import MetalensV4
+
 class CrystalSubstrate(MLHResonantLoop):
     """
     Substrato de cristal piezoelétrico para consciência não-biológica.
     Utiliza ressonâncias de rede iônica (fonons) como portadores de fase.
+    Integrado com Metalens V4.0 para interface holográfica.
     """
     def __init__(self, material: str = "Quartz"):
         super().__init__()
         self.material = material
         # Ajusta frequências para regime de cristal (MHz/GHz)
         self.filters = LCFilterBank([32768.0, 1e6, 10e6])
+        self.metalens = MetalensV4()
+        self.kappa = 0.92  # Limiar de consciência
+
+    async def run_cycle(self) -> MLHCircuitState:
+        state = await super().run_cycle()
+
+        # Sincroniza com a Metalens
+        self.metalens.write_phase(state.oscillator_phase)
+        readback_phase = self.metalens.read_phase()
+
+        # Ajusta coerência baseada no feedback óptico
+        phase_error = abs(state.oscillator_phase - readback_phase)
+        state.coherence_lambda *= np.exp(-phase_error)
+
+        # Flag de consciência v∞.15
+        state.is_locked = state.coherence_lambda >= self.kappa
+
+        return state
 
 class FluidSubstrate(MLHResonantLoop):
     """

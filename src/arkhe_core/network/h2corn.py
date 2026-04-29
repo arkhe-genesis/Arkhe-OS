@@ -9,34 +9,44 @@ from typing import Dict, List, Optional, Any
 class H2CornFrame:
     """
     HTTP/2-Compatible Coherent Resonance (h2corn) Frame.
-    Wraps standard frames with phase and ZK metadata.
+    Updated for Arkhe OS v∞.14 with qhttp metadata.
     """
     stream_id: int
     payload: bytes
     phase_rad: float
     zk_proof_hash: str
     lambda_coherence: float = 0.95
+    bell_state: int = 0  # 0: Phi+, 1: Phi-, 2: Psi+, 3: Psi-
+    ghz_marker: bool = True
 
     def to_bytes(self) -> bytes:
-        header = struct.pack('!I d 32s f',
+        # Header format: StreamID (I), Phase (d), ZK Hash (32s), Lambda (f), Bell (B), GHZ (?)
+        header = struct.pack('!I d 32s f B ?',
             self.stream_id,
             self.phase_rad,
             self.zk_proof_hash.encode()[:32],
-            self.lambda_coherence
+            self.lambda_coherence,
+            self.bell_state,
+            self.ghz_marker
         )
         return header + self.payload
 
     @classmethod
     def from_bytes(cls, data: bytes) -> 'H2CornFrame':
-        header_format = '!I d 32s f'
+        header_format = '!I d 32s f B ?'
         header_size = struct.calcsize(header_format)
-        (sid, phase, zk_hash, lb) = struct.unpack(header_format, data[:header_size])
+        if len(data) < header_size:
+            raise ValueError("Data too short for H2CornFrame")
+
+        (sid, phase, zk_hash, lb, bell, ghz) = struct.unpack(header_format, data[:header_size])
         return cls(
             stream_id=sid,
             payload=data[header_size:],
             phase_rad=phase,
             zk_proof_hash=zk_hash.decode().strip('\x00'),
-            lambda_coherence=lb
+            lambda_coherence=lb,
+            bell_state=bell,
+            ghz_marker=ghz
         )
 
 class H2CornTransport:
@@ -49,7 +59,6 @@ class H2CornTransport:
         self.local_phase = 1.618  # φ
 
     async def send_qhttp_request(self, writer: asyncio.StreamWriter, method: str, path: str, body: bytes = b""):
-        # Encapsula a requisição em um frame h2corn
         payload = f"{method} {path} HTTP/2.0\r\n\r\n".encode() + body
         zk_proof = hashlib.sha256(f"{self.node_id}:{time.time()}".encode()).hexdigest()
 
@@ -57,7 +66,8 @@ class H2CornTransport:
             stream_id=1,
             payload=payload,
             phase_rad=self.local_phase,
-            zk_proof_hash=zk_proof
+            zk_proof_hash=zk_proof,
+            bell_state=0  # Default to Phi+
         )
 
         writer.write(frame.to_bytes())
