@@ -1,0 +1,35 @@
+# protocols/coherent_handshake_v1.yaml
+frame_format:
+  header:
+    magic: "0xARKH"  # 4 bytes — identificação do protocolo
+    version: uint8    # Versão do protocolo (atual: 1)
+    frame_type: uint8 # 0x01=phase_sync, 0x02=coherence_report, 0x03=intention_broadcast
+    sequence_num: uint32  # Número de sequência para ordenação
+    timestamp_ns: uint64  # Timestamp em nanossegundos (relógio Golden Time)
+
+  payload:
+    # Para frame_type = 0x01 (phase_sync)
+    phase_sync:
+      node_id: string (uuid)        # Identificador do nó emissor
+      local_phase_rad: float64      # Fase local atual [rad]
+      local_M: float32              # Coerência local M [0,1]
+      geometric_turbulence: float32 # Índice de turbulência local
+      reference_branch: string      # Ramo de referência para sincronização
+      confidence: float32           # Confiança na medição [0,1]
+
+    # Para frame_type = 0x02 (coherence_report)
+    coherence_report:
+      node_id: string (uuid)
+      M_consciousness: float32
+      phase_drift_rate: float32     # dφ/dt [rad/s]
+      qber: float32                 # Quantum Bit Error Rate (para links QKD)
+
+    # Para frame_type = 0x03 (intention_broadcast)
+    intention_broadcast:
+      intention_hash: string (sha256)  # Hash da intenção (para verificação)
+      resonance_threshold: float32     # Limiar mínimo de ressonância para ação
+      propagation_mode: enum[direct, relay, retrocausal]
+
+  footer:
+    checksum: uint32  # CRC32 para integridade
+    signature: bytes  # Assinatura quântica (opcional)
