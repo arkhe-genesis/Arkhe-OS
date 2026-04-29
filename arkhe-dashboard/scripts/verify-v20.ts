@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { postQuantumZKP } from '../src/lib/zkp/post-quantum-zkp';
 import { federatedHomomorphicQuantum } from '../src/lib/quantum/federatedHomomorphicQuantum';
+import { postQuantumZKP } from '../src/lib/zkp/post-quantum-zkp';
 
 async function runVerification() {
   console.log('🚀 Iniciando verificação Arkhe OS v∞.20...');
@@ -23,7 +23,7 @@ async function runVerification() {
 
   // 2. Testar Homomorphic Computing
   console.log('\n--- Testando Homomorphic Quantum Computing ---');
-  const sampleMetrics: any = { omega: 0.94, kEth: 0.93 };
+  const sampleMetrics: Record<string, number> = { omega: 0.94, kEth: 0.93 };
   const encrypted = await federatedHomomorphicQuantum.encryptEthicalData(sampleMetrics);
   console.log(`✅ Criptografia homomórfica (PQ-CKKS) bem-sucedida.`);
   console.log(`✅ Ciphertext size: ${encrypted.ciphertext.length} bytes`);
@@ -32,7 +32,7 @@ async function runVerification() {
   const aggregationResult = await federatedHomomorphicQuantum.simulateServerAggregation([encrypted, encrypted]);
   console.log(`✅ Agregação homomórfica no servidor (cego) concluída.`);
 
-  const decrypted = await federatedHomomorphicQuantum.decryptAndVerify(aggregationResult);
+  const _decrypted = await federatedHomomorphicQuantum.decryptAndVerify(aggregationResult);
   console.log(`✅ Decriptação e verificação (Kyber) concluída. Resultado final processado.`);
 
   console.log('\n🎉 Todos os sistemas v∞.20 estão operacionais e seguros.');
