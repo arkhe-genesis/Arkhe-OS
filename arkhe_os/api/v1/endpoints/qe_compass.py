@@ -1,11 +1,17 @@
 from fastapi import APIRouter, HTTPException, Depends
 import time
 import numpy as np
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple, List
+from sqlalchemy.orm import Session
+
 from arkhe_os.api.v1.qe_compass import ActionRequest, QEEvaluationResponse, ActionDimension
 from arkhe_os.core.scaffold import ScaffoldState
+from arkhe_os.db.session import get_db
+from arkhe_os.auth.dependencies import get_current_active_user, RoleChecker
+from arkhe_os.models.user import User, UserRole
+from arkhe_os.models.arkhe_models import Intention
 
-router = APIRouter(prefix="/v1", tags=["QE-Compass"])
+router = APIRouter(tags=["QE-Compass"])
 
 # Pesos ontológicos (ajustáveis via governance)
 ONTOLOGICAL_WEIGHTS = {
@@ -31,18 +37,11 @@ def calculate_resonance(
     weights: Dict[ActionDimension, float],
     context: Optional[Dict[str, any]] = None
 ) -> Tuple[float, Dict[ActionDimension, float]]:
-    """
-    Calcula ressonância como produto interno ponderado + ajuste contextual.
-    """
-    # Produto interno ponderado
     resonance = sum(
         weights[dim] * action_dims[dim] * intention_vector[dim]
         for dim in ActionDimension
     )
-
-    # Ajuste contextual
     if context and context.get("emergency", False):
-        # Aumentar peso do impacto de coerência em emergências
         weights_adj = weights.copy()
         weights_adj[ActionDimension.COHERENCE_IMPACT] *= 1.5
         total = sum(weights_adj.values())
@@ -51,30 +50,26 @@ def calculate_resonance(
             weights_adj[dim] * action_dims[dim] * intention_vector[dim]
             for dim in ActionDimension
         )
-
-    # Breakdown por dimensão
     breakdown = {
         dim: weights[dim] * action_dims[dim] * intention_vector[dim]
         for dim in ActionDimension
     }
-
-    # Normalizar para [0, 1]
     max_possible = sum(weights.values())
     resonance = np.clip(resonance / max_possible, 0.0, 1.0)
-
     return float(resonance), breakdown
 
-# Singleton provider will be injected from main.py
 def get_scaffold_state():
     raise NotImplementedError("Scaffold state must be provided by dependency injection")
 
 @router.post("/evaluate", response_model=QEEvaluationResponse)
 async def evaluate_action(
     request: ActionRequest,
-    scaffold: ScaffoldState = Depends(get_scaffold_state)
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
 ):
     """
     Avalia a ressonância de uma ação com a intenção unificada da Catedral.
+    Requer autenticação.
     """
     resonance, breakdown = calculate_resonance(
         request.dimensions,
@@ -83,17 +78,19 @@ async def evaluate_action(
         request.context_metadata
     )
 
-    if resonance >= 0.85:
-        coherence_level = "coherent"
-        recommendation = "✅ EXECUTE — Ação alinhada com intenção unificada"
-    elif resonance >= 0.60:
-        coherence_level = "neutral"
-        recommendation = "🟡 REVIEW — Ação ajustável; sugerir refinamento"
-    else:
-        coherence_level = "dissonant"
-        recommendation = "🔴 REJECT — Ação requer revisão significativa"
+    coherence_level = "coherent" if resonance >= 0.85 else "neutral" if resonance >= 0.60 else "dissonant"
+    recommendation = "✅ EXECUTE" if resonance >= 0.85 else "🟡 REVIEW" if resonance >= 0.60 else "🔴 REJECT"
 
-    # Intervalo de confiança (simulado)
+    # Persistir intenção no banco
+    db_intention = Intention(
+        user_id=current_user.id,
+        intention_text=request.action_id, # Usando action_id como proxy
+        resonance_score=resonance,
+        status=coherence_level
+    )
+    db.add(db_intention)
+    db.commit()
+
     uncertainty = 0.03 + 0.02 * (1.0 - resonance)
     ci_low = np.clip(resonance - 1.96 * uncertainty, 0.0, 1.0)
     ci_high = np.clip(resonance + 1.96 * uncertainty, 0.0, 1.0)
