@@ -6,8 +6,8 @@
 
 // arkhe-dashboard/src/app/api/memory/retrieve/route.ts
 import { NextResponse } from 'next/server';
-
 import type { NextRequest } from 'next/server';
+
 import { federatedCosmicMemory } from '@/lib/memory/federatedCosmicMemory';
 
 export async function POST(request: NextRequest) {
@@ -32,7 +32,8 @@ export async function POST(request: NextRequest) {
       timestamp: Date.now()
     });
   } catch (error: unknown) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    const message = error instanceof Error ? error.message : String(error);
+    return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }
 

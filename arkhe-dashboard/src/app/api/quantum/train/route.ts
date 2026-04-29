@@ -6,8 +6,8 @@
 
 // arkhe-dashboard/src/app/api/quantum/train/route.ts
 import { NextResponse } from 'next/server';
-
 import type { NextRequest } from 'next/server';
+
 import { federatedHomomorphicQuantum } from '@/lib/quantum/federatedHomomorphicQuantum';
 
 export async function POST(request: NextRequest) {
@@ -27,7 +27,8 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Unknown action' }, { status: 400 });
     }
   } catch (error: unknown) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    const message = error instanceof Error ? error.message : String(error);
+    return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }
 

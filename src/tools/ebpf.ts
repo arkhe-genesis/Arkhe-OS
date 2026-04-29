@@ -72,7 +72,8 @@ export const ebpfMonitorTraffic = definePageTool({
       ]);
       response.appendResponseLine(output);
     } catch (error: unknown) {
-      response.appendResponseLine(`Error: ${error.message}`);
+      const message = error instanceof Error ? error.message : String(error);
+      response.appendResponseLine(`Error: ${message}`);
     }
   },
 });
@@ -99,7 +100,8 @@ export const ebpfCheckReadiness = definePageTool({
       ]);
       response.appendResponseLine(output);
     } catch (error: unknown) {
-      response.appendResponseLine(`Error: ${error.message}`);
+      const message = error instanceof Error ? error.message : String(error);
+      response.appendResponseLine(`Error: ${message}`);
     }
   },
 });
@@ -132,7 +134,8 @@ export const ebpfRunBenchmark = definePageTool({
       ]);
       response.appendResponseLine(output);
     } catch (error: unknown) {
-      response.appendResponseLine(`Error: ${error.message}`);
+      const message = error instanceof Error ? error.message : String(error);
+      response.appendResponseLine(`Error: ${message}`);
     }
   },
 });
@@ -162,7 +165,8 @@ export const ebpfLoadProgram = definePageTool({
       ]);
       response.appendResponseLine(output);
     } catch (error: unknown) {
-      response.appendResponseLine(`Error: ${error.message}`);
+      const message = error instanceof Error ? error.message : String(error);
+      response.appendResponseLine(`Error: ${message}`);
     }
   },
 });
@@ -192,7 +196,8 @@ export const ebpfVerifyIntegrity = definePageTool({
       ]);
       response.appendResponseLine(output);
     } catch (error: unknown) {
-      response.appendResponseLine(`Error: ${error.message}`);
+      const message = error instanceof Error ? error.message : String(error);
+      response.appendResponseLine(`Error: ${message}`);
     }
   },
 });

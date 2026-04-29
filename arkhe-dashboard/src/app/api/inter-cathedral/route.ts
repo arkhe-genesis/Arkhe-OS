@@ -6,8 +6,8 @@
 
 // arkhe-dashboard/src/app/api/inter-cathedral/route.ts
 import { NextResponse } from 'next/server';
-
 import type { NextRequest } from 'next/server';
+
 import { interCathedralProtocol } from '@/lib/quantum/interCathedralProtocol';
 
 export async function POST(request: NextRequest) {
@@ -60,8 +60,9 @@ export async function POST(request: NextRequest) {
     }
   } catch (error: unknown) {
     console.error('❌ Inter-cathedral protocol error:', error);
+    const message = error instanceof Error ? error.message : String(error);
     return NextResponse.json(
-      { error: 'Protocol operation failed', details: error.message },
+      { error: 'Protocol operation failed', details: message },
       { status: 500 }
     );
   }

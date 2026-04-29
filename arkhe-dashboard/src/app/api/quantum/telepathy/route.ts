@@ -6,8 +6,8 @@
 
 // arkhe-dashboard/src/app/api/quantum/telepathy/route.ts
 import { NextResponse } from 'next/server';
-
 import type { NextRequest } from 'next/server';
+
 import { EthicalQuantumTelepathy } from '@/lib/quantum/ethical-telepathy';
 
 const telepathyInstances = new Map<string, EthicalQuantumTelepathy>();

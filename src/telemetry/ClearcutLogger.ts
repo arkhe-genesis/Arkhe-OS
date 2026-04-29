@@ -163,15 +163,14 @@ function hasEquivalentType(zodType: ZodType, value: unknown): boolean {
 }
 
 export function sanitizeParams(
-  params: any,
-  schema: any,
-): any {
-  const transformed: any = {};
+  params: Record<string, unknown>,
+  schema: Record<string, any>,
+): Record<string, LoggedToolCallArgValue> {
+  const transformed: Record<string, LoggedToolCallArgValue> = {};
   for (const [name, value] of Object.entries(params)) {
     if (PARAM_BLOCKLIST.has(name)) {
       continue;
     }
-      // @ts-expect-error
     const zodType = getZodType(schema[name]);
     if (!hasEquivalentType(zodType, value)) {
       throw new Error(
@@ -179,9 +178,7 @@ export function sanitizeParams(
       );
     }
     const transformedName = transformArgName(zodType, name);
-    // @ts-expect-error
     const transformedValue = transformValue(zodType, value);
-    // @ts-expect-error
     transformed[transformedName] = transformedValue;
   }
   return transformed;

@@ -6,8 +6,8 @@
 
 // arkhe-dashboard/src/app/api/simulate/route.ts
 import { NextResponse } from 'next/server';
-
 import type { NextRequest } from 'next/server';
+
 import { ethicalSimulator } from '@/lib/simulator/ethicalSimulator';
 
 export async function POST(request: NextRequest) {
@@ -16,6 +16,7 @@ export async function POST(request: NextRequest) {
     const result = await ethicalSimulator.simulate(scenario, baseMetrics);
     return NextResponse.json({ success: true, result });
   } catch (error: unknown) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    const message = error instanceof Error ? error.message : String(error);
+    return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }
