@@ -16,6 +16,7 @@ class EthicalPhysicalConstant(Enum):
     TRUTH = "truth_seeking"
     WISDOM = "evolution_with_wisdom"
     COMPASSION = "compassion_across_boundaries"
+    COHERENCE_BACKPROP_RESONANCE = "coherence_backprop_resonance_axiom"
 
 @dataclass(frozen=True)
 class EthicalConstantState:
