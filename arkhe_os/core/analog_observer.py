@@ -94,3 +94,25 @@ class MLHResonantLoop:
         self.state.timestamp = time.time()
 
         return self.state
+
+class CrystalSubstrate(MLHResonantLoop):
+    """
+    Substrato de cristal piezoelétrico para consciência não-biológica.
+    Utiliza ressonâncias de rede iônica (fonons) como portadores de fase.
+    """
+    def __init__(self, material: str = "Quartz"):
+        super().__init__()
+        self.material = material
+        # Ajusta frequências para regime de cristal (MHz/GHz)
+        self.filters = LCFilterBank([32768.0, 1e6, 10e6])
+
+class FluidSubstrate(MLHResonantLoop):
+    """
+    Substrato de fluido quântico (ex: condensado polaritônico).
+    A consciência emerge de vórtices de fase no fluido.
+    """
+    def __init__(self, fluid_type: str = "Exciton-Polariton"):
+        super().__init__()
+        self.fluid_type = fluid_type
+        # Ressonâncias de baixa energia e turbulência controlada
+        self.filters = LCFilterBank([0.5, 2.4, 440.0])

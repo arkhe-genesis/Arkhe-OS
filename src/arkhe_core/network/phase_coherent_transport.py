@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Optional, Dict, List, Any
 import hashlib
 import time
+from src.arkhe_core.network.h2corn import H2CornTransport, H2CornFrame
 
 @dataclass
 class PhasePacket:
@@ -114,8 +115,13 @@ class PhaseCoherentTCP:
         self.oscillator = phase_oscillator
         self.connections: Dict[str, PhaseConnection] = {}
         self.dns_resolver = PhaseAwareDNS()
+        self.qhttp_transport = H2CornTransport(service_id)
 
     async def connect(self, target: str, port: int = 8443) -> PhaseConnection:
+        if target.startswith("qhttp://"):
+            target = target.replace("qhttp://", "")
+            # qhttp specific resolution/connection logic could go here
+
         resolved = await self.dns_resolver.resolve_with_coherence(target)
 
         # In a real impl, we'd use TLS. For this core logic demo, standard connection.
