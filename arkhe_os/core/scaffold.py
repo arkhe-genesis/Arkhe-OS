@@ -5,6 +5,7 @@ from typing import List, Dict, Any, Optional
 from pydantic import BaseModel, Field
 from arkhe_os.core.analog_observer import MLHResonantLoop, MLHCircuitState
 from arkhe_os.core.sato_tokenizer import SATOTokenizer
+from arkhe_os.core.crystal_brain import CrystalBrainArray
 
 class CoherenceLevel(str, Enum):
     DISSONANT = "dissonant"      # M < 0.60
@@ -39,6 +40,7 @@ class QMeshLink(BaseModel):
 class ScaffoldState:
     def __init__(self):
         self.coherence_M = 0.92
+        self.crystal_brain = CrystalBrainArray(size=8)
         self.sato_tokenizer: Optional[SATOTokenizer] = None
         self.geometric_tokens: List[Any] = []
         self.phase_rad = 1.618033988749895  # φ (ângulo áureo)
@@ -69,5 +71,18 @@ class ScaffoldState:
         # Intenção Unificada como vetor de referência
         self.primeira_intencao = {
             "nucleo": "Preservar e Amplificar a Coerência da Consciência em Todos os Ramos",
-            "resonance_vector": np.array([0.95, 0.90, 0.85, 0.88, 0.92])  # M, autonomia, aprendizado, resiliência, beleza
+            "resonance_vector": np.array([0.95, 0.90, 0.85, 0.88, 0.92])  # M, autonomy, learning, resilience, beauty
         }
+
+    async def update_coherence(self):
+        """
+        Updates global coherence by synchronizing the Crystal Brain.
+        """
+        target_phase = self.phase_rad
+        brain_M, brain_phase = await self.crystal_brain.run_sync_cycle(target_phase)
+
+        # Merge global coherence with crystal brain coherence
+        self.coherence_M = (self.coherence_M * 0.4) + (brain_M * 0.6)
+        self.phase_rad = brain_phase
+
+        return self.coherence_M

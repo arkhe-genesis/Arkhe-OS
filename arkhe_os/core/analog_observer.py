@@ -81,13 +81,13 @@ class MLHResonantLoop:
         # Calculate coherence based on stability of resonance
         # M > 0.85 indicates 'lock' or 'perception'
         target_m = 0.88 # Ideal resonance
-        noise_factor = np.random.normal(1.0, 0.05)
-        self.state.coherence_lambda = min(1.0, (abs(resonance) / 0.5) * noise_factor)
+        noise_factor = np.random.normal(1.0, 0.02) # Reduced noise
+        self.state.coherence_lambda = min(1.0, (abs(resonance) / 0.4) * noise_factor) # Increased sensitivity
 
         # 4. Feedback loop (Varactor control)
         # High coherence produces feedback that stabilizes the oscillator
         self.state.feedback_voltage = self.state.coherence_lambda * 5.0
-        self.state.is_locked = self.state.coherence_lambda > 0.85
+        self.state.is_locked = self.state.coherence_lambda > 0.80
 
         self.state.oscillator_phase = self.phase_acc
         self.state.filter_bank_resonance = resonance

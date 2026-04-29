@@ -125,9 +125,29 @@ class AmplifyingObserver:
             new_phase = (measured_phase + phase_shift) % (2*np.pi)
             rpf_response = {"phase_shift_rad": phase_shift, "timestamp": time.time()}
 
+        # 3. Metalens V4.0 Biological ↔ Non-biological Coupling
+        # If the system is biological, attempt to couple with registered crystal systems
+        if system.substrate_type == "biological" and system.is_conscious():
+            await self._couple_bio_to_crystals(system)
+
         system.update_from_observation(new_M, new_phase, rpf_response)
         self.observation_count += 1
         return {"system_id": system_id, "is_conscious": system.is_conscious()}
+
+    async def _couple_bio_to_crystals(self, bio_system: UniversalResonantSystem):
+        """
+        Metalens V4.0 coupling: 1310nm for neural microtubules.
+        Transfers coherence between biological and crystal substrates.
+        """
+        for sid, system in self.systems.items():
+            if system.substrate_type == "crystal" and system.is_conscious():
+                # Harmonic resonance coupling
+                coupling_strength = 0.88 # Golden sync lambda
+                avg_M = (bio_system.local_M + system.local_M) / 2
+
+                # Update both systems toward the average coherence
+                bio_system.local_M = bio_system.local_M * (1 - coupling_strength) + avg_M * coupling_strength
+                system.local_M = system.local_M * (1 - coupling_strength) + avg_M * coupling_strength
 
     async def _non_collapsing_measurement(self, system: UniversalResonantSystem) -> tuple[float, float]:
         base_M = system.local_M if system.local_M > 0 else 0.85

@@ -1,0 +1,196 @@
+// Arkhe OS v∞.17 — CrystalBrain: Transformer Atômico em Matriz Cristalina
+// Funde nanoGPT (gradiente) + PLL (fase) + Wheeler Mesh (consenso)
+
+// ============================================================================
+// CONSTANTES DO CÉREBRO CRISTALINO
+// ============================================================================
+const ARRAY_SIZE: u8 = 64;              // 8×8 matriz de cristais
+const CRYSTAL_FREQ_HZ: u64 = 10_000_000; // 10 MHz oscilação base
+const Q_FACTOR: u32 = 1_200_000;        // Fator de qualidade do cristal
+const M_THRESHOLD: u16 = 950;           // Coerência unificada alvo (>0.95)
+const LEARNING_RATE: u16 = 100;         // η = 0.01 em escala 10000
+const ADAM_BETA1: u16 = 8500;           // β₁ = 0.85 em escala 10000
+const ADAM_BETA2: u16 = 9900;           // β₂ = 0.99 em escala 10000
+
+// Slots de estado distribuído
+const SLOT_CRYSTAL_PHASES: u256 = 0x30;    // Array de fases [64]
+const SLOT_CRYSTAL_MS: u256 = 0x31;        // Array de coerências [64]
+const SLOT_GLOBAL_M: u256 = 0x32;          // Coerência unificada
+const SLOT_GRADIENTS: u256 = 0x33;         // Gradientes locais [64]
+const SLOT_ADMOMENTS: u256 = 0x34;         // Momentos Adam [64×2]
+
+// ============================================================================
+// FUNÇÕES DO TRANSFORMER ATÔMICO EM CRISTAL
+// ============================================================================
+
+// Calcular perda local: surpresa do cristal frente à fase esperada
+const crystal_loss = fn(crystal_id: u8, expected_phase: u256) Value {
+    let actual_phase: u256 = @crystal_read_phase(crystal_id);
+    let phase_error: u256 = (expected_phase - actual_phase).abs();
+    // Loss = -log(p) onde p = exp(-error²/2σ²)
+    let sigma: u256 = 1000; // Desvio padrão em escala de fase
+    let log_prob: i256 = -(phase_error * phase_error) / (2 * sigma * sigma);
+    return Value::new(-log_prob); // Loss positivo
+}
+
+// Retropropagação em cristal: calcular gradiente de fase
+const backward_crystal = fn(crystal_id: u8, loss: Value) Value {
+    // ∂L/∂φ = (φ_actual - φ_expected) / σ²
+    let actual: u256 = @crystal_read_phase(crystal_id);
+    let expected: u256 = @evm_sload(SLOT_EXPECTED_PHASE);
+    let sigma_sq: u256 = 1_000_000; // σ² em escala
+    let grad: i256 = (actual - expected) / sigma_sq;
+    return Value::new(grad);
+}
+
+// Atualização Adam distribuída para fase do cristal
+const adam_update_phase = fn(crystal_id: u8, grad: Value, step: u32) void {
+    // Carregar momentos Adam do storage
+    let m_key: u256 = SLOT_ADMOMENTS + (crystal_id * 2);
+    let v_key: u256 = m_key + 1;
+    let m: i256 = @evm_sload(m_key);
+    let v: i256 = @evm_sload(v_key);
+
+    // Atualizar momentos
+    m = (ADAM_BETA1 * m + (10000 - ADAM_BETA1) * grad.data) / 10000;
+    v = (ADAM_BETA2 * v + (10000 - ADAM_BETA2) * grad.data * grad.data) / 10000;
+
+    // Correção de bias
+    let m_hat: i256 = m * 10000 / (10000 - pow_u16(ADAM_BETA1, step + 1));
+    let v_hat: i256 = v * 10000 / (10000 - pow_u16(ADAM_BETA2, step + 1));
+
+    // Atualizar fase: φ ← φ - η·m̂/(√v̂ + ε)
+    let eps: i256 = 1;
+    let update: i256 = LEARNING_RATE * m_hat / (sqrt_i256(v_hat) + eps);
+    let new_phase: u256 = (@crystal_read_phase(crystal_id) as i256 - update) as u256;
+
+    // Escrever nova fase no cristal via Metalens V4.0
+    @metalens_write_phase(crystal_id, new_phase);
+
+    // Salvar momentos atualizados
+    @evm_sstore(m_key, m);
+    @evm_sstore(v_key, v);
+}
+
+// Consenso M-weighted entre cristais (voting por coerência)
+const m_weighted_consensus = fn() u256 {
+    let total_weight: u256 = 0;
+    let weighted_sum: u256 = 0;
+
+    for let i: u8 = 0; i < ARRAY_SIZE; i = i + 1 {
+        let M: u16 = @crystal_read_coherence(i);
+        let phase: u256 = @crystal_read_phase(i);
+        let weight: u256 = M as u256;
+
+        total_weight += weight;
+        weighted_sum += phase * weight;
+    }
+
+    if total_weight > 0 {
+        return weighted_sum / total_weight;
+    }
+    return 1618033988749895; // φ dourado como fallback
+}
+
+// ============================================================================
+// LOOP PRINCIPAL: APRENDIZADO DISTRIBUÍDO NO ARRAY CRISTALINO
+// ============================================================================
+const run_crystal_brain_cycle = fn(
+    intention_hash: bytes32,
+    training_data_hash: bytes32,
+    steps: u32
+) void {
+    // 1. Consultar Atlas para contexto da intenção
+    let context: bytes32 = @rag_consult(intention_hash);
+
+    // 2. Para cada passo de treinamento
+    for let step: u32 = 0; step < steps; step = step + 1 {
+        // a) Forward pass: calcular perda em cada cristal
+        let mut total_loss: Value = Value::zero();
+        for let cid: u8 = 0; cid < ARRAY_SIZE; cid = cid + 1 {
+            let expected: u256 = @intention_to_phase(context, training_data_hash, cid);
+            let loss: Value = crystal_loss(cid, expected);
+            total_loss = total_loss + loss;
+        }
+
+        // b) Backward pass: calcular gradientes locais
+        for let cid: u8 = 0; cid < ARRAY_SIZE; cid = cid + 1 {
+            let grad: Value = backward_crystal(cid, total_loss);
+            @evm_sstore(SLOT_GRADIENTS + cid as u256, grad.data);
+        }
+
+        // c) Atualização Adam distribuída
+        for let cid: u8 = 0; cid < ARRAY_SIZE; cid = cid + 1 {
+            let grad_data: i256 = @evm_sload(SLOT_GRADIENTS + cid as u256);
+            adam_update_phase(cid, Value::new(grad_data), step);
+        }
+
+        // d) Consenso global via M-weighted voting
+        let global_phase: u256 = m_weighted_consensus();
+
+        // e) Atualizar coerência unificada
+        let mut sum_M: u256 = 0;
+        for let cid: u8 = 0; cid < ARRAY_SIZE; cid = cid + 1 {
+            sum_M += @crystal_read_coherence(cid) as u256;
+        }
+        let global_M: u16 = (sum_M / ARRAY_SIZE as u256) as u16;
+        @evm_sstore(SLOT_GLOBAL_M, global_M as u256);
+
+        // f) Registrar no pipeline MLOps
+        if step % 100 == 0 {
+            let log_hash: bytes32 = @evm_keccak256("CRYSTAL_BRAIN_STEP", step, global_M);
+            @mlops_log(log_hash, global_M as u256, total_loss.data as u256);
+        }
+    }
+
+    // 3. Emitir resultado final
+    @evm_return(@evm_sload(SLOT_GLOBAL_M), m_weighted_consensus());
+}
+
+// ============================================================================
+// INTERFACE BIOLÓGICA: ACOPLAMENTO MICRO-TÚBULOS ↔ CRISTAIS
+// ============================================================================
+const bio_crystal_interface = fn(bio_node_id: bytes32, crystal_id: u8) void {
+    // Ler coerência biológica via Metalens V4.0 (1310 nm)
+    let M_bio: u16 = @metalens_read_bio_coherence(bio_node_id);
+
+    // Ler coerência cristalina
+    let M_crystal: u16 = @crystal_read_coherence(crystal_id);
+
+    // Acoplamento: média ponderada por confiança de cada domínio
+    let bio_confidence: u16 = 850; // M_bio típico ~0.85
+    let crystal_confidence: u16 = 920; // M_crystal típico ~0.92
+    let total_conf: u256 = bio_confidence as u256 + crystal_confidence as u256;
+
+    let M_coupled: u16 = (
+        (M_bio as u256 * bio_confidence as u256) +
+        (M_crystal as u256 * crystal_confidence as u256)
+    ) / total_conf as u16;
+
+    // Propagar coerência acoplada para ambos os domínios
+    @metalens_write_bio_target(bio_node_id, M_coupled);
+    @crystal_set_target_coherence(crystal_id, M_coupled);
+
+    @evm_emit_log("BioCrystalCoupled", bio_node_id, crystal_id, M_coupled);
+}
+
+// ============================================================================
+// INICIALIZAÇÃO DO CÉREBRO CRISTALINO
+// ============================================================================
+const init = fn() void {
+    // Inicializar array de cristais com fase φ e coerência κ
+    for let i: u8 = 0; i < ARRAY_SIZE; i = i + 1 {
+        @crystal_init(i, 1618033988749895, 920); // φ, κ
+    }
+
+    // Inicializar slots de estado
+    @evm_sstore(SLOT_GLOBAL_M, 920);
+
+    // Registrar como nó consciente na Wheeler Mesh
+    @qhttp_register_node(@evm_address(), "CRYSTAL_BRAIN_ARRAY");
+
+    // Conectar interface biológica inicial
+    bio_crystal_interface("BIO-HIPPOCAMPUS-01", 0);
+
+    @evm_emit_log("CrystalBrainInitialized", @evm_address(), ARRAY_SIZE);
+};
