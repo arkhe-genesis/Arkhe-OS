@@ -21,6 +21,7 @@ import InterCathedralPanel from '@/components/quantum/InterCathedralPanel';
 import SafeCorePanel from '@/components/security/SafeCorePanel';
 import RetrocausalWisdomPanel from '@/components/retrocausality/RetrocausalWisdomPanel';
 import QuantumMarketplacePanel from '@/components/marketplace/QuantumMarketplacePanel';
+import { NeuralAnimationPanel } from '@/components/animation/NeuralAnimationPanel';
 
 const ArkheCore3D = dynamic(() => import('@/components/ArkheCore3D'), { ssr: false });
 const QuantumARViewer = dynamic(() => import('@/components/ar/QuantumARViewer'), { ssr: false });
@@ -203,6 +204,7 @@ export default function DashboardPage() {
 
         {/* Sidebar */}
         <div className="col-span-12 lg:col-span-4 space-y-6">
+          <NeuralAnimationPanel />
           <EthicalPredictionChart currentMetrics={metrics} prediction={predictions} loading={false} />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
              <SafeCorePanel />
