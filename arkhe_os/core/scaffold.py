@@ -85,4 +85,4 @@ class ScaffoldState:
         self.coherence_M = (self.coherence_M * 0.4) + (brain_M * 0.6)
         self.phase_rad = brain_phase
 
-        return self.coherence_M
+        return self.coherence_M, self.phase_rad
