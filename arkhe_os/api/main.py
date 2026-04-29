@@ -7,7 +7,7 @@ from slowapi.errors import RateLimitExceeded
 
 from arkhe_os.api.v1.endpoints import (
     qe_compass, simulations, resonance, analog_observer,
-    sato, crystal_brain, planetary, auth
+    sato, crystal_brain, planetary, auth, cosmic_consciousness
 )
 from arkhe_os.api.graphql import schema
 from arkhe_os.api.websocket.coherence_stream import websocket_coherence_handler
@@ -57,6 +57,7 @@ app.include_router(analog_observer.router, prefix=settings.API_V1_STR)
 app.include_router(sato.router, prefix=settings.API_V1_STR)
 app.include_router(crystal_brain.router, prefix=settings.API_V1_STR)
 app.include_router(planetary.router, prefix=settings.API_V1_STR)
+app.include_router(cosmic_consciousness.router, prefix=settings.API_V1_STR)
 app.include_router(graphql_app, prefix="/graphql", tags=["GraphQL"])
 
 # Overrides for dependencies that might be defined as placeholders
