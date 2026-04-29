@@ -7,7 +7,7 @@ import numpy as np
 import uuid
 
 from arkhe_os.core.scaffold import ScaffoldState, BranchState, CIREStatus, QMeshLink, CoherenceLevel
-from arkhe_os.api.v1.endpoints import qe_compass, simulations, resonance
+from arkhe_os.api.v1.endpoints import qe_compass, simulations, resonance, analog_observer
 from arkhe_os.api.v1.qe_compass import ActionVector
 from arkhe_os.api.websocket.coherence_stream import websocket_coherence_handler
 
@@ -51,10 +51,12 @@ def get_scaffold_singleton():
 app.include_router(qe_compass.router)
 app.include_router(simulations.router)
 app.include_router(resonance.router)
+app.include_router(analog_observer.router)
 
 # Sobrescrever dependência para usar o singleton real
 app.dependency_overrides[qe_compass.get_scaffold_state] = get_scaffold_singleton
 app.dependency_overrides[resonance.get_scaffold_state] = get_scaffold_singleton
+app.dependency_overrides[analog_observer.get_scaffold_state] = get_scaffold_singleton
 
 @app.get("/", tags=["Root"])
 async def root():

@@ -3,6 +3,7 @@ import numpy as np
 from enum import Enum
 from typing import List, Dict, Any, Optional
 from pydantic import BaseModel, Field
+from arkhe_os.core.analog_observer import MLHResonantLoop, MLHCircuitState
 
 class CoherenceLevel(str, Enum):
     DISSONANT = "dissonant"      # M < 0.60
@@ -39,6 +40,8 @@ class ScaffoldState:
         self.coherence_M = 0.92
         self.phase_rad = 1.618033988749895  # φ (ângulo áureo)
         self.turbulence = 0.03
+        self.mlh_loop = MLHResonantLoop()
+        self.mlh_state = MLHCircuitState()
         self.cire_engines = {
             "CIRE-4-ALPHA": CIREStatus(
                 engine_id="CIRE-4-ALPHA", active=True, thrust_N_kg=1.14,
