@@ -88,7 +88,7 @@ class CoherentHandshakeProtocol:
 
             await asyncio.sleep(self.PHASE_SYNC_INTERVAL_S)
 
-     async def collect_neighbor_phases(self, websocket, local_node_id: Optional[str] = None) -> List[PhaseSyncFrame]:
+    async def collect_neighbor_phases(self, websocket, local_node_id: Optional[str] = None) -> List[PhaseSyncFrame]:
         """Coleta frames de sincronização de nós vizinhos"""
         if self.websocket_manager:
             # Filtra o próprio nó para evitar amortecimento do consenso
