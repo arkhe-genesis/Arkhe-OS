@@ -280,6 +280,14 @@ export const cliOptions = {
     description: 'Endpoint for Ethereum JSON-RPC (e.g., http://127.0.0.1:8545).',
     default: 'http://127.0.0.1:8545',
   },
+  gridApiTokenId: {
+    type: 'string',
+    description: 'API token ID for Lightspark Grid API.',
+  },
+  gridApiClientSecret: {
+    type: 'string',
+    description: 'API client secret for Lightspark Grid API.',
+  },
   viaCli: {
     type: 'boolean',
     describe:
@@ -367,6 +375,10 @@ export function parseArguments(version: string, argv = process.argv) {
       [
         '$0 --slim',
         'Only 3 tools: navigation, JavaScript execution and screenshot',
+      ],
+      [
+        '$0 --grid-api-token-id=TOKEN_ID --grid-api-client-secret=CLIENT_SECRET',
+        'Provide credentials for Lightspark Grid API',
       ],
     ]);
 
