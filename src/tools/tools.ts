@@ -14,10 +14,10 @@ import * as decentralizedTools from './decentralized.js';
 import * as ebpfTools from './ebpf.js';
 import * as emulationTools from './emulation.js';
 import * as evoskillTools from './evoskill.js';
-import * as fortytwoTools from './fortytwo.js';
-import * as gridTools from './grid.js';
 import * as extensionTools from './extensions.js';
+import * as fortytwoTools from './fortytwo.js';
 import * as gnoTools from './gno.js';
+import * as gridTools from './grid.js';
 import * as inPageTools from './inPage.js';
 import * as inputTools from './input.js';
 import * as lambdaTools from './lambda_tools.js';
@@ -27,6 +27,7 @@ import * as memoryTools from './memory.js';
 import * as mercuryTools from './mercury.js';
 import * as meshtasticTools from './meshtastic.js';
 import * as microsandboxTools from './microsandbox.js';
+import * as nashTools from './nash.js';
 import * as nekoTools from './neko.js';
 import * as networkTools from './network.js';
 import * as oasisTools from './oasis.js';
@@ -83,6 +84,7 @@ export const createTools = (args: ParsedArguments) => {
         ...Object.values(oasisTools),
         ...Object.values(meshtasticTools),
         ...Object.values(gnoTools),
+        ...Object.values(nashTools),
       ];
 
   const tools = [];

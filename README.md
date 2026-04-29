@@ -746,6 +746,12 @@ If you run into any issues, checkout our [troubleshooting guide](./docs/troubles
   - [`grid_get_transaction`](docs/tool-reference.md#grid_get_transaction)
   - [`grid_list_customers`](docs/tool-reference.md#grid_list_customers)
   - [`grid_lookup_uma`](docs/tool-reference.md#grid_lookup_uma)
+- **Nash Identity Safe** (5 tools)
+  - [`nash_attest`](docs/tool-reference.md#nash_attest)
+  - [`nash_authenticate`](docs/tool-reference.md#nash_authenticate)
+  - [`nash_coercion_scan`](docs/tool-reference.md#nash_coercion_scan)
+  - [`nash_enroll_cognitive_profile`](docs/tool-reference.md#nash_enroll_cognitive_profile)
+  - [`nash_get_device_status`](docs/tool-reference.md#nash_get_device_status)
 
 <!-- END AUTO GENERATED TOOLS -->
 

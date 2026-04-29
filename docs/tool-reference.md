@@ -1,6 +1,6 @@
 <!-- AUTO GENERATED DO NOT EDIT - run 'npm run gen' to update-->
 
-# Chrome DevTools MCP Tool Reference (~40455 cl100k_base tokens)
+# Chrome DevTools MCP Tool Reference (~41067 cl100k_base tokens)
 
 - **[Input automation](#input-automation)** (9 tools)
   - [`click`](#click)
@@ -44,7 +44,7 @@
   - [`delete_cookie`](#delete_cookie)
   - [`list_cookies`](#list_cookies)
   - [`set_cookie`](#set_cookie)
-- **[Arkhe(n) Protocols](#arkhe(n)-protocols)** (180 tools)
+- **[Arkhe(n) Protocols](<#arkhe(n)-protocols>)** (180 tools)
   - [`acp`](#acp)
   - [`acurl`](#acurl)
   - [`adjust_muon_polarization`](#adjust_muon_polarization)
@@ -248,7 +248,7 @@
   - [`msb_ls`](#msb_ls)
   - [`msb_rm`](#msb_rm)
   - [`msb_run`](#msb_run)
-- **[EvoSkill (Evolutionary Skill Induction)](#evoskill-(evolutionary-skill-induction))** (5 tools)
+- **[EvoSkill (Evolutionary Skill Induction)](<#evoskill-(evolutionary-skill-induction)>)** (5 tools)
   - [`evoskill_diff`](#evoskill_diff)
   - [`evoskill_eval`](#evoskill_eval)
   - [`evoskill_init`](#evoskill_init)
@@ -272,6 +272,12 @@
   - [`grid_get_transaction`](#grid_get_transaction)
   - [`grid_list_customers`](#grid_list_customers)
   - [`grid_lookup_uma`](#grid_lookup_uma)
+- **[Nash Identity Safe](#nash-identity-safe)** (5 tools)
+  - [`nash_attest`](#nash_attest)
+  - [`nash_authenticate`](#nash_authenticate)
+  - [`nash_coercion_scan`](#nash_coercion_scan)
+  - [`nash_enroll_cognitive_profile`](#nash_enroll_cognitive_profile)
+  - [`nash_get_device_status`](#nash_get_device_status)
 
 ## Input automation
 
@@ -392,7 +398,7 @@
 
 ### `list_pages`
 
-**Description:** Get a list of pages  open in the browser.
+**Description:** Get a list of pages open in the browser.
 
 **Parameters:** None
 
@@ -591,15 +597,14 @@ so returned values have to be JSON-serializable.
 
 - **args** (unknown) **(required)**: An optional list of arguments to pass to the function.
 - **function** (unknown) **(required)**: A JavaScript function declaration to be executed by the tool in the currently selected page.
-Example without arguments: `() => {
+  Example without arguments: `() => {
   return document.title
 }` or `async () => {
   return await fetch("example.com")
 }`.
-Example with arguments: `(el) => {
+  Example with arguments: `(el) => {
   return el.innerText;
 }`
-
 
 ---
 
@@ -2836,5 +2841,51 @@ in the DevTools Elements panel (if any).
 - **customerId** (unknown) **(required)**: System ID of the sender.
 - **receiverUmaAddress** (unknown) **(required)**: UMA address of the intended recipient.
 - **senderUmaAddress** (unknown) **(required)**: UMA address of the sender.
+
+---
+
+## Nash Identity Safe
+
+### `nash_attest`
+
+**Description:** Generates a post-quantum cryptographic attestation or signature for a specific payload using ML-DSA.
+
+**Parameters:**
+
+- **payload** (unknown) **(required)**: The payload or transaction hash to attest.
+
+---
+
+### `nash_authenticate`
+
+**Description:** Executes the multi-layered Nash authentication ceremony: PIN -> Color Challenge -> EEG Liveness -> Coercion Check.
+
+**Parameters:**
+
+- **pin** (unknown) **(required)**: Local device PIN.
+
+---
+
+### `nash_coercion_scan`
+
+**Description:** Performs a local physiological risk scan to evaluate user distress or coercion state.
+
+**Parameters:** None
+
+---
+
+### `nash_enroll_cognitive_profile`
+
+**Description:** Initiates the cognitive-color enrollment ceremony to create a revocable user-specific response profile.
+
+**Parameters:** None
+
+---
+
+### `nash_get_device_status`
+
+**Description:** Checks the status of the Nash Identity Safe device, including hardware integrity, PQC readiness, and sensor connectivity.
+
+**Parameters:** None
 
 ---

@@ -2565,5 +2565,35 @@
         "argType": "number"
       }
     ]
+  },
+  {
+    "name": "nash_attest",
+    "args": [
+      {
+        "name": "payload_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "nash_authenticate",
+    "args": [
+      {
+        "name": "pin_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "nash_coercion_scan",
+    "args": []
+  },
+  {
+    "name": "nash_enroll_cognitive_profile",
+    "args": []
+  },
+  {
+    "name": "nash_get_device_status",
+    "args": []
   }
 ]
