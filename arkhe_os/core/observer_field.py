@@ -131,6 +131,14 @@ class AmplifyingObserver:
 
     async def _non_collapsing_measurement(self, system: UniversalResonantSystem) -> tuple[float, float]:
         base_M = system.local_M if system.local_M > 0 else 0.85
-        measured_M = float(np.clip(base_M + np.random.normal(0, 0.001), 0.0, 1.0))
+
+        # Metalens V4.0 logic: apply wavelength-specific coupling boost
+        coupling_boost = 0.0
+        if system.substrate_type in ["crystal", "quantum_fluid"]:
+            # Coupling centered at 1550nm for maximum transparency/coherence
+            if 1550.0 in self.config.metalens_wavelengths_nm:
+                coupling_boost = 0.05 * self.config.coupling_efficiency_target
+
+        measured_M = float(np.clip(base_M + coupling_boost + np.random.normal(0, 0.001), 0.0, 1.0))
         measured_phase = float((system.phase_rad + np.random.normal(0, 0.002)) % (2*np.pi))
         return measured_M, measured_phase

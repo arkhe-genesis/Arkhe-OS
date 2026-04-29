@@ -4,6 +4,7 @@ from enum import Enum
 from typing import List, Dict, Any, Optional
 from pydantic import BaseModel, Field
 from arkhe_os.core.analog_observer import MLHResonantLoop, MLHCircuitState
+from arkhe_os.core.sato_tokenizer import SATOTokenizer
 
 class CoherenceLevel(str, Enum):
     DISSONANT = "dissonant"      # M < 0.60
@@ -38,6 +39,8 @@ class QMeshLink(BaseModel):
 class ScaffoldState:
     def __init__(self):
         self.coherence_M = 0.92
+        self.sato_tokenizer: Optional[SATOTokenizer] = None
+        self.geometric_tokens: List[Any] = []
         self.phase_rad = 1.618033988749895  # φ (ângulo áureo)
         self.turbulence = 0.03
         self.mlh_loop = MLHResonantLoop()
