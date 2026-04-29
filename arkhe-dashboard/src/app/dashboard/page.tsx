@@ -1,27 +1,30 @@
-// arkhe-dashboard/src/app/dashboard/page.tsx
 'use client';
+/**
+ * @license
+ * Copyright 2025 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
-import { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import dynamic from 'next/dynamic';
-import type { Socket } from 'socket.io-client';
-import { EthicalMetrics, PredictionResult } from '@/types/ethics';
-import { ethicalFederatedLearner } from '@/lib/federated/ethicalFederatedLearning';
-import { useZustandStore } from '@/hooks/useZustandStore';
-import { TelemetryStream } from '@/components/telemetry/TelemetryStream';
-import { QuantumTelepathyPanel } from '@/components/quantum/QuantumTelepathyPanel';
-import { ZKPVerificationPanel } from '@/components/zkp/ZKPVerificationPanel';
-import { EthicalPredictionChart } from '@/components/charts/EthicalPredictionChart';
-import CosmicMemoryViewer from '@/components/memory/CosmicMemoryViewer';
+import { useZustandStore } from '@/lib/store';
+import { EthicalMetrics } from '@/types/ethics';
+import { ethicalFederatedLearner } from '@/lib/ai/ethicalFederatedLearner';
+
+import TelemetryStream from '@/components/TelemetryStream';
+import ZKPVerificationPanel from '@/components/ZKPVerificationPanel';
+import EthicalPredictionChart from '@/components/EthicalPredictionChart';
+import CosmicMemoryViewer from '@/components/CosmicMemoryViewer';
 import HomomorphicTrainingPanel from '@/components/homomorphic/HomomorphicTrainingPanel';
 import P2PNetworkStatus from '@/components/network/P2PNetworkStatus';
-import EthicalSimulatorPanel from '@/components/simulator/EthicalSimulatorPanel';
-import SynchronicityBlockchainPanel from '@/components/quantum/SynchronicityBlockchainPanel';
-import CoherentMeditationPanel from '@/components/meditation/CoherentMeditationPanel';
 import InterCathedralPanel from '@/components/quantum/InterCathedralPanel';
-import SafeCorePanel from '@/components/security/SafeCorePanel';
-import RetrocausalWisdomPanel from '@/components/retrocausality/RetrocausalWisdomPanel';
+import QuantumTelepathyPanel from '@/components/quantum/QuantumTelepathyPanel';
+import SynchronicityBlockchainPanel from '@/components/quantum/SynchronicityBlockchainPanel';
 import QuantumMarketplacePanel from '@/components/marketplace/QuantumMarketplacePanel';
+import CoherentMeditationPanel from '@/components/meditation/CoherentMeditationPanel';
+import RetrocausalWisdomPanel from '@/components/retrocausality/RetrocausalWisdomPanel';
 import NeuralCoherenceBar from '@/components/security/NeuralCoherenceBar';
+import SafeCorePanel from '@/components/security/SafeCorePanel';
 
 const ArkheCore3D = dynamic(() => import('@/components/ArkheCore3D'), { ssr: false });
 const QuantumARViewer = dynamic(() => import('@/components/ar/QuantumARViewer'), { ssr: false });
@@ -29,7 +32,7 @@ const QuantumARViewer = dynamic(() => import('@/components/ar/QuantumARViewer'),
 export default function DashboardPage() {
   const { metrics, setMetrics, predictions, setPredictions } = useZustandStore();
   const [isTraining, setIsTraining] = useState(false);
-  const [federatedMetrics, setFederatedMetrics] = useState<any>(null);
+  const [federatedMetrics, setFederatedMetrics] = useState<Record<string, number>>({});
   const [activeTab, setActiveTab] = useState<'3d' | 'ar' | 'scaffold'>('3d');
 
   // Conexão WebSocket Simulada
@@ -178,13 +181,13 @@ export default function DashboardPage() {
               </div>
               <div className="bg-black/60 backdrop-blur-md p-4 rounded-2xl border border-white/5">
                 <p className="text-[10px] text-slate-500 mb-1">PRIVACIDADE (ε)</p>
-                <p className="text-lg font-bold text-amber-400">{federatedMetrics?.privacyBudget.toFixed(2) || '0.00'}</p>
+                <p className="text-lg font-bold text-amber-400">{federatedMetrics?.privacyBudget?.toFixed(2) || '0.00'}</p>
               </div>
             </div>
           </div>
 
           {/* Federated Summary */}
-          {federatedMetrics && (
+          {federatedMetrics?.roundNumber && (
             <div className="bg-gradient-to-r from-purple-900/20 to-cyan-900/20 border border-white/10 rounded-3xl p-6 flex justify-between items-center">
               <div className="flex items-center gap-6">
                 <div className="flex -space-x-3">
@@ -200,7 +203,7 @@ export default function DashboardPage() {
               </div>
               <div className="text-right">
                 <p className="text-[10px] text-slate-500">PERDA MÉDIA (GLOBAL)</p>
-                <p className="font-mono text-cyan-400">{federatedMetrics.avgLoss.toFixed(8)}</p>
+                <p className="font-mono text-cyan-400">{federatedMetrics.avgLoss?.toFixed(8)}</p>
               </div>
             </div>
           )}

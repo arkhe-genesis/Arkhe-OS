@@ -6,8 +6,8 @@
 
 // arkhe-dashboard/src/app/api/zkp/verify/route.ts
 import { NextResponse } from 'next/server';
-
 import type { NextRequest } from 'next/server';
+
 import { postQuantumZKP } from '@/lib/zkp/post-quantum-zkp';
 import { ZKPProof } from '@/types/ethics';
 
