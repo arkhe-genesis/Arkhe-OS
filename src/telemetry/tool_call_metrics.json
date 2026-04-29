@@ -2359,5 +2359,211 @@
         "argType": "number"
       }
     ]
+  },
+  {
+    "name": "ask_fortytwo_prime",
+    "args": [
+      {
+        "name": "question_length",
+        "argType": "number"
+      },
+      {
+        "name": "network",
+        "argType": "string"
+      },
+      {
+        "name": "noSession",
+        "argType": "boolean"
+      }
+    ]
+  },
+  {
+    "name": "copy_soul",
+    "args": [
+      {
+        "name": "citizenDid_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "ebpf_check_readiness",
+    "args": [
+      {
+        "name": "consent_id_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "ebpf_load_program",
+    "args": [
+      {
+        "name": "consent_id_length",
+        "argType": "number"
+      },
+      {
+        "name": "elf_path_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "ebpf_monitor_traffic",
+    "args": [
+      {
+        "name": "consent_id_length",
+        "argType": "number"
+      },
+      {
+        "name": "interface_length",
+        "argType": "number"
+      },
+      {
+        "name": "duration",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "ebpf_run_benchmark",
+    "args": [
+      {
+        "name": "consent_id_length",
+        "argType": "number"
+      },
+      {
+        "name": "benchmark_name",
+        "argType": "string"
+      }
+    ]
+  },
+  {
+    "name": "ebpf_verify_integrity",
+    "args": [
+      {
+        "name": "consent_id_length",
+        "argType": "number"
+      },
+      {
+        "name": "batch_id_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "get_human_embedded_status",
+    "args": []
+  },
+  {
+    "name": "grid_create_quote",
+    "args": [
+      {
+        "name": "source_count",
+        "argType": "number"
+      },
+      {
+        "name": "destination_count",
+        "argType": "number"
+      },
+      {
+        "name": "lockedCurrencySide",
+        "argType": "string"
+      },
+      {
+        "name": "lockedCurrencyAmount",
+        "argType": "number"
+      },
+      {
+        "name": "description_length",
+        "argType": "number"
+      },
+      {
+        "name": "immediatelyExecute",
+        "argType": "boolean"
+      },
+      {
+        "name": "lookupId_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "grid_execute_quote",
+    "args": [
+      {
+        "name": "quoteId_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "grid_get_config",
+    "args": []
+  },
+  {
+    "name": "grid_get_quote",
+    "args": [
+      {
+        "name": "quoteId_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "grid_get_transaction",
+    "args": [
+      {
+        "name": "transactionId_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "grid_list_customers",
+    "args": [
+      {
+        "name": "limit",
+        "argType": "number"
+      },
+      {
+        "name": "cursor_length",
+        "argType": "number"
+      },
+      {
+        "name": "customerType",
+        "argType": "string"
+      }
+    ]
+  },
+  {
+    "name": "grid_lookup_uma",
+    "args": [
+      {
+        "name": "receiverUmaAddress_length",
+        "argType": "number"
+      },
+      {
+        "name": "senderUmaAddress_length",
+        "argType": "number"
+      },
+      {
+        "name": "customerId_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "install_soul",
+    "args": [
+      {
+        "name": "artifactId_length",
+        "argType": "number"
+      },
+      {
+        "name": "targetSubstrate_length",
+        "argType": "number"
+      }
+    ]
   }
 ]

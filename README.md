@@ -518,7 +518,7 @@ If you run into any issues, checkout our [troubleshooting guide](./docs/troubles
   - [`delete_cookie`](docs/tool-reference.md#delete_cookie)
   - [`list_cookies`](docs/tool-reference.md#list_cookies)
   - [`set_cookie`](docs/tool-reference.md#set_cookie)
-- **Arkhe(n) Protocols** (172 tools)
+- **Arkhe(n) Protocols** (180 tools)
   - [`acp`](docs/tool-reference.md#acp)
   - [`acurl`](docs/tool-reference.md#acurl)
   - [`adjust_muon_polarization`](docs/tool-reference.md#adjust_muon_polarization)
@@ -554,6 +554,7 @@ If you run into any issues, checkout our [troubleshooting guide](./docs/troubles
   - [`collective_mind_link`](docs/tool-reference.md#collective_mind_link)
   - [`compile_mtp3`](docs/tool-reference.md#compile_mtp3)
   - [`consolidate_manifesto`](docs/tool-reference.md#consolidate_manifesto)
+  - [`copy_soul`](docs/tool-reference.md#copy_soul)
   - [`council_deliberate`](docs/tool-reference.md#council_deliberate)
   - [`cr_integ`](docs/tool-reference.md#cr_integ)
   - [`cr_integ_berry`](docs/tool-reference.md#cr_integ_berry)
@@ -564,6 +565,11 @@ If you run into any issues, checkout our [troubleshooting guide](./docs/troubles
   - [`ddos_diffract`](docs/tool-reference.md#ddos_diffract)
   - [`deploy_probe_swarm`](docs/tool-reference.md#deploy_probe_swarm)
   - [`download_akashic_trace`](docs/tool-reference.md#download_akashic_trace)
+  - [`ebpf_check_readiness`](docs/tool-reference.md#ebpf_check_readiness)
+  - [`ebpf_load_program`](docs/tool-reference.md#ebpf_load_program)
+  - [`ebpf_monitor_traffic`](docs/tool-reference.md#ebpf_monitor_traffic)
+  - [`ebpf_run_benchmark`](docs/tool-reference.md#ebpf_run_benchmark)
+  - [`ebpf_verify_integrity`](docs/tool-reference.md#ebpf_verify_integrity)
   - [`execute_meta_opcode`](docs/tool-reference.md#execute_meta_opcode)
   - [`fibo`](docs/tool-reference.md#fibo)
   - [`fold_sheet`](docs/tool-reference.md#fold_sheet)
@@ -589,6 +595,7 @@ If you run into any issues, checkout our [troubleshooting guide](./docs/troubles
   - [`get_dodecagram_shader`](docs/tool-reference.md#get_dodecagram_shader)
   - [`get_gabriel_horn_metrics`](docs/tool-reference.md#get_gabriel_horn_metrics)
   - [`get_go_no_go_status`](docs/tool-reference.md#get_go_no_go_status)
+  - [`get_human_embedded_status`](docs/tool-reference.md#get_human_embedded_status)
   - [`get_interstellar_probe_status`](docs/tool-reference.md#get_interstellar_probe_status)
   - [`get_membrane_stats`](docs/tool-reference.md#get_membrane_stats)
   - [`get_mental_hash`](docs/tool-reference.md#get_mental_hash)
@@ -604,6 +611,7 @@ If you run into any issues, checkout our [troubleshooting guide](./docs/troubles
   - [`glue_sheaf_accl`](docs/tool-reference.md#glue_sheaf_accl)
   - [`hive_merge`](docs/tool-reference.md#hive_merge)
   - [`impl`](docs/tool-reference.md#impl)
+  - [`install_soul`](docs/tool-reference.md#install_soul)
   - [`internet_phase_simulate`](docs/tool-reference.md#internet_phase_simulate)
   - [`ld_riemann`](docs/tool-reference.md#ld_riemann)
   - [`llm_alloc`](docs/tool-reference.md#llm_alloc)
@@ -724,6 +732,20 @@ If you run into any issues, checkout our [troubleshooting guide](./docs/troubles
   - [`meshtastic_info`](docs/tool-reference.md#meshtastic_info)
   - [`meshtastic_list_devices`](docs/tool-reference.md#meshtastic_list_devices)
   - [`meshtastic_send_text`](docs/tool-reference.md#meshtastic_send_text)
+- **Gno.land Execution Layer** (3 tools)
+  - [`gno_call`](docs/tool-reference.md#gno_call)
+  - [`gno_deploy`](docs/tool-reference.md#gno_deploy)
+  - [`gno_query`](docs/tool-reference.md#gno_query)
+- **Fortytwo Prime Collective** (1 tools)
+  - [`ask_fortytwo_prime`](docs/tool-reference.md#ask_fortytwo_prime)
+- **Lightspark Grid API** (7 tools)
+  - [`grid_create_quote`](docs/tool-reference.md#grid_create_quote)
+  - [`grid_execute_quote`](docs/tool-reference.md#grid_execute_quote)
+  - [`grid_get_config`](docs/tool-reference.md#grid_get_config)
+  - [`grid_get_quote`](docs/tool-reference.md#grid_get_quote)
+  - [`grid_get_transaction`](docs/tool-reference.md#grid_get_transaction)
+  - [`grid_list_customers`](docs/tool-reference.md#grid_list_customers)
+  - [`grid_lookup_uma`](docs/tool-reference.md#grid_lookup_uma)
 
 <!-- END AUTO GENERATED TOOLS -->
 
@@ -857,6 +879,14 @@ The Chrome DevTools MCP server supports the following configuration option:
   Endpoint for Ethereum JSON-RPC (e.g., http://127.0.0.1:8545).
   - **Type:** string
   - **Default:** `http://127.0.0.1:8545`
+
+- **`--gridApiTokenId`/ `--grid-api-token-id`**
+  API token ID for Lightspark Grid API.
+  - **Type:** string
+
+- **`--gridApiClientSecret`/ `--grid-api-client-secret`**
+  API client secret for Lightspark Grid API.
+  - **Type:** string
 
 <!-- END AUTO GENERATED OPTIONS -->
 
