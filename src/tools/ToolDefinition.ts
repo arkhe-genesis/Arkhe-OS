@@ -63,7 +63,7 @@ export interface ToolDefinition<
 }
 
 export interface Request<Schema extends zod.ZodRawShape> {
-// @ts-expect-error
+  // @ts-expect-error Internal Zod type mapping for schema parameters
   params: zod.objectOutputType<Schema, zod.ZodTypeAny>;
 }
 

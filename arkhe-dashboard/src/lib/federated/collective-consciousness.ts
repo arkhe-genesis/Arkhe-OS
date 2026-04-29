@@ -1,5 +1,13 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/federated/collective-consciousness.ts
 import * as tf from '@tensorflow/tfjs';
+
 import { ethicalPredictiveModel } from '../tfjs/ethical-predictive-model';
 
 export interface FederatedRound {
@@ -11,8 +19,8 @@ export interface FederatedRound {
 }
 
 export class CollectiveConsciousnessOrchestrator {
-  private currentRound: number = 0;
-  private participants: Set<string> = new Set();
+  private currentRound = 0;
+  private participants = new Set<string>();
 
   constructor() {}
 

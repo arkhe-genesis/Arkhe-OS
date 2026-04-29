@@ -1,8 +1,16 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/memory/CosmicMemoryViewer.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
-import { EthicalMetrics } from '@/types/ethics';
+
+import type { EthicalMetrics } from '@/types/ethics';
 
 export default function CosmicMemoryViewer({ currentMetrics }: { currentMetrics: EthicalMetrics }) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -25,7 +33,7 @@ export default function CosmicMemoryViewer({ currentMetrics }: { currentMetrics:
       body: JSON.stringify({ queryVector, queryAmplitude, maxResults: 5, similarityThreshold: 0.5, entanglementDepth: 2 })
     });
     const data = await response.json();
-    if (data.success) setResults(data.data.results);
+    if (data.success) {setResults(data.data.results);}
     setIsLoading(false);
   };
 

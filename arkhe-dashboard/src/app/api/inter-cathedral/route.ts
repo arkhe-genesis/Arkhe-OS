@@ -6,8 +6,8 @@
 
 // arkhe-dashboard/src/app/api/inter-cathedral/route.ts
 import { NextResponse } from 'next/server';
-
 import type { NextRequest } from 'next/server';
+
 import { interCathedralProtocol } from '@/lib/quantum/interCathedralProtocol';
 
 export async function POST(request: NextRequest) {

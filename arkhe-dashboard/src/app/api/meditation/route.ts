@@ -6,8 +6,8 @@
 
 // arkhe-dashboard/src/app/api/meditation/route.ts
 import { NextResponse } from 'next/server';
-
 import type { NextRequest } from 'next/server';
+
 import { coherentMeditationEngine } from '@/lib/meditation/coherentMeditation';
 
 export async function POST(request: NextRequest) {

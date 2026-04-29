@@ -7,7 +7,7 @@
 
 import React from 'react';
 
-export const Switch = ({ checked, onCheckedChange, ...props }: any) => (
+export const Switch = ({ checked, onCheckedChange, ...props }: { checked: boolean, onCheckedChange: (checked: boolean) => void, [key: string]: unknown }) => (
   <input
     type="checkbox"
     checked={checked}

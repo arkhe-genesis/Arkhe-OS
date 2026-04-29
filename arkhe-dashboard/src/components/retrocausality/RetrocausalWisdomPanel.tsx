@@ -1,7 +1,15 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/retrocausality/RetrocausalWisdomPanel.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import { retrocausalWisdomEcho } from '@/lib/retrocausality/retrocausalWisdomEcho';
 import { EthicalPrinciple } from '@/types/ethics';
 

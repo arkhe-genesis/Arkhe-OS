@@ -1,3 +1,10 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/quantum/quantumSynchronicity.ts
 /**
  * Quantum Synchronicity Detector (FS-223)
@@ -5,7 +12,7 @@
  * Models synchronicity as non-local correlations between intention and field state.
  */
 
-import { EthicalMetrics } from '@/types/ethics';
+import type { EthicalMetrics } from '@/types/ethics';
 
 export interface SynchronicityPattern {
   id: string;

@@ -1,8 +1,15 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 'use client';
 
-import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
 import { geoNaturalEarth1, geoPath, geoGraticule } from 'd3-geo';
+import React, { useRef, useEffect } from 'react';
 import { feature } from 'topojson-client';
 
 // Mock topology for sandbox
@@ -20,7 +27,7 @@ export default function ThreatMap({ threats = [], onThreatClick }: any) {
     const svgRef = useRef<SVGSVGElement>(null);
 
     useEffect(() => {
-        if (!svgRef.current) return;
+        if (!svgRef.current) {return;}
 
         const svg = d3.select(svgRef.current);
         svg.selectAll('*').remove();

@@ -1,0 +1,51 @@
+# arkhe_clinical/protocols/optical_neural_calibration_rtd_v1.0.yaml
+protocol_name: "Arkhe_OpticalNeural_Calibration_RTD_PhaseB"
+version: "1.0"
+date: "2026-04-28"
+
+# Correção de referencial terrestre
+temporal_reference:
+  enabled: true
+  location: "auto-detect via GPS"
+  timestamp_scale: "tdb"  # Para sincronização com efemérides celestes
+  sagnac_correction: true  # Para rede distribuída de aquisição
+
+# Participantes (atualizado)
+participants:
+  n_total: 6
+  inclusion:
+    - "Saudáveis, 18-45 anos"
+    - "Sem histórico neurológico ou oftalmológico"
+    - "Capacidade de manter fixação visual por ≥5 min"
+    - "Consentimento para estimulação transcraniana óptica de baixa potência"
+    - "Disponibilidade para sessão em janela temporal precisa (±10ms UTC)"
+  exclusion:
+    - "Fotossensibilidade ou epilepsia fotogênica"
+    - "Uso de medicamentos que afetam excitabilidade cortical"
+    - "Condições que impedem imobilidade da cabeça"
+    - "Incapacidade de sincronizar relógio pessoal com NTP/PTP"
+
+# Equipamento com sincronização RTD
+hardware_sync:
+  master_clock: "GPS-disciplined oscillator (GPSDO)"
+  distribution: "White Rabbit PTP over fiber"
+  accuracy_ns: "< 100"  # Nanosegundos de precisão
+  sagnac_aware: true  # Aplica correção para nós distribuídos geograficamente
+
+# Protocolo de estimulação (atualizado)
+stimulation_protocol:
+  trial_structure:
+    baseline_duration_s: 30
+    stimulation_duration_s: 10
+    post_duration_s: 30
+    inter_trial_interval_s: 60
+    # Timestamps agora em escala TDB para consistência astronômica
+    timestamp_scale: "tdb"
+  parameter_sweep:
+    l_p_values: [1, 2, 3]
+    m_values: [2, 4, 6, 8, 10]
+    ratio_values: [0.7, 1.0, 1.3]
+    total_combinations: 45
+  randomization:
+    method: "Latin square design"
+    seed_source: "quantum RNG + astronomical ephemeris"  # Semente não-determinística

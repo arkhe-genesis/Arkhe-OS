@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Infinity, Shield, Server, Box } from 'lucide-react';
+import { Infinity as InfinityIcon, Shield, Server, Box } from 'lucide-react';
 import React, { useState } from 'react';
 
 import { useArkheSimulation } from '../hooks/useArkheSimulation';
@@ -12,7 +12,7 @@ import { useArkheSimulation } from '../hooks/useArkheSimulation';
 export const EternalInvariancePanel: React.FC = () => {
   const state = useArkheSimulation();
   const [loading, setLoading] = useState(false);
-  const [fixPointResult, setFixPointResult] = useState<any>(null);
+  const [fixPointResult, setFixPointResult] = useState<unknown>(null);
 
   const handleEternalize = async () => {
     setLoading(true);
@@ -46,7 +46,7 @@ export const EternalInvariancePanel: React.FC = () => {
     <div className="p-4 bg-zinc-900/50 rounded-lg border border-white/10 space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Infinity className="w-5 h-5 text-rose-400" />
+          <InfinityIcon className="w-5 h-5 text-rose-400" />
           <h3 className="font-medium text-white">Eternal Invariance</h3>
         </div>
         <div className={`px-2 py-0.5 rounded text-xs font-bold ${ei.isEternal ? 'bg-rose-500/20 text-rose-400' : 'bg-zinc-800 text-zinc-400'}`}>
@@ -101,12 +101,12 @@ export const EternalInvariancePanel: React.FC = () => {
         <div className="mt-4 space-y-2 p-3 bg-black/40 rounded border border-white/5">
           <div className="flex items-center justify-between text-[10px] font-bold border-b border-white/5 pb-1">
             <span className="text-zinc-500">FIXED POINT VALIDATION</span>
-            <span className={fixPointResult.isFixedPoint ? 'text-emerald-400' : 'text-rose-400'}>
-              {fixPointResult.isFixedPoint ? 'VALID' : 'INVALID'}
+            <span className={(fixPointResult as {isFixedPoint: boolean}).isFixedPoint ? 'text-emerald-400' : 'text-rose-400'}>
+              {(fixPointResult as {isFixedPoint: boolean}).isFixedPoint ? 'VALID' : 'INVALID'}
             </span>
           </div>
           <div className="space-y-1">
-            {fixPointResult.verifications.map((v: any) => (
+            {(fixPointResult as {verifications: Array<{id: string, status: string}>}).verifications.map((v) => (
               <div key={v.id} className="flex items-center justify-between text-[9px] font-mono">
                 <span className="text-zinc-500">{v.id}</span>
                 <span className={v.status === 'VALID' ? 'text-emerald-500' : 'text-zinc-600'}>{v.status}</span>

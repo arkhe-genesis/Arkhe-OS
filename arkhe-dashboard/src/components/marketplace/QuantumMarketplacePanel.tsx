@@ -1,7 +1,15 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/marketplace/QuantumMarketplacePanel.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import { quantumEthicalTalentMarketplace } from '@/lib/marketplace/quantumEthicalTalentMarketplace';
 import { EthicalPrinciple } from '@/types/ethics';
 

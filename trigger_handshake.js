@@ -1,4 +1,12 @@
-import http from 'http';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import http from 'node:http';
+
 import { logger } from './server/logger.js';
 
 const req = http.request({

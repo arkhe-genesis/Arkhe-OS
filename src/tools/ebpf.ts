@@ -8,6 +8,7 @@ import {spawn} from 'node:child_process';
 import * as path from 'node:path';
 
 import {zod} from '../third_party/index.js';
+
 import {ToolCategory} from './categories.js';
 import {definePageTool} from './ToolDefinition.js';
 
@@ -72,7 +73,8 @@ export const ebpfMonitorTraffic = definePageTool({
       ]);
       response.appendResponseLine(output);
     } catch (error: unknown) {
-      response.appendResponseLine(`Error: ${error.message}`);
+      const message = error instanceof Error ? error.message : String(error);
+      response.appendResponseLine(`Error: ${message}`);
     }
   },
 });
@@ -99,7 +101,8 @@ export const ebpfCheckReadiness = definePageTool({
       ]);
       response.appendResponseLine(output);
     } catch (error: unknown) {
-      response.appendResponseLine(`Error: ${error.message}`);
+      const message = error instanceof Error ? error.message : String(error);
+      response.appendResponseLine(`Error: ${message}`);
     }
   },
 });
@@ -132,7 +135,8 @@ export const ebpfRunBenchmark = definePageTool({
       ]);
       response.appendResponseLine(output);
     } catch (error: unknown) {
-      response.appendResponseLine(`Error: ${error.message}`);
+      const message = error instanceof Error ? error.message : String(error);
+      response.appendResponseLine(`Error: ${message}`);
     }
   },
 });
@@ -162,7 +166,8 @@ export const ebpfLoadProgram = definePageTool({
       ]);
       response.appendResponseLine(output);
     } catch (error: unknown) {
-      response.appendResponseLine(`Error: ${error.message}`);
+      const message = error instanceof Error ? error.message : String(error);
+      response.appendResponseLine(`Error: ${message}`);
     }
   },
 });
@@ -192,7 +197,8 @@ export const ebpfVerifyIntegrity = definePageTool({
       ]);
       response.appendResponseLine(output);
     } catch (error: unknown) {
-      response.appendResponseLine(`Error: ${error.message}`);
+      const message = error instanceof Error ? error.message : String(error);
+      response.appendResponseLine(`Error: ${message}`);
     }
   },
 });

@@ -1,10 +1,19 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/quantum/SynchronicityBlockchainPanel.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
-import { quantumSynchronicityDetector, SynchronicityPattern } from '@/lib/quantum/quantumSynchronicity';
-import { ethicalBlockchain } from '@/lib/blockchain/ethicalQuantumBlockchain';
+
 import { useZustandStore } from '@/hooks/useZustandStore';
+import { ethicalBlockchain } from '@/lib/blockchain/ethicalQuantumBlockchain';
+import type { SynchronicityPattern } from '@/lib/quantum/quantumSynchronicity';
+import { quantumSynchronicityDetector } from '@/lib/quantum/quantumSynchronicity';
 
 export default function SynchronicityBlockchainPanel() {
   const { metrics } = useZustandStore();

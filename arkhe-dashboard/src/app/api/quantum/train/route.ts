@@ -6,8 +6,8 @@
 
 // arkhe-dashboard/src/app/api/quantum/train/route.ts
 import { NextResponse } from 'next/server';
-
 import type { NextRequest } from 'next/server';
+
 import { federatedHomomorphicQuantum } from '@/lib/quantum/federatedHomomorphicQuantum';
 
 export async function POST(request: NextRequest) {

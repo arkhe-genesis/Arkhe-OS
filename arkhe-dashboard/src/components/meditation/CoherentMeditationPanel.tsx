@@ -1,3 +1,10 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/meditation/CoherentMeditationPanel.tsx
 'use client';
 
@@ -37,7 +44,7 @@ export default function CoherentMeditationPanel() {
   };
 
   useEffect(() => {
-    if (!isMeditating) return;
+    if (!isMeditating) {return;}
 
     const interval = setInterval(() => {
       setCollectiveCoherence(prev => Math.min(1.0, prev + 0.05 * Math.random()));

@@ -1,27 +1,36 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/app/dashboard/page.tsx
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
 import dynamic from 'next/dynamic';
+import { useEffect, useState, useCallback } from 'react';
 import type { Socket } from 'socket.io-client';
-import { EthicalMetrics, PredictionResult } from '@/types/ethics';
-import { ethicalFederatedLearner } from '@/lib/federated/ethicalFederatedLearning';
-import { useZustandStore } from '@/hooks/useZustandStore';
-import { TelemetryStream } from '@/components/telemetry/TelemetryStream';
-import { QuantumTelepathyPanel } from '@/components/quantum/QuantumTelepathyPanel';
-import { ZKPVerificationPanel } from '@/components/zkp/ZKPVerificationPanel';
+
 import { EthicalPredictionChart } from '@/components/charts/EthicalPredictionChart';
-import CosmicMemoryViewer from '@/components/memory/CosmicMemoryViewer';
 import HomomorphicTrainingPanel from '@/components/homomorphic/HomomorphicTrainingPanel';
-import P2PNetworkStatus from '@/components/network/P2PNetworkStatus';
-import EthicalSimulatorPanel from '@/components/simulator/EthicalSimulatorPanel';
-import SynchronicityBlockchainPanel from '@/components/quantum/SynchronicityBlockchainPanel';
-import CoherentMeditationPanel from '@/components/meditation/CoherentMeditationPanel';
-import InterCathedralPanel from '@/components/quantum/InterCathedralPanel';
-import SafeCorePanel from '@/components/security/SafeCorePanel';
-import RetrocausalWisdomPanel from '@/components/retrocausality/RetrocausalWisdomPanel';
 import QuantumMarketplacePanel from '@/components/marketplace/QuantumMarketplacePanel';
+import CoherentMeditationPanel from '@/components/meditation/CoherentMeditationPanel';
+import CosmicMemoryViewer from '@/components/memory/CosmicMemoryViewer';
+import P2PNetworkStatus from '@/components/network/P2PNetworkStatus';
+import InterCathedralPanel from '@/components/quantum/InterCathedralPanel';
+import { QuantumTelepathyPanel } from '@/components/quantum/QuantumTelepathyPanel';
+import SynchronicityBlockchainPanel from '@/components/quantum/SynchronicityBlockchainPanel';
+import RetrocausalWisdomPanel from '@/components/retrocausality/RetrocausalWisdomPanel';
 import NeuralCoherenceBar from '@/components/security/NeuralCoherenceBar';
+import SafeCorePanel from '@/components/security/SafeCorePanel';
+import EthicalSimulatorPanel from '@/components/simulator/EthicalSimulatorPanel';
+import { TelemetryStream } from '@/components/telemetry/TelemetryStream';
+import { ZKPVerificationPanel } from '@/components/zkp/ZKPVerificationPanel';
+import { useZustandStore } from '@/hooks/useZustandStore';
+import { ethicalFederatedLearner } from '@/lib/federated/ethicalFederatedLearning';
+import { PredictionResult } from '@/types/ethics';
+import type { EthicalMetrics} from '@/types/ethics';
 
 const ArkheCore3D = dynamic(() => import('@/components/ArkheCore3D'), { ssr: false });
 const QuantumARViewer = dynamic(() => import('@/components/ar/QuantumARViewer'), { ssr: false });

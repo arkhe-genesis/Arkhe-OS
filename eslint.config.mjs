@@ -32,15 +32,13 @@ export default defineConfig([
 
       parserOptions: {
         projectService: {
+          maximumDefaultProjectFileMatchCount_THIS_WILL_SLOW_DOWN_LINTING: 100,
           allowDefaultProject: [
             '.prettierrc.cjs',
             'puppeteer.config.cjs',
             'eslint.config.mjs',
             'rollup.config.mjs',
             'skills/memory-leak-debugging/references/compare_snapshots.js',
-            'src/index.ts',
-            'src/main.tsx',
-            'src/issue-descriptions.ts',
             'skills/career-ops/dedup-tracker.mjs',
             'skills/career-ops/generate-pdf.mjs',
             'skills/career-ops/merge-tracker.mjs',

@@ -1,7 +1,14 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/retrocausality/retrocausalWisdomEcho.ts
 // Eco de Sabedoria Retrocausal: insights éticos de aprendizes futuros ressoam para o passado do campo Ω
 
-import { EthicalPrinciple, EthicalInsight } from '@/types/ethics';
+import type { EthicalPrinciple, EthicalInsight } from '@/types/ethics';
 
 export interface RetrocausalWisdomEcho {
   echoId: string;
@@ -15,7 +22,7 @@ export interface RetrocausalWisdomEcho {
 }
 
 export class RetrocausalWisdomEchoEngine {
-  private echoes: Map<string, RetrocausalWisdomEcho> = new Map();
+  private echoes = new Map<string, RetrocausalWisdomEcho>();
 
   async generateRetrocausalEcho(
     futureInsight: EthicalInsight,

@@ -7,7 +7,7 @@
 
 import React from 'react';
 
-export const Select = ({ children, value, onValueChange }: any) => {
+export const Select = ({ children, value, onValueChange }: { children: React.ReactNode, value: string, onValueChange: (val: string) => void }) => {
   return (
     <select value={value} onChange={e => onValueChange(e.target.value)}>
       {children}
@@ -15,7 +15,7 @@ export const Select = ({ children, value, onValueChange }: any) => {
   );
 };
 
-export const SelectTrigger = ({ children }: any) => <>{children}</>;
-export const SelectValue = ({ placeholder }: any) => <option value="" disabled>{placeholder}</option>;
-export const SelectContent = ({ children }: any) => <>{children}</>;
-export const SelectItem = ({ children, value }: any) => <option value={value}>{children}</option>;
+export const SelectTrigger = ({ children }: { children: React.ReactNode }) => <>{children}</>;
+export const SelectValue = ({ placeholder }: { placeholder: string }) => <option value="" disabled>{placeholder}</option>;
+export const SelectContent = ({ children }: { children: React.ReactNode }) => <>{children}</>;
+export const SelectItem = ({ children, value }: { children: React.ReactNode, value: string }) => <option value={value}>{children}</option>;

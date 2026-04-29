@@ -6,8 +6,8 @@
 
 // arkhe-dashboard/src/app/api/simulate/route.ts
 import { NextResponse } from 'next/server';
-
 import type { NextRequest } from 'next/server';
+
 import { ethicalSimulator } from '@/lib/simulator/ethicalSimulator';
 
 export async function POST(request: NextRequest) {

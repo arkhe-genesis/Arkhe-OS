@@ -100,7 +100,6 @@ export function generateToolMetrics(tools: ToolDefinition[]): ToolMetric[] {
       }
       let zodType;
       try {
-        // @ts-expect-error
         zodType = getZodType(schema);
       } catch (err) {
         console.error(`Error getting zod type for tool ${tool.name} arg ${name}:`, err);
@@ -111,21 +110,21 @@ export function generateToolMetrics(tools: ToolDefinition[]): ToolMetric[] {
 
       if (argType === 'enum') {
         const findValues = (s: unknown): unknown[] | undefined => {
-          const d = ((s as { _def?: unknown })._def) || ((s as { def?: unknown }).def);
-          if (d?.values?.length > 0) {
+          const d = ((s as { _def?: { values?: unknown[]; entries?: unknown[]; innerType?: unknown } })._def) || ((s as { def?: { values?: unknown[]; entries?: unknown[]; innerType?: unknown } }).def);
+          if (d?.values && Array.isArray(d.values) && d.values.length > 0) {
             return d.values;
           }
-          if (d?.entries?.length > 0) {
+          if (d?.entries && Array.isArray(d.entries) && d.entries.length > 0) {
             return d.entries;
           }
-          if (((s as { options?: unknown[] }).options)?.length > 0) {
+          if (((s as { options?: unknown[] }).options) && Array.isArray((s as { options?: unknown[] }).options) && (s as { options?: unknown[] }).options.length > 0) {
             return ((s as { options?: unknown[] }).options);
           }
-          if (((d as { innerType?: unknown })?.innerType)) {
+          if (d?.innerType) {
             return findValues(d.innerType);
           }
-          if (((s as { innerType?: unknown }).innerType)) {
-            return findValues(((s as { innerType?: unknown }).innerType));
+          if ((s as { innerType?: unknown }).innerType) {
+            return findValues((s as { innerType?: unknown }).innerType);
           }
           return undefined;
         };

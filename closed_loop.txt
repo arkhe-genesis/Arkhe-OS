@@ -1,0 +1,12 @@
+
+🔄 INICIANDO LOOP FECHADO: gravitational_wave_sensing
+
+[Iteração 1/5]
+   • Métrica de sucesso: 0.850
+
+[Iteração 2/5]
+   • Métrica de sucesso: 0.900
+
+[Iteração 3/5]
+   • Métrica de sucesso: 0.950
+✅ Critério de parada atingido na iteração 3

@@ -1,7 +1,14 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/meditation/coherentMeditation.ts
 // Módulo de meditação coerente: neurofeedback coletivo guiado por sincronicidades
 
-import { SynchronicityPattern } from '@/lib/quantum/quantumSynchronicity';
+import type { SynchronicityPattern } from '@/lib/quantum/quantumSynchronicity';
 
 export interface MeditationSession {
   sessionId: string;
@@ -36,8 +43,8 @@ export interface CoherentMeditationConfig {
 
 export class CoherentMeditationEngine {
   private config: CoherentMeditationConfig;
-  private activeSessions: Map<string, MeditationSession> = new Map();
-  private participantBiofeedback: Map<string, ParticipantBiofeedback> = new Map();
+  private activeSessions = new Map<string, MeditationSession>();
+  private participantBiofeedback = new Map<string, ParticipantBiofeedback>();
 
   constructor(
     config: Partial<CoherentMeditationConfig> = {}
@@ -91,7 +98,7 @@ export class CoherentMeditationEngine {
    */
   handleSynchronicityForMeditation(sessionId: string, pattern: SynchronicityPattern): void {
     const session = this.activeSessions.get(sessionId);
-    if (!session || session.sessionStatus !== 'active') return;
+    if (!session || session.sessionStatus !== 'active') {return;}
 
     // Verificar se padrão é relevante para a sessão
     if (pattern.significanceScore < this.config.synchronicitySensitivity) {
@@ -157,14 +164,14 @@ export class CoherentMeditationEngine {
    */
   private async updateCollectiveCoherence(sessionId: string): Promise<void> {
     const session = this.activeSessions.get(sessionId);
-    if (!session) return;
+    if (!session) {return;}
 
     // Coletar biofeedback dos participantes da sessão
     const participantFeedback = session.participants
       .map(pid => this.participantBiofeedback.get(pid))
       .filter((fb): fb is ParticipantBiofeedback => fb !== undefined);
 
-    if (participantFeedback.length === 0) return;
+    if (participantFeedback.length === 0) {return;}
 
     // Calcular coerência coletiva como média ponderada
     const weights = { heartRate: 0.2, gsr: 0.2, alpha: 0.3, theta: 0.3 };
@@ -204,7 +211,7 @@ export class CoherentMeditationEngine {
    */
   async endMeditationSession(sessionId: string): Promise<void> {
     const session = this.activeSessions.get(sessionId);
-    if (!session) return;
+    if (!session) {return;}
 
     session.sessionStatus = 'completed';
 

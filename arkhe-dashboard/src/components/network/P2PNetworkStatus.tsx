@@ -1,7 +1,15 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/network/P2PNetworkStatus.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
+
 import { peerMesh } from '@/lib/webrtc/peerMesh';
 
 export default function P2PNetworkStatus() {

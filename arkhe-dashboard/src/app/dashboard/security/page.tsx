@@ -1,12 +1,20 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 'use client';
 
-import { useState, useEffect } from 'react';
-import ThreatMap from '@/components/security/ThreatMap';
-import CoherenceMetrics from '@/components/security/CoherenceMetrics';
-import IncidentTable from '@/components/security/IncidentTable';
-import ThresholdConfig from '@/components/security/ThresholdConfig';
-import EulerPrismPanel from '@/components/security/EulerPrismPanel';
 import dynamic from 'next/dynamic';
+import { useState, useEffect } from 'react';
+
+import CoherenceMetrics from '@/components/security/CoherenceMetrics';
+import EulerPrismPanel from '@/components/security/EulerPrismPanel';
+import IncidentTable from '@/components/security/IncidentTable';
+import ThreatMap from '@/components/security/ThreatMap';
+import ThresholdConfig from '@/components/security/ThresholdConfig';
 
 const ArkheCore3D = dynamic(() => import('@/components/ArkheCore3D'), { ssr: false });
 

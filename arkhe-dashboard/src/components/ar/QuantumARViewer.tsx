@@ -1,9 +1,17 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/ar/QuantumARViewer.tsx
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+
 import { QuantumAROverlay } from '@/lib/ar/quantumAROverlay';
-import { EthicalMetrics } from '@/types/ethics';
+import type { EthicalMetrics } from '@/types/ethics';
 
 interface QuantumARViewerProps {
   metrics: EthicalMetrics;
@@ -38,7 +46,7 @@ export default function QuantumARViewer({ metrics, onSessionChange }: QuantumARV
   }, [metrics, sessionActive]);
 
   const startARSession = async () => {
-    if (!containerRef.current) return;
+    if (!containerRef.current) {return;}
 
     try {
       const arOverlay = new QuantumAROverlay({

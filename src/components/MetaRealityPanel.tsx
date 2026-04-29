@@ -1,11 +1,10 @@
-
 /**
  * @license
- * Copyright 2026 Google LLC
+ * Copyright 2025 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { X, Box, Zap, AlertTriangle, Infinity } from 'lucide-react';
+import { X, Box, Zap, AlertTriangle, Infinity as InfinityIcon } from 'lucide-react';
 import { motion } from 'motion/react';
 import React from 'react';
 
@@ -55,7 +54,7 @@ export default function MetaRealityPanel({ state, onClose }: MetaRealityPanelPro
 
           <div className="bg-white/5 p-4 rounded border border-white/10 space-y-3">
              <div className="flex items-center gap-2 text-arkhe-cyan">
-                <Infinity className="w-4 h-4" />
+                <InfinityIcon className="w-4 h-4" />
                 <h3 className="text-xs font-mono font-bold uppercase">Non-Physical Manifolds</h3>
              </div>
              <div className="flex flex-wrap gap-2">

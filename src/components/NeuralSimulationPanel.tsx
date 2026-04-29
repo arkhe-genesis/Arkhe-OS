@@ -1,4 +1,11 @@
+/**
+ * @license
+ * Copyright 2025 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import React, { useState, useEffect } from 'react';
+
 import { Card, CardContent, CardHeader, CardTitle, Button, Badge, Progress } from './ui';
 
 const NeuralSimulationPanel: React.FC = () => {

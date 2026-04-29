@@ -1,5 +1,12 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/quantum/federatedHomomorphicQuantum.ts
-import { EthicalMetrics } from '@/types/ethics';
+import type { EthicalMetrics } from '@/types/ethics';
 
 export interface EncryptedEthicalData {
   ciphertext: Uint8Array;
@@ -10,9 +17,9 @@ export interface EncryptedEthicalData {
 }
 
 export class FederatedHomomorphicQuantumEngine {
-  private privacyBudget: number = 0;
+  private privacyBudget = 0;
 
-  constructor(private securityLevel: number = 256) {}
+  constructor(private securityLevel = 256) {}
 
   async encryptEthicalData(data: EthicalMetrics): Promise<EncryptedEthicalData> {
     const plaintext = JSON.stringify(data);

@@ -1,3 +1,10 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/lora/mixtureOfLoRAExperts.ts
 import * as tf from '@tensorflow/tfjs';
 
@@ -21,7 +28,7 @@ export class MixtureOfLoRAExperts {
   }
 
   async combineLayers(contextVector: tf.Tensor1D) {
-    if (this.experts.length === 0) return { deltaWeight: tf.zeros([768, 768]) };
+    if (this.experts.length === 0) {return { deltaWeight: tf.zeros([768, 768]) };}
 
     return tf.tidy(() => {
       let delta = tf.zeros([768, 768]);

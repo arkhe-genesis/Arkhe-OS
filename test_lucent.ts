@@ -1,5 +1,12 @@
-import { LucentCollector } from './packages/lucent-sdk/src/LucentCollector';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { HydroUXCorrelator } from './packages/lucent-sdk/src/correlation/HydroUXCorrelator';
+import { LucentCollector } from './packages/lucent-sdk/src/LucentCollector';
 
 async function testLucent() {
   console.log("Starting Lucent Test...");

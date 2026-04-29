@@ -1,3 +1,10 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/webgpu/ethicalKernels.ts
 
 export const MatMulShader = `
@@ -149,7 +156,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 
 export class EthicalWebGPU {
   private device: GPUDevice | null = null;
-  private pipelines: Map<string, GPUComputePipeline> = new Map();
+  private pipelines = new Map<string, GPUComputePipeline>();
 
   constructor(device: GPUDevice) {
     this.device = device;
@@ -157,7 +164,7 @@ export class EthicalWebGPU {
   }
 
   private initializePipelines() {
-    if (!this.device) return;
+    if (!this.device) {return;}
 
     const shaders = [
         { name: 'matmul', code: MatMulShader },
@@ -180,9 +187,9 @@ export class EthicalWebGPU {
   }
 
   async runMatMul(A: GPUBuffer, B: GPUBuffer, C: GPUBuffer, M: number, N: number, K: number) {
-    if (!this.device) return;
+    if (!this.device) {return;}
     const pipeline = this.pipelines.get('matmul');
-    if (!pipeline) return;
+    if (!pipeline) {return;}
 
     const dimsBuffer = this.device.createBuffer({
       size: 12,
@@ -211,9 +218,9 @@ export class EthicalWebGPU {
 
   // Methods for Attention, RMSNorm, etc would follow similar patterns
   async runSampling(logits: GPUBuffer, vocabSize: number, temperature: number) {
-      if (!this.device) return;
+      if (!this.device) {return;}
       const pipeline = this.pipelines.get('sampling');
-      if (!pipeline) return;
+      if (!pipeline) {return;}
 
       const paramsBuffer = this.device.createBuffer({
           size: 8,

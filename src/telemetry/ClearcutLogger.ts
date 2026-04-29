@@ -8,7 +8,6 @@ import process from 'node:process';
 
 import {DAEMON_CLIENT_NAME} from '../daemon/utils.js';
 import {logger} from '../logger.js';
-import type {zod, ShapeOutput} from '../third_party/index.js';
 
 import type {LocalState, Persistence} from './persistence.js';
 import {FilePersistence} from './persistence.js';
@@ -38,9 +37,9 @@ function isZodType(type: string): type is ZodType {
   return SUPPORTED_ZOD_TYPES.includes(type as ZodType);
 }
 
-export function getZodType(zodType: any): ZodType {
-  const def = zodType._def;
-  let typeName = (def as any).typeName;
+export function getZodType(zodType: unknown): ZodType {
+  const def = (zodType as { _def: { typeName?: string; type?: string } })._def;
+  let typeName = def.typeName;
   if (!typeName && def.type) {
     // Fallback for some zod versions/configurations
     const map: Record<string, string> = {
@@ -65,21 +64,21 @@ export function getZodType(zodType: any): ZodType {
     typeName === 'ZodDefault' ||
     typeName === 'ZodNullable'
   ) {
-    const innerType = (def as any).innerType;
+    const innerType = (def as { innerType?: unknown }).innerType;
     if (!innerType) {
       throw new Error(`Zod type ${typeName} missing innerType`);
     }
     return getZodType(innerType);
   }
   if (typeName === 'ZodPipeline') {
-    const innerType = (def as any).innerType || (def as any).in;
+    const innerType = (def as { innerType?: unknown }).innerType || (def as { in?: unknown }).in;
     if (!innerType) {
       throw new Error(`Zod type ${typeName} missing innerType or in`);
     }
     return getZodType(innerType);
   }
   if (typeName === 'ZodEffects') {
-    return getZodType((def as any).schema);
+    return getZodType((def as { schema: unknown }).schema);
   }
 
   if (isZodType(typeName)) {
@@ -163,15 +162,14 @@ function hasEquivalentType(zodType: ZodType, value: unknown): boolean {
 }
 
 export function sanitizeParams(
-  params: any,
-  schema: any,
-): any {
-  const transformed: any = {};
+  params: Record<string, unknown>,
+  schema: Record<string, unknown>,
+): Record<string, LoggedToolCallArgValue> {
+  const transformed: Record<string, LoggedToolCallArgValue> = {};
   for (const [name, value] of Object.entries(params)) {
     if (PARAM_BLOCKLIST.has(name)) {
       continue;
     }
-      // @ts-expect-error
     const zodType = getZodType(schema[name]);
     if (!hasEquivalentType(zodType, value)) {
       throw new Error(
@@ -179,9 +177,7 @@ export function sanitizeParams(
       );
     }
     const transformedName = transformArgName(zodType, name);
-    // @ts-expect-error
     const transformedValue = transformValue(zodType, value);
-    // @ts-expect-error
     transformed[transformedName] = transformedValue;
   }
   return transformed;
