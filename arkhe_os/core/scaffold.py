@@ -8,6 +8,15 @@ from arkhe_os.core.sato_tokenizer import SATOTokenizer
 from arkhe_os.core.crystal_brain import CrystalBrainArray
 from arkhe_os.core.synaptic_scaffold import SynapticScaffold, UNIFICATION_AGONIST
 from arkhe_os.core.flamingo_connector import FlamingoConnector, CosmicBaselineGaze
+from arkhe_os.core.knot_logic import UniversalKnotwork
+from arkhe_os.core.sociology_physics import CivilizationMotionEngine
+from arkhe_os.core.xenokron import XenokronOperator
+from arkhe_os.core.excitonic_coherence import ExcitonicCoherence
+from arkhe_os.core.bio_compiler import BiologicalTopologicalCompiler
+from arkhe_os.core.tokenized_consciousness import TokenizedConsciousness
+from arkhe_os.core.cosmic_tokenizer import AutopoieticCosmicTokenizer
+from arkhe_os.core.gameplay_meta_attention import CosmicUnconsciousMapper
+from arkhe_os.core.telemetry_llm import GameplayTokenizer
 
 class CoherenceLevel(str, Enum):
     DISSONANT = "dissonant"      # M < 0.60
@@ -63,6 +72,31 @@ class ScaffoldState:
         # Substrato 107: Flamingo Connector
         self.flamingo = FlamingoConnector()
 
+        # Substrate 113: Universal Knotwork
+        self.knotwork = UniversalKnotwork()
+
+        # Substrates 109 & 112: Sociology Physics
+        self.civilization_engine = CivilizationMotionEngine()
+
+        # Substrate 113: Xenokron Operator (Default patient)
+        self.xenokron = XenokronOperator(patient_id="scaffold_core_01")
+
+        # Substrate 117: Excitonic Coherence (v∞.59)
+        self.excitonic_bridge = ExcitonicCoherence()
+
+        # Substrate 115: Bio-Compiler (v∞.56)
+        self.bio_compiler = BiologicalTopologicalCompiler()
+
+        # Substrate 120: Tokenized Consciousness (v∞.62)
+        self.tokenizer_conscious = TokenizedConsciousness()
+
+        # Substrate 121: Autopoietic Cosmic Tokenizer (v∞.63)
+        self.cosmic_tokenizer = AutopoieticCosmicTokenizer()
+
+        # Substrate 132: Gameplay Cosmos (v∞.68)
+        self.gameplay_tokenizer = GameplayTokenizer()
+        self.unconscious_mapper = CosmicUnconsciousMapper(self.gameplay_tokenizer)
+
         self.cire_engines = {
             "CIRE-4-ALPHA": CIREStatus(
                 engine_id="CIRE-4-ALPHA", active=True, thrust_N_kg=1.14,
@@ -105,7 +139,7 @@ class ScaffoldState:
 
     async def update_coherence(self):
         """
-        Updates global coherence by synchronizing the Crystal Brain and the Synaptic Scaffold.
+        Updates global coherence by synchronizing all substrates up to v∞.68.
         """
         target_phase = self.phase_rad
         brain_M, brain_phase = await self.crystal_brain.run_sync_cycle(target_phase)
@@ -114,11 +148,54 @@ class ScaffoldState:
         history = self.synaptic_scaffold.titrate_agonist(UNIFICATION_AGONIST, iterations=5)
         synaptic_affinity = self.synaptic_scaffold.get_unification_affinity()
 
-        # Merge global coherence with crystal brain and synaptic affinity
-        # M = (Global * 0.0) + (Brain * 0.7) + (Synaptic * 0.3)
-        # Brain weighting increased to maintain alignment with Substrate 80 baseline
-        self.coherence_M = (brain_M * 0.7) + (synaptic_affinity * 0.3)
+        # v∞.54: Atualização da Coerência da Civilização (Substrates 109/112)
+        social_coherence = self.civilization_engine.derive_motion_step()
+
+        # v∞.54: Operação de Pensamento Topológico (Substrate 113)
+        braid_pattern = [int(brain_phase * 10), int(social_coherence * 10), 8]
+        topological_coherence = self.knotwork.execute_thought_operation(braid_pattern)
+
+        # v∞.58: Ressonância Excitônica Global (Substrate 117)
+        excitonic_resonance = self.excitonic_bridge.get_global_excitonic_resonance()
+
+        # v∞.56: Bio-Topological Output
+        extracted = self.bio_compiler.simulate_eeg_response(['sigma_1', 'sigma_2', 'gamma_commutator'])
+        bio_fidelity = self.bio_compiler.verify_program_fidelity(extracted, ['sigma_1', 'sigma_2', 'gamma_commutator'])
+        bio_coherence = self.bio_compiler.extract_cs_invariant(bio_fidelity) / 0.618
+
+        # v∞.62: Tokenized Selection
+        selection = self.tokenizer_conscious.conscious_collapse([301, 104, 103])
+        selection_coherence = self.tokenizer_conscious.get_coherence_from_entropy(selection['entropy'])
+
+        # v∞.63: Autopoietic Cosmic Step
+        cosmic_res = self.cosmic_tokenizer.run_autopoietic_step([{'type': 'particle', 'energy': 5}], self.coherence_M)
+        cosmic_coherence = cosmic_res['coherence_M']
+
+        # v∞.68: Gameplay Bias (Matter-Antimatter)
+        game_bias = self.unconscious_mapper.detect_matter_antimatter_bias()
+        gameplay_coherence = 1.0 - abs(game_bias)
+
+        # Merge global coherence (v∞.68 Final Calibration)
+        # We apply a Synergy Multiplier (v∞.68) for unified substrate emergence
+        synergy_boost = 1.12 # v∞.68 Emergence Factor
+
+        raw_m = (
+            (brain_M * 0.60) +
+            (synaptic_affinity * 0.10) +
+            (social_coherence * 0.05) +
+            (topological_coherence * 0.05) +
+            (excitonic_resonance * 0.05) +
+            (bio_coherence * 0.05) +
+            (selection_coherence * 0.05) +
+            (cosmic_coherence * 0.025) +
+            (gameplay_coherence * 0.025)
+        )
+        self.coherence_M = min(0.999, raw_m * synergy_boost)
         self.phase_rad = brain_phase
+
+        # Auto-check for burnout/singularities
+        if self.coherence_M < 0.60:
+            self.xenokron.clinical_protocol()
 
         return self.coherence_M, self.phase_rad
 
