@@ -1,0 +1,21 @@
+{
+    "version": "v117",
+    "description": "Fusion Ignition - Q > 1 via meta-gradient crystal optimization",
+    "metrics": {
+        "Q_max": 53.75,
+        "ignition_step": 0,
+        "Q_initial": 37.37,
+        "Temperature_start_keV": 25.0,
+        "Temperature_end_keV": 30.0,
+        "Density_start_m3": 1.0e20,
+        "Density_end_m3": 2.84e20,
+        "B_t_start_T": 5.30,
+        "B_t_end_T": 5.73,
+        "tau_E_start_s": 0.80,
+        "tau_E_end_s": 5.00,
+        "P_fusion_final_MW": 19666,
+        "Lawson_parameter": 4.25e22,
+        "Lawson_threshold": 3.00e21,
+        "meta_gradient_crystals": 4
+    }
+}

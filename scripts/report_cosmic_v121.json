@@ -1,0 +1,26 @@
+{
+    "version": "v121",
+    "description": "CMB Real Bath + Delay Lines + TSVF",
+    "features": [
+        "cmb_real_bath",
+        "cosmic_delay_line_mesh",
+        "tsvf_retrocausality"
+    ],
+    "cmb_model": {
+        "bose_einstein_occupation": "n_bar(v,z) = 1/(exp(hv/kT_CMB(z)) - 1)",
+        "T_CMB_z": "T_0(1+z)",
+        "entropy_density": "s = (4/3) * a_B * T^3"
+    },
+    "cdlm_model": {
+        "lookback_time_z5": "> 12.5 Gyr",
+        "phase_accumulation": "phi = w * t_delay",
+        "fidelity": "exp(-scattering * t_lookback)",
+        "mesh_edges": "500 Mpc comoving"
+    },
+    "tsvf_model": {
+        "formalism": "<psi| * |chi>",
+        "forward": "primordial plasma at emission (z_em ~ 10)",
+        "backward": "thermal equilibrium at detection (z_det = 0)",
+        "weak_value": "A_w = <chi|A|psi> / <chi|psi>"
+    }
+}
