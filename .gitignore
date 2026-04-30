@@ -157,3 +157,7 @@ log.txt
 .DS_Store
 target/
 **/target/
+.venv/
+build/bin/
+node_modules/
+arkhe-rust-core/target/

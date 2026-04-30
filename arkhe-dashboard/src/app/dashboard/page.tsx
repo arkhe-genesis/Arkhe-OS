@@ -1,4 +1,5 @@
 'use client';
+import EthicalSimulatorPanel from '@/components/simulator/EthicalSimulatorPanel';
 /**
  * @license
  * Copyright 2025 Google LLC

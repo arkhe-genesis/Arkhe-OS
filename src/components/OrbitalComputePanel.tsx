@@ -62,7 +62,7 @@ export default function OrbitalComputePanel({ orbital }: { orbital: OrbitalState
 
       <div className="flex-1 flex flex-col gap-2">
         <h3 className="text-[10px] font-mono text-arkhe-muted uppercase mb-1 flex items-center gap-1">
-          <Layers className="w-3 h-3" /> Physical World OS Stack
+          <Layers className="w-3 h-3" /> Physical world-os Stack
         </h3>
 
         <div className="grid grid-cols-1 gap-2">
