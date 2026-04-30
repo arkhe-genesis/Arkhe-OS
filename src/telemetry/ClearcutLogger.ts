@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, @local/enforce-zod-schema */
 /**
  * @license
  * Copyright 2026 Google LLC

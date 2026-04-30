@@ -5,36 +5,42 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useEffect, useState, useCallback } from 'react';
-
 import dynamic from 'next/dynamic';
+import React, {useEffect, useState, useCallback} from 'react';
 
-import EthicalPredictionChart from '@/components/EthicalPredictionChart';
 import CosmicMemoryViewer from '@/components/CosmicMemoryViewer';
-import TelemetryStream from '@/components/TelemetryStream';
-import ZKPVerificationPanel from '@/components/ZKPVerificationPanel';
+import EthicalPredictionChart from '@/components/EthicalPredictionChart';
 import HomomorphicTrainingPanel from '@/components/homomorphic/HomomorphicTrainingPanel';
-import P2PNetworkStatus from '@/components/network/P2PNetworkStatus';
-import InterCathedralPanel from '@/components/quantum/InterCathedralPanel';
-import SafeCorePanel from '@/components/security/SafeCorePanel';
-import { ethicalFederatedLearner } from '@/lib/ai/ethicalFederatedLearner';
-import { useZustandStore } from '@/lib/store';
-import type { EthicalMetrics } from '@/types/ethics';
-import QuantumTelepathyPanel from '@/components/quantum/QuantumTelepathyPanel';
-import SynchronicityBlockchainPanel from '@/components/quantum/SynchronicityBlockchainPanel';
 import QuantumMarketplacePanel from '@/components/marketplace/QuantumMarketplacePanel';
 import CoherentMeditationPanel from '@/components/meditation/CoherentMeditationPanel';
+import P2PNetworkStatus from '@/components/network/P2PNetworkStatus';
+import InterCathedralPanel from '@/components/quantum/InterCathedralPanel';
+import QuantumTelepathyPanel from '@/components/quantum/QuantumTelepathyPanel';
+import SynchronicityBlockchainPanel from '@/components/quantum/SynchronicityBlockchainPanel';
 import RetrocausalWisdomPanel from '@/components/retrocausality/RetrocausalWisdomPanel';
 import NeuralCoherenceBar from '@/components/security/NeuralCoherenceBar';
 import SafeCorePanel from '@/components/security/SafeCorePanel';
+import SafeCorePanel from '@/components/security/SafeCorePanel';
+import TelemetryStream from '@/components/TelemetryStream';
+import ZKPVerificationPanel from '@/components/ZKPVerificationPanel';
+import {ethicalFederatedLearner} from '@/lib/ai/ethicalFederatedLearner';
+import {useZustandStore} from '@/lib/store';
+import type {EthicalMetrics} from '@/types/ethics';
 
-const ArkheCore3D = dynamic(() => import('@/components/ArkheCore3D'), { ssr: false });
-const QuantumARViewer = dynamic(() => import('@/components/ar/QuantumARViewer'), { ssr: false });
+const ArkheCore3D = dynamic(() => import('@/components/ArkheCore3D'), {
+  ssr: false,
+});
+const QuantumARViewer = dynamic(
+  () => import('@/components/ar/QuantumARViewer'),
+  {ssr: false},
+);
 
 export default function DashboardPage() {
-  const { metrics, setMetrics, predictions, setPredictions } = useZustandStore();
+  const {metrics, setMetrics, predictions, setPredictions} = useZustandStore();
   const [isTraining, setIsTraining] = useState(false);
-  const [federatedMetrics, setFederatedMetrics] = useState<Record<string, number>>({});
+  const [federatedMetrics, setFederatedMetrics] = useState<
+    Record<string, number>
+  >({});
   const [activeTab, setActiveTab] = useState<'3d' | 'ar' | 'scaffold'>('3d');
 
   // Conexão WebSocket Simulada
@@ -68,23 +74,23 @@ export default function DashboardPage() {
     setIsTraining(true);
     try {
       const localData = {
-        features: Array.from({ length: 50 }, () =>
-          Array.from({ length: 10 }, () =>
-            Array.from({ length: 6 }, () => 0.9 + Math.random() * 0.1)
-          )
+        features: Array.from({length: 50}, () =>
+          Array.from({length: 10}, () =>
+            Array.from({length: 6}, () => 0.9 + Math.random() * 0.1),
+          ),
         ),
-        labels: Array.from({ length: 50 }, () => 0.92 + Math.random() * 0.08),
+        labels: Array.from({length: 50}, () => 0.92 + Math.random() * 0.08),
       };
 
       const update = await ethicalFederatedLearner.trainLocalModel(
         'client_arkhe_dashboard',
         localData,
-        3
+        3,
       );
 
       const response = await fetch('/api/federated/aggregate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
           action: 'submit_update',
           ...update,
@@ -163,11 +169,23 @@ export default function DashboardPage() {
             </div>
 
             {activeTab === '3d' ? (
-              <ArkheCore3D omega={metrics.omega} kEth={metrics.kEth} />
+              <ArkheCore3D
+                omega={metrics.omega}
+                kEth={metrics.kEth}
+              />
             ) : activeTab === 'scaffold' ? (
-              <ArkheCore3D omega={metrics.omega} kEth={metrics.kEth} scaffoldMode={true} />
+              <ArkheCore3D
+                omega={metrics.omega}
+                kEth={metrics.kEth}
+                scaffoldMode={true}
+              />
             ) : (
-              <QuantumARViewer metrics={metrics} onSessionChange={() => { /* noop */ }} />
+              <QuantumARViewer
+                metrics={metrics}
+                onSessionChange={() => {
+                  /* noop */
+                }}
+              />
             )}
 
             {/* Bottom Metrics Overlay */}
@@ -175,15 +193,23 @@ export default function DashboardPage() {
               <NeuralCoherenceBar />
               <div className="bg-black/60 backdrop-blur-md p-4 rounded-2xl border border-white/5">
                 <p className="text-[10px] text-slate-500 mb-1">CONSTANTE K</p>
-                <p className="text-lg font-bold text-purple-400">{metrics.kEth.toFixed(4)}</p>
+                <p className="text-lg font-bold text-purple-400">
+                  {metrics.kEth.toFixed(4)}
+                </p>
               </div>
               <div className="bg-black/60 backdrop-blur-md p-4 rounded-2xl border border-white/5">
                 <p className="text-[10px] text-slate-500 mb-1">FIDELIDADE Q</p>
-                <p className="text-lg font-bold text-emerald-400">{(metrics.quantumFidelity * 100).toFixed(1)}%</p>
+                <p className="text-lg font-bold text-emerald-400">
+                  {(metrics.quantumFidelity * 100).toFixed(1)}%
+                </p>
               </div>
               <div className="bg-black/60 backdrop-blur-md p-4 rounded-2xl border border-white/5">
-                <p className="text-[10px] text-slate-500 mb-1">PRIVACIDADE (ε)</p>
-                <p className="text-lg font-bold text-amber-400">{federatedMetrics?.privacyBudget?.toFixed(2) || '0.00'}</p>
+                <p className="text-[10px] text-slate-500 mb-1">
+                  PRIVACIDADE (ε)
+                </p>
+                <p className="text-lg font-bold text-amber-400">
+                  {federatedMetrics?.privacyBudget?.toFixed(2) || '0.00'}
+                </p>
               </div>
             </div>
           </div>
@@ -193,19 +219,35 @@ export default function DashboardPage() {
             <div className="bg-gradient-to-r from-purple-900/20 to-cyan-900/20 border border-white/10 rounded-3xl p-6 flex justify-between items-center">
               <div className="flex items-center gap-6">
                 <div className="flex -space-x-3">
-                  {[1,2,3,4].map(i => (
-                    <div key={i} className="w-10 h-10 rounded-full bg-slate-800 border-2 border-black flex items-center justify-center text-[10px] font-bold">C{i}</div>
+                  {[1, 2, 3, 4].map(i => (
+                    <div
+                      key={i}
+                      className="w-10 h-10 rounded-full bg-slate-800 border-2 border-black flex items-center justify-center text-[10px] font-bold"
+                    >
+                      C{i}
+                    </div>
                   ))}
-                  <div className="w-10 h-10 rounded-full bg-cyan-500 border-2 border-black flex items-center justify-center text-[10px] font-bold text-black">+{federatedMetrics.participatingClients - 1}</div>
+                  <div className="w-10 h-10 rounded-full bg-cyan-500 border-2 border-black flex items-center justify-center text-[10px] font-bold text-black">
+                    +{federatedMetrics.participatingClients - 1}
+                  </div>
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-white uppercase">Rede Coletiva Ativa</h4>
-                  <p className="text-[10px] text-slate-400">Rodada #{federatedMetrics.roundNumber} completada com sucesso</p>
+                  <h4 className="text-xs font-bold text-white uppercase">
+                    Rede Coletiva Ativa
+                  </h4>
+                  <p className="text-[10px] text-slate-400">
+                    Rodada #{federatedMetrics.roundNumber} completada com
+                    sucesso
+                  </p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-[10px] text-slate-500">PERDA MÉDIA (GLOBAL)</p>
-                <p className="font-mono text-cyan-400">{federatedMetrics.avgLoss?.toFixed(8)}</p>
+                <p className="text-[10px] text-slate-500">
+                  PERDA MÉDIA (GLOBAL)
+                </p>
+                <p className="font-mono text-cyan-400">
+                  {federatedMetrics.avgLoss?.toFixed(8)}
+                </p>
               </div>
             </div>
           )}
@@ -213,18 +255,22 @@ export default function DashboardPage() {
 
         {/* Sidebar */}
         <div className="col-span-12 lg:col-span-4 space-y-6">
-          <EthicalPredictionChart currentMetrics={metrics} prediction={predictions} loading={false} />
+          <EthicalPredictionChart
+            currentMetrics={metrics}
+            prediction={predictions}
+            loading={false}
+          />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
-             <SafeCorePanel />
-             <RetrocausalWisdomPanel />
-             <QuantumMarketplacePanel />
-             <SynchronicityBlockchainPanel />
-             <InterCathedralPanel />
-             <CoherentMeditationPanel />
-             <CosmicMemoryViewer currentMetrics={metrics} />
-             <HomomorphicTrainingPanel />
-             <EthicalSimulatorPanel />
-             <P2PNetworkStatus />
+            <SafeCorePanel />
+            <RetrocausalWisdomPanel />
+            <QuantumMarketplacePanel />
+            <SynchronicityBlockchainPanel />
+            <InterCathedralPanel />
+            <CoherentMeditationPanel />
+            <CosmicMemoryViewer currentMetrics={metrics} />
+            <HomomorphicTrainingPanel />
+            <EthicalSimulatorPanel />
+            <P2PNetworkStatus />
           </div>
           <QuantumTelepathyPanel />
           <ZKPVerificationPanel />

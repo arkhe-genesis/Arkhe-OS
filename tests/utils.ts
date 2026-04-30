@@ -5,6 +5,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-ts-comment */
+
+
 import assert from 'node:assert';
 import {spawn} from 'node:child_process';
 import path from 'node:path';

@@ -1,3 +1,10 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/webrtc/peerMesh.ts
 
 export interface BiofeedbackState {
@@ -9,7 +16,7 @@ export interface BiofeedbackState {
 }
 
 export class BiofeedbackP2PMesh {
-  private crdt: Map<string, BiofeedbackState> = new Map();
+  private crdt = new Map<string, BiofeedbackState>();
 
   constructor(private nodeId: string) {}
 
@@ -26,7 +33,7 @@ export class BiofeedbackP2PMesh {
 
   getAggregatedMetrics() {
     const nodes = Array.from(this.crdt.values());
-    if (nodes.length === 0) return { avgOmega: 0.94, nodeCount: 1 };
+    if (nodes.length === 0) {return { avgOmega: 0.94, nodeCount: 1 };}
 
     return {
       avgOmega: nodes.reduce((s, n) => s + n.omega, 0) / nodes.length,

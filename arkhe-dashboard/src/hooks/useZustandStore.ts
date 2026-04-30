@@ -1,6 +1,14 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/hooks/useZustandStore.ts
 import { create } from 'zustand';
-import { EthicalMetrics, PredictionResult } from '@/types/ethics';
+
+import type { EthicalMetrics, PredictionResult } from '@/types/ethics';
 
 interface ArkheState {
   metrics: EthicalMetrics;

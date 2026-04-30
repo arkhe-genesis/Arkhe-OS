@@ -1,16 +1,27 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/ar/QuantumARViewer.tsx
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { QuantumAROverlay } from '@/lib/ar/quantumAROverlay';
-import { EthicalMetrics } from '@/types/ethics';
+import {useEffect, useRef, useState} from 'react';
+
+import {QuantumAROverlay} from '@/lib/ar/quantumAROverlay';
+import type {EthicalMetrics} from '@/types/ethics';
 
 interface QuantumARViewerProps {
   metrics: EthicalMetrics;
   onSessionChange?: (active: boolean) => void;
 }
 
-export default function QuantumARViewer({ metrics, onSessionChange }: QuantumARViewerProps) {
+export default function QuantumARViewer({
+  metrics,
+  onSessionChange,
+}: QuantumARViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const arOverlayRef = useRef<QuantumAROverlay | null>(null);
   const [arSupported, setArSupported] = useState(false);
@@ -21,15 +32,21 @@ export default function QuantumARViewer({ metrics, onSessionChange }: QuantumARV
     const checkARSupport = async () => {
       if (typeof window !== 'undefined' && 'xr' in navigator) {
         try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const supported = await (navigator as unknown as { xr: { isSessionSupported: (mode: string) => Promise<boolean> } }).xr.isSessionSupported('immersive-ar');
+
+          const supported = await (
+            navigator as unknown as {
+              xr: {isSessionSupported: (mode: string) => Promise<boolean>};
+            }
+          ).xr.isSessionSupported('immersive-ar');
           setArSupported(supported);
         } catch (_err) {
           setArSupported(false);
         }
       }
     };
-    checkARSupport().catch(() => {});
+    checkARSupport().catch(() => {
+      /* ignore */
+    });
   }, []);
 
   useEffect(() => {
@@ -39,10 +56,10 @@ export default function QuantumARViewer({ metrics, onSessionChange }: QuantumARV
   }, [metrics, sessionActive]);
 
   const startARSession = async () => {
-    if (!containerRef.current) return;
+    if (!containerRef.current) {return;}
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       const arOverlay = new QuantumAROverlay({
         enableWorldTracking: true,
         enableHandTracking: true,
@@ -58,7 +75,9 @@ export default function QuantumARViewer({ metrics, onSessionChange }: QuantumARV
         setSessionActive(true);
         onSessionChange?.(true);
       } else {
-        setError('Failed to start AR session. Make sure you are on a compatible device.');
+        setError(
+          'Failed to start AR session. Make sure you are on a compatible device.',
+        );
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'AR initialization failed');
@@ -83,9 +102,12 @@ export default function QuantumARViewer({ metrics, onSessionChange }: QuantumARV
         {!sessionActive && (
           <div className="text-center p-6 bg-black/40 backdrop-blur-md rounded-2xl max-w-sm border border-white/10">
             <div className="text-4xl mb-4">🔮</div>
-            <h4 className="text-lg font-bold text-white mb-2">Realidade Aumentada Quântica</h4>
+            <h4 className="text-lg font-bold text-white mb-2">
+              Realidade Aumentada Quântica
+            </h4>
             <p className="text-sm text-slate-400 mb-6">
-              Sobreponha o campo de coerência Ω ao seu ambiente físico via WebXR.
+              Sobreponha o campo de coerência Ω ao seu ambiente físico via
+              WebXR.
             </p>
             <button
               onClick={startARSession}
@@ -96,7 +118,9 @@ export default function QuantumARViewer({ metrics, onSessionChange }: QuantumARV
                   : 'bg-slate-800 text-slate-500 cursor-not-allowed'
               }`}
             >
-              {arSupported ? 'Iniciar Experiência AR' : 'AR Não Suportado neste Browser'}
+              {arSupported
+                ? 'Iniciar Experiência AR'
+                : 'AR Não Suportado neste Browser'}
             </button>
           </div>
         )}
@@ -106,8 +130,12 @@ export default function QuantumARViewer({ metrics, onSessionChange }: QuantumARV
         <div className="absolute top-4 left-4 right-4 flex justify-between items-start pointer-events-none">
           <div className="bg-black/60 backdrop-blur-md rounded-lg p-3 text-[10px] font-mono border border-white/10">
             <div className="text-cyan-400">Ω: {metrics.omega.toFixed(6)}</div>
-            <div className="text-purple-400">K_ETH: {metrics.kEth.toFixed(6)}</div>
-            <div className="text-emerald-400">Q_FID: {(metrics.quantumFidelity || 0.99).toFixed(4)}</div>
+            <div className="text-purple-400">
+              K_ETH: {metrics.kEth.toFixed(6)}
+            </div>
+            <div className="text-emerald-400">
+              Q_FID: {(metrics.quantumFidelity || 0.99).toFixed(4)}
+            </div>
           </div>
           <button
             onClick={stopARSession}
