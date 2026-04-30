@@ -1,6 +1,14 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 'use client';
 
 import { useEffect, useState } from 'react';
+
 import { useZustandStore } from '@/hooks/useZustandStore';
 
 export default function NeuralCoherenceBar() {
