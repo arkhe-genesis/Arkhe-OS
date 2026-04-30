@@ -607,7 +607,7 @@ export function runSimulationTick(broadcastState: () => void) {
     ramsey: newRamsey,
     chshMonitor: newCHSH,
     logs: newLogs,
-    tzinor: tzinorStore.state,
+    tzinor: (tzinorStore as any).state || state.tzinor,
     epoch: now / 1000,
     edge: {
       activePhysicalNodes: Math.max(100000, state.edge.activePhysicalNodes + Math.floor(Math.random() * 100) - 40),

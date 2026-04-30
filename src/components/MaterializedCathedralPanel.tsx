@@ -4,7 +4,8 @@
  * Copyright 2026 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-shadow-restricted-names */
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 
 import { X, Zap, ShieldCheck, Activity, Layers, Radio } from 'lucide-react';

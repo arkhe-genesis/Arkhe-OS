@@ -6,6 +6,12 @@
       "sourceType": "github",
       "skillPath": "skills/fortytwo-mcp/SKILL.md",
       "computedHash": "31751fb6b691c047240d05a112f49113509d1d5f77a87b8afbf3cc070fea30c6"
+    },
+    "urbit": {
+      "source": "urbit/urbit",
+      "sourceType": "github",
+      "skillPath": "skills/urbit/SKILL.md",
+      "computedHash": "84c45b284579501b17241b119f18df0d1d95c157b2960f440377fbca6c1c19f1"
     }
   }
 }
