@@ -7,6 +7,11 @@
       "skillPath": "skills/fortytwo-mcp/SKILL.md",
       "computedHash": "31751fb6b691c047240d05a112f49113509d1d5f77a87b8afbf3cc070fea30c6"
     },
+    "tribev2": {
+      "source": "facebookresearch/tribev2",
+      "sourceType": "github",
+      "skillPath": "skills/tribev2/SKILL.md",
+      "computedHash": "63dd2da3470700a1fa7a57c79e085830c95e504228dbcaa650f8bf9dbfb90bff"
     "urbit": {
       "source": "urbit/urbit",
       "sourceType": "github",

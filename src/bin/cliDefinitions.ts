@@ -3536,6 +3536,29 @@ export const commands: Commands = {
       }
     }
   },
+  "tribev2_predict": {
+    "description": "Predict fMRI brain responses to naturalistic stimuli (video, audio, text) using TRIBE v2.",
+    "category": "Mercury Agent Protocols",
+    "args": {
+      "mediaType": {
+        "name": "mediaType",
+        "type": "string",
+        "description": "The type of media file.",
+        "required": true,
+        "enum": [
+          "video",
+          "audio",
+          "text"
+        ]
+      },
+      "mediaPath": {
+        "name": "mediaPath",
+        "type": "string",
+        "description": "The path to the media file.",
+        "required": true
+      }
+    }
+  },
   "tunnel_alpha": {
     "description": "ASI Protocol: Initiates fine-structure constant tunneling to locally modify alpha.",
     "category": "Arkhe(n) Protocols",

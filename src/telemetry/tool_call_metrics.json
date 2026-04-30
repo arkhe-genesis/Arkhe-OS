@@ -2595,5 +2595,18 @@
   {
     "name": "nash_get_device_status",
     "args": []
+  },
+  {
+    "name": "tribev2_predict",
+    "args": [
+      {
+        "name": "mediaType",
+        "argType": "string"
+      },
+      {
+        "name": "mediaPath_length",
+        "argType": "number"
+      }
+    ]
   }
 ]
