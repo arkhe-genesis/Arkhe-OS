@@ -35,12 +35,12 @@ export default function CoherentMeditationPanel() {
     };
   }, []);
 
-  const startMeditation = async () => {
+  const startMeditation = () => {
     setIsMeditating(true);
     setParticipantCount(Math.floor(Math.random() * 10) + 5);
   };
 
-  const endMeditation = async () => {
+  const endMeditation = () => {
     setIsMeditating(false);
   };
 

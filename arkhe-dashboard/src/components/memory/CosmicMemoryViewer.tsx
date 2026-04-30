@@ -60,7 +60,7 @@ export default function CosmicMemoryViewer({
         <input
           type="text"
           value={searchQuery}
-          onChange={e => setSearchQuery(e.target.value)}
+          onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Buscar ressonância ética..."
           className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-purple-500/50 transition-all"
         />

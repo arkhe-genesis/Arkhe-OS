@@ -128,13 +128,13 @@ export default function DashboardPage() {
 
         <div className="flex gap-3">
           <button
-            onClick={requestPrediction}
+            onClick={() => void requestPrediction()}
             className="px-6 py-2 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 rounded-xl text-xs font-bold hover:bg-cyan-500/20 transition-all"
           >
             🔮 PREDIÇÃO FEDERADA
           </button>
           <button
-            onClick={handleFederatedTraining}
+            onClick={() => void handleFederatedTraining()}
             disabled={isTraining}
             className="px-6 py-2 bg-purple-500/20 border border-purple-500/40 text-purple-300 rounded-xl text-xs font-bold hover:bg-purple-500/30 transition-all disabled:opacity-50 shadow-[0_0_15px_rgba(168,85,247,0.1)]"
           >

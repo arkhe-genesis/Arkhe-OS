@@ -10,6 +10,12 @@
 
 import {useState, useEffect} from 'react';
 
+type TrainingStats = {
+  federatedQPUs: number;
+  avgTrainingLoss: number;
+  avgValidationAccuracy: number;
+};
+
 export default function HomomorphicTrainingPanel() {
   const [isTraining, setIsTraining] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -23,7 +29,7 @@ export default function HomomorphicTrainingPanel() {
 
   const handleTrain = async () => {
     setIsTraining(true);
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     setIsTraining(false);
   };
 
@@ -45,7 +51,7 @@ export default function HomomorphicTrainingPanel() {
         </div>
       </div>
       <button
-        onClick={handleTrain}
+        onClick={() => void handleTrain()}
         disabled={isTraining}
         className="w-full py-3 bg-emerald-600/20 border border-emerald-500/30 text-emerald-400 rounded-xl text-[10px] font-black hover:bg-emerald-600/30 transition-all disabled:opacity-50"
       >

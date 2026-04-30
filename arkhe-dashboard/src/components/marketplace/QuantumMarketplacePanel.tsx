@@ -13,6 +13,12 @@ import {useState, useEffect} from 'react';
 import {quantumEthicalTalentMarketplace} from '@/lib/marketplace/quantumEthicalTalentMarketplace';
 import {EthicalPrinciple} from '@/types/ethics';
 
+type MarketplaceDashboard = {
+  activePostings: number;
+  registeredTalents: number;
+  avgEthicalAlignment: number;
+};
+
 export default function QuantumMarketplacePanel() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [dashboard, setDashboard] = useState<any>(null);
