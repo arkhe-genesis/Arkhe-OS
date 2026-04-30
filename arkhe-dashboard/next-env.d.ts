@@ -1,3 +1,8 @@
+/**
+ * @license
+ * Copyright 2025 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
 /// <reference types="next" />
 /// <reference types="next/image-types/global" />
 

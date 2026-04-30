@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
   try {
     const payload = await request.json();
     return NextResponse.json({ success: true, payload });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: 'Training API failed' }, { status: 500 });
   }
 }

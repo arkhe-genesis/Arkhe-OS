@@ -21,14 +21,15 @@ export default function QuantumARViewer({ metrics, onSessionChange }: QuantumARV
     const checkARSupport = async () => {
       if (typeof window !== 'undefined' && 'xr' in navigator) {
         try {
-          const supported = await (navigator as any).xr.isSessionSupported('immersive-ar');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const supported = await (navigator as unknown as { xr: { isSessionSupported: (mode: string) => Promise<boolean> } }).xr.isSessionSupported('immersive-ar');
           setArSupported(supported);
-        } catch {
+        } catch (_err) {
           setArSupported(false);
         }
       }
     };
-    checkARSupport();
+    checkARSupport().catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -41,6 +42,7 @@ export default function QuantumARViewer({ metrics, onSessionChange }: QuantumARV
     if (!containerRef.current) return;
 
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const arOverlay = new QuantumAROverlay({
         enableWorldTracking: true,
         enableHandTracking: true,
@@ -58,8 +60,8 @@ export default function QuantumARViewer({ metrics, onSessionChange }: QuantumARV
       } else {
         setError('Failed to start AR session. Make sure you are on a compatible device.');
       }
-    } catch (err: any) {
-      setError(err.message || 'AR initialization failed');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'AR initialization failed');
     }
   };
 
