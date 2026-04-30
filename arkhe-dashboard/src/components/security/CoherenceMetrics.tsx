@@ -1,6 +1,13 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 'use client';
 
-export default function CoherenceMetrics({ metrics }: any) {
+export default function CoherenceMetrics({ metrics }: unknown) {
   const stats = [
     { label: 'Ω MÉDIO (REDE)', value: metrics?.avgOmega?.toFixed(4) || '0.9412', color: 'text-cyan-400' },
     { label: 'ENTROPIA (HUMANA)', value: '4.2 bits', color: 'text-purple-400' },

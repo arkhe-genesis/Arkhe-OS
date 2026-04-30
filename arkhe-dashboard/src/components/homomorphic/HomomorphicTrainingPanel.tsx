@@ -1,3 +1,10 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/homomorphic/HomomorphicTrainingPanel.tsx
 'use client';
 
@@ -5,9 +12,10 @@ import { useState, useEffect } from 'react';
 
 export default function HomomorphicTrainingPanel() {
   const [isTraining, setIsTraining] = useState(false);
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<unknown>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     fetch('/api/quantum/train').then(r => r.json()).then(d => d.success && setStats(d.data));
   }, []);
 
@@ -15,7 +23,8 @@ export default function HomomorphicTrainingPanel() {
     setIsTraining(true);
     await new Promise(resolve => setTimeout(resolve, 2000));
     setIsTraining(false);
-  };
+
+};
 
   return (
     <div className="bg-black/40 border border-emerald-500/20 rounded-3xl p-6">

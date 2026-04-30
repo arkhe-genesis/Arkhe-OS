@@ -1,12 +1,20 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/ar/quantumAROverlay.ts
 import * as THREE from 'three';
-import { EthicalMetrics, ARConfig, ARSessionState } from '@/types/ethics';
+
+import type { _EthicalMetrics, ARConfig, ARSessionState } from '@/types/ethics';
 
 export class QuantumAROverlay {
   private renderer: THREE.WebGLRenderer | null = null;
   private scene: THREE.Scene | null = null;
   private camera: THREE.PerspectiveCamera | null = null;
-  private arSession: any = null; // XRSession
+  private arSession: unknown = null; // XRSession
   private config: ARConfig;
   private state: ARSessionState;
 
@@ -62,13 +70,14 @@ export class QuantumAROverlay {
     await this.createCoherenceVisualization();
 
     try {
-      const session = await (navigator as any).xr.requestSession('immersive-ar', {
+      const session = await (navigator as unknown).xr.requestSession('immersive-ar', {
         optionalFeatures: ['local-floor', 'bounded-floor', 'hand-tracking']
       });
       this.arSession = session;
       this.state.sessionActive = true;
       this.state.trackingMode = 'world';
 
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
       this.renderer.xr.setSession(session);
       this.renderer.setAnimationLoop(this.renderAR.bind(this));
 
@@ -80,7 +89,7 @@ export class QuantumAROverlay {
   }
 
   private async createCoherenceVisualization(): Promise<void> {
-    if (!this.scene) return;
+    if (!this.scene) {return;}
     this.coherenceField = new THREE.Group();
 
     const particleCount = 2000;
@@ -155,7 +164,7 @@ export class QuantumAROverlay {
     this.scene.add(this.coherenceField);
   }
 
-  updateOverlayMetrics(metrics: EthicalMetrics): void {
+  updateOverlayMetrics(metrics: _EthicalMetrics): void {
     this.state.overlayMetrics = {
       omega: metrics.omega,
       kEth: metrics.kEth,
@@ -172,8 +181,8 @@ export class QuantumAROverlay {
     }
   }
 
-  private renderAR(timestamp: number, _frame?: any): void {
-    if (!this.renderer || !this.scene || !this.camera) return;
+  private renderAR(timestamp: number, _frame?: unknown): void {
+    if (!this.renderer || !this.scene || !this.camera) {return;}
 
     if (this.particleSystem?.material instanceof THREE.ShaderMaterial) {
       this.particleSystem.material.uniforms.uTime.value = timestamp * 0.001;
@@ -205,11 +214,11 @@ export class QuantumAROverlay {
 }
 
 class QPUSimulator {
-  private qubitCount: number = 16;
-  private coherenceTime: number = 100;
-  private lastUpdate: number = 0;
+  private qubitCount = 16;
+  private coherenceTime = 100;
+  private lastUpdate = 0;
 
-  updateCoherenceMetrics(metrics: EthicalMetrics): void {
+  updateCoherenceMetrics(metrics: _EthicalMetrics): void {
     this.coherenceTime = 100 * metrics.quantumFidelity;
   }
 

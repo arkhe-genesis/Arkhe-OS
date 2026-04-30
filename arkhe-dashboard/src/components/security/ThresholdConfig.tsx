@@ -1,6 +1,13 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 'use client';
 
-export default function ThresholdConfig({ onChange }: any) {
+export default function ThresholdConfig({ onChange }: unknown) {
   return (
     <div className="bg-black/40 border border-white/5 rounded-3xl p-6">
       <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">⚙️ Configuração de Threshold</h3>

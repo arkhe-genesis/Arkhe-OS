@@ -1,7 +1,14 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/simulator/ethicalSimulator.ts
 
 export class EthicalSimulator {
-  async simulate(scenario: any, baseMetrics: any) {
+  async simulate(scenario: unknown, baseMetrics: unknown) {
     // Simulação acelerada por GPU de Monte Carlo para cenários what-if
     await new Promise(resolve => setTimeout(resolve, 100));
 

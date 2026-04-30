@@ -1,14 +1,23 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/marketplace/quantumEthicalTalentMarketplace.ts
 // Mercado de Talentos Ético Quântico: matching descentralizado com credenciais verificáveis e privacidade ZKP
 
-import { createHash } from 'crypto';
-import { EthicalPrinciple, QuantumEthicalCredential } from '@/types/ethics';
+import { _createHash } from 'node:crypto';
+
+import type { QuantumEthicalCredential } from '@/types/ethics';
+import { _EthicalPrinciple } from '@/types/ethics';
 
 export interface EthicalJobPosting {
   postingId: string;
   organizationDID: string;
   roleTitle: string;
-  ethicalValues: Partial<Record<EthicalPrinciple, { min: number }>>;
+  ethicalValues: Partial<Record<_EthicalPrinciple, { min: number }>>;
   status: 'active' | 'filled';
 }
 
@@ -21,15 +30,15 @@ export interface TalentMatch {
 }
 
 export class QuantumEthicalTalentMarketplace {
-  private postings: Map<string, EthicalJobPosting> = new Map();
-  private credentials: Map<string, QuantumEthicalCredential> = new Map();
+  private postings = new Map<string, EthicalJobPosting>();
+  private credentials = new Map<string, QuantumEthicalCredential>();
 
   constructor() {
     // Seed initial job
     this.postJob({
       organizationDID: 'did:arkhe:cathedral_hq',
       roleTitle: 'Quantum Ethicist',
-      ethicalValues: { [EthicalPrinciple.TRUTH_SEEKING]: { min: 0.9 } }
+      ethicalValues: { [_EthicalPrinciple.TRUTH_SEEKING]: { min: 0.9 } }
     });
   }
 
@@ -45,7 +54,7 @@ export class QuantumEthicalTalentMarketplace {
 
   async executeMatching(postingId: string): Promise<TalentMatch[]> {
     const posting = this.postings.get(postingId);
-    if (!posting) return [];
+    if (!posting) {return [];}
 
     return Array.from(this.credentials.values()).map(cred => ({
       matchId: `match_${cred.credentialId || cred.talentId}_${postingId}`,

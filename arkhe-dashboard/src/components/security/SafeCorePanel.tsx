@@ -1,11 +1,19 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/security/SafeCorePanel.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import { safeCoreEngine } from '@/lib/security/safeCore';
 
 export default function SafeCorePanel() {
-  const [dashboard, setDashboard] = useState<any>(null);
+  const [dashboard, setDashboard] = useState<unknown>(null);
 
   useEffect(() => {
     // Simular registro de agentes e scaffolds

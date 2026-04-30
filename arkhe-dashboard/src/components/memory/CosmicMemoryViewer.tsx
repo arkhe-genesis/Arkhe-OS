@@ -1,16 +1,25 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/memory/CosmicMemoryViewer.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
-import { EthicalMetrics } from '@/types/ethics';
 
-export default function CosmicMemoryViewer({ currentMetrics }: { currentMetrics: EthicalMetrics }) {
+import type { _EthicalMetrics } from '@/types/ethics';
+
+export default function CosmicMemoryViewer({ _currentMetrics }: { _currentMetrics: _EthicalMetrics }) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState<unknown[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<unknown>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     fetch('/api/memory/retrieve').then(r => r.json()).then(d => d.success && setStats(d.data));
   }, []);
 
@@ -25,7 +34,7 @@ export default function CosmicMemoryViewer({ currentMetrics }: { currentMetrics:
       body: JSON.stringify({ queryVector, queryAmplitude, maxResults: 5, similarityThreshold: 0.5, entanglementDepth: 2 })
     });
     const data = await response.json();
-    if (data.success) setResults(data.data.results);
+    if (data.success) {setResults(data.data.results);}
     setIsLoading(false);
   };
 

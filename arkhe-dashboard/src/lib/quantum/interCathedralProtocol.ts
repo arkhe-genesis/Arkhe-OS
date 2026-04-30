@@ -1,3 +1,10 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/quantum/interCathedralProtocol.ts
 // Protocolo de comunicação inter-catedral via teleportação quântica de estados de coerência
 
@@ -41,8 +48,8 @@ export interface InterCathedralSyncConfig {
 export class InterCathedralProtocol {
   private config: InterCathedralSyncConfig;
   private localNode: CathedralNode | null = null;
-  private remoteNodes: Map<string, CathedralNode> = new Map();
-  private activeTeleportations: Map<string, TeleportationResult> = new Map();
+  private remoteNodes = new Map<string, CathedralNode>();
+  private activeTeleportations = new Map<string, TeleportationResult>();
   private syncHistory: Array<{ timestamp: number; fidelity: number; latency: number }> = [];
 
   constructor(config: Partial<InterCathedralSyncConfig> = {}) {

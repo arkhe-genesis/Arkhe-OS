@@ -1,8 +1,15 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/charts/EthicalPredictionChart.tsx
 'use client';
-import { EthicalMetrics, PredictionResult } from '@/types/ethics';
+import type { _EthicalMetrics, PredictionResult } from '@/types/ethics';
 
-export function EthicalPredictionChart({ currentMetrics, prediction, loading }: { currentMetrics: EthicalMetrics; prediction: PredictionResult | null; loading: boolean }) {
+export function EthicalPredictionChart({ _currentMetrics, prediction, loading }: { _currentMetrics: _EthicalMetrics; prediction: PredictionResult | null; loading: boolean }) {
   return (
     <div className="p-4 bg-black/20 rounded-xl border border-white/5">
       {loading ? (

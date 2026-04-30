@@ -1,9 +1,17 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/ar/QuantumARViewer.tsx
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+
 import { QuantumAROverlay } from '@/lib/ar/quantumAROverlay';
-import { EthicalMetrics } from '@/types/ethics';
+import type { EthicalMetrics } from '@/types/ethics';
 
 interface QuantumARViewerProps {
   metrics: EthicalMetrics;
@@ -21,7 +29,7 @@ export default function QuantumARViewer({ metrics, onSessionChange }: QuantumARV
     const checkARSupport = async () => {
       if (typeof window !== 'undefined' && 'xr' in navigator) {
         try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
           const supported = await (navigator as unknown as { xr: { isSessionSupported: (mode: string) => Promise<boolean> } }).xr.isSessionSupported('immersive-ar');
           setArSupported(supported);
         } catch (_err) {
@@ -29,7 +37,7 @@ export default function QuantumARViewer({ metrics, onSessionChange }: QuantumARV
         }
       }
     };
-    checkARSupport().catch(() => {});
+    checkARSupport().catch(() => { /* ignore */ });
   }, []);
 
   useEffect(() => {
@@ -39,10 +47,10 @@ export default function QuantumARViewer({ metrics, onSessionChange }: QuantumARV
   }, [metrics, sessionActive]);
 
   const startARSession = async () => {
-    if (!containerRef.current) return;
+    if (!containerRef.current) {return;}
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       const arOverlay = new QuantumAROverlay({
         enableWorldTracking: true,
         enableHandTracking: true,

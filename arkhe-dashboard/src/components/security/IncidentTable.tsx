@@ -1,6 +1,13 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 'use client';
 
-export default function IncidentTable({ incidents = [] }: any) {
+export default function IncidentTable({ incidents = [] }: unknown) {
   return (
     <div className="bg-black/40 border border-white/5 rounded-3xl p-6 overflow-hidden">
       <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">🔍 Incidentes Recentes</h3>
@@ -15,7 +22,7 @@ export default function IncidentTable({ incidents = [] }: any) {
             </tr>
           </thead>
           <tbody className="text-slate-300">
-            {incidents.map((inc: any, i: number) => (
+            {incidents.map((inc: unknown, i: number) => (
               <tr key={i} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                 <td className="py-2">{inc.domain}</td>
                 <td className="py-2">{inc.attack_type}</td>

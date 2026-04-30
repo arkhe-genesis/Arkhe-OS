@@ -1,12 +1,20 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/retrocausality/RetrocausalWisdomPanel.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import { retrocausalWisdomEcho } from '@/lib/retrocausality/retrocausalWisdomEcho';
-import { EthicalPrinciple } from '@/types/ethics';
+import { _EthicalPrinciple } from '@/types/ethics';
 
 export default function RetrocausalWisdomPanel() {
-  const [dashboard, setDashboard] = useState<any>(null);
+  const [dashboard, setDashboard] = useState<unknown>(null);
 
   useEffect(() => {
     setDashboard(retrocausalWisdomEcho.getRetrocausalDashboard());
@@ -16,7 +24,7 @@ export default function RetrocausalWisdomPanel() {
     await retrocausalWisdomEcho.generateRetrocausalEcho({
       insightId: `ins_${Date.now()}`,
       learnerId: 'learner_42',
-      principle: EthicalPrinciple.COHERENCE_PRESERVATION,
+      principle: _EthicalPrinciple.COHERENCE_PRESERVATION,
       content: 'True stability requires accepting the non-linear flow of Ω.',
       coherenceScore: 0.98,
       noveltyScore: 0.85,
@@ -47,7 +55,7 @@ export default function RetrocausalWisdomPanel() {
 
           <div className="space-y-2">
             <p className="text-[8px] text-slate-500 font-bold uppercase tracking-widest">Active Echos</p>
-            {dashboard.recentEchoes.map((e: any) => (
+            {dashboard.recentEchoes.map((e: unknown) => (
               <div key={e.echoId} className="p-2 bg-white/5 rounded border border-white/5">
                 <p className="text-[9px] text-white line-clamp-1 font-medium">{e.wisdomContent}</p>
                 <div className="flex justify-between mt-1">

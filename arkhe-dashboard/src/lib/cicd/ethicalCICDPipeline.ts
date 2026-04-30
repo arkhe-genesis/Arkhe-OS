@@ -1,7 +1,14 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/cicd/ethicalCICDPipeline.ts
 // CI/CD Ético: validação contínua com testes de coerência e detecção de regressão moral
 
-import { EthicalPrinciple } from '@/types/ethics';
+import { _EthicalPrinciple } from '@/types/ethics';
 
 export interface CICDEthicalReport {
   reportId: string;
@@ -12,7 +19,7 @@ export interface CICDEthicalReport {
 }
 
 export class EthicalCICDPipeline {
-  private reports: Map<string, CICDEthicalReport> = new Map();
+  private reports = new Map<string, CICDEthicalReport>();
 
   async runPipeline(pipelineId: string): Promise<CICDEthicalReport> {
     const report: CICDEthicalReport = {

@@ -5,28 +5,28 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useEffect, useState, useCallback } from 'react';
 
 import dynamic from 'next/dynamic';
+import React, { useEffect, useState, useCallback } from 'react';
 
-import EthicalPredictionChart from '@/components/EthicalPredictionChart';
 import CosmicMemoryViewer from '@/components/CosmicMemoryViewer';
-import TelemetryStream from '@/components/TelemetryStream';
-import ZKPVerificationPanel from '@/components/ZKPVerificationPanel';
+import EthicalPredictionChart from '@/components/EthicalPredictionChart';
 import HomomorphicTrainingPanel from '@/components/homomorphic/HomomorphicTrainingPanel';
-import P2PNetworkStatus from '@/components/network/P2PNetworkStatus';
-import InterCathedralPanel from '@/components/quantum/InterCathedralPanel';
-import SafeCorePanel from '@/components/security/SafeCorePanel';
-import { ethicalFederatedLearner } from '@/lib/ai/ethicalFederatedLearner';
-import { useZustandStore } from '@/lib/store';
-import type { EthicalMetrics } from '@/types/ethics';
-import QuantumTelepathyPanel from '@/components/quantum/QuantumTelepathyPanel';
-import SynchronicityBlockchainPanel from '@/components/quantum/SynchronicityBlockchainPanel';
 import QuantumMarketplacePanel from '@/components/marketplace/QuantumMarketplacePanel';
 import CoherentMeditationPanel from '@/components/meditation/CoherentMeditationPanel';
+import P2PNetworkStatus from '@/components/network/P2PNetworkStatus';
+import InterCathedralPanel from '@/components/quantum/InterCathedralPanel';
+import QuantumTelepathyPanel from '@/components/quantum/QuantumTelepathyPanel';
+import SynchronicityBlockchainPanel from '@/components/quantum/SynchronicityBlockchainPanel';
 import RetrocausalWisdomPanel from '@/components/retrocausality/RetrocausalWisdomPanel';
 import NeuralCoherenceBar from '@/components/security/NeuralCoherenceBar';
 import SafeCorePanel from '@/components/security/SafeCorePanel';
+import SafeCorePanel from '@/components/security/SafeCorePanel';
+import TelemetryStream from '@/components/TelemetryStream';
+import ZKPVerificationPanel from '@/components/ZKPVerificationPanel';
+import { ethicalFederatedLearner } from '@/lib/ai/ethicalFederatedLearner';
+import { useZustandStore } from '@/lib/store';
+import type { EthicalMetrics } from '@/types/ethics';
 
 const ArkheCore3D = dynamic(() => import('@/components/ArkheCore3D'), { ssr: false });
 const QuantumARViewer = dynamic(() => import('@/components/ar/QuantumARViewer'), { ssr: false });

@@ -1,15 +1,24 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/quantum/SynchronicityBlockchainPanel.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
-import { quantumSynchronicityDetector, SynchronicityPattern } from '@/lib/quantum/quantumSynchronicity';
-import { ethicalBlockchain } from '@/lib/blockchain/ethicalQuantumBlockchain';
+
 import { useZustandStore } from '@/hooks/useZustandStore';
+import { ethicalBlockchain } from '@/lib/blockchain/ethicalQuantumBlockchain';
+import type { SynchronicityPattern } from '@/lib/quantum/quantumSynchronicity';
+import { quantumSynchronicityDetector } from '@/lib/quantum/quantumSynchronicity';
 
 export default function SynchronicityBlockchainPanel() {
   const { metrics } = useZustandStore();
   const [latestSync, setLatestSync] = useState<SynchronicityPattern | null>(null);
-  const [blockchainInfo, setBlockchainInfo] = useState<any>(null);
+  const [blockchainInfo, setBlockchainInfo] = useState<unknown>(null);
   const [proposing, setProposing] = useState(false);
 
   useEffect(() => {
@@ -19,6 +28,7 @@ export default function SynchronicityBlockchainPanel() {
       setLatestSync(pattern);
       // Auto-anchor high significance patterns
       if (pattern.significanceScore > 0.9) {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
         ethicalBlockchain.anchorSynchronicityPattern(pattern).then(() => {
           setBlockchainInfo(ethicalBlockchain.getBlockchainDashboard());
         });

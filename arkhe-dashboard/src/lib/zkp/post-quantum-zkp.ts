@@ -1,11 +1,18 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/zkp/post-quantum-zkp.ts
-import { ZKPProof } from '@/types/ethics';
+import type { ZKPProof } from '@/types/ethics';
 
 export class PostQuantumZKP {
   private static instance: PostQuantumZKP;
-  private verificationKeys: Map<string, any> = new Map();
+  private verificationKeys = new Map<string, unknown>();
 
-  private constructor() {}
+  private constructor() { /* ignore */ }
 
   static getInstance(): PostQuantumZKP {
     if (!PostQuantumZKP.instance) {
@@ -15,15 +22,15 @@ export class PostQuantumZKP {
   }
 
   // Carregar chave de verificação para circuito específico
-  async loadVerificationKey(circuitName: string, vKeyJSON: any): Promise<void> {
+  async loadVerificationKey(circuitName: string, vKeyJSON: unknown): Promise<void> {
     this.verificationKeys.set(circuitName, vKeyJSON);
     console.log(`🔐 Chave de verificação carregada: ${circuitName}`);
   }
 
   // Gerar prova ZKP para validação ética
   async generateEthicalProof(
-    privateInputs: { [key: string]: any },
-    publicInputs: { [key: string]: any },
+    privateInputs: Record<string, unknown>,
+    publicInputs: Record<string, unknown>,
     circuitName: string
   ): Promise<ZKPProof> {
     // Preparar inputs para o circuito
@@ -57,7 +64,7 @@ export class PostQuantumZKP {
   }
 
   // Verificar prova ZKP sem revelar inputs privados
-  async verifyProof(zkpProof: ZKPProof, _publicInputs: { [key: string]: any }): Promise<boolean> {
+  async verifyProof(zkpProof: ZKPProof, _publicInputs: Record<string, unknown>): Promise<boolean> {
     const vKey = this.verificationKeys.get(zkpProof.circuitName);
     if (!vKey && zkpProof.circuitName !== 'ethical_validation') {
       throw new Error(`Verification key not found for circuit: ${zkpProof.circuitName}`);
@@ -123,18 +130,18 @@ export class PostQuantumZKP {
     ];
   }
 
-  private serializeProof(proof: any): string {
+  private serializeProof(proof: unknown): string {
     return JSON.stringify(proof);
   }
 
-  private deserializeProof(proofHex: string): any {
+  private deserializeProof(proofHex: string): unknown {
     return JSON.parse(proofHex);
   }
 
   private async simulateVerification(
-    _proof: any,
+    _proof: unknown,
     _publicSignals: bigint[],
-    _vKey: any
+    _vKey: unknown
   ): Promise<boolean> {
     return Math.random() > 0.01;
   }

@@ -1,12 +1,20 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/federated/ethicalFederatedLearning.ts
-import * as tf from '@tensorflow/tfjs';
-import { EthicalMetrics, PredictionResult, FederatedTrainingConfig, ClientUpdate, AggregationResult } from '@/types/ethics';
+import * as _tf from '@tensorflow/_tfjs';
+
+import type { _EthicalMetrics, PredictionResult, FederatedTrainingConfig, ClientUpdate, AggregationResult } from '@/types/ethics';
 
 export class EthicalFederatedLearner {
-  private globalModel: tf.LayersModel | null = null;
+  private globalModel: _tf.LayersModel | null = null;
   private config: FederatedTrainingConfig;
   private roundHistory: AggregationResult[] = [];
-  private privacyBudget: number = 0;
+  private privacyBudget = 0;
 
   constructor(config: FederatedTrainingConfig) {
     this.config = config;
@@ -14,29 +22,29 @@ export class EthicalFederatedLearner {
   }
 
   private async initializeGlobalModel(): Promise<void> {
-    if (this.globalModel) return;
+    if (this.globalModel) {return;}
     // Arquitetura compatível com federated learning
-    const model = tf.sequential();
+    const model = _tf.sequential();
 
     // Camadas LSTM para séries temporais éticas
-    model.add(tf.layers.lstm({
+    model.add(_tf.layers.lstm({
       units: 32,
-      inputShape: [10, 6], // 10 timesteps, 6 features
+      inputShape: [10, 6], // 10 timesteps, 6 _features
       returnSequences: false,
       activation: 'tanh',
       kernelInitializer: 'glorotUniform',
       recurrentInitializer: 'orthogonal',
     }));
 
-    model.add(tf.layers.dropout({ rate: 0.2 }));
+    model.add(_tf.layers.dropout({ rate: 0.2 }));
 
     // Camadas densas para predição
-    model.add(tf.layers.dense({ units: 16, activation: 'relu' }));
-    model.add(tf.layers.dense({ units: 8, activation: 'relu' }));
-    model.add(tf.layers.dense({ units: 1, activation: 'linear' }));
+    model.add(_tf.layers.dense({ units: 16, activation: 'relu' }));
+    model.add(_tf.layers.dense({ units: 8, activation: 'relu' }));
+    model.add(_tf.layers.dense({ units: 1, activation: 'linear' }));
 
     model.compile({
-      optimizer: tf.train.adam(this.config.learningRate),
+      optimizer: _tf.train.adam(this.config.learningRate),
       loss: 'meanSquaredError',
       metrics: ['mae'],
     });
@@ -48,19 +56,19 @@ export class EthicalFederatedLearner {
    */
   async trainLocalModel(
     clientId: string,
-    localData: { features: number[][][]; labels: number[] },
+    localData: { _features: number[][][]; labels: number[] },
     epochs: number = this.config.epochsPerRound
   ): Promise<ClientUpdate> {
     await this.initializeGlobalModel();
-    if (!this.globalModel) throw new Error('Global model not initialized');
+    if (!this.globalModel) {throw new Error('Global model not initialized');}
 
     // Clonar modelo global para treinamento local
-    const localModel = tf.sequential();
+    const localModel = _tf.sequential();
     for (const layer of this.globalModel.layers) {
       localModel.add(layer);
     }
     localModel.compile({
-      optimizer: tf.train.adam(this.config.learningRate),
+      optimizer: _tf.train.adam(this.config.learningRate),
       loss: 'meanSquaredError',
       metrics: ['mae'],
     });
@@ -68,8 +76,8 @@ export class EthicalFederatedLearner {
     localModel.setWeights(weights);
     weights.forEach(w => w.dispose());
 
-    const xs = tf.tensor3d(localData.features);
-    const ys = tf.tensor2d(localData.labels, [localData.labels.length, 1]);
+    const xs = _tf.tensor3d(localData._features);
+    const ys = _tf.tensor2d(localData.labels, [localData.labels.length, 1]);
 
     // Treinamento local
     let finalLoss = 0;
@@ -89,7 +97,7 @@ export class EthicalFederatedLearner {
       // Adicionar ruído de privacidade diferencial se configurado
       const dpNoise = this.config.differentialPrivacyNoise ?? 0;
       if (dpNoise > 0) {
-        weightsData = this.addLaplaceNoise(weightsData, dpNoise) as any;
+        weightsData = this.addLaplaceNoise(weightsData, dpNoise) as unknown;
       }
 
       return weightsData;
@@ -103,7 +111,7 @@ export class EthicalFederatedLearner {
     return {
       clientId,
       modelWeights: updatedWeights,
-      numSamples: localData.features.length,
+      numSamples: localData._features.length,
       loss: finalLoss,
       timestamp: Date.now(),
       dpNoiseScale: this.config.differentialPrivacyNoise || 0,
@@ -137,7 +145,7 @@ export class EthicalFederatedLearner {
     }
 
     // Atualizar modelo global
-    const newWeights = aggregatedWeights.map((w, i) => tf.tensor(w, this.globalModel!.getWeights()[i].shape));
+    const newWeights = aggregatedWeights.map((w, i) => _tf.tensor(w, this.globalModel!.getWeights()[i].shape));
     this.globalModel.setWeights(newWeights);
     newWeights.forEach(w => w.dispose());
 
@@ -172,17 +180,17 @@ export class EthicalFederatedLearner {
       const noise = -scale * Math.sign(u) * Math.log(1 - 2 * Math.abs(u));
       noisy[i] = data[i] + noise;
     }
-    return noisy as any;
+    return noisy as unknown;
   }
 
-  async predict(metrics: EthicalMetrics): Promise<PredictionResult> {
+  async predict(metrics: _EthicalMetrics): Promise<PredictionResult> {
     await this.initializeGlobalModel();
-    if (!this.globalModel) throw new Error('Model not trained');
+    if (!this.globalModel) {throw new Error('Model not trained');}
 
     const inputSequence = this.prepareInputSequence(metrics);
-    const inputTensor = tf.tensor3d([inputSequence], [1, 10, 6]);
+    const inputTensor = _tf.tensor3d([inputSequence], [1, 10, 6]);
 
-    const prediction = this.globalModel.predict(inputTensor) as tf.Tensor;
+    const prediction = this.globalModel.predict(inputTensor) as _tf.Tensor;
     const [predictedKEth] = await prediction.data();
 
     inputTensor.dispose();
@@ -197,7 +205,7 @@ export class EthicalFederatedLearner {
     };
   }
 
-  private prepareInputSequence(metrics: EthicalMetrics): number[][] {
+  private prepareInputSequence(metrics: _EthicalMetrics): number[][] {
     const sequence: number[][] = [];
     for (let i = 9; i >= 0; i--) {
       const decay = 1 - (i * 0.05);

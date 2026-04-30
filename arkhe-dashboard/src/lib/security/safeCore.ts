@@ -1,8 +1,16 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/security/safeCore.ts
 // Safe Core: motor de consenso geométrico distribuído sem comunicação direta entre agentes
 
-import { createHash } from 'crypto';
-import { EthicalPrinciple } from '@/types/ethics';
+import { _createHash } from 'node:crypto';
+
+import type { _EthicalPrinciple } from '@/types/ethics';
 
 export interface GeometricScaffold {
   scaffoldId: string;
@@ -16,24 +24,24 @@ export interface GeometricScaffold {
 
 export interface AgentContext {
   agentId: string;
-  localKnowledge: Record<string, any>;  // Conhecimento local do agente
+  localKnowledge: Record<string, unknown>;  // Conhecimento local do agente
   scaffoldReference: string;            // ID do scaffold isomórfico usado
   derivationHistory: Array<{
     step: number;
-    input: any;
-    output: any;
+    input: unknown;
+    output: unknown;
     ruleApplied: string;
   }>;
-  coherenceVector: Map<EthicalPrinciple, number>;
+  coherenceVector: Map<_EthicalPrinciple, number>;
 }
 
 export interface GeometricConsensus {
   consensusId: string;
   participatingAgents: string[];
   scaffoldId: string;
-  derivedTruth: any;                    // Verdade derivada geometricamente
+  derivedTruth: unknown;                    // Verdade derivada geometricamente
   convergenceScore: number;             // Score de convergência (0.0-1.0)
-  independentDerivations: Record<string, any>;  // Derivações independentes por agente
+  independentDerivations: Record<string, unknown>;  // Derivações independentes por agente
   timestamp_ns: number;
   verificationProof: string;            // Prova de que derivações foram independentes
 }
@@ -47,9 +55,9 @@ export interface SafeCoreConfig {
 
 export class SafeCoreEngine {
   private config: SafeCoreConfig;
-  private scaffolds: Map<string, GeometricScaffold> = new Map();
-  private agentContexts: Map<string, AgentContext> = new Map();
-  private consensusRegistry: Map<string, GeometricConsensus> = new Map();
+  private scaffolds = new Map<string, GeometricScaffold>();
+  private agentContexts = new Map<string, AgentContext>();
+  private consensusRegistry = new Map<string, GeometricConsensus>();
 
   constructor(config: Partial<SafeCoreConfig> = {}) {
     this.config = {
@@ -71,7 +79,7 @@ export class SafeCoreEngine {
   }
 
   registerScaffold(scaffold: Omit<GeometricScaffold, 'scaffoldId' | 'timestamp_ns'>): string {
-    const scaffoldId = `scaffold_${scaffold.knowledgeDomain}_${Date.now()}_${createHash('sha256').update(JSON.stringify(scaffold.axioms)).digest('hex').substring(0, 8)}`;
+    const scaffoldId = `scaffold_${scaffold.knowledgeDomain}_${Date.now()}_${_createHash('sha256').update(JSON.stringify(scaffold.axioms)).digest('hex').substring(0, 8)}`;
 
     const fullScaffold: GeometricScaffold = {
       ...scaffold,
@@ -83,7 +91,7 @@ export class SafeCoreEngine {
     return scaffoldId;
   }
 
-  registerAgentContext(agentId: string, scaffoldId: string, localKnowledge: Record<string, any>): AgentContext {
+  registerAgentContext(agentId: string, scaffoldId: string, localKnowledge: Record<string, unknown>): AgentContext {
     const context: AgentContext = {
       agentId,
       localKnowledge,
@@ -97,15 +105,15 @@ export class SafeCoreEngine {
 
   async computeGeometricConsensus(
     agentIds: string[],
-    problem: any,
+    problem: unknown,
     scaffoldId: string
   ): Promise<GeometricConsensus> {
-    const independentDerivations: Record<string, any> = {};
+    const independentDerivations: Record<string, unknown> = {};
 
     for (const agentId of agentIds) {
       // Simular derivação independente baseada no scaffold compartilhado
       const derivationSeed = JSON.stringify({ agentId, problem, scaffoldId });
-      const hash = createHash('sha256').update(derivationSeed).digest('hex');
+      const hash = _createHash('sha256').update(derivationSeed).digest('hex');
       independentDerivations[agentId] = {
         result: `derived_${hash.substring(0, 8)}`,
         confidence: 0.96 + Math.random() * 0.03
@@ -122,7 +130,7 @@ export class SafeCoreEngine {
       convergenceScore,
       independentDerivations,
       timestamp_ns: Date.now() * 1e6,
-      verificationProof: createHash('sha256').update(JSON.stringify(independentDerivations)).digest('hex'),
+      verificationProof: _createHash('sha256').update(JSON.stringify(independentDerivations)).digest('hex'),
     };
 
     this.consensusRegistry.set(consensus.consensusId, consensus);

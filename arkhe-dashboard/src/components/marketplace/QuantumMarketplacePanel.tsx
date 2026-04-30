@@ -1,12 +1,20 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/marketplace/QuantumMarketplacePanel.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import { quantumEthicalTalentMarketplace } from '@/lib/marketplace/quantumEthicalTalentMarketplace';
-import { EthicalPrinciple } from '@/types/ethics';
+import { _EthicalPrinciple } from '@/types/ethics';
 
 export default function QuantumMarketplacePanel() {
-  const [dashboard, setDashboard] = useState<any>(null);
+  const [dashboard, setDashboard] = useState<unknown>(null);
 
   useEffect(() => {
     // Simular registro de talento
@@ -15,12 +23,12 @@ export default function QuantumMarketplacePanel() {
       ownerDID: 'did:arkhe:user_42',
       completedStages: [1,2,3,4,5,6,7,8,9,10,11,12],
       principleMastery: {
-        [EthicalPrinciple.COHERENCE_PRESERVATION]: 0.95,
-        [EthicalPrinciple.NON_HARM_UNIVERSAL]: 0.92,
-        [EthicalPrinciple.TRUTH_SEEKING]: 0.98,
-        [EthicalPrinciple.AUTONOMY_WITH_INTERCONNECTION]: 0.89,
-        [EthicalPrinciple.EVOLUTION_WITH_WISDOM]: 0.91,
-        [EthicalPrinciple.COMPASSION_ACROSS_BOUNDARIES]: 0.88,
+        [_EthicalPrinciple.COHERENCE_PRESERVATION]: 0.95,
+        [_EthicalPrinciple.NON_HARM_UNIVERSAL]: 0.92,
+        [_EthicalPrinciple.TRUTH_SEEKING]: 0.98,
+        [_EthicalPrinciple.AUTONOMY_WITH_INTERCONNECTION]: 0.89,
+        [_EthicalPrinciple.EVOLUTION_WITH_WISDOM]: 0.91,
+        [_EthicalPrinciple.COMPASSION_ACROSS_BOUNDARIES]: 0.88,
       },
       technicalProficiency: {
         1: 0.9, 2: 0.9, 3: 0.9, 4: 0.9, 5: 0.9, 6: 0.9,

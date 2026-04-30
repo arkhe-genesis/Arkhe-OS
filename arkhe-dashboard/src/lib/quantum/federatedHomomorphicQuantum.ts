@@ -1,18 +1,25 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/quantum/federatedHomomorphicQuantum.ts
-import { EthicalMetrics } from '@/types/ethics';
+import type { EthicalMetrics } from '@/types/ethics';
 
 export interface EncryptedEthicalData {
   ciphertext: Uint8Array;
   encryptionScheme: string;
   securityLevel: number;
-  metadata: any;
+  metadata: unknown;
   timestamp_ns: number;
 }
 
 export class FederatedHomomorphicQuantumEngine {
-  private privacyBudget: number = 0;
+  private privacyBudget = 0;
 
-  constructor(private securityLevel: number = 256) {}
+  constructor(private securityLevel = 256) {}
 
   async encryptEthicalData(data: Partial<EthicalMetrics>): Promise<EncryptedEthicalData> {
     const plaintext = JSON.stringify(data);
@@ -27,7 +34,7 @@ export class FederatedHomomorphicQuantumEngine {
     };
   }
 
-  async trainFederatedHomomorphicModel(encryptedDatasets: any[]) {
+  async trainFederatedHomomorphicModel(encryptedDatasets: unknown[]) {
     this.privacyBudget += 0.05 * Math.sqrt(encryptedDatasets.length || 1);
     return {
       roundId: `fhq_${Date.now()}`,
@@ -38,15 +45,15 @@ export class FederatedHomomorphicQuantumEngine {
     };
   }
 
-  async simulateServerAggregation(encryptedDatasets: any[]) {
+  async simulateServerAggregation(encryptedDatasets: unknown[]) {
       return this.trainFederatedHomomorphicModel(encryptedDatasets);
   }
 
-  async decryptAndVerify(aggregationResult: any) {
+  async decryptAndVerify(aggregationResult: unknown) {
       return {
           verified: true,
           result: aggregationResult
-      }
+      };
   }
 
   getHomomorphicDashboard() {

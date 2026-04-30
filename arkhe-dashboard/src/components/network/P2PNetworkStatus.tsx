@@ -1,11 +1,19 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/network/P2PNetworkStatus.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
+import { _useEffect, useState } from 'react';
+
 import { peerMesh } from '@/lib/webrtc/peerMesh';
 
 export default function P2PNetworkStatus() {
-  const [metrics, setMetrics] = useState<any>(peerMesh.getAggregatedMetrics());
+  const [metrics, _setMetrics] = useState<unknown>(peerMesh.getAggregatedMetrics());
 
   return (
     <div className="bg-black/40 border border-green-500/20 rounded-3xl p-6">

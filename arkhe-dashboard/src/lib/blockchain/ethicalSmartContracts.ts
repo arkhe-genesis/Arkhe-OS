@@ -1,8 +1,19 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/blockchain/ethicalSmartContracts.ts
 // Contratos inteligentes éticos auto-executáveis baseados em validação de K_eth
 
-import { EthicalQuantumBlockchain, QuantumTransaction } from './ethicalQuantumBlockchain';
-import { createHash } from 'node:crypto';
+import { _createHash } from 'node:crypto';
+
+import type { EthicalQuantumBlockchain, QuantumTransaction } from './ethicalQuantumBlockchain';
+import { ethicalBlockchain } from './ethicalQuantumBlockchain';
+
+
 
 export interface EthicalSmartContract {
   contractId: string;
@@ -19,13 +30,13 @@ export interface EthicalSmartContract {
 
 export interface TriggerCondition {
   type: 'keth_threshold' | 'omega_range' | 'synchronicity_pattern' | 'collective_meditation';
-  parameters: Record<string, any>;
+  parameters: Record<string, unknown>;
   evaluationLogic: string;  // Código ou expressão para avaliar condição
 }
 
 export interface EthicalAction {
   type: 'adjust_keth' | 'emit_alert' | 'reward_participants' | 'anchor_reality' | 'custom';
-  parameters: Record<string, any>;
+  parameters: Record<string, unknown>;
   ethicalJustification: string;
 }
 
@@ -35,7 +46,7 @@ export interface ContractExecution {
   triggeredAt_ns: number;
   conditionMet: boolean;
   actionExecuted: boolean;
-  result: any;
+  result: unknown;
   zkpProof?: string;  // Prova ZKP da execução válida
   timestamp_ns: number;
 }
@@ -49,9 +60,9 @@ export interface SmartContractConfig {
 
 export class EthicalSmartContractEngine {
   private config: SmartContractConfig;
-  private contracts: Map<string, EthicalSmartContract> = new Map();
+  private contracts = new Map<string, EthicalSmartContract>();
   private blockchain: EthicalQuantumBlockchain;
-  private executionCounters: Map<string, { count: number; resetTime: number }> = new Map();
+  private executionCounters = new Map<string, { count: number; resetTime: number }>();
 
   constructor(config: Partial<SmartContractConfig> = {}, blockchain: EthicalQuantumBlockchain) {
     this.config = {
@@ -120,9 +131,9 @@ export class EthicalSmartContractEngine {
   /**
    * Avalia condições de trigger para todos os contratos ativos
    */
-  async evaluateAllContracts(currentMetrics: { omega: number; kEth: number; synchronicityPatterns?: any[]; collectiveMeditation?: any }): Promise<void> {
+  async evaluateAllContracts(_currentMetrics: { omega: number; kEth: number; synchronicityPatterns?: unknown[]; collectiveMeditation?: unknown }): Promise<void> {
     for (const [contractId, contract] of this.contracts) {
-      if (contract.status !== 'active') continue;
+      if (contract.status !== 'active') {continue;}
 
       // Verificar limite de execuções por hora
       if (!this.checkExecutionLimit(contractId)) {
@@ -130,11 +141,11 @@ export class EthicalSmartContractEngine {
       }
 
       // Avaliar condição de trigger
-      const conditionMet = await this.evaluateTriggerCondition(contract.triggerCondition, currentMetrics);
+      const conditionMet = await this.evaluateTriggerCondition(contract.triggerCondition, _currentMetrics);
 
       if (conditionMet) {
         // Executar ação do contrato
-        await this.executeContractAction(contract, currentMetrics);
+        await this.executeContractAction(contract, _currentMetrics);
       }
     }
   }
@@ -144,7 +155,7 @@ export class EthicalSmartContractEngine {
    */
   private async evaluateTriggerCondition(
     condition: TriggerCondition,
-    metrics: any
+    metrics: unknown
   ): Promise<boolean> {
     switch (condition.type) {
       case 'keth_threshold': {
@@ -169,7 +180,7 @@ export class EthicalSmartContractEngine {
         const { patternType, minSignificance } = condition.parameters;
         const patterns = metrics.synchronicityPatterns || [];
 
-        return patterns.some((p: any) =>
+        return patterns.some((p: unknown) =>
           p.patternType === patternType &&
           p.significanceScore >= minSignificance
         );
@@ -179,7 +190,7 @@ export class EthicalSmartContractEngine {
         const { minCoherence, minParticipants } = condition.parameters;
         const meditation = metrics.collectiveMeditation;
 
-        if (!meditation) return false;
+        if (!meditation) {return false;}
 
         return meditation.collectiveCoherence >= minCoherence &&
                meditation.participantCount >= minParticipants;
@@ -193,7 +204,7 @@ export class EthicalSmartContractEngine {
   /**
    * Executa ação de contrato quando condição é atendida
    */
-  private async executeContractAction(contract: EthicalSmartContract, metrics: any): Promise<void> {
+  private async executeContractAction(contract: EthicalSmartContract, metrics: unknown): Promise<void> {
     const execution: ContractExecution = {
       executionId: `exec_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`,
       contractId: contract.contractId,
@@ -221,7 +232,7 @@ export class EthicalSmartContractEngine {
 
       console.log(`✅ Contrato executado: ${contract.contractId} → ${contract.action.type} (resultado: ${JSON.stringify(result)})`);
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       execution.actionExecuted = false;
       execution.result = { error: error.message };
       contract.executionHistory.push(execution);
@@ -236,7 +247,7 @@ export class EthicalSmartContractEngine {
   /**
    * Executa ação ética específica
    */
-  private async performEthicalAction(action: EthicalAction, _metrics: any): Promise<any> {
+  private async performEthicalAction(action: EthicalAction, _metrics: unknown): Promise<unknown> {
     switch (action.type) {
       case 'adjust_keth': {
         const { newValue, justification } = action.parameters;
@@ -294,7 +305,7 @@ export class EthicalSmartContractEngine {
       timestamp: Date.now(),
     };
 
-    return createHash('sha3-256')
+    return _createHash('sha3-256')
       .update(JSON.stringify(proofData))
       .digest('hex');
   }
@@ -305,17 +316,17 @@ export class EthicalSmartContractEngine {
   private async generateExecutionProof(
     contract: EthicalSmartContract,
     execution: ContractExecution,
-    result: any
+    result: unknown
   ): Promise<string> {
     const proofData = {
       contractId: contract.contractId,
       executionId: execution.executionId,
       actionType: contract.action.type,
-      resultHash: createHash('sha3-256').update(JSON.stringify(result)).digest('hex'),
+      resultHash: _createHash('sha3-256').update(JSON.stringify(result)).digest('hex'),
       timestamp: execution.timestamp_ns,
     };
 
-    return createHash('sha3-256')
+    return _createHash('sha3-256')
       .update(JSON.stringify(proofData))
       .digest('hex');
   }
@@ -398,5 +409,4 @@ export class EthicalSmartContractEngine {
   }
 }
 
-import { ethicalBlockchain } from './ethicalQuantumBlockchain';
 export const ethicalSmartContracts = new EthicalSmartContractEngine({}, ethicalBlockchain);

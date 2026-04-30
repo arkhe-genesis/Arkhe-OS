@@ -1,3 +1,10 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/quantum/QuantumTelepathyPanel.tsx
 'use client';
 import { useState } from 'react';

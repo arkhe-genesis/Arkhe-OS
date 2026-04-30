@@ -1,6 +1,14 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/federated/collective-consciousness.ts
-import * as tf from '@tensorflow/tfjs';
-import { ethicalPredictiveModel } from '../tfjs/ethical-predictive-model';
+import * as _tf from '@tensorflow/_tfjs';
+
+import { ethicalPredictiveModel } from '../_tfjs/ethical-predictive-model';
 
 export interface FederatedRound {
   roundId: string;
@@ -11,10 +19,10 @@ export interface FederatedRound {
 }
 
 export class CollectiveConsciousnessOrchestrator {
-  private currentRound: number = 0;
-  private participants: Set<string> = new Set();
+  private currentRound = 0;
+  private participants = new Set<string>();
 
-  constructor() {}
+  constructor() { /* ignore */ }
 
   async startFederatedRound(participants: string[]): Promise<FederatedRound> {
     this.currentRound++;
@@ -32,7 +40,7 @@ export class CollectiveConsciousnessOrchestrator {
   }
 
   // Simular treinamento local e agregação
-  async performSecureAggregation(localWeights: any[]): Promise<boolean> {
+  async performSecureAggregation(localWeights: unknown[]): Promise<boolean> {
     console.log(`🔐 Realizando agregação segura de ${localWeights.length} atualizações de modelo`);
 
     // Em produção: agregar pesos usando MPC ou HE
@@ -43,7 +51,7 @@ export class CollectiveConsciousnessOrchestrator {
     return true;
   }
 
-  async trainLocalNode(data: { features: number[][][]; labels: number[][] }): Promise<any> {
+  async trainLocalNode(data: { _features: number[][][]; labels: number[][] }): Promise<unknown> {
     console.log('🧠 Treinando nó local para consciência coletiva...');
     await ethicalPredictiveModel.train(data, {
       epochs: 5,

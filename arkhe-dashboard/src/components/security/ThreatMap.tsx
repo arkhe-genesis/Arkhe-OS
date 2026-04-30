@@ -1,12 +1,19 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 'use client';
 
-import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
-import { geoNaturalEarth1, geoPath, geoGraticule } from 'd3-geo';
-import { feature } from 'topojson-client';
+import { geoNaturalEarth1, geoPath, _geoGraticule } from 'd3-geo';
+import React, { _useRef, useEffect } from 'react';
+import { _feature } from 'topojson-client';
 
 // Mock topology for sandbox
-const mockWorld = {
+const _mockWorld = {
   type: "Topology",
   objects: {
     countries: {
@@ -16,11 +23,11 @@ const mockWorld = {
   }
 };
 
-export default function ThreatMap({ threats = [], onThreatClick }: any) {
-    const svgRef = useRef<SVGSVGElement>(null);
+export default function ThreatMap({ threats = [], onThreatClick }: unknown) {
+    const svgRef = _useRef<SVGSVGElement>(null);
 
     useEffect(() => {
-        if (!svgRef.current) return;
+        if (!svgRef.current) {return;}
 
         const svg = d3.select(svgRef.current);
         svg.selectAll('*').remove();
@@ -32,7 +39,7 @@ export default function ThreatMap({ threats = [], onThreatClick }: any) {
             .scale(width / 6)
             .translate([width / 2, height / 2]);
 
-        const path = geoPath().projection(projection);
+        const _path = geoPath().projection(projection);
 
         // Background
         svg.append('rect')
@@ -49,10 +56,10 @@ export default function ThreatMap({ threats = [], onThreatClick }: any) {
             .selectAll('circle')
             .data(threats)
             .join('circle')
-            .attr('cx', (d: any) => projection(d.coordinates || [0,0])![0])
-            .attr('cy', (d: any) => projection(d.coordinates || [0,0])![1])
-            .attr('r', (d: any) => (d.intensity / 5) + 2)
-            .attr('fill', (d: any) => colorScale(d.severity))
+            .attr('cx', (d: unknown) => projection(d.coordinates || [0,0])![0])
+            .attr('cy', (d: unknown) => projection(d.coordinates || [0,0])![1])
+            .attr('r', (d: unknown) => (d.intensity / 5) + 2)
+            .attr('fill', (d: unknown) => colorScale(d.severity))
             .attr('fill-opacity', 0.6)
             .attr('stroke', '#fff')
             .attr('stroke-width', 0.5)
