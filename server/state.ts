@@ -492,8 +492,8 @@ export const setState = (newState: Partial<SimulationState>) => {
   state = { ...state, ...newState };
 };
 
-export const updateState = (updater: (s: SimulationState) => void) => {
-    updater(state);
+export const updateState = (updater: any) => {
+    if (typeof updater === "function") updater(state); else Object.assign(state, updater);
 };
 
 export const generateOrbId = () => uuidv4();

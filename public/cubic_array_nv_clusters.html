@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cubic Array of Icosahedral NV Clusters</title>
+    <style>
+        :root {
+            --panel-bg: rgba(15, 15, 20, 0.75);
+            --panel-border: rgba(255, 255, 255, 0.1);
+            --text-main: #e0e0e0;
+            --accent: #4a90e2;
+        }
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #050505;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--text-main);
+        }
+        #container { width: 100vw; height: 100vh; position: relative; }
+        .panel {
+            position: absolute;
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--panel-border);
+            padding: 15px 20px;
+            border-radius: 12px;
+            pointer-events: auto;
+        }
+        #info { top: 20px; left: 20px; width: 280px; }
+        #info h2 { margin: 0 0 10px 0; font-size: 15px; color: #fff; line-height: 1.3; }
+        #info p { margin: 5px 0; font-size: 12px; color: #bbb; }
+        #info strong { color: #eee; }
+
+        #controls { bottom: 20px; left: 20px; width: 280px; }
+        .control-group { margin-bottom: 10px; }
+        label { display: block; font-size: 11px; margin-bottom: 4px; color: #aaa; text-transform: uppercase; }
+        button, select {
+            width: 100%; padding: 8px; background: rgba(255, 255, 255, 0.05); color: #fff;
+            border: 1px solid var(--panel-border); border-radius: 6px; font-size: 12px; cursor: pointer;
+        }
+        button:hover, select:hover { background: rgba(255, 255, 255, 0.15); }
+
+        #selectionInfo { margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--panel-border); min-height: 60px; font-size: 12px;}
+        .value-highlight { color: var(--accent); font-family: monospace; font-size: 13px; }
+        .memory-highlight { color: #50e3c2; font-family: monospace; font-size: 13px; font-weight: bold;}
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="info" class="panel">
+            <h2>Cubic Array of Icosahedral NV Clusters</h2>
+            <p><strong>Macro-Structure:</strong> Simple Cubic Grid</p>
+            <p><strong>Meso-Structure:</strong> 12-Point Icosahedron</p>
+            <p><strong>Micro-Structure:</strong> 6-Point Octahedral Carbon</p>
+            <p><strong>NV Centers:</strong> <span id="nvCount" class="value-highlight">0</span></p>
+            <p><strong>Carbon Atoms:</strong> <span id="carbonCount" class="value-highlight">0</span></p>
+            <p><strong>RAM (64-bit Array):</strong> <span id="ramUsage" class="memory-highlight">0 KB</span></p>
+            <div id="selectionInfo">Hover over an atom...</div>
+        </div>
+
+        <div id="controls" class="panel">
+            <div class="control-group">
+                <button id="toggleNV">Toggle NV Centers</button>
+            </div>
+            <div class="control-group">
+                <button id="toggleCarbon">Toggle Carbon Shells</button>
+            </div>
+            <div class="control-group">
+                <label>Cubic Grid Bounds</label>
+                <select id="latticeSize">
+                    <option value="0">Single Cell (Fast)</option>
+                    <option value="1" selected>1×1×1 Grid</option>
+                    <option value="2">2×2×2 Grid</option>
+                    <option value="3">3×3×3 Grid (Massive)</option>
+                    <option value="4">4×4×4 Grid (Extreme)</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        // === PHYSICAL CONSTANTS ===
+        const C_C_BOND_LENGTH = 0.154;
+        const NV_PITCH = 5.0;
+        const ANGSTROM_PER_NM = 10;
+
+        // === COMPRESSION CONSTANTS ===
+        const PACK_SCALE = 1000;  // 1nm = 1000 integer steps
+        const PACK_OFFSET = 500;  // Offset negative coords to positive (-500nm to 0)
+
+        // Type Enums
+        const TYPE_CARBON = 0n;
+        const TYPE_NV_NEG = 1n;
+        const TYPE_NV_NEU = 2n;
+
+        // === SCENE GLOBALS ===
+        let scene, camera, renderer, controls, raycaster, mouse;
+        let instancedCarbon, instancedNVNeg, instancedNVNeu;
+        let packedDataArray; // The BigUint64Array
+
+        const dummy = new THREE.Object3D(); // Used to calculate matrices
+
+        // Pre-allocate Materials
+        const matCarbon = new THREE.MeshStandardMaterial({ color: 0x555555, roughness: 0.7 });
+        const matNVNeg = new THREE.MeshStandardMaterial({ color: 0xff2a2a, emissive: 0xff0000, emissiveIntensity: 0.8 });
+        const matNVNeu = new THREE.MeshStandardMaterial({ color: 0x4a90e2, emissive: 0x0044ff, emissiveIntensity: 0.8 });
+
+        const geoCarbon = new THREE.SphereGeometry(0.12 * ANGSTROM_PER_NM, 12, 12);
+        const geoNV = new THREE.SphereGeometry(0.4 * ANGSTROM_PER_NM, 16, 16);
+
+        function init() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0a0a0c);
+            // Removed fog completely so objects never fade away
+            // scene.fog = new THREE.FogExp2(0x0a0a0c, 0.005);
+
+            // Increased the far clipping plane from 1000 to 5000 to prevent distant objects from vanishing
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 5000);
+            camera.position.set(40, 30, 50);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            document.getElementById('container').prepend(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+
+            const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.6);
+            scene.add(hemiLight);
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            dirLight.position.set(10, 20, 10);
+            scene.add(dirLight);
+
+            raycaster = new THREE.Raycaster();
+            mouse = new THREE.Vector2();
+
+            document.getElementById('latticeSize').addEventListener('change', (e) => buildPipeline(parseInt(e.target.value)));
+
+            document.getElementById('toggleNV').addEventListener('click', () => {
+                if(instancedNVNeg) instancedNVNeg.visible = !instancedNVNeg.visible;
+                if(instancedNVNeu) instancedNVNeu.visible = !instancedNVNeu.visible;
+            });
+            document.getElementById('toggleCarbon').addEventListener('click', () => {
+                if(instancedCarbon) instancedCarbon.visible = !instancedCarbon.visible;
+            });
+
+            window.addEventListener('mousemove', onMouseMove, false);
+            window.addEventListener('resize', onWindowResize, false);
+
+            buildPipeline(1);
+        }
+
+        // ==========================================
+        // STEP 2: COMPRESS / PACK FUNCTION
+        // ==========================================
+        function packAtom(x, y, z, type) {
+            // Quantize float coordinates to 20-bit positive integers
+            const qX = BigInt(Math.max(0, Math.min(1048575, Math.floor((x + PACK_OFFSET) * PACK_SCALE))));
+            const qY = BigInt(Math.max(0, Math.min(1048575, Math.floor((y + PACK_OFFSET) * PACK_SCALE))));
+            const qZ = BigInt(Math.max(0, Math.min(1048575, Math.floor((z + PACK_OFFSET) * PACK_SCALE))));
+
+            // Shift into a single 64-bit BigInt: [ Type:4 | X:20 | Y:20 | Z:20 ]
+            return (type << 60n) | (qX << 40n) | (qY << 20n) | qZ;
+        }
+
+        // ==========================================
+        // STEP 3: UNPACK FUNCTION
+        // ==========================================
+        function unpackAtom(packed64) {
+            const type = packed64 >> 60n;
+            const x = Number((packed64 >> 40n) & 0xFFFFFn) / PACK_SCALE - PACK_OFFSET;
+            const y = Number((packed64 >> 20n) & 0xFFFFFn) / PACK_SCALE - PACK_OFFSET;
+            const z = Number(packed64 & 0xFFFFFn) / PACK_SCALE - PACK_OFFSET;
+            return { x, y, z, type };
+        }
+
+        // ==========================================
+        // STEP 1 & 4: GENERATE AND RENDER (PIPELINE)
+        // ==========================================
+        function buildPipeline(size) {
+            // Clear old meshes
+            if (instancedCarbon) scene.remove(instancedCarbon);
+            if (instancedNVNeg) scene.remove(instancedNVNeg);
+            if (instancedNVNeu) scene.remove(instancedNVNeu);
+
+            // Step 1: Generate mathematically perfect temp data
+            const tempLattice = [];
+            const phi = (1 + Math.sqrt(5)) / 2;
+            const baseVertices = [
+                [0, 1, phi], [0, 1, -phi], [0, -1, phi], [0, -1, -phi], [1, phi, 0], [1, -phi, 0], [-1, phi, 0], [-1, -phi, 0], [phi, 0, 1], [phi, 0, -1], [-phi, 0, 1], [-phi, 0, -1]
+            ]; // Truncated 12-point Icosahedron core
+
+            for (let i = -size; i <= size; i++) {
+                for (let j = -size; j <= size; j++) {
+                    for (let k = -size; k <= size; k++) {
+                        const offsetX = i * NV_PITCH * 2;
+                        const offsetY = j * NV_PITCH * 2;
+                        const offsetZ = k * NV_PITCH * 2;
+
+                        baseVertices.forEach((v) => {
+                            const x = v[0] * (NV_PITCH / 3) + offsetX;
+                            const y = v[1] * (NV_PITCH / 3) + offsetY;
+                            const z = v[2] * (NV_PITCH / 3) + offsetZ;
+
+                            // Assign random NV State
+                            const nvType = Math.random() > 0.5 ? TYPE_NV_NEG : TYPE_NV_NEU;
+                            tempLattice.push(packAtom(x, y, z, nvType)); // Pack NV
+
+                            // Generate Octahedral Carbon Shell (6 points)
+                            for (let dx = -1; dx <= 1; dx++) {
+                                for (let dy = -1; dy <= 1; dy++) {
+                                    for (let dz = -1; dz <= 1; dz++) {
+                                        if (Math.abs(dx) + Math.abs(dy) + Math.abs(dz) === 1) {
+                                            const cx = x + dx * C_C_BOND_LENGTH;
+                                            const cy = y + dy * C_C_BOND_LENGTH;
+                                            const cz = z + dz * C_C_BOND_LENGTH;
+                                            tempLattice.push(packAtom(cx, cy, cz, TYPE_CARBON)); // Pack Carbon
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+
+            // Lock into Typed Array (Hyper-compression)
+            packedDataArray = new BigUint64Array(tempLattice);
+
+            // Count instances for memory allocation
+            let cCount = 0, nNegCount = 0, nNeuCount = 0;
+            for(let i=0; i < packedDataArray.length; i++) {
+                const type = packedDataArray[i] >> 60n;
+                if(type === TYPE_CARBON) cCount++;
+                else if(type === TYPE_NV_NEG) nNegCount++;
+                else if(type === TYPE_NV_NEU) nNeuCount++;
+            }
+
+            // Step 4: Initialize InstancedMeshes
+            instancedCarbon = new THREE.InstancedMesh(geoCarbon, matCarbon, cCount);
+            instancedNVNeg = new THREE.InstancedMesh(geoNV, matNVNeg, nNegCount);
+            instancedNVNeu = new THREE.InstancedMesh(geoNV, matNVNeu, nNeuCount);
+
+            // Populate the GPU buffers
+            let idxC = 0, idxNNeg = 0, idxNNeu = 0;
+            for(let i = 0; i < packedDataArray.length; i++) {
+                const atom = unpackAtom(packedDataArray[i]);
+
+                // Position dummy object to calculate matrix
+                dummy.position.set(atom.x * ANGSTROM_PER_NM, atom.y * ANGSTROM_PER_NM, atom.z * ANGSTROM_PER_NM);
+                dummy.updateMatrix();
+
+                // Apply to correct instance buffer
+                if(atom.type === TYPE_CARBON) {
+                    instancedCarbon.setMatrixAt(idxC++, dummy.matrix);
+                } else if(atom.type === TYPE_NV_NEG) {
+                    instancedNVNeg.setMatrixAt(idxNNeg++, dummy.matrix);
+                } else if(atom.type === TYPE_NV_NEU) {
+                    instancedNVNeu.setMatrixAt(idxNNeu++, dummy.matrix);
+                }
+            }
+
+            // Signal GPU to update
+            instancedCarbon.instanceMatrix.needsUpdate = true;
+            instancedNVNeg.instanceMatrix.needsUpdate = true;
+            instancedNVNeu.instanceMatrix.needsUpdate = true;
+
+            scene.add(instancedCarbon, instancedNVNeg, instancedNVNeu);
+
+            // Update UI
+            document.getElementById('nvCount').textContent = (nNegCount + nNeuCount).toLocaleString();
+            document.getElementById('carbonCount').textContent = cCount.toLocaleString();
+
+            // Show memory savings (Bytes = length * 8 for 64-bit)
+            const memoryKB = (packedDataArray.length * 8 / 1024).toFixed(2);
+            document.getElementById('ramUsage').textContent = memoryKB + ' KB';
+        }
+
+        // Raycasting Logic for InstancedMesh
+        function onMouseMove(event) {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+
+            const meshes = [instancedNVNeg, instancedNVNeu, instancedCarbon].filter(m => m && m.visible);
+            const intersects = raycaster.intersectObjects(meshes);
+            const infoDiv = document.getElementById('selectionInfo');
+
+            if (intersects.length > 0) {
+                const hit = intersects[0];
+                const matrix = new THREE.Matrix4();
+                hit.object.getMatrixAt(hit.instanceId, matrix);
+                const pos = new THREE.Vector3().setFromMatrixPosition(matrix);
+
+                let typeStr = "Carbon Atom (Octahedral)";
+                if(hit.object === instancedNVNeg) typeStr = "NV Center (NV⁻)";
+                if(hit.object === instancedNVNeu) typeStr = "NV Center (NV⁰)";
+
+                infoDiv.innerHTML = `
+                    <p><strong>Selected:</strong> <span style="color:var(--accent)">${typeStr}</span></p>
+                    <p><strong>Cartesian:</strong> (${pos.x.toFixed(2)}, ${pos.y.toFixed(2)}, ${pos.z.toFixed(2)}) Å</p>
+                    <p><strong>GPU Instance ID:</strong> ${hit.instanceId}</p>
+                `;
+            } else {
+                infoDiv.innerHTML = 'Hover over an atom to inspect coordinates.';
+            }
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        init();
+        animate();
+    </script>
+</body>
+</html>
