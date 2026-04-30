@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARKHE OS v∞.118 — Visor NV em Escala Real</title>
+    <style>
+        :root {
+            --panel-bg: rgba(10, 10, 15, 0.85);
+            --panel-border: rgba(255, 255, 255, 0.08);
+            --text-main: #e0e0e0;
+            --accent: #4a90e2;
+            --nv-neg: #ff2a2a;
+            --nv-neu: #4a90e2;
+            --carbon: #555555;
+        }
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #020204;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            color: var(--text-main);
+        }
+        #container { width: 100vw; height: 100vh; position: relative; }
+
+        .panel {
+            position: absolute;
+            background: var(--panel-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--panel-border);
+            padding: 16px 20px;
+            border-radius: 12px;
+            pointer-events: auto;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        #info { top: 20px; left: 20px; width: 320px; }
+        #info h2 {
+            margin: 0 0 12px 0;
+            font-size: 13px;
+            color: #fff;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 4px 0;
+            padding: 2px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+        .metric-label { color: #888; }
+        .metric-value {
+            font-family: 'SF Mono', monospace;
+            color: var(--accent);
+            font-weight: 600;
+        }
+        .coherence-bar {
+            width: 100%;
+            height: 3px;
+            background: rgba(255,255,255,0.05);
+            margin-top: 4px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .coherence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff2a2a, #ffd700, #4a90e2);
+            transition: width 0.3s ease;
+        }
+
+        #oam-panel {
+            top: 20px;
+            right: 20px;
+            width: 280px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .oam-link {
+            margin: 6px 0;
+            padding: 8px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 6px;
+            font-size: 10px;
+        }
+        .oam-queue {
+            color: #ffd700;
+            font-size: 9px;
+            margin-top: 2px;
+        }
+
+        #controls { bottom: 20px; left: 20px; width: 320px; }
+        button, select {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            border: 1px solid var(--panel-border);
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            margin-bottom: 8px;
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        button:hover { background: rgba(255,255,255,0.12); }
+        button.active { background: rgba(74, 144, 226, 0.3); border-color: var(--accent); }
+
+        #connection-status {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.5s ease;
+        }
+        .status-connecting { background: rgba(255, 193, 7, 0.2); color: #ffc107; border: 1px solid rgba(255,193,7,0.3); }
+        .status-live { background: rgba(40, 167, 69, 0.2); color: #28a745; border: 1px solid rgba(40,167,69,0.3); }
+        .status-dead { background: rgba(220, 53, 69, 0.2); color: #dc3545; border: 1px solid rgba(220,53,69,0.3); }
+
+        .planet-legend {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="connection-status" class="status-connecting">● Conectando ao Feed Cósmico...</div>
+
+        <div id="info" class="panel">
+            <h2>🪐 ARKHE OS v∞.118 — Visor NV</h2>
+            <div class="metric-row">
+                <span class="metric-label">Feed</span>
+                <span class="metric-value" id="fps-counter">-- FPS</span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Tempo Sim</span>
+                <span class="metric-value" id="sim-time">0.00s</span>
+            </div>
+            <div style="margin-top: 12px; font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 1px;">Coerência Planetária</div>
+
+            <div id="coherence-bars"></div>
+
+            <div style="margin-top: 16px; font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 1px;">Nós Ativos</div>
+            <div class="metric-row">
+                <span class="metric-label">Total NV⁻</span>
+                <span class="metric-value" id="nv-neg-count">0</span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Total NV⁰</span>
+                <span class="metric-value" id="nv-neu-count">0</span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Carbono</span>
+                <span class="metric-value" id="carbon-count">0</span>
+            </div>
+        </div>
+
+        <div id="oam-panel" class="panel">
+            <h2 style="margin: 0 0 12px 0; font-size: 12px; color: #fff; letter-spacing: 1px;">🔗 OAM Cross-Body</h2>
+            <div id="oam-links"></div>
+        </div>
+
+        <div id="controls" class="panel">
+            <button id="btn-connect" onclick="toggleConnection()">Conectar ao Feed</button>
+            <button id="btn-nv" class="active" onclick="toggleNV()">NV Centers</button>
+            <button id="btn-carbon" onclick="toggleCarbon()">Carbon Shells</button>
+            <button id="btn-auto-rotate" onclick="toggleAutoRotate()">Auto-Rotação</button>
+            <div style="margin-top: 8px; font-size: 9px; color: #555;">
+                WebSocket: ws://localhost:8765
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        // === CONFIGURAÇÃO ===
+        const WS_URL = 'ws://localhost:8765';
+        let ws = null;
+        let isConnected = false;
+        let frameCount = 0;
+        let lastFpsTime = performance.now();
+
+        // === THREE.JS SETUP ===
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x020204);
+        scene.fog = new THREE.FogExp2(0x020204, 0.02);
+
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
+        camera.position.set(15, 10, 20);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        document.getElementById('container').prepend(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.autoRotate = false;
+        controls.autoRotateSpeed = 0.5;
+
+        // Iluminação
+        const ambient = new THREE.AmbientLight(0x404040, 0.5);
+        scene.add(ambient);
+        const sunLight = new THREE.PointLight(0xffffff, 1, 100);
+        sunLight.position.set(0, 0, 0);
+        scene.add(sunLight);
+
+        // === MATERIAIS ===
+        const matCarbon = new THREE.MeshBasicMaterial({
+            color: 0x333333,
+            transparent: true,
+            opacity: 0.6
+        });
+        const matNVNeg = new THREE.MeshBasicMaterial({
+            color: 0xff2a2a,
+            transparent: true,
+            opacity: 0.9
+        });
+        const matNVNeu = new THREE.MeshBasicMaterial({
+            color: 0x4a90e2,
+            transparent: true,
+            opacity: 0.9
+        });
+
+        const geoCarbon = new THREE.SphereGeometry(0.03, 6, 6);
+        const geoNV = new THREE.SphereGeometry(0.08, 8, 8);
+
+        // === GRUPOS POR PLANETA ===
+        const planetGroups = {};
+        const PLANET_COLORS = {
+            'EARTH': 0x4a90e2,
+            'MOON': 0xcccccc,
+            'MARS': 0xff6b35,
+            'VENUS': 0xffd700
+        };
+
+        // Criar grupos vazios
+        ['EARTH', 'MOON', 'MARS', 'VENUS'].forEach(p => {
+            planetGroups[p] = {
+                carbon: new THREE.Group(),
+                nvNeg: new THREE.Group(),
+                nvNeu: new THREE.Group()
+            };
+            scene.add(planetGroups[p].carbon);
+            scene.add(planetGroups[p].nvNeg);
+            scene.add(planetGroups[p].nvNeu);
+        });
+
+        // === ORBITAS DOS PLANETAS (visualização) ===
+        function createOrbit(radius, color) {
+            const points = [];
+            for (let i = 0; i <= 64; i++) {
+                const angle = (i / 64) * Math.PI * 2;
+                points.push(new THREE.Vector3(
+                    Math.cos(angle) * radius,
+                    0,
+                    Math.sin(angle) * radius
+                ));
+            }
+            const geometry = new THREE.BufferGeometry().setFromPoints(points);
+            const material = new THREE.LineBasicMaterial({
+                color: color,
+                transparent: true,
+                opacity: 0.15
+            });
+            return new THREE.Line(geometry, material);
+        }
+
+        scene.add(createOrbit(2.0, 0x4a90e2));   // Earth-Moon
+        scene.add(createOrbit(8.0, 0xff6b35));   // Mars
+        scene.add(createOrbit(4.0, 0xffd700));   // Venus
+
+        // === LABELS DOS PLANETAS ===
+        function createLabel(text, position, color) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 128;
+            canvas.height = 32;
+            ctx.fillStyle = `rgba(${(color>>16)&255}, ${(color>>8)&255}, ${color&255}, 0.8)`;
+            ctx.font = 'bold 14px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(text, 64, 22);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true });
+            const sprite = new THREE.Sprite(spriteMat);
+            sprite.position.copy(position);
+            sprite.scale.set(2, 0.5, 1);
+            return sprite;
+        }
+
+        scene.add(createLabel('TERRA', new THREE.Vector3(0, 2, 0), 0x4a90e2));
+        scene.add(createLabel('MARTE', new THREE.Vector3(8, 2, 0), 0xff6b35));
+        scene.add(createLabel('LUA', new THREE.Vector3(2, 1.5, 0), 0xcccccc));
+        scene.add(createLabel('VÊNUS', new THREE.Vector3(-4, 1.5, 0), 0xffd700));
+
+        // === WEBSOCKET ===
+        function toggleConnection() {
+            if (isConnected) {
+                ws.close();
+            } else {
+                connect();
+            }
+        }
+
+        function connect() {
+            updateStatus('connecting', '● Sincronizando...');
+            ws = new WebSocket(WS_URL);
+
+            ws.onopen = () => {
+                isConnected = true;
+                updateStatus('live', '● FEED CÓSMICO ATIVO');
+                document.getElementById('btn-connect').textContent = 'Desconectar';
+            };
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                processFrame(data);
+                frameCount++;
+            };
+
+            ws.onclose = () => {
+                isConnected = false;
+                updateStatus('dead', '● Feed Offline');
+                document.getElementById('btn-connect').textContent = 'Conectar ao Feed';
+            };
+
+            ws.onerror = (err) => {
+                console.error('WebSocket error:', err);
+                updateStatus('dead', '● Erro de Conexão');
+            };
+        }
+
+        function updateStatus(cls, text) {
+            const el = document.getElementById('connection-status');
+            el.className = 'status-' + cls;
+            el.textContent = text;
+        }
+
+        // === PROCESSAMENTO DE FRAME ===
+        let currentData = null;
+
+        function processFrame(data) {
+            currentData = data;
+
+            // Atualizar métricas
+            document.getElementById('sim-time').textContent = data.timestamp.toFixed(2) + 's';
+
+            // Atualizar coerências
+            updateCoherenceBars(data.coherences);
+
+            // Atualizar OAM
+            updateOAMPanel(data.oam_queue_depth, data.oam_deliveries);
+
+            // Atualizar malhas 3D
+            updateMeshes(data.nodes);
+
+            // Atualiza visualização de cobertura quântica (Quantum Input Diversity & Coverage)
+            if (data.coverage) {
+                updateCoverageVisualization(data.coverage);
+            }
+        }
+
+        function updateCoherenceBars(coherences) {
+            const container = document.getElementById('coherence-bars');
+            if (!container.dataset.initialized) {
+                container.innerHTML = '';
+                Object.entries(coherences).forEach(([planet, val]) => {
+                    const div = document.createElement('div');
+                    div.style.margin = '6px 0';
+                    div.innerHTML = `
+                        <div style="display:flex;justify-content:space-between;font-size:10px;">
+                            <span style="color:#888;">${planet}</span>
+                            <span style="color:var(--accent);" id="coh-val-${planet}">0.000</span>
+                        </div>
+                        <div class="coherence-bar">
+                            <div class="coherence-fill" id="coh-bar-${planet}" style="width:0%"></div>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+                container.dataset.initialized = 'true';
+            }
+
+            Object.entries(coherences).forEach(([planet, val]) => {
+                const bar = document.getElementById(`coh-bar-${planet}`);
+                const label = document.getElementById(`coh-val-${planet}`);
+                if (bar && label) {
+                    bar.style.width = (val * 100) + '%';
+                    label.textContent = val.toFixed(3);
+                }
+            });
+        }
+
+        function updateOAMPanel(queueDepth, deliveries) {
+            const container = document.getElementById('oam-links');
+            let html = '';
+
+            Object.entries(queueDepth).forEach(([link, depth]) => {
+                const [src, tgt] = link.split('->');
+                const delivered = deliveries[tgt] || 0;
+                const color = depth > 5 ? '#ff2a2a' : (depth > 0 ? '#ffd700' : '#28a745');
+                html += `
+                    <div class="oam-link">
+                        <div style="display:flex;justify-content:space-between;">
+                            <span>${src} → ${tgt}</span>
+                            <span style="color:${color};">${depth} fila</span>
+                        </div>
+                        <div class="oam-queue">Entregues: ${delivered}</div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // === ATUALIZAÇÃO DE MALHAS 3D ===
+        function updateMeshes(nodesData) {
+            let totalNvNeg = 0, totalNvNeu = 0, totalCarbon = 0;
+
+            Object.entries(nodesData).forEach(([planetName, planetData]) => {
+                const group = planetGroups[planetName];
+                if (!group) return;
+
+                const positions = planetData.positions;
+                const states = planetData.nv_states;
+
+                // Limpar grupos
+                while(group.carbon.children.length > 0) group.carbon.remove(group.carbon.children[0]);
+                while(group.nvNeg.children.length > 0) group.nvNeg.remove(group.nvNeg.children[0]);
+                while(group.nvNeu.children.length > 0) group.nvNeu.remove(group.nvNeu.children[0]);
+
+                // Criar meshes instanciados manualmente (simplificado para demo)
+                // Em produção, usar InstancedMesh
+                const n = Math.min(positions.length, 500);
+
+                for (let i = 0; i < n; i++) {
+                    const pos = positions[i];
+                    const state = states[i];
+                    const vec = new THREE.Vector3(pos[0], pos[1], pos[2]);
+
+                    let mesh;
+                    if (state === 0) {
+                        mesh = new THREE.Mesh(geoCarbon, matCarbon);
+                        totalCarbon++;
+                    } else if (state === 1) {
+                        mesh = new THREE.Mesh(geoNV, matNVNeg);
+                        // Brilho proporcional à coerência do planeta
+                        const intensity = planetData.coherence;
+                        mesh.material = matNVNeg.clone();
+                        mesh.material.opacity = 0.5 + intensity * 0.5;
+                        totalNvNeg++;
+                    } else {
+                        mesh = new THREE.Mesh(geoNV, matNVNeu);
+                        mesh.material = matNVNeu.clone();
+                        mesh.material.opacity = 0.5 + planetData.coherence * 0.5;
+                        totalNvNeu++;
+                    }
+
+                    mesh.position.copy(vec);
+
+                    if (state === 0) group.carbon.add(mesh);
+                    else if (state === 1) group.nvNeg.add(mesh);
+                    else group.nvNeu.add(mesh);
+                }
+            });
+
+            document.getElementById('nv-neg-count').textContent = totalNvNeg;
+            document.getElementById('nv-neu-count').textContent = totalNvNeu;
+            document.getElementById('carbon-count').textContent = totalCarbon;
+        }
+
+        // Adicionar ao final do <script> do Visor NV (substrato v∞.118)
+        // Atualiza as propriedades visuais baseadas nos dados de cobertura recebidos via WebSocket
+
+        function updateCoverageVisualization(coverData) {
+            // coverData = { 'EARTH': {condition: 95, decision: 97, path: 82, jain: 0.92}, ... }
+            const planets = Object.keys(coverData);
+
+            planets.forEach(planet => {
+                const group = planetGroups[planet];
+                if (!group) return;
+
+                const cov = coverData[planet];
+
+                // Mapeia cobertura para parâmetros visuais
+                const conditionHue = mapRange(cov.condition, 50, 100, 0, 240);  // vermelho(0) -> azul(240)
+                const decisionBrightness = mapRange(cov.decision, 50, 100, 0.3, 1.0);
+                const pathScale = mapRange(cov.path, 0, 100, 0.5, 2.0);
+                const jainOpacity = mapRange(cov.jain_path, 0.5, 1.0, 0.3, 1.0);
+
+                // Aplica a todos os centros NV do planeta
+                [group.nvNeg, group.nvNeu].forEach(nvGroup => {
+                    nvGroup.children.forEach(mesh => {
+                        // Cor baseada na condição
+                        const color = new THREE.Color();
+                        color.setHSL(conditionHue / 360, 1.0, 0.5);
+                        mesh.material.color = color;
+
+                        // Brilho baseado na decisão
+                        mesh.material.opacity = decisionBrightness * jainOpacity;
+
+                        // Tamanho baseado no caminho
+                        mesh.scale.setScalar(pathScale * (0.8 + 0.2 * Math.sin(Date.now() * 0.005 + mesh.position.x)));
+                    });
+                });
+            });
+        }
+
+        function mapRange(value, inMin, inMax, outMin, outMax) {
+            return ((value - inMin) / (inMax - inMin)) * (outMax - outMin) + outMin;
+        }
+
+        // === CONTROLES ===
+        function toggleNV() {
+            const btn = document.getElementById('btn-nv');
+            const visible = !btn.classList.contains('active');
+            btn.classList.toggle('active');
+            Object.values(planetGroups).forEach(g => {
+                g.nvNeg.visible = visible;
+                g.nvNeu.visible = visible;
+            });
+        }
+
+        function toggleCarbon() {
+            const btn = document.getElementById('btn-carbon');
+            const visible = !btn.classList.contains('active');
+            btn.classList.toggle('active');
+            Object.values(planetGroups).forEach(g => {
+                g.carbon.visible = visible;
+            });
+        }
+
+        function toggleAutoRotate() {
+            const btn = document.getElementById('btn-auto-rotate');
+            controls.autoRotate = !controls.autoRotate;
+            btn.classList.toggle('active');
+        }
+
+        // === LOOP DE RENDERIZAÇÃO ===
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+
+            // FPS
+            const now = performance.now();
+            if (now - lastFpsTime >= 1000) {
+                document.getElementById('fps-counter').textContent = frameCount + ' FPS';
+                frameCount = 0;
+                lastFpsTime = now;
+            }
+
+            // Pulsar NV baseado na coerência
+            if (currentData) {
+                const t = Date.now() * 0.002;
+                Object.entries(currentData.coherences).forEach(([planet, coh]) => {
+                    const group = planetGroups[planet];
+                    if (group) {
+                        group.nvNeg.children.forEach((mesh, i) => {
+                            const pulse = 0.7 + 0.3 * Math.sin(t + i * 0.1);
+                            // Only update scale here if coverage hasn't set it (we let coverage dominate scale above, but we can blend them or leave pulse)
+                            // blending pulse with coverage scale
+                            // Here we'll just leave it since updateCoverageVisualization runs per frame right after meshes are built,
+                            // actually it overrides it above. Let's just do minor pulse on top.
+                            const currentScale = mesh.scale.x;
+                            // just making it pulse slightly from its current base size
+                            // mesh.scale.setScalar(currentScale * pulse);
+                        });
+                    }
+                });
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+
+        // Auto-conectar após 1s
+        setTimeout(() => {
+            if (!isConnected) connect();
+        }, 1000);
+    </script>
+</body>
+</html>

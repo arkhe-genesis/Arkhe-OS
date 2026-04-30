@@ -1,5 +1,4 @@
 'use client';
-import EthicalSimulatorPanel from '@/components/simulator/EthicalSimulatorPanel';
 /**
  * @license
  * Copyright 2025 Google LLC
@@ -22,6 +21,7 @@ import RetrocausalWisdomPanel from '@/components/retrocausality/RetrocausalWisdo
 import NeuralCoherenceBar from '@/components/security/NeuralCoherenceBar';
 import SafeCorePanel from '@/components/security/SafeCorePanel';
 import SafeCorePanel from '@/components/security/SafeCorePanel';
+import EthicalSimulatorPanel from '@/components/simulator/EthicalSimulatorPanel';
 import TelemetryStream from '@/components/TelemetryStream';
 import ZKPVerificationPanel from '@/components/ZKPVerificationPanel';
 import {ethicalFederatedLearner} from '@/lib/ai/ethicalFederatedLearner';
