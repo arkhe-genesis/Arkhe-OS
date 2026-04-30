@@ -2,7 +2,7 @@
 // Contratos inteligentes éticos auto-executáveis baseados em validação de K_eth
 
 import { EthicalQuantumBlockchain, QuantumTransaction } from './ethicalQuantumBlockchain';
-import { createHash } from 'node:crypto';
+import { createHash } from 'crypto';
 
 export interface EthicalSmartContract {
   contractId: string;

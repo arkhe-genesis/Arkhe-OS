@@ -1,4 +1,5 @@
 'use client';
+import EthicalSimulatorPanel from '@/components/simulator/EthicalSimulatorPanel';
 /**
  * @license
  * Copyright 2025 Google LLC
@@ -9,24 +10,23 @@ import React, { useEffect, useState, useCallback } from 'react';
 
 import dynamic from 'next/dynamic';
 
-import EthicalPredictionChart from '@/components/EthicalPredictionChart';
-import CosmicMemoryViewer from '@/components/CosmicMemoryViewer';
-import TelemetryStream from '@/components/TelemetryStream';
-import ZKPVerificationPanel from '@/components/ZKPVerificationPanel';
+import { EthicalPredictionChart } from '@/components/charts/EthicalPredictionChart';
+import CosmicMemoryViewer from '@/components/memory/CosmicMemoryViewer';
+import { TelemetryStream } from '@/components/telemetry/TelemetryStream';
+import { ZKPVerificationPanel } from '@/components/zkp/ZKPVerificationPanel';
 import HomomorphicTrainingPanel from '@/components/homomorphic/HomomorphicTrainingPanel';
 import P2PNetworkStatus from '@/components/network/P2PNetworkStatus';
 import InterCathedralPanel from '@/components/quantum/InterCathedralPanel';
 import SafeCorePanel from '@/components/security/SafeCorePanel';
-import { ethicalFederatedLearner } from '@/lib/ai/ethicalFederatedLearner';
-import { useZustandStore } from '@/lib/store';
+import { ethicalFederatedLearner } from '@/lib/federated/ethicalFederatedLearning';
+import { useZustandStore } from '@/hooks/useZustandStore';
 import type { EthicalMetrics } from '@/types/ethics';
-import QuantumTelepathyPanel from '@/components/quantum/QuantumTelepathyPanel';
+import { QuantumTelepathyPanel } from '@/components/quantum/QuantumTelepathyPanel';
 import SynchronicityBlockchainPanel from '@/components/quantum/SynchronicityBlockchainPanel';
 import QuantumMarketplacePanel from '@/components/marketplace/QuantumMarketplacePanel';
 import CoherentMeditationPanel from '@/components/meditation/CoherentMeditationPanel';
 import RetrocausalWisdomPanel from '@/components/retrocausality/RetrocausalWisdomPanel';
 import NeuralCoherenceBar from '@/components/security/NeuralCoherenceBar';
-import SafeCorePanel from '@/components/security/SafeCorePanel';
 
 const ArkheCore3D = dynamic(() => import('@/components/ArkheCore3D'), { ssr: false });
 const QuantumARViewer = dynamic(() => import('@/components/ar/QuantumARViewer'), { ssr: false });

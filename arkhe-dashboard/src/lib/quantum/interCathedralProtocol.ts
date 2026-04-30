@@ -1,7 +1,7 @@
 // arkhe-dashboard/src/lib/quantum/interCathedralProtocol.ts
 // Protocolo de comunicação inter-catedral via teleportação quântica de estados de coerência
 
-import { createHash, randomBytes } from 'node:crypto';
+import { createHash, randomBytes } from 'crypto';
 
 export interface CathedralNode {
   nodeId: string;
