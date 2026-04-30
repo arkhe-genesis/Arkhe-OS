@@ -10,11 +10,11 @@
 
 import {useState, useEffect} from 'react';
 
-type TrainingStats = {
+interface TrainingStats {
   federatedQPUs: number;
   avgTrainingLoss: number;
   avgValidationAccuracy: number;
-};
+}
 
 export default function HomomorphicTrainingPanel() {
   const [isTraining, setIsTraining] = useState(false);

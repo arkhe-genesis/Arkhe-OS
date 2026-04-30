@@ -154,15 +154,15 @@ def simulate_coverage_with_input(qubits, n_gates, input_statevector):
     jain = 0.5 + 0.5 * effective_superposition
 
     return {
-        'condition': float(condition_cov),
-        'decision': float(decision_cov),
-        'path': float(path_cov),
-        'jain_condition': float(jain),
-        'jain_decision': float(jain),
-        'jain_path': float(jain),
-        'probabilistic_condition': float(condition_cov * jain / 100.0),
-        'probabilistic_decision': float(decision_cov * jain / 100.0),
-        'probabilistic_path': float(path_cov * jain / 100.0),
+        'condition': condition_cov,
+        'decision': decision_cov,
+        'path': path_cov,
+        'jain_condition': jain,
+        'jain_decision': jain,
+        'jain_path': jain,
+        'probabilistic_condition': condition_cov * jain / 100.0,
+        'probabilistic_decision': decision_cov * jain / 100.0,
+        'probabilistic_path': path_cov * jain / 100.0,
     }
 
 if __name__ == "__main__":
