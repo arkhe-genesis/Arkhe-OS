@@ -6,18 +6,20 @@
  */
 
 import React, { useEffect, useState, useCallback } from 'react';
-import dynamic from 'next/dynamic';
-import { useZustandStore } from '@/lib/store';
-import { EthicalMetrics } from '@/types/ethics';
-import { ethicalFederatedLearner } from '@/lib/ai/ethicalFederatedLearner';
 
-import TelemetryStream from '@/components/TelemetryStream';
-import ZKPVerificationPanel from '@/components/ZKPVerificationPanel';
+import dynamic from 'next/dynamic';
+
 import EthicalPredictionChart from '@/components/EthicalPredictionChart';
 import CosmicMemoryViewer from '@/components/CosmicMemoryViewer';
+import TelemetryStream from '@/components/TelemetryStream';
+import ZKPVerificationPanel from '@/components/ZKPVerificationPanel';
 import HomomorphicTrainingPanel from '@/components/homomorphic/HomomorphicTrainingPanel';
 import P2PNetworkStatus from '@/components/network/P2PNetworkStatus';
 import InterCathedralPanel from '@/components/quantum/InterCathedralPanel';
+import SafeCorePanel from '@/components/security/SafeCorePanel';
+import { ethicalFederatedLearner } from '@/lib/ai/ethicalFederatedLearner';
+import { useZustandStore } from '@/lib/store';
+import type { EthicalMetrics } from '@/types/ethics';
 import QuantumTelepathyPanel from '@/components/quantum/QuantumTelepathyPanel';
 import SynchronicityBlockchainPanel from '@/components/quantum/SynchronicityBlockchainPanel';
 import QuantumMarketplacePanel from '@/components/marketplace/QuantumMarketplacePanel';
@@ -165,7 +167,7 @@ export default function DashboardPage() {
             ) : activeTab === 'scaffold' ? (
               <ArkheCore3D omega={metrics.omega} kEth={metrics.kEth} scaffoldMode={true} />
             ) : (
-              <QuantumARViewer metrics={metrics} onSessionChange={() => {}} />
+              <QuantumARViewer metrics={metrics} onSessionChange={() => { /* noop */ }} />
             )}
 
             {/* Bottom Metrics Overlay */}

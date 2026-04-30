@@ -11,9 +11,10 @@ import dynamic from 'next/dynamic';
 const ArkheCore3D = dynamic(() => import('@/components/ArkheCore3D'), { ssr: false });
 
 export default function SecurityDashboardPage() {
-  const [threats, setThreats] = useState<any[]>([]);
-  const [incidents, setIncidents] = useState<any[]>([]);
-  const [metrics, setMetrics] = useState<any>({ avgOmega: 0.9412 });
+  const [threats, setThreats] = useState<unknown[]>([]);
+  const [incidents, setIncidents] = useState<unknown[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [metrics, _setMetrics] = useState<unknown>({ avgOmega: 0.9412 });
   const [eulerPrismActive, setEulerPrismActive] = useState(false);
 
   useEffect(() => {
@@ -55,14 +56,14 @@ export default function SecurityDashboardPage() {
                   fibonacciVision={eulerPrismActive}
                 />
             </div>
-            <ThreatMap threats={threats} onThreatClick={(d: any) => console.log(d)} />
+            <ThreatMap threats={threats} onThreatClick={(d: unknown) => console.log(d)} />
             <IncidentTable incidents={incidents} />
         </div>
 
         <div className="col-span-12 lg:col-span-4 space-y-6">
             <EulerPrismPanel active={eulerPrismActive} onToggle={() => setEulerPrismActive(!eulerPrismActive)} />
             <CoherenceMetrics metrics={metrics} />
-            <ThresholdConfig onChange={(v: any) => console.log(v)} />
+            <ThresholdConfig onChange={(v: unknown) => console.log(v)} />
 
             <div className="bg-gradient-to-br from-indigo-900/40 to-purple-900/20 border border-white/10 rounded-3xl p-6">
                 <h4 className="text-xs font-bold mb-4 uppercase tracking-widest text-indigo-300">🔒 Prova de Humanidade ZK</h4>
