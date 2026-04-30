@@ -1,12 +1,17 @@
-// arkhe-dashboard/src/components/marketplace/QuantumMarketplacePanel.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
 import { quantumEthicalTalentMarketplace } from '@/lib/marketplace/quantumEthicalTalentMarketplace';
 import { EthicalPrinciple } from '@/types/ethics';
 
+type MarketplaceDashboard = {
+  activePostings: number;
+  registeredTalents: number;
+  avgEthicalAlignment: number;
+};
+
 export default function QuantumMarketplacePanel() {
-  const [dashboard, setDashboard] = useState<any>(null);
+  const [dashboard, setDashboard] = useState<MarketplaceDashboard | null>(null);
 
   useEffect(() => {
     // Simular registro de talento

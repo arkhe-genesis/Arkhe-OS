@@ -1,4 +1,3 @@
-// arkhe-dashboard/src/components/meditation/CoherentMeditationPanel.tsx
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -13,26 +12,23 @@ export default function CoherentMeditationPanel() {
   const audioContextRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
-    const initAudio = async () => {
-      if (typeof window !== 'undefined' && 'AudioContext' in window) {
-        audioContextRef.current = new (window as any).AudioContext();
-      }
-    };
-    initAudio();
+    if (typeof window !== 'undefined' && 'AudioContext' in window) {
+      audioContextRef.current = new window.AudioContext();
+    }
 
     return () => {
       if (audioContextRef.current) {
-        audioContextRef.current.close();
+        void audioContextRef.current.close();
       }
     };
   }, []);
 
-  const startMeditation = async () => {
+  const startMeditation = () => {
     setIsMeditating(true);
     setParticipantCount(Math.floor(Math.random() * 10) + 5);
   };
 
-  const endMeditation = async () => {
+  const endMeditation = () => {
     setIsMeditating(false);
   };
 

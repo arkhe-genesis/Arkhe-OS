@@ -42,7 +42,6 @@ export default function QuantumARViewer({ metrics, onSessionChange }: QuantumARV
     if (!containerRef.current) return;
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const arOverlay = new QuantumAROverlay({
         enableWorldTracking: true,
         enableHandTracking: true,
@@ -88,7 +87,7 @@ export default function QuantumARViewer({ metrics, onSessionChange }: QuantumARV
               Sobreponha o campo de coerência Ω ao seu ambiente físico via WebXR.
             </p>
             <button
-              onClick={startARSession}
+              onClick={() => void startARSession()}
               disabled={!arSupported}
               className={`w-full py-3 rounded-xl font-bold transition-all shadow-lg ${
                 arSupported
@@ -110,7 +109,7 @@ export default function QuantumARViewer({ metrics, onSessionChange }: QuantumARV
             <div className="text-emerald-400">Q_FID: {(metrics.quantumFidelity || 0.99).toFixed(4)}</div>
           </div>
           <button
-            onClick={stopARSession}
+            onClick={() => void stopARSession()}
             className="pointer-events-auto px-4 py-2 bg-red-500/80 hover:bg-red-500 text-white rounded-lg text-xs font-bold transition-all shadow-lg"
           >
             Sair AR

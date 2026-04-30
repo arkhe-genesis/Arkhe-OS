@@ -1,8 +1,8 @@
 // arkhe-dashboard/src/components/charts/EthicalPredictionChart.tsx
 'use client';
-import { EthicalMetrics, PredictionResult } from '@/types/ethics';
+import { PredictionResult } from '@/types/ethics';
 
-export function EthicalPredictionChart({ currentMetrics, prediction, loading }: { currentMetrics: EthicalMetrics; prediction: PredictionResult | null; loading: boolean }) {
+export default function EthicalPredictionChart({ prediction, loading }: { prediction: PredictionResult | null; loading: boolean }) {
   return (
     <div className="p-4 bg-black/20 rounded-xl border border-white/5">
       {loading ? (

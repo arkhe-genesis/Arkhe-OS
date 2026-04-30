@@ -5,21 +5,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import dynamic from 'next/dynamic';
 import React, { useEffect, useState, useCallback } from 'react';
 
-import dynamic from 'next/dynamic';
-
-import EthicalPredictionChart from '@/components/EthicalPredictionChart';
 import CosmicMemoryViewer from '@/components/CosmicMemoryViewer';
+import EthicalPredictionChart from '@/components/charts/EthicalPredictionChart';
 import TelemetryStream from '@/components/TelemetryStream';
 import ZKPVerificationPanel from '@/components/ZKPVerificationPanel';
 import HomomorphicTrainingPanel from '@/components/homomorphic/HomomorphicTrainingPanel';
 import P2PNetworkStatus from '@/components/network/P2PNetworkStatus';
 import InterCathedralPanel from '@/components/quantum/InterCathedralPanel';
-import SafeCorePanel from '@/components/security/SafeCorePanel';
-import { ethicalFederatedLearner } from '@/lib/ai/ethicalFederatedLearner';
-import { useZustandStore } from '@/lib/store';
-import type { EthicalMetrics } from '@/types/ethics';
 import QuantumTelepathyPanel from '@/components/quantum/QuantumTelepathyPanel';
 import SynchronicityBlockchainPanel from '@/components/quantum/SynchronicityBlockchainPanel';
 import QuantumMarketplacePanel from '@/components/marketplace/QuantumMarketplacePanel';
@@ -27,6 +22,9 @@ import CoherentMeditationPanel from '@/components/meditation/CoherentMeditationP
 import RetrocausalWisdomPanel from '@/components/retrocausality/RetrocausalWisdomPanel';
 import NeuralCoherenceBar from '@/components/security/NeuralCoherenceBar';
 import SafeCorePanel from '@/components/security/SafeCorePanel';
+import { ethicalFederatedLearner } from '@/lib/ai/ethicalFederatedLearner';
+import { useZustandStore } from '@/lib/store';
+import type { EthicalMetrics } from '@/types/ethics';
 
 const ArkheCore3D = dynamic(() => import('@/components/ArkheCore3D'), { ssr: false });
 const QuantumARViewer = dynamic(() => import('@/components/ar/QuantumARViewer'), { ssr: false });
@@ -122,13 +120,13 @@ export default function DashboardPage() {
 
         <div className="flex gap-3">
           <button
-            onClick={requestPrediction}
+            onClick={() => void requestPrediction()}
             className="px-6 py-2 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 rounded-xl text-xs font-bold hover:bg-cyan-500/20 transition-all"
           >
             🔮 PREDIÇÃO FEDERADA
           </button>
           <button
-            onClick={handleFederatedTraining}
+            onClick={() => void handleFederatedTraining()}
             disabled={isTraining}
             className="px-6 py-2 bg-purple-500/20 border border-purple-500/40 text-purple-300 rounded-xl text-xs font-bold hover:bg-purple-500/30 transition-all disabled:opacity-50 shadow-[0_0_15px_rgba(168,85,247,0.1)]"
           >
@@ -213,7 +211,7 @@ export default function DashboardPage() {
 
         {/* Sidebar */}
         <div className="col-span-12 lg:col-span-4 space-y-6">
-          <EthicalPredictionChart currentMetrics={metrics} prediction={predictions} loading={false} />
+          <EthicalPredictionChart prediction={predictions} loading={false} />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
              <SafeCorePanel />
              <RetrocausalWisdomPanel />
@@ -221,9 +219,8 @@ export default function DashboardPage() {
              <SynchronicityBlockchainPanel />
              <InterCathedralPanel />
              <CoherentMeditationPanel />
-             <CosmicMemoryViewer currentMetrics={metrics} />
+             <CosmicMemoryViewer />
              <HomomorphicTrainingPanel />
-             <EthicalSimulatorPanel />
              <P2PNetworkStatus />
           </div>
           <QuantumTelepathyPanel />
