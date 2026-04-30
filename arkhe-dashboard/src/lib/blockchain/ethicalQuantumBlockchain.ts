@@ -1,12 +1,21 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/blockchain/ethicalQuantumBlockchain.ts
 /**
  * Ethical Quantum Blockchain (FS-223)
  * Byzantine Fault Tolerance (BFT) governance for K_eth.
  * Ensures immutability of ethical decisions through quantum-resistant anchoring.
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
+
+import type { SynchronicityPattern } from '../quantum/quantumSynchronicity';
 import { postQuantumZKP } from '../zkp/post-quantum-zkp';
-import { SynchronicityPattern } from '../quantum/quantumSynchronicity';
 
 export interface QuantumTransaction {
   txId: string;
@@ -55,15 +64,15 @@ export class EthicalQuantumBlockchain {
 
   async addTransaction(tx: QuantumTransaction): Promise<boolean> {
     // 1. Verify Post-Quantum Signature
-    if (!this.verifyPQSignature(tx)) return false;
+    if (!this.verifyPQSignature(tx)) {return false;}
 
     // 2. Validate Ethical Constraints
-    if (!this.validateConstraints(tx)) return false;
+    if (!this.validateConstraints(tx)) {return false;}
 
     // 3. Verify ZKP for Ethical Validation types
     if (tx.type === 'ethical_validation' && tx.zkpProof) {
       const isValid = await postQuantumZKP.verifyProof(JSON.parse(tx.zkpProof), {});
-      if (!isValid) return false;
+      if (!isValid) {return false;}
     }
 
     this.pendingTransactions.push(tx);
@@ -87,7 +96,7 @@ export class EthicalQuantumBlockchain {
     if (tx.type === 'keth_proposal') {
       const currentK = this.getLatestKeth();
       const proposedK = tx.payload.newValue;
-      if (Math.abs(currentK - proposedK) > 0.05) return false;
+      if (Math.abs(currentK - proposedK) > 0.05) {return false;}
     }
     return true;
   }

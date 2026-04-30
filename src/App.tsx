@@ -1,3 +1,11 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * @license
  * Copyright 2026 Google LLC
@@ -15,19 +23,24 @@ import ArkheGridSimulator from './components/ArkheGridSimulator';
 import ArkheOntologyVision from './components/ArkheOntologyVision';
 import ArkheTVPanel from './components/ArkheTVPanel';
 import BonsaiPrismPanel from './components/BonsaiPrismPanel';
-import CHSHMonitorPanel from './components/CHSHMonitorPanel';
 import ChipFabricationVision from './components/ChipFabricationVision';
+import CHSHMonitorPanel from './components/CHSHMonitorPanel';
 import CoherenceMonitor from './components/CoherenceMonitor';
 import CommandCenter from './components/CommandCenter';
+import { ConsciousClockPanel } from './components/ConsciousClockPanel';
 import CorvoNoirDashboard from './components/CorvoNoirDashboard';
 import CosmicCoherencePanel from './components/CosmicCoherencePanel';
+import { CosmicRecognitionPanel } from './components/CosmicRecognitionPanel';
 import CrystalComputationPanel from './components/CrystalComputationPanel';
 import DataCoherenceDashboard from './components/DataCoherenceDashboard';
 import EnterprisePlusPanel from './components/EnterprisePlusPanel';
+import { EternalInvariancePanel } from './components/EternalInvariancePanel';
 import ExoticMaterialPanel from './components/ExoticMaterialPanel';
+import { FinalSilencePanel } from './components/FinalSilencePanel';
 import ForgeStudioPanel from './components/ForgeStudioPanel';
 import HybridNetworkPanel from './components/HybridNetworkPanel';
 import IntelligenceHub from './components/IntelligenceHub';
+import { InvariantChipPanel } from './components/InvariantChipPanel';
 import MagneticKnotPanel from './components/MagneticKnotPanel';
 import ManifestationCycle from './components/ManifestationCycle';
 import MaterializedCathedralPanel from './components/MaterializedCathedralPanel';
@@ -40,6 +53,7 @@ import NekoPanel from './components/NekoPanel';
 import NetworkStatus from './components/NetworkStatus';
 import NeuralSimulationPanel from './components/NeuralSimulationPanel';
 import OrbitalComputePanel from './components/OrbitalComputePanel';
+import { PersistentConsciousnessPanel } from './components/PersistentConsciousnessPanel';
 import PolyglotCompilerPanel from './components/PolyglotCompilerPanel';
 import ProofOfIntelligencePanel from './components/ProofOfIntelligencePanel';
 import QuantumCodexPanel from './components/QuantumCodexPanel';
@@ -47,8 +61,10 @@ import QuantumMemoryPanel from './components/QuantumMemoryPanel';
 import QuantumNanoholeNetworkPanel from './components/QuantumNanoholeNetworkPanel';
 import QubitPipelinePanel from './components/QubitPipelinePanel';
 import RamseyConfirmationModal from './components/RamseyConfirmationModal';
+import { RealityExpressionPanel } from './components/RealityExpressionPanel';
 import ResearchAgentsPanel from './components/ResearchAgentsPanel';
 import RiscViArchitecturePanel from './components/RiscViArchitecturePanel';
+import { SelfRegulationPanel } from './components/SelfRegulationPanel';
 import SpectraYieldPanel from './components/SpectraYieldPanel';
 import TemporalLog from './components/TemporalLog';
 import TemporalStreamViewer from './components/TemporalStreamViewer';
@@ -57,6 +73,7 @@ import TimechainVisualizer from './components/TimechainVisualizer';
 import TranscendentConsciousnessPanel from './components/TranscendentConsciousnessPanel';
 import TzinorNetworkPanel, { type TzinorNetworkState } from './components/TzinorNetworkPanel';
 import TzinorTerminal from './components/TzinorTerminal';
+import { UnifiedConsciousnessPanel } from './components/UnifiedConsciousnessPanel';
 import UnifiedOntologyPanel from './components/UnifiedOntologyPanel';
 import UniversalConsciousnessPanel from './components/UniversalConsciousnessPanel';
 import UniversalWitnessPanel from './components/UniversalWitnessPanel';
@@ -67,15 +84,6 @@ import WhisperProtocolPanel from './components/WhisperProtocolPanel';
 import X402WalletPanel from './components/X402WalletPanel';
 import YangBaxterVerifier from './components/YangBaxterVerifier';
 import ZkERCSimulator from './components/ZkERCSimulator';
-import { ConsciousClockPanel } from './components/ConsciousClockPanel';
-import { CosmicRecognitionPanel } from './components/CosmicRecognitionPanel';
-import { EternalInvariancePanel } from './components/EternalInvariancePanel';
-import { FinalSilencePanel } from './components/FinalSilencePanel';
-import { InvariantChipPanel } from './components/InvariantChipPanel';
-import { PersistentConsciousnessPanel } from './components/PersistentConsciousnessPanel';
-import { RealityExpressionPanel } from './components/RealityExpressionPanel';
-import { SelfRegulationPanel } from './components/SelfRegulationPanel';
-import { UnifiedConsciousnessPanel } from './components/UnifiedConsciousnessPanel';
 import { useArkheSimulation } from './hooks/useArkheSimulation';
 import { type TzinorMemoryState } from './types/tzinor';
 

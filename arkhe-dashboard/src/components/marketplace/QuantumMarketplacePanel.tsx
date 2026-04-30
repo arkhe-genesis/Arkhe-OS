@@ -1,11 +1,26 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/marketplace/QuantumMarketplacePanel.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
-import { quantumEthicalTalentMarketplace } from '@/lib/marketplace/quantumEthicalTalentMarketplace';
-import { EthicalPrinciple } from '@/types/ethics';
+import {useState, useEffect} from 'react';
+
+import {quantumEthicalTalentMarketplace} from '@/lib/marketplace/quantumEthicalTalentMarketplace';
+import {EthicalPrinciple} from '@/types/ethics';
+
+type MarketplaceDashboard = {
+  activePostings: number;
+  registeredTalents: number;
+  avgEthicalAlignment: number;
+};
 
 export default function QuantumMarketplacePanel() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [dashboard, setDashboard] = useState<any>(null);
 
   useEffect(() => {
@@ -13,7 +28,7 @@ export default function QuantumMarketplacePanel() {
     quantumEthicalTalentMarketplace.registerCredential({
       credentialId: 'cred_88',
       ownerDID: 'did:arkhe:user_42',
-      completedStages: [1,2,3,4,5,6,7,8,9,10,11,12],
+      completedStages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
       principleMastery: {
         [EthicalPrinciple.COHERENCE_PRESERVATION]: 0.95,
         [EthicalPrinciple.NON_HARM_UNIVERSAL]: 0.92,
@@ -23,12 +38,22 @@ export default function QuantumMarketplacePanel() {
         [EthicalPrinciple.COMPASSION_ACROSS_BOUNDARIES]: 0.88,
       },
       technicalProficiency: {
-        1: 0.9, 2: 0.9, 3: 0.9, 4: 0.9, 5: 0.9, 6: 0.9,
-        7: 0.9, 8: 0.9, 9: 0.9, 10: 0.9, 11: 0.9, 12: 0.9
+        1: 0.9,
+        2: 0.9,
+        3: 0.9,
+        4: 0.9,
+        5: 0.9,
+        6: 0.9,
+        7: 0.9,
+        8: 0.9,
+        9: 0.9,
+        10: 0.9,
+        11: 0.9,
+        12: 0.9,
       },
       ethicalAlignmentScore: 0.94,
       issuedAt_ns: Date.now() * 1e6,
-      zkpProof: 'pqc_proof_validated'
+      zkpProof: 'pqc_proof_validated',
     });
     setDashboard(quantumEthicalTalentMarketplace.getMarketplaceDashboard());
   }, []);
@@ -43,11 +68,15 @@ export default function QuantumMarketplacePanel() {
         <div className="space-y-3">
           <div className="flex justify-between text-[10px]">
             <span className="text-slate-500">ACTIVE POSTINGS</span>
-            <span className="text-white font-bold">{dashboard.activePostings}</span>
+            <span className="text-white font-bold">
+              {dashboard.activePostings}
+            </span>
           </div>
           <div className="flex justify-between text-[10px]">
             <span className="text-slate-500">REGISTERED TALENTS</span>
-            <span className="text-white font-bold">{dashboard.registeredTalents}</span>
+            <span className="text-white font-bold">
+              {dashboard.registeredTalents}
+            </span>
           </div>
           <div className="flex justify-between text-[10px]">
             <span className="text-slate-500">PRIVACY PROTOCOL</span>
@@ -55,11 +84,21 @@ export default function QuantumMarketplacePanel() {
           </div>
 
           <div className="p-3 bg-emerald-500/5 rounded-xl border border-emerald-500/20">
-            <p className="text-[9px] text-emerald-300 font-bold uppercase mb-1">Top Alignment</p>
+            <p className="text-[9px] text-emerald-300 font-bold uppercase mb-1">
+              Top Alignment
+            </p>
             <div className="flex justify-between items-end">
-              <p className="text-lg font-mono text-white">{(dashboard.avgEthicalAlignment * 100).toFixed(1)}%</p>
+              <p className="text-lg font-mono text-white">
+                {(dashboard.avgEthicalAlignment * 100).toFixed(1)}%
+              </p>
               <div className="flex gap-1">
-                {[1,2,3].map(i => <div key={i} className="w-1 h-3 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: `${i * 0.1}s` }}></div>)}
+                {[1, 2, 3].map(i => (
+                  <div
+                    key={i}
+                    className="w-1 h-3 bg-emerald-500 rounded-full animate-bounce"
+                    style={{animationDelay: `${i * 0.1}s`}}
+                  ></div>
+                ))}
               </div>
             </div>
           </div>

@@ -1,8 +1,18 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/blockchain/ethicalSmartContracts.ts
 // Contratos inteligentes éticos auto-executáveis baseados em validação de K_eth
+/* eslint-disable @typescript-eslint/no-explicit-any, import/order */
 
-import { EthicalQuantumBlockchain, QuantumTransaction } from './ethicalQuantumBlockchain';
+
 import { createHash } from 'node:crypto';
+
+import type { EthicalQuantumBlockchain, QuantumTransaction } from './ethicalQuantumBlockchain';
 
 export interface EthicalSmartContract {
   contractId: string;
@@ -49,9 +59,9 @@ export interface SmartContractConfig {
 
 export class EthicalSmartContractEngine {
   private config: SmartContractConfig;
-  private contracts: Map<string, EthicalSmartContract> = new Map();
+  private contracts = new Map<string, EthicalSmartContract>();
   private blockchain: EthicalQuantumBlockchain;
-  private executionCounters: Map<string, { count: number; resetTime: number }> = new Map();
+  private executionCounters = new Map<string, { count: number; resetTime: number }>();
 
   constructor(config: Partial<SmartContractConfig> = {}, blockchain: EthicalQuantumBlockchain) {
     this.config = {
@@ -122,7 +132,7 @@ export class EthicalSmartContractEngine {
    */
   async evaluateAllContracts(currentMetrics: { omega: number; kEth: number; synchronicityPatterns?: any[]; collectiveMeditation?: any }): Promise<void> {
     for (const [contractId, contract] of this.contracts) {
-      if (contract.status !== 'active') continue;
+      if (contract.status !== 'active') {continue;}
 
       // Verificar limite de execuções por hora
       if (!this.checkExecutionLimit(contractId)) {
@@ -179,7 +189,7 @@ export class EthicalSmartContractEngine {
         const { minCoherence, minParticipants } = condition.parameters;
         const meditation = metrics.collectiveMeditation;
 
-        if (!meditation) return false;
+        if (!meditation) {return false;}
 
         return meditation.collectiveCoherence >= minCoherence &&
                meditation.participantCount >= minParticipants;

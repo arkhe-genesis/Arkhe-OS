@@ -1,11 +1,18 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/meditation/CoherentMeditationPanel.tsx
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import {useState, useEffect, useRef} from 'react';
 
 export default function CoherentMeditationPanel() {
   const [isMeditating, setIsMeditating] = useState(false);
-  const [collectiveOmega, setCollectiveOmega] = useState(0.90);
+  const [collectiveOmega, setCollectiveOmega] = useState(0.9);
   const [collectiveCoherence, setCollectiveCoherence] = useState(0.0);
   const [binauralFrequency, setBinauralFrequency] = useState(10.0);
   const [participantCount, setParticipantCount] = useState(1);
@@ -15,32 +22,35 @@ export default function CoherentMeditationPanel() {
   useEffect(() => {
     const initAudio = async () => {
       if (typeof window !== 'undefined' && 'AudioContext' in window) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         audioContextRef.current = new (window as any).AudioContext();
       }
     };
-    initAudio();
+    void initAudio();
 
     return () => {
       if (audioContextRef.current) {
-        audioContextRef.current.close();
+        void audioContextRef.current.close();
       }
     };
   }, []);
 
-  const startMeditation = async () => {
+  const startMeditation = () => {
     setIsMeditating(true);
     setParticipantCount(Math.floor(Math.random() * 10) + 5);
   };
 
-  const endMeditation = async () => {
+  const endMeditation = () => {
     setIsMeditating(false);
   };
 
   useEffect(() => {
-    if (!isMeditating) return;
+    if (!isMeditating) {return;}
 
     const interval = setInterval(() => {
-      setCollectiveCoherence(prev => Math.min(1.0, prev + 0.05 * Math.random()));
+      setCollectiveCoherence(prev =>
+        Math.min(1.0, prev + 0.05 * Math.random()),
+      );
       setCollectiveOmega(prev => Math.min(0.98, prev + 0.01 * Math.random()));
       setBinauralFrequency(8 + Math.random() * 10);
     }, 2000);
@@ -76,23 +86,29 @@ export default function CoherentMeditationPanel() {
         <div className="space-y-3">
           <div className="flex justify-between items-center">
             <span className="text-[10px] text-slate-500">COLLECTIVE Ω</span>
-            <span className="text-[10px] font-mono text-cyan-400">{collectiveOmega.toFixed(3)}</span>
+            <span className="text-[10px] font-mono text-cyan-400">
+              {collectiveOmega.toFixed(3)}
+            </span>
           </div>
 
           <div className="flex justify-between items-center">
             <span className="text-[10px] text-slate-500">COHERENCE</span>
-            <span className="text-[10px] font-mono text-purple-400">{(collectiveCoherence * 100).toFixed(1)}%</span>
+            <span className="text-[10px] font-mono text-purple-400">
+              {(collectiveCoherence * 100).toFixed(1)}%
+            </span>
           </div>
 
           <div className="flex justify-between items-center">
             <span className="text-[10px] text-slate-500">BINAURAL</span>
-            <span className="text-[10px] font-mono text-amber-400">{binauralFrequency.toFixed(1)} Hz</span>
+            <span className="text-[10px] font-mono text-amber-400">
+              {binauralFrequency.toFixed(1)} Hz
+            </span>
           </div>
 
           <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-emerald-500 to-cyan-500 transition-all duration-500"
-              style={{ width: `${collectiveCoherence * 100}%` }}
+              style={{width: `${collectiveCoherence * 100}%`}}
             />
           </div>
 

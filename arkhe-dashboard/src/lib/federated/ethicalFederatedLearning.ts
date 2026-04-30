@@ -1,12 +1,22 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/federated/ethicalFederatedLearning.ts
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import * as tf from '@tensorflow/tfjs';
-import { EthicalMetrics, PredictionResult, FederatedTrainingConfig, ClientUpdate, AggregationResult } from '@/types/ethics';
+
+import type { EthicalMetrics, PredictionResult, FederatedTrainingConfig, ClientUpdate, AggregationResult } from '@/types/ethics';
 
 export class EthicalFederatedLearner {
   private globalModel: tf.LayersModel | null = null;
   private config: FederatedTrainingConfig;
   private roundHistory: AggregationResult[] = [];
-  private privacyBudget: number = 0;
+  private privacyBudget = 0;
 
   constructor(config: FederatedTrainingConfig) {
     this.config = config;
@@ -14,7 +24,7 @@ export class EthicalFederatedLearner {
   }
 
   private async initializeGlobalModel(): Promise<void> {
-    if (this.globalModel) return;
+    if (this.globalModel) {return;}
     // Arquitetura compatível com federated learning
     const model = tf.sequential();
 
@@ -52,7 +62,7 @@ export class EthicalFederatedLearner {
     epochs: number = this.config.epochsPerRound
   ): Promise<ClientUpdate> {
     await this.initializeGlobalModel();
-    if (!this.globalModel) throw new Error('Global model not initialized');
+    if (!this.globalModel) {throw new Error('Global model not initialized');}
 
     // Clonar modelo global para treinamento local
     const localModel = tf.sequential();
@@ -177,7 +187,7 @@ export class EthicalFederatedLearner {
 
   async predict(metrics: EthicalMetrics): Promise<PredictionResult> {
     await this.initializeGlobalModel();
-    if (!this.globalModel) throw new Error('Model not trained');
+    if (!this.globalModel) {throw new Error('Model not trained');}
 
     const inputSequence = this.prepareInputSequence(metrics);
     const inputTensor = tf.tensor3d([inputSequence], [1, 10, 6]);

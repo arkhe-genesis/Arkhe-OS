@@ -1,3 +1,10 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 'use client';
 
 import { useEffect, useRef } from 'react';
@@ -15,7 +22,7 @@ export default function ArkheCore3D({ omega, kEth, scaffoldMode = false, fibonac
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current) {return;}
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
@@ -147,7 +154,7 @@ export default function ArkheCore3D({ omega, kEth, scaffoldMode = false, fibonac
     animate();
 
     const handleResize = () => {
-      if (!containerRef.current) return;
+      if (!containerRef.current) {return;}
       camera.aspect = containerRef.current.clientWidth / containerRef.current.clientHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);

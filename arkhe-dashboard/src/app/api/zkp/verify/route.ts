@@ -9,7 +9,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 import { postQuantumZKP } from '@/lib/zkp/post-quantum-zkp';
-import { ZKPProof } from '@/types/ethics';
+import type { ZKPProof } from '@/types/ethics';
 
 export async function POST(request: NextRequest) {
   try {

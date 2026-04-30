@@ -1,5 +1,14 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/simulator/EthicalSimulatorPanel.tsx
 'use client';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 
 import { useState } from 'react';
 
@@ -15,7 +24,7 @@ export default function EthicalSimulatorPanel() {
       body: JSON.stringify({ scenario: { id: 'sc1' }, baseMetrics: { omega: 0.94 } })
     });
     const data = await res.json();
-    if (data.success) setResult(data.result);
+    if (data.success) {setResult(data.result);}
     setLoading(false);
   };
 

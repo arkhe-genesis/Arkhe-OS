@@ -12,6 +12,7 @@ import {Client} from '@modelcontextprotocol/sdk/client/index.js';
 import {StdioClientTransport} from '@modelcontextprotocol/sdk/client/stdio.js';
 
 import type {ToolDefinition} from '../src/tools/ToolDefinition';
+
 import {getExecutablePath} from './utils.js';
 
 describe('e2e', () => {
