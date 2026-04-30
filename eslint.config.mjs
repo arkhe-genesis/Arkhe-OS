@@ -6,7 +6,7 @@
 
 import js from '@eslint/js';
 import stylisticPlugin from '@stylistic/eslint-plugin';
-import {defineConfig, globalIgnores} from 'eslint/config';
+import {defineConfig, globalIgnores} from 'eslint';
 import importPlugin from 'eslint-plugin-import';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
@@ -32,6 +32,10 @@ export default defineConfig([
 
       parserOptions: {
         projectService: {
+          maximumDefaultProjectFileMatchCount_THIS_WILL_SLOW_DOWN_LINTING: 100,
+          maximumDefaultProjectFileMatchCount_THIS_WILL_SLOW_DOWN_LINTING: 100,
+          maximumDefaultProjectFileMatchCount_THIS_WILL_SLOW_DOWN_LINTING: 100,
+          maximumDefaultProjectFileMatchCount_THIS_WILL_SLOW_DOWN_LINTING: 100,
           allowDefaultProject: [
             '.prettierrc.cjs',
             'puppeteer.config.cjs',
