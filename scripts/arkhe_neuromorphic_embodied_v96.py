@@ -352,7 +352,7 @@ class NeuromorphicEmbodiedPolicy(nn.Module):
         # Cerebelo: FiLM event-driven
         self.cerebellum = EventDrivenFiLM(
             input_dim=config.semantic_dim // 4,
-            context_dim=config.context_dim,
+            context_dim=config.proprio_dim,
             threshold=config.film_threshold,
             decay_rate=config.film_decay
         )
