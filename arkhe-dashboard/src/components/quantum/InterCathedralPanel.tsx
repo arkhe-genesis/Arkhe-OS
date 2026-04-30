@@ -1,9 +1,17 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/quantum/InterCathedralPanel.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
 
 export default function InterCathedralPanel() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [nodes, setNodes] = useState<any[]>([]);
   const [fidelity, setFidelity] = useState(0.97);
 

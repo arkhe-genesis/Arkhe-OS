@@ -1,7 +1,14 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/homomorphic/HomomorphicTrainingPanel.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import {useState, useEffect} from 'react';
 
 type TrainingStats = {
   federatedQPUs: number;
@@ -11,15 +18,13 @@ type TrainingStats = {
 
 export default function HomomorphicTrainingPanel() {
   const [isTraining, setIsTraining] = useState(false);
-  const [stats, setStats] = useState<TrainingStats | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [stats, setStats] = useState<any>(null);
 
   useEffect(() => {
-    fetch('/api/quantum/train')
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.success) setStats(d.data);
-      })
-      .catch((e) => console.error('Error fetching homomorphic stats:', e));
+    void fetch('/api/quantum/train')
+      .then(r => r.json())
+      .then(d => d.success && setStats(d.data));
   }, []);
 
   const handleTrain = async () => {

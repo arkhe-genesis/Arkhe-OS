@@ -1,5 +1,13 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 'use client';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function EulerPrismPanel({ active, onToggle }: any) {
   return (
     <div className={`bg-gradient-to-br ${active ? 'from-indigo-600/20 to-cyan-500/10 border-cyan-500/50' : 'from-slate-900/40 to-black/40 border-white/5'} border rounded-3xl p-6 transition-all duration-500`}>

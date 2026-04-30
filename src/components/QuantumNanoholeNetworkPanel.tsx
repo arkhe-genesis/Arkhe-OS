@@ -4,6 +4,8 @@
  * Copyright 2026 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-shadow-restricted-names */
+
 
 import { X, Layers, Cpu, ShieldCheck, Zap, Activity } from 'lucide-react';
 import { motion } from 'motion/react';

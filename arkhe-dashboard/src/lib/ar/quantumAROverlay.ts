@@ -1,6 +1,16 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/ar/quantumAROverlay.ts
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-floating-promises */
+
 import * as THREE from 'three';
-import { EthicalMetrics, ARConfig, ARSessionState } from '@/types/ethics';
+
+import type { EthicalMetrics, ARConfig, ARSessionState } from '@/types/ethics';
 
 export class QuantumAROverlay {
   private renderer: THREE.WebGLRenderer | null = null;
@@ -80,7 +90,7 @@ export class QuantumAROverlay {
   }
 
   private async createCoherenceVisualization(): Promise<void> {
-    if (!this.scene) return;
+    if (!this.scene) {return;}
     this.coherenceField = new THREE.Group();
 
     const particleCount = 2000;
@@ -173,7 +183,7 @@ export class QuantumAROverlay {
   }
 
   private renderAR(timestamp: number, _frame?: any): void {
-    if (!this.renderer || !this.scene || !this.camera) return;
+    if (!this.renderer || !this.scene || !this.camera) {return;}
 
     if (this.particleSystem?.material instanceof THREE.ShaderMaterial) {
       this.particleSystem.material.uniforms.uTime.value = timestamp * 0.001;
@@ -205,9 +215,9 @@ export class QuantumAROverlay {
 }
 
 class QPUSimulator {
-  private qubitCount: number = 16;
-  private coherenceTime: number = 100;
-  private lastUpdate: number = 0;
+  private qubitCount = 16;
+  private coherenceTime = 100;
+  private lastUpdate = 0;
 
   updateCoherenceMetrics(metrics: EthicalMetrics): void {
     this.coherenceTime = 100 * metrics.quantumFidelity;

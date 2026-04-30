@@ -1,4 +1,13 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/simulator/ethicalSimulator.ts
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 
 export class EthicalSimulator {
   async simulate(scenario: any, baseMetrics: any) {

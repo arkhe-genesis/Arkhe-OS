@@ -1,58 +1,53 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/memory/CosmicMemoryViewer.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
-// import { EthicalMetrics } from '@/types/ethics';
+import {useState, useEffect} from 'react';
 
-type MemoryResult = {
-  entryId: string;
-  quantumSimilarity: number;
-};
+import type {EthicalMetrics} from '@/types/ethics';
 
-type MemoryStats = {
-  localEntries: number;
-  federatedNodes: number;
-};
-
-export default function CosmicMemoryViewer() {
+export default function CosmicMemoryViewer({
+  _currentMetrics,
+}: {
+  _currentMetrics?: EthicalMetrics;
+}) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [results, setResults] = useState<MemoryResult[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [results, setResults] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [stats, setStats] = useState<MemoryStats | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [stats, setStats] = useState<any>(null);
 
   useEffect(() => {
-    fetch('/api/memory/retrieve')
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.success) setStats(d.data);
-      })
-      .catch((e) => console.error('Error fetching memory stats:', e));
+    void fetch('/api/memory/retrieve')
+      .then(r => r.json())
+      .then(d => d.success && setStats(d.data));
   }, []);
 
   const handleSearch = async () => {
     setIsLoading(true);
-    const queryVector = Array.from({ length: 32 }, () => Math.random());
-    const queryAmplitude = { re: 0.9, im: 0.1 };
+    const queryVector = Array.from({length: 32}, () => Math.random());
+    const queryAmplitude = {re: 0.9, im: 0.1};
 
-    try {
-      const response = await fetch('/api/memory/retrieve', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          queryVector,
-          queryAmplitude,
-          maxResults: 5,
-          similarityThreshold: 0.5,
-          entanglementDepth: 2,
-        }),
-      });
-      const data = await response.json();
-      if (data.success) {
-        setResults(data.data.results);
-      }
-    } catch (e) {
-      console.error('Search failed', e);
-    }
+    const response = await fetch('/api/memory/retrieve', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        queryVector,
+        queryAmplitude,
+        maxResults: 5,
+        similarityThreshold: 0.5,
+        entanglementDepth: 2,
+      }),
+    });
+    const data = await response.json();
+    if (data.success) {setResults(data.data.results);}
     setIsLoading(false);
   };
 

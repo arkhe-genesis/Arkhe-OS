@@ -1,5 +1,13 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import * as tf from '@tensorflow/tfjs';
-import { EthicalMetrics, PredictionResult } from '@/types/ethics';
+
+import type { EthicalMetrics, PredictionResult } from '@/types/ethics';
 
 export class EthicalPredictiveModel {
   private model: tf.LayersModel | null = null;
@@ -11,7 +19,7 @@ export class EthicalPredictiveModel {
   }
 
   public async initializeModel(): Promise<void> {
-    if (this.model) return;
+    if (this.model) {return;}
     // Arquitetura: LSTM + Dense para séries temporais de métricas éticas
     const model = tf.sequential();
 
@@ -80,7 +88,7 @@ export class EthicalPredictiveModel {
     options: { epochs: number; batchSize: number; validationSplit: number }
   ): Promise<void> {
     await this.initializeModel();
-    if (this.isTraining || !this.model) return;
+    if (this.isTraining || !this.model) {return;}
 
     this.isTraining = true;
     const { epochs, batchSize, validationSplit } = options;
@@ -115,7 +123,7 @@ export class EthicalPredictiveModel {
 
   async predict(metrics: EthicalMetrics): Promise<PredictionResult> {
     await this.initializeModel();
-    if (!this.model) throw new Error('Model not initialized');
+    if (!this.model) {throw new Error('Model not initialized');}
 
     // Preparar input: normalizar e formatar para sequência temporal
     const inputSequence = this.prepareInputSequence(metrics);
