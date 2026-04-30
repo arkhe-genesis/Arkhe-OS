@@ -3,7 +3,8 @@
  * Copyright 2026 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-shadow-restricted-names */
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 
 import { X, Video, Activity, Wifi, ShieldAlert, Play, Pause, Maximize, Volume2, VolumeX, Terminal, Eye, Layers } from 'lucide-react';

@@ -1,3 +1,10 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // scripts/run_federated_cosmic_net.js
 // Simulação da Rede Federada Cósmica v3
 
@@ -24,7 +31,7 @@ async function runFederationSimulation() {
         for(let j=i+1; j<surveys.length; j++) {
             const diff = Math.abs(surveys[i].p_occ - surveys[j].p_occ) * 1e122;
             const status = diff < delta_p_max ? "COMPATÍVEL ✅" : "TENSÃO DETECTADA ⚠️";
-            if (diff >= delta_p_max) allCompatible = false;
+            if (diff >= delta_p_max) {allCompatible = false;}
             console.log(`   → ${surveys[i].name} vs ${surveys[j].name}: ΔP=${diff.toFixed(2)} | ${status}`);
         }
     }
