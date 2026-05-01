@@ -58,7 +58,7 @@ export default function SecurityDashboardPage() {
         <div className="col-span-12 lg:col-span-8 space-y-6">
             <div className="bg-black/40 border border-white/5 rounded-[2rem] p-8 min-h-[400px] relative overflow-hidden group">
                 <ArkheCore3D
-                  omega={(metrics as any).avgOmega}
+                  omega={(metrics as any).avgOmega /* eslint-disable-line @typescript-eslint/no-explicit-any */}
                   kEth={0.92}
                   scaffoldMode={eulerPrismActive}
                   fibonacciVision={eulerPrismActive}

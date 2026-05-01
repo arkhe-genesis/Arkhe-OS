@@ -20,6 +20,7 @@ import AndromedaProbePanel from './components/AndromedaProbePanel';
 import ArkheCliPanel from './components/ArkheCliPanel';
 import ArkheGame from './components/ArkheGame';
 import ArkheGridSimulator from './components/ArkheGridSimulator';
+import ArkheComputeCore283 from './components/ArkheComputeCore283';
 import ArkheOntologyVision from './components/ArkheOntologyVision';
 import ArkheTVPanel from './components/ArkheTVPanel';
 import BonsaiPrismPanel from './components/BonsaiPrismPanel';
@@ -48,6 +49,7 @@ import MetaCreationPanel from './components/MetaCreationPanel';
 import MetaRealityPanel from './components/MetaRealityPanel';
 import MitigationEngine from './components/MitigationEngine';
 import MolecularCommunicationPanel from './components/MolecularCommunicationPanel';
+import ArkheV288 from './components/ArkheV288';
 import MultiverseMemorySyncPanel from './components/MultiverseMemorySyncPanel';
 import NekoPanel from './components/NekoPanel';
 import NetworkStatus from './components/NetworkStatus';
@@ -87,7 +89,7 @@ import ZkERCSimulator from './components/ZkERCSimulator';
 import { useArkheSimulation } from './hooks/useArkheSimulation';
 import { type TzinorMemoryState } from './types/tzinor';
 
-type PanelType = 'simulation' | 'command' | 'intelligence' | 'network' | 'governance' | 'corvo' | 'enterprise' | 'bonsai' | 'neko' | 'dashboard' | 'forge' | 'spectra' | 'game';
+type PanelType = 'arkhe-v288' | 'simulation' | 'command' | 'intelligence' | 'network' | 'governance' | 'corvo' | 'enterprise' | 'bonsai' | 'neko' | 'dashboard' | 'forge' | 'spectra' | 'game';
 
 export default function App() {
   const state = useArkheSimulation();
@@ -129,6 +131,7 @@ export default function App() {
   const [showConsciousClock, setShowConsciousClock] = useState(false);
 
   const navigation = [
+    { id: 'arkhe-v288', label: 'Arkhe v∞.288', icon: Video },
     { id: 'simulation', label: 'Reality Simulation', icon: Shield },
     { id: 'dashboard', label: 'Data Coherence', icon: Bell },
     { id: 'command', label: 'Command Center', icon: Menu },
@@ -231,6 +234,11 @@ export default function App() {
       {/* Main Content Area */}
       <main className="max-w-[960px] mx-auto p-6 min-h-[calc(100vh-4rem)] relative z-10">
         <AnimatePresence mode="wait">
+          {activePanel === 'arkhe-v288' && (
+            <div className="absolute inset-0 z-50 bg-black">
+              <ArkheV288 />
+            </div>
+          )}
           {activePanel === 'simulation' && (
             <motion.div
               key="simulation"
@@ -260,6 +268,7 @@ export default function App() {
                 <OrbitalComputePanel orbital={state.orbital} />
                 <MitigationEngine mitigation={state.mitigation} hardware={state.hardware} activeThreat={state.activeThreat} />
                 <ArkheGridSimulator onClose={() => setActivePanel("simulation")} />
+                <ArkheComputeCore283 />
               </div>
             </motion.div>
           )}

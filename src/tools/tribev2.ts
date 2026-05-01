@@ -89,7 +89,7 @@ if __name__ == "__main__":
   });
 }
 
-export const tribev2Predict = defineTool({
+export const tribev2_predict = defineTool({
   name: 'tribev2_predict',
   description: 'Predict fMRI brain responses to naturalistic stimuli (video, audio, text) using TRIBE v2.',
   annotations: {
