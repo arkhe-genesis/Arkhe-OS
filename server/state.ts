@@ -492,7 +492,7 @@ export const setState = (newState: Partial<SimulationState>) => {
   state = { ...state, ...newState };
 };
 
-export const updateState = (updater: any) => {
+export const updateState = (updater: unknown) => {
     if (typeof updater === "function") updater(state); else Object.assign(state, updater);
 };
 
