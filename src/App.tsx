@@ -20,6 +20,7 @@ import AndromedaProbePanel from './components/AndromedaProbePanel';
 import ArkheCliPanel from './components/ArkheCliPanel';
 import ArkheGame from './components/ArkheGame';
 import ArkheGridSimulator from './components/ArkheGridSimulator';
+import ArkheComputeCore283 from './components/ArkheComputeCore283';
 import ArkheOntologyVision from './components/ArkheOntologyVision';
 import ArkheTVPanel from './components/ArkheTVPanel';
 import BonsaiPrismPanel from './components/BonsaiPrismPanel';
@@ -260,6 +261,7 @@ export default function App() {
                 <OrbitalComputePanel orbital={state.orbital} />
                 <MitigationEngine mitigation={state.mitigation} hardware={state.hardware} activeThreat={state.activeThreat} />
                 <ArkheGridSimulator onClose={() => setActivePanel("simulation")} />
+                <ArkheComputeCore283 />
               </div>
             </motion.div>
           )}

@@ -6,6 +6,7 @@
  */
 
 export { default as AstlFabricator } from './AstlFabricator';
+export { default as ArkheComputeCore283 } from './ArkheComputeCore283';
 export { default as ChipFabricationVision } from './ChipFabricationVision';
 export { default as CoherenceMonitor } from './CoherenceMonitor';
 export { default as EdgeAgentPanel } from './EdgeAgentPanel';
