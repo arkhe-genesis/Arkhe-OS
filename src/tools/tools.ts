@@ -43,8 +43,8 @@ import * as snapshotTools from './snapshot.js';
 import * as spectraTools from './spectra.js';
 import * as storageTools from './storage.js';
 import * as tauTools from './tau.js';
-import * as urbitTools from './urbit.js';
 import type {ToolDefinition} from './ToolDefinition.js';
+import * as urbitTools from './urbit.js';
 
 export const createTools = (args: ParsedArguments) => {
   const rawTools = args.slim
