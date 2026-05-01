@@ -1,5 +1,21 @@
-import * as React from "react";
-import { useEffect, useRef, useState } from "react";
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import * as React from 'react';
+import {useEffect, useRef, useState} from 'react';
 
 const GRID_SIZE = 256;
 
@@ -129,32 +145,50 @@ fn cs_main(@builtin(global_invocation_id) id: vec3<u32>) {
 export default function Component() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [error, setError] = useState<string | null>(null);
-  const [, setStats] = useState({ avgA: 0, avgC: 0 });
+  const [, setStats] = useState({avgA: 0, avgC: 0});
 
   useEffect(() => {
     let mounted = true;
     let requestRef: number;
+    let ws: WebSocket;
+    let wsInterval: ReturnType<typeof setInterval>;
 
     async function initWebGPU() {
       if (!(navigator as any).gpu) {
-        setError("WebGPU not supported");
+        setError('WebGPU not supported');
         return;
       }
 
       const adapter = await (navigator as any).gpu.requestAdapter();
       if (!adapter) {
-        setError("No adapter found");
+        setError('No adapter found');
         return;
       }
       const device = await adapter.requestDevice();
       const canvas = canvasRef.current;
-      if (!canvas) return;
-      const context = canvas.getContext("webgpu") as any;
+      if (!canvas) {return;}
+      const context = canvas.getContext('webgpu') as any;
+
+      // ARKHE BRIDGE WEBSOCKET
+      ws = new WebSocket('ws://localhost:8080');
+      ws.onopen = () => console.log('ArkheCanvas conectado ao bridge');
+
+      wsInterval = setInterval(() => {
+        // Try to retrieve kappa and cBrain from a globally available state or assume 50.0 and 0.5
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(
+            JSON.stringify({
+              kappa: (window as any).currentKappa || 50.0,
+              cBrain: (window as any).currentCBrain || 0.5,
+            }),
+          );
+        }
+      }, 100);
 
       const format = (navigator as any).gpu.getPreferredCanvasFormat();
-      context.configure({ device, format });
+      context.configure({device, format});
 
-      const module = device.createShaderModule({ code: ARKHE_WGSL });
+      const module = device.createShaderModule({code: ARKHE_WGSL});
 
       // Cell size: 5 floats * 4 bytes = 20 bytes
       const cellCount = GRID_SIZE * GRID_SIZE;
@@ -177,10 +211,10 @@ export default function Component() {
         const dist = Math.sqrt((x - centerPos) ** 2 + (y - centerPos) ** 2);
 
         initialData[i * 5 + 0] = dist < 10 ? 0.35 : 0.1; // A
-        initialData[i * 5 + 1] = 0.58 * Math.PI;         // phi
-        initialData[i * 5 + 2] = 1.0;                    // rho
-        initialData[i * 5 + 3] = dist < 10 ? 0.8 : 0.3;  // cBrain
-        initialData[i * 5 + 4] = 0.1;                    // cUniverse
+        initialData[i * 5 + 1] = 0.58 * Math.PI; // phi
+        initialData[i * 5 + 2] = 1.0; // rho
+        initialData[i * 5 + 3] = dist < 10 ? 0.8 : 0.3; // cBrain
+        initialData[i * 5 + 4] = 0.1; // cUniverse
       }
       device.queue.writeBuffer(stateBuffer0, 0, initialData);
       device.queue.writeBuffer(stateBuffer1, 0, initialData);
@@ -194,34 +228,36 @@ export default function Component() {
 
       const bindGroupLayout = device.createBindGroupLayout({
         entries: [
-          { binding: 0, visibility: 0x004, buffer: { type: "uniform" } },
-          { binding: 1, visibility: 0x004, buffer: { type: "read-only-storage" } },
-          { binding: 2, visibility: 0x004, buffer: { type: "storage" } },
+          {binding: 0, visibility: 0x004, buffer: {type: 'uniform'}},
+          {binding: 1, visibility: 0x004, buffer: {type: 'read-only-storage'}},
+          {binding: 2, visibility: 0x004, buffer: {type: 'storage'}},
         ],
       });
 
       const bindGroupA = device.createBindGroup({
         layout: bindGroupLayout,
         entries: [
-          { binding: 0, resource: { buffer: uniformBuffer } },
-          { binding: 1, resource: { buffer: stateBuffer0 } },
-          { binding: 2, resource: { buffer: stateBuffer1 } },
+          {binding: 0, resource: {buffer: uniformBuffer}},
+          {binding: 1, resource: {buffer: stateBuffer0}},
+          {binding: 2, resource: {buffer: stateBuffer1}},
         ],
       });
 
       const bindGroupB = device.createBindGroup({
         layout: bindGroupLayout,
         entries: [
-          { binding: 0, resource: { buffer: uniformBuffer } },
-          { binding: 1, resource: { buffer: stateBuffer1 } },
-          { binding: 2, resource: { buffer: stateBuffer0 } },
+          {binding: 0, resource: {buffer: uniformBuffer}},
+          {binding: 1, resource: {buffer: stateBuffer1}},
+          {binding: 2, resource: {buffer: stateBuffer0}},
         ],
       });
 
-      const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
+      const pipelineLayout = device.createPipelineLayout({
+        bindGroupLayouts: [bindGroupLayout],
+      });
       const computePipeline = device.createComputePipeline({
         layout: pipelineLayout,
-        compute: { module, entryPoint: "cs_main" },
+        compute: {module, entryPoint: 'cs_main'},
       });
 
       // Rendering setup
@@ -292,64 +328,75 @@ export default function Component() {
         }
       `;
 
-      const renderModule = device.createShaderModule({ code: renderShader });
+      const renderModule = device.createShaderModule({code: renderShader});
       const renderPipeline = device.createRenderPipeline({
-        layout: device.createPipelineLayout({ bindGroupLayouts: [
-          device.createBindGroupLayout({
-            entries: [
-              { binding: 0, visibility: 0x002, buffer: { type: "read-only-storage" } }, // FRAGMENT
-              { binding: 1, visibility: 0x002, buffer: { type: "uniform" } }           // FRAGMENT
-            ]
-          })
-        ]}),
-        vertex: { module: renderModule, entryPoint: "vs_main" },
-        fragment: { module: renderModule, entryPoint: "fs_main", targets: [{ format }] },
-        primitive: { topology: "triangle-strip" },
+        layout: device.createPipelineLayout({
+          bindGroupLayouts: [
+            device.createBindGroupLayout({
+              entries: [
+                {
+                  binding: 0,
+                  visibility: 0x002,
+                  buffer: {type: 'read-only-storage'},
+                }, // FRAGMENT
+                {binding: 1, visibility: 0x002, buffer: {type: 'uniform'}}, // FRAGMENT
+              ],
+            }),
+          ],
+        }),
+        vertex: {module: renderModule, entryPoint: 'vs_main'},
+        fragment: {
+          module: renderModule,
+          entryPoint: 'fs_main',
+          targets: [{format}],
+        },
+        primitive: {topology: 'triangle-strip'},
       });
 
       const renderBindGroup0 = device.createBindGroup({
         layout: renderPipeline.getBindGroupLayout(0),
         entries: [
-          { binding: 0, resource: { buffer: stateBuffer0 } },
-          { binding: 1, resource: { buffer: uniformBuffer } }
+          {binding: 0, resource: {buffer: stateBuffer0}},
+          {binding: 1, resource: {buffer: uniformBuffer}},
         ],
       });
       const renderBindGroup1 = device.createBindGroup({
         layout: renderPipeline.getBindGroupLayout(0),
         entries: [
-          { binding: 0, resource: { buffer: stateBuffer1 } },
-          { binding: 1, resource: { buffer: uniformBuffer } }
+          {binding: 0, resource: {buffer: stateBuffer1}},
+          {binding: 1, resource: {buffer: uniformBuffer}},
         ],
       });
 
       let step = 0;
       function frame(time: number) {
-        if (!mounted) return;
+        if (!mounted) {return;}
 
         const uniformsData = new ArrayBuffer(80);
         const view = new DataView(uniformsData);
-        view.setFloat32(0, time / 1000, true);         // uTime
-        view.setFloat32(4, 0.016, true);               // uDt
-        view.setUint32(8, GRID_SIZE, true);            // uGridWidth
-        view.setUint32(12, GRID_SIZE, true);           // uGridHeight
-        view.setFloat32(16, 50.0, true);               // uKappa
-        view.setFloat32(20, 0.9, true);                // uCBrainInput (High coherence stimulus)
-        view.setFloat32(24, 0.08, true);               // uAlphaBase
-        view.setFloat32(28, 0.3, true);                // uBeta
-        view.setFloat32(32, 0.01, true);               // uEpsilon
-        view.setFloat32(36, 0.02, true);               // uDelta
-        view.setFloat32(40, 0.03, true);               // uZeta
-        view.setFloat32(44, 0.5, true);                // uAMax
-        view.setFloat32(48, 0.3, true);                // uC0
-        view.setFloat32(52, 1.0, true);                // uCMax
-        view.setFloat32(56, 0.01, true);               // uDA
-        view.setFloat32(60, 0.05, true);               // uDPhi
-        view.setFloat32(64, 0.02, true);               // uDC
+        view.setFloat32(0, time / 1000, true); // uTime
+        view.setFloat32(4, 0.016, true); // uDt
+        view.setUint32(8, GRID_SIZE, true); // uGridWidth
+        view.setUint32(12, GRID_SIZE, true); // uGridHeight
+        view.setFloat32(16, 50.0, true); // uKappa
+        view.setFloat32(20, 0.9, true); // uCBrainInput (High coherence stimulus)
+        view.setFloat32(24, 0.08, true); // uAlphaBase
+        view.setFloat32(28, 0.3, true); // uBeta
+        view.setFloat32(32, 0.01, true); // uEpsilon
+        view.setFloat32(36, 0.02, true); // uDelta
+        view.setFloat32(40, 0.03, true); // uZeta
+        view.setFloat32(44, 0.5, true); // uAMax
+        view.setFloat32(48, 0.3, true); // uC0
+        view.setFloat32(52, 1.0, true); // uCMax
+        view.setFloat32(56, 0.01, true); // uDA
+        view.setFloat32(60, 0.05, true); // uDPhi
+        view.setFloat32(64, 0.02, true); // uDC
 
         device.queue.writeBuffer(uniformBuffer, 0, uniformsData);
 
         const currentBindGroup = step % 2 === 0 ? bindGroupA : bindGroupB;
-        const currentRenderBindGroup = step % 2 === 0 ? renderBindGroup1 : renderBindGroup0;
+        const currentRenderBindGroup =
+          step % 2 === 0 ? renderBindGroup1 : renderBindGroup0;
 
         const commandEncoder = device.createCommandEncoder();
         const computePass = (commandEncoder as any).beginComputePass();
@@ -359,12 +406,14 @@ export default function Component() {
         computePass.end();
 
         const passEncoder = commandEncoder.beginRenderPass({
-          colorAttachments: [{
-            view: context.getCurrentTexture().createView(),
-            clearValue: { r: 0, g: 0, b: 0, a: 1 },
-            loadOp: "clear",
-            storeOp: "store",
-          }],
+          colorAttachments: [
+            {
+              view: context.getCurrentTexture().createView(),
+              clearValue: {r: 0, g: 0, b: 0, a: 1},
+              loadOp: 'clear',
+              storeOp: 'store',
+            },
+          ],
         });
         passEncoder.setPipeline(renderPipeline);
         passEncoder.setBindGroup(0, currentRenderBindGroup);
@@ -372,30 +421,70 @@ export default function Component() {
         passEncoder.end();
 
         device.queue.submit([commandEncoder.finish()]);
+
+        // Keep current parameters available globally for the websocket
+        (window as any).currentKappa = 50.0; // In a full impl this would read from the simulated loop state or UI
+        (window as any).currentCBrain = 0.5; // same
+
         step++;
+
         requestRef = requestAnimationFrame(frame);
       }
 
       requestRef = requestAnimationFrame(frame);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     initWebGPU();
     return () => {
       mounted = false;
       cancelAnimationFrame(requestRef);
+      if (wsInterval) clearInterval(wsInterval);
+      if (ws && ws.readyState === 1) {
+        // OPEN
+        ws.close();
+      }
     };
   }, []);
 
   return (
-    <div style={{ padding: "20px", background: "#111", color: "#eee", borderRadius: "8px", fontFamily: "monospace" }}>
-      <h3 style={{ margin: "0 0 10px 0", color: "#ffd700" }}>🔺 ARKHE v∞.283 — Compute Core</h3>
+    <div
+      style={{
+        padding: '20px',
+        background: '#111',
+        color: '#eee',
+        borderRadius: '8px',
+        fontFamily: 'monospace',
+      }}
+    >
+      <h3 style={{margin: '0 0 10px 0', color: '#ffd700'}}>
+        🔺 ARKHE v∞.283 — Compute Core
+      </h3>
       {error ? (
-        <p style={{ color: "#ff5555" }}>{error}</p>
+        <p style={{color: '#ff5555'}}>{error}</p>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "15px" }}>
-          <canvas ref={canvasRef} width={GRID_SIZE} height={GRID_SIZE} style={{ background: "#000", border: "1px solid #333", imageRendering: "pixelated", width: "100%", maxWidth: "512px" }} />
-          <div style={{ fontSize: "12px", width: "100%", opacity: 0.8 }}>
-             <p>Substrato 283 active. Coherence loop running on GPU.</p>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '15px',
+          }}
+        >
+          <canvas
+            ref={canvasRef}
+            width={GRID_SIZE}
+            height={GRID_SIZE}
+            style={{
+              background: '#000',
+              border: '1px solid #333',
+              imageRendering: 'pixelated',
+              width: '100%',
+              maxWidth: '512px',
+            }}
+          />
+          <div style={{fontSize: '12px', width: '100%', opacity: 0.8}}>
+            <p>Substrato 283 active. Coherence loop running on GPU.</p>
           </div>
         </div>
       )}
