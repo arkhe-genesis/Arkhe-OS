@@ -162,3 +162,4 @@ build/bin/
 node_modules/
 arkhe-rust-core/target/
 venv_new/
+tvm_env/
