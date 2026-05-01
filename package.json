@@ -139,6 +139,7 @@
     "tailwind-merge": "^3.5.0",
     "three": "^0.183.2",
     "tiny-secp256k1": "^2.2.4",
+    "utf-8-validate": "^5.0.10",
     "vite": "^8.0.8",
     "web3": "^4.16.0",
     "webrtc": "^1.14.1",
