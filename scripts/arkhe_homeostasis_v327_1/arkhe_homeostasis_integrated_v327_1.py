@@ -20,6 +20,7 @@ from homeostasis_zee200_bridge import HomeostasisZEE200Bridge
 from living_interpretability_framework import LivingInterpretabilityPublisher
 from verifiable_manifold_steering import VerifiableManifoldSteerer
 from expanded_parameter_space import AdaptiveParameterOptimizer, multi_objective_score
+from scripts.arkhe_homeostasis_v327_1.causal_efficacy_metrics import CausalEfficacyEvaluator
 
 # Pipeline Ising
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'arkhe_ising_v325'))
@@ -44,7 +45,7 @@ def homeostasis_with_expanded_steering(initial_params, param_ranges, intention_n
         J, h, _ = ising_pipeline.fit_ising_crystal(binarized, gamma=params[1])
         np.fill_diagonal(J, 0)
 
-        communities = ising_pipeline.detect_crystal_communities(J)
+        communities = ising_pipeline.detect_crystal_communities(J, search_enabled=True)
         classifications = ising_pipeline.classify_all_communities(J, communities)
         capture_frac = sum(1 for c in classifications.values() if c['regime'] == 'CAPTURE') / len(classifications) if classifications else 0
 
@@ -89,7 +90,7 @@ def homeostasis_with_expanded_steering(initial_params, param_ranges, intention_n
         J, _, _ = ising_pipeline.fit_ising_crystal(binarized, gamma=best_params_dict['lambda_l1'])
         np.fill_diagonal(J, 0)
 
-        communities = ising_pipeline.detect_crystal_communities(J)
+        communities = ising_pipeline.detect_crystal_communities(J, search_enabled=True)
         ising_result = ising_pipeline.classify_all_communities(J, communities)
 
         capture_communities = [
@@ -133,10 +134,21 @@ def homeostasis_with_expanded_steering(initial_params, param_ranges, intention_n
             start_int_sub, end_int_sub, n_steps=20, generate_proof=True
         )
 
+        # Measure causal efficacy
+        evaluator = CausalEfficacyEvaluator(baseline_window=20, coherence_metric='global_order_parameter')
+        efficacy_metrics = evaluator.evaluate_steering_impact(
+            pre_state=start_int_sub,
+            post_state=steering_result['trajectory'][-1] if steering_result['trajectory'] else end_int_sub,
+            steering_trajectory=steering_result['trajectory'] if steering_result['trajectory'] else [],
+            target_intention=end_int_sub,
+            non_target_communities=[] # Dummy for now
+        )
+
         steering_results.append({
             'intention_pair_idx': i,
             'community_id': dominant_cid,
             'trajectory': steering_result,
+            'causal_efficacy': efficacy_metrics.overall_efficacy,
             'proof_hash': steering_result['proof']['proof_hash'] if steering_result['proof'] else None
         })
 

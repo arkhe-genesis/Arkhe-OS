@@ -9,6 +9,9 @@ import hashlib
 from pathlib import Path
 import sys
 import os
+from scripts.arkhe_homeostasis_v327_1.spsa_adaptive import AdaptiveSPSA
+from scripts.arkhe_homeostasis_v327_1.zee200_nondeterministic import NonDeterministicProofSeed
+from scripts.arkhe_homeostasis_v327_1.proof_tagging import ProofTagger
 
 # Ensure the mock backend is accessible
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -74,11 +77,14 @@ class HomeostasisZEE200Bridge:
         n_crystals = len(crystals)
 
         # Preparar inputs públicos para ZEE200
+        seed_gen = NonDeterministicProofSeed()
+        proof_seed = seed_gen.generate_seed(community_data, self._compute_parent_hash())
+        seed_num = int(hashlib.sha256(proof_seed.encode()).hexdigest(), 16) % (2**32)
         public_inputs = [
             float(epsilon**2),           # epsilon_sq
             float(manifold_dim),          # manifold_dimension
             float(n_crystals),            # n_crystals
-            float(hash(tuple(crystals)) % (2**32))  # indices hash
+            float(seed_num)               # indices hash from nondeterministic seed
         ]
 
         # Private witness (comprometido, não revelado)
@@ -268,6 +274,17 @@ class HomeostasisZEE200Bridge:
             # Computar hash deste bloco
             block_hash = hashlib.sha256(json.dumps(proof, sort_keys=True).encode()).hexdigest()
             proof['block_hash'] = block_hash
+
+            # Tag the proof
+            tagger = ProofTagger(monitoring_threshold=0.30, certification_threshold=0.80, transition_sensitivity=0.15)
+            proof_meta = tagger.classify_proof(
+                capture_fraction=capture_fraction,
+                cohesion_rho=float(dominant_info['rho']),
+                manifold_dim=manifold_dim,
+                epoch=block_id
+            )
+            proof['proof_type'] = proof_meta.proof_type.name
+            proof['priority'] = proof_meta.priority
 
             # Adicionar à cadeia
             with open(self.on_chain_log_path) as f:
