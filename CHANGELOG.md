@@ -713,3 +713,11 @@
 - Block #215: Implemented Hyperspectral Vision (AKA_QUERY_MATERIAL, 0x1FF).
 - Block #216: Implemented Synthetic Emotions as Data (ONEIRIC_FEED, 0x201).
 - Added opcodes: PHASE_READ (0x23), SHEET_SELECT (0x3C), PHASE_UNWRAP (0x3F).
+
+## [v∞.101] - 2026-05-04
+### Proposed
+- Riemann Spectral Conjecture (Substrate 101): Ĥ_ζ operator whose spectrum may correspond to Riemann zeros
+- Conceptual framework linking chronometry, torsion phonons, and characteristic gluing to Hilbert-Pólya
+### Epistemic Note
+- This is a research proposal, not a proof. All claims are conjectural and require rigorous mathematical development.
+- Numerical tests are heuristic; small errors do not prove correspondence, large errors would falsify.
