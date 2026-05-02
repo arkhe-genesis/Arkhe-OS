@@ -25,11 +25,41 @@
       "skillPath": "skills/software-copyright-materials/SKILL.md",
       "computedHash": "ab53d96502e1c051e14e6ad64e9f569c953b0efb5aac2fa97f223dfc71db44ea"
     },
-    "premortem": {
-      "source": "local",
-      "sourceType": "local",
-      "skillPath": "skills/premortem/SKILL.md",
-      "computedHash": "98eacda9e63631e8356c4e398f9934d0b7ca3a79e900ed5ce2d2045534905474"
+    "peft": {
+      "source": "huggingface/peft",
+      "sourceType": "github",
+      "skillPath": "skills/peft/SKILL.md",
+      "computedHash": "c89c38393c363ae3b16e0e41608df37207111c2ad5c9c7424af17928e8478186"
+    },
+    "llamafactory": {
+      "source": "hiyouga/LlamaFactory",
+      "sourceType": "github",
+      "skillPath": "skills/llamafactory/SKILL.md",
+      "computedHash": "ca4800a55bcf0c068ff39d2ab9b96fd114e4e13250d49e0132e58b85bfa13a61"
+    },
+    "deepspeed": {
+      "source": "deepspeedai/DeepSpeed",
+      "sourceType": "github",
+      "skillPath": "skills/deepspeed/SKILL.md",
+      "computedHash": "3aadfe753146c60c405083e564cae29e6f0839741a9292aef3cf68d83fcc942c"
+    },
+    "trl": {
+      "source": "huggingface/trl",
+      "sourceType": "github",
+      "skillPath": "skills/trl/SKILL.md",
+      "computedHash": "011f73120ed61a0c330d0dc45fab81f12b83f00f91e7adbaa4365489fbd03674"
+    },
+    "axolotl": {
+      "source": "axolotl-ai-cloud/axolotl",
+      "sourceType": "github",
+      "skillPath": "skills/axolotl/SKILL.md",
+      "computedHash": "182b81b37ed8276d938c73242266c29fd97113fcac82d209b4cb86567d8084cd"
+    },
+    "unsloth": {
+      "source": "unslothai/unsloth",
+      "sourceType": "github",
+      "skillPath": "skills/unsloth/SKILL.md",
+      "computedHash": "917eb465e52ec937eb37ae34657af334dbef037f363c923370b1faf879b6c01e"
     }
   }
 }
