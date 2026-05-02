@@ -1,0 +1,19 @@
+{
+  "hardware": {
+    "t95": 5.67,
+    "r_final": 0.989
+  },
+  "fluid": {
+    "max_velocity": 1.0
+  },
+  "coupling": {
+    "phase_velocity_correlation": 1.0,
+    "hardware_coherence": 0.989,
+    "fluid_coherence": 0.98,
+    "joint_coherence": 0.9844999999999999,
+    "coupling_strength": 0.9844999999999999
+  },
+  "visualization": [
+    "render_output.png"
+  ]
+}
