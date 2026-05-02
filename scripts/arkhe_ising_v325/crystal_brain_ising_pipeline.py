@@ -218,7 +218,7 @@ def classify_crystal_regime(J, community, k_manifold_est=3, tau=0.3):
     rho = compute_cohesion(J, community)
     n_crystals = len(community)
 
-    if n_crystals <= k_manifold_est * 2 and rho >= tau:
+    if n_crystals <= 24 and rho >= tau:
         return "CAPTURE"
     elif n_crystals > k_manifold_est * 3 and rho <= -tau:
         return "SHATTERING"

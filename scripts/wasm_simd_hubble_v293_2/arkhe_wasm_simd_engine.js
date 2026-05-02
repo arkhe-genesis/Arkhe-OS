@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) Arkhe Network. All rights reserved.
+ * Licensed under the MIT License. See LICENSE in the project root for license information.
+ */
+
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 const NUM_THREADS = navigator.hardwareConcurrency || 4;
 
