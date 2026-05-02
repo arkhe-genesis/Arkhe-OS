@@ -60,6 +60,12 @@
       "sourceType": "github",
       "skillPath": "skills/unsloth/SKILL.md",
       "computedHash": "917eb465e52ec937eb37ae34657af334dbef037f363c923370b1faf879b6c01e"
+    },
+    "sigdigger": {
+      "source": "BatchDrake/SigDigger",
+      "sourceType": "github",
+      "skillPath": "skills/sigdigger/SKILL.md",
+      "computedHash": "8a60205da68d6900cf355bfdabc78ebc5cab57783acab84991bb832ce839b2e4"
     }
   }
 }
