@@ -4,7 +4,7 @@ spsa_adaptive.py
 SPSA com modos adaptativos: convergência estável vs. choque para escapar de platôs.
 """
 import numpy as np
-from typing import Literal, Tuple, Optional
+from typing import Literal, Tuple, Optional, Dict
 
 class AdaptiveSPSA:
     """
@@ -38,6 +38,13 @@ class AdaptiveSPSA:
         self.best_score = -np.inf
         self.history = []
 
+    def initialize_with_tabula_prior(self, nuclear_features: Dict,
+                                     tabula_prior) -> np.ndarray:
+        """Initialize parameters using Tabula Oracle prior."""
+        return tabula_prior.initialize_spsa_with_prior(
+            nuclear_features, self.param_bounds
+        )
+
     def _apply_shock_if_needed(self, current_score: float) -> bool:
         """Verifica se deve aplicar choque de parâmetros."""
         if self.mode != 'adaptive':
@@ -60,19 +67,31 @@ class AdaptiveSPSA:
 
         return False
 
-    def step(self, evaluate_fn, epoch: int, current_theta: np.ndarray) -> Tuple[np.ndarray, float]:
+    def step(self, evaluate_fn, epoch: int, current_theta: np.ndarray = None,
+             nuclear_features: Optional[Dict] = None,
+             tabula_prior = None) -> Tuple[np.ndarray, float]:
         """
         Executa um passo do SPSA com parâmetros adaptativos.
 
         Args:
             evaluate_fn: função que retorna score para dados parâmetros
             epoch: número da iteração atual
-            current_theta: vetor de parâmetros atuais
+            current_theta: vetor de parâmetros atuais (se None e tabula_prior fornecido, inicializa com prior)
+            nuclear_features: características nucleares opcionais para inicialização
+            tabula_prior: prior opcional (TabulaSPSAPrior) para inicialização
 
         Returns:
             new_theta: parâmetros atualizados
             score: score do ponto atual
         """
+        # Initialize with prior if needed
+        if current_theta is None and tabula_prior is not None and nuclear_features is not None:
+            current_theta = self.initialize_with_tabula_prior(nuclear_features, tabula_prior)
+            print(f"🌲 Initialized SPSA with Tabula prior: kappa={current_theta[0]:.3f}")
+        elif current_theta is None:
+            # Fallback initialization if no prior and no current_theta
+            current_theta = np.array([np.random.uniform(b[0], b[1]) for b in self.param_bounds])
+
         # Avaliar ponto atual
         current_score = evaluate_fn(current_theta)
         self.history.append(current_score)

@@ -1,0 +1,41 @@
+# .github/workflows/ci.yml
+name: ARKHE Crystal Brain Continuous Homeostasis
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # a cada 6 horas
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          pip install numpy scipy scikit-learn networkx matplotlib
+      - name: Execute production pipeline
+        run: |
+          python run_production_homeostasis.py --epochs 8 --timesteps 300 --security-bits 80
+      - name: Upload metrics artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: arkhe-metrics
+          path: arkhe_metrics_v327.7_homeostatic_production.json
+      - name: Upload dashboard artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: arkhe-dashboard
+          path: arkhe_v327.7_production_homeostatic_dashboard.png
+      - name: Upload OCTRA submission
+        uses: actions/upload-artifact@v4
+        with:
+          name: octra-submission
+          path: octra_submissions/
+      - name: Commit and push updated chain log
+        run: |
+          git config user.name "ARKHE CosmicDAO Bot"
+          git config user.email "bot@arkhe.cosmicdao.network"
+          git add logs/coherence_chain_*.json publish/interpretability/*.json octra_submissions/
+          git diff --staged --quiet || (git commit -m "[CI] Automated homeostasis run" && git push)

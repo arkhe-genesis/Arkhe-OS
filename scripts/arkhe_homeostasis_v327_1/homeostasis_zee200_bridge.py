@@ -318,7 +318,7 @@ def spsa_with_adaptive_shock(initial_params, max_epochs=30, capture_threshold=0.
     from spsa_adaptive import AdaptiveSPSA
 
     # Configurar otimizador adaptativo
-    param_bounds = [(0.1, 2.0), (0.0001, 0.01), (0.0, 0.3), (2, 5)]
+    param_bounds = [(0.1, 2.0), (0.0001, 0.01), (0.0, 0.3), (2, 5), (0.1, 2.0)]
     optimizer = AdaptiveSPSA(
         param_bounds=param_bounds,
         mode='adaptive',
@@ -330,7 +330,8 @@ def spsa_with_adaptive_shock(initial_params, max_epochs=30, capture_threshold=0.
         initial_params['kappa'],
         initial_params['lambda_l1'],
         initial_params['binarization_threshold'],
-        initial_params['embedding_dim']
+        initial_params['embedding_dim'],
+        initial_params.get('lambda_delta', 1.3759)
     ])
 
     a, c = 0.4, 0.2  # Hiperparâmetros SPSA
@@ -369,7 +370,8 @@ def spsa_with_adaptive_shock(initial_params, max_epochs=30, capture_threshold=0.
                 'kappa': theta[0] - history[-1]['params'][0],
                 'lambda_l1': theta[1] - history[-1]['params'][1],
                 'binarization_threshold': theta[2] - history[-1]['params'][2],
-                'embedding_dim': theta[3] - history[-1]['params'][3]
+                'embedding_dim': theta[3] - history[-1]['params'][3],
+                'lambda_delta': theta[4] - history[-1]['params'][4]
             }
 
         # Verificar e gerar prova ZK se necessário
@@ -422,7 +424,8 @@ if __name__ == '__main__':
         'kappa': args.initial_kappa,
         'lambda_l1': getattr(args, 'initial_lambda', 0.003),
         'binarization_threshold': 0.1,
-        'embedding_dim': 3
+        'embedding_dim': 3,
+        'lambda_delta': 1.3759
     }
 
     history, proofs, best_params = spsa_with_zee200(

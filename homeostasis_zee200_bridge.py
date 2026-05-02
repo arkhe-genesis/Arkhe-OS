@@ -23,7 +23,7 @@ class HomeostasisZEE200Bridge:
 
         # Integrar componentes validados
         self.spsa_optimizer = AdaptiveSPSA(
-            param_bounds=[(0.1, 2.0), (0.0001, 0.01), (0.0, 0.3), (2, 5)],
+            param_bounds=[(0.1, 2.0), (0.0001, 0.01), (0.0, 0.3), (2, 5), (0.1, 2.0)],
             mode='adaptive',
             plateau_threshold=5,
             min_improvement=0.015
@@ -52,7 +52,8 @@ class HomeostasisZEE200Bridge:
             initial_params['kappa'],
             initial_params['lambda_l1'],
             initial_params['binarization_threshold'],
-            initial_params['embedding_dim']
+            initial_params['embedding_dim'],
+            initial_params.get('lambda_delta', 1.3759)
         ])
 
         history = []
@@ -87,7 +88,7 @@ class HomeostasisZEE200Bridge:
             })
             self.proof_history.append({'proof_hash': f'hash_{epoch}', 'capture_fraction': score})
 
-        return history, {'kappa': theta[0], 'lambda_l1': theta[1], 'binarization_threshold': theta[2], 'embedding_dim': theta[3]}
+        return history, {'kappa': theta[0], 'lambda_l1': theta[1], 'binarization_threshold': theta[2], 'embedding_dim': theta[3], 'lambda_delta': theta[4]}
 
     def detect_crystal_communities_validated(self, J: np.ndarray):
         """Detecção de comunidades com Louvain multi-resolução validado."""

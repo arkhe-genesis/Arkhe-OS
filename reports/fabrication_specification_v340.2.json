@@ -1,0 +1,36 @@
+{
+  "timestamp": "2026-05-02T17:00:16",
+  "arkhe_version": "v\u221e.340.2",
+  "summary": {
+    "vortex_invertibility": true,
+    "watermark_verification": true,
+    "homeostasis_convergence": false
+  },
+  "critical_fabrication_parameters": {
+    "micro_vortex_matrix": {
+      "pitch_tolerance": "\u00b120 nm required for phase-spectrum invertibility",
+      "vortex_depth": "1.5 \u03bcm \u00b150 nm for optimal diffraction efficiency",
+      "dn_modulation": "\u0394n = 0.02-0.08 for sufficient phase contrast",
+      "noise_tolerance": "Spectral SNR > 20 dB for reliable phase reconstruction"
+    },
+    "optical_watermarking": {
+      "modulation_depth": "\u03b5 = 0.01 optimal for imperceptibility + detectability",
+      "frequency_spacing": "Orthogonal frequencies prevent cross-talk between hash bits",
+      "minimum_snr": "20 dB required for reliable verification",
+      "key_management": "theta_key must be securely stored for verification"
+    },
+    "homeostatic_control": {
+      "pi_gains": "\u03b3\u2081=1e-3, \u03b3\u2082=1e-6 for stable convergence",
+      "kappa_range": "\u03ba \u2208 [0.1, 2.0] sufficient for CAPTURE regime access",
+      "response_time": "Actuator response < 1 ms required for real-time homeostasis",
+      "spectral_resolution": "1 nm resolution sufficient for error detection"
+    }
+  },
+  "recommended_next_steps": [
+    "Export vortex model to Lumerical/MEEP for full-wave validation",
+    "Fabricate test matrix in PMMA via femtosecond laser writing",
+    "Characterize spectral response with benchtop spectrometer",
+    "Integrate Mach-Zehnder modulator on SiP platform",
+    "Implement FPGA-based PI controller for optical feedback"
+  ]
+}
