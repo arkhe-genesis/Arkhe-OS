@@ -1,0 +1,57 @@
+{
+  "arkhe_version": "v312.1",
+  "type": "OrchOR_Fluidic_Identity_Experimental",
+  "track1": {
+    "description": "Effective mass vs collapse rate (pressure projection)",
+    "orch_or_fit": {
+      "a": 112.30527965161323,
+      "b": 1.6101694434462899,
+      "r2": 0.8476745064144986
+    },
+    "aic_delta": 9.291053717692396,
+    "bayes_factor": 115.54350482954274,
+    "p_value": 0.009185130835465233,
+    "interpretation": "evidence for Orch-OR scaling"
+  },
+  "track2": {
+    "description": "Intention (EEG) vs vortex strength modulation",
+    "pearson_r": 1.0,
+    "p_value": 0.0,
+    "cohens_d": 9.64764509999969,
+    "spearman_rho": 1.0,
+    "significant": true,
+    "interpretation": "intention modulates vortex"
+  },
+  "track3": {
+    "description": "Non-associativity in fluid measurement sequences",
+    "any_significant": false,
+    "kruskal_p": 0.32262034971729575,
+    "levene_p": 0.23907243295833988,
+    "cliffs_delta": [
+      -0.0639,
+      0.01785,
+      0.08325
+    ],
+    "interpretation": "no evidence"
+  },
+  "integration": {
+    "individual_bayes_factors": [
+      115.54350482954274,
+      1.0,
+      0.6875960897011718
+    ],
+    "bayes_factor_combined": 79.44726211116205,
+    "interpretation": "MODERATE evidence",
+    "n_tracks_positive": 2,
+    "consistency": "high",
+    "track1_positive": true,
+    "track2_positive": true,
+    "track3_positive": false
+  },
+  "constants": {
+    "PHI": 1.618033988749895,
+    "PHI_INV": 0.6180339887498948,
+    "FINGERPRINT": 0.58,
+    "SYNC_PHASE": 1.82212373908208
+  }
+}
