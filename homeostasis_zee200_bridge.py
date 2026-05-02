@@ -1,7 +1,7 @@
-from scripts.arkhe_homeostasis_v327_1.spsa_adaptive import AdaptiveSPSA
-from scripts.arkhe_homeostasis_v327_1.louvain_multires import detect_communities_multires
-from scripts.arkhe_homeostasis_v327_1.zee200_nondeterministic import NonDeterministicProofSeed
-from scripts.arkhe_homeostasis_v327_1.proof_tagging import ProofTagger, ProofType
+from core.spsa import AdaptiveSPSA
+from core.louvain import detect_communities_multires
+from core.hash_chain import NonDeterministicProofSeed
+from core.tagging import ProofTagger, ProofType
 import numpy as np
 
 # Mocking original behavior for fallback

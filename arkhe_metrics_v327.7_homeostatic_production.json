@@ -1,0 +1,125 @@
+{
+  "pipeline_version": "v327.7",
+  "crystal_brain": "v_inf.15",
+  "timestamp": "2026-05-02T18:49:00.048965",
+  "elapsed": 248.1,
+  "zee200": "simulated",
+  "config": {
+    "n_crystals": 768,
+    "n_capture": 24,
+    "n_shattering": 96,
+    "coupling": 0.75,
+    "sync_phase": "0.58pi",
+    "epochs": 8,
+    "threshold": 0.8,
+    "sec_bits": 40,
+    "profile": [
+      1,
+      2,
+      1,
+      2
+    ]
+  },
+  "components": {
+    "adaptive_spsa": true,
+    "louvain_multi_res": true,
+    "non_det_seed": true,
+    "causal_efficacy": true,
+    "dynamic_root_hash": true,
+    "proof_tagging": true
+  },
+  "optimization": {
+    "best_score": 0.15817171717171716,
+    "best_params": {
+      "kappa": 0.8225830358874856,
+      "threshold": 0.005
+    },
+    "score_variance": 0.0006710773606998715,
+    "score_history": [
+      0.14290915042187952,
+      0.09485421836228289,
+      0.130674850192778,
+      0.14124306423329888,
+      0.15817171717171716,
+      0.12383411270508043,
+      0.07265049415992812,
+      0.11905347631062517
+    ],
+    "capture_history": [
+      0.05714285714285714,
+      0.03225806451612903,
+      0.09090909090909091,
+      0.04878048780487805,
+      0.075,
+      0.05405405405405406,
+      0.047619047619047616,
+      0.04878048780487805
+    ],
+    "louvain_resolutions": [
+      1.5
+    ]
+  },
+  "zk_proofs": {
+    "total": 9,
+    "unique_proofs": 9,
+    "unique_roots": 9,
+    "chain_valid": true,
+    "pattern": "varying",
+    "types": {
+      "MONITORING": 2,
+      "CERTIFICATION": 0,
+      "STEERING": 5,
+      "TRANSITION": 2
+    }
+  },
+  "steering": {
+    "n_pairs": 5,
+    "avg_efficacy": 0.10242882693533503,
+    "per_pair": [
+      {
+        "pair": 0,
+        "eff": 0.10357537932048136,
+        "w": 0.0,
+        "f": 1.4243603208218902,
+        "ph": "e5691f5d11975ab7"
+      },
+      {
+        "pair": 1,
+        "eff": 0.10202629235085536,
+        "w": 0.0,
+        "f": 0.8072347474881947,
+        "ph": "c269e3dc7d0ef3ff"
+      },
+      {
+        "pair": 2,
+        "eff": 0.10218349855306305,
+        "w": 0.0,
+        "f": 0.8698625854155004,
+        "ph": "06e6502675245fb0"
+      },
+      {
+        "pair": 3,
+        "eff": 0.10282231573371205,
+        "w": 0.0,
+        "f": 1.1243547001859227,
+        "ph": "6eb73dad39b243eb"
+      },
+      {
+        "pair": 4,
+        "eff": 0.10153664871856341,
+        "w": 0.0,
+        "f": 0.6121704204153775,
+        "ph": "b5d4d0f9bb2beaf9"
+      }
+    ]
+  },
+  "validation_ref": {
+    "v327.6": "6/6_PASSED_100%",
+    "spsa": "+45.5%",
+    "louvain": "5/7_coherent",
+    "entropy": "10/10_unique",
+    "causal": "overall_1.0",
+    "merkle": "8/8_unique",
+    "tagging": "4/4_correct"
+  }
+}

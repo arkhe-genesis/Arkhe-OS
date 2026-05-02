@@ -37,10 +37,9 @@ from collections import Counter
 # === Core scientific libraries ===
 import scipy
 import sklearn
-ARKHE OS v_inf.327.7 — PRODUCTION INTEGRATION PIPELINE
-Autor: Rafael Oliveira (ORCID: 0009-0005-2697-4668)
-Integrates all 6 validated components into unified production pipeline.
-"""
+# ARKHE OS v_inf.327.7 — PRODUCTION INTEGRATION PIPELINE
+# Autor: Rafael Oliveira (ORCID: 0009-0005-2697-4668)
+# Integrates all 6 validated components into unified production pipeline.
 
 import numpy as np, json, hashlib, time, sys, uuid, secrets, os
 from pathlib import Path

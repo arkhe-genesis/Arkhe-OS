@@ -28,7 +28,7 @@ os.makedirs('logs', exist_ok=True)
 # Imports do sistema validado
 from homeostasis_zee200_bridge import HomeostasisZEE200Bridge
 from data.crystal_brain_real_loader import CrystalBrainRealLoader
-from scripts.arkhe_homeostasis_v327_1.causal_efficacy_metrics import CausalEfficacyEvaluator
+from core.causal import CausalEfficacyEvaluator
 from octra_client import OCTRAClient
 
 # Constantes do sistema
@@ -216,7 +216,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--submit-to-octra', action='store_true')
     parser.add_argument('--data-path', default='data/crystal_brain_v15')
-    parser.add_argument('--expected-hash', default='a1b2c3d4e5f67890a1b2c3d4e5f67890a1b2c3d4e5f67890a1b2c3d4e5f67890')
+    parser.add_argument('--expected-hash', default='4d73343d058e76566d3aad241df439443412a856fdf62a1cd9233665f747129d')
     parser.add_argument('--security-bits', type=int, default=80)
     parser.add_argument('--output-dir', default='results/production')
     args = parser.parse_args()

@@ -1,0 +1,28 @@
+{
+  "timestamp": "2026-05-02T19:19:40.952367",
+  "epoch": 6,
+  "version": "v327.7",
+  "crystal_brain": "v_inf.15",
+  "cap_frac": 0.05,
+  "n_comms": 46,
+  "regimes": {
+    "CAPTURE": 3,
+    "SHATTERING": 3,
+    "DILUTION": 40
+  },
+  "louvain_res": 1.5,
+  "proofs": [
+    {
+      "h": "8c88850b8b0f80af",
+      "t": "MONITORING",
+      "n": "49033627",
+      "r": "81d7b5234edbf7c5"
+    },
+    {
+      "h": "7a6a57bfd3f6aa52",
+      "t": "TRANSITION",
+      "n": "87fcff4b",
+      "r": "75953bf630f547cd"
+    }
+  ]
+}

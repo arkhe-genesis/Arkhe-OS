@@ -9,9 +9,9 @@ import hashlib
 from pathlib import Path
 import sys
 import os
-from scripts.arkhe_homeostasis_v327_1.spsa_adaptive import AdaptiveSPSA
-from scripts.arkhe_homeostasis_v327_1.zee200_nondeterministic import NonDeterministicProofSeed
-from scripts.arkhe_homeostasis_v327_1.proof_tagging import ProofTagger
+from core.spsa import AdaptiveSPSA
+from core.hash_chain import NonDeterministicProofSeed
+from core.tagging import ProofTagger
 
 # Ensure the mock backend is accessible
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))

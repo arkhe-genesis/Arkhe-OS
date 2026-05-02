@@ -1,0 +1,125 @@
+{
+  "pipeline_version": "v327.7",
+  "crystal_brain": "v_inf.15",
+  "timestamp": "2026-05-02T19:55:01.859081",
+  "elapsed": 100.7,
+  "zee200": "simulated",
+  "config": {
+    "n_crystals": 768,
+    "n_capture": 24,
+    "n_shattering": 96,
+    "coupling": 0.75,
+    "sync_phase": "0.58pi",
+    "epochs": 8,
+    "threshold": 0.8,
+    "sec_bits": 40,
+    "profile": [
+      1,
+      2,
+      1,
+      2
+    ]
+  },
+  "components": {
+    "adaptive_spsa": true,
+    "louvain_multi_res": true,
+    "non_det_seed": true,
+    "causal_efficacy": true,
+    "dynamic_root_hash": true,
+    "proof_tagging": true
+  },
+  "optimization": {
+    "best_score": 0.5625301932367149,
+    "best_params": {
+      "kappa": 0.7810081846517193,
+      "threshold": 0.18008737222474308
+    },
+    "score_variance": 0.0070396081357096615,
+    "score_history": [
+      0.14590340346242747,
+      0.20633684210526315,
+      0.35515472848608237,
+      0.19683520599250937,
+      0.5625301932367149,
+      0.3173076377058489,
+      0.16836146272855135,
+      0.11842105263157895
+    ],
+    "capture_history": [
+      0.09375,
+      0.16,
+      0.2857142857142857,
+      0.125,
+      0.21052631578947367,
+      0.25,
+      0.12,
+      0.08
+    ],
+    "louvain_resolutions": [
+      1.5
+    ]
+  },
+  "zk_proofs": {
+    "total": 9,
+    "unique_proofs": 9,
+    "unique_roots": 9,
+    "chain_valid": true,
+    "pattern": "varying",
+    "types": {
+      "MONITORING": 2,
+      "CERTIFICATION": 0,
+      "STEERING": 5,
+      "TRANSITION": 2
+    }
+  },
+  "steering": {
+    "n_pairs": 5,
+    "avg_efficacy": 0.10177724345354022,
+    "per_pair": [
+      {
+        "pair": 0,
+        "eff": 0.10336612980721992,
+        "w": 0.0,
+        "f": 1.3428988175395382,
+        "ph": "64ca651d94ed26e4"
+      },
+      {
+        "pair": 1,
+        "eff": 0.10065546114348096,
+        "w": 0.0,
+        "f": 0.26149258790784985,
+        "ph": "2150e105a39c1d6a"
+      },
+      {
+        "pair": 2,
+        "eff": 0.10311634187782028,
+        "w": 0.0,
+        "f": 1.2432473084661333,
+        "ph": "1fc677f592d039d7"
+      },
+      {
+        "pair": 3,
+        "eff": 0.10040910057455495,
+        "w": 0.0,
+        "f": 0.163208405286756,
+        "ph": "5efda56eef2d0405"
+      },
+      {
+        "pair": 4,
+        "eff": 0.10133918386462504,
+        "w": 0.0,
+        "f": 0.5342599754815367,
+        "ph": "fdbb989d619125d8"
+      }
+    ]
+  },
+  "validation_ref": {
+    "v327.6": "6/6_PASSED_100%",
+    "spsa": "+45.5%",
+    "louvain": "5/7_coherent",
+    "entropy": "10/10_unique",
+    "causal": "overall_1.0",
+    "merkle": "8/8_unique",
+    "tagging": "4/4_correct"
+  }
+}

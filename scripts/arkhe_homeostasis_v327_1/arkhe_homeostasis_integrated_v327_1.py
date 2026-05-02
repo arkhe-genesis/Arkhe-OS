@@ -20,7 +20,7 @@ from homeostasis_zee200_bridge import HomeostasisZEE200Bridge
 from living_interpretability_framework import LivingInterpretabilityPublisher
 from verifiable_manifold_steering import VerifiableManifoldSteerer
 from expanded_parameter_space import AdaptiveParameterOptimizer, multi_objective_score
-from scripts.arkhe_homeostasis_v327_1.causal_efficacy_metrics import CausalEfficacyEvaluator
+from core.causal import CausalEfficacyEvaluator
 
 # Pipeline Ising
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'arkhe_ising_v325'))

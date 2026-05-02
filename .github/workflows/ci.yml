@@ -17,7 +17,7 @@ jobs:
           pip install numpy scipy scikit-learn networkx matplotlib
       - name: Execute production pipeline
         run: |
-          python run_production_homeostasis.py --epochs 8 --timesteps 300 --security-bits 80
+          python run_lightweight.py
       - name: Upload metrics artifact
         uses: actions/upload-artifact@v4
         with:
