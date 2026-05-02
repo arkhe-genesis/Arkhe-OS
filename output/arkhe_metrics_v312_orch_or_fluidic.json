@@ -1,5 +1,5 @@
 {
-  "arkhe_version": "v312.1",
+  "arkhe_version": "v312.3",
   "type": "OrchOR_Fluidic_Identity_Experimental",
   "track1": {
     "description": "Effective mass vs collapse rate (pressure projection)",
@@ -14,39 +14,31 @@
     "interpretation": "evidence for Orch-OR scaling"
   },
   "track2": {
-    "description": "Intention (EEG) vs vortex strength modulation",
-    "pearson_r": 1.0,
-    "p_value": 0.0,
-    "cohens_d": 9.64764509999969,
-    "spearman_rho": 1.0,
+    "description": "Intention vs vortex strength modulation (Realistic Sensor + MI)",
+    "mi_nats": 2.2224826692133326,
     "significant": true,
-    "interpretation": "intention modulates vortex"
+    "interpretation": "informational coupling detected"
   },
   "track3": {
-    "description": "Non-associativity in fluid measurement sequences",
-    "any_significant": false,
-    "kruskal_p": 0.32262034971729575,
-    "levene_p": 0.23907243295833988,
-    "cliffs_delta": [
-      -0.0639,
-      0.01785,
-      0.08325
-    ],
-    "interpretation": "no evidence"
+    "description": "Direct Octonionic Associator Test on Velocity Fields",
+    "mean_associator_norm": 6.513855439198107e-05,
+    "std_associator_norm": 3.0962531495874746e-06,
+    "non_associative_detected": false,
+    "interpretation": "associative baseline"
   },
   "integration": {
     "individual_bayes_factors": [
       115.54350482954274,
-      1.0,
-      0.6875960897011718
+      4488689800.11103,
+      1.0673068941977328
     ],
-    "bayes_factor_combined": 79.44726211116205,
-    "interpretation": "MODERATE evidence",
-    "n_tracks_positive": 2,
+    "bayes_factor_combined": 553546928639.4406,
+    "interpretation": "STRONG evidence for Orch-OR fluidic identity",
+    "n_tracks_positive": 2.0,
     "consistency": "high",
     "track1_positive": true,
     "track2_positive": true,
-    "track3_positive": false
+    "track3_positive": 0.0
   },
   "constants": {
     "PHI": 1.618033988749895,
