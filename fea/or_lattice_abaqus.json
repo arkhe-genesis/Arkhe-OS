@@ -1,0 +1,72 @@
+{
+  "parts": {
+    "strut_H": {
+      "type": "wire",
+      "section": "rectangular",
+      "thickness": 0.0002
+    },
+    "strut_V": {
+      "type": "wire",
+      "section": "rectangular",
+      "thickness": 0.0002
+    },
+    "strut_D": {
+      "type": "wire",
+      "section": "rectangular",
+      "thickness": 0.0002
+    },
+    "node": {
+      "type": "point",
+      "radius": 0.00025
+    }
+  },
+  "material": {
+    "name": "PEEK-OPTIMA",
+    "elastic": {
+      "youngs_modulus": 3600000000.0,
+      "poisson": 0.4
+    },
+    "density": 1300
+  },
+  "assembly": {
+    "rings": 12,
+    "nodes_per_ring": 64,
+    "torsion_offset": 1.3759704251386322
+  },
+  "steps": {
+    "initial": {
+      "type": "Static",
+      "nlgeom": true
+    },
+    "loading": {
+      "type": "Static",
+      "boundary_conditions": {
+        "base_ring": "encastre"
+      },
+      "loads": {
+        "top_ring_torsion": {
+          "magnitude": 0.12413793103448277,
+          "axis": "Z"
+        }
+      }
+    }
+  },
+  "output_requests": [
+    {
+      "type": "FIELD",
+      "variables": [
+        "U",
+        "UR",
+        "S",
+        "E"
+      ]
+    },
+    {
+      "type": "HISTORY",
+      "variables": [
+        "RF",
+        "RM"
+      ]
+    }
+  ]
+}

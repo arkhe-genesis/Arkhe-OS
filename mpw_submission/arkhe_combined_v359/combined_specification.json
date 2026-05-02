@@ -1,0 +1,41 @@
+{
+  "arkhe_version": "v\u221e.359.1",
+  "submission_date": "2026-05-02T18:33:33.999153",
+  "foundry": "AIM_Photonics",
+  "components": {
+    "vortex_matrix": {
+      "description": "10\u00d710 \u03bcm micro-vortex array for spectral sensing",
+      "gds_file": "vortex_matrix.gds",
+      "material": "PMMA",
+      "feature_size_min": "300 nm",
+      "total_area": "10\u00d710 \u03bcm\u00b2"
+    },
+    "or_lattice": {
+      "description": "Operational Relativity torsional lattice (12 layers \u00d7 64 crystals)",
+      "gds_file": "or_lattice.gds",
+      "material": "PEEK or polymer alternative",
+      "feature_size_min": "100 \u03bcm",
+      "total_dimensions": "0.0 mm \u00d7 0.0 mm",
+      "key_parameters": {
+        "lambda_delta": 1.3759704251386322,
+        "torsion_period_layers": 4.57,
+        "prime_field": 181,
+        "strut_weights": {
+          "H": 1.0,
+          "V": 1.1896551724137931,
+          "D": 1.2413793103448276
+        }
+      }
+    }
+  },
+  "integration_notes": [
+    "Vortex matrix to be coupled to crystal nodes on OR lattice via evanescent waveguide",
+    "Alignment markers on both components enable post-fabrication registration",
+    "Material compatibility: PMMA vortex on PEEK lattice requires adhesive bonding or monolithic polymer option"
+  ],
+  "testing_protocol": {
+    "optical": "Spectral response validation via tunable laser + spectrometer",
+    "mechanical": "Torsional response validation via FEA correlation (CAPTURE regime)",
+    "integrated": "Closed-loop homeostasis validation with ArkheVision feedback"
+  }
+}
