@@ -1,0 +1,65 @@
+# docker-compose.sync.yml — Deploy do sistema de sincronização global
+version: '3.8'
+
+services:
+  gnss-lisbon:
+    image: arkhe/gnss-adapter:latest
+    container_name: gnss-lisbon
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0  # Septentrio PolaRx5TR
+    environment:
+      - RECEIVER_ID=gnss_lisbon_01
+      - PORT=/dev/ttyUSB0
+      - BAUDRATE=115200
+    networks:
+      - arkhe-sync
+    volumes:
+      - ./config/gnss_lisbon.json:/app/config.json
+
+  wr-lisbon:
+    image: arkhe/wr-adapter:latest
+    container_name: wr-lisbon
+    ports:
+      - "1234:1234"  # WR-PTP control port
+    environment:
+      - SWITCH_IP=192.168.100.10
+      - NODE_ID=wr_lisbon_hub
+    networks:
+      - arkhe-sync
+
+  sync-aggregator:
+    image: arkhe/sync-aggregator:latest
+    container_name: sync-aggregator
+    ports:
+      - "8080:8080"  # WebSocket API
+      - "9090:9090"  # Prometheus metrics
+    environment:
+      - BUFFER_SIZE=10000
+      - NODE_PAIRS=[["lisbon","tokyo"],["lisbon","newyork"],["tokyo","newyork"]]
+    volumes:
+      - ./data:/app/data
+    networks:
+      - arkhe-sync
+    depends_on:
+      - gnss-lisbon
+      - wr-lisbon
+
+  sync-dashboard:
+    image: arkhe/sync-dashboard:latest
+    container_name: sync-dashboard
+    ports:
+      - "3000:3000"
+    environment:
+      - AGGREGATOR_WS=ws://sync-aggregator:8080/ws
+      - NODE_PAIRS=[["lisbon","tokyo"],["lisbon","newyork"],["tokyo","newyork"]]
+    networks:
+      - arkhe-sync
+    depends_on:
+      - sync-aggregator
+
+networks:
+  arkhe-sync:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.100.0/24
