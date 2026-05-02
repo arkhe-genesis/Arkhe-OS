@@ -24,6 +24,12 @@
       "sourceType": "github",
       "skillPath": "skills/software-copyright-materials/SKILL.md",
       "computedHash": "ab53d96502e1c051e14e6ad64e9f569c953b0efb5aac2fa97f223dfc71db44ea"
+    },
+    "premortem": {
+      "source": "local",
+      "sourceType": "local",
+      "skillPath": "skills/premortem/SKILL.md",
+      "computedHash": "98eacda9e63631e8356c4e398f9934d0b7ca3a79e900ed5ce2d2045534905474"
     }
   }
 }
