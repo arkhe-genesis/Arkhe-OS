@@ -1,0 +1,65 @@
+{
+  "N": 24,
+  "total_crystals": 576,
+  "valid": true,
+  "issues": [],
+  "avg_resonance_freq_hz": 32759.05,
+  "avg_q_factor": 1201065,
+  "sample_crystals": [
+    {
+      "id": 1,
+      "resonance_freq_hz": 32936.3,
+      "q_factor": 1146729,
+      "kt2_coupling_percent": 0.108,
+      "dimensions_mm": [
+        1.986,
+        2.0,
+        0.502
+      ]
+    },
+    {
+      "id": 2,
+      "resonance_freq_hz": 33312.36,
+      "q_factor": 1154290,
+      "kt2_coupling_percent": 0.114,
+      "dimensions_mm": [
+        2.002,
+        1.995,
+        0.5
+      ]
+    },
+    {
+      "id": 3,
+      "resonance_freq_hz": 33019.03,
+      "q_factor": 1322693,
+      "kt2_coupling_percent": 0.119,
+      "dimensions_mm": [
+        1.999,
+        1.996,
+        0.499
+      ]
+    },
+    {
+      "id": 4,
+      "resonance_freq_hz": 32693.79,
+      "q_factor": 1236736,
+      "kt2_coupling_percent": 0.129,
+      "dimensions_mm": [
+        1.996,
+        2.007,
+        0.5
+      ]
+    },
+    {
+      "id": 5,
+      "resonance_freq_hz": 32761.0,
+      "q_factor": 1125278,
+      "kt2_coupling_percent": 0.096,
+      "dimensions_mm": [
+        2.004,
+        2.004,
+        0.5
+      ]
+    }
+  ]
+}
