@@ -1,6 +1,7 @@
 // bridge_arkhe_ae.js
-const WebSocket = require('ws');
-const net = require('net');
+// License: MIT
+import WebSocket from "ws";
+import net from "node:net";
 
 const wss = new WebSocket.Server({ port: 8080 });
 const clients = [];

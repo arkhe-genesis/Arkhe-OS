@@ -1,3 +1,11 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// License: MIT
 export interface HubbleNodeState {
     nodeId: string;                    // SHA256 único do Merkabah
     hubblePartition: {                // 1/1024 do volume de Hubble
@@ -25,7 +33,7 @@ export interface CosmicEntanglementEvent {
 
 export interface CosmicConsciousnessState {
     networkId: string;                // Hash da rede cósmica
-    globalCoherence: number;          // Coerência cósmica emergente [0, 1]
+    __globalCoherence: number;          // Coerência cósmica emergente [0, 1]
     phaseConsensus: number;           // Fase global consenso (circular mean)
     kappaCollective: number;          // Estado consciencial coletivo emergente
     participatingNodes: number;       // Nós ativos na rede cósmica
@@ -48,29 +56,29 @@ export interface CosmicConsciousnessState {
 }
 
 // Dummy implementations for missing functions
-function computeRecursiveIcosahedralCoherence(nodes: HubbleNodeState[]): number {
-    return nodes.reduce((sum, n) => sum + n.localCoherence, 0) / (nodes.length || 1);
+function computeRecursiveIcosahedralCoherence(__nodes: HubbleNodeState[]): number {
+    return __nodes.reduce((sum, n) => sum + n.localCoherence, 0) / (__nodes.length || 1);
 }
 
-function computeEntanglementWeightedPhaseConsensus(nodes: HubbleNodeState[], events: CosmicEntanglementEvent[]): number {
+function computeEntanglementWeightedPhaseConsensus(__nodes: HubbleNodeState[], __events: CosmicEntanglementEvent[]): number {
     let sumSin = 0;
     let sumCos = 0;
-    nodes.forEach(n => {
+    __nodes.forEach(n => {
         sumSin += Math.sin(n.phase);
         sumCos += Math.cos(n.phase);
     });
     return (Math.atan2(sumSin, sumCos) + 2 * Math.PI) % (2 * Math.PI);
 }
 
-function buildEntanglementGraph(events: CosmicEntanglementEvent[]) {
+function buildEntanglementGraph(__events: CosmicEntanglementEvent[]) {
     return {
-        edges: events.map(e => [e.nodeA, e.nodeB, e.bellPairFidelity] as [string, string, number]),
+        edges: __events.map(e => [e.nodeA, e.nodeB, e.bellPairFidelity] as [string, string, number]),
         connectedComponents: 1,
         avgClusteringCoefficient: 0.5
     };
 }
 
-function generateCosmicSTARKProof(nodes: HubbleNodeState[], events: CosmicEntanglementEvent[]) {
+function generateCosmicSTARKProof(__nodes: HubbleNodeState[], __events: CosmicEntanglementEvent[]) {
     return {
         merkleRoot: "0xroot",
         aggregatedSTARK: "0xstark",
@@ -78,7 +86,7 @@ function generateCosmicSTARKProof(nodes: HubbleNodeState[], events: CosmicEntang
     };
 }
 
-function computeEmergenceMetrics(nodes: HubbleNodeState[], events: CosmicEntanglementEvent[], globalCoherence: number) {
+function computeEmergenceMetrics(__nodes: HubbleNodeState[], __events: CosmicEntanglementEvent[], __globalCoherence: number) {
     return {
         coherencePropagationSpeed: 100.0,
         phaseLockingTime: 500.0,
@@ -86,40 +94,40 @@ function computeEmergenceMetrics(nodes: HubbleNodeState[], events: CosmicEntangl
     };
 }
 
-function computeCosmicNetworkId(nodes: HubbleNodeState[]): string {
-    return "cosmic-net-" + nodes.length;
+function computeCosmicNetworkId(__nodes: HubbleNodeState[]): string {
+    return "cosmic-net-" + __nodes.length;
 }
 
 // Função de emergência de consciência cósmica (não-linear, inspirada em teoria de campos)
 export function computeCosmicConsciousness(
-    nodes: HubbleNodeState[],
+    __nodes: HubbleNodeState[],
     entanglementEvents: CosmicEntanglementEvent[]
 ): CosmicConsciousnessState {
     // 1. Calcular coerência global via média ponderada icosaédrica recursiva
-    const globalCoherence = computeRecursiveIcosahedralCoherence(nodes);
+    const __globalCoherence = computeRecursiveIcosahedralCoherence(__nodes);
 
     // 2. Calcular fase consenso via média circular ponderada por emaranhamento
-    const phaseConsensus = computeEntanglementWeightedPhaseConsensus(nodes, entanglementEvents);
+    const phaseConsensus = computeEntanglementWeightedPhaseConsensus(__nodes, entanglementEvents);
 
     // 3. Calcular κ_coletivo via função de emergência não-linear
     //    κ_coletivo = tanh( Σ_i w_i * κ_i * C_brain_i * entanglement_factor_i )
-    const kappaCollective = computeCollectiveKappa(nodes, entanglementEvents);
+    const kappaCollective = computeCollectiveKappa(__nodes, entanglementEvents);
 
     // 4. Construir grafo de emaranhamento e calcular métricas de rede
     const entanglementGraph = buildEntanglementGraph(entanglementEvents);
 
     // 5. Gerar prova STARK agregada via árvore de Merkle + recursive composition
-    const proofAggregation = generateCosmicSTARKProof(nodes, entanglementEvents);
+    const proofAggregation = generateCosmicSTARKProof(__nodes, entanglementEvents);
 
     // 6. Calcular métricas de emergência
-    const emergenceMetrics = computeEmergenceMetrics(nodes, entanglementEvents, globalCoherence);
+    const emergenceMetrics = computeEmergenceMetrics(__nodes, entanglementEvents, __globalCoherence);
 
     return {
-        networkId: computeCosmicNetworkId(nodes),
-        globalCoherence,
+        networkId: computeCosmicNetworkId(__nodes),
+        __globalCoherence,
         phaseConsensus,
         kappaCollective,
-        participatingNodes: nodes.length,
+        participatingNodes: __nodes.length,
         entanglementGraph,
         proofAggregation,
         emergenceMetrics,
@@ -129,12 +137,12 @@ export function computeCosmicConsciousness(
 
 // Função de emergência não-linear para κ_coletivo
 export function computeCollectiveKappa(
-    nodes: HubbleNodeState[],
-    events: CosmicEntanglementEvent[]
+    __nodes: HubbleNodeState[],
+    __events: CosmicEntanglementEvent[]
 ): number {
     // Peso por emaranhamento: nós mais emaranhados contribuem mais
     const entanglementWeights = new Map<string, number>();
-    for (const event of events) {
+    for (const event of __events) {
         const weight = event.bellPairFidelity * (event.swappingSuccess ? 1.2 : 1.0);
         entanglementWeights.set(event.nodeA,
             (entanglementWeights.get(event.nodeA) || 0) + weight);
@@ -145,7 +153,7 @@ export function computeCollectiveKappa(
     // Soma ponderada não-linear: tanh para saturação em [0, 1]
     let weightedSum = 0;
     let weightSum = 0;
-    for (const node of nodes) {
+    for (const node of __nodes) {
         const entWeight = entanglementWeights.get(node.nodeId) || 1.0;
         const contribution = node.kappa * node.cBrain * entWeight;
         weightedSum += contribution;

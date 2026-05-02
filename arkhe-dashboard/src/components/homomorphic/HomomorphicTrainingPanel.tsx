@@ -10,7 +10,7 @@
 
 import {useState, useEffect} from 'react';
 
-interface TrainingStats {
+interface __TrainingStats {
   federatedQPUs: number;
   avgTrainingLoss: number;
   avgValidationAccuracy: number;

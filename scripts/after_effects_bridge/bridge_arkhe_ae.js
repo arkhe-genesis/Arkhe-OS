@@ -1,5 +1,6 @@
-const WebSocket = require('ws');
-const net = require('net');
+// License: MIT
+const WebSocket = await import("ws");
+const net = await import("node:net");
 
 const wss = new WebSocket.Server({ port: 8080 });
 const clients = [];
@@ -10,7 +11,7 @@ const tcpServer = net.createServer((socket) => {
     console.log('AE conectado.');
     socket.on('close', () => {
         const idx = clients.indexOf(socket);
-        if (idx > -1) clients.splice(idx, 1);
+        if (idx > -1) { clients.splice(idx, 1); }
     });
     socket.on('error', (err) => console.error('Erro AE:', err));
 });

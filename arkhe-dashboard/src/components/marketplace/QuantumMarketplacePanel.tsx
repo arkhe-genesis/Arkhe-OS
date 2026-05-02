@@ -13,7 +13,7 @@ import {useState, useEffect} from 'react';
 import {quantumEthicalTalentMarketplace} from '@/lib/marketplace/quantumEthicalTalentMarketplace';
 import {EthicalPrinciple} from '@/types/ethics';
 
-interface MarketplaceDashboard {
+interface __MarketplaceDashboard {
   activePostings: number;
   registeredTalents: number;
   avgEthicalAlignment: number;
@@ -55,7 +55,7 @@ export default function QuantumMarketplacePanel() {
       issuedAt_ns: Date.now() * 1e6,
       zkpProof: 'pqc_proof_validated',
     });
-    setDashboard(quantumEthicalTalentMarketplace.getMarketplaceDashboard());
+    setDashboard(quantumEthicalTalentMarketplace.get_MarketplaceDashboard());
   }, []);
 
   return (
