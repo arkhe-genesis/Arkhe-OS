@@ -680,3 +680,9 @@ if __name__ != "__main__":
     assert _run_keccak_tests(), "Keccak self-tests failed"
     assert _run_memory_expansion_tests(), "Memory expansion self-tests failed"
     assert _run_encoder_tests(), "Bytecode encoder self-tests failed"
+
+def _evm_keccak256(data: bytes):
+    from Crypto.Hash import keccak
+    k = keccak.new(digest_bits=256)
+    k.update(data)
+    return k
