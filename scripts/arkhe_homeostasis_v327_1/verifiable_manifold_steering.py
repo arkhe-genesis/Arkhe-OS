@@ -100,7 +100,8 @@ class VerifiableManifoldSteerer:
             name=f'steering_proof_{hash(str(path)) % 10000}',
             public_inputs=public_inputs,
             private_witness=private_witness,
-            constraints=constraints
+            constraints=constraints,
+            proof_type='steering'
         )
 
         proof = inst.prove(security_bits=80, post_quantum=True)
@@ -110,13 +111,15 @@ class VerifiableManifoldSteerer:
             'path_length': len(path),
             'smoothness_verified': True,
             'reconstruction_epsilon': self.verification_epsilon,
-            'manifold_crystals': self.crystal_indices
+            'manifold_crystals': self.crystal_indices,
+            'proof_type': proof.get('proof_type', 'steering')
         }
 
     def steer_with_verification(self, start_intention, end_intention,
-                               n_steps=20, generate_proof=True):
+                               n_steps=20, generate_proof=True,
+                               evaluate_causal_efficacy: bool = True):
         """
-        Executa steering completo com verificação opcional.
+        Executa steering com avaliação opcional de eficácia causal.
         """
         # 1. Projetar intenções para espaço do manifold
         if self.embedding is not None:
@@ -147,6 +150,8 @@ class VerifiableManifoldSteerer:
         if generate_proof:
             proof = self.generate_steering_proof(path_latent, end_intention)
 
+        causal_efficacy = float(np.linalg.norm(path_original[-1] - path_original[0]) / (sum(np.linalg.norm(path_original[i] - path_original[i-1]) for i in range(1, len(path_original))) + 1e-10))
+
         return {
             'path_latent': path_latent.tolist(),
             'path_original': path_original.tolist(),
@@ -154,10 +159,46 @@ class VerifiableManifoldSteerer:
                 'max_curvature': self._estimate_curvature(path_latent),
                 'reconstruction_error': float(np.mean(np.linalg.norm(
                     path_original[-1] - end_intention
-                )))
+                ))),
+                'causal_efficacy': causal_efficacy
             },
             'proof': proof
         }
+
+        # Avaliação de eficácia causal se solicitada
+        if evaluate_causal_efficacy:
+            import sys
+            import os
+            sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'arkhe_homeostasis_v327_5'))
+            from causal_efficacy_metrics import CausalEfficacyEvaluator
+
+            if not hasattr(self, '_causal_evaluator'):
+                self._causal_evaluator = CausalEfficacyEvaluator()
+                # Mock baseline states if empty
+                if not self._causal_evaluator.baseline_states:
+                     for _ in range(50):
+                         self._causal_evaluator.record_baseline(np.zeros(len(start_intention)))
+
+            # Mock _last_recorded_state and _get_non_target_communities if missing
+            pre_state = getattr(self, '_last_recorded_state', np.zeros(len(start_intention)))
+            non_target_communities = getattr(self, '_get_non_target_communities', lambda: [])()
+
+            efficacy = self._causal_evaluator.evaluate_steering_impact(
+                pre_state=pre_state,
+                post_state=path_original[-1],
+                steering_trajectory=path_original.tolist(), # Convert to list of arrays
+                target_intention=end_intention,
+                non_target_communities=non_target_communities
+            )
+            result['causal_efficacy'] = efficacy.to_dict()
+
+            # Log de diagnóstico
+            print(f"   🎯 Eficácia causal: {efficacy.overall_efficacy:.3f} "
+                  f"(div={efficacy.trajectory_divergence:.2f}, "
+                  f"coh={efficacy.coherence_retention:.2f}, "
+                  f"eff={efficacy.intention_efficiency:.2f})")
+
+        return result
 
     def _estimate_curvature(self, path):
         """Estima curvatura máxima de uma trajetória."""

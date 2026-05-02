@@ -166,9 +166,9 @@ def fit_ising_crystal(binarized_codes, gamma=0.5, max_iter=1000):
 
     return J_opt, h_opt, -result.fun
 
-def detect_crystal_communities(J, resolution=1.0):
+def detect_crystal_communities(J, resolution=0.5):
     """
-    Aplica Louvain community detection à matriz de couplings.
+    Aplica Louvain community detection à matriz de couplings usando resolução original.
     """
     J_abs = np.abs(J)
     # Filtrar ruído
@@ -199,6 +199,49 @@ def detect_crystal_communities(J, resolution=1.0):
             print(f"   Comunidade {cid}: {len(crystals)} cristais")
 
     return communities
+
+def detect_crystal_communities_adaptive(J: np.ndarray,
+                                       base_resolution: float = 1.0,
+                                       search_enabled: bool = True):
+    """
+    Detecção de comunidades com busca adaptativa de resolução.
+
+    Se search_enabled=True, varre múltiplas resoluções para encontrar estruturas coerentes.
+    Caso contrário, usa resolução fixa (comportamento original).
+    """
+    if not search_enabled:
+        # Comportamento original
+        return detect_crystal_communities(J, resolution=base_resolution), None
+
+    # Busca multi-resolução
+    print(f"   🔍 Buscando resolução ótima para detecção de comunidades...")
+    import sys
+    import os
+    sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'arkhe_homeostasis_v327_5'))
+    from louvain_multires import detect_communities_multires
+
+    multires_result = detect_communities_multires(
+        J,
+        resolution_range=[0.3, 0.5, 0.7, 1.0, 1.5],
+        min_community_size=10,
+        cohesion_threshold=0.3
+    )
+
+    best_res = multires_result['best_resolution']
+    print(f"   ✓ Resolução ótima selecionada: {best_res}")
+
+    communities = {
+        cid: info['crystals']
+        for cid, info in enumerate(multires_result['selected_communities'])
+    }
+
+    # Adicionar os isolados como comunidade diluída
+    all_clustered = [n for comm in communities.values() for n in comm]
+    isolates = [i for i in range(768) if i not in all_clustered]
+    if isolates:
+        communities[len(communities)] = isolates
+
+    return communities, multires_result
 
 def compute_cohesion(J, community):
     """
