@@ -86,7 +86,8 @@ class HomeostasisZEE200Bridge:
             name=f'capture_manifold_{community_data["community_id"]}',
             public_inputs=public_inputs,
             private_witness=private_witness,
-            constraints=constraints
+            constraints=constraints,
+            proof_type='monitoring'
         )
 
         # Gerar prova ZK real
@@ -101,6 +102,7 @@ class HomeostasisZEE200Bridge:
             'manifold_dim': int(manifold_dim),
             'epsilon': float(epsilon),
             'verified': True,  # Assumindo que prove() só retorna se sucesso
+            'proof_type': proof.get('proof_type', 'monitoring'),
             'timestamp': None  # Preenchido ao registrar
         }
 
@@ -196,7 +198,7 @@ def spsa_with_zee200(initial_params, max_epochs=20, N_steps=200,
     ])
     bounds = [(0.1, 2.0), (0.0001, 0.01), (0.0, 0.3), (2, 5)]  # [min, max] por parâmetro
 
-    a, c = 0.1, 0.05  # Hiperparâmetros SPSA
+    a, c = 0.4, 0.2  # Hiperparâmetros SPSA
     history = []
     all_proofs = []
 

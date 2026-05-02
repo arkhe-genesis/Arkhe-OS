@@ -12,7 +12,8 @@
     "interpretation": "octonionic structure detected"
   },
   "proof": {
-    "proof_hash": "1b32a76cb4cfa201",
-    "verified": true
+    "proof_hash": "fd7db14f76843437",
+    "verified": true,
+    "proof_type": "certification"
   }
 }
