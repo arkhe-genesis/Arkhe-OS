@@ -1,0 +1,75 @@
+{
+  "specification": {
+    "field_resolution": [
+      16,
+      16
+    ],
+    "L_physical": 1.72,
+    "topology": "torus_T2",
+    "clock_source": "White Rabbit PTP",
+    "clock_jitter_ns": 0.5,
+    "update_rate_hz": 20.0,
+    "detector_type": "SNSPD_array",
+    "detector_efficiency": 0.85,
+    "detector_jitter_ps": 50.0,
+    "dark_count_rate_hz": 1.0,
+    "coupling_constant": 0.6180339887498949,
+    "kuramoto_order_parameter_target": 0.95,
+    "feedback_gain": 0.1,
+    "control_processor": "ESP32-S3 + FPGA Kintex-7",
+    "uart_baud_rate": 921600,
+    "data_format": "Q8.40_fixed_point",
+    "target_coupling_strength": 0.001,
+    "max_decoherence_time_ms": 100.0,
+    "fidelity_threshold": 0.99
+  },
+  "hardware_model": {
+    "gate_error_1q": 0.0001,
+    "gate_error_2q": 0.0006,
+    "t1_time_ms": 1000.0,
+    "t2_time_ms": 500.0,
+    "readout_error": 0.01,
+    "control_bandwidth_hz": 100.0,
+    "latency_us": 10.0
+  },
+  "simulation_results": {
+    "spec": {
+      "field_resolution": [
+        16,
+        16
+      ],
+      "L_physical": 1.72,
+      "topology": "torus_T2",
+      "clock_source": "White Rabbit PTP",
+      "clock_jitter_ns": 0.5,
+      "update_rate_hz": 20.0,
+      "detector_type": "SNSPD_array",
+      "detector_efficiency": 0.85,
+      "detector_jitter_ps": 50.0,
+      "dark_count_rate_hz": 1.0,
+      "coupling_constant": 0.6180339887498949,
+      "kuramoto_order_parameter_target": 0.95,
+      "feedback_gain": 0.1,
+      "control_processor": "ESP32-S3 + FPGA Kintex-7",
+      "uart_baud_rate": 921600,
+      "data_format": "Q8.40_fixed_point",
+      "target_coupling_strength": 0.001,
+      "max_decoherence_time_ms": 100.0,
+      "fidelity_threshold": 0.99
+    },
+    "hardware": {
+      "gate_error_1q": 0.0001,
+      "gate_error_2q": 0.0006,
+      "t1_time_ms": 1000.0,
+      "t2_time_ms": 500.0,
+      "readout_error": 0.01,
+      "control_bandwidth_hz": 100.0,
+      "latency_us": 10.0
+    },
+    "final_order_parameter": 0.9767730583468299,
+    "convergence_time_s": 6.499999999999985,
+    "coupling_strength": 0.0034534311018133046,
+    "target_coupling_strength": 0.001,
+    "coupling_achieved": true
+  }
+}
