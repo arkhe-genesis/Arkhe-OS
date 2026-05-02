@@ -71,12 +71,21 @@ def run_integrated_orch_or_fluid_tests(config_path='config/orch_or_fluid_plan.js
     results['combined_evidence'] = combined_evidence
     print(f"   Bayes factor combinado: {combined_evidence['bayes_factor_combined']:.2f} ({combined_evidence['interpretation']})")
 
+    # Salvar resultados individuais dos tracks para integração ZEE200
+    with open("results/track1_v312_2.json", "w") as f:
+        json.dump(test1_result, f, indent=2, default=str)
+    with open("results/track2_v312_3.json", "w") as f:
+        json.dump(test2_result, f, indent=2, default=str)
+    with open("results/track3_v312_3.json", "w") as f:
+        json.dump(test3_result, f, indent=2, default=str)
+
     # Salvar resultados
     output_path = f"results/orch_or_fluid_integrated_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
     with open(output_path, 'w') as f:
         json.dump(results, f, indent=2, default=str)
 
     print(f"\n💾 Resultados salvos em: {output_path}")
+    print(f"📄 Resultados individuais salvos em: results/track[1-3]...json")
 
     return results
 
