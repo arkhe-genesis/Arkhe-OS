@@ -12,11 +12,18 @@
       "sourceType": "github",
       "skillPath": "skills/tribev2/SKILL.md",
       "computedHash": "63dd2da3470700a1fa7a57c79e085830c95e504228dbcaa650f8bf9dbfb90bff"
+    },
     "urbit": {
       "source": "urbit/urbit",
       "sourceType": "github",
       "skillPath": "skills/urbit/SKILL.md",
       "computedHash": "84c45b284579501b17241b119f18df0d1d95c157b2960f440377fbca6c1c19f1"
+    },
+    "software-copyright-materials": {
+      "source": "Fokkyp/SoftwareCopyright-Skill",
+      "sourceType": "github",
+      "skillPath": "skills/software-copyright-materials/SKILL.md",
+      "computedHash": "ab53d96502e1c051e14e6ad64e9f569c953b0efb5aac2fa97f223dfc71db44ea"
     }
   }
 }

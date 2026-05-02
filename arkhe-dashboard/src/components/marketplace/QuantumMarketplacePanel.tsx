@@ -13,7 +13,7 @@ import {useState, useEffect} from 'react';
 import {quantumEthicalTalentMarketplace} from '@/lib/marketplace/quantumEthicalTalentMarketplace';
 import {EthicalPrinciple} from '@/types/ethics';
 
-interface MarketplaceDashboard {
+interface _MarketplaceDashboard {
   activePostings: number;
   registeredTalents: number;
   avgEthicalAlignment: number;
