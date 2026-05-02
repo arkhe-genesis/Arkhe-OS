@@ -1,27 +1,16 @@
 [package]
-name = "arkhe-stark-rust"
-version = "0.293.2"
+name = "arkhe_stark_rust"
+version = "0.1.0"
 edition = "2021"
-authors = ["ARKHE OS <architect@arkhe.os>"]
-description = "STARK recursive aggregation for ARKHE OS Merkabah network"
 
 [lib]
 name = "arkhe_stark_rust"
-crate-type = ["cdylib", "rlib"]
+crate-type = ["cdylib"]
 
 [dependencies]
-winterfell = { version = "0.8", features = ["concurrent"] }
-winter-crypto = "0.8"
-winter-math = "0.8"
-winter-utils = "0.8"
-winter-air = "0.8"
-sha2 = "0.10"
+pyo3 = { version = "0.20", features = ["extension-module"] }
+winterfell = "0.8"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-pyo3 = { version = "0.22", features = ["extension-module"] }
-winter-prover = "0.8"
-
-[profile.release]
-opt-level = 3
-lto = true
-codegen-units = 1
+sha2 = "0.10"
+winter-prover = "0.8.3"
