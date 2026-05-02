@@ -1,8 +1,20 @@
-import fs from 'fs';
-import { Worker, isMainThread, parentPort } from 'worker_threads';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-import os from 'os';
+/*
+ * Copyright (c) Arkhe Network. All rights reserved.
+ * Licensed under the MIT License. See LICENSE in the project root for license information.
+ */
+
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import fs from 'node:fs';
+import os from 'node:os';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { Worker, isMainThread, parentPort } from 'node:worker_threads';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -97,9 +109,9 @@ if (isMainThread) {
         const nodesData = new Float32Array(1024 * 5); // lat, lon, phase, coherence, kappa
         // Inicializar com alguns valores aleatórios
         for(let i=0; i<nodesData.length; i++) {
-            if (i % 5 === 0) nodesData[i] = Math.random() * 180 - 90; // lat
-            if (i % 5 === 1) nodesData[i] = Math.random() * 360 - 180; // lon
-            if (i % 5 === 2) nodesData[i] = Math.random() * Math.PI * 2; // phase
+            if (i % 5 === 0) {nodesData[i] = Math.random() * 180 - 90;} // lat
+            if (i % 5 === 1) {nodesData[i] = Math.random() * 360 - 180;} // lon
+            if (i % 5 === 2) {nodesData[i] = Math.random() * Math.PI * 2;} // phase
         }
 
         const mGlobal = await engine.computeGlobalCoherence(nodesData);

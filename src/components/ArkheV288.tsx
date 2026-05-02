@@ -1,3 +1,15 @@
+/*
+ * Copyright (c) Arkhe Network. All rights reserved.
+ * Licensed under the MIT License. See LICENSE in the project root for license information.
+ */
+
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -37,7 +49,7 @@ const EEG_MAPPER_WEIGHTS = {
 };
 
 // Mapeamento estado → κ
-const STATE_KAPPA_MAP: Record<string, number> = {
+const _STATE_KAPPA_MAP: Record<string, number> = {
   'sleep_deep': 0.5,
   'relaxation': 1.0,
   'focus_intense': 2.5,
@@ -94,7 +106,7 @@ function mapCoherenceToKappa(cBrain: number): { kappa: number; stateName: string
     }
   }
 
-  if (cBrain < states[0].c) return { kappa: states[0].kappa, stateName: states[0].name };
+  if (cBrain < states[0].c) {return { kappa: states[0].kappa, stateName: states[0].name };}
   return { kappa: states[states.length-1].kappa, stateName: states[states.length-1].name };
 }
 
@@ -103,10 +115,10 @@ function mapCoherenceToKappa(cBrain: number): { kappa: number; stateName: string
  * Evita flickering no campo quando o sinal EEG é ruidoso.
  */
 class KalmanFilter {
-  private x: number = 0.3;   // estado estimado
-  private P: number = 1.0;   // covariância do erro
-  private Q: number = 0.001; // ruído de processo
-  private R: number = 0.1;   // ruído de medição
+  private x = 0.3;   // estado estimado
+  private P = 1.0;   // covariância do erro
+  private Q = 0.001; // ruído de processo
+  private R = 0.1;   // ruído de medição
 
   update(measurement: number): number {
     // Predição
@@ -141,10 +153,10 @@ interface BrainFlowInstance {
  */
 async function loadBrainFlowWASM(): Promise<BrainFlowInstance> {
   // Em produção, carregar de /public/brainflow.js ou CDN
-  // @ts-expect-error missing types
-  // @ts-expect-error missing types
-  // @ts-expect-error missing types
-  // @ts-expect-error missing types
+
+
+
+
   const module = await import(/* @vite-ignore */ '/brainflow_wasm/brainflow.js?url');
   const brainflow = await module.default();
   brainflow.DataFilter.set_log_level(brainflow.LogLevels.LEVEL_OFF);
@@ -205,9 +217,9 @@ interface SerialPort {
   readable: ReadableStream<Uint8Array> | null;
 }
 
-interface Navigator {
+interface _Navigator {
   serial: {
-    requestPort(options: { filters: { usbVendorId: number }[] }): Promise<SerialPort>;
+    requestPort(options: { filters: Array<{ usbVendorId: number }> }): Promise<SerialPort>;
   };
 }
 
@@ -229,7 +241,7 @@ async function openEEGStream(config: EEGStreamConfig): Promise<ReadableStreamDef
   const reader = config.port.readable!.getReader();
   const decoder = new TextDecoder();
   let buffer = '';
-  const samples: number[] = [];
+  const _samples: number[] = [];
   const windowSize = config.samplingRate; // 1 segundo de dados
 
   // Buffer circular para amostras
@@ -248,7 +260,7 @@ async function openEEGStream(config: EEGStreamConfig): Promise<ReadableStreamDef
     try {
       while (true) {
         const { value, done } = await reader.read();
-        if (done) break;
+        if (done) {break;}
 
         buffer += decoder.decode(value, { stream: true });
         const lines = buffer.split('\n');
@@ -288,7 +300,7 @@ async function openEEGStream(config: EEGStreamConfig): Promise<ReadableStreamDef
     }
   };
 
-  processLoop();
+  processLoop().catch(err => config.onError(err as Error));
   return reader;
 }
 
@@ -667,7 +679,7 @@ const ArkheV288: React.FC = () => {
   const connectEEG = useCallback(async () => {
     try {
       // Solicitar porta serial
-      const port = await (navigator as any).serial.requestPort({
+      const port = await (navigator as unknown as { serial: { requestPort: (opts: { filters: Array<{ usbVendorId: number }> }) => Promise<SerialPort> } }).serial.requestPort({
         filters: [{ usbVendorId: 0x0403 }], // FTDI (OpenBCI)
       });
 
@@ -728,7 +740,7 @@ const ArkheV288: React.FC = () => {
   // ─── INICIALIZAR WEBGPU ───
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) {return;}
     const wg = webgpuRef.current;
     let mounted = true;
 
@@ -739,13 +751,13 @@ const ArkheV288: React.FC = () => {
       }
 
       const adapter = await navigator.gpu.requestAdapter();
-      if (!adapter) return;
+      if (!adapter) {return;}
       const device = await adapter.requestDevice();
       wg.device = device;
       wg.startTime = performance.now();
 
       const context = canvas!.getContext('webgpu');
-      if (!context) return;
+      if (!context) {return;}
 
       const presentationFormat = navigator.gpu.getPreferredCanvasFormat();
       context.configure({ device, format: presentationFormat });
@@ -859,7 +871,7 @@ const ArkheV288: React.FC = () => {
       let framesSinceUpdate = 0;
 
       function frame() {
-        if (!mounted) return;
+        if (!mounted) {return;}
         const now = performance.now();
         const t = (now - wg.startTime) * 0.001;
         const frameIdx = wg.frameCount % 2;
@@ -917,15 +929,15 @@ const ArkheV288: React.FC = () => {
       wg.animId = requestAnimationFrame(frame);
     }
 
-    initWebGPU();
+    initWebGPU().catch(console.error);
 
     // Tentar conectar EEG automaticamente
-    connectEEG();
+    connectEEG().catch(console.error);
 
     return () => {
       mounted = false;
       cancelAnimationFrame(wg.animId);
-      wg.eegReader?.cancel();
+      wg.eegReader?.cancel().catch(console.error);
     };
   }, [connectEEG]);
 
