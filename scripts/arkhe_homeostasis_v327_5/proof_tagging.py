@@ -12,6 +12,7 @@ class ProofType(Enum):
     """Tipos de prova na cadeia de coerência."""
 
     # Provas de monitoramento (baixo limiar, observação contínua)
+    TORSIONAL_STABILITY = auto()      # Estabilidade torsional de camadas
     GEOMETRY_MONITORING = auto()      # CAPTURE 30-80%: observação de estrutura
     COHERENCE_TRACKING = auto()        # Mudanças graduais em ρ ou dimensão
 
@@ -89,6 +90,7 @@ class ProofTagger:
                      cohesion_rho: Optional[float] = None,
                      manifold_dim: Optional[int] = None,
                      epoch: Optional[int] = None,
+                     torsional_coherence: Optional[float] = None,
                      parameter_change: Optional[Dict] = None) -> ProofMetadata:
         """
         Classifica tipo de prova baseado em contexto.
@@ -120,7 +122,14 @@ class ProofTagger:
         }
 
         # Lógica de classificação
-        if capture_fraction >= self.certification_threshold:
+        if torsional_coherence is not None and torsional_coherence >= self.certification_threshold:
+            proof_type = ProofType.TORSIONAL_STABILITY
+            priority = 'high'
+            triggered_by = 'torsional_threshold'
+            threshold_value = self.certification_threshold
+            downstream = ['verify_torsional_stability']
+
+        elif capture_fraction >= self.certification_threshold:
             proof_type = ProofType.COHERENCE_CERTIFICATION
             priority = 'high'
             triggered_by = 'threshold_crossed'
