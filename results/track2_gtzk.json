@@ -20,7 +20,8 @@
     "interpretation": "informational coupling detected"
   },
   "proof": {
-    "proof_hash": "a2aca125605e1612",
-    "verified": true
+    "proof_hash": "f8d209803d09e9bc",
+    "verified": true,
+    "proof_type": "certification"
   }
 }

@@ -57,8 +57,19 @@ class HomeostasisZEE200Bridge:
         last_block = chain[max(chain.keys(), key=lambda k: int(k.split('_')[1]))]
         return hashlib.sha256(json.dumps(last_block, sort_keys=True).encode()).hexdigest()
 
+    def _compute_block_content_hash(self, block_data: dict) -> str:
+        """Computa hash do conteúdo do bloco para encadeamento adequado."""
+        # Excluir campos que não devem afetar o hash do conteúdo
+        content_for_hash = {
+            k: v for k, v in block_data.items()
+            if k not in ['block_hash', 'parent_hash', 'timestamp']
+        }
+        return hashlib.sha256(
+            json.dumps(content_for_hash, sort_keys=True).encode()
+        ).hexdigest()
+
     def generate_capture_proof(self, community_data, manifold_points,
-                               epsilon=0.01, manifold_dim=3):
+                               epsilon=0.01, manifold_dim=3, parent_hash=None):
         """
         Gera prova ZK de que uma comunidade CAPTURE captura um manifold.
         """
@@ -92,13 +103,29 @@ class HomeostasisZEE200Bridge:
             name=f'capture_manifold_{community_data["community_id"]}',
             public_inputs=public_inputs,
             private_witness=private_witness,
-            constraints=constraints
+            constraints=constraints,
+            proof_type='monitoring'
         )
+
+        # Instanciar gerador de entropia se ainda não existe
+        if not hasattr(self, '_entropy_seed'):
+            import sys
+            import os
+            sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'arkhe_homeostasis_v327_5'))
+            from zee200_nondeterministic import NonDeterministicProofSeed
+            self._entropy_seed = NonDeterministicProofSeed(
+                entropy_sources=['time', 'pid', 'memory'],
+                chain_binding=True
+            )
 
         # Gerar prova ZK real
         proof = inst.prove(security_bits=self.security_bits, post_quantum=True)
 
+        # Injetar entropia não-determinística
+        proof = self._entropy_seed.inject_into_proof(proof, parent_hash)
+
         return {
+            'entropy_metadata': proof.get('entropy_metadata'),
             'proof_hash': proof['proof_hash'],
             'proof_size_bytes': proof['proof_size_bytes'],
             'community_id': community_data['community_id'],
@@ -107,33 +134,72 @@ class HomeostasisZEE200Bridge:
             'manifold_dim': int(manifold_dim),
             'epsilon': float(epsilon),
             'verified': True,  # Assumindo que prove() só retorna se sucesso
+            'proof_type': proof.get('proof_type', 'monitoring'),
             'timestamp': None  # Preenchido ao registrar
         }
 
     def check_and_prove(self, classification_result, community_details,
-                        binarized_codes, J_matrix):
+                        binarized_codes, J_matrix,
+                        epoch=None, parameter_changes=None):
         """
-        Verifica se CAPTURE > threshold e gera prova se necessário.
+        Verifica se CAPTURE > threshold e gera prova se necessário, com tagging.
         """
+        import time
+        from datetime import datetime
         capture_fraction = classification_result.get('capture_fraction', 0)
         new_proofs = []
 
-        if capture_fraction >= self.capture_threshold:
-            print(f"🔐 CAPTURE={capture_fraction:.1%} >= {self.capture_threshold:.1%} → Gerando prova ZK...")
-
-            # Identificar comunidade CAPTURE dominante (maior coesão)
-            capture_communities = [
-                (cid, info) for cid, info in community_details.items()
-                if info['regime'] == 'CAPTURE'
-            ]
-            if not capture_communities:
-                return new_proofs
-
-            # Selecionar comunidade com maior |ρ|
-            dominant_cid, dominant_info = max(
-                capture_communities, key=lambda x: abs(x[1]['rho'])
+        # Inicializar tagger se necessário
+        if not hasattr(self, '_proof_tagger'):
+            import sys
+            import os
+            sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'arkhe_homeostasis_v327_5'))
+            from proof_tagging import ProofTagger, ProofType
+            self._proof_tagger = ProofTagger(
+                monitoring_threshold=0.30,
+                certification_threshold=0.80,
+                transition_sensitivity=0.15
             )
 
+        # Extrair métricas da comunidade dominante (se existir)
+        dominant_info = None
+        dominant_cid = None
+        if community_details:
+            capture_comms = [(cid, info) for cid, info in community_details.items()
+                             if info['regime'] == 'CAPTURE']
+            if capture_comms:
+                dominant_cid, dominant_info = max(capture_comms, key=lambda x: abs(x[1]['rho']))
+
+        # Classificar tipo de prova
+        import sys
+        import os
+        sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'arkhe_homeostasis_v327_5'))
+        from proof_tagging import ProofType
+        proof_meta = self._proof_tagger.classify_proof(
+            capture_fraction=capture_fraction,
+            cohesion_rho=dominant_info['rho'] if dominant_info else None,
+            manifold_dim=dominant_info.get('manifold_dim') if dominant_info else None,
+            epoch=epoch,
+            parameter_change=parameter_changes
+        )
+
+        # Decidir se gera prova baseada no tipo e prioridade
+        should_generate = (
+            proof_meta.proof_type in [
+                ProofType.COHERENCE_CERTIFICATION,
+                ProofType.REGIME_TRANSITION,
+                ProofType.PARAMETER_OPTIMIZATION
+            ] or
+            (proof_meta.priority in ['high', 'critical'])
+        )
+
+        if not should_generate:
+            return []
+
+        print(f"   🔐 Generating {proof_meta.proof_type.name} proof "
+              f"(CAPTURE={capture_fraction:.1%}, priority={proof_meta.priority})...")
+
+        if dominant_info:
             # Extrair manifold points via PCA
             from sklearn.decomposition import PCA
             crystals = dominant_info['crystals']
@@ -149,6 +215,8 @@ class HomeostasisZEE200Bridge:
             pca = PCA(n_components=manifold_dim)
             manifold_points = pca.fit_transform(codes_sub)
 
+            parent_hash = self._compute_parent_hash()
+
             # Gerar prova ZK
             proof = self.generate_capture_proof(
                 community_data={
@@ -158,17 +226,53 @@ class HomeostasisZEE200Bridge:
                 },
                 manifold_points=manifold_points,
                 epsilon=0.01,
-                manifold_dim=manifold_dim
+                manifold_dim=manifold_dim,
+                parent_hash=parent_hash
             )
 
-            # Registrar no log on-chain
+            # Injetar metadados de tagging na prova
+            proof['proof_metadata'] = proof_meta.to_dict()
+
+            # Atualizar proof_hash para incluir tagging
+            proof['proof_hash'] = hashlib.sha256(
+                str({**proof, 'metadata': proof_meta.to_dict()}).encode()
+            ).hexdigest()[:16]
+
+            # Registrar no log on-chain com agregação dinâmica
             block_id = len(self.proof_history) + 1
-            proof['timestamp'] = f'block_{block_id}'
-            proof['parent_hash'] = self._compute_parent_hash()
+
+            # Calcular hash do conteúdo deste bloco
+            block_content = {
+                'proof_hash': proof['proof_hash'],
+                'community_id': proof['community_id'],
+                'capture_fraction': float(capture_fraction),
+                'block_id': block_id,
+            }
+            content_hash = self._compute_block_content_hash(block_content)
+
+            # Calcular root_hash dinâmico (não constante)
+            root_hash = hashlib.sha256(
+                f"{content_hash}|{parent_hash}|{block_id}|{time.time_ns()}".encode()
+            ).hexdigest()
+
+            # Atualizar prova com metadados de agregação
+            proof.update({
+                'block_id': block_id,
+                'parent_hash': parent_hash,
+                'content_hash': content_hash,
+                'root_hash': root_hash,  # Agora dinâmico!
+                'timestamp': datetime.now().isoformat(),
+                'capture_fraction': float(capture_fraction),
+                'aggregation_metadata': {
+                    'strategy': 'incremental_dynamic',
+                    'window_size': 8,
+                    'position_in_window': block_id % 8,
+                    'root_update_policy': 'every_block'
+                }
+            })
 
             # Computar hash deste bloco
-            block_data = {**proof, 'capture_fraction': float(capture_fraction)}
-            block_hash = hashlib.sha256(json.dumps(block_data, sort_keys=True).encode()).hexdigest()
+            block_hash = hashlib.sha256(json.dumps(proof, sort_keys=True).encode()).hexdigest()
             proof['block_hash'] = block_hash
 
             # Tag the proof
@@ -185,65 +289,71 @@ class HomeostasisZEE200Bridge:
             # Adicionar à cadeia
             with open(self.on_chain_log_path) as f:
                 chain = json.load(f)
-            chain[f'block_{block_id}'] = block_data
+            chain[f'block_{block_id}'] = proof
             with open(self.on_chain_log_path, 'w') as f:
                 json.dump(chain, f, indent=2)
 
             self.proof_history.append(proof)
             new_proofs.append(proof)
 
-            print(f"   ✓ Prova gerada: {proof['proof_hash'][:16]}..., bloco #{block_id}")
+            print(f"   ✓ Prova gerada: {proof['proof_hash'][:16]}..., "
+                  f"bloco #{block_id}, root={root_hash[:16]}...")
+
+            # Log de ações downstream
+            if proof_meta.downstream_actions:
+                print(f"   📬 Downstream actions: {', '.join(proof_meta.downstream_actions)}")
 
         return new_proofs
 
-def spsa_with_zee200(initial_params, max_epochs=20, N_steps=200,
-                     capture_threshold=0.80, zee200_bridge=None):
-    """
-    SPSA com geração automática de provas ZK quando CAPTURE ultrapassa limiar.
-    """
+def spsa_with_adaptive_shock(initial_params, max_epochs=30, capture_threshold=0.80, zee200_bridge=None, N_steps=200):
+    """SPSA com choque adaptativo de parâmetros."""
     if zee200_bridge is None:
         zee200_bridge = HomeostasisZEE200Bridge(capture_threshold=capture_threshold)
 
-    # Parâmetros otimizáveis
+    # Usar pipeline ising do v325
+    sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'arkhe_ising_v325'))
+    import crystal_brain_ising_pipeline as ising_pipeline
+
+    sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'arkhe_homeostasis_v327_5'))
+    from spsa_adaptive import AdaptiveSPSA
+
+    # Configurar otimizador adaptativo
+    param_bounds = [(0.1, 2.0), (0.0001, 0.01), (0.0, 0.3), (2, 5)]
+    optimizer = AdaptiveSPSA(
+        param_bounds=param_bounds,
+        mode='adaptive',
+        plateau_threshold=5,
+        min_improvement=0.015  # 1.5% de melhoria mínima para resetar contagem
+    )
+
     theta = np.array([
         initial_params['kappa'],
         initial_params['lambda_l1'],
         initial_params['binarization_threshold'],
         initial_params['embedding_dim']
     ])
-    bounds = [(0.1, 2.0), (0.0001, 0.01), (0.0, 0.3), (2, 5)]  # [min, max] por parâmetro
 
+    a, c = 0.4, 0.2  # Hiperparâmetros SPSA
     history = []
     all_proofs = []
 
-    optimizer = AdaptiveSPSA(param_bounds=bounds, mode='adaptive', plateau_threshold=4, min_improvement=0.02)
-
-    # Usar pipeline ising do v325
-    sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'arkhe_ising_v325'))
-    import crystal_brain_ising_pipeline as ising_pipeline
-
     def run_simulation(params, steps):
-        # Gerar dados sintéticos para simulação (n_crystals truncado para velocidade se necessário, mantemos 768 mas pipeline lida)
         phases = ising_pipeline.generate_synthetic_crystal_data(n_timesteps=steps)
         binarized = ising_pipeline.binarize_crystal_phases(phases, threshold=params[2])
         J, h, _ = ising_pipeline.fit_ising_crystal(binarized, gamma=params[1])
-        # Force diag to 0
         np.fill_diagonal(J, 0)
         return {'binarized': binarized, 'J_matrix': J}
 
     def evaluate(params):
         states = run_simulation(params, N_steps // 2)
-        # detect communities and classify
         communities = ising_pipeline.detect_crystal_communities(states['J_matrix'])
         classifications = ising_pipeline.classify_all_communities(states['J_matrix'], communities)
         capture_frac = sum(1 for c in classifications.values() if c['regime'] == 'CAPTURE') / len(classifications) if classifications else 0
-        return capture_frac, classifications
+        return capture_frac
 
-    for k in range(1, max_epochs + 1):
-        # 1. Simular com parâmetros atuais
+    for epoch in range(1, max_epochs + 1):
+        # Para simulação principal e prova:
         states = run_simulation(theta, N_steps)
-
-        # 2. Pipeline Ising + classificação
         communities = ising_pipeline.detect_crystal_communities(states['J_matrix'])
         community_details = ising_pipeline.classify_all_communities(states['J_matrix'], communities)
         capture_fraction = sum(1 for c in community_details.values() if c['regime'] == 'CAPTURE') / len(community_details) if community_details else 0
@@ -253,36 +363,51 @@ def spsa_with_zee200(initial_params, max_epochs=20, N_steps=200,
             'community_details': community_details
         }
 
-        # 3. Verificar e gerar prova ZK se necessário
+        parameter_changes = None
+        if len(history) > 0:
+            parameter_changes = {
+                'kappa': theta[0] - history[-1]['params'][0],
+                'lambda_l1': theta[1] - history[-1]['params'][1],
+                'binarization_threshold': theta[2] - history[-1]['params'][2],
+                'embedding_dim': theta[3] - history[-1]['params'][3]
+            }
+
+        # Verificar e gerar prova ZK se necessário
         new_proofs = zee200_bridge.check_and_prove(
             classification_result=ising_result,
             community_details=community_details,
             binarized_codes=states['binarized'],
-            J_matrix=states['J_matrix']
+            J_matrix=states['J_matrix'],
+            epoch=epoch,
+            parameter_changes=parameter_changes
         )
         all_proofs.extend(new_proofs)
 
-        # 4 & 5. SPSA Adaptativo (Update)
-        # SPSA adaptativo lida com o cálculo do gradiente e update
-        theta, current_score = optimizer.step(evaluate_fn=lambda t: evaluate(t)[0], epoch=k, current_theta=theta)
+        # Executar passo adaptativo
+        theta, score = optimizer.step(
+            evaluate_fn=evaluate,
+            epoch=epoch,
+            current_theta=theta
+        )
 
-        # 6. Registrar histórico
-        epoch_record = {
-            'epoch': k,
-            'kappa': float(theta[0]),
-            'lambda_l1': float(theta[1]),
-            'binarization_threshold': float(theta[2]),
-            'embedding_dim': int(theta[3]),
-            'capture_fraction': float(capture_fraction),
-            'proofs_generated': len(new_proofs)
-        }
-        history.append(epoch_record)
+        # Registrar histórico
+        history.append({
+            'epoch': epoch,
+            'params': theta.copy(),
+            'score': score,
+            'mode': optimizer.current_params.copy(),
+            'stagnation': optimizer.stagnation_counter
+        })
 
-        print(f"Epoch {k:2d}: κ={theta[0]:.3f}, λ={theta[1]:.4f}, "
-              f"thresh={theta[2]:.2f}, dim={int(theta[3])}, "
-              f"CAPTURE={capture_fraction:.1%}, proofs={len(new_proofs)}")
+        print(f"Epoch {epoch:2d}: score={score:.4f}, "
+              f"mode={'⚡SHOCK' if optimizer.mode=='aggressive' else '→stable'}, "
+              f"stagnation={optimizer.stagnation_counter}, proofs={len(new_proofs)}")
 
     return history, all_proofs, theta
+
+def spsa_with_zee200(initial_params, max_epochs=20, N_steps=200,
+                     capture_threshold=0.80, zee200_bridge=None):
+    return spsa_with_adaptive_shock(initial_params, max_epochs=max_epochs, capture_threshold=capture_threshold, zee200_bridge=zee200_bridge, N_steps=N_steps)
 
 if __name__ == '__main__':
     import argparse

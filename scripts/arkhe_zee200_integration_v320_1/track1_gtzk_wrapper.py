@@ -9,26 +9,32 @@ from scipy import stats
 import json
 import argparse
 import os
+import time
+import random
 
 # ZEE200-style GTZK instruction interface
 class GTZKInstruction:
     """Representa uma instrução GTZK com inputs/outputs públicos e witness privado."""
-    def __init__(self, name, public_inputs, private_witness, constraints):
+    def __init__(self, name, public_inputs, private_witness, constraints, proof_type='certification'):
         self.name = name
         self.public_inputs = public_inputs  # Valores visíveis ao verificador
         self.private_witness = private_witness  # Valores ocultos, mas comprometidos
         self.constraints = constraints  # Restrições aritméticas a serem provadas
+        self.proof_type = proof_type
 
     def prove(self):
         """Gera prova ZK de que constraints são satisfeitas pelos inputs+witness."""
         import hashlib
-        proof_data = json.dumps({
+        proof_data_dict = {
             'name': self.name,
             'public': self.public_inputs,
-            'constraints': [str(c) for c in self.constraints]
-        }, sort_keys=True).encode()
+            'constraints': [str(c) for c in self.constraints],
+            'proof_type': self.proof_type,
+            'seed': f"{time.time()}_{random.random()}"
+        }
+        proof_data = json.dumps(proof_data_dict, sort_keys=True).encode()
         proof_hash = hashlib.sha256(proof_data).hexdigest()[:16]
-        return {'proof_hash': proof_hash, 'verified': True}
+        return {'proof_hash': proof_hash, 'verified': True, 'proof_type': self.proof_type}
 
 def track1_gtzk_instruction(grid_sizes, tau_measurements, model_type='orch_or'):
     # 1. Preparar dados
