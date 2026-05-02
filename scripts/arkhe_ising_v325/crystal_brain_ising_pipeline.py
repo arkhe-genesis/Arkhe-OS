@@ -166,7 +166,7 @@ def fit_ising_crystal(binarized_codes, gamma=0.5, max_iter=1000):
 
     return J_opt, h_opt, -result.fun
 
-def detect_crystal_communities(J, resolution=1.0):
+def detect_crystal_communities(J, resolution=0.5):
     """
     Aplica Louvain community detection à matriz de couplings.
     """

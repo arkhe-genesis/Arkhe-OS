@@ -43,7 +43,7 @@ class AdaptiveParameterOptimizer:
     """Otimizador que combina SPSA com busca em grade adaptativa para espaço expandido."""
 
     def __init__(self, param_ranges, initial_point,
-                 spsa_params={'a': 0.1, 'c': 0.05},
+                 spsa_params={'a': 0.4, 'c': 0.2},
                  grid_refinement_interval=5):
         """
         Args:

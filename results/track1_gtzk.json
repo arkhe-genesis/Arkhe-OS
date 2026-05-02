@@ -20,7 +20,8 @@
     "interpretation": "evidence for Orch-OR scaling"
   },
   "proof": {
-    "proof_hash": "3444904de31632e7",
-    "verified": true
+    "proof_hash": "fad3b324985dfe59",
+    "verified": true,
+    "proof_type": "certification"
   }
 }

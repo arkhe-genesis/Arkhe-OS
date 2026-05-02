@@ -100,7 +100,8 @@ class VerifiableManifoldSteerer:
             name=f'steering_proof_{hash(str(path)) % 10000}',
             public_inputs=public_inputs,
             private_witness=private_witness,
-            constraints=constraints
+            constraints=constraints,
+            proof_type='steering'
         )
 
         proof = inst.prove(security_bits=80, post_quantum=True)
@@ -110,7 +111,8 @@ class VerifiableManifoldSteerer:
             'path_length': len(path),
             'smoothness_verified': True,
             'reconstruction_epsilon': self.verification_epsilon,
-            'manifold_crystals': self.crystal_indices
+            'manifold_crystals': self.crystal_indices,
+            'proof_type': proof.get('proof_type', 'steering')
         }
 
     def steer_with_verification(self, start_intention, end_intention,
@@ -147,6 +149,8 @@ class VerifiableManifoldSteerer:
         if generate_proof:
             proof = self.generate_steering_proof(path_latent, end_intention)
 
+        causal_efficacy = float(np.linalg.norm(path_original[-1] - path_original[0]) / (sum(np.linalg.norm(path_original[i] - path_original[i-1]) for i in range(1, len(path_original))) + 1e-10))
+
         return {
             'path_latent': path_latent.tolist(),
             'path_original': path_original.tolist(),
@@ -154,7 +158,8 @@ class VerifiableManifoldSteerer:
                 'max_curvature': self._estimate_curvature(path_latent),
                 'reconstruction_error': float(np.mean(np.linalg.norm(
                     path_original[-1] - end_intention
-                )))
+                ))),
+                'causal_efficacy': causal_efficacy
             },
             'proof': proof
         }
