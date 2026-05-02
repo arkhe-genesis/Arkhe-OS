@@ -9,6 +9,9 @@ import hashlib
 from pathlib import Path
 import sys
 import os
+from scripts.arkhe_homeostasis_v327_1.spsa_adaptive import AdaptiveSPSA
+from scripts.arkhe_homeostasis_v327_1.zee200_nondeterministic import NonDeterministicProofSeed
+from scripts.arkhe_homeostasis_v327_1.proof_tagging import ProofTagger
 
 # Ensure the mock backend is accessible
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -63,11 +66,14 @@ class HomeostasisZEE200Bridge:
         n_crystals = len(crystals)
 
         # Preparar inputs públicos para ZEE200
+        seed_gen = NonDeterministicProofSeed()
+        proof_seed = seed_gen.generate_seed(community_data, self._compute_parent_hash())
+        seed_num = int(hashlib.sha256(proof_seed.encode()).hexdigest(), 16) % (2**32)
         public_inputs = [
             float(epsilon**2),           # epsilon_sq
             float(manifold_dim),          # manifold_dimension
             float(n_crystals),            # n_crystals
-            float(hash(tuple(crystals)) % (2**32))  # indices hash
+            float(seed_num)               # indices hash from nondeterministic seed
         ]
 
         # Private witness (comprometido, não revelado)
@@ -165,6 +171,17 @@ class HomeostasisZEE200Bridge:
             block_hash = hashlib.sha256(json.dumps(block_data, sort_keys=True).encode()).hexdigest()
             proof['block_hash'] = block_hash
 
+            # Tag the proof
+            tagger = ProofTagger(monitoring_threshold=0.30, certification_threshold=0.80, transition_sensitivity=0.15)
+            proof_meta = tagger.classify_proof(
+                capture_fraction=capture_fraction,
+                cohesion_rho=float(dominant_info['rho']),
+                manifold_dim=manifold_dim,
+                epoch=block_id
+            )
+            proof['proof_type'] = proof_meta.proof_type.name
+            proof['priority'] = proof_meta.priority
+
             # Adicionar à cadeia
             with open(self.on_chain_log_path) as f:
                 chain = json.load(f)
@@ -196,9 +213,10 @@ def spsa_with_zee200(initial_params, max_epochs=20, N_steps=200,
     ])
     bounds = [(0.1, 2.0), (0.0001, 0.01), (0.0, 0.3), (2, 5)]  # [min, max] por parâmetro
 
-    a, c = 0.1, 0.05  # Hiperparâmetros SPSA
     history = []
     all_proofs = []
+
+    optimizer = AdaptiveSPSA(param_bounds=bounds, mode='adaptive', plateau_threshold=4, min_improvement=0.02)
 
     # Usar pipeline ising do v325
     sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'arkhe_ising_v325'))
@@ -244,19 +262,9 @@ def spsa_with_zee200(initial_params, max_epochs=20, N_steps=200,
         )
         all_proofs.extend(new_proofs)
 
-        # 4. SPSA: estimar gradiente
-        delta = np.random.choice([-1, 1], size=4)
-        theta_plus = np.clip(theta + c * delta, *zip(*bounds))
-        theta_minus = np.clip(theta - c * delta, *zip(*bounds))
-
-        C_plus, _ = evaluate(theta_plus)
-        C_minus, _ = evaluate(theta_minus)
-        grad_est = (C_plus - C_minus) / (2 * c * delta)
-
-        # 5. Atualização SPSA
-        ak = a / (k ** 0.602)
-        theta = theta + ak * grad_est  # Maximização: subir gradiente
-        theta = np.clip(theta, *zip(*bounds))
+        # 4 & 5. SPSA Adaptativo (Update)
+        # SPSA adaptativo lida com o cálculo do gradiente e update
+        theta, current_score = optimizer.step(evaluate_fn=lambda t: evaluate(t)[0], epoch=k, current_theta=theta)
 
         # 6. Registrar histórico
         epoch_record = {
