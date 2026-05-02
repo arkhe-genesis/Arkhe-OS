@@ -1,0 +1,14 @@
+{
+  "track1": {
+    "n_values": [16, 64],
+    "n_trials": 10
+  },
+  "track2": {
+    "n_trials": 50
+  },
+  "track3": {
+    "sequences": ["ABC", "A(BC)", "(AB)C"],
+    "n_trials": 20,
+    "algebra_type": "octonionic"
+  }
+}
