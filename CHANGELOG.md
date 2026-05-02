@@ -1,5 +1,16 @@
 # Changelog
 
+## [v∞.375.1] - 2026-05-03
+### Added
+- TorsionPhonon simulator (Substrate 99) with phenomenological model
+- Epistemic documentation for retrocausality claims
+### Validated
+- Dispersion relation ω̃(k̃,l) and group velocity ṽ_g
+- Coherence transport C_{ℓ→ℓ'} with ξ=2.0 layers
+### Notes
+- Topological charge Q is phenomenological; rigorous Berry phase derivation scheduled
+- Retrocausal condition ω_tuning=ω_vacuum is working hypothesis, not proven theorem
+
 ## [0.21.0](https://github.com/ChromeDevTools/chrome-devtools-mcp/compare/chrome-devtools-mcp-v0.20.3...chrome-devtools-mcp-v0.21.0) (2026-04-01)
 
 

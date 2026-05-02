@@ -3,7 +3,19 @@ Modelo de transição inspirado na colagem característica de Crump et al.
 Adaptado para o steering do Crystal Brain via SPSA.
 """
 import numpy as np
+import sys
+import os
 from scipy.optimize import minimize
+
+# Try to import TorsionPhononField from core.torsion_phonon
+try:
+    # Adjust path if we are in arkhe-v3277/core
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+    from core.torsion_phonon import TorsionPhononField
+    HAS_TORSION_PHONON = True
+except ImportError:
+    HAS_TORSION_PHONON = False
+
 
 class CharacteristicGluingSteering:
     """
@@ -66,11 +78,35 @@ class CharacteristicGluingSteering:
     def simulate_transition(self):
         """
         Mock method for simulating the transition to compute capture fraction based on params.
+        Integrates TorsionPhononField to establish the correlation between phonon emissions
+        and DILUTION->CAPTURE regime transitions if available.
         """
         kappa = self.gluing_params.get('kappa_glue', 1.0)
-        # Use kappa to produce some simulated output
-        # If kappa is close to 1.0, maybe capture_fraction is high
-        return {'capture_fraction': min(0.99, max(0.0, 0.8 * kappa))}
+        base_capture = min(0.99, max(0.0, 0.8 * kappa))
+
+        phonon_coherence_bonus = 0.0
+        emissions_count = 0
+
+        if HAS_TORSION_PHONON:
+            # Initialize a brief field simulation to see if phonons enhance capture
+            sim = TorsionPhononField(n_layers=12, lambda_delta=self.gluing_params.get('torsion_rate', 3722/2705))
+
+            # Run a small emission sequence during transition window
+            history = sim.simulate_emission_sequence(0, 1.0, dt=0.1)
+            emissions_count = len(history['emissions'])
+
+            if history['coherence']:
+                # The final coherence of the field acts as a bonus to the capture fraction
+                # signifying that topological excitations helped in the DILUTION->CAPTURE transition
+                phonon_coherence_bonus = history['coherence'][-1] * 0.1 # Cap bonus at 10%
+
+        final_capture = min(0.99, base_capture + phonon_coherence_bonus)
+
+        return {
+            'capture_fraction': final_capture,
+            'phonon_emissions': emissions_count,
+            'coherence_bonus': phonon_coherence_bonus
+        }
 
     def optimize_gluing(self, target_capture_fraction=0.85, max_iter=100):
         """
