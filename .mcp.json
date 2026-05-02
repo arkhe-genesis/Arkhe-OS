@@ -7,6 +7,10 @@
     "sentrux": {
       "command": "sentrux",
       "args": ["--mcp"]
+    },
+    "socraticode": {
+      "command": "npx",
+      "args": ["-y", "socraticode"]
     }
   }
 }
