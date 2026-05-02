@@ -157,6 +157,7 @@ async function loadBrainFlowWASM(): Promise<BrainFlowInstance> {
 
 
 
+  // @ts-expect-error cannot resolve module but it exists at runtime
   const module = await import(/* @vite-ignore */ '/brainflow_wasm/brainflow.js?url');
   const brainflow = await module.default();
   brainflow.DataFilter.set_log_level(brainflow.LogLevels.LEVEL_OFF);
