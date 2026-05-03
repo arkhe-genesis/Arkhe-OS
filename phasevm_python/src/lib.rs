@@ -1,99 +1,56 @@
+// phasevm_python/src/lib.rs — Python FFI bindings for PhaseVM via PyO3
 use pyo3::prelude::*;
-use pyo3::async_;
 use pyo3::types::PyList;
-use phasevm::{PhaseVM, AsyncPhaseVM, CompilationResult, CacheStats};
+use phasevm::{PhaseVM, PhaseVMError};
 use num_complex::Complex64;
-use std::time::Duration;
 
-/// Async Python wrapper for thread-safe PhaseVM
+/// Python wrapper for PhaseVM JIT compiler
 #[pyclass]
-struct PyAsyncPhaseVM {
-    async_vm: AsyncPhaseVM,
+struct PyPhaseVM {
+    vm: PhaseVM,
 }
 
 #[pymethods]
-impl PyAsyncPhaseVM {
+impl PyPhaseVM {
     #[new]
-    #[pyo3(signature = (num_workers = 2))]
-    fn new(num_workers: usize) -> PyResult<Self> {
-        let async_vm = AsyncPhaseVM::new(num_workers)
+    fn new() -> PyResult<Self> {
+        let vm = PhaseVM::new()
             .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(PyAsyncPhaseVM { async_vm })
+        Ok(PyPhaseVM { vm })
     }
 
-    /// Submit async compilation request, returns future-like object
-    #[pyo3(signature = (gates, timeout_ms = 50.0))]
-    fn compile_circuit_async<'p>(
-        &'p self,
-        py: Python<'p>,
-        gates: &PyList,
-        timeout_ms: f64,
-    ) -> PyResult<&'p PyAny> {
+    /// Compile a circuit (list of gate names) and return Jones invariant as (real, imag)
+    #[pyo3(signature = (gates))]
+    fn compile_circuit(&mut self, gates: &PyList) -> PyResult<(f64, f64)> {
+        // Convert Python list to Rust Vec<String>
         let gate_vec: Vec<String> = gates
             .iter()
             .map(|item| item.extract::<String>())
             .collect::<Result<_, _>>()
             .map_err(|e| pyo3::exceptions::PyTypeError::new_err(e.to_string()))?;
 
-        let timeout = Duration::from_millis(timeout_ms as u64);
-        let receiver = self.async_vm
-            .compile_async(gate_vec, timeout)
+        // Compile via PhaseVM
+        let result = self.vm.compile_circuit(&gate_vec)
             .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
 
-        // Return async task that Python can await
-        async_::future_into_py(py, async move {
-            // Receive result from Rust channel
-            match receiver.recv() {
-                Ok(CompilationResult::Success { jones, cache_hit }) => {
-                    Ok((jones.re, jones.im, cache_hit))
-                }
-                Ok(CompilationResult::Error { message }) => {
-                    Err(pyo3::exceptions::PyRuntimeError::new_err(message))
-                }
-                Ok(CompilationResult::Timeout) => {
-                    Err(pyo3::exceptions::PyTimeoutError::new_err("JIT compilation timeout"))
-                }
-                Err(_) => Err(pyo3::exceptions::PyRuntimeError::new_err("Channel closed")),
-            }
-        })
+        // Return as tuple (real, imag)
+        Ok((result.re, result.im))
+    }
+
+    /// Clear the JIT compilation cache
+    fn clear_cache(&mut self) {
+        self.vm.cache.clear();
     }
 
     /// Get cache statistics
-    fn get_cache_stats(&self) -> PyResult<(usize, usize)> {
-        let stats = self.async_vm.get_stats()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok((stats.circuit_cache_size, stats.gate_cache_size))
-    }
-
-    /// Clear compilation cache
-    fn clear_cache(&self) -> PyResult<()> {
-        self.async_vm.clear_cache()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
-    }
-
-    /// Warm up cache with frequently used circuits
-    fn warmup_cache(&self, py: Python, circuits: &PyList) -> PyResult<()> {
-        let circuit_vecs: Vec<Vec<String>> = circuits
-            .iter()
-            .map(|sublist| {
-                let inner_list: &PyList = sublist.downcast()?;
-                inner_list
-                    .iter()
-                    .map(|item| item.extract::<String>())
-                    .collect::<Result<_, _>>()
-            })
-            .collect::<Result<_, _>>()
-            .map_err(|e: PyErr| pyo3::exceptions::PyTypeError::new_err(e.to_string()))?;
-
-        self.async_vm.warmup_cache(circuit_vecs)
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
+    fn cache_stats(&self) -> PyResult<(usize, usize)> {
+        Ok((self.vm.cache.len(), self.vm.gate_cache.len()))
     }
 }
 
-// Update module initialization
+/// Module initialization function for PyO3
 #[pymodule]
 fn phasevm_rs(_py: Python, m: &PyModule) -> PyResult<()> {
-    m.add_class::<PyAsyncPhaseVM>()?; // New async wrapper
+    m.add_class::<PyPhaseVM>()?;
     Ok(())
 }

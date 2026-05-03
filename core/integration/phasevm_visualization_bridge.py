@@ -1,226 +1,329 @@
-from concurrent.futures import ThreadPoolExecutor, Future
+#!/usr/bin/env python3
+"""
+PhaseVM → Visualization Bridge — Complete Bytecode to Shader Pipeline
+Connects Rust JIT compilation to Pygfx/WGPU shader rendering via Jones invariants.
+
+Pipeline:
+  Network Metrics → Topological Bytecode → PhaseVM JIT → Jones Invariant
+  → Shader Parameter Mapping → GPU Uniform Update → Real-time Visualization
+"""
+import numpy as np
 import asyncio
-from typing import Optional, Callable, Awaitable, List, Dict
+from typing import Dict, List, Optional, Callable
+from dataclasses import dataclass, field
+from enum import Enum, auto
 import time
 import logging
+from concurrent.futures import ThreadPoolExecutor
+
+from phasevm import PhaseVM  # Rust binding via PyO3
+from core.visualization.sophon_hexagon_v2 import SophonHexagonEngine
+from core.visualization.bidirectional_ui import BidirectionalUI, UIParameter
 
 logger = logging.getLogger(__name__)
 
+class CompilationMode(Enum):
+    """Mode for bytecode compilation and parameter mapping."""
+    AMPLITUDE = auto()      # |J| → wave amplitude
+    PHASE = auto()          # arg(J) → wave phase offset
+    FREQUENCY = auto()      # Re(J) → frequency modulation
+    COUPLING = auto()       # Im(J) → nonlinear coupling strength
+    MIXED = auto()          # Adaptive mapping based on circuit complexity
+
+@dataclass
 class BytecodeToShaderConfig:
-    pass
+    """Configuration for bytecode→shader parameter mapping."""
+    # Compilation
+    compilation_mode: CompilationMode = CompilationMode.MIXED
+    cache_enabled: bool = True
+    max_cache_size: int = 1024
+
+    # Mapping parameters
+    amplitude_scale: float = 0.5      # Scale factor for |J| → amplitude
+    phase_scale: float = np.pi / 4    # Scale for arg(J) → phase offset
+    frequency_base: float = 2.0       # Base frequency for Re(J) modulation
+    coupling_max: float = 0.3         # Max coupling strength from Im(J)
+
+    # Performance
+    compilation_timeout_ms: float = 50.0  # Max time for JIT compilation
+    fallback_to_cached: bool = True       # Use cached result if compilation times out
+
+    # Visualization sync
+    uniform_update_threshold: float = 0.01  # Min change to trigger GPU update
+    frame_sync: bool = True                  # Sync updates to render loop
 
 class PhaseVMVisualizationBridge:
+    """
+    Bridges PhaseVM Rust JIT compiler to Sophon visualization pipeline.
+
+    Real-time cycle:
+    1. Fetch network state → generate topological bytecode
+    2. Compile bytecode via PhaseVM JIT → Jones invariant (complex)
+    3. Map Jones invariant to shader parameters (amplitude, phase, frequency, coupling)
+    4. Update GPU uniform buffer → trigger re-render
+    5. (Optional) Feed back visual state to network thresholds via bidirectional UI
+    """
+
     def __init__(
         self,
-        visualization_engine=None,
-        bidirectional_ui=None,
-        config=None,
-        sophon_api_url: Optional[str] = None,
-        async_compilation: bool = True,  # Enable async JIT
-        num_compiler_threads: int = 2,   # Worker threads for JIT
+        visualization_engine: SophonHexagonEngine,
+        bidirectional_ui: Optional[BidirectionalUI] = None,
+        config: BytecodeToShaderConfig = None,
+        sophon_api_url: Optional[str] = None
     ):
-        self.visualization_engine = visualization_engine
-        self.last_jones = complex(1.0, 0.0)
+        self.viz = visualization_engine
+        self.ui = bidirectional_ui
+        self.config = config or BytecodeToShaderConfig()
+        self.sophon_api = sophon_api_url
 
-        # Initialize async PhaseVM if enabled
-        if async_compilation:
-            from phasevm_bridge import PyAsyncPhaseVM
-            self.phasevm = PyAsyncPhaseVM(num_workers=num_compiler_threads)
-            self._compilation_executor = ThreadPoolExecutor(max_workers=num_compiler_threads)
-            self._pending_compilations: Dict[str, Future] = {}
-        else:
-            from phasevm_bridge import PhaseVM
-            self.phasevm = PhaseVM()
-            self._compilation_executor = None
-            self._pending_compilations = {}
+        # Initialize PhaseVM JIT compiler
+        self.phasevm = PhaseVM()
 
-        # Warmup phase
-        self._warmup_cache()
+        # Thread pool for async compilation to prevent render loop blocking
+        self.executor = ThreadPoolExecutor(max_workers=2)
 
-    def _warmup_cache(self):
-        """Warm up the cache with frequently used circuits"""
-        frequent_circuits = [
-            ["I", "H"],
-            ["H", "X"],
-            ["Z", "H", "I"],
-            ["H", "X", "Z", "H", "I"]
-        ]
-        if hasattr(self.phasevm, "warmup_cache"):
-            self.phasevm.warmup_cache(frequent_circuits)
-            logger.info(f"Warmed up cache with {len(frequent_circuits)} frequent circuits")
+        # State tracking
+        self.last_jones: Optional[complex] = None
+        self.last_shader_params: Optional[np.ndarray] = None
+        self.compilation_times: List[float] = []
 
-    def compile_bytecode_to_jones_async(
-        self,
-        gates: List[str],
-        callback: Optional[Callable[[Optional[complex], bool], None]] = None
-    ) -> Optional[Future]:
+        # Register UI callbacks if available
+        if self.ui:
+            self._register_ui_callbacks()
+
+    def _register_ui_callbacks(self):
+        """Connect UI controls to bytecode generation parameters."""
+        def on_circuit_complexity_change(value: float):
+            # UI slider → bytecode length/complexity
+            self.circuit_complexity = np.clip(value, 1, 20)
+            logger.debug(f"Circuit complexity updated: {self.circuit_complexity}")
+
+        self.ui.add_parameter(UIParameter(
+            name="circuit_complexity",
+            label="Bytecode Complexity",
+            value=5.0, min_val=1.0, max_val=20.0, step=1.0,
+            shader_uniform_index=None,  # Not a direct shader param
+            network_metric=None
+        ))
+        self.ui.on_parameter_change("circuit_complexity", on_circuit_complexity_change)
+
+    def network_state_to_bytecode(self, metrics: Dict[str, float]) -> List[str]:
         """
-        Submit async JIT compilation request.
+        Convert network coherence metrics to topological bytecode (cbytes).
 
-        Args:
-            gates: List of gate names for bytecode
-            callback: Optional callback(result: complex|None, cache_hit: bool)
-
-        Returns:
-            Future for awaiting result, or None if using callback-only mode
+        Mapping strategy:
+        - High coherence → simple circuits (identity, H)
+        - Low coherence → complex circuits (multi-gate braids)
+        - High BER → gates with imaginary components (Z, phase gates)
         """
-        if self._compilation_executor is None:
-            # Fallback to sync compilation
-            try:
-                result = self.phasevm.compile_circuit(gates)
-                if callback:
-                    callback(result, False)  # cache_hit unknown in sync mode
-                return None
-            except Exception as e:
-                logger.warning(f"Sync compilation failed: {e}")
-                if callback:
-                    callback(None, False)
-                return None
+        coh_dist = metrics.get('coherence_distance', 0.3)
+        delivery = metrics.get('delivery_rate', 0.97)
+        ber = metrics.get('ber', 1e-4)
 
-        # Submit to async compiler
-        cache_key = "|".join(gates)
+        # Determine circuit complexity based on coherence
+        complexity = int(np.clip(1 + (1 - coh_dist) * 10, 1, 15))
+        if hasattr(self, 'circuit_complexity'):
+            complexity = int(np.clip(self.circuit_complexity, 1, 20))
 
-        def _compilation_task():
-            try:
-                # PyO3 async method returns (re, im, cache_hit) tuple
-                import asyncio
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
-                res = loop.run_until_complete(self.phasevm.compile_circuit_async(gates, timeout_ms=50.0))
-                loop.close()
-                re, im, cache_hit = res
-                return complex(re, im), cache_hit
-            except Exception as e:
-                logger.warning(f"Async compilation failed: {e}")
-                return None, False
+        # Generate gate sequence
+        gates = []
+        gate_pool = ['H', 'X', 'Z', 'I']  # Available gates in PhaseVM
 
-        # Submit to thread pool
-        future = self._compilation_executor.submit(_compilation_task)
-        self._pending_compilations[cache_key] = future
+        for i in range(complexity):
+            # Bias gate selection based on metrics
+            if ber > 1e-4 and i % 3 == 0:
+                # High BER → more Z gates (phase errors)
+                gates.append('Z')
+            elif delivery < 0.90 and i % 2 == 0:
+                # Low delivery → more X gates (bit flips)
+                gates.append('X')
+            else:
+                # Default: Hadamard for superposition
+                gates.append(np.random.choice(gate_pool))
 
-        # Setup completion callback
-        def _on_complete(fut: Future):
-            try:
-                result, cache_hit = fut.result()
-                if result is not None:
-                    self.last_jones = result
-                    logger.debug(f"Async JIT: {len(gates)} gates → cache_hit={cache_hit}")
-                if callback:
-                    callback(result, cache_hit)
-            except Exception as e:
-                logger.error(f"Compilation future failed: {e}")
-                if callback:
-                    callback(None, False)
-            finally:
-                # Clean up pending tracking
-                self._pending_compilations.pop(cache_key, None)
+        return gates
 
-        future.add_done_callback(_on_complete)
-        return future
+    def compile_bytecode_to_jones_sync(self, gates: List[str]) -> Optional[complex]:
+        """Synchronous part of compilation"""
+        try:
+            return self.phasevm.compile_circuit(gates)
+        except Exception as e:
+            logger.warning(f"JIT compilation failed: {e}")
+            raise e
 
-    def network_state_to_bytecode(self, metrics):
-        # mock implementation
-        return ["H", "X", "Z"]
+    async def compile_bytecode_to_jones(self, gates: List[str]) -> Optional[complex]:
+        """
+        Compile bytecode via PhaseVM JIT and return Jones invariant.
+        Uses ThreadPoolExecutor to run compilation asynchronously,
+        preventing render loop blocking.
+        Includes timeout handling and fallback to cached results.
+        """
+        start = time.perf_counter()
 
-    def metrics_to_wave_params(self, metrics):
-        pass
+        try:
+            # Attempt async compilation with timeout
+            loop = asyncio.get_event_loop()
+            task = loop.run_in_executor(self.executor, self.compile_bytecode_to_jones_sync, gates)
 
-    def update_shader_uniforms(self, params):
-        return True
+            # Wait for compilation with timeout
+            result = await asyncio.wait_for(task, timeout=self.config.compilation_timeout_ms / 1000.0)
 
-    def jones_to_shader_params(self, jones):
-        return {"amplitude": abs(jones), "phase": 0.0}
+            elapsed_ms = (time.perf_counter() - start) * 1000
+            self.compilation_times.append(elapsed_ms)
+
+            # Keep compilation time history bounded
+            if len(self.compilation_times) > 100:
+                self.compilation_times.pop(0)
+
+            logger.debug(f"JIT compilation: {len(gates)} gates → {elapsed_ms:.2f}ms")
+            return result
+
+        except asyncio.TimeoutError:
+            logger.warning(f"JIT compilation timed out after {self.config.compilation_timeout_ms}ms")
+            if self.config.fallback_to_cached and self.last_jones is not None:
+                logger.info("Falling back to cached Jones invariant")
+                return self.last_jones
+            return None
+        except Exception as e:
+            if self.config.fallback_to_cached and self.last_jones is not None:
+                logger.info("Falling back to cached Jones invariant")
+                return self.last_jones
+            return None
+
+    def jones_to_shader_params(self, jones: complex) -> Dict[str, float]:
+        """
+        Map Jones invariant to shader uniform parameters.
+
+        Mapping depends on CompilationMode:
+        - AMPLITUDE: |J| → wave_amplitude
+        - PHASE: arg(J) → wave_phase offset
+        - FREQUENCY: Re(J) → frequency modulation
+        - COUPLING: Im(J) → coupling_strength
+        - MIXED: Adaptive combination based on circuit complexity
+        """
+        magnitude = abs(jones)
+        phase = np.angle(jones)
+        real, imag = jones.real, jones.imag
+
+        params = {}
+
+        if self.config.compilation_mode == CompilationMode.AMPLITUDE:
+            params['amplitude_factor'] = np.clip(
+                self.config.amplitude_scale * magnitude, 0.0, 1.0
+            )
+        elif self.config.compilation_mode == CompilationMode.PHASE:
+            params['phase_offset'] = np.clip(
+                phase * self.config.phase_scale, -np.pi, np.pi
+            )
+        elif self.config.compilation_mode == CompilationMode.FREQUENCY:
+            params['frequency_mod'] = self.config.frequency_base * (1.0 + 0.5 * real)
+        elif self.config.compilation_mode == CompilationMode.COUPLING:
+            params['coupling_strength'] = np.clip(
+                self.config.coupling_max * abs(imag), 0.0, self.config.coupling_max
+            )
+        else:  # MIXED mode
+            # Adaptive mapping based on Jones properties
+            params['amplitude_factor'] = np.clip(0.3 + 0.4 * magnitude, 0.3, 1.0)
+            params['phase_offset'] = phase * 0.25  # Subtle phase modulation
+            params['frequency_mod'] = self.config.frequency_base * (1.0 + 0.3 * real)
+            params['coupling_strength'] = np.clip(0.1 * abs(imag), 0.0, 0.15)
+
+        return params
+
+    def update_shader_uniforms(self, params: Dict[str, float]) -> bool:
+        """
+        Update visualization engine shader uniforms with new parameters.
+
+        Returns True if update was significant enough to trigger re-render.
+        """
+        if self.viz.ui is None:
+            return False
+
+        updated = False
+
+        # Map params to UI parameters (which bind to shader uniforms)
+        if 'amplitude_factor' in params:
+            new_val = params['amplitude_factor']
+            if self._significant_change('wave_amplitude_balance', new_val):
+                self.viz.ui.update_parameter('wave_amplitude_balance', new_val)
+                updated = True
+
+        if 'coupling_strength' in params:
+            new_val = params['coupling_strength']
+            if self._significant_change('coupling_strength', new_val):
+                self.viz.ui.update_parameter('coupling_strength', new_val)
+                updated = True
+
+        # Store for change detection
+        self.last_shader_params = params.copy()
+        return updated
+
+    def _significant_change(self, param_name: str, new_value: float) -> bool:
+        """Check if parameter change exceeds update threshold."""
+        if self.last_shader_params is None:
+            return True
+        old_value = self.last_shader_params.get(param_name)
+        if old_value is None:
+            return True
+        return abs(new_value - old_value) > self.config.uniform_update_threshold
 
     async def update_cycle(self, metrics: Dict[str, float]) -> Dict[str, any]:
         """
-        Execute update cycle with non-blocking async compilation.
+        Execute one complete update cycle: metrics → bytecode → JIT → shader.
+
+        Returns timing and status information for monitoring.
         """
         cycle_start = time.perf_counter()
-        result = {'success': False, 'stages': {}, 'async': True}
+        result = {'success': False, 'stages': {}}
 
         try:
-            # Stage 1: Bytecode generation (sync, fast)
+            # Stage 1: Bytecode generation
             t0 = time.perf_counter()
             gates = self.network_state_to_bytecode(metrics)
             result['stages']['bytecode_ms'] = (time.perf_counter() - t0) * 1000
-            cache_key = "|".join(gates)
 
-            # Stage 2: Async JIT compilation (non-blocking)
+            # Stage 2: JIT compilation (Now Async)
             t1 = time.perf_counter()
-
-            # Check if we already have a pending compilation for this bytecode
-            if cache_key in self._pending_compilations:
-                # Reuse pending future
-                future = self._pending_compilations[cache_key]
-                compilation_ms = (time.perf_counter() - t1) * 1000
-                result['stages']['compilation_ms'] = compilation_ms
-                result['stages']['compilation_status'] = 'pending_reused'
-            else:
-                # Submit new async compilation with callback
-                def _on_jones_ready(jones: Optional[complex], cache_hit: bool):
-                    if jones is not None:
-                        # Continue pipeline with result
-                        shader_params = self.jones_to_shader_params(jones)
-                        self.update_shader_uniforms(shader_params)
-                        result['success'] = True
-                        result['jones_invariant'] = {'real': jones.real, 'imag': jones.imag}
-                        result['shader_params'] = shader_params
-                        result['cache_hit'] = cache_hit
-                    else:
-                        # Fallback to direct mapping
-                        self.metrics_to_wave_params(metrics)
-                        result['success'] = True  # Still succeeded via fallback
-                        result['fallback_used'] = True
-
-                self.compile_bytecode_to_jones_async(gates, callback=_on_jones_ready)
-
-                compilation_ms = (time.perf_counter() - t1) * 1000
-                result['stages']['compilation_ms'] = compilation_ms
-                result['stages']['compilation_status'] = 'submitted'
-
-            # Stage 3-4: If result already available (cache hit), continue synchronously
-            if cache_key in self._pending_compilations:
-                future = self._pending_compilations[cache_key]
-                if future.done():
-                    jones, cache_hit = future.result()
-                    if jones is not None:
-                        self.last_jones = jones
-                        t2 = time.perf_counter()
-                        shader_params = self.jones_to_shader_params(jones)
-                        result['stages']['mapping_ms'] = (time.perf_counter() - t2) * 1000
-
-                        t3 = time.perf_counter()
-                        updated = self.update_shader_uniforms(shader_params)
-                        result['stages']['shader_update_ms'] = (time.perf_counter() - t3) * 1000
-                        result['shader_updated'] = updated
-                        result['success'] = True
-                        result['jones_invariant'] = {'real': jones.real, 'imag': jones.imag}
-                        result['shader_params'] = shader_params
-                        result['cache_hit'] = cache_hit
-
-            # If not done yet, return early; render loop will use cached/previous params
-            if not result.get('success'):
-                result['status'] = 'compilation_in_progress'
-                result['total_ms'] = (time.perf_counter() - cycle_start) * 1000
+            jones = await self.compile_bytecode_to_jones(gates)
+            if jones is None:
+                logger.warning("JIT compilation failed, skipping update")
+                result['stages']['compilation_ms'] = (time.perf_counter() - t1) * 1000
                 return result
+            result['stages']['compilation_ms'] = (time.perf_counter() - t1) * 1000
+            self.last_jones = jones
+
+            # Stage 3: Parameter mapping
+            t2 = time.perf_counter()
+            shader_params = self.jones_to_shader_params(jones)
+            result['stages']['mapping_ms'] = (time.perf_counter() - t2) * 1000
+
+            # Stage 4: Shader update
+            t3 = time.perf_counter()
+            updated = self.update_shader_uniforms(shader_params)
+            result['stages']['shader_update_ms'] = (time.perf_counter() - t3) * 1000
+            result['shader_updated'] = updated
+
+            result['success'] = True
+            result['jones_invariant'] = {'real': jones.real, 'imag': jones.imag}
+            result['shader_params'] = shader_params
 
         except Exception as e:
             logger.error(f"Update cycle failed: {e}", exc_info=True)
             result['error'] = str(e)
-            # Fallback to direct mapping to ensure render continues
-            self.metrics_to_wave_params(metrics)
-            result['success'] = True
-            result['fallback_used'] = True
 
         result['total_ms'] = (time.perf_counter() - cycle_start) * 1000
         return result
 
-    def get_pending_compilations(self) -> int:
-        """Return number of in-flight JIT compilations."""
-        return len(self._pending_compilations)
+    def get_performance_stats(self) -> Dict[str, float]:
+        """Return compilation and update performance statistics."""
+        if not self.compilation_times:
+            return {'avg_compilation_ms': 0, 'p99_compilation_ms': 0}
 
-    def shutdown(self):
-        """Clean up thread pool and pending tasks."""
-        if self._compilation_executor:
-            self._compilation_executor.shutdown(wait=True)
-            self._pending_compilations.clear()
+        times = sorted(self.compilation_times)
+        return {
+            'avg_compilation_ms': np.mean(times),
+            'p50_compilation_ms': np.percentile(times, 50),
+            'p99_compilation_ms': np.percentile(times, 99),
+            'max_compilation_ms': np.max(times),
+            'cache_size': self.phasevm.cache_size[0] if hasattr(self.phasevm, 'cache_size') else 0,
+        }
