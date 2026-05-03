@@ -1,0 +1,39 @@
+receivers:
+- name: 'slack-certificate-warnings'
+  slack_configs:
+  - api_url: '${SLACK_WEBHOOK_URL}'
+    channel: '#arkhe-certificates'
+    send_resolved: true
+    title: '{{ .CommonAnnotations.summary }}'
+    text: |
+      {{ range .Alerts }}
+      *Alert*: {{ .Annotations.summary }}
+      *Service*: {{ .Labels.service }}
+      *Namespace*: {{ .Labels.namespace }}
+      *Severity*: {{ .Labels.severity }}
+      *Days Until Expiry*: {{ .Annotations.description | regexFind "Days until expiry: ([0-9.]+)" | index 1 }}
+      *Runbook*: {{ .Annotations.runbook_url }}
+      {{ end }}
+    actions:
+    - type: button
+      text: "View Dashboard"
+      url: "https://grafana.arkhe.os/d/arkhe-certificates"
+    - type: button
+      text: "Open Runbook"
+      url: "{{ .CommonAnnotations.runbook_url }}"
+- name: 'pagerduty-critical'
+  pagerduty_configs:
+  - service_key: '${PAGERDUTY_SERVICE_KEY}'
+
+route:
+  group_by: ['alertname', 'service', 'namespace']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+  routes:
+  - match:
+      alertname: ArkheCertificateExpiringWarning
+    receiver: slack-certificate-warnings
+  - match:
+      alertname: ArkheCertificateExpiringCritical
+    receiver: pagerduty-critical

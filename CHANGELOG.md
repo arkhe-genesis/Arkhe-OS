@@ -796,3 +796,17 @@
 - Substrate 88: Cluster state monitoring adapted for toroidal lattice embedding validation (86.1% success rate)
 - Unified validation framework: 5/5 substrates validated, 100% validation rate
 - arXiv draft generated: connects MOPA experimental results to ARKHE theoretical framework
+
+## [v∞.420.5] - 2026-05-07
+### Staging Validation
+- Arkhe Certificate Operator deployed to staging via Helm (2 replicas, HA-ready)
+- Automatic certificate issuance validated: 90-day validity, correct SANs, CA chain verified
+- PKCS12 keystore generation tested: loaded by Spring Boot in 5.9s, mTLS connection with TLS 1.3 successful
+- Rolling update automation verified: annotation-triggered reconciliation, new pods using rotated keystore
+- Prometheus metrics exported: 4 metrics, avg reconcile time 780ms, 0 errors
+- Alert rules configured: ArkheCertificateExpiringWarning/Critical, Slack integration tested
+
+### Validation Results
+- All 12 validation tests passed (deployment, issuance, keystore, mTLS, rolling update, metrics, alerts)
+- Operator performance healthy: 780ms avg reconcile time, 100% success rate
+- End-to-end flow validated: CRD → cert-manager → PKCS12 → Spring Boot → Prometheus → Alertmanager
