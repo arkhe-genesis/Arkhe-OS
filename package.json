@@ -30,7 +30,11 @@
     "update-tool-call-metrics": "node --experimental-strip-types scripts/update_tool_call_metrics.ts",
     "verify-npm-package": "node scripts/verify-npm-package.mjs",
     "eval": "npm run build && node --experimental-strip-types scripts/eval_gemini.ts",
-    "count-tokens": "node --experimental-strip-types scripts/count_tokens.ts"
+    "count-tokens": "node --experimental-strip-types scripts/count_tokens.ts",
+    "slide:dev": "open-slide dev",
+    "slide:build": "open-slide build",
+    "slide:preview": "open-slide preview",
+    "slide:sync:skills": "open-slide sync:skills"
   },
   "files": [
     "build/src",
@@ -57,7 +61,7 @@
     "@types/filesystem": "^0.0.36",
     "@types/json-schema": "^7.0.15",
     "@types/node": "^25.0.0",
-    "@types/react-dom": "^19.2.3",
+    "@types/react-dom": "^18.3.1",
     "@types/sinon": "^21.0.0",
     "@types/yargs": "^17.0.33",
     "@typescript-eslint/eslint-plugin": "^8.43.0",
@@ -84,7 +88,9 @@
     "tsx": "^4.21.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.43.0",
-    "yargs": "18.0.0"
+    "yargs": "18.0.0",
+    "@types/react": "^18.3.12",
+    "vite": "^8.0.8"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=23"
@@ -125,9 +131,9 @@
     "nostr-tools": "^2.23.3",
     "pg": "^8.20.0",
     "playwright": "^1.59.1",
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5",
-    "react-is": "^19.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-is": "^18.3.1",
     "react-router-dom": "^7.14.1",
     "recharts": "^3.8.1",
     "redis": "^5.12.1",
@@ -143,7 +149,8 @@
     "vite": "^8.0.8",
     "web3": "^4.16.0",
     "ws": "^8.20.0",
-    "xrpl": "^4.6.0"
+    "xrpl": "^4.6.0",
+    "@open-slide/core": "^1.0.4"
   },
   "overrides": {
     "@types/json5": "0.0.30"

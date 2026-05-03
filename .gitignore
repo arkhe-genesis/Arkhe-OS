@@ -169,3 +169,5 @@ results/
 venv/
 arkhe-ace-step-ui/node_modules
 arkhe-ace-step-ui/server/node_modules
+
+dist
