@@ -11,3 +11,4 @@ web3
 torch
 qiskit
 qiskit-machine-learning
+kubernetes
