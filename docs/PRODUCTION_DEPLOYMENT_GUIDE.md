@@ -1,3 +1,27 @@
+[1/4] Creating Certificate Authority (CA)...
+[2/4] Generating certificate for arkhe-sophon-network...
+[2/4] Generating certificate for arkhe-crystal-brain...
+[2/4] Generating certificate for arkhe-octra...
+[3/4] Generating client certificate for mTLS...
+[4/4] Certificates generated successfully!
+
+📁 Certificate structure:
+   certs/
+   ├── ca/
+   │   ├── ca-cert.pem          # CA public certificate
+   │   └── ca-key.pem           # CA private key (KEEP SECURE)
+   ├── sophon-network/
+   │   ├── server-keystore.p12  # Server keystore for Spring Boot
+   │   └── server-truststore.p12 # Server truststore with CA
+   ├── crystal-brain/ ... (same structure)
+   ├── octra/ ... (same structure)
+   └── client/
+       └── client-keystore.p12  # Client certificate for mTLS
+```
+
+### 2. Configuração do Spring Boot
+
+Configure `application-prod.properties`:
 # ARKHE OS Production Deployment Guide
 
 ## Overview
