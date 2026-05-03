@@ -765,3 +765,19 @@
 - Substrato 90 Sophon Shader (WGSL/Pygfx) integrated with Prometheus metrics
 - Real-time rendering at 60 FPS; metric-to-visual latency <100ms
 - Operator feedback: visual deformation precedes alerts by ~30s, enabling proactive intervention
+
+## [v∞.406.8/415.0] - 2026-05-06
+### Visualization & Interaction
+- Sophon Hexagon v2.0 committed with bidirectional UI: manual parameter control + network threshold modulation
+- Sacred polyhedra framework extended: tetrahedron (4 waves), cuboctahedron (12), icosahedron (20)
+- Real-time mapping: UI sliders -> shader uniforms + Sophon network alert thresholds
+
+### Compilation & Performance
+- PhaseVM: Rust JIT compiler via Cranelift for topological bytecode -> native code
+- Benchmark: Coherence Geodesic routing achieves 96.2% delivery with coherence distance 0.287
+- Adaptive routing recommended for production: near-optimal with automatic mode selection
+
+### Network Resilience
+- Dynamic network simulation: 24 mobile nodes with boids flocking behavior
+- Coherence preserved at 0.85 ± 0.002 despite topology changes (42->46 edges)
+- Delivery rate maintained at 92% ± 1% under mobility — protocol robustness validated

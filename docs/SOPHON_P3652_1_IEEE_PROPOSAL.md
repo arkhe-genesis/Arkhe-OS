@@ -26,6 +26,8 @@ Route selection SHALL maximize `1 - TCD` rather than strictly minimizing latency
 If TCD computation exceeds the threshold bound of 1.0ms/packet, systems MAY fallback to traditional algorithms (e.g., Dijkstra).
 
 ### 4.3 Validation Criteria
+
+### 4.4 PhaseVM Integration\nNodes SHOULD utilize PhaseVM (or equivalent JIT compiler) for accelerating invariant calculations. PhaseVM converts topological bytecode into native instructions, enabling the strict < 1.0ms/packet latency requirement.
 Implementations SHALL be tested against:
 - High load stress (Burst traffic models).
 - Cache efficiency (LRU or equivalent showing ≥70% hit rate for invariant calculations).
@@ -35,4 +37,6 @@ Implementations SHALL be tested against:
 Topological routing algorithms currently simulate state cohesion. True physical quantum coherence relies on the specific underlying transducer hardware (e.g., Orlov Transducer). As such, deployments MUST calibrate metrics based on their physical substrate and document the mapping of theoretical variables to physical measurements.
 
 ## 6. Annex A: Visualization Integration
+
+Systems SHOULD support Bidirectional UI components for manual intervention, modulating shader uniforms and network threshold parameters simultaneously based on operator feedback.
 Systems SHOULD support visual representations of network coherence, mapping TCD and BER into real-time parameters (e.g., WGSL Shader deformations).
