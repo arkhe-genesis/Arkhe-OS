@@ -63,3 +63,24 @@ class DebyeVectorialPropagator:
         P = R_out @ T @ R_in
 
         return P
+
+    def transfer_matrix_propagation(self, U_in, interfaces: list,
+                                    layer_thicknesses: list, wavelength: float):
+        import torch
+        k0 = 2 * np.pi / wavelength
+        M_total = np.eye(2, dtype=complex)
+
+        for interface, thickness in zip(interfaces, layer_thicknesses):
+            n = interface.n2
+            k = k0 * n
+            delta = k * thickness
+
+            M_layer = np.array([
+                [np.cos(delta), 1j * np.sin(delta) / n],
+                [1j * n * np.sin(delta), np.cos(delta)]
+            ], dtype=complex)
+
+            M_total = M_layer @ M_total
+
+        t_total = 2 / (M_total[0,0] + M_total[0,1] + M_total[1,0] + M_total[1,1])
+        return U_in * t_total
