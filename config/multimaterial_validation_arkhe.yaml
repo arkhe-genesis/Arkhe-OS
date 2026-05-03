@@ -1,0 +1,29 @@
+# config/multimaterial_validation_arkhe.yaml
+multimaterial_validation:
+  substrates:
+    - id: '85_extended'  # PMMA + AlN/GaN hybrid spectrometer
+      material_stack: ['air', 'PMMA', 'AlN', 'air']
+      wavelength_range: [0.4, 1.0]  # μm: visible to NIR
+      reference_data: 'config/experimental_data_substrate85_hybrid.json'
+
+    - id: '89_extended'  # Irrotational antenna with NbTiN coating
+      material_stack: ['air', 'NbTiN', 'PEEK', 'air']
+      wavelength_range: [0.008, 0.012]  # m: Ku/Ka band (8-12 mm)
+      reference_data: 'config/experimental_data_substrate89_coated.json'
+
+  fixed_parameters:
+    numerical_aperture: 0.35
+    focal_length: 2.5e-3  # For optical; scaled for RF
+    incident_angle: [0.01, 0.0]
+
+  observables:
+    - peak_position
+    - spectral_width_fwhm
+    - spatial_coherence
+    - polarization_extinction_ratio  # New: for anisotropic materials
+
+  metrics:
+    - chi2_dof
+    - p_value
+    - residual_sigma
+    - material_dependence_slope  # Sensitivity to n(λ) accuracy
