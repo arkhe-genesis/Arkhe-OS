@@ -1,39 +1,65 @@
-import torch
-from typing import Optional, Dict, Any
-from core.optics.sellmeier_dispersion import DispersiveMaterial, create_dispersive_interface
+#!/usr/bin/env python3
+"""
+Debye Vectorial Propagator — Substrate 104 Extension
+"""
+import numpy as np
+from typing import Tuple, Union, Optional
+from core.propagation.fresnel_interface import DielectricInterface
 
 class DebyeVectorialPropagator:
-    def __init__(self, config: Dict[str, Any]):
-        self.config = config
-        self.dispersive_interface = None
-        if config.get('material1') and config.get('material2') and config.get('wavelength'):
-            self.dispersive_interface = create_dispersive_interface(
-                config['material1'],
-                config['material2'],
-                config['wavelength'] * 1e6  # Convert m → μm for Sellmeier
-            )
+    def __init__(self, NA: float, n_media: float = 1.0):
+        self.NA = NA
+        self.n_media = n_media
+        self.theta_max = np.arcsin(NA / n_media)
 
-    def propagate(self, U_in: torch.Tensor, wavelength: Optional[float] = None) -> torch.Tensor:
+    def _polarization_transformation(self, theta: float, psi: float,
+                                    interface: Optional[DielectricInterface] = None) -> np.ndarray:
         """
-        Propagate incident field with optional wavelength-dependent Fresnel coefficients.
+        Compute polarization transformation matrix P(θ,ψ) via Jones calculus.
+
+        Now includes realistic Fresnel transmission coefficients for dielectric interfaces.
 
         Args:
-            U_in: Incident field at lens pupil
-            wavelength: Optional wavelength in meters for dispersive interface
+            theta: Polar angle in lens aperture
+            psi: Azimuthal angle
+            interface: Optional DielectricInterface for Fresnel coefficients (default: air→air)
 
         Returns:
-            U_focal: Vectorial field at focal plane
+            P: 2×2 Jones matrix transforming input polarization to focal plane
         """
-        # Use wavelength-specific interface if provided and material is dispersive
-        interface = self.dispersive_interface
-        if wavelength is not None and self.dispersive_interface is not None:
-            # Re-evaluate refractive indices at new wavelength
-            wavelength_um = wavelength * 1e6
-            interface = create_dispersive_interface(
-                self.dispersive_interface.material1.split()[0],  # Extract base name
-                self.dispersive_interface.material2.split()[0],
-                wavelength_um
-            )
+        # Rotation to local (s,p) basis
+        R_in = np.array([
+            [np.cos(psi), np.sin(psi)],
+            [-np.sin(psi), np.cos(psi)]
+        ], dtype=complex)
 
-        # ... mock rest of propagation for now
-        return U_in
+        # Fresnel transmission coefficients
+        if interface is not None:
+            # Compute transmission angle via Snell's law
+            theta_t = interface.snell_angle(theta)
+
+            if np.isnan(theta_t):
+                # Total internal reflection: no transmission
+                t_s, t_p = 0.0, 0.0
+            else:
+                _, t_s, _, t_p = interface.fresnel_coefficients(theta)
+        else:
+            # Default: air→air interface (unity transmission)
+            t_s, t_p = 1.0, 1.0
+
+        # Diagonal transmission matrix in (s,p) basis
+        T = np.array([
+            [t_s, 0.0],
+            [0.0, t_p]
+        ], dtype=complex)
+
+        # Rotation back to lab frame
+        R_out = np.array([
+            [np.cos(psi), -np.sin(psi)],
+            [np.sin(psi), np.cos(psi)]
+        ], dtype=complex)
+
+        # Full transformation: lab → (s,p) → Fresnel → (s,p) → lab
+        P = R_out @ T @ R_in
+
+        return P

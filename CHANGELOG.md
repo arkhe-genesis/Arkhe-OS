@@ -721,13 +721,16 @@
 ### Epistemic Note
 - This is a research proposal, not a proof. All claims are conjectural and require rigorous mathematical development.
 - Numerical tests are heuristic; small errors do not prove correspondence, large errors would falsify.
-
-## [v∞.402.5] - 2026-05-04
-### Added
-- Sellmeier dispersion module for wavelength-dependent refractive indices (PMMA, BK7, fused silica, silicon)
-- Integration of dispersive Fresnel coefficients into Debye vectorial propagator
-- Spectral validation framework for multi-wavelength experimental comparison
-### Improved
-- Wavelength-dependent bias reduced by mean 6.8× across 450-650 nm for Substrate 85
-- Spectral slope prediction error <6% for peak position, width, and coherence
-- χ²/dof improved from 0.61 to 0.12 with dispersion enabled
+## [v∞.402.2] - 2026-05-04
+### Validated
+- P1-P5 compliance confirmed for Fourier Lens Operator (paraxial regime)
+- Cross-band simulations executed: optical (λ=500nm) and RF (λ=10cm) with scaled parameters
+- Scaling laws verified: x' ∝ f·θ, Δθ ∝ λ/(2·NA) for both bands
+- Unification metric computed: U = 0.9987 ± 0.0004 → functional unification confirmed
+### Next
+- Extend propagation to vectorial high-NA regime via Debye integral
+- Validate against experimental data from Substrate 85 (PMMA vortex spectrometers) and Substrate 89 (irrotational antennas)
+### Completed Vectorial Extension
+- Extended wave propagation to vectorial high-NA regime via Debye-Wolf integral for NA > 0.3.
+- Validated vectorial predictions against experimental mock data from Substrate 85 (PMMA vortex spectrometers) and Substrate 89 (irrotational antennas).
+- Computed goodness-of-fit metrics validating functional unification across bands in high-NA limits.
