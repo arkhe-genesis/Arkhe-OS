@@ -2,6 +2,7 @@ import time
 from typing import Tuple, List, Optional
 from core.ledger.coherence_ledger import CoherenceLedgerEntry, FaceBuffer, LatticeMetrics
 from core.neuro.pac_neuromapping import calibrate_neurodynamic_pac, validate_excess_margin
+from core.lattice.orthogonal_witness import UserState, CollaborativeSpace, can_form_triangular_face
 
 class TriangularLatticeProtocol:
     def __init__(self, metrics: LatticeMetrics):
@@ -13,33 +14,51 @@ class TriangularLatticeProtocol:
         self.buffer = FaceBuffer(vertices=vertices, prev_hash=self.metrics.last_hash)
         self.buffer.state = "FORMING"
 
-    def read_neural_phase_space(self, theta_self: float, theta_A: float, theta_B: float, pac_mi: float, phase_variance: float):
+    def read_neural_phase_space(self, user_self: UserState, user_A: UserState, user_B: UserState, collaborative_space: Optional[CollaborativeSpace] = None):
         """
         2. READ NEURAL PHASE SPACE
         In a real application, this would read from EEG interfaces.
         For simulation, we pass in the simulated readings.
+        Incorporates Orthogonal Witness manifold.
         """
         if not self.buffer:
             raise ValueError("Buffer not initialized.")
 
         # Compute Δθ = max edge phase difference
-        edge_ab = abs(theta_A - theta_self)
-        edge_bc = abs(theta_B - theta_A)
-        edge_ca = abs(theta_self - theta_B)
+        edge_ab = abs(user_A.theta_human - user_self.theta_human)
+        edge_bc = abs(user_B.theta_human - user_A.theta_human)
+        edge_ca = abs(user_self.theta_human - user_B.theta_human)
 
         edges = (edge_ab, edge_bc, edge_ca)
         delta_theta = max(edges)
 
-        # Log to buffer
-        self.buffer.update_metrics(k=pac_mi, epsilon=phase_variance, edges=edges, delta_theta=delta_theta)
+        # If collaborative space exists, use its inter-user metrics
+        # Otherwise fall back to self
+        if collaborative_space:
+            k = collaborative_space.k_inter
+            epsilon = collaborative_space.epsilon_inter
+        else:
+            k = user_self.k
+            epsilon = user_self.epsilon
 
-    def apply_calibration_loop(self) -> str:
+        # Log to buffer
+        self.buffer.update_metrics(k=k, epsilon=epsilon, edges=edges, delta_theta=delta_theta)
+
+    def apply_calibration_loop(self, user_self: Optional[UserState] = None, user_A: Optional[UserState] = None, collaborative_space: Optional[CollaborativeSpace] = None) -> str:
         """
         3. APPLY CALIBRATION LOOP
         Returns the action taken.
         """
         if not self.buffer:
             raise ValueError("Buffer not initialized.")
+
+
+        # Check collision avoidant rules if this is a collaborative face
+        if user_self and user_A and collaborative_space:
+            if not can_form_triangular_face(user_self, user_A, collaborative_space):
+                # Need to decouple or wait for orthogonal alignment
+                self.buffer.ritual_phase = "CALIBRATE"
+                return "HOLD_FOR_ORTHOGONALITY"
 
         delta_theta = self.buffer.delta_theta
         epsilon = self.buffer.epsilon
