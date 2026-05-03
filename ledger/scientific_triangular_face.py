@@ -26,7 +26,7 @@ def sign_with_outpost_scientific_key(data: Dict) -> Dict:
 def publish_to_ledger(data: Dict) -> None:
     pass
 
-def broadcast_to_connected_mirrors(data: Dict) -> None:
+def broadcast_to_connected_mirrors(data: Dict, sync_mode: str = "continuous") -> None:
     pass
 
 def seal_scientific_triangular_face(origin_did: str, outpost_did: str,
@@ -100,6 +100,6 @@ def seal_scientific_triangular_face(origin_did: str, outpost_did: str,
         "confidence": mission_data.get("biosignature_confidence", 0),
         "vertices": [origin_did, outpost_did, destination_did]
         # Nota: dados brutos sensíveis NÃO são transmitidos; apenas metadados e hashes
-    })
+    }, sync_mode="daily_snapshot")
 
     return signed_face

@@ -5,8 +5,7 @@ version: v∞.Ω.1.1  # Corrigido com validação física
 parameters:
   payload_id: string
   expected_mass_kg: float @ [100.0, 350.0]  # Corrigido: máximo 350 kg
-  expected_velocity_kms: float @ [2.0, 2.5]  # Corrigido: tether captura até 2.5 km/s
-  tether_tension_N: float @ [800.0, 2000.0] = 1200.0  # Limite reduzido para margem
+  expected_velocity_kms: float @ [0.0, 0.01]  # Modificado para docking suave (<10 m/s)
   decelerator_kernel_hash: string
 
 optimization_targets:
@@ -17,8 +16,7 @@ optimization_targets:
 
 hard_constraints:
   max_coil_current_A: 8000
-  max_tether_tension_N: 2000  # Corrigido: limite operacional reduzido
-  max_deceleration_g: 90  # Corrigido: 90 g suficiente para 2.5 km/s → 0
+  max_deceleration_g: 5  # Reduzido para docking suave
   safety_margin_floor: 0.90
   energy_recovery_min: 0.90
   capture_window_min_ms: 200  # Novo: janela mínima de captura
@@ -26,7 +24,7 @@ hard_constraints:
 preconditions:
   assert verify_payload_vc(payload_id) == true
   assert expected_mass_kg within [100, 350]  # Corrigido
-  assert expected_velocity_kms within [2.0, 2.5]  # Corrigido
+  assert expected_velocity_kms within [0.0, 0.01]  # Docking suave
 
   # 4D coherence checks (mantidos)
   coherence = fetch_4d_coherence("orbital_receiver")
@@ -41,7 +39,6 @@ preconditions:
   assert trajectory.velocity_kms <= 2.5  # Tether não captura acima de 2.5 km/s
 
   # Hardware health (atualizado)
-  assert all_tether_segments_operational()
   assert decelerator_cryo_nominal()
   assert smes_soc > 0.85
   assert capacitor_bank_charged()  # Novo: capacitor bank deve estar carregado
@@ -49,12 +46,6 @@ preconditions:
 
 sequence:
   at T-600s: {
-    # Pré-rotação do tether com flywheels
-    pre_rotate_tether(
-      target_tip_velocity_kms = expected_velocity_kms,
-      phase_alignment_tolerance_rad = 0.01
-    )
-    deploy_tether(length_km = 22.0, tension_N = tether_tension_N)  # Corrigido: 22 km
     align_grapple_car(expected_trajectory = trajectory)
     start_telemetry_stream()
   }
@@ -68,7 +59,7 @@ sequence:
       abort("Coil synchronization degraded")
 
     # Verificação de janela de captura ampliada
-    capture_window = estimate_capture_window(trajectory, tether_state)
+    capture_window = estimate_capture_window(trajectory)
     if capture_window < 200 ms:
       abort("Capture window too narrow")
   }
@@ -92,14 +83,13 @@ sequence:
       clamp_grapple()
       enable_momentum_transfer()
 
-    # Compilar kernel de desaceleração para faixa 2.5 km/s → 0
+    # Compilar kernel de desaceleração
     kernel = llm_compile(
       ceremony = "decelerator_sequence",
       params = {
         payload_mass: expected_mass_kg,
-        entry_velocity: expected_velocity_kms,  # Até 2.5 km/s
-        tether_tension: tether_tension_N,
-        deceleration_profile: "trapezoidal_90g"  # Novo perfil
+        entry_velocity: expected_velocity_kms,
+        deceleration_profile: "trapezoidal_5g"  # Docking suave
       },
       hardware_target = "zynq_ultrascale_fpga"
     )
@@ -107,7 +97,7 @@ sequence:
     # Verificar contratos de segurança (atualizados)
     assert verify_kernel_contract(kernel, {
       max_coil_current: 8000.0,
-      max_deceleration_g: 90.0,  # Corrigido
+      max_deceleration_g: 5.0,  # Reduzido
       energy_recovery_min: 0.90,
       safety_margin_preserved: true,
       capacitor_bank_usage: true  # Novo: usa capacitor bank para pico
@@ -118,10 +108,7 @@ sequence:
   }
 
   at T+30s: {
-    # Transição suave de tether para desacelerador EM
-    retract_tether(rate_ms = 15.0)
-
-    # Ativar desacelerador com 4-8 segmentos em paralelo
+    # Ativar desacelerador com segmentos em paralelo
     activate_decelerator(
       kernel_hash = kernel.sass_hash,
       active_segments = compute_optimal_segments(expected_mass_kg, expected_velocity_kms)
@@ -139,7 +126,7 @@ sequence:
       emergency_abort("Safety margin critical")
 
     # Limite de desaceleração corrigido
-    if telemetry.deceleration_g > 90.0:
+    if telemetry.deceleration_g > 5.0:
       emergency_abort("Deceleration limit exceeded")
 
     # Monitoramento térmico de pico (novo)
@@ -187,7 +174,6 @@ sequence:
 
     # Reset de subsistemas (atualizado)
     reset_decelerator()
-    rewind_tether()
     discharge_pcm_to_radiators()  # Novo: liberar calor armazenado
   }
 

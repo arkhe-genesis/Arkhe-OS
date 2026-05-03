@@ -28,7 +28,7 @@ def multi_party_sign_triangular_face(data: Dict, signers: list) -> Dict:
 def publish_to_ledger_with_privacy(data: Dict) -> None:
     pass
 
-def broadcast_to_connected_mirrors(data: Dict) -> None:
+def broadcast_to_connected_mirrors(data: Dict, sync_mode: str = "continuous") -> None:
     pass
 
 def seal_crewed_mission_triangular_face(earth_did: str, phobos_did: str,
@@ -115,6 +115,6 @@ def seal_crewed_mission_triangular_face(earth_did: str, phobos_did: str,
         "vertices": [earth_did, phobos_did, destination_did],
         "ethical_framework": mission_data.get("mission_ethics", {}).get("framework_name", "mock")
         # Nota: dados sensíveis da tripulação NUNCA são transmitidos; apenas metadados públicos e hashes
-    })
+    }, sync_mode="daily_snapshot")
 
     return signed_face

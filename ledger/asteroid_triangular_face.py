@@ -29,7 +29,7 @@ def sign_with_asteroid_node_key(data: Dict) -> Dict:
 def publish_to_ledger(data: Dict) -> None:
     pass
 
-def broadcast_to_connected_mirrors(data: Dict) -> None:
+def broadcast_to_connected_mirrors(data: Dict, sync_mode: str = "continuous") -> None:
     pass
 
 def seal_asteroid_triangular_face(origin_did: str, destination_did: str,
@@ -86,6 +86,6 @@ def seal_asteroid_triangular_face(origin_did: str, destination_did: str,
         "vertices": [origin_did, "did:arkhe:celestial:asteroid:ceres-node-1", destination_did],
         "resources_processed": resources,
         "efficiency": resources.get("efficiency", 0)
-    })
+    }, sync_mode="daily_snapshot")
 
     return signed_face

@@ -16,7 +16,7 @@ optimization_targets:
   thermal_margin: 0.95 ± 0.025  # Margem térmica para sistemas criogênicos
 
 hard_constraints:
-  max_approach_velocity_ms: 500  # Limite para aproximação iônica segura
+  max_approach_velocity_ms: 10  # Limite para propulsive rendezvous seguro
   max_coil_current_A: 10000
   min_cryo_temp_K: 90  # Para destilação de H₂O/NH₃
   safety_margin_floor: 0.90
@@ -49,8 +49,8 @@ sequence:
   }
 
   at T-30s: {
-    # Engajar docking magnético suave
-    engage_magnetic_docking()
+    # Engajar docking via propulsive rendezvous
+    engage_propulsive_rendezvous()
     confirm_soft_capture()
   }
 
@@ -62,7 +62,7 @@ sequence:
     capture_vc = create_capture_completion_vc({
       payload_id: payload_id,
       origin: origin_did,
-      capture_method: "ionic_approach_magnetic_docking",
+      capture_method: "propulsive_rendezvous",
       coherence_profile: recorded_4d_coherence
     })
     publish_to_ledger(capture_vc)
