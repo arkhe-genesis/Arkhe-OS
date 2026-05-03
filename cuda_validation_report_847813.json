@@ -1,0 +1,282 @@
+{
+  "arkhe_block": 847813,
+  "timestamp": "2026-05-03T18:25:25.062351+00:00",
+  "validation": {
+    "passed": 53,
+    "failed": 1,
+    "total": 54,
+    "all_passed": false
+  },
+  "results": [
+    {
+      "status": "PASS",
+      "name": "arkhe_cuda_init import",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "arkhe_gpu_reconciler import",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "arkhe_cuda_reconciler_cupy import",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "get_device_info() returns",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "device.name is str",
+      "detail": "name=EMULATION"
+    },
+    {
+      "status": "PASS",
+      "name": "device.backend is valid",
+      "detail": "backend=EMULATION"
+    },
+    {
+      "status": "PASS",
+      "name": "device.compute_capability is str",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "GPU available flag",
+      "detail": "available=False"
+    },
+    {
+      "status": "PASS",
+      "name": "check_cuda_availability()",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "Config N_NODES",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "Config K = 1/\u03c6",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "Config block_size",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "Config grid_size",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "Config delta_critical",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "Reconciler init",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "thetas shape",
+      "detail": "shape=(144000,)"
+    },
+    {
+      "status": "PASS",
+      "name": "thetas dtype",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "omegas shape",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "zk_lambdas shape",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "zk_lambdas initial",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "grid_size",
+      "detail": "grid=563, expected=563"
+    },
+    {
+      "status": "PASS",
+      "name": "vibra2 initial state",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "tick() returns",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "order_parameter type",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "delta type",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "coherence type",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "compute_time type",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "order_parameter range",
+      "detail": " | actual=0.9950, range=[0.0, 1.0]"
+    },
+    {
+      "status": "PASS",
+      "name": "delta range",
+      "detail": " | actual=0.0045, range=[0.0, 1.0]"
+    },
+    {
+      "status": "PASS",
+      "name": "coherence range",
+      "detail": " | actual=0.9950, range=[0.5, 1.0]"
+    },
+    {
+      "status": "PASS",
+      "name": "compute_time > 0",
+      "detail": "t=137364.6882ms"
+    },
+    {
+      "status": "PASS",
+      "name": "Dream aligned executes",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "Dream divergent executes",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "Dream alignment recorded",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "Dream divergence recorded",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "Initial VIBRA2 INACTIVE",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "VIBRA2 state is valid",
+      "detail": "state=ACTIVE"
+    },
+    {
+      "status": "PASS",
+      "name": "simulate('normal')",
+      "detail": "keys=['profile', 'n_ticks', 'mode', 'final_stats', 'vibra2_triggers']"
+    },
+    {
+      "status": "PASS",
+      "name": "simulate('normal') n_ticks > 0",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "simulate('gap_spike')",
+      "detail": "keys=['profile', 'n_ticks', 'mode', 'final_stats', 'vibra2_triggers']"
+    },
+    {
+      "status": "PASS",
+      "name": "simulate('gap_spike') n_ticks > 0",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "simulate('dream_aligned')",
+      "detail": "keys=['profile', 'n_ticks', 'mode', 'final_stats', 'vibra2_triggers']"
+    },
+    {
+      "status": "PASS",
+      "name": "simulate('dream_aligned') n_ticks > 0",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "simulate('vibra2_stress')",
+      "detail": "keys=['profile', 'n_ticks', 'mode', 'final_stats', 'vibra2_triggers']"
+    },
+    {
+      "status": "PASS",
+      "name": "simulate('vibra2_stress') n_ticks > 0",
+      "detail": ""
+    },
+    {
+      "status": "FAIL",
+      "name": "Convergence produces variation",
+      "detail": "std=0.000000, range=0.000000"
+    },
+    {
+      "status": "PASS",
+      "name": "N=1 tick",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "N=256 tick",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "dream=+1.0",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "dream=-1.0",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "delta_duration=100",
+      "detail": ""
+    },
+    {
+      "status": "PASS",
+      "name": "CuPy tick",
+      "detail": "returned result"
+    },
+    {
+      "status": "PASS",
+      "name": "CuPy benchmark",
+      "detail": "keys=['mean_ms', 'mode']"
+    },
+    {
+      "status": "PASS",
+      "name": "CuPy mode",
+      "detail": "mode=CPU-EMULATION"
+    }
+  ]
+}
