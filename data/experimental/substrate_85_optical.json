@@ -1,0 +1,21 @@
+{
+  "substrate": 85,
+  "description": "PMMA vortex spectrometers experimental data",
+  "band": "optical",
+  "measurements": [
+    {
+      "numerical_aperture": 0.4,
+      "incident_angle_rad": 0.01,
+      "measured_peak_position": 0.00050,
+      "measured_spectral_width": 6.35e-7,
+      "measured_coherence": 0.965
+    },
+    {
+      "numerical_aperture": 0.6,
+      "incident_angle_rad": 0.02,
+      "measured_peak_position": 0.00100,
+      "measured_spectral_width": 4.31e-7,
+      "measured_coherence": 0.940
+    }
+  ]
+}

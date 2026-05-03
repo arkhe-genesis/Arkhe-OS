@@ -1,0 +1,24 @@
+# config/cross_band_simulation.yaml
+bands:
+  optical:
+    wavelength: 500e-9        # 500 nm (verde)
+    focal_length: 0.05        # 5 cm
+    numerical_aperture: 0.1   # Paraxial
+    detector_pixel_size: 5e-6 # 5 μm pixels (CCD/CMOS típico)
+    quantum_efficiency: 0.9   # Típico para silício @ 500nm
+    incident_angle: [0.01, 0.0] # ~0.57° para teste paraxial
+
+  rf:
+    wavelength: 0.1           # 10 cm (banda Ku/Ka)
+    focal_length: 1.0         # 1 m (escalonado proporcionalmente)
+    numerical_aperture: 0.1   # Mesma NA para comparação justa
+    detector_pixel_size: 0.01 # 1 cm pixels (antena array típico)
+    quantum_efficiency: 0.85  # Típico para receptores RF
+    incident_angle: [0.01, 0.0] # Mesmo ângulo normalizado
+
+shared:
+  grid_pixels: [1024, 1024]
+  seed_numpy: 104
+  seed_torch: 104
+  mp_dps: 50
+  falsifiability_sigma: 3.0
