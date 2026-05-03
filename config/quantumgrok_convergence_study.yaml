@@ -1,0 +1,53 @@
+convergence_study:
+  grids:
+    - name: "24_cube"
+      size: [24, 24, 24]
+      voxels: 13824
+      status: "completed"
+    - name: "48_cube"
+      size: [48, 48, 48]
+      voxels: 110592
+      status: "pending"
+    - name: "96_cube"
+      size: [96, 96, 96]
+      voxels: 884736
+      status: "pending"
+
+  shared_parameters:
+    lattice_spacing: 0.1          # Fixed physical scale
+    fractal_iterations: 4         # Hexaflake depth constant
+    gauge_group: "SU(2)"
+    theta_cs: 0.1
+    memory_alpha: 0.7
+    relaxon_tau: 1.0
+    holographic_observers: 12
+    time_steps: 1000
+    dt: 0.01
+
+  reproducibility:
+    base_seed: 103
+    seed_offset_per_grid: 1000    # 24³:103, 48³:1103, 96³:2103
+    mpmath_dps: 50
+    torch_precision: "float32"    # Upgrade to float64 for 96³ if memory permits
+
+  convergence_criteria:
+    observable_tolerance: 0.01     # 1% relative change between grids
+    statistical_confidence: 0.95   # 95% CI for bootstrap uncertainties
+    falsifiability_sigma: 3.0      # Flag if any observable diverges >3σ
+
+observables:
+  scar_ipr:
+    enabled: true
+    energy_window: [0.5, 2.0]
+    threshold_localization: 0.3
+    convergence_metric: "scar_fraction_relative_change"
+  hall_currents:
+    enabled: true
+    external_field_strength: 0.01
+    response_components: ["xy", "yz", "zx"]
+    convergence_metric: "sigma_xy_relative_change"
+  friedmann_params:
+    enabled: true
+    extraction_method: "ml_enhanced_holographic"  # NEW: ML-enhanced reconstruction
+    compare_to: ["Planck_2018", "DESI_2024"]
+    convergence_metric: "H0_OmegaL_combined_chi2"
