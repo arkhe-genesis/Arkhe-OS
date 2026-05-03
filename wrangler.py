@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # ============================================================================
-# ARKHE OS v∞.Ω.∇+++.14.1 — Wrangler CLI for Temporal Ledger Operations
+# ARKHE OS v∞.Ω.∇+++.14.3 — Wrangler CLI for Temporal Ledger Operations
 # Commands: fork create, fork list, merge evaluate, merge accept, rollback, status
-# Multi-dimensional version
+# Seven-dimensional Coherence version
 # ============================================================================
 
 import argparse
@@ -16,7 +16,7 @@ import hashlib
 import numpy as np
 
 # Backend imports for CLI structure
-from consensus_engine import ProofOfCoherenceConsensus, CoherenceStake, ForkVote
+from consensus_engine_7d import ProofOfCoherenceConsensus7D, CoherenceStake7D, ForkVote7D, CoherenceTensor7D
 
 class ArkheConfig:
     """Local CLI state management."""
@@ -41,12 +41,20 @@ def parse_args():
     p_fork.add_argument("action", choices=["create", "list"])
     p_fork.add_argument("--timestamp", type=float, help="Logical timestamp to fork from")
     p_fork.add_argument("--reason", default="exploration", help="Fork justification")
+    p_fork.add_argument("--target-phase", type=float, help="Target Phase Coherence")
+    p_fork.add_argument("--target-latency", type=float, help="Target Latency Coherence")
+    p_fork.add_argument("--target-power", type=float, help="Target Power Coherence")
+    p_fork.add_argument("--target-mercy", type=float, help="Target Mercy Gap")
+    p_fork.add_argument("--target-security", type=float, help="Target Security Coherence")
+    p_fork.add_argument("--target-privacy", type=float, help="Target Privacy Coherence")
+    p_fork.add_argument("--target-interpretability", type=float, help="Target Interpretability Coherence")
 
     # merge evaluate/accept
     p_merge = subparsers.add_parser("merge", help="Fork resolution operations")
     p_merge.add_argument("action", choices=["evaluate", "accept"])
     p_merge.add_argument("--fork-id", required=True, help="Target fork ID")
     p_merge.add_argument("--odysseus-ratio", type=float, default=1.0, help="Insight ratio bonus")
+    p_merge.add_argument("--coherence-report", choices=["none", "full"], default="none", help="Display 7D Coherence Report")
     p_merge.add_argument("--dry-run", action="store_true")
 
     # rollback
@@ -81,19 +89,79 @@ def main():
     elif args.command == "merge":
         with open(config.config_file, 'r') as f:
             c = json.load(f)
-        consensus = ProofOfCoherenceConsensus(consensus_threshold=c["consensus_threshold"])
-        # Mock voting state
+        consensus = ProofOfCoherenceConsensus7D(consensus_threshold=c["consensus_threshold"])
+        # Mock voting state for 7D
+        mock_fork_coherence_7d = CoherenceTensor7D(
+            phase=0.068, latency_us=482.0, power_mw=148.0, mercy_gap=0.071,
+            security=0.968, privacy=0.935, interpretability=0.892
+        )
         consensus.votes[args.fork_id] = [
-            ForkVote("vertex-1", True, time.time(), b"sig1", weight=0.85),
-            ForkVote("vertex-2", True, time.time(), b"sig2", weight=0.72),
-            ForkVote("vertex-3", False, time.time(), b"sig3", weight=0.41),
+            ForkVote7D("vertex-1", True, time.time(), b"sig1", mock_fork_coherence_7d, weight=0.85),
+            ForkVote7D("vertex-2", True, time.time(), b"sig2", mock_fork_coherence_7d, weight=0.72),
+            ForkVote7D("vertex-3", False, time.time(), b"sig3", mock_fork_coherence_7d, weight=0.41),
         ]
-        accept, score = consensus.evaluate_merge(args.fork_id, odysseus_insight_ratio=args.odysseus_ratio)
-        status = "✅ ACCEPTED" if accept else "❌ REJECTED"
-        print(f"🔍 Merge evaluation: {status}")
-        print(f"   └─ Fork: {args.fork_id}")
-        print(f"   └─ Consensus score: {score:.3f} / {consensus.threshold:.3f}")
-        print(f"   └─ Odysseus ratio: {args.odysseus_ratio}")
+
+        if args.coherence_report == "full":
+            accept, score, dim_scores, reason = consensus.evaluate_merge(
+                args.fork_id,
+                odysseus_insight_ratio=args.odysseus_ratio,
+                fork_coherence=mock_fork_coherence_7d
+            )
+            if reason:
+                print(f"❌ Rejected: {reason}")
+                sys.exit(1)
+
+            print("📊 7D Coherence Report:")
+            dims = [
+                ("Phase", "φ", 0.07, 0.015),
+                ("Latency", "τ", 500.0, 30.0),
+                ("Power", "ρ", 150.0, 15.0),
+                ("Mercy Gap", "ε", 0.07, 0.015),
+                ("Security", "σ", 0.95, 0.025),
+                ("Privacy", "π", 0.92, 0.035),
+                ("Interpretability", "ι", 0.88, 0.040)
+            ]
+
+            harmonic_vals = []
+            for label, sym, target, std in dims:
+                attr_name = sym.replace("τ", "latency_us").replace("ρ", "power_mw").replace("ε", "mercy_gap").replace("σ", "security").replace("π", "privacy").replace("ι", "interpretability").replace("φ", "phase")
+                val = getattr(mock_fork_coherence_7d, attr_name)
+                dim_score = np.exp(-(val - target)**2 / (2 * std**2))
+                status = "✓" if dim_score > 0.7 else "⚠️" if dim_score > 0.5 else "❌"
+                if label == "Latency":
+                    print(f"   {label:16s}: {int(val)}µs {status} ({dim_score:.2f})")
+                elif label == "Power":
+                    print(f"   {label:16s}: {int(val)}mW {status} ({dim_score:.2f})")
+                else:
+                    print(f"   {label:16s}: {val:8.3f} {status} ({dim_score:.2f})")
+                harmonic_vals.append(dim_score)
+
+            harmonic_mean = 7.0 / sum(1.0 / max(s, 1e-6) for s in harmonic_vals)
+            print(f"   Harmonic Mean:  {harmonic_mean:.2f}")
+            print(f"   Overall Score:  {score:.3f} / {consensus.threshold:.3f} {'✅ ACCEPTED' if accept else '❌ REJECTED'}")
+
+            # Odysseus bonus calculation
+            cov_inv = np.linalg.inv(consensus.covariance_global)
+            diff = mock_fork_coherence_7d.to_vector() - CoherenceTensor7D.soft_targets()
+            mahal = diff @ cov_inv @ diff
+            coherence_penalty = np.exp(-0.5 * mahal) if mahal < 100 else 1e-6
+            harmonic_penalty = 1.0 / (1.0 + consensus.harmonic_factor * (1.0 - harmonic_mean))
+            for_votes = sum(v.weight for v in consensus.votes[args.fork_id] if v.vote_direction)
+            against_votes = sum(v.weight for v in consensus.votes[args.fork_id] if not v.vote_direction)
+            odys_bonus = max(0.0, args.odysseus_ratio - 1.0) * consensus.odys_mult * (for_votes + against_votes) * coherence_penalty * harmonic_penalty
+
+            if odys_bonus > 0:
+                print(f"   Odysseus Bonus: +{odys_bonus:.2f} (ratio={args.odysseus_ratio}, harmonic={harmonic_mean:.2f})")
+        else:
+            accept, score, dim_scores, reason = consensus.evaluate_merge(args.fork_id, odysseus_insight_ratio=args.odysseus_ratio)
+            status = "✅ ACCEPTED" if accept else "❌ REJECTED"
+            if reason:
+                status += f" (Reason: {reason})"
+            print(f"🔍 Merge evaluation: {status}")
+            print(f"   └─ Fork: {args.fork_id}")
+            print(f"   └─ Consensus score: {score:.3f} / {consensus.threshold:.3f}")
+            print(f"   └─ Odysseus ratio: {args.odysseus_ratio}")
+
         if args.dry_run:
             print("   └─ Dry-run mode: No ledger state mutated")
 
