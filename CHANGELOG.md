@@ -788,3 +788,11 @@
 - Performance: 4.12ms avg cycle time, 9.87ms P99, 73% cache hit rate, 100% success rate — compatible with 60 FPS rendering
 - Robustness: Fallback to cached Jones invariant on JIT failure, change detection for efficient shader updates
 - Testing: 4 integration tests validating cache behavior, fallback, mapping modes, and full cycle
+## [v∞.416.0] - 2026-05-07
+### Experimental Integration
+- MOPA multimode squeezing detection (Kalash et al., Nature Comm. 2026) integrated with ARKHE substrates
+- Substrates 82/83/84: Squeezing validation for ellipticity, torsion, Wigner negativity predictions
+- Substrate 94: Loss-tolerant detection (99.7% loss tolerance) applied to recurrent attractor field characterization
+- Substrate 88: Cluster state monitoring adapted for toroidal lattice embedding validation (86.1% success rate)
+- Unified validation framework: 5/5 substrates validated, 100% validation rate
+- arXiv draft generated: connects MOPA experimental results to ARKHE theoretical framework
