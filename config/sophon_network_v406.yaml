@@ -1,0 +1,15 @@
+protocol:
+  version: "v∞.406.1"
+  name: "Sophon Network"
+  substrate: 105
+
+reproducibility:
+  seed_numpy: 105
+  seed_torch: 105
+  mp_dps: 50
+  network_nodes: 12
+
+thresholds:
+  coherence_threshold: 0.9
+  chronometric_base: 5.0
+  falsifiability_delivery_rate: 0.95

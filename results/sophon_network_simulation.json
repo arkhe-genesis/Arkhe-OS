@@ -1,0 +1,23 @@
+{
+  "network": {
+    "nodes": 50,
+    "edges": 185,
+    "packets_simulated": 1000
+  },
+  "coherence_routing": {
+    "delivery_rate": 1.0,
+    "avg_hops": 5.608,
+    "avg_coherence_loss": 0.28275918966134567,
+    "avg_routing_time_ms": 0.6489966280003898
+  },
+  "traditional_dijkstra": {
+    "delivery_rate": 1.0,
+    "avg_hops": 2.142,
+    "avg_coherence_loss": 0.8384083547446497,
+    "avg_routing_time_ms": 0.3779744239998877
+  },
+  "comparison": {
+    "coherence_preservation_improvement": 0.6627428769510958,
+    "latency_overhead_ratio": 1.717038473483017
+  }
+}
