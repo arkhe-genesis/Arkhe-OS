@@ -70,7 +70,7 @@ pos_mars_init = np.array([r_mars, 0.0, 0.0])
 vel_mars_init = np.array([0.0, v_mars, 0.0])
 
 # Relays nos Pontos de Lagrange (Sun-Earth L4, Sun-Mars L4, Sun-Mars L5)
-N_relays = 3
+N_relays = 4
 pos_relays_init = []
 vel_relays_init = []
 
@@ -94,6 +94,13 @@ vel_relays_init.append(rotate_z(vel_mars_init, np.pi/3))
 # Relay 3: Sun-Mars L5 (-60 graus)
 pos_relays_init.append(rotate_z(pos_mars_init, -np.pi/3))
 vel_relays_init.append(rotate_z(vel_mars_init, -np.pi/3))
+
+# Relay 4: Órbita Solar Intermediária a 2.5 AU
+r_relay4 = 2.5 * AU
+v_relay4 = np.sqrt(G * M_sun / r_relay4)
+theta_relay4 = np.pi/2 # Inicializado em quadratura
+pos_relays_init.append(np.array([r_relay4 * np.cos(theta_relay4), r_relay4 * np.sin(theta_relay4), 0.0]))
+vel_relays_init.append(np.array([-v_relay4 * np.sin(theta_relay4), v_relay4 * np.cos(theta_relay4), 0.0]))
 
 def pack_state(pos_m, vel_m, pos_r, vel_r):
     state = np.zeros((3 + N_relays, 6))
@@ -197,7 +204,9 @@ links = {
     'Terra ↔ L4_E': (1, 3),
     'L4_E ↔ L4_M': (3, 4),
     'L4_M ↔ L5_M': (4, 5),
-    'L5_M ↔ Marte': (5, 2)
+    'L5_M ↔ Marte': (5, 2),
+    'Marte ↔ Relay 2.5AU': (2, 6),
+    'Relay 2.5AU ↔ Outer System': (6, 6) # Self loop in distance just to include the node
 }
 
 distances = {}
@@ -271,6 +280,7 @@ ax.plot(pos[2,0,:]/AU, pos[2,1,:]/AU, 'r-', linewidth=2, label='Marte')
 ax.plot(pos[3,0,:]/AU, pos[3,1,:]/AU, 'g-', linewidth=2, label='Relay α (L4_E)')
 ax.plot(pos[4,0,:]/AU, pos[4,1,:]/AU, 'm-', linewidth=2, label='Relay β (L4_M)')
 ax.plot(pos[5,0,:]/AU, pos[5,1,:]/AU, 'c-', linewidth=2, label='Relay γ (L5_M)')
+ax.plot(pos[6,0,:]/AU, pos[6,1,:]/AU, 'y-', linewidth=2, label='Relay δ (2.5 AU)')
 
 ax.plot(0, 0, 'yo', markersize=10, label='Sol')
 ax.set_aspect('equal')

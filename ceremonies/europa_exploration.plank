@@ -4,7 +4,7 @@ version: v∞.Ω.1.0
 
 parameters:
   mission_id: string
-  target_depth_km: float @ [0.1, 5.0]  # Profundidade de perfuração no gelo restrita a regiões finas
+  target_depth_km: float @ [0.1, 3.0]  # Restrito a 3.0 km (regiões de gelo fino)
   sampling_mode: string @ ["surface_ice", "subsurface_ocean", "hydrothermal_vent"]
   biosignature_sensitivity: float @ [0.1, 1.0]  # Limite de detecção para vida
   data_compression_ratio: float @ [100, 1000]  # Fator de compressão clássica
@@ -16,14 +16,14 @@ optimization_targets:
   radiation_margin: 0.95 ± 0.025  # Margem de blindagem contra radiação
 
 hard_constraints:
-  max_drill_power_W: 10000
+  max_nuclear_drill_power_W: 100000  # Broca nuclear de 100 kW
   min_cryo_temp_K: 100  # Para instrumentos sensíveis
   max_radiation_dose_rem_day: 100  # Limite para eletrônicos rad-hardened
   safety_margin_floor: 0.90
 
 preconditions:
   assert verify_mission_vc(mission_id) == true
-  assert target_depth_km <= 5.0  # Limite de profundidade para perfuração viável
+  assert target_depth_km <= 3.0  # Limite de profundidade atualizado
   assert sampling_mode in ["surface_ice", "subsurface_ocean", "hydrothermal_vent"]
 
   # Coerência 4D adaptada para exploração em ambiente de radiação
@@ -55,7 +55,7 @@ sequence:
   at T-600s: {
     # Iniciar perfuração térmica com monitoramento em tempo real
     start_thermal_drilling(
-      laser_power_W = 10000,
+      nuclear_power_W = 100000,
       target_depth_km = target_depth_km,
       melt_rate_target_m_h = 1.0
     )
