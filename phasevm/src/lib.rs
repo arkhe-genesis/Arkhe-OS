@@ -39,7 +39,6 @@ impl PhaseVM {
 
         let builder = JITBuilder::with_isa(isa, cranelift_module::default_libcall_names());
         let module = JITModule::new(builder);
-
         let mut vm = PhaseVM {
             module,
             ctx: FunctionBuilderContext::new(),
@@ -52,6 +51,8 @@ impl PhaseVM {
     }
 
     /// Compila uma sequência de portas lógicas para código nativo.
+    pub fn cache_size(&self) -> usize { self.cache.len() }
+    pub fn clear_cache(&mut self) { self.cache.clear(); }
     pub fn compile_circuit(&mut self, gates: &[String]) -> Result<Complex64, PhaseVMError> {
         // Cache key: concatenation of gate names
         let cache_key = gates.join("|");
@@ -172,3 +173,4 @@ mod tests {
         Ok(())
     }
 }
+pub mod async_compiler;

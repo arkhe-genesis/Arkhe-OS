@@ -1,12 +1,10 @@
-#!/usr/bin/env python3
-import phasevm_bridge
+from core.integration.phasevm_visualization_bridge import PhaseVMVisualizationBridge
+from core.visualization.sophon_hexagon_v2 import SophonHexagonEngine
+import asyncio
 
-def test_bridge():
-    state = phasevm_bridge.compile_circuit(["H"])
-    print(f"H gate result: {state}")
+engine = SophonHexagonEngine()
+bridge = PhaseVMVisualizationBridge(visualization_engine=engine, async_compilation=True)
 
-    state2 = phasevm_bridge.compile_circuit(["H", "X", "Z", "H", "I"])
-    print(f"Sequence result: {state2}")
-
-if __name__ == "__main__":
-    test_bridge()
+metrics = {"sophon_coherence_distance": 0.8}
+res = asyncio.run(bridge.update_cycle(metrics))
+print(res)

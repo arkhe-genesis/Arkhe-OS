@@ -41,14 +41,37 @@ class PhaseVMMock:
     def clear_cache(self):
         self.cache.clear()
 
+class PyAsyncPhaseVMMock:
+    def __init__(self, num_workers=2):
+        self.mock = PhaseVMMock()
+        self.stats = {"circuit_cache_size": 0, "gate_cache_size": 4}
+
+    async def compile_circuit_async(self, gates, timeout_ms=50.0):
+        res = self.mock.compile_circuit(gates)
+        # Mock cache hit behavior
+        cache_hit = "|".join(gates) in self.mock.cache
+        return (res.real, res.imag, cache_hit)
+
+    def get_cache_stats(self):
+        return (len(self.mock.cache), self.stats["gate_cache_size"])
+
+    def clear_cache(self):
+        self.mock.clear_cache()
+
+    def warmup_cache(self, circuits):
+        for circuit in circuits:
+            self.mock.compile_circuit(circuit)
 
 # Try to load actual compiled rust extension, fallback to mock
 try:
-    # In a real environment, this would import the pyo3 module
-    # import phasevm_rs
-    phasevm = PhaseVMMock()
+    import phasevm_rs
+    PhaseVM = phasevm_rs.PyPhaseVM
+    PyAsyncPhaseVM = phasevm_rs.PyAsyncPhaseVM
 except ImportError:
-    phasevm = PhaseVMMock()
+    PhaseVM = PhaseVMMock
+    PyAsyncPhaseVM = PyAsyncPhaseVMMock
+
+phasevm = PhaseVM()
 
 def compile_circuit(gates):
     """Compile topological bytecode to native code and execute."""

@@ -14,6 +14,7 @@ cranelift-module = "0.98"
 num-complex = "0.4"
 sha2 = "0.10"
 thiserror = "1.0"
+crossbeam-channel = "0.5"
 pyo3 = { version = "0.20", features = ["extension-module"], optional = true }
 
 [lib]
