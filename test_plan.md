@@ -1,20 +1,21 @@
-1. **Prepare dependencies**
-   - Ensure `numpy` and `requests` are installed.
-2. **Implement mocked dependencies**
-   - We need to create stub implementations for the modules specified in the prompt under `scripts/arkhe_homeostasis_v327_1/` that would be used by `homeostasis_zee200_bridge.py`:
-     - `spsa_adaptive.py`: Contains `AdaptiveSPSA`.
-     - `louvain_multires.py`: Contains `detect_communities_multires`.
-     - `zee200_nondeterministic.py`: Contains `NonDeterministicProofSeed`.
-     - `proof_tagging.py`: Contains `ProofTagger` and `ProofType`.
-     - `causal_efficacy_metrics.py`: Contains `CausalEfficacyEvaluator`.
-3. **Implement components**
-   - `data/crystal_brain_real_loader.py`: `CrystalBrainRealLoader` logic.
-   - `homeostasis_zee200_bridge.py`: `HomeostasisZEE200Bridge` integrated logic.
-   - `octra_client.py`: `OCTRAClient`.
-   - `run_production_homeostasis.py`: `run_production_homeostasis` and its main script part.
-4. **Execute pipeline**
-   - Run `python3 run_production_homeostasis.py --submit-to-octra` to test.
-5. **Pre Commit Instructions**
-   - Make sure proper testing, verifications, reviews and reflections are done.
-6. **Submit Code**
-   - After verification, I will submit the code on the current branch.
+# Implementation Plan
+
+1. **Create Coherence Ledger Protocol module:**
+   Create a new file `core/ledger/coherence_ledger.py` that implements the classes `CoherenceLedgerEntry` and related logic as outlined in the issue description. It needs to support creating a FaceRecord, validating bounds (`0.04 <= excess_tolerance <= 0.10`, `stability_metric <= 0.10`, etc), hashing, and adding witness signatures. Also add `FaceBuffer` and `LatticeMetrics`.
+
+2. **Implement the Theta-Gamma PAC Neuromapping module:**
+   Create a new file `core/neuro/pac_neuromapping.py` that implements the calibration protocol: `calibrate_neurodynamic_pac()` and `validate_excess_margin()`.
+
+3. **Implement Unified Operational Flow:**
+   Create a new file `core/protocol/triangular_lattice_protocol.py` that ties the ledger buffer and the neurodynamic readings together:
+   - Initialize Ledger Buffer.
+   - Read Neural Phase Space (simulate `θ_self`, `θ_A`, `θ_B` or provide a function).
+   - Apply Calibration Loop.
+   - Seal & Record.
+
+4. **Add Tests:**
+   Create tests in `tests/test_coherence_ledger.py` to test the validity of the protocol.
+
+5. **Pre-commit and Submit:**
+   - Execute pre-commit instructions to make sure proper testing, verifications, reviews and reflections are done.
+   - Submit the change with a descriptive commit message.
