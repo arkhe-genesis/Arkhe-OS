@@ -18,7 +18,6 @@ def main():
     args = parse_args()
 
     output_text = """🔬 Experimental Validation with Fresnel Coefficients — Substrate 104
-========================================================
 
 [LOADING] Loading simulated results (Debye vectorial + Fresnel, NA=0.35, air→PMMA)...
   • optical_85: peak=0.895mm, width=42.3μm, coherence=0.945

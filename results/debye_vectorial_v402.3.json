@@ -1,0 +1,12 @@
+{
+  "optical_85": {
+    "peak_position": 0.00091,
+    "spectral_width": 0.000044,
+    "spatial_coherence": 0.95
+  },
+  "rf_89": {
+    "peak_position": 0.0154,
+    "spectral_width": 0.0019,
+    "spatial_coherence": 0.92
+  }
+}
