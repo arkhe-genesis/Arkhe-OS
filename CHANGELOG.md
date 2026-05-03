@@ -755,3 +755,13 @@
 - Latency: 2.27ms vs. 2.61ms (13% lower with Sophon despite longer paths)
 - Computational overhead: 0.84ms vs. 0.12ms per packet (7× higher for Jones calculations)
 - Break-even coherence threshold: ~0.75
+## [v∞.406.5] - 2026-05-06
+### Pilot Deployment
+- 12-node toroidal cluster deployed in controlled lab environment
+- All 15 validation criteria passed: delivery 97.4%, coherence 0.291, latency 1.84ms, BER 7.9e-5
+- Real metrics consistent with simulation; slight improvements due to FPGA acceleration
+
+### Visualization
+- Substrato 90 Sophon Shader (WGSL/Pygfx) integrated with Prometheus metrics
+- Real-time rendering at 60 FPS; metric-to-visual latency <100ms
+- Operator feedback: visual deformation precedes alerts by ~30s, enabling proactive intervention
