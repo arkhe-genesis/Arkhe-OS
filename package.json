@@ -61,6 +61,7 @@
     "@types/filesystem": "^0.0.36",
     "@types/json-schema": "^7.0.15",
     "@types/node": "^25.0.0",
+    "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@types/sinon": "^21.0.0",
     "@types/yargs": "^17.0.33",
@@ -88,9 +89,8 @@
     "tsx": "^4.21.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.43.0",
-    "yargs": "18.0.0",
-    "@types/react": "^19.2.14",
-    "vite": "^8.0.8"
+    "vite": "^8.0.8",
+    "yargs": "18.0.0"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=23"
@@ -99,6 +99,7 @@
     "@grpc/grpc-js": "^1.14.3",
     "@grpc/proto-loader": "^0.8.0",
     "@huggingface/transformers": "^4.1.0",
+    "@open-slide/core": "^1.0.4",
     "@opentelemetry/api": "^1.9.1",
     "@opentelemetry/exporter-logs-otlp-http": "^0.216.0",
     "@opentelemetry/resources": "^2.6.1",
@@ -149,8 +150,7 @@
     "vite": "^8.0.8",
     "web3": "^4.16.0",
     "ws": "^8.20.0",
-    "xrpl": "^4.6.0",
-    "@open-slide/core": "^1.0.4"
+    "xrpl": "^4.6.0"
   },
   "overrides": {
     "@types/json5": "0.0.30"
