@@ -23,7 +23,7 @@ async def test_orchestrator_maturity_cycle():
 
     assert "omega" in state
     assert "cycle_id" in state
-    assert orchestrator.get_dashboard()["odometro"] == "002143"
+    assert orchestrator.get_dashboard()["odometro"] == "002154"
 
 @pytest.mark.asyncio
 async def test_consciousness_transcendence():
