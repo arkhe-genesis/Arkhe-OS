@@ -1,30 +1,20 @@
-1. **Formalize `consensus epsilon merge` with Proof-of-Coherence voting mechanics and Odysseus super-linear bonus.**
-   - Create `core/protocol/fork/ledger_temporal_fork_protocol.py` containing the `LedgerState` and `LedgerTemporalForkProtocol` classes as specified in the issue.
-   - Enhance `LedgerTemporalForkProtocol` to include `consensus epsilon merge` mechanics:
-      - Add a method to handle Proof-of-Coherence voting, where vertex votes are weighted by their historical $\epsilon$-preservation fidelity.
-      - Add the Odysseus Principle bonus to the merge evaluation, granting a consensus bonus to forks exhibiting super-linear insight gain.
-      - Integrate Uniphics principle `t_flow = k / E_d` into fork evaluation if possible, or at least account for it in the documentation and conceptual logic.
+1. **Create the integration for Metacognitive Monitor (Substrate 147)**
+   - The user has provided an advanced spec for **ARKHE OS v∞.Ω.∇+++.147** detailing the integration of Meta-Learning (MAML-Riemanniano), Counterfactual Planning, Multi-Agent Resource Negotiation (VCG), and Curriculum Learning.
+   - The implementation involves writing a set of metacognitive, causal, negotiation, and curriculum classes. I have already drafted `core/metacognition/substrate_147.py` and run a basic test. I should split this into logical modules inside `core/metacognition/` or `core/` depending on the canonical structure.
+   - Based on the memory: "The repository root structure is strictly organized by ARKHE OS layers: `layer_0_physical`, `layer_1_hardware`, `layer_2_protocol`, `layer_3_governance`, and `layer_4_meta`. Loose files are strictly categorized into domain-specific folders like `core/`." and also "Arkhe OS v∞.Ω.∇+++.147 canonizes..."
+   - I will place the code in `layer_4_meta/algorithmic/` if it exists, but the previous `find` command showed `layer_4_meta` doesn't exist. I'll create `core/metacognition/` for all metacognitive components as they seem like core logic.
+   - I'll rename `core/metacognition/substrate_147.py` to `core/metacognition/metacognition_module.py` and ensure the names match the user's specs exactly.
+   - Specifically, I need to implement:
+     - `RiemannianMAML` and `MetaAdaptationLayer`
+     - `ContraFactualWorldModel` and `ContraFactualSafetyChecker` and `SafeAsyncMARLAgent`
+     - `CurvatureAdjustedValuation` and `AsyncResourceNegotiator` and `ResourceAwareMissionExecution`
+     - `RiemannianCurriculumGenerator` and `CurriculumDrivenMissionLoop`
 
-2. **Implement the Wrangler CLI.**
-   - Create `cli/wrangler/wrangler_cli.py` (or similar) using `argparse` or `click`.
-   - Implement the following commands:
-      - `wrangler d1 fork create <timestamp> [reason]`: Creates a fork from a specific timestamp.
-      - `wrangler d1 merge accept <fork_id>`: Triggers the merge of a fork back into the main chain, utilizing the consensus epsilon merge criteria.
-      - `wrangler d1 rollback <timestamp>`: Rolls back the main chain to a previous timestamp.
-   - Connect the CLI to an instance of `LedgerTemporalForkProtocol`.
+2. **Verify tests and constraints**
+   - Ensure `torch` dependencies and math functions work correctly. I will write a test suite in `tests/test_substrate_147.py`.
 
-3. **Simulate timeline branching on synthetic ledger data.**
-   - Create `scripts/simulate_timeline_branching.py`.
-   - The script should:
-      - Initialize a `LedgerTemporalForkProtocol`.
-      - Generate a synthetic main chain of `LedgerState` objects.
-      - Create one or more forks using the CLI or programmatic API.
-      - Simulate diverging $\epsilon$ statistics and Odysseus gains on the forks.
-      - Execute `consensus epsilon merge` to observe which fork is accepted based on $\epsilon$-convergence and merge stability.
-      - Print the simulation results (coherence scores, merge acceptance/rejection, rollback effects).
+3. **Pre-commit step**
+   - Call `pre_commit_instructions` tool to get the required checks and perform them to ensure proper testing, verification, review, and reflection are done.
 
-4. **Add Tests.**
-   - Create `tests/test_ledger_temporal_fork.py` to test the new protocol, ensuring the `evaluate_fork_coherence`, `merge_fork`, and `rollback_to` methods work correctly.
-
-5. **Complete pre-commit steps.**
-   - Ensure proper testing, verification, review, and reflection are done as required by the pre-commit instructions.
+4. **Submit**
+   - Submit the branch.
