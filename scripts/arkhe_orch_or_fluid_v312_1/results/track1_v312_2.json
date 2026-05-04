@@ -1,0 +1,9 @@
+{
+  "fit_parameters": {
+    "a": 149.93235928381526,
+    "b": 1.9864694592337924
+  },
+  "t_statistic": 188.66991298718946,
+  "p_value_mass_dependence": 2.8091595183576956e-05,
+  "interpretation": "evidence for Orch-OR scaling"
+}

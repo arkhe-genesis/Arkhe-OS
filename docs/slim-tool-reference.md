@@ -1,6 +1,6 @@
 <!-- AUTO GENERATED DO NOT EDIT - run 'npm run gen' to update-->
 
-# Chrome DevTools MCP Slim Tool Reference (~345 cl100k_base tokens)
+# Chrome DevTools MCP Slim Tool Reference (~359 cl100k_base tokens)
 
 - **[Navigation automation](#navigation-automation)** (1 tools)
   - [`navigate`](#navigate)
@@ -16,7 +16,7 @@
 
 **Parameters:**
 
-- **url** (unknown) **(required)**: URL to [`navigate`](#navigate) to
+- **url** (string) **(required)**: URL to [`navigate`](#navigate) to
 
 ---
 
@@ -28,7 +28,7 @@
 
 **Parameters:**
 
-- **script** (unknown) **(required)**: JS script to run on the page
+- **script** (string) **(required)**: JS script to run on the page
 
 ---
 

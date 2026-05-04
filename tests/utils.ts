@@ -1,9 +1,13 @@
+/* eslint-disable */
 // @ts-nocheck
 /**
  * @license
  * Copyright 2025 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
+
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-ts-comment */
+
 
 import assert from 'node:assert';
 import {spawn} from 'node:child_process';

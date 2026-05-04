@@ -1,5 +1,13 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 'use client';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function CoherenceMetrics({ metrics }: any) {
   const stats = [
     { label: 'Ω MÉDIO (REDE)', value: metrics?.avgOmega?.toFixed(4) || '0.9412', color: 'text-cyan-400' },

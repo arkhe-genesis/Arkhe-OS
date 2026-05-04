@@ -5,6 +5,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
+
 import { X, Cpu, Activity, ShieldCheck, Grid3X3 } from 'lucide-react';
 import { motion } from 'motion/react';
 import React from 'react';

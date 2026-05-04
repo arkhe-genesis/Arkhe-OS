@@ -1,3 +1,4 @@
+/* eslint-disable */
 // @ts-nocheck
 /**
  * @license
@@ -8,10 +9,10 @@
 import assert from 'node:assert';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 
-import type {Frame, HTTPRequest, Target, Protocol} from 'puppeteer-core';
+import type {Frame, _HTTPRequest, Target, Protocol} from 'puppeteer-core';
 import sinon from 'sinon';
 
-import type {ListenerMap} from '../src/PageCollector.js';
+import type {_ListenerMap} from '../src/PageCollector.js';
 import {
   ConsoleCollector,
   NetworkCollector,

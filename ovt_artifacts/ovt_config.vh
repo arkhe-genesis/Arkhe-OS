@@ -1,0 +1,8 @@
+// ARKHE OVT v295.3 - FPGA Configuration Header
+// Generated from OVT Simulation
+`define DELTA_ASSOC_FIXED 98432678965
+`define SYNC_PHASE_FIXED 1369486280032197017600
+`define FIR_COEFF_0 1121501860331
+`define FIR_COEFF_1 -87960930222
+`define FIR_COEFF_2 32985348833
+`define SIGNIFICANCE_TARGET 5 // 5σ detection threshold

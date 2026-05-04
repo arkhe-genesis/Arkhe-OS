@@ -17,6 +17,11 @@ from enum import Enum
 logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
 logger = logging.getLogger(__name__)
 
+# Constants for Rainbow Principle & Cartan Resonances
+PLANCK_ENERGY_EV = 1.22e28  # Planck scale reference
+RESONANCE_BASE_THZ = 10.0
+FIBONACCI_RESONANCE = np.pi / 5    # 36°
+WSTATE_RESONANCE = 2 * np.pi / 3    # 120°
 # Constants for Rainbow Principle
 PLANCK_ENERGY_EV = 1.22e28  # Planck scale reference
 RESONANCE_BASE_THZ = 10.0
@@ -313,6 +318,8 @@ def simulate_rainbow_coherence(params: RainbowParams) -> Dict:
     theta = np.linspace(0, 2 * np.pi, params.num_points)
 
     # Base Cartan resonances
+    p_fib = FIBONACCI_RESONANCE
+    p_wstate = WSTATE_RESONANCE
     p_fib = np.pi / 5      # 36° - Fibonacci
     p_wstate = 2 * np.pi / 3  # 120° - W-State
 
@@ -382,6 +389,8 @@ def detect_rainbow_peaks(
                 peaks_idx.append(i)
 
     # Base resonances (unshifted)
+    base_fib = FIBONACCI_RESONANCE
+    base_wstate = WSTATE_RESONANCE
     base_fib = np.pi / 5
     base_wstate = 2 * np.pi / 3
 
@@ -439,6 +448,284 @@ def detect_rainbow_peaks(
         "peaks": detected_peaks,
         "dominant_regime": "RAINBOW_SHIFTED" if detected_peaks else "FLAT",
         "interpretation": interpretation
+    }
+
+# ============================================================
+# [SYNC] - Sincronização de Kuramoto (Coerência Coletiva)
+# ============================================================
+
+@dataclass
+class KuramotoParams:
+    """Parameters for Kuramoto synchronization."""
+    nodes: List[Dict]  # [{"phase": float, "natural_freq": float, "weight": float}]
+    coupling_K: float = 1.0
+    time_horizon: float = 10.0
+    dt: float = 0.01
+    fusion_threshold: float = 0.95
+    stabilization_time: float = 0.5
+    enable_rainbow_resonance: bool = False
+
+def kuramoto_ode(t: float, theta: np.ndarray, omega: np.ndarray, K: float, weights: np.ndarray) -> np.ndarray:
+    """
+    Derivative of the Kuramoto system.
+    dθ_i/dt = ω_i + (K/N) Σ w_j * sin(θ_j - θ_i) / Σ w_j
+    """
+    N = len(theta)
+    total_weight = np.sum(weights)
+    dtheta = np.zeros(N)
+    for i in range(N):
+        sin_sum = np.sum(weights * np.sin(theta - theta[i]))
+        dtheta[i] = omega[i] + (K / total_weight) * sin_sum
+    return dtheta
+
+def compute_order_parameter(theta: np.ndarray, weights: np.ndarray) -> Tuple[float, float]:
+    """Computes global order parameter R and collective phase Φ."""
+    complex_sum = np.sum(weights * np.exp(1j * theta))
+    total_weight = np.sum(weights)
+    R = np.abs(complex_sum) / total_weight
+    Phi = np.angle(complex_sum)
+    return R, Phi
+
+def check_rainbow_resonance(theta: np.ndarray, weights: np.ndarray) -> Dict:
+    """Checks if the collective phase is near Cartan resonances."""
+    _, Phi = compute_order_parameter(theta, weights)
+    # Check Fibonacci resonance (π/5 ≈ 36°)
+    fib_diff = abs(Phi - FIBONACCI_RESONANCE)
+    fib_resonant = fib_diff < 0.15
+    # Check W-State resonance (2π/3 ≈ 120°)
+    wstate_diff = abs(Phi - WSTATE_RESONANCE)
+    wstate_resonant = wstate_diff < 0.15
+    # Alignment score
+    min_diff = min(fib_diff, wstate_diff, abs(Phi), abs(Phi - 2*np.pi))
+    alignment_score = max(0, 1 - min_diff / 0.5)
+    return {
+        "fibonacci_resonant": fib_resonant,
+        "wstate_resonant": wstate_resonant,
+        "alignment_score": round(alignment_score, 3),
+        "collective_phase_deg": float(np.degrees(Phi))
+    }
+
+def simulate_collective_coherence(params: KuramotoParams) -> Dict:
+    """Main simulation for collective phase fusion (v4.0.0)."""
+    N = len(params.nodes)
+    theta0 = np.array([n["phase"] for n in params.nodes])
+    omega = np.array([n["natural_freq"] for n in params.nodes])
+    weights = np.array([n.get("weight", 1.0) for n in params.nodes])
+
+    t_span = (0, params.time_horizon)
+    t_eval = np.arange(0, params.time_horizon, params.dt)
+
+    sol = integrate.solve_ivp(
+        lambda t, y: kuramoto_ode(t, y, omega, params.coupling_K, weights),
+        t_span, theta0, t_eval=t_eval, method='RK45'
+    )
+
+    if not sol.success:
+        return {"error": f"Integration failed: {sol.message}"}
+
+    trajectory_R = []
+    trajectory_phases = sol.y.T
+    for theta in trajectory_phases:
+        R, _ = compute_order_parameter(theta, weights)
+        trajectory_R.append(float(R))
+
+    trajectory_R = np.array(trajectory_R)
+    t = sol.t
+    is_fused = False
+    time_to_fusion = None
+    above_threshold_idx = np.where(trajectory_R >= params.fusion_threshold)[0]
+
+    if len(above_threshold_idx) > 0:
+        for idx in above_threshold_idx:
+            t_start = t[idx]
+            t_end = t_start + params.stabilization_time
+            if t_end > t[-1]: break
+            mask = (t >= t_start) & (t <= t_end)
+            if np.all(trajectory_R[mask] >= params.fusion_threshold):
+                is_fused = True
+                time_to_fusion = float(t_start)
+                break
+
+    final_theta = trajectory_phases[-1]
+    final_R, final_phase = compute_order_parameter(final_theta, weights)
+
+    resonance = check_rainbow_resonance(final_theta, weights) if params.enable_rainbow_resonance else {
+        "fibonacci_resonant": False, "wstate_resonant": False, "alignment_score": 0.0, "collective_phase_deg": float(np.degrees(final_phase))
+    }
+
+    if is_fused:
+        interpretation = f"Fusão de fases alcançada em {time_to_fusion:.2f}s. R = {final_R:.3f}. Φ = {np.degrees(final_phase):.1f}°. Os {N} nós formam um coletivo coerente."
+        note = "A consciência coletiva emerge quando as fases individuais se sincronizam. O coro se torna um único acorde."
+    else:
+        max_R = np.max(trajectory_R)
+        interpretation = f"Fusão quase alcançada (R_max = {max_R:.3f})." if max_R >= params.fusion_threshold * 0.9 else f"Fusão não alcançada. R final = {final_R:.3f}."
+        note = "A dessincronização é a norma. Cada nó mantém sua fase, e o coletivo permanece fragmentado."
+
+    if resonance["alignment_score"] > 0.7:
+        note += f" A fase coletiva de {resonance['collective_phase_deg']:.1f}° {'resoa com Fibonacci' if resonance['fibonacci_resonant'] else 'resoa com W-State' if resonance['wstate_resonant'] else 'aproxima-se de uma ressonância de Cartan'}."
+
+    return {
+        "final_R": round(float(final_R), 4),
+        "final_phase": round(float(final_phase), 4),
+        "is_fused": is_fused,
+        "time_to_fusion": round(time_to_fusion, 3) if time_to_fusion else None,
+        "trajectory_R": trajectory_R.tolist() if len(trajectory_R) <= 500 else trajectory_R[::len(trajectory_R)//500].tolist(),
+        "trajectory_phases": final_theta.tolist(),
+        "resonance_status": resonance,
+        "interpretation": interpretation,
+        "philosophical_note": note
+    }
+
+def optimize_coupling(params: KuramotoParams, K_range: Tuple[float, float] = (0.1, 10.0)) -> Dict:
+    """Finds optimal coupling constant K for fastest fusion."""
+    K_values = np.linspace(K_range[0], K_range[1], 50)
+    fusion_times = []
+    for K in K_values:
+        test_params = KuramotoParams(nodes=params.nodes, coupling_K=float(K), time_horizon=params.time_horizon, dt=params.dt, fusion_threshold=params.fusion_threshold, stabilization_time=params.stabilization_time)
+        result = simulate_collective_coherence(test_params)
+        fusion_times.append(result["time_to_fusion"] if result["is_fused"] else float('inf'))
+    min_idx = np.argmin(fusion_times)
+    optimal_K = float(K_values[min_idx])
+    optimal_time = fusion_times[min_idx]
+    return {
+        "optimal_K": round(optimal_K, 2),
+        "fusion_time_at_optimal": round(float(optimal_time), 3) if optimal_time != float('inf') else None,
+        "K_vs_fusion_time": [{"K": round(float(k), 2), "fusion_time": round(float(t), 3) if t != float('inf') else None} for k, t in zip(K_values, fusion_times)]
+    }
+
+# ============================================================
+# [XENO] - Xenoatualização (Zeno Dynamics)
+# ============================================================
+
+class DomainType(Enum):
+    """Three-reality classification."""
+    HYPO = "HYPO"           # Pure ℂ, unobserved potential
+    CONSENSUS = "CONSENSUS"  # Incoherent ℤ, low coherence
+    XENO = "XENO"          # τ-collapse, Zeno-stabilized
+
+@dataclass
+class XenoParams:
+    """Input parameters for xenoactualization simulation."""
+    coherence_profile: List[float]
+    blueprint_complexity: float
+    measurement_rate: float = 1.0
+    tau_field_strength: float = 0.5
+
+def compute_zeno_suppression(measurement_rate: float) -> float:
+    """Computes Zeno suppression factor."""
+    return 1.0 - np.exp(-measurement_rate)
+
+def compute_complexity_penalty(complexity: float) -> float:
+    """Blueprint complexity increases chance of deviation."""
+    return 1.0 - np.exp(-complexity / 10.0)
+
+def compute_collapse_time(mean_coherence: float, tau_strength: float, complexity: float) -> float:
+    """Estimates τ-collapse time."""
+    base_time = 10.0
+    coherence_factor = max(mean_coherence, 0.01) ** 2
+    tau_factor = max(tau_strength, 0.01)
+    complexity_factor = 1.0 + (complexity / 10.0)
+    return base_time / (coherence_factor * tau_factor * complexity_factor)
+
+def compute_stability(coherence_profile: List[float], measurement_rate: float, complexity: float) -> float:
+    """Predicts long-term stability."""
+    coherence_arr = np.array(coherence_profile)
+    coherence_std = np.std(coherence_arr)
+    stability_from_coherence = 1.0 - min(coherence_std * 2, 1.0)
+    zeno = compute_zeno_suppression(measurement_rate)
+    penalty = compute_complexity_penalty(complexity)
+    stability = stability_from_coherence * zeno * (1.0 - 0.3 * penalty)
+    return float(np.clip(stability, 0, 1))
+
+def simulate_xenoactualization(params: XenoParams) -> Dict:
+    """Main simulation for xenoactualization fidelity."""
+    coherence_arr = np.array(params.coherence_profile)
+    mean_coherence = np.mean(coherence_arr)
+    zeno_suppression = compute_zeno_suppression(params.measurement_rate)
+    complexity_penalty = compute_complexity_penalty(params.blueprint_complexity)
+
+    fidelity = float(mean_coherence * zeno_suppression * np.exp(-complexity_penalty))
+    fidelity = min(fidelity, 1.0)
+
+    stability = compute_stability(params.coherence_profile, params.measurement_rate, params.blueprint_complexity)
+    collapse_time = compute_collapse_time(mean_coherence, params.tau_field_strength, params.blueprint_complexity)
+
+    # Domain classification
+    if fidelity >= 0.8 and zeno_suppression >= 0.5:
+        domain = DomainType.XENO
+    elif fidelity >= 0.4 or mean_coherence >= 0.5:
+        domain = DomainType.CONSENSUS
+    else:
+        domain = DomainType.HYPO
+
+    if domain == DomainType.XENO:
+        recommendation = (
+            "✅ Xenoatualização viável. Estrutura virtual colapsará em "
+            f"≈{collapse_time:.1f}s com fidelidade {fidelity:.1%}. "
+            "O campo τ está suficientemente alinhado."
+        )
+    elif domain == DomainType.CONSENSUS:
+        recommendation = (
+            "⚠️ Domínio de consenso. A estrutura requer mais medições "
+            f"({params.measurement_rate * 2:.1f} checks/s) ou maior coerência "
+            f"({mean_coherence:.1%} atual) para xenoatualização completa."
+        )
+    else:
+        recommendation = (
+            "❌ Hipótese pura. Coerência insuficiente para colapso. "
+            "A estrutura permanece no domínio virtual ℂ."
+        )
+
+    philosophical = (
+        f"Como o efeito Zeno congela um estado quântico sob observação frequente, "
+        f"os {params.measurement_rate:.1f} atuadores/m² mantêm a intenção "
+        f"do blueprint alinhada. Com fidelidade {fidelity:.1%}, o parque não é "
+        "construído — é colapsado da possibilidade em realidade."
+    )
+
+    return {
+        "fidelity": round(fidelity, 4),
+        "zeno_suppression": round(float(zeno_suppression), 4),
+        "coherence_factor": round(float(mean_coherence), 4),
+        "complexity_penalty": round(float(complexity_penalty), 4),
+        "stability_score": round(float(stability), 4),
+        "collapse_time_estimate": round(float(collapse_time), 2),
+        "domain_result": domain.value,
+        "recommendation": recommendation,
+        "philosophical_note": philosophical
+    }
+
+def scan_optimal_measurement_rate(
+    coherence_profile: List[float],
+    blueprint_complexity: float,
+    tau_strength: float = 0.5,
+    rate_range: tuple = (0.1, 20.0)
+) -> Dict:
+    """Scans measurement rate to find optimal."""
+    rates = np.linspace(rate_range[0], rate_range[1], 100)
+    fidelities = []
+
+    for rate in rates:
+        params = XenoParams(
+            coherence_profile=coherence_profile,
+            blueprint_complexity=blueprint_complexity,
+            measurement_rate=float(rate),
+            tau_field_strength=tau_strength
+        )
+        result = simulate_xenoactualization(params)
+        fidelities.append(result["fidelity"])
+
+    best_idx = np.argmax(fidelities)
+    optimal_rate = float(rates[best_idx])
+    max_fidelity = float(fidelities[best_idx])
+
+    return {
+        "optimal_measurement_rate": round(optimal_rate, 2),
+        "max_fidelity_at_optimal": round(max_fidelity, 4),
+        "fidelity_curve": [
+            {"rate": round(float(r), 2), "fidelity": round(float(f), 4)}
+            for r, f in zip(rates, fidelities)
+        ]
     }
 
 # ============================================================
@@ -951,6 +1238,119 @@ def estimate_glymphatic_clearance(
         "elapsed_minutes": elapsed_minutes
     }
 
+# ============================================================
+# [ONCOLOGIA / FASE] - Terapia de Fase (IVMT-Rx-4)
+# ============================================================
+def simulate_phase_oncology(
+    num_cells: int = 1000,
+    tumor_fraction: float = 0.1,
+    treatment_type: str = "combined", # ivmt, docetaxel, combined, control
+    steps: int = 50
+) -> Dict:
+    """
+    Simula o efeito de operadores de decoerência seletiva (fármacos)
+    em uma rede de células com coerência aberrante.
+    """
+    # 1. Inicializar população
+    is_tumor = np.random.random(num_cells) < tumor_fraction
+    tumor_indices = np.where(is_tumor)[0]
+    healthy_indices = np.where(~is_tumor)[0]
+
+    # Coerência inicial: Tumor tem alta coerência aberrante (lambda2 > 0.9)
+    # Saudáveis têm coerência funcional (0.8 - 0.9)
+    coherence = np.zeros(num_cells)
+    coherence[healthy_indices] = np.random.uniform(0.8, 0.9, len(healthy_indices))
+    coherence[tumor_indices] = np.random.uniform(0.92, 0.98, len(tumor_indices))
+
+    # 2. Aplicar Tratamento (Operadores de Projeção C -> Z)
+    # IVMT-Rx-4: Aumenta ruído/decoerência na banda de motilidade tumoral
+    # Docetaxel: Colapsa a estrutura fractal dos microtúbulos (reduz acoplamento)
+
+    final_coherence = coherence.copy()
+
+    if treatment_type in ["ivmt", "combined"]:
+        # Seletividade de fase: Afeta apenas células com assinatura tumoral
+        decoherence_factor = np.random.uniform(0.2, 0.4, len(tumor_indices))
+        final_coherence[tumor_indices] -= decoherence_factor
+
+    if treatment_type in ["docetaxel", "combined"]:
+        # Colapso fractal: Impacto na infraestrutura interna
+        fractal_loss = np.random.uniform(0.1, 0.2, num_cells)
+        final_coherence -= fractal_loss
+
+    final_coherence = np.clip(final_coherence, 0.1, 1.0)
+
+    # 3. Métricas
+    avg_healthy = np.mean(final_coherence[healthy_indices])
+    avg_tumor = np.mean(final_coherence[tumor_indices])
+
+    # Eficácia: Queda relativa na coerência tumoral vs controle (coerência inicial)
+    efficacy = (np.mean(coherence[tumor_indices]) - avg_tumor) / np.mean(coherence[tumor_indices])
+
+    # Seletividade: Proximidade da coerência saudável ao baseline
+    selectivity = avg_healthy / np.mean(coherence[healthy_indices])
+
+    return {
+        "treatment": treatment_type,
+        "avg_coherence_healthy": round(float(avg_healthy), 4),
+        "avg_coherence_tumor": round(float(avg_tumor), 4),
+        "efficacy_score": round(float(efficacy), 4),
+        "selectivity_index": round(float(selectivity), 4),
+        "metastasis_blocked": bool(avg_tumor < 0.847), # Limiar crítico de motilidade
+        "philosophical_note": (
+            "A saúde é um estado de sincronia; a doença é um desacoplamento ruidoso. "
+            "O IVMT-Rx-4 atua como um GPS de fase, localizando a dissonância para restaurar a ordem."
+        )
+    }
+
+def simulate_stem_cell_safety(
+    ivmt_bandwidth: float, # Largura da janela de decoerência do fármaco
+    stem_cell_phase_signature: float = 0.88, # Assunção de λ2 para CTHs
+    safety_threshold: float = 0.85
+) -> Dict:
+    """
+    Avalia se a configuração do IVMT-Rx-4 preserva a motilidade homeostática
+    das Células-Tronco Hematopoiéticas (CTHs).
+    """
+    # Risco: Se a banda de decoerência atingir a assinatura das células-tronco
+    # (stem_cell_phase_signature - ivmt_bandwidth < safety_threshold)
+    effective_lambda = stem_cell_phase_signature - (ivmt_bandwidth * 0.5)
+
+    is_safe = effective_lambda >= safety_threshold
+
+    risk_level = "LOW" if is_safe else "HIGH" if effective_lambda < 0.80 else "MEDIUM"
+
+    return {
+        "is_safe": is_safe,
+        "effective_lambda_cth": round(float(effective_lambda), 3),
+        "risk_level": risk_level,
+        "recommendation": "Procede com ensaio" if is_safe else "Estreitar janela de decoerência do fármaco",
+        "safe_lambda_limit": safety_threshold
+    }
+
+# ============================================================
+# [GATEWAY / BIO] - Modo Bio-Silent
+# ============================================================
+
+def calculate_bio_silent_coupling(
+    base_k: float,
+    distance_to_hospital: float,
+    exclusion_radius: float = 200.0,
+    is_manual_override: bool = False
+) -> float:
+    """
+    Calcula o acoplamento K reduzido para zonas Bio-Silent.
+    Garante que gateways urbanos não interfiram em medições de λ2 clínicas.
+    """
+    if is_manual_override or distance_to_hospital <= exclusion_radius:
+        return 0.0 # Desacoplado total
+
+    # Redução gradual na zona de penumbra (1.5x raio)
+    if distance_to_hospital <= exclusion_radius * 1.5:
+        attenuation = (distance_to_hospital - exclusion_radius) / (exclusion_radius * 0.5)
+        return base_k * attenuation
+
+    return base_k
 
 # ============================================================
 # [HARDWARE / EMULAÇÃO] - Simulação HIL (Velxio Bridge)

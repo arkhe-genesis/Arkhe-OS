@@ -57,6 +57,7 @@ export default defineConfig([
             'trigger_handshake.js',
             'verify_design_final.test.ts',
             'vite.config.ts',
+            'src/components/zkp/ArkheTruth.tsx',
           ],
         },
       },

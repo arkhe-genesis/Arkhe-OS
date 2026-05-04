@@ -1,0 +1,86 @@
+# test/matrix/platform-test-matrix.yaml
+platforms:
+  azure:
+    environments:
+      - name: "staging"
+        region: "eastus"
+        k8sVersion: "1.28"
+        nodeType: "Standard_D4s_v4"
+      - name: "production"
+        region: "westeurope"
+        k8sVersion: "1.28"
+        nodeType: "Standard_D8s_v4"
+    testSuites:
+      - "certificate-rotation"
+      - "mTLS-connectivity"
+      - "secret-management"
+      - "metrics-export"
+      - "rolling-update"
+
+  gcp:
+    environments:
+      - name: "staging"
+        region: "us-central1"
+        k8sVersion: "1.28"
+        nodeType: "n2-standard-4"
+      - name: "production"
+        region: "europe-west4"
+        k8sVersion: "1.28"
+        nodeType: "n2-standard-8"
+    testSuites:
+      - "certificate-rotation"
+      - "mTLS-connectivity"
+      - "secret-management"
+      - "metrics-export"
+      - "rolling-update"
+
+  apple:
+    environments:
+      - name: "macos-dev"
+        osVersion: "14.0"  # Sonoma
+        architecture: "arm64"
+        jvm: "temurin-21"
+      - name: "macos-ci"
+        osVersion: "13.0"  # Ventura
+        architecture: "x86_64"
+        jvm: "temurin-21"
+    testSuites:
+      - "keychain-integration"
+      - "metal-visualization"
+      - "secure-enclave-secrets"
+      - "native-image-startup"
+
+  oracle:
+    environments:
+      - name: "staging"
+        region: "us-ashburn-1"
+        k8sVersion: "1.28"
+        nodeType: "VM.Standard.E4.Flex"
+      - name: "production"
+        region: "eu-frankfurt-1"
+        k8sVersion: "1.28"
+        nodeType: "VM.Standard.A1.Flex"  # Ampere ARM
+    testSuites:
+      - "certificate-rotation"
+      - "oracle-vault-secrets"
+      - "graalvm-native-image"
+      - "oracle-db-integration"
+
+# Test execution configuration
+execution:
+  # Run tests in parallel across platforms
+  parallel: true
+  maxParallel: 4
+  # Retry failed tests with exponential backoff
+  retry:
+    enabled: true
+    maxAttempts: 3
+    initialDelay: "5s"
+    maxDelay: "60s"
+  # Collect and aggregate results
+  reporting:
+    format: "junit"
+    aggregation: "consolidated-report"
+    upload:
+      enabled: true
+      destination: "s3://arkhe-test-results/platform-matrix/"

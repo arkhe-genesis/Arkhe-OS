@@ -1,0 +1,20 @@
+# UCB1 Bandit Configuration
+exploration:
+  constant: 2.0
+  warm_start_reward: 0.5
+  warm_start_launches: 2
+
+mercy_gap:
+  target: 0.07
+  min: 0.04
+  max: 0.10
+  penalty_factor: 2.0
+
+reward_weights:
+  latency: 0.4
+  power: 0.3
+  mercy: 0.3
+
+baselines:
+  latency_us: 500.0
+  power_mw: 150.0

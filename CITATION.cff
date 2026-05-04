@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+title: "Verifiable Homeostatic Manifold Discovery in Quantum Oscillator Networks"
+message: "If you use this software, please cite the preprint and the Zenodo archive."
+authors:
+  - given-names: Rafael
+    family-names: Oliveira
+    orcid: "https://orcid.org/0009-0005-2697-4668"
+repository-code: "https://github.com/ARKHE-OS/crystal-brain"
+doi: "10.5281/zenodo.ARKHE_CRYSTAL_BRAIN"
+license: "CC-BY-4.0"
+date-released: "2026-05-03"

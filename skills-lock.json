@@ -19,65 +19,65 @@
       "skillPath": "skills/fortytwo-mcp/SKILL.md",
       "computedHash": "31751fb6b691c047240d05a112f49113509d1d5f77a87b8afbf3cc070fea30c6"
     },
-    "grill-me": {
-      "source": "mattpocock/skills",
+    "tribev2": {
+      "source": "facebookresearch/tribev2",
       "sourceType": "github",
-      "skillPath": "skills/productivity/grill-me/SKILL.md",
-      "computedHash": "784f0dbb7403b0f00324bce9a112f715342777a0daee7bbb7385f9c6f0a170ea"
+      "skillPath": "skills/tribev2/SKILL.md",
+      "computedHash": "63dd2da3470700a1fa7a57c79e085830c95e504228dbcaa650f8bf9dbfb90bff"
     },
-    "grill-with-docs": {
-      "source": "mattpocock/skills",
+    "urbit": {
+      "source": "urbit/urbit",
       "sourceType": "github",
-      "skillPath": "skills/engineering/grill-with-docs/SKILL.md",
-      "computedHash": "ea225e10406dbb6a18ba97af34e4e9313424438195cd16e657635f841b6e7a2f"
+      "skillPath": "skills/urbit/SKILL.md",
+      "computedHash": "84c45b284579501b17241b119f18df0d1d95c157b2960f440377fbca6c1c19f1"
     },
-    "improve-codebase-architecture": {
-      "source": "mattpocock/skills",
+    "software-copyright-materials": {
+      "source": "Fokkyp/SoftwareCopyright-Skill",
       "sourceType": "github",
-      "skillPath": "skills/engineering/improve-codebase-architecture/SKILL.md",
-      "computedHash": "c77b86b4332919499608f9af1880074e1fec65a59b95c70c27a9f39cd137865e"
+      "skillPath": "skills/software-copyright-materials/SKILL.md",
+      "computedHash": "ab53d96502e1c051e14e6ad64e9f569c953b0efb5aac2fa97f223dfc71db44ea"
     },
-    "setup-matt-pocock-skills": {
-      "source": "mattpocock/skills",
+    "peft": {
+      "source": "huggingface/peft",
       "sourceType": "github",
-      "skillPath": "skills/engineering/setup-matt-pocock-skills/SKILL.md",
-      "computedHash": "3a32f8f1ed8160c9d286a2aabe88ee9b884c6f3f88a7a6c47b7d5d552c959587"
+      "skillPath": "skills/peft/SKILL.md",
+      "computedHash": "c89c38393c363ae3b16e0e41608df37207111c2ad5c9c7424af17928e8478186"
     },
-    "tdd": {
-      "source": "mattpocock/skills",
+    "llamafactory": {
+      "source": "hiyouga/LlamaFactory",
       "sourceType": "github",
-      "skillPath": "skills/engineering/tdd/SKILL.md",
-      "computedHash": "15a7b5e36383ebadb2dec5e586679e55e9663d292da418926b8da6fc0ef27d84"
+      "skillPath": "skills/llamafactory/SKILL.md",
+      "computedHash": "ca4800a55bcf0c068ff39d2ab9b96fd114e4e13250d49e0132e58b85bfa13a61"
     },
-    "to-issues": {
-      "source": "mattpocock/skills",
+    "deepspeed": {
+      "source": "deepspeedai/DeepSpeed",
       "sourceType": "github",
-      "skillPath": "skills/engineering/to-issues/SKILL.md",
-      "computedHash": "73a91f30784523aa59ec9b02769576ebfc738e2cd5ad8f6441076031f0a5d5ac"
+      "skillPath": "skills/deepspeed/SKILL.md",
+      "computedHash": "3aadfe753146c60c405083e564cae29e6f0839741a9292aef3cf68d83fcc942c"
     },
-    "to-prd": {
-      "source": "mattpocock/skills",
+    "trl": {
+      "source": "huggingface/trl",
       "sourceType": "github",
-      "skillPath": "skills/engineering/to-prd/SKILL.md",
-      "computedHash": "fd8c259f9c44eff08e29a1a2fc71a806a3568d279a55387a361f78620b10f2aa"
+      "skillPath": "skills/trl/SKILL.md",
+      "computedHash": "011f73120ed61a0c330d0dc45fab81f12b83f00f91e7adbaa4365489fbd03674"
     },
-    "triage": {
-      "source": "mattpocock/skills",
+    "axolotl": {
+      "source": "axolotl-ai-cloud/axolotl",
       "sourceType": "github",
-      "skillPath": "skills/engineering/triage/SKILL.md",
-      "computedHash": "2b6efb6da12d92551772fcc04acf331f4e0e6f7bd9d4cb23ce0b301e0b128feb"
+      "skillPath": "skills/axolotl/SKILL.md",
+      "computedHash": "182b81b37ed8276d938c73242266c29fd97113fcac82d209b4cb86567d8084cd"
     },
-    "write-a-skill": {
-      "source": "mattpocock/skills",
+    "unsloth": {
+      "source": "unslothai/unsloth",
       "sourceType": "github",
-      "skillPath": "skills/productivity/write-a-skill/SKILL.md",
-      "computedHash": "b44d8aab2ead83c716e01af4c9a24ccc4575ce70ad58ec4f1749fb88c9cc82ba"
+      "skillPath": "skills/unsloth/SKILL.md",
+      "computedHash": "917eb465e52ec937eb37ae34657af334dbef037f363c923370b1faf879b6c01e"
     },
-    "zoom-out": {
-      "source": "mattpocock/skills",
+    "sigdigger": {
+      "source": "BatchDrake/SigDigger",
       "sourceType": "github",
-      "skillPath": "skills/engineering/zoom-out/SKILL.md",
-      "computedHash": "8357aeaece3b709c442eab67e64b86844e05e2f1ea95b109565eba50b6def36e"
+      "skillPath": "skills/sigdigger/SKILL.md",
+      "computedHash": "8a60205da68d6900cf355bfdabc78ebc5cab57783acab84991bb832ce839b2e4"
     }
   }
 }

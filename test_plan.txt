@@ -1,0 +1,9 @@
+1. Implement the first part of Substrato 295: `arkhe_experimental_non_associativity_v295.py`.
+   - Goal: Experimental Proof of Atomic Non-Associativity.
+   - Detect non-associative octonionic signatures in the entanglement of three particles, verifying that (AB)C != A(BC).
+2. Implement the second part of Substrato 295: `arkhe_polarization_quaternionic_v295.py`.
+   - Goal: Manipulate polarization via quaternionic multiplication.
+   - Show that non-commutativity of quaternion multiplication impacts wave propagation in photonics: q1*q2 != q2*q1.
+3. Add tests or assertions to ensure the mathematical operations follow the algebraic ontology, like the Fano plane for octonions, and quaternion rotations.
+4. Call pre-commit instructions to ensure everything is verified.
+5. Submit changes.

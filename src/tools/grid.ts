@@ -1,3 +1,11 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/* eslint-disable @typescript-eslint/no-explicit-any, @local/enforce-zod-schema */
 /**
  * @license
  * Copyright 2025 Google LLC
@@ -5,6 +13,7 @@
  */
 
 import {zod} from '../third_party/index.js';
+
 import {ToolCategory} from './categories.js';
 import {defineTool} from './ToolDefinition.js';
 

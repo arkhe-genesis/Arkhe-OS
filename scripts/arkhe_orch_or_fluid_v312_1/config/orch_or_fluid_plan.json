@@ -1,0 +1,12 @@
+{
+  "test1": {
+    "grid_sizes": [16, 32, 64, 128],
+    "n_trials": 50
+  },
+  "test2": {
+    "n_trials": 50
+  },
+  "test3": {
+    "sequences": ["ABC", "A(BC)", "(AB)C"]
+  }
+}

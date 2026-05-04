@@ -1,8 +1,19 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/marketplace/quantumEthicalTalentMarketplace.ts
 // Mercado de Talentos Ético Quântico: matching descentralizado com credenciais verificáveis e privacidade ZKP
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { createHash } from 'crypto';
-import { EthicalPrinciple, QuantumEthicalCredential } from '@/types/ethics';
+
+import { createHash } from 'node:crypto';
+
+import type { QuantumEthicalCredential } from '@/types/ethics';
+import { EthicalPrinciple } from '@/types/ethics';
 
 export interface EthicalJobPosting {
   postingId: string;
@@ -21,8 +32,8 @@ export interface TalentMatch {
 }
 
 export class QuantumEthicalTalentMarketplace {
-  private postings: Map<string, EthicalJobPosting> = new Map();
-  private credentials: Map<string, QuantumEthicalCredential> = new Map();
+  private postings = new Map<string, EthicalJobPosting>();
+  private credentials = new Map<string, QuantumEthicalCredential>();
 
   constructor() {
     // Seed initial job
@@ -45,7 +56,7 @@ export class QuantumEthicalTalentMarketplace {
 
   async executeMatching(postingId: string): Promise<TalentMatch[]> {
     const posting = this.postings.get(postingId);
-    if (!posting) return [];
+    if (!posting) {return [];}
 
     return Array.from(this.credentials.values()).map(cred => ({
       matchId: `match_${cred.credentialId || cred.talentId}_${postingId}`,

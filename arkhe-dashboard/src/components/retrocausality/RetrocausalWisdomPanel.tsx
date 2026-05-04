@@ -1,11 +1,20 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/retrocausality/RetrocausalWisdomPanel.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import { retrocausalWisdomEcho } from '@/lib/retrocausality/retrocausalWisdomEcho';
 import { EthicalPrinciple } from '@/types/ethics';
 
 export default function RetrocausalWisdomPanel() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [dashboard, setDashboard] = useState<any>(null);
 
   useEffect(() => {
@@ -47,6 +56,7 @@ export default function RetrocausalWisdomPanel() {
 
           <div className="space-y-2">
             <p className="text-[8px] text-slate-500 font-bold uppercase tracking-widest">Active Echos</p>
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             {dashboard.recentEchoes.map((e: any) => (
               <div key={e.echoId} className="p-2 bg-white/5 rounded border border-white/5">
                 <p className="text-[9px] text-white line-clamp-1 font-medium">{e.wisdomContent}</p>

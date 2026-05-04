@@ -1,0 +1,124 @@
+# GCP Platform Configuration for ARKHE OS
+platform:
+  type: gcp
+  displayName: "ARKHE OS on Google Cloud Platform"
+
+# GCP project and identity
+gcp:
+  projectId: ${GCP_PROJECT_ID}
+  # Location: regional (e.g., "us-central1") or zonal (e.g., "us-central1-a")
+  location: ${GCP_LOCATION:us-central1}
+  # Authentication: application default credentials, service account key, or workload identity federation
+  authentication:
+    type: workload_identity  # Recommended for GKE
+    serviceAccount: ${GCP_SERVICE_ACCOUNT:arkhe-sa@${GCP_PROJECT_ID}.iam.gserviceaccount.com}
+    # Scopes for GCP API access
+    scopes:
+      - "https://www.googleapis.com/auth/cloud-platform"
+      - "https://www.googleapis.com/auth/monitoring.write"
+      - "https://www.googleapis.com/auth/secretmanager"
+
+# Google Kubernetes Engine (GKE) configuration
+gke:
+  clusterName: ${GCP_GKE_CLUSTER:arkhe-gke-prod}
+  # Node pool configuration
+  nodePools:
+    - name: arkhe-system
+      machineType: n2-standard-4
+      minNodeCount: 3
+      maxNodeCount: 10
+      autoscaling:
+        enabled: true
+        minNodeCount: 3
+        maxNodeCount: 10
+      labels:
+        workload: arkhe-operator
+      taints: []
+    - name: arkhe-user
+      machineType: n2-standard-8
+      minNodeCount: 6
+      maxNodeCount: 30
+      autoscaling:
+        enabled: true
+      labels:
+        workload: arkhe-services
+      # Preemptible nodes for cost optimization (fault-tolerant workloads)
+      preemptible: false
+
+# Secret Manager configuration
+secretManager:
+  prefix: "arkhe"
+  # Replication: automatic (multi-region) or user-managed (specific regions)
+  replication: automatic
+  # Rotation policy for sensitive secrets
+  rotation:
+    enabled: true
+    nextRotationTime: "90d"
+    rotationPeriod: "90d"
+
+# Cloud Monitoring and Logging
+monitoring:
+  metricsPrefix: "custom.googleapis.com/arkhe"
+  logSink:
+    name: "arkhe-logs"
+    destination: "logging.googleapis.com/projects/${GCP_PROJECT_ID}/locations/global/buckets/_Default"
+    filter: 'resource.type="k8s_container" AND labels."k8s-pod/app_kubernetes_io/name"="arkhe"'
+  # Alert policies for ARKHE metrics
+  alertPolicies:
+    - name: "arkhe-certificate-expiry-warning"
+      condition: 'metric.type="custom.googleapis.com/arkhe/certificate_expiry_seconds" AND metric.value < 604800'
+      notificationChannels: ["projects/${GCP_PROJECT_ID}/notificationChannels/${SLACK_CHANNEL_ID}"]
+
+# Certificate Manager configuration
+certificateManager:
+  # Use Google-managed certificates for public domains
+  googleManaged:
+    enabled: true
+    domains:
+      - "${SERVICE_NAME}.${NAMESPACE}.svc.cluster.local"
+  # Or integrate with external CA via DNS-01 challenge
+  externalCa:
+    enabled: false
+    provider: "letsencrypt"
+    dnsProvider: "cloud-dns"
+
+# Network configuration
+network:
+  vpcName: ${GCP_VPC:arkhe-vpc-prod}
+  subnetName: ${GCP_SUBNET:arkhe-services}
+  # Private Google Access for VPC
+  privateGoogleAccess: true
+  # VPC Service Controls perimeter (if using)
+  servicePerimeter:
+    enabled: false
+    perimeterName: ${GCP_SERVICE_PERIMETER:}
+
+# Security and compliance
+security:
+  # Binary Authorization for GKE (container image attestation)
+  binaryAuthorization:
+    enabled: true
+    policyName: "arkhe-binauthz-policy"
+  # Confidential GKE nodes (AMD SEV-SNP)
+  confidentialNodes:
+    enabled: false  # Enable for high-security workloads
+  # Shielded GKE nodes
+  shieldedNodes:
+    enabled: true
+    integrityMonitoring: true
+    secureBoot: true
+
+# Cost optimization
+cost:
+  # Committed use discounts for predictable workloads
+  committedUse:
+    enabled: true
+    term: "1_year"
+    commitmentName: "arkhe-cud-1y"
+  # Sustained use discounts (automatic on GCP)
+  sustainedUse:
+    enabled: true
+  # Preemptible/Spot VMs for batch workloads
+  spotInstances:
+    enabled: true
+    maxPrice: "ON_DEMAND"  # Pay up to on-demand price

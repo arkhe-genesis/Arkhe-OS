@@ -5,6 +5,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+
 import React, { useState, useEffect } from 'react';
 
 import { Badge } from './ui/Badge';

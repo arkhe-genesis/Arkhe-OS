@@ -1,0 +1,25 @@
+paper_reference: "Kalash et al., Nature Communications (2026)"
+experimental_date: "2026-04-15"
+squeezing_config:
+  num_spatial_modes: 9
+  detection_efficiency: 0.003
+  observed_squeezing_db: -7.9
+  state_purity: 0.78
+  substrate_82_ellipticity: 0.34
+  substrate_83_torsion: 0.28
+  substrate_84_wigner_neg: -0.042
+attractor_config:
+  parametric_gain: 15.0
+  loss_tolerance: 0.997
+  detection_efficiency: 0.003
+  recurrence_depth: 5
+  coherence_threshold: 0.85
+  nonlinear_coupling: 0.12
+cluster_config:
+  max_cluster_nodes: 5
+  simultaneous_pairs_monitored: 36
+  effective_spatial_modes: 50
+  lattice_dimensions: [3, 4]
+  periodic_boundaries: true
+  embedding_tolerance: 0.15
+overall_validation_threshold: 0.85

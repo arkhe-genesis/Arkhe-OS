@@ -1,0 +1,19 @@
+{
+  "instruction_name": "track3_octonionic_associator",
+  "public_inputs": {
+    "grid_size": 48,
+    "n_points": 2304,
+    "fano_table_commitment": "sha256:fano_v1.0"
+  },
+  "public_outputs": {
+    "associator_norm": 6.027528172088119,
+    "moufang_p": 4.37e-54,
+    "non_associative_detected": true,
+    "interpretation": "octonionic structure detected"
+  },
+  "proof": {
+    "proof_hash": "fd7db14f76843437",
+    "verified": true,
+    "proof_type": "certification"
+  }
+}

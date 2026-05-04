@@ -1,0 +1,33 @@
+{
+  "valid": true,
+  "details": [
+    {
+      "metric": "capture_fraction_final",
+      "arkhe_value": 0.85,
+      "prl_value": 0.85,
+      "match": true,
+      "description": "Fra\u00e7\u00e3o CAPTURE final vs. coer\u00eancia extremal"
+    },
+    {
+      "metric": "transition_time",
+      "arkhe_value": 150,
+      "prl_value": true,
+      "match": true,
+      "description": "Tempo de transi\u00e7\u00e3o: finito (n\u00e3o assint\u00f3tico)"
+    },
+    {
+      "metric": "symmetry_group",
+      "arkhe_value": "SU2_x_Z4",
+      "prl_value": "SU(2) \u00d7 Z\u2084",
+      "match": true,
+      "description": "Grupo de simetria do estado coerente"
+    },
+    {
+      "metric": "gluing_order",
+      "arkhe_value": 4,
+      "prl_value": 4,
+      "match": true,
+      "description": "Ordem de diferenciabilidade da transi\u00e7\u00e3o"
+    }
+  ]
+}

@@ -1,8 +1,18 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/security/safeCore.ts
 // Safe Core: motor de consenso geométrico distribuído sem comunicação direta entre agentes
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { createHash } from 'crypto';
-import { EthicalPrinciple } from '@/types/ethics';
+
+import { createHash } from 'node:crypto';
+
+import type { EthicalPrinciple } from '@/types/ethics';
 
 export interface GeometricScaffold {
   scaffoldId: string;
@@ -47,9 +57,9 @@ export interface SafeCoreConfig {
 
 export class SafeCoreEngine {
   private config: SafeCoreConfig;
-  private scaffolds: Map<string, GeometricScaffold> = new Map();
-  private agentContexts: Map<string, AgentContext> = new Map();
-  private consensusRegistry: Map<string, GeometricConsensus> = new Map();
+  private scaffolds = new Map<string, GeometricScaffold>();
+  private agentContexts = new Map<string, AgentContext>();
+  private consensusRegistry = new Map<string, GeometricConsensus>();
 
   constructor(config: Partial<SafeCoreConfig> = {}) {
     this.config = {

@@ -44,6 +44,8 @@ import * as spectraTools from './spectra.js';
 import * as storageTools from './storage.js';
 import * as tauTools from './tau.js';
 import type {ToolDefinition} from './ToolDefinition.js';
+import * as tribev2Tools from './tribev2.js';
+import * as urbitTools from './urbit.js';
 
 export const createTools = (args: ParsedArguments) => {
   const rawTools = args.slim
@@ -85,6 +87,8 @@ export const createTools = (args: ParsedArguments) => {
         ...Object.values(meshtasticTools),
         ...Object.values(gnoTools),
         ...Object.values(nashTools),
+        ...Object.values(tribev2Tools),
+        ...Object.values(urbitTools),
       ];
 
   const tools = [];

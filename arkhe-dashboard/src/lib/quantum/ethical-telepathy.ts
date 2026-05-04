@@ -1,11 +1,22 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/quantum/ethical-telepathy.ts
-import { QuantumIntention } from '@/types/ethics';
-import { io, Socket } from 'socket.io-client';
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
+
+import type { Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
+
+import type { QuantumIntention } from '@/types/ethics';
 
 export class EthicalQuantumTelepathy {
   private socket: Socket | null = null;
-  private entangledConsciousnesses: Map<string, string> = new Map();
-  private intentionBuffer: Map<string, QuantumIntention[]> = new Map();
+  private entangledConsciousnesses = new Map<string, string>();
+  private intentionBuffer = new Map<string, QuantumIntention[]>();
   private quantumChannelEstablished = false;
 
   constructor(private localConsciousnessId: string, private quantumEndpoint: string) {}

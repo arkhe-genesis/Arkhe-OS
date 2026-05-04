@@ -1,0 +1,15 @@
+{
+    "fingerprint": 0.58,
+    "base_rate": -0.29,
+    "classic_merkabah": {
+        "L": 256.0,
+        "correction": 5.985811069346254e-06,
+        "total_rate": -0.2899940141889306
+    },
+    "mini_merkabah": {
+        "L": 1.72,
+        "correction": 0.022260074391422247,
+        "total_rate": -0.26773992560857773
+    },
+    "amplification_factor": 3718.8067136661903
+}

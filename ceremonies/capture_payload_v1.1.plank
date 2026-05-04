@@ -1,0 +1,184 @@
+# Arquivo: ceremonies/capture_payload_v1.1.plank
+ceremony: capture_payload
+version: v∞.Ω.1.1  # Corrigido com validação física
+
+parameters:
+  payload_id: string
+  expected_mass_kg: float @ [100.0, 350.0]  # Corrigido: máximo 350 kg
+  expected_velocity_kms: float @ [0.0, 0.01]  # Modificado para docking suave (<10 m/s)
+  decelerator_kernel_hash: string
+
+optimization_targets:
+  phase: 0.07 ± 0.015 rad
+  latency_us: 500 ± 30 µs
+  power_kw: 150 ± 15 kW
+  safety_margin: 0.95 ± 0.025
+
+hard_constraints:
+  max_coil_current_A: 8000
+  max_deceleration_g: 5  # Reduzido para docking suave
+  safety_margin_floor: 0.90
+  energy_recovery_min: 0.90
+  capture_window_min_ms: 200  # Novo: janela mínima de captura
+
+preconditions:
+  assert verify_payload_vc(payload_id) == true
+  assert expected_mass_kg within [100, 350]  # Corrigido
+  assert expected_velocity_kms within [0.0, 0.01]  # Docking suave
+
+  # 4D coherence checks (mantidos)
+  coherence = fetch_4d_coherence("orbital_receiver")
+  assert coherence.phase > 0.8
+  assert coherence.latency_us < 600
+  assert coherence.power_kw < 180
+  assert coherence.safety_margin > 0.95
+
+  # Verificação de trajetória prevista
+  trajectory = compute_payload_trajectory(payload_id)
+  assert trajectory.uncertainty_ms < 50  # Previsão precisa para janela de 200 ms
+  assert trajectory.velocity_kms <= 2.5  # Tether não captura acima de 2.5 km/s
+
+  # Hardware health (atualizado)
+  assert decelerator_cryo_nominal()
+  assert smes_soc > 0.85
+  assert capacitor_bank_charged()  # Novo: capacitor bank deve estar carregado
+  assert safety_enclave_self_test_passed()
+
+sequence:
+  at T-600s: {
+    align_grapple_car(expected_trajectory = trajectory)
+    start_telemetry_stream()
+  }
+
+  at T-60s: {
+    # Verificação final de coerência 4D + trajetória
+    coherence = fetch_4d_coherence("orbital_receiver")
+    if coherence.safety_margin < 0.92:
+      abort("Safety margin degraded")
+    if coherence.phase < 0.75:
+      abort("Coil synchronization degraded")
+
+    # Verificação de janela de captura ampliada
+    capture_window = estimate_capture_window(trajectory)
+    if capture_window < 200 ms:
+      abort("Capture window too narrow")
+  }
+
+  at T-10s: {
+    # Armament do desacelerador e confirmação de link
+    arm_decelerator()
+    confirm_payload_link(payload_id)
+    enable_emergency_abort()
+
+    # Carregar capacitor bank para pico de desaceleração
+    charge_capacitor_bank(target_energy_MJ = 50)
+  }
+
+  at T=0: {
+    # Soft-capture magnético passivo (amplia janela para 200 ms)
+    engage_soft_capture_magnetic()
+
+    # Após confirmação de grappling, ativar clamp indutivo
+    if grapple_confirmed():
+      clamp_grapple()
+      enable_momentum_transfer()
+
+    # Compilar kernel de desaceleração
+    kernel = llm_compile(
+      ceremony = "decelerator_sequence",
+      params = {
+        payload_mass: expected_mass_kg,
+        entry_velocity: expected_velocity_kms,
+        deceleration_profile: "trapezoidal_5g"  # Docking suave
+      },
+      hardware_target = "zynq_ultrascale_fpga"
+    )
+
+    # Verificar contratos de segurança (atualizados)
+    assert verify_kernel_contract(kernel, {
+      max_coil_current: 8000.0,
+      max_deceleration_g: 5.0,  # Reduzido
+      energy_recovery_min: 0.90,
+      safety_margin_preserved: true,
+      capacitor_bank_usage: true  # Novo: usa capacitor bank para pico
+    })
+
+    fpga_load_kernel(kernel)
+    fpga_start_execution()
+  }
+
+  at T+30s: {
+    # Ativar desacelerador com segmentos em paralelo
+    activate_decelerator(
+      kernel_hash = kernel.sass_hash,
+      active_segments = compute_optimal_segments(expected_mass_kg, expected_velocity_kms)
+    )
+
+    # Transferir carga de desaceleração para capacitor bank durante pico
+    enable_capacitor_buffering(duration_s = 3.3)
+  }
+
+  during deceleration {
+    telemetry = stream_telemetry()
+
+    # Monitoramento 4D (mantido)
+    if telemetry.coherence.safety_margin < 0.90:
+      emergency_abort("Safety margin critical")
+
+    # Limite de desaceleração corrigido
+    if telemetry.deceleration_g > 5.0:
+      emergency_abort("Deceleration limit exceeded")
+
+    # Monitoramento térmico de pico (novo)
+    if telemetry.thermal_load_kw > 44.0:  # Limite de radiadores base
+      engage_pcm_thermal_storage()  # Ativar armazenamento PCM
+      if telemetry.thermal_load_kw > 224.0:  # Base + emergência
+        reduce_deceleration_rate(safety_margin = 0.1)
+  }
+
+  at T+120s: {
+    # Payload em repouso; liberar para docking bay
+    release_payload()
+
+    # Verificação de recuperação de energia (atualizada para KE maior)
+    recovered_energy = measure_smes_charge_delta()
+    initial_ke = 0.5 * expected_mass_kg * (expected_velocity_kms * 1000)**2
+    recovery_efficiency = recovered_energy / initial_ke
+    assert recovery_efficiency >= 0.90, f"Recuperação {recovery_efficiency:.3f} < 90%"
+
+    # Reset do capacitor bank para próxima captura
+    recharge_capacitor_bank_from_smes()
+
+    # Log de captura no ledger ético (mantido)
+    capture_vc = create_capture_completion_vc({
+      payload_id: payload_id,
+      entry_velocity_kms: expected_velocity_kms,
+      exit_velocity_kms: 0.0,
+      energy_recovered_GJ: recovered_energy / 1e9,
+      coherence_profile: recorded_4d_coherence,
+      kernel_hash: kernel.sass_hash,
+      operator_signature: sign_with_operator_key(),
+      thermal_management_log: recorded_thermal_profile  # Novo
+    })
+
+    # Selar face triangular no ledger (mantido)
+    seal_triangular_face(
+      earth_did = "did:arkhe:terrestrial:ops-consortium",
+      moon_did = "did:arkhe:celestial:lunar:mass-driver-1",
+      orbital_did = "did:arkhe:orbital:eml1:receiver-1",
+      payload_id = payload_id,
+      capture_vc_hash = hash(capture_vc)
+    )
+
+    publish_to_ledger(capture_vc)
+
+    # Reset de subsistemas (atualizado)
+    reset_decelerator()
+    discharge_pcm_to_radiators()  # Novo: liberar calor armazenado
+  }
+
+postconditions:
+  assert capture_completion_vc.valid == true
+  assert capture_completion_vc.payload_id == payload_id
+  assert capture_completion_vc.timestamp within [now - 5s, now + 5s]
+  assert triangular_face_sealed == true

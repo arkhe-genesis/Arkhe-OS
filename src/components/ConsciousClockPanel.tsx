@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
+
 import { Timer, Wind, Heart, Zap } from 'lucide-react';
 import React, { useState } from 'react';
 

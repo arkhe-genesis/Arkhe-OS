@@ -1,9 +1,18 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/lib/zkp/post-quantum-zkp.ts
-import { ZKPProof } from '@/types/ethics';
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-empty-function */
+
+import type { ZKPProof } from '@/types/ethics';
 
 export class PostQuantumZKP {
   private static instance: PostQuantumZKP;
-  private verificationKeys: Map<string, any> = new Map();
+  private verificationKeys = new Map<string, any>();
 
   private constructor() {}
 
@@ -22,8 +31,8 @@ export class PostQuantumZKP {
 
   // Gerar prova ZKP para validação ética
   async generateEthicalProof(
-    privateInputs: { [key: string]: any },
-    publicInputs: { [key: string]: any },
+    privateInputs: Record<string, any>,
+    publicInputs: Record<string, any>,
     circuitName: string
   ): Promise<ZKPProof> {
     // Preparar inputs para o circuito
@@ -57,7 +66,7 @@ export class PostQuantumZKP {
   }
 
   // Verificar prova ZKP sem revelar inputs privados
-  async verifyProof(zkpProof: ZKPProof, _publicInputs: { [key: string]: any }): Promise<boolean> {
+  async verifyProof(zkpProof: ZKPProof, _publicInputs: Record<string, any>): Promise<boolean> {
     const vKey = this.verificationKeys.get(zkpProof.circuitName);
     if (!vKey && zkpProof.circuitName !== 'ethical_validation') {
       throw new Error(`Verification key not found for circuit: ${zkpProof.circuitName}`);

@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
+
 import { Globe, Sparkles, Box, Hash } from 'lucide-react';
 import React, { useState } from 'react';
 

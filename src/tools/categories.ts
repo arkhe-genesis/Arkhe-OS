@@ -25,6 +25,7 @@ export enum ToolCategory {
   FORTYTWO = 'fortytwo',
   GRID = 'grid',
   NASH = 'nash',
+  URBIT = 'urbit',
 }
 
 export const labels = {
@@ -48,4 +49,5 @@ export const labels = {
   [ToolCategory.FORTYTWO]: 'Fortytwo Prime Collective',
   [ToolCategory.GRID]: 'Lightspark Grid API',
   [ToolCategory.NASH]: 'Nash Identity Safe',
+  [ToolCategory.URBIT]: 'Urbit',
 };

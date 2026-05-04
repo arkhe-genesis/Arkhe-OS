@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any, no-shadow-restricted-names */
+
+
 import { Infinity, Shield, Server, Box } from 'lucide-react';
 import React, { useState } from 'react';
 

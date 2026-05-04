@@ -116,13 +116,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
 // Start the server
 async function main() {
-  const { logger } = await import('../../server/logger.ts');
+  const { logger } = await import('../../server/logger');
   const transport = new StdioServerTransport();
   await server.connect(transport);
   logger.error("🜏 GPD-Arkhe Bridge MCP Server running on stdio");
 }
 
 main().catch(async (err) => {
-  const { logger } = await import('../../server/logger.ts');
+  const { logger } = await import('../../server/logger');
   logger.error(err);
 });

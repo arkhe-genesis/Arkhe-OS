@@ -11,4 +11,5 @@ pydantic>=2.0.0
 streamlit
 plotly
 requests
+openai
 torch

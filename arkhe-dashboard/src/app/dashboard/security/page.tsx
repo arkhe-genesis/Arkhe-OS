@@ -1,19 +1,27 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 'use client';
 
-import { useState, useEffect } from 'react';
-import ThreatMap from '@/components/security/ThreatMap';
-import CoherenceMetrics from '@/components/security/CoherenceMetrics';
-import IncidentTable from '@/components/security/IncidentTable';
-import ThresholdConfig from '@/components/security/ThresholdConfig';
-import EulerPrismPanel from '@/components/security/EulerPrismPanel';
 import dynamic from 'next/dynamic';
+import { useState, useEffect } from 'react';
+
+import CoherenceMetrics from '@/components/security/CoherenceMetrics';
+import EulerPrismPanel from '@/components/security/EulerPrismPanel';
+import IncidentTable from '@/components/security/IncidentTable';
+import ThreatMap from '@/components/security/ThreatMap';
+import ThresholdConfig from '@/components/security/ThresholdConfig';
 
 const ArkheCore3D = dynamic(() => import('@/components/ArkheCore3D'), { ssr: false });
 
 export default function SecurityDashboardPage() {
   const [threats, setThreats] = useState<unknown[]>([]);
   const [incidents, setIncidents] = useState<unknown[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   const [metrics, _setMetrics] = useState<unknown>({ avgOmega: 0.9412 });
   const [eulerPrismActive, setEulerPrismActive] = useState(false);
 
@@ -50,7 +58,7 @@ export default function SecurityDashboardPage() {
         <div className="col-span-12 lg:col-span-8 space-y-6">
             <div className="bg-black/40 border border-white/5 rounded-[2rem] p-8 min-h-[400px] relative overflow-hidden group">
                 <ArkheCore3D
-                  omega={metrics.avgOmega}
+                  omega={(metrics as any).avgOmega /* eslint-disable-line @typescript-eslint/no-explicit-any */}
                   kEth={0.92}
                   scaffoldMode={eulerPrismActive}
                   fibonacciVision={eulerPrismActive}

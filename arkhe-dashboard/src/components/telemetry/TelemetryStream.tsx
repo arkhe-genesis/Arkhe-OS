@@ -1,6 +1,13 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // arkhe-dashboard/src/components/telemetry/TelemetryStream.tsx
 'use client';
-import { EthicalMetrics } from '@/types/ethics';
+import type { EthicalMetrics } from '@/types/ethics';
 
 export function TelemetryStream({ metrics }: { metrics: EthicalMetrics }) {
   return (

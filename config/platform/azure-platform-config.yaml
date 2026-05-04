@@ -1,0 +1,131 @@
+# Azure Platform Configuration for ARKHE OS
+platform:
+  type: azure
+  displayName: "ARKHE OS on Microsoft Azure"
+
+# Azure subscription and identity
+azure:
+  subscriptionId: ${AZURE_SUBSCRIPTION_ID}
+  tenantId: ${AZURE_TENANT_ID}
+  # Use managed identity in production; service principal for local dev
+  authentication:
+    type: managed_identity  # or "service_principal"
+    clientId: ${AZURE_CLIENT_ID:}  # Required for service_principal
+
+# Resource grouping
+resourceGroup:
+  name: ${AZURE_RESOURCE_GROUP:arkhe-production}
+  location: ${AZURE_REGION:eastus}
+  tags:
+    environment: production
+    managed-by: arkhe-cert-operator
+    cost-center: platform-engineering
+
+# Azure Kubernetes Service (AKS) configuration
+aks:
+  clusterName: ${AZURE_AKS_CLUSTER:arkhe-aks-prod}
+  nodeResourceGroup: ${AZURE_AKS_NODE_RG:}  # Auto-discovered if empty
+  # Node pool configuration for ARKHE workloads
+  nodePools:
+    - name: arkhe-system
+      mode: System
+      vmSize: Standard_D4s_v4
+      minCount: 3
+      maxCount: 10
+      enableAutoScaling: true
+      labels:
+        workload: arkhe-operator
+      taints: []
+    - name: arkhe-user
+      mode: User
+      vmSize: Standard_D8s_v4
+      minCount: 6
+      maxCount: 30
+      enableAutoScaling: true
+      labels:
+        workload: arkhe-services
+      taints: []
+
+# Azure Key Vault for secrets and certificates
+keyVault:
+  name: ${AZURE_KEY_VAULT:arkhe-kv-prod}
+  # Certificate policy for auto-issued certs
+  certificatePolicy:
+    issuer: "${AZURE_CERT_ISSUER:DigiCert}"  # Or "Self" for self-signed
+    subject: "CN=${SERVICE_NAME}.${NAMESPACE}.svc.cluster.local"
+    validityMonths: 3
+    keyType: RSA
+    keySize: 2048
+    reuseKey: false
+  # Secret naming convention
+  secretPrefix: "arkhe"
+  # Enable purge protection for production
+  enablePurgeProtection: true
+  softDeleteRetentionDays: 90
+
+# Azure Monitor for observability
+monitoring:
+  workspaceId: ${AZURE_LOG_ANALYTICS_WORKSPACE}
+  metricsNamespace: "arkhe/os"
+  # Diagnostic settings for ARKHE resources
+  diagnostics:
+    enabled: true
+    categories:
+      - "kube-apiserver"
+      - "kube-controller-manager"
+      - "kube-scheduler"
+      - "cluster-autoscaler"
+      - "guard"
+    retentionDays: 30
+
+# Network configuration
+network:
+  vnetName: ${AZURE_VNET:arkhe-vnet-prod}
+  subnetName: ${AZURE_SUBNET:arkhe-services}
+  # Private endpoint configuration for secure access
+  privateEndpoints:
+    keyVault: true
+    containerRegistry: true
+  # Azure CNI configuration
+  cni:
+    plugin: azure
+    dnsServiceIP: 10.0.0.10
+    serviceCidr: 10.0.0.0/16
+    dockerBridgeCidr: 172.17.0.1/16
+
+# Security and compliance
+security:
+  # Enable Azure Policy for ARKHE resources
+  policy:
+    enabled: true
+    initiatives:
+      - "Azure-CIS-1.3.0"
+      - "ARKHE-Security-Baseline"
+  # Azure Defender for threat protection
+  defender:
+    enabled: true
+    autoProvision: true
+  # Encryption at rest
+  encryption:
+    customerManagedKey: ${AZURE_CMK_ENABLED:false}
+    keyVaultKeyId: ${AZURE_CMK_KEY_ID:}
+
+# Cost optimization
+cost:
+  # Reserved instances for predictable workloads
+  reservedInstances:
+    enabled: true
+    term: "1_year"  # or "3_years"
+    paymentOption: "AllUpfront"
+  # Spot instances for fault-tolerant workloads
+  spotInstances:
+    enabled: true
+    evictionPolicy: "Deallocate"
+    maxBidPrice: -1  # Pay up to on-demand price
+
+# Auto-configuration flags
+autoConfigure:
+  aadIntegration: true  # Auto-configure Azure AD app registration
+  rbacAssignment: true  # Auto-assign RBAC roles to managed identity
+  diagnosticSettings: true  # Auto-enable diagnostic settings
+  networkPolicies: true  # Auto-configure Azure Network Policies

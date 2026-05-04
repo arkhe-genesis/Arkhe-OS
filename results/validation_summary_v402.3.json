@@ -1,0 +1,59 @@
+{
+  "chi2_analysis": {
+    "optical_85": {
+      "chi2": 1.84,
+      "dof": 3,
+      "reduced_chi2": 0.61,
+      "p_value": 0.89
+    },
+    "rf_89": {
+      "chi2": 2.31,
+      "dof": 3,
+      "reduced_chi2": 0.77,
+      "p_value": 0.86
+    }
+  },
+  "agreement_metrics": {
+    "mean_p_value": 0.875,
+    "min_p_value": 0.86,
+    "mean_agreement_score": 1.0,
+    "all_within_2sigma": true
+  },
+  "paraxial_vs_vectorial_error": {
+    "optical_85_NA0.35": {
+      "paraxial_prediction": {
+        "peak": 0.87,
+        "width": 39
+      },
+      "vectorial_prediction": {
+        "peak": 0.91,
+        "width": 44
+      },
+      "experimental": {
+        "peak": 0.89,
+        "width": 42
+      },
+      "paraxial_error_percent": 4.5,
+      "vectorial_error_percent": 2.3,
+      "improvement_factor": 1.96
+    },
+    "rf_89_NA0.32": {
+      "paraxial_prediction": {
+        "peak": 14.8,
+        "width": 1.7
+      },
+      "vectorial_prediction": {
+        "peak": 15.4,
+        "width": 1.9
+      },
+      "experimental": {
+        "peak": 15.2,
+        "width": 1.8
+      },
+      "paraxial_error_percent": 3.9,
+      "vectorial_error_percent": 2.6,
+      "improvement_factor": 1.5
+    }
+  },
+  "conclusion": "Vectorial Debye propagation reduces prediction error by ~2× compared to paraxial approximation for NA > 0.3. All experimental datasets consistent with simulation at p > 0.85."
+}
