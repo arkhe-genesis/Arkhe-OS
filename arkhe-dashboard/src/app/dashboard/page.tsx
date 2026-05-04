@@ -20,13 +20,15 @@ import SynchronicityBlockchainPanel from '@/components/quantum/SynchronicityBloc
 import RetrocausalWisdomPanel from '@/components/retrocausality/RetrocausalWisdomPanel';
 import NeuralCoherenceBar from '@/components/security/NeuralCoherenceBar';
 import SafeCorePanel from '@/components/security/SafeCorePanel';
-import SafeCorePanel from '@/components/security/SafeCorePanel';
 import EthicalSimulatorPanel from '@/components/simulator/EthicalSimulatorPanel';
+import PoCNetworkPanel from '@/components/poc/PoCNetworkPanel';
 import TelemetryStream from '@/components/TelemetryStream';
 import ZKPVerificationPanel from '@/components/ZKPVerificationPanel';
 import {ethicalFederatedLearner} from '@/lib/ai/ethicalFederatedLearner';
 import {useZustandStore} from '@/lib/store';
+import {createTenant, listNetworks} from '@/lib/api-client';
 import type {EthicalMetrics} from '@/types/ethics';
+import type {NetworkSummary} from '@/types/api';
 
 const ArkheCore3D = dynamic(() => import('@/components/ArkheCore3D'), {
   ssr: false,
@@ -43,6 +45,28 @@ export default function DashboardPage() {
     Record<string, number>
   >({});
   const [activeTab, setActiveTab] = useState<'3d' | 'ar' | 'scaffold'>('3d');
+  const [networks, setNetworks] = useState<NetworkSummary[]>([]);
+  const [tenantId, setTenantId] = useState<string>('');
+
+  // Multi-tenant PoC network init
+  useEffect(() => {
+    const stored = localStorage.getItem('arkhe_tenant_id');
+    if (!stored) {
+      const newId = 'tenant_' + Math.random().toString(36).slice(2, 10);
+      localStorage.setItem('arkhe_tenant_id', newId);
+      setTenantId(newId);
+    } else {
+      setTenantId(stored);
+    }
+  }, []);
+
+  // Load coherence networks
+  useEffect(() => {
+    if (!tenantId) return;
+    void listNetworks(tenantId)
+      .then(setNetworks)
+      .catch(() => setNetworks([]));
+  }, [tenantId]);
 
   // Conexão WebSocket Simulada
   useEffect(() => {
@@ -122,7 +146,7 @@ export default function DashboardPage() {
               Arkhe OS <span className="text-cyan-400">v19-Collective</span>
             </h1>
             <p className="text-[10px] font-mono text-slate-500 tracking-[0.2em]">
-              ODÔMETRO: 002186 | STATUS: ACT_IV_SCAFFOLD
+              ODÔMETRO: 002186 | STATUS: ACT_IV_SCAFFOLD | TENANT: {tenantId.slice(0, 12)}...
             </p>
           </div>
         </div>
@@ -268,6 +292,7 @@ export default function DashboardPage() {
             <SynchronicityBlockchainPanel />
             <InterCathedralPanel />
             <CoherentMeditationPanel />
+            <PoCNetworkPanel networks={networks} tenantId={tenantId} />
             <CosmicMemoryViewer currentMetrics={metrics} />
             <HomomorphicTrainingPanel />
             <EthicalSimulatorPanel />

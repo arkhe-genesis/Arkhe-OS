@@ -7,10 +7,19 @@
 // arkhe-dashboard/src/app/api/telemetry/route.ts
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { fetchTelemetry } from '@/lib/api-client';
 
 export async function GET(_request: NextRequest) {
   try {
-    // Buscar métricas do núcleo C++ via proxy (simulado)
+    const telemetry = await fetchTelemetry();
+    return NextResponse.json({
+      success: true,
+      data: telemetry,
+      timestamp: Date.now(),
+    });
+  } catch (error) {
+    console.error('❌ Error fetching telemetry:', error);
+    // Fallback to local simulation
     return NextResponse.json({
       success: true,
       data: {
@@ -28,8 +37,5 @@ export async function GET(_request: NextRequest) {
       },
       timestamp: Date.now(),
     });
-  } catch (error) {
-    console.error('❌ Error fetching telemetry:', error);
-    return NextResponse.json({ success: false, error: 'Failed to fetch telemetry' }, { status: 500 });
   }
 }

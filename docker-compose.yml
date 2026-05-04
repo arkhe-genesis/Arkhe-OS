@@ -1,295 +1,55 @@
-version: '3.8'
+# Arkhe PoC SaaS — Docker Compose
+version: '3.9'
 
 services:
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.5.0
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
+  # FastAPI backend (PoC Core)
+  arkhe-api:
+    build:
+      context: .
+      dockerfile: arkhe-saas-backend/Dockerfile
+    container_name: arkhe-api
     ports:
-      - "22181:2181"
-    healthcheck:
-      test: echo stat | nc localhost 2181
-      interval: 10s
-      timeout: 10s
-      retries: 3
-    networks:
-      - cathedral-net
-
-  kafka:
-    image: confluentinc/cp-kafka:7.5.0
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://arkhe:arkhe_secret@db:5432/arkhe_poc
+      - CORS_ORIGINS=http://localhost:3000
     depends_on:
-      - zookeeper
-    ports:
-      - "29092:29092"
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_NUM_PARTITIONS: 12
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
-    healthcheck:
-      test: ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list"]
-      interval: 10s
-      timeout: 10s
-      retries: 3
-    networks:
-      - cathedral-net
+      db:
+        condition: service_healthy
+    restart: unless-stopped
 
-  postgres:
-    image: postgres:15
-    environment:
-      POSTGRES_USER: arkhe
-      POSTGRES_PASSWORD: arkhepassword
-      POSTGRES_DB: arkhedb
+  # Next.js dashboard
+  arkhe-dashboard:
+    build:
+      context: .
+      dockerfile: arkhe-dashboard/Dockerfile
+    container_name: arkhe-dashboard
     ports:
-      - "5432:5432"
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_ARKHE_API_URL=http://arkhe-api:8000
+      - NODE_ENV=production
+    depends_on:
+      arkhe-api:
+        condition: service_started
+    restart: unless-stopped
+
+  # PostgreSQL with RLS
+  db:
+    image: postgres:16-alpine
+    container_name: arkhe-db
+    environment:
+      - POSTGRES_USER=arkhe
+      - POSTGRES_PASSWORD=arkhe_secret
+      - POSTGRES_DB=arkhe_poc
+    volumes:
+      - arkhe_pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U arkhe"]
+      test: ["CMD-SHELL", "pg_isready -U arkhe -d arkhe_poc"]
       interval: 5s
       timeout: 5s
       retries: 5
-    networks:
-      - cathedral-net
-
-  arkhe-sophon-network:
-    build:
-      context: ./arkhe-sophon-network
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    depends_on:
-      kafka:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-    environment:
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/arkhedb
-      - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/arkhedb
-      - SPRING_DATASOURCE_USERNAME=arkhe
-      - SPRING_DATASOURCE_PASSWORD=arkhepassword
-    networks:
-      - cathedral-net
-
-  arkhe-crystal-brain:
-    build:
-      context: ./arkhe-sophon-network
-      dockerfile: Dockerfile
-    ports:
-      - "8082:8080"
-    depends_on:
-      kafka:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-    environment:
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/arkhedb
-      - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/arkhedb
-      - SPRING_DATASOURCE_USERNAME=arkhe
-      - SPRING_DATASOURCE_PASSWORD=arkhepassword
-    networks:
-      - cathedral-net
-
-  arkhe-octra:
-    build:
-      context: ./arkhe-sophon-network
-      dockerfile: Dockerfile
-    ports:
-      - "8083:8080"
-    depends_on:
-      kafka:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-    environment:
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/arkhedb
-      - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/arkhedb
-      - SPRING_DATASOURCE_USERNAME=arkhe
-      - SPRING_DATASOURCE_PASSWORD=arkhepassword
-    networks:
-      - cathedral-net
-
-  arkhe-visualization:
-    build:
-      context: ./arkhe-sophon-network
-      dockerfile: Dockerfile
-    ports:
-      - "8084:8080"
-    depends_on:
-      kafka:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-    environment:
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/arkhedb
-      - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/arkhedb
-      - SPRING_DATASOURCE_USERNAME=arkhe
-      - SPRING_DATASOURCE_PASSWORD=arkhepassword
-    networks:
-      - cathedral-net
-
-  arkhe-materials:
-    build:
-      context: ./arkhe-sophon-network
-      dockerfile: Dockerfile
-    ports:
-      - "8085:8080"
-    depends_on:
-      kafka:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-    environment:
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/arkhedb
-      - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/arkhedb
-      - SPRING_DATASOURCE_USERNAME=arkhe
-      - SPRING_DATASOURCE_PASSWORD=arkhepassword
-    networks:
-      - cathedral-net
-
-  arkhe-wigner:
-    build:
-      context: ./arkhe-sophon-network
-      dockerfile: Dockerfile
-    ports:
-      - "8086:8080"
-    depends_on:
-      kafka:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-    environment:
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/arkhedb
-      - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/arkhedb
-      - SPRING_DATASOURCE_USERNAME=arkhe
-      - SPRING_DATASOURCE_PASSWORD=arkhepassword
-    networks:
-      - cathedral-net
-
-  prometheus:
-    image: prom/prometheus:latest
-    ports:
-      - "9090:9090"
-    networks:
-      - cathedral-net
-
-  grafana:
-    image: grafana/grafana:latest
-    ports:
-      - "3000:3000"
-    networks:
-      - cathedral-net
-
-  spring-cloud-gateway:
-    build:
-      context: ./arkhe-sophon-network
-      dockerfile: Dockerfile
-    ports:
-      - "80:8080"
-    depends_on:
-      kafka:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-    networks:
-      - cathedral-net
-
-  # =========================================================
-  # ARKHE EXISTING SERVICES FROM THE BASE CATHEDRAL SYSTEM
-  # =========================================================
-  # GUARDIAO DO NOME (numa) — Resolve antes de tudo
-  numa:
-    image: ghcr.io/razvandimescu/numa:latest
-    container_name: catedral_numa
-    network_mode: host  # Porta 53/udp + 53/tcp requerem host networking
-    environment:
-      - NUMA_CONFIG=/config/numa.toml
-    volumes:
-      - ./configs/numa:/config:ro
-      - numa_cache:/var/lib/numa/cache
-    # ports: # Redundante com network_mode: host
     restart: unless-stopped
 
-  cathedrald-core:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    networks:
-      - cathedral-net
-    dns:
-      - 172.17.0.1
-    environment:
-      - PYTHONPATH=/app
-    depends_on:
-      - numa
-
-  quantum-bus:
-    build: .
-    command: python3 scripts/quantum_bus.py
-    networks:
-      - cathedral-net
-    dns:
-      - 172.17.0.1
-    depends_on:
-      - numa
-
-  gateway:
-    build: .
-    command: python3 scripts/gateway_bridge.py --port 8081
-    ports:
-      - "8081:8081" # Port updated from 8080 to prevent conflict with arkhe-sophon-network
-    networks:
-      - cathedral-net
-    dns:
-      - 172.17.0.1
-    depends_on:
-      - quantum-bus
-      - numa
-
-  entropy-monitor:
-    build: .
-    command: python3 scripts/entropy_monitor.py
-    networks:
-      - cathedral-net
-    dns:
-      - 172.17.0.1
-    depends_on:
-      - gateway
-      - numa
-
-  sapphire-node:
-    build: .
-    command: python3 scripts/global_handshake.py --server
-    networks:
-      - cathedral-net
-    dns:
-      - 172.17.0.1
-    depends_on:
-      - numa
-
-  diamond-node:
-    build: .
-    command: python3 scripts/global_handshake.py
-    networks:
-      - cathedral-net
-    dns:
-      - 172.17.0.1
-    depends_on:
-      - sapphire-node
-      - numa
-
-networks:
-  cathedral-net:
-    driver: bridge
-
 volumes:
-  numa_cache:
+  arkhe_pgdata:

@@ -1,0 +1,17 @@
+[project]
+name = "arkhe-saas-backend"
+version = "1.0.0"
+description = "Arkhe PoC SaaS Backend"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.109.0",
+    "uvicorn[standard]>=0.27.0",
+    "pydantic>=2.5.0",
+    "numpy>=1.26.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "httpx>=0.26.0",
+]
