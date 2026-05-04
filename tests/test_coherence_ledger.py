@@ -2,6 +2,7 @@ import pytest
 from core.ledger.coherence_ledger import CoherenceLedgerEntry, FaceBuffer, LatticeMetrics
 from core.neuro.pac_neuromapping import calibrate_neurodynamic_pac, validate_excess_margin
 from core.protocol.triangular_lattice_protocol import TriangularLatticeProtocol
+from core.lattice.orthogonal_witness import UserState
 
 def test_validate_equilateral():
     # Valid face
@@ -66,11 +67,9 @@ def test_triangular_lattice_protocol():
     # bc = abs(0.15 - 0.1) = 0.05
     # ca = abs(0.05 - 0.15) = 0.10
     protocol.read_neural_phase_space(
-        theta_self=0.05,
-        theta_A=0.1,
-        theta_B=0.15,
-        pac_mi=0.08,
-        phase_variance=0.05
+        user_self=UserState("V1", 0.9, 0.05, 0.05, 0.08),
+        user_A=UserState("V2", 0.9, 0.05, 0.1, 0.08),
+        user_B=UserState("V3", 0.9, 0.05, 0.15, 0.08),
     )
 
     assert round(protocol.buffer.delta_theta, 2) == 0.10
@@ -97,32 +96,26 @@ def test_triangular_lattice_protocol_calibration_adjustments():
 
     # Test Pause (delta_theta > 0.15)
     protocol.read_neural_phase_space(
-        theta_self=0.0,
-        theta_A=0.2, # edge = 0.2 -> max_edge = 0.2
-        theta_B=0.1,
-        pac_mi=0.08,
-        phase_variance=0.05
+        user_self=UserState("V1", 0.9, 0.0, 0.05, 0.08),
+        user_A=UserState("V2", 0.9, 0.05, 0.2, 0.08),
+        user_B=UserState("V3", 0.9, 0.05, 0.1, 0.08),
     )
     assert protocol.apply_calibration_loop() == "PAUSE"
 
     # Test Increase K (epsilon < 0.04)
     protocol.read_neural_phase_space(
-        theta_self=0.05,
-        theta_A=0.1,
-        theta_B=0.1,
-        pac_mi=0.08,
-        phase_variance=0.03 # too low
+        user_self=UserState("V1", 0.9, 0.03, 0.05, 0.08),
+        user_A=UserState("V2", 0.9, 0.05, 0.1, 0.08),
+        user_B=UserState("V3", 0.9, 0.05, 0.1, 0.08),
     )
     assert protocol.apply_calibration_loop() == "INCREASE_K"
     assert round(protocol.buffer.k, 3) == 0.09
 
     # Test Decrease K (epsilon > 0.10)
     protocol.read_neural_phase_space(
-        theta_self=0.05,
-        theta_A=0.1,
-        theta_B=0.1,
-        pac_mi=0.08,
-        phase_variance=0.15 # too high
+        user_self=UserState("V1", 0.9, 0.15, 0.05, 0.08),
+        user_A=UserState("V2", 0.9, 0.15, 0.1, 0.08),
+        user_B=UserState("V3", 0.9, 0.05, 0.15, 0.08),
     )
     assert protocol.apply_calibration_loop() == "DECREASE_K"
     assert round(protocol.buffer.k, 3) == 0.07
