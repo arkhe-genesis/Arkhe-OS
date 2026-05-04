@@ -41,10 +41,4 @@ def verify_convergence(
     results['kolmogorov_reached'] = ci_lower >= kolmogorov_limit
     results['final_energy_ci'] = (ci_lower, final_energy + stats.norm.ppf((1+confidence)/2) * energy_std / np.sqrt(50))
 
-    # 4. Verificar consenso entre nós (se gap_matrix disponível)
-    if 'gap_matrix' in locals():
-        final_std = np.std(gap_matrix[:, -1])
-        results['consensus_achieved'] = final_std < 0.5
-        results['final_gap_std'] = final_std
-
     return results

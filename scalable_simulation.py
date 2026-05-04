@@ -65,7 +65,7 @@ class ScalableWakefieldCluster:
     def update_agents_batch(self, query_lens: np.ndarray, context_lens: np.ndarray):
         """Atualiza gaps de todos os agentes em batch (vetorizado)."""
         # Vetorizado: muito mais rápido que loop Python
-        self.gaps = np.abs(query_lens - context_lens) / np.maximum(query_lens, context_lens, 1) * 10.0
+        self.gaps = np.abs(query_lens - context_lens) / np.maximum(query_lens, context_lens) * 10.0
         self.gaps += np.random.normal(0, 0.5, size=self.num_nodes)
         self.gaps = np.clip(self.gaps, 0, 50)
 

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>ARKHE OS v158 — Relatório de Desempenho</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; margin: 40px; background: #0a0e17; color: #e0e6f0; }
+        h1 { color: #7dd3fc; border-bottom: 2px solid #3b82f6; padding-bottom: 10px; }
+        h2 { color: #a78bfa; margin-top: 30px; }
+        .metric { background: #1e293b; padding: 15px; border-radius: 8px; margin: 10px 0; }
+        .metric-value { font-size: 1.4em; color: #22d3ee; font-weight: bold; }
+        .success { color: #4ade80; } .warning { color: #fbbf24; } .error { color: #f87171; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #334155; }
+        th { background: #1e293b; color: #94a3b8; }
+        .signature { font-family: monospace; font-size: 0.9em; color: #64748b; margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <h1>🌍 ARKHE OS v158 — Relatório de Desempenho da Rede de Coerência</h1>
+    <p><strong>Report ID:</strong> <code>ad189cd837a6</code> |
+       <strong>Gerado em:</strong> 2026-05-06</p>
+
+    <h2>1. 🎯 Convergência da Aceleração</h2>
+    <div class="metric">
+        <div>Limiar de Kolmogorov: <span class="metric-value">90.0 GeV</span></div>
+        <div>Atingido: <span class="success">
+            ✓ Sim
+        </span></div>
+        <div>Passo do limiar: <span class="metric-value">90</span></div>
+            <div>Taxa de convergência: <span class="metric-value">0.7501 por passo</span></div>
+        <div>Energia final: <span class="metric-value">100.00 GeV</span></div>
+    </div>
+
+    <h2>2. 🔗 Coerência e Gap Kolmogorov</h2>
+    <div class="metric">
+        <div>Gap médio final: <span class="metric-value">0.500</span></div>
+        <div>Desvio padrão (últimos 100 passos): <span class="metric-value">2.770</span></div>
+        <div>Tendência do gap: <span class="success">
+            ↓ Decrescente
+        </span> (slope=-0.0960)</div>
+    </div>
+
+    <h2>3. ⚡ Eficiência da Rede LoRa</h2>
+    <div class="metric">
+        <div>Potência total estimada: <span class="metric-value">0.002 W</span></div>
+        <div>Energia consumida: <span class="metric-value">0.19 J</span></div>
+        <div>Aceleração por joule: <span class="metric-value">2604.1667 GeV/J</span></div>
+        <div>Tempo no ar médio: <span class="metric-value">1.9 ms</span></div>
+    </div>
+
+    <h2>4. 🌀 Torção e Inteligência da Rede</h2>
+    <div class="metric">
+        <div>Torção média (final): <span class="metric-value">N/D</span></div>
+        <div>Torção convergiu: <span class="warning">
+            ✗ Não / Não avaliado
+        </span></div>
+    </div>
+
+    <h2>5. 📊 Validação Estatística</h2>
+    <table>
+        <tr><th>Métrica</th><th>Valor</th><th>Limiar</th><th>Status</th></tr>
+        <tr><td>Estacionariedade do gap (ADF)</td>
+            <td>p=0.961</td>
+            <td>p &lt; 0.05</td>
+            <td class="warning">
+                ⚠ Não estacionário
+            </td></tr>
+        <tr><td>Tendência decrescente do gap</td>
+            <td>slope=-0.0960</td>
+            <td>slope &lt; 0</td>
+            <td class="success">
+                ✓ Decrescente
+            </td></tr>
+        <tr><td>Limiar Kolmogorov (IC 95%)</td>
+                <td>[0.00, 0.00] GeV</td>
+            <td>&gt;= 90.0 GeV</td>
+            <td class="success">
+                ✓ Atingido
+            </td></tr>
+    </table>
+
+    <h2>6. 📎 Anexos</h2>
+    <p>Gráficos completos em PDF: <a href="test-reports/report_ad189cd837a6.pdf" style="color:#7dd3fc">test-reports/report_ad189cd837a6.pdf</a></p>
+
+    <div class="signature">
+        <p><strong>Assinatura do Relatório:</strong><br>
+        <code>b2e0e42a2eabe6d1</code></p>
+        <p><em>Relatório gerado automaticamente pelo ARKHE Orchestrator v158.
+        Para verificar a integridade, compare o hash com o registrado no ledger Arxia.</em></p>
+    </div>
+</body>
+</html>

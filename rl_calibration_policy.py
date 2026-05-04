@@ -82,7 +82,7 @@ class LoRaCalibrationEnv(gym.Env):
             'avg_tx_interval': np.mean(self.tx_interval)
         }
 
-        return self._get_obs(), reward, terminated, truncated, info
+        return self._get_obs(), float(reward), terminated, truncated, info
 
 def train_calibration_policy(
     num_nodes: int = 10,

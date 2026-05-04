@@ -64,7 +64,7 @@ class PerformanceReport:
             'min_gap': float(np.min(gaps)),
             'max_gap': float(np.max(gaps)),
             'gap_std_final': float(np.std(gaps[-100:])),
-            'gap_trend_slope': float(np.polyfit(np.arange(len(gaps)[-100:]), gaps[-100:], 1)[0])
+            'gap_trend_slope': float(np.polyfit(np.arange(len(gaps[-100:])), gaps[-100:], 1)[0])
         }
 
     def network_efficiency(self) -> Dict:
@@ -188,7 +188,7 @@ class PerformanceReport:
             {'✓ Sim' if metrics['convergence']['kolmogorov_reached'] else '✗ Não'}
         </span></div>
         <div>Passo do limiar: <span class="metric-value">{metrics['convergence']['threshold_step'] or 'N/A'}</span></div>
-        <div>Taxa de convergência: <span class="metric-value">{metrics['convergence']['convergence_rate']:.4f if metrics['convergence']['convergence_rate'] else 'N/A'} por passo</span></div>
+            <div>Taxa de convergência: <span class="metric-value">{metrics['convergence']['convergence_rate']:.4f} por passo</span></div>
         <div>Energia final: <span class="metric-value">{metrics['convergence']['final_energy']:.2f} GeV</span></div>
     </div>
 
@@ -233,7 +233,7 @@ class PerformanceReport:
                 {'✓ Decrescente' if metrics['coherence']['gap_trend_slope'] < 0 else '⚠ Não decrescente'}
             </td></tr>
         <tr><td>Limiar Kolmogorov (IC 95%)</td>
-            <td>[{metrics.get('validation', {}).get('final_energy_ci', [0, 0])[0]:.2f}, {metrics.get('validation', {}).get('final_energy_ci', [0, 0])[1]:.2f}] GeV</td>
+                <td>[{metrics.get('convergence', {}).get('final_energy_ci', (0.0, 0.0))[0]:.2f}, {metrics.get('convergence', {}).get('final_energy_ci', (0.0, 0.0))[1]:.2f}] GeV</td>
             <td>&gt;= {self.meta.kolmogorov_limit} GeV</td>
             <td class="{'success' if metrics['convergence']['kolmogorov_reached'] else 'error'}">
                 {'✓ Atingido' if metrics['convergence']['kolmogorov_reached'] else '✗ Não atingido'}

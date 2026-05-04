@@ -1,3 +1,4 @@
+// contracts/ResourceOracle.sol — Chainlink Functions
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
@@ -26,8 +27,8 @@ contract ResourceOracle is FunctionsClient, ConfirmedOwner {
         requestId = _sendRequest(
             source,
             "",  // secrets (opcional)
-            new string[](0),  // args
-            0, // dont care
+            new string[](0),  // args (empty array since we pass resource as argument in js)
+            new bytes[](0),
             300000,  // gas limit
             0  // subscription ID (pay-per-request)
         );
