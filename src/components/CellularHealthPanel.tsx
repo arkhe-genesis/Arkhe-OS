@@ -9,7 +9,6 @@ import { Heart, Activity, Timer, Zap } from 'lucide-react';
 import React from 'react';
 
 import type { SimulationState } from '../../server/types';
-import { cn } from '../lib/utils';
 
 import { Card } from './ui/Card';
 

@@ -1,0 +1,179 @@
+# Oracle Cloud Infrastructure Configuration for ARKHE OS
+platform:
+  type: oracle
+  displayName: "ARKHE OS on Oracle Cloud Infrastructure"
+
+# OCI tenancy and authentication
+oci:
+  # Tenancy OCID
+  tenancyId: ${OCI_TENANCY_OCID}
+  # Compartment for ARKHE resources
+  compartmentId: ${OCI_COMPARTMENT_OCID}
+  # Region: e.g., "us-ashburn-1", "eu-frankfurt-1"
+  region: ${OCI_REGION:us-ashburn-1}
+  # Authentication method: "config_file", "instance_principal", "resource_principal"
+  authentication:
+    type: instance_principal  # Recommended for OCI compute
+    configFile: ${OCI_CONFIG_FILE:~/.oci/config}
+    profile: ${OCI_PROFILE:DEFAULT}
+    # For resource principal (functions, OKE)
+    resourcePrincipalVersion: "2.2"
+
+# Oracle Kubernetes Engine (OKE) configuration
+oke:
+  clusterId: ${OCI_OKE_CLUSTER_OCID}
+  clusterName: ${OCI_OKE_CLUSTER_NAME:arkhe-oke-prod}
+  # Node pool configuration
+  nodePools:
+    - name: arkhe-system
+      shape: VM.Standard.E4.Flex
+      ocpus: 4
+      memoryInGBs: 16
+      minNodes: 3
+      maxNodes: 10
+      kubernetesVersion: "v1.28.2"
+      labels:
+        workload: arkhe-operator
+      taints: []
+    - name: arkhe-user
+      shape: VM.Standard.E4.Flex
+      ocpus: 8
+      memoryInGBs: 32
+      minNodes: 6
+      maxNodes: 30
+      # Ampere A1 (ARM) nodes for cost optimization
+      shapeDetails:
+        - shape: VM.Standard.A1.Flex
+          ocpus: 4
+          memoryInGBs: 24
+          baselineOcpuUtilization: "25%"  # Burstable for cost savings
+
+# Oracle Vault for secrets management
+vault:
+  vaultId: ${OCI_VAULT_OCID}
+  # Master encryption key for vault
+  masterKeyId: ${OCI_MASTER_KEY_OCID}
+  # Secret naming convention
+  secretPrefix: "arkhe"
+  # Rotation policy
+  rotation:
+    enabled: true
+    rotationPeriod: "P90D"  # ISO 8601 duration: 90 days
+  # Bundle CA certificates for TLS verification
+  caBundleId: ${OCI_CA_BUNDLE_OCID:}
+
+# Oracle Certificate Authority Service
+certificateAuthority:
+  # CA bundle for issuing certificates
+  caBundleId: ${OCI_CA_BUNDLE_OCID}
+  # Certificate configuration
+  certificateConfig:
+    commonNamePattern: "${SERVICE_NAME}.${NAMESPACE}.svc.cluster.local"
+    validityPeriod: "P90D"
+    keyAlgorithm: RSA
+    keySize: 2048
+    signatureAlgorithm: SHA256_WITH_RSA
+  # Auto-renewal configuration
+  autoRenewal:
+    enabled: true
+    renewBeforeExpiry: "P14D"  # Renew 14 days before expiry
+
+# Oracle Monitoring and Logging
+monitoring:
+  namespace: "arkhe/os"
+  # Metric aggregation interval
+  aggregationInterval: "PT1M"  # 1 minute
+  # Alarm definitions for ARKHE metrics
+  alarms:
+    - name: "arkhe-certificate-expiry-warning"
+      metric: "arkhe_certificate_expiry_seconds"
+      threshold: 604800  # 7 days in seconds
+      severity: "WARNING"
+      destinations:
+        - type: "notification"
+          topicId: ${OCI_NOTIFICATION_TOPIC_OCID}
+    - name: "arkhe-certificate-expiry-critical"
+      metric: "arkhe_certificate_expiry_seconds"
+      threshold: 259200  # 3 days in seconds
+      severity: "CRITICAL"
+      destinations:
+        - type: "pagerduty"
+          integrationKey: ${PAGERDUTY_INTEGRATION_KEY}
+
+# Oracle Database integration (optional for analytics)
+database:
+  # Autonomous Database for ARKHE analytics
+  autonomousDatabase:
+    enabled: false  # Enable if using Oracle DB for metrics/analytics
+    databaseId: ${OCI_ADB_OCID:}
+    # Connection configuration
+    connection:
+      wallet: "${OCI_ADB_WALLET_PATH:/opt/arkhe/wallet}"
+      serviceName: "arkhe_prod_high"
+      ssl: true
+  # Oracle JDBC native optimization
+  jdbc:
+    nativeEnabled: true  # Use Oracle JDBC native for better performance
+    connectionPool:
+      minConnections: 10
+      maxConnections: 100
+      connectionTimeout: 30
+
+# GraalVM native image optimization (Oracle-maintained)
+graalvm:
+  enabled: true
+  # Platform-specific build configuration
+  build:
+    platform: "linux"
+    architecture: "${OCI_ARCH:amd64}"  # or "aarch64" for Ampere
+    # Native image build arguments
+    nativeImageArgs:
+      - "-O3"
+      - "-march=compatibility"
+      - "--gc=G1"
+      - "-H:+ReportExceptionStackTraces"
+      # Oracle-specific optimizations
+      - "-Doracle.jdbc.native=true"
+      - "-H:IncludeResources=oracle/net/res/.*"
+      - "-H:IncludeResources=oracle/i18n/util/.*"
+  # Runtime configuration for native image
+  runtime:
+    # Heap size tuning for OCI shapes
+    heapSize:
+      initial: "256m"
+      max: "2g"
+    # GC tuning for low-latency workloads
+    gc:
+      type: "G1"
+      regionSize: "4m"
+      initiatingHeapOccupancyPercent: 45
+
+# Cost optimization for OCI
+cost:
+  # Universal Credits for flexible billing
+  universalCredits:
+    enabled: true
+  # Reserved instances for predictable workloads
+  reservedInstances:
+    enabled: true
+    term: "1_year"  # or "3_years"
+    paymentOption: "ALL_UPFRONT"
+  # Ampere A1 (ARM) instances for cost-effective compute
+  ampereOptimization:
+    enabled: true
+    # Auto-select ARM nodes when workload is compatible
+    autoSelectArm: true
+    # Fallback to x86 if ARM not available
+    fallbackToX86: true
+
+# Oracle Cloud Guard for security monitoring
+cloudGuard:
+  enabled: true
+  # Detector recipes for ARKHE resources
+  detectorRecipes:
+    - "security-detector-recipe"
+    - "arkhe-custom-detector-recipe"
+  # Responder recipes for automated remediation
+  responderRecipes:
+    - "auto-remediate-unauthorized-access"
+    - "notify-on-certificate-expiry"

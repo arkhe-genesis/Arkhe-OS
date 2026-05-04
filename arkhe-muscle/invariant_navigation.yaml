@@ -1,0 +1,8 @@
+# invariant_navigation.yaml — Astrometria quântica
+navigation_system:
+  method: "Pulsar Timing GHZ7"
+  reference_pulsars:
+    - B1937+21
+    - J0437-4715
+  accuracy_m: 0.001
+  seal_interval_s: 1.0

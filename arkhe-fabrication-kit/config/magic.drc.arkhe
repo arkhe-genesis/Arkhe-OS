@@ -1,0 +1,8 @@
+// Regra Arkhe #1: HESITATE deve ter caminho mínimo de 8 buffers
+check_min_path arkhe_hesitate HESITATE_REG/Q HESITATE_PAD 8
+
+// Regra Arkhe #2: TRNG não pode ter metal sobre a área ativa
+check_metal_exclusion trng_area MET1 MET2 MET3 MET4 MET5
+
+// Regra Arkhe #3: Barramento Clifford deve ter largura mínima de 1µm para reduzir IR drop
+check_width_min clifford_bus 1.0

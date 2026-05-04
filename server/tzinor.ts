@@ -73,7 +73,7 @@ export class EvolutionaryStateStore {
 
     // 2. Add to Immediate Context (fContext)
     this.state.fContext.unshift({
-      timestamp: observation.originTime,
+      time: observation.originTime,
       embedding: observation.embedding,
       salience: relevance,
     });
@@ -92,7 +92,7 @@ export class EvolutionaryStateStore {
 
     toConsolidate.forEach(node => {
       this.state.gMemory.unshift({
-        originTime: node.timestamp,
+        originTime: node.time,
         consolidatedTime: now,
         summaryHash: observation.id,
         resonanceWeight: node.salience * observation.coherence

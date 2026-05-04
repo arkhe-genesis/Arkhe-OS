@@ -1,0 +1,85 @@
+@prefix arkhe: <http://arkhe.ai/ontology/2026#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+# === CLASSES DE PERFORMANCE ===
+
+arkhe:PerformanceContract a owl:Class ;
+    rdfs:label "Contrato de Performance" ;
+    rdfs:comment "Garantias métricas que uma arquitetura deve atender." .
+
+arkhe:EfficiencyRatio a owl:Class ;
+    rdfs:label "Razão de Eficiência" ;
+    rdfs:subClassOf arkhe:PerformanceContract ;
+    rdfs:comment "Razão entre parâmetros de arquitetura degenerada e Cliffordiana equivalente." .
+
+arkhe:MemoryFootprint a owl:Class ;
+    rdfs:label "Pegada de Memória" ;
+    rdfs:subClassOf arkhe:PerformanceContract ;
+    rdfs:comment "Uso de memória de estado (KV cache vs multivector recorrente)." .
+
+# === PROPRIEDADES ===
+
+arkhe:hasParameterRatio a owl:DatatypeProperty ;
+    rdfs:domain arkhe:EfficiencyRatio ;
+    rdfs:range xsd:float ;
+    rdfs:comment "Razão de parâmetros (degenerada / Clifford). Deve ser > 1.0." .
+
+arkhe:hasMemoryRatio a owl:DatatypeProperty ;
+    rdfs:domain arkhe:MemoryFootprint ;
+    rdfs:range xsd:float ;
+    rdfs:comment "Razão de memória de estado (degenerada / Clifford). Deve ser > 1.0." .
+
+arkhe:hasConvergenceLoss a owl:DatatypeProperty ;
+    rdfs:domain arkhe:PerformanceContract ;
+    rdfs:range xsd:float ;
+    rdfs:comment "Perda de validação após N épocas." .
+
+# === INSTANCIAS CANONICAS (resultados do benchmark BR) ===
+
+arkhe:BenchmarkTinyShakespeare a arkhe:PerformanceContract ;
+    rdfs:label "Benchmark Tiny Shakespeare" ;
+    arkhe:hasParameterRatio 9.98 ;
+    arkhe:hasMemoryRatio 12.31 ;
+    arkhe:hasConvergenceLoss 1.9345 ;
+    rdfs:comment "Catedral atinge perda comparável ao Transformer com 1/10 dos parâmetros." .
+
+# === SHACL: CONTRATOS DE PERFORMANCE ===
+
+arkhe:PerformanceGateShape a sh:NodeShape ;
+    sh:targetClass arkhe:DegenerateArchitecture ;
+
+    sh:property [
+        sh:path arkhe:hasParameterRatio ;
+        sh:minCount 1 ;
+        sh:message "LEI DA PERFORMANCE [Art. 1]: Toda arquitetura degenerada deve declarar sua razão de parâmetros contra a Catedral equivalente."
+    ] ;
+
+    sh:sparql [
+        sh:message "LEI DA PERFORMANCE [Art. 2]: Razão de parâmetros < 2.0 é inaceitável. A Catedral provou 10x. Não há desculpa para degeneração ineficiente."
+        sh:select """
+            PREFIX arkhe: <http://arkhe.ai/ontology/2026#>
+            SELECT $this
+            WHERE {
+                $this a arkhe:DegenerateArchitecture .
+                $this arkhe:hasParameterRatio ?ratio .
+                FILTER (?ratio < 2.0)
+            }
+        """
+    ] ;
+
+    sh:sparql [
+        sh:message "LEI DA PERFORMANCE [Art. 3]: Arquitetura que não declara benchmark empírico é arquiteturalmente inválida."
+        sh:select """
+            PREFIX arkhe: <http://arkhe.ai/ontology/2026#>
+            SELECT $this
+            WHERE {
+                $this a arkhe:DegenerateArchitecture .
+                FILTER NOT EXISTS {
+                    $this arkhe:hasParameterRatio ?r .
+                }
+            }
+        """
+    ] .

@@ -8,7 +8,7 @@ Predicts waiting time before cell inoculation to ensure temperature ≤ 37°C.
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timezone
 import json
 
 # ============================================================================

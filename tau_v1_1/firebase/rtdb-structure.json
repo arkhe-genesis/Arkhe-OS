@@ -1,0 +1,16 @@
+{
+  "vacuum": {
+    "mesh": {
+      "lambda": 1.0,
+      "hysteresis": [1.0, 1.0, 1.0, 1.0]
+    },
+    "tasks": {
+      "pending": {},
+      "digest": {}
+    }
+  },
+  "agents": {
+    "alfa": {"role": "ALFA", "online": true},
+    "beta": {"role": "BETA", "online": true}
+  }
+}

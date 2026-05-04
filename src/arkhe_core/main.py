@@ -11,6 +11,7 @@ from arkhe_core.storage.phase_persistent import PhaseCoherentPostgres
 from arkhe_core.storage.cache_vault import ArkheCacheVault
 from arkhe_core.infrastructure.phase_orchestration import PhaseKubernetesOperator
 from arkhe_core.observability.phase_telemetry import PhaseStructuredLogger
+from arkhe_core.architecture.casulo_pipeline import unified_arkhe_pipeline
 
 class PhaseOscillator:
     """CPG do sistema unificado."""
@@ -45,6 +46,15 @@ class ArkheSystem:
         self.storage = PhaseCoherentPostgres(None, self.oscillator)
         self.cache = ArkheCacheVault(self.oscillator)
         self.orchestration = PhaseKubernetesOperator()
+
+    def run_casulo_pipeline(self, backend_props: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Executa o pipeline unificado ARKHE v1.0 para processar dados de backends quânticos.
+        """
+        self.logger.log("CASULO_PIPELINE_START", n_qubits=len(backend_props.get('t1', [])))
+        result = unified_arkhe_pipeline(backend_props)
+        self.logger.log("CASULO_PIPELINE_COMPLETE", lambda2=result['lambda2'])
+        return result
 
     async def bootstrap(self):
         await self.oscillator.start()

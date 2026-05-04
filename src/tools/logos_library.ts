@@ -5,6 +5,7 @@
  */
 
 import {zod} from '../third_party/index.js';
+
 import {ToolCategory} from './categories.js';
 import {definePageTool} from './ToolDefinition.js';
 
@@ -151,7 +152,7 @@ export const executeMetaOpcode = definePageTool({
     }
 
     response.appendResponseLine(`Ação: ${aspectFunctions[aspect]} aplicada ao domínio ${family}.`);
-    response.appendResponseLine(`**RESULTADO**: Invariante $\oint d\theta = 2\pi$ preservado. Coerência λ2 otimizada.`);
+    response.appendResponseLine(`**RESULTADO**: Invariante $oint d\theta = 2pi$ preservado. Coerência λ2 otimizada.`);
   },
 });
 

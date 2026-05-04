@@ -1,0 +1,19 @@
+{
+  "root_verified": true,
+  "tracks_verified": {
+    "track1": {
+      "valid": true,
+      "message": "Track 1 constraints satisfied"
+    },
+    "track2": {
+      "valid": true,
+      "message": "Track 2 constraints satisfied"
+    },
+    "track3": {
+      "valid": true,
+      "message": "Track 3 constraints satisfied"
+    }
+  },
+  "overall_valid": true,
+  "message": "\u2713 Proof verified successfully"
+}

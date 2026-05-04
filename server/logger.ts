@@ -6,6 +6,7 @@
  */
 
 import { logs, SeverityNumber } from '@opentelemetry/api-logs';
+import type { AnyValueMap } from '@opentelemetry/api-logs';
 import { OTLPLogExporter } from '@opentelemetry/exporter-logs-otlp-http';
 import { resourceFromAttributes } from '@opentelemetry/resources';
 import { LoggerProvider, BatchLogRecordProcessor } from '@opentelemetry/sdk-logs';
@@ -40,7 +41,7 @@ logs.setGlobalLoggerProvider(loggerProvider);
 const otelLogger = logs.getLogger('arkhe-logger');
 
 export const logger = {
-  info: (message: string, attributes?: Record<string, any>) => {
+  info: (message: string, attributes?: AnyValueMap) => {
     console.log(`[INFO] ${message}`, attributes || '');
     otelLogger.emit({
       severityNumber: SeverityNumber.INFO,
@@ -49,7 +50,7 @@ export const logger = {
       attributes,
     });
   },
-  warn: (message: string, attributes?: Record<string, any>) => {
+  warn: (message: string, attributes?: AnyValueMap) => {
     console.warn(`[WARN] ${message}`, attributes || '');
     otelLogger.emit({
       severityNumber: SeverityNumber.WARN,
@@ -58,7 +59,7 @@ export const logger = {
       attributes,
     });
   },
-  error: (message: string, attributes?: Record<string, any>) => {
+  error: (message: string, attributes?: AnyValueMap) => {
     console.error(`[ERROR] ${message}`, attributes || '');
     otelLogger.emit({
       severityNumber: SeverityNumber.ERROR,
@@ -67,7 +68,7 @@ export const logger = {
       attributes,
     });
   },
-  debug: (message: string, attributes?: Record<string, any>) => {
+  debug: (message: string, attributes?: AnyValueMap) => {
     console.debug(`[DEBUG] ${message}`, attributes || '');
     otelLogger.emit({
       severityNumber: SeverityNumber.DEBUG,

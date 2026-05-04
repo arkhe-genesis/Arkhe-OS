@@ -1,0 +1,58 @@
+{
+  "metadata": {
+    "timestamp": "2026-05-02T03:32:24.773982",
+    "framework": "Orch-OR = Fluidic Mini-Merkabah",
+    "version": "v\u221e.312.1"
+  },
+  "tests": {
+    "mass_dependence": {
+      "fit_parameters": {
+        "a": 150.2195040047708,
+        "b": 2.006622559460946
+      },
+      "t_statistic": 284.2329811849175,
+      "p_value_mass_dependence": 1.237778674822998e-05,
+      "interpretation": "evidence for Orch-OR scaling"
+    },
+    "intention_modulation": {
+      "pearson_r": 0.6027470029643625,
+      "p_value_raw": 3.6239140852786555e-06,
+      "p_value_fdr_corrected": 3.6239140852786555e-06,
+      "cohens_d": 3.3589276728087967,
+      "significant": "True"
+    },
+    "nonassociative_stats": {
+      "comparisons": [
+        "ABC vs A(BC)",
+        "ABC vs (AB)C",
+        "A(BC) vs (AB)C"
+      ],
+      "ks_p_values_raw": [
+        0.000648608042418048,
+        2.3797467071606504e-06,
+        3.432078828289855e-16
+      ],
+      "ks_p_values_fdr_corrected": [
+        0.000648608042418048,
+        3.5696200607409755e-06,
+        1.0296236484869566e-15
+      ],
+      "any_significant": true,
+      "interpretation": "evidence for non-associative fluid algebra"
+    }
+  },
+  "cross_validation": {
+    "mass_dependence_evidence": true,
+    "nonassociativity_evidence": true,
+    "overall_consistency": "consistent"
+  },
+  "combined_evidence": {
+    "individual_bayes_factors": [
+      2630.2630242187006,
+      8103.029312232279,
+      10353502604133.72
+    ],
+    "bayes_factor_combined": 2.2066521962219487e+20,
+    "interpretation": "strong evidence for Orch-OR fluidic identity"
+  }
+}

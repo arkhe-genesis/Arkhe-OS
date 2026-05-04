@@ -8,7 +8,7 @@ import os
 import asyncio
 import numpy as np
 import json
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone, timezone, timedelta
 import random
 
 # Add arkhe-brain to path

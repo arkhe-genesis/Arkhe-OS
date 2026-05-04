@@ -1,0 +1,15 @@
+[Unit]
+Description=TAU RHO Agent — ROI Token Processor
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/tau
+ExecStart=/usr/bin/python3 /opt/tau/rho_agent_prod.py
+Restart=always
+RestartSec=5
+Environment="PYTHONUNBUFFERED=1"
+
+[Install]
+WantedBy=multi-user.target

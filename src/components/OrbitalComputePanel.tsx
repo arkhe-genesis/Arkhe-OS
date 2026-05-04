@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Satellite, Globe, Cpu, Layers, Radio } from 'lucide-react';
+import { Satellite,  Layers, Radio } from 'lucide-react';
 import React from 'react';
 
 export interface OrbitalState {
@@ -62,9 +62,9 @@ export default function OrbitalComputePanel({ orbital }: { orbital: OrbitalState
 
       <div className="flex-1 flex flex-col gap-2">
         <h3 className="text-[10px] font-mono text-arkhe-muted uppercase mb-1 flex items-center gap-1">
-          <Layers className="w-3 h-3" /> Physical World OS Stack
+          <Layers className="w-3 h-3" /> Physical world-os Stack
         </h3>
-        
+
         <div className="grid grid-cols-1 gap-2">
           <div className="flex items-center justify-between bg-[#1f2024]/50 p-2 rounded border border-arkhe-border/30">
             <span className="text-xs font-mono text-arkhe-muted w-24">Compute</span>
@@ -84,7 +84,7 @@ export default function OrbitalComputePanel({ orbital }: { orbital: OrbitalState
           </div>
         </div>
       </div>
-      
+
       <div className="mt-4 pt-3 border-t border-arkhe-border/50 flex justify-between items-center">
         <div className="flex items-center gap-1 text-[10px] font-mono text-arkhe-muted">
           <Radio className="w-3 h-3" />

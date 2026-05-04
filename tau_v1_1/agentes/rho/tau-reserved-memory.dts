@@ -1,0 +1,20 @@
+// tau-reserved-memory.dts
+/ {
+    reserved-memory {
+        #address-cells = <2>;
+        #size-cells = <2>;
+        ranges;
+
+        roi_ring_buffer: buffer@40000000 {
+            compatible = "shared-dma-pool";
+            reg = <0x0 0x40000000 0x0 0x00400000>; // 4MB
+            no-map;
+        };
+    };
+
+    uio_roi: uio@0 {
+        compatible = "generic-uio";
+        interrupts-extended = <&gic 0 121 4>; // PL2PS IRQ 121
+        interrupt-names = "roi_frame_done";
+    };
+};

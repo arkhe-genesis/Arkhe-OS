@@ -15,7 +15,7 @@ from fastapi.responses import HTMLResponse
 from scipy.signal import spectrogram, hilbert, resample
 from bitcoinlib.keys import Key
 from bitcoinlib.transactions import Transaction, Output as TxOut, Input as TxIn
-from datetime import datetime
+from datetime import datetime, timezone
 
 # --- Configuração Ontológica ---
 SAMPLE_RATE = 44100

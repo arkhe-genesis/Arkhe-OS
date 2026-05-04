@@ -255,6 +255,39 @@ export const cliOptions = {
     describe:
       'Exposes a "slim" set of 3 tools covering navigation, script execution and screenshots only. Useful for basic browser tasks.',
   },
+  beeApi: {
+    type: 'string',
+    description: 'Endpoint for Swarm Bee node (e.g., http://127.0.0.1:1633).',
+    default: 'http://127.0.0.1:1633',
+  },
+  ipfsGateway: {
+    type: 'string',
+    description: 'Endpoint for IPFS Gateway (e.g., http://127.0.0.1:8080).',
+    default: 'http://127.0.0.1:8080',
+  },
+  ipfsApi: {
+    type: 'string',
+    description: 'Endpoint for IPFS API (e.g., http://127.0.0.1:5001).',
+    default: 'http://127.0.0.1:5001',
+  },
+  radicleHttpd: {
+    type: 'string',
+    description: 'Endpoint for Radicle httpd (e.g., http://127.0.0.1:8780).',
+    default: 'http://127.0.0.1:8780',
+  },
+  ethRpc: {
+    type: 'string',
+    description: 'Endpoint for Ethereum JSON-RPC (e.g., http://127.0.0.1:8545).',
+    default: 'http://127.0.0.1:8545',
+  },
+  gridApiTokenId: {
+    type: 'string',
+    description: 'API token ID for Lightspark Grid API.',
+  },
+  gridApiClientSecret: {
+    type: 'string',
+    description: 'API client secret for Lightspark Grid API.',
+  },
   viaCli: {
     type: 'boolean',
     describe:
@@ -342,6 +375,10 @@ export function parseArguments(version: string, argv = process.argv) {
       [
         '$0 --slim',
         'Only 3 tools: navigation, JavaScript execution and screenshot',
+      ],
+      [
+        '$0 --grid-api-token-id=TOKEN_ID --grid-api-client-secret=CLIENT_SECRET',
+        'Provide credentials for Lightspark Grid API',
       ],
     ]);
 

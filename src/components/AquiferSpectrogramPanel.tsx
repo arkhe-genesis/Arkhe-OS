@@ -5,8 +5,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+
 import { motion } from 'framer-motion';
-import { Waves, Activity, Droplets, ShieldAlert, Radio, Box, Users, Link as LinkIcon, AlertTriangle } from 'lucide-react';
+import { Activity, Droplets, ShieldAlert, Radio, Users, Link as LinkIcon, AlertTriangle } from 'lucide-react';
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import * as THREE from 'three';
 
@@ -96,7 +99,7 @@ export default function AquiferSpectrogramPanel({ onClose }: { onClose?: () => v
 
     const ambientLight = new THREE.AmbientLight(0x404040);
     scene.add(ambientLight);
-    
+
     const pointLight = new THREE.PointLight(0xffffff, 1, 100);
     pointLight.position.set(10, 10, 10);
     scene.add(pointLight);
@@ -129,8 +132,8 @@ export default function AquiferSpectrogramPanel({ onClose }: { onClose?: () => v
   // Real-time Data Sync
   useEffect(() => {
     const eventSource = new EventSource('/api/stream');
-    eventSource.onmessage = (event) => {
-      const newState = JSON.parse(event.data);
+    eventSource.onmessage = (event: MessageEvent) => {
+      const newState = JSON.parse(event.data as string);
       setState(newState);
     };
     return () => eventSource.close();
@@ -189,15 +192,16 @@ export default function AquiferSpectrogramPanel({ onClose }: { onClose?: () => v
   // Audio and FFT Analysis
   const toggleAudio = () => {
     if (isPlaying) {
-      if (audioCtxRef.current) {audioCtxRef.current.suspend();}
+      if (audioCtxRef.current) {void audioCtxRef.current.suspend();}
       setIsPlaying(false);
     } else {
       if (!audioCtxRef.current) {
         audioCtxRef.current = new (window.AudioContext || ((window as any).webkitAudioContext))();
+        audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
         analyserRef.current = audioCtxRef.current.createAnalyser();
         analyserRef.current.fftSize = 128;
       }
-      audioCtxRef.current.resume();
+      void audioCtxRef.current.resume();
       setIsPlaying(true);
       updateFFT();
     }
@@ -207,7 +211,7 @@ export default function AquiferSpectrogramPanel({ onClose }: { onClose?: () => v
     if (!isPlaying || !analyserRef.current) {return;}
     const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
     analyserRef.current.getByteFrequencyData(dataArray);
-    
+
     // Simulate some "hydro-acoustic" data if no real input
     const simulated = new Float32Array(64);
     for (let i = 0; i < 64; i++) {
@@ -319,8 +323,8 @@ export default function AquiferSpectrogramPanel({ onClose }: { onClose?: () => v
                     key={i}
                     className="flex-1 min-w-[2px] rounded-t-sm transition-all duration-300"
                     style={{
-                      height: `${(amp as number) * 100}%`,
-                      background: `hsl(${200 + (amp as number) * 60}, 70%, 50%)`
+                      height: `${(amp) * 100}%`,
+                      background: `hsl(${200 + (amp) * 60}, 70%, 50%)`
                     }}
                   />
                 ))}

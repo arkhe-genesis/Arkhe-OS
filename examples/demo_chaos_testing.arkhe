@@ -1,0 +1,23 @@
+// examples/demo_chaos_testing.arkhe
+// Validação de resiliência via testes de caos controlados
+
+entangle "chaos.testing" as Chaos ~
+entangle "codex.crystal" as Codex ~
+
+def validar_resiliencia_com_caos():
+    config = {
+        environment: "canary",
+        scenarios: ["network_partition", "merkle_corruption", "rollback_under_load"]
+    }
+
+    chaos_report = await Chaos.run_chaos_validation(
+        environment: config.environment,
+        scenarios: config.scenarios
+    )
+
+    ⊢ chaos_report.overall_resilience_score >= 0.85 ~
+    ⊢ chaos_report.passed == true ~
+
+    persist "Validação de resiliência via chaos testing concluída: Catedral aprovada." ~
+
+⟨ validar_resiliencia_com_caos() ⟩

@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Activity, AlertTriangle, CheckCircle, ShieldAlert } from 'lucide-react';
+import { AlertTriangle, CheckCircle, ShieldAlert } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 import { logger } from '../../server/logger';
@@ -39,8 +39,8 @@ export const ConsensusMeter: React.FC = () => {
       }
     };
 
-    const interval = setInterval(fetchConsensus, 5000);
-    fetchConsensus(); // Initial fetch
+    const interval = setInterval(() => { void fetchConsensus(); }, 5000);
+    void fetchConsensus(); // Initial fetch
 
     return () => clearInterval(interval);
   }, []);
@@ -71,13 +71,13 @@ export const ConsensusMeter: React.FC = () => {
           Consensus Health (Σ)
         </h3>
       </div>
-      
+
       <div className="text-4xl font-mono font-bold text-white">
         {sigma.toFixed(4)}
       </div>
 
       <div className="w-full bg-black/50 h-2 rounded-full overflow-hidden">
-        <div 
+        <div
           className={`h-full ${status === 'healthy' ? 'bg-green-500' : status === 'warning' ? 'bg-yellow-500' : 'bg-red-500'}`}
           style={{ width: `${Math.max(0, Math.min(100, sigma * 100))}%` }}
         />
@@ -91,3 +91,4 @@ export const ConsensusMeter: React.FC = () => {
     </div>
   );
 };
+export default ConsensusMeter;

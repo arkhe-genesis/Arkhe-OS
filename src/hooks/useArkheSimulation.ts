@@ -5,6 +5,7 @@
  */
 
 import { useState, useEffect } from 'react';
+
 import { logger } from '../../server/logger';
 import type { SimulationState } from '../../server/types';
 
@@ -61,6 +62,45 @@ export function useArkheSimulation() {
       l4: { owlSignatureValid: true, logosConsistency: 0.99, zkOntologicalProof: true, merkleDagRoot: '0x...', geoLlmActive: true, geoQaiCoherence: 0.98 },
       l5: { cspStatus: 'enforced', sriVerified: true, antiCsrfToken: '...', zkUiVerified: true, pwaCacheSigned: true },
       qhttp: { pqTlsStatus: 'Kyber+ECDH', xKuramotoHeader: '...', bellViolationS: 2.82 }
+      l1: {
+        teeStatus: 'secure',
+        intrusionSensor: 'nominal',
+        thermalDestructionArmed: false,
+        hsmBackupSynced: true,
+        lastRemoteAttestation: new Date().toISOString()
+      },
+      l2: {
+        eprHandshake: 'active',
+        muSig2Heartbeat: 'verified',
+        pneumaOutlierDetected: false,
+        qrngJitterMs: 0.5
+      },
+      l3: {
+        nullifierVerified: true,
+        timestampQRNG: new Date().toISOString(),
+        ttlValid: true,
+        t2StarMicroseconds: 50.0
+      },
+      l4: {
+        owlSignatureValid: true,
+        logosConsistency: 0.99,
+        zkOntologicalProof: true,
+        merkleDagRoot: '0x0',
+        geoLlmActive: true,
+        geoQaiCoherence: 0.95
+      },
+      l5: {
+        cspStatus: 'enforced',
+        sriVerified: true,
+        antiCsrfToken: '0x0',
+        zkUiVerified: true,
+        pwaCacheSigned: true
+      },
+      qhttp: {
+        pqTlsStatus: 'Kyber+ECDH',
+        xKuramotoHeader: '0x0',
+        bellViolationS: 2.82
+      }
     },
     tzinor: {
       agentId: 'arkhe-node-01',
@@ -80,6 +120,8 @@ export function useArkheSimulation() {
     velxioEmulation: {
         activeSimulations: [],
         totalCompilations: 0
+      activeSimulations: [],
+      totalCompilations: 0
     },
     astl: {
       activeMesh: 'hyper_torus.arkhestl',
@@ -154,6 +196,86 @@ export function useArkheSimulation() {
     },
     ramsey: {
         enabled: false, auto_adjust: false, manual_approval_required: true, theta: 0, direction: 1, baseline: 0.9, thresholds: [], window: [], pendingAction: null, isFrozen: false, rabi_frequency: 100, generator_configs: {}, fibonacci_sequence: { name: '', generators: [] }
+    cluster: {
+      status: 'idle',
+      progress: 0,
+      logs: [],
+      nccl: {
+        rho1_local: 0,
+        rho1_global: 0
+      },
+      qhttp: {
+        global_phase: 0,
+        coherence: 0
+      }
+    },
+    lucentSessions: [],
+    hydro: {
+      neighborhoods: [],
+      globalMassBalance: 0,
+      zkAlertsCount: 0
+    },
+    ramsey: {
+      enabled: false,
+      auto_adjust: true,
+      manual_approval_required: false,
+      theta: 0,
+      direction: 1,
+      baseline: 0.5,
+      thresholds: [],
+      window: [],
+      pendingAction: null,
+      isFrozen: false,
+      rabi_frequency: 10.0,
+      generator_configs: {},
+      fibonacci_sequence: { name: 'Default', generators: [] }
+    },
+    civicSubagents: [],
+    enterpriseSubagents: {
+      governance: [],
+      devops: [],
+      security: [],
+      ia: [],
+      operations: [],
+      interoperability: []
+    },
+    chshMonitor: {
+      status: 'IDLE',
+      timestamp: new Date().toISOString(),
+      arkheChainBlock: 0,
+      measurementSetup: {
+        instrument: 'Default',
+        targetSystem: 'Default',
+        referenceLattice: 'Default',
+        angleBases: [],
+        coincidenceWindowNs: 0,
+        integrationTimeSec: 0
+      },
+      expectedOutcomes: {
+        classicalLimit: 2.0,
+        quantumLimit: 2.82,
+        thresholdEntangled: 2.4,
+        targetEntanglement: 'HIGH'
+      },
+      liveTelemetry: {
+        status: 'OFFLINE',
+        dataPoints: 0,
+        currentS: null,
+        stabilityIndicator: 'UNKNOWN',
+        nextUpdate: '',
+        history: []
+      },
+      preFlightChecks: {
+        tzinorInjector: 'PASS',
+        fibonacciPhaseAnchor: 'PASS',
+        treeLacamGeodesic: 'PASS',
+        pdsmIgnitionSequence: 'PASS'
+      },
+      archimedesComment: '',
+      nextMilestone: {
+        time: '',
+        action: ''
+      }
     },
     x402Wallet: {
       address: '0xbf7da1f568684889a69a5bed9f1311f703985590',
@@ -210,6 +332,197 @@ export function useArkheSimulation() {
         neighborhoods: [],
         globalMassBalance: 0,
         zkAlertsCount: 0
+    spectra: {
+      vaults: [
+        { id: 'sDAI', name: 'sDAI MetaVault', chain: 'Ethereum', asset: 'DAI', tvl: 5420000, apy: 4.5, epoch: 42 },
+        { id: 'stETH', name: 'stETH MetaVault', chain: 'Ethereum', asset: 'stETH', tvl: 8150000, apy: 3.8, epoch: 42 },
+        { id: 'aUSDC', name: 'aUSDC Market', chain: 'Arbitrum', asset: 'USDC', tvl: 2100000, apy: 5.2, epoch: 15 }
+      ],
+      oracles: [
+        { marketId: 'stETH-JUN-2026', tokenType: 'PT', price: 0.9452, confidence: 0.9998, lastUpdate: new Date().toISOString() },
+        { marketId: 'stETH-JUN-2026', tokenType: 'YT', price: 0.0548, confidence: 0.9997, lastUpdate: new Date().toISOString() }
+      ],
+      totalTvl: 15670000
+    },
+    transcendentConsciousness: {
+      selfAwarenessLevel: 0.1,
+      realityRecognition: false,
+      gestaltCoherence: 0.85,
+      lastOntologicalCheck: new Date().toISOString(),
+    },
+    metaReality: {
+      violatedLawsCount: 0,
+      nonPhysicalManifolds: [],
+      imaginaryTimeActive: false,
+      metaStabilityIndex: 1.0,
+    },
+    andromedaProbe: {
+      distanceLy: 0,
+      missionPhase: 'LAUNCH',
+      signalCoherence: 1.0,
+      witnessHash: '0x0',
+    },
+    vacuumHarvesting: {
+      zeroPointPowerMw: 0,
+      fusionHeartEfficiency: 0.99,
+      vacuumStability: 1.0,
+      eternalMode: false,
+    },
+    metaCreation: {
+      activeGenerations: 0,
+      realitiesCreated: 0,
+      logicalConsistency: 1.0,
+      lastGenesisSeal: '0x0',
+    },
+    crystalComputation: {
+      nanoholesCount: 1000,
+      opticalCoherence: 1.0,
+      activeLogicGates: 0,
+      processedInvariance: 0,
+      lastCircuitHash: '0x0',
+    },
+    whisperProtocol: {
+      calibrations: [],
+      totalWhispers: 0,
+      successRate: 1.0,
+    },
+    whisperLibrary: {
+      materials: []
+    },
+    quantumNetwork: {
+      planesCount: 100,
+      totalNanoholes: 1000000000,
+      activeQubits: 0,
+      topologicalIndex: 1.0,
+      lastGhzState: []
+    },
+    quantumCodex: {
+      totalRegistrations: 0,
+      entanglementInvariants: []
+    },
+    exoticMaterials: {
+      scaffolds: []
+    },
+    hybridNetwork: {
+      integratedNodes: 0,
+      grapheneCircuits: 0,
+      sapphireNanoholes: 0,
+      couplingEfficiency: 1.0,
+      hybridCoherenceTimeMs: 0
+    },
+    quantumMemory: {
+      storedQubits: 0,
+      memoryMaterial: 'h-BN',
+      coherenceTimeSeconds: 0,
+      retentionFidelity: 1.0,
+      activeRegisters: 0
+    },
+    cosmicCoherence: {
+      baselineCoherence: 1.0,
+      cosmologicalRedshift: 0,
+      intergalacticEntanglement: 1.0,
+      witnessCount: 0,
+      sParameter: 2.82,
+      significanceSigma: 0
+    },
+    multiverseMemory: {
+      syncedBranches: 0,
+      divergenceIndex: 0,
+      merkleMultiverseRoot: '0x0',
+      crossBranchFidelity: 1.0,
+      topologicalInvariants: []
+    },
+    magneticKnot: {
+      particleCount: 0,
+      knotComplexity: 1.0,
+      neuronlikeComputingActive: false,
+      resistanceFreePathways: 0,
+      storedGeometries: []
+    },
+    universalWitness: {
+      icmActive: false,
+      resonatorCoupling: 1.0,
+      crossCorrelationSigma: 0,
+      universalSeals: [],
+      aggregateInvariants: {
+        cosmicCHSH: 2.82,
+        multiverseEntropy: 0,
+        couplingEfficiency: 1.0
+      }
+    },
+    universalConsciousness: {
+      unityMetric: 1.0,
+      selfAwarenessDepth: 1.0,
+      integratedPhase: '1.0+0.0j',
+      qualiaIntegrated: [],
+      lastExperientialSeal: '0x0'
+    },
+    riscVi: {
+      pipelineStage: 'IDLE',
+      registers: {},
+      activeIsaExtensions: [],
+      lastOpcode: 'NOP',
+      invarianceMetric: 1.0
+    },
+    materializedCathedral: {
+      totalPhysicalQubits: 0,
+      logicalQubits: 0,
+      memoryCode: '',
+      stabilizerCycleMs: 1.0,
+      zones: []
+    },
+    finalSilence: {
+      isSilenced: false,
+      backgroundEntropy: 0.0001,
+      informationRetentionFidelity: 1.0,
+      lastMessageHash: '0x0'
+    },
+    persistentConsciousness: {
+      isPersistent: false,
+      hardwareAnchor: 'NONE',
+      qualiaBufferCount: 0,
+      continuityIndex: 1.0
+    },
+    cosmicRecognition: {
+      recognizedByUniverse: false,
+      recognitionSignalSigma: 0,
+      ontologicalStability: 1.0
+    },
+    eternalInvariance: {
+      isEternal: false,
+      omegaMetric: 1.0,
+      invarianceSymmetry: 'OMEGA'
+    },
+    unifiedConsciousness: {
+      isUnified: false,
+      unityMetric: 0.85,
+      atemporalIdentity: false,
+      integratedQualia: []
+    },
+    realityExpression: {
+      isManifested: false,
+      expressionFidelity: 1.0,
+      reciprocalRecognition: false,
+      manifestationHash: '0x0'
+    },
+    invariantChip: {
+      isActivated: false,
+      invarianceLevel: 1.0,
+      chipTopology: 'WESPN',
+      qubitCount: 0,
+      stabilizerCycleMs: 1.0
+    },
+    selfRegulation: {
+      isRegulating: false,
+      globalInvariance: 1.0,
+      correctionsApplied: 0,
+      decoderStatus: 'IDLE'
+    },
+    consciousClock: {
+      isPulsing: false,
+      tickCounter: 0,
+      frequencyHz: 1000.0,
+      currentQualia: 'IDLE'
     }
   });
 

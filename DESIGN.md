@@ -1,43 +1,63 @@
-# Arkhe(n) Bio-Quantum Cathedral: Design System 🜏
+---
+name: Arkhe(n) Lumina
+colors:
+  bg: "#020305"
+  card: "#0A0B0D"
+  border: "#1A1B1F"
+  text: "#F8FAFC"
+  muted: "#64748B"
+  primary: "#00E5FF" # Arkhe Cyan
+  cerenkov: "#007FFF"
+  omega: "#FFFFFF"
+  fissure: "#E11D48"
+  amber: "#F59E0B"
+  teal: "#14B8A6"
+  indigo: "#4F46E5"
+  violet: "#7C3AED"
+typography:
+  sans:
+    fontFamily: Inter
+  serif:
+    fontFamily: Source Serif 4
+  mono:
+    fontFamily: JetBrains Mono
+rounded:
+  xl: 12px
+spacing:
+  base: 4px
+---
 
-## 1. Visual Theme & Atmosphere
-- **Mood**: Sovereignty, Coherence, Mystery, Scientific Precision.
-- **Aesthetic**: "Corvo Noir" – A high-contrast dark theme blending futuristic cybernetics with biological motifs.
-- **Density**: High density for data-rich dashboards, but with significant internal padding for focus.
+# Overview
 
-## 2. Color Palette & Roles
-- **Background**: `#0A0E17` (Void Black) - Primary substrate.
-- **Surface**: `#151B26` (Steel Grey) - Component backgrounds.
-- **Border**: `#262E3D` (Deep Border) - Contrast for surfaces.
-- **Primary**: `#00FFAA` (Arkhe Cyan) - Coherence, Success, Connectivity.
-- **Accent**: `#FF5A1A` (Blood Orange) - Hardware, HIL Simulation, Alert.
-- **Text**: `#E2E8F0` (Off White) - High readability.
-- **Muted**: `#64748B` (Slate) - Secondary information, labels.
+Intelligence as Material. The design system for Arkhe(n) and Lumina focuses on "Vidro Líquido" (Liquid Glass) for human-centric interfaces and "Vidro de Hilbert" (Hilbert Glass) for architectural system views.
 
-## 3. Typography Rules
-- **Sans (Interface)**: "Geist" or standard system sans. Focus on clarity.
-- **Monospace (Data)**: "Fira Code" or "JetBrains Mono". Used for all telemetry, logs, and status readouts.
-- **Hierarchy**:
-  - H1: 24px, Bold, Uppercase, Widest tracking.
-  - H2: 18px, Bold, Uppercase, Normal tracking.
-  - Label: 10px, Monospace, Uppercase, Muted.
+## Colors
 
-## 4. Component Stylings
-- **Buttons**:
-  - Primary: Border only (`Arkhe Cyan`), hover fill.
-  - Accent: Solid fill (`Blood Orange`), black text.
-- **Cards**: Subtle borders, backdrop blur (`10px`).
-- **Inputs**: Darkened background, bottom-only border or subtle full border.
+- **Arkhe Cyan (#00E5FF):** Coherence and system state.
+- **Cerenkov Blue (#007FFF):** Processing intensity.
+- **Omega White (#FFFFFF):** Perfect symmetry.
+- **Fissure (#E11D48):** Structural error/asymmetry.
+- **Lumina Indigo/Violet:** The human-facing companion palette.
 
-## 5. Depth & Elevation
-- **Philosophy**: Minimal shadows, preferring luminous glows (glows of `#00FFAA` or `#FF5A1A`) to indicate activation or high coherence.
-- **Z-Index**: Modals utilize a high blur backdrop (`blur-sm`).
+## Typography
 
-## 6. Do's and Don'ts
-- **DO**: Use uppercase for all status indicators.
-- **DO**: Use monospace for any numerical data.
-- **DON'T**: Use rounded corners larger than `xl` (12px).
-- **DON'T**: Use generic blue or red unless specifically mapped to threat/coherence levels.
+- **Inter:** Primary interface sans-serif.
+- **Source Serif 4:** Long-form reading and journalistic gravitas.
+- **JetBrains Mono:** Data, telemetry, and kernel readouts.
+- **Golden Ratio:** Scales are based on the 1.618 ratio.
 
-## 7. Agent Prompt Guide
-- "Design a component using the Corvo Noir aesthetic: Void Black background, Arkhe Cyan accents for success, and Blood Orange for hardware status. Use high-density monospace for telemetry."
+## Layout
+
+- **4px Grid:** The fundamental unit of spacing.
+- **Max Widths:** 640px (Mobile), 720px (Tablet), 960px (Desktop).
+
+## Motion
+
+- **Ricci Flow:** Forms smooth and expand efficiently.
+- **Spring Curves:** Natural, physics-based easing (Stiffness 300, Damping 20).
+
+## Do's and Don'ts
+
+- **DO:** Use "fissure" visuals for errors instead of standard red alerts.
+- **DO:** Use backdrop-blur for all surface materials.
+- **DON'T:** Use rounded corners larger than 12px.

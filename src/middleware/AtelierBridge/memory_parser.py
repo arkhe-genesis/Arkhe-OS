@@ -7,7 +7,7 @@ Arkhe-Block: 847.812 | Synapse-κ
 import re
 from typing import List
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from .cst_parser import CognitiveNode
 
 @dataclass

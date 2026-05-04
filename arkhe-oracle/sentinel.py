@@ -2,7 +2,7 @@ import os
 import asyncio
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 # Dependências de Integração
 try:
@@ -43,7 +43,7 @@ class ArkheSentinel:
 
     async def broadcast_alert(self, title: str, message: str, level: str = "INFO"):
         """Envia alertas em tempo real para os operadores da rede."""
-        full_message = f"[{level}] 🜏 **{title}**\n\n{message}\n\n*Timestamp: {datetime.utcnow().isoformat()}Z*"
+        full_message = f"[{level}] 🜏 **{title}**\n\n{message}\n\n*Timestamp: {datetime.now(timezone.utc).isoformat()}Z*"
         logger.info(f"Broadcasting: {title}")
 
         # Telegram Alert

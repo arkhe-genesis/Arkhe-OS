@@ -1,0 +1,33 @@
+groups:
+- name: arkhe-resilience
+  rules:
+  # Alert if circuit breaker is OPEN for > 2 minutes
+  - alert: CircuitBreakerOpen
+    expr: resilience4j_circuitbreaker_state{state="OPEN"} == 1
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Circuit breaker {{ $labels.name }} is OPEN"
+      description: "Circuit breaker {{ $labels.name }} has been OPEN for >2m. Failure rate: {{ $value }}%"
+      runbook_url: "https://arkhe.os/runbooks/circuit-breaker-open"
+
+  # Alert if failure rate is high but circuit not yet open
+  - alert: HighFailureRate
+    expr: resilience4j_circuitbreaker_failure_rate > 40
+    for: 5m
+    labels:
+      severity: info
+    annotations:
+      summary: "High failure rate for {{ $labels.name }}"
+      description: "Failure rate {{ $value }}% exceeds 40% threshold"
+
+  # Alert if rate limiter is rejecting requests
+  - alert: RateLimitingActive
+    expr: resilience4j_ratelimiter_available_permissions < 10
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Rate limiting active for {{ $labels.name }}"
+      description: "Only {{ $value }} permissions available; requests may be rejected"

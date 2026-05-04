@@ -9,9 +9,9 @@ import os from 'node:os';
 import path from 'node:path';
 import {describe, it} from 'node:test';
 
-import {executablePath} from 'puppeteer';
-
 import {detectDisplay, ensureBrowserConnected, launch} from '../src/browser.js';
+
+import {getExecutablePath} from './utils.js';
 
 describe('browser', () => {
   it('detects display does not crash', () => {
@@ -25,7 +25,7 @@ describe('browser', () => {
       headless: true,
       isolated: false,
       userDataDir: folderPath,
-      executablePath: executablePath(),
+      executablePath: getExecutablePath(),
       devtools: false,
     });
     try {
@@ -34,7 +34,7 @@ describe('browser', () => {
           headless: true,
           isolated: false,
           userDataDir: folderPath,
-          executablePath: executablePath(),
+          executablePath: getExecutablePath(),
           devtools: false,
         });
         await browser2.close();
@@ -57,7 +57,7 @@ describe('browser', () => {
       headless: true,
       isolated: false,
       userDataDir: folderPath,
-      executablePath: executablePath(),
+      executablePath: getExecutablePath(),
       viewport: {
         width: 1501,
         height: 801,
@@ -84,7 +84,7 @@ describe('browser', () => {
       headless: true,
       isolated: false,
       userDataDir: folderPath,
-      executablePath: executablePath(),
+      executablePath: getExecutablePath(),
       devtools: false,
       chromeArgs: ['--remote-debugging-port=0'],
     });

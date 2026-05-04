@@ -9,7 +9,7 @@ import asyncio
 import json
 from dataclasses import dataclass
 from typing import List, Tuple, Dict
-from datetime import datetime
+from datetime import datetime, timezone
 import hashlib
 
 @dataclass

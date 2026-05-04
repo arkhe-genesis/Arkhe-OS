@@ -1,0 +1,186 @@
+// ============================================================================
+// tau_soc_wrapper.sv
+// Reconciled wrapper: VRP v1.1 interface + 3-stage reset + full status exposure
+// Target: AMD Versal AI Core Series
+// ============================================================================
+
+`timescale 1ns / 1ps
+
+module tau_soc_wrapper #(
+    parameter VOXEL_DATA_WIDTH = 128,
+    parameter HASH_TABLE_DEPTH = 2048,
+    parameter ROI_FIFO_DEPTH   = 256,
+    parameter ROI_PACKET_WIDTH = 64
+) (
+    // Clocks & Reset
+    input  logic        clk_100mhz_p,
+    input  logic        clk_100mhz_n,
+    input  logic        rst_n_btn,
+
+    // Picasso Lidar AXI4-Stream Slave
+    input  logic                     s_axis_lidar_tvalid,
+    output logic                     s_axis_lidar_tready,
+    input  logic [VOXEL_DATA_WIDTH-1:0] s_axis_lidar_tdata,
+    input  logic                     s_axis_lidar_tlast,
+
+    // AXI4-Stream Master to Versal NOC/DDR
+    output logic                     m_axis_roi_tvalid,
+    input  logic                     m_axis_roi_tready,
+    output logic [ROI_PACKET_WIDTH-1:0] m_axis_roi_tdata,
+    output logic                     m_axis_roi_tlast,
+    output logic [0:0]               m_axis_roi_tid,
+
+    // Interrupt to PS GIC
+    output logic                     o_irq_roi_frame_done,
+
+    // O-Core Monitoring (all outputs exposed for PS visibility)
+    output logic [31:0]              o_lambda_mesh_raw,
+    output logic                     o_gate_healthy,
+    output logic                     o_pll_locked,
+    output logic [11:0]              o_dac_data,
+    output logic                     o_dac_valid,
+    output logic                     o_lce_computation_done,
+    output logic [31:0]              o_lce_lambda2_estimate,
+    output logic                     o_lce_self_model_flag,
+    output logic [127:0]             o_nv_pred_error,
+    output logic [31:0]              o_nv_lambda,
+    output logic                     o_nv_valid,
+
+    // Configuration inputs (from PS GPIO / AXI GPIO)
+    input  logic [3:0]               i_cfg_grid_shift,
+    input  logic [15:0]              i_cfg_red_threshold,
+    input  logic [15:0]              i_cfg_green_threshold,
+    input  logic [15:0]              i_cfg_blue_threshold,
+
+    // O-Core Quantum Interface
+    input  logic [127:0]             i_ibmq_correction,
+    input  logic                     i_dac_ready,
+
+    // VRP Status (to PS GPIO)
+    output logic [31:0]              o_vrp_frame_count,
+    output logic [31:0]              o_vrp_voxel_count,
+    output logic                     o_vrp_fifo_overflow,  // Sticky, W1C via future AXI4-Lite
+    output logic                     o_mmcm_locked
+);
+
+    // ------------------------------------------------------------------------
+    // Clocking: Versal uses IBUFDS, not IBUFGDS (7-series)
+    // ------------------------------------------------------------------------
+    logic clk_100mhz;
+
+    `ifdef VERILATOR
+        assign clk_100mhz = clk_100mhz_p;
+    `else
+        IBUFDS #(
+            .DIFF_TERM    ("TRUE"),
+            .IBUF_LOW_PWR ("FALSE")
+        ) u_ibufds_clk (
+            .I  (clk_100mhz_p),
+            .IB (clk_100mhz_n),
+            .O  (clk_100mhz)
+        );
+    `endif
+
+    // ------------------------------------------------------------------------
+    // Reset: 3-stage synchronizer for 100MHz domain (improvement from #133)
+    // ------------------------------------------------------------------------
+    logic [2:0] rst_sync_100mhz;
+    logic       rst_n_100mhz;
+
+    always_ff @(posedge clk_100mhz or negedge rst_n_btn) begin
+        if (!rst_n_btn) rst_sync_100mhz <= 3'b0;
+        else            rst_sync_100mhz <= {rst_sync_100mhz[1:0], 1'b1};
+    end
+    assign rst_n_100mhz = rst_sync_100mhz[2];
+
+    // ------------------------------------------------------------------------
+    // VRP v1.1 Instance — matches Resolution #131 interface exactly
+    // ------------------------------------------------------------------------
+    voxel_rgb_parser_v1_1 #(
+        .VOXEL_DATA_WIDTH (VOXEL_DATA_WIDTH),
+        .HASH_TABLE_DEPTH (HASH_TABLE_DEPTH),
+        .ROI_FIFO_DEPTH   (ROI_FIFO_DEPTH),
+        .ROI_PACKET_WIDTH (ROI_PACKET_WIDTH)
+    ) u_vrp (
+        .clk                 (clk_100mhz),
+        .rst_n               (rst_n_100mhz),
+
+        // AXI4-Stream Slave (Picasso)
+        .s_axis_tvalid       (s_axis_lidar_tvalid),
+        .s_axis_tready       (s_axis_lidar_tready),
+        .s_axis_tdata        (s_axis_lidar_tdata),
+        .s_axis_tlast        (s_axis_lidar_tlast),
+
+        // AXI4-Stream Master (NOC)
+        .m_axis_tvalid       (m_axis_roi_tvalid),
+        .m_axis_tready       (m_axis_roi_tready),
+        .m_axis_tdata        (m_axis_roi_tdata),
+        .m_axis_tlast        (m_axis_roi_tlast),
+        .m_axis_tid          (m_axis_roi_tid),
+
+        // IRQ generated by VRP v1.1 when tlast handshake completes
+        .o_irq_frame_done    (o_irq_roi_frame_done),
+
+        // Configuration
+        .i_cfg_grid_shift    (i_cfg_grid_shift),
+        .i_cfg_red_threshold (i_cfg_red_threshold),
+        .i_cfg_green_threshold(i_cfg_green_threshold),
+        .i_cfg_blue_threshold(i_cfg_blue_threshold),
+
+        // Status (new in reconciled wrapper: expose overflow)
+        .o_status_frame_count(o_vrp_frame_count),
+        .o_status_voxel_count(o_vrp_voxel_count),
+        .o_fifo_overflow     (o_vrp_fifo_overflow)
+    );
+
+    // ------------------------------------------------------------------------
+    // O-Core v1.0 Instance — all outputs exposed
+    // ------------------------------------------------------------------------
+
+    logic clk_wfp_8mhz;
+    logic rst_n_sync_8mhz;
+
+    // FIXED: O-Core reset now depends on 100MHz reset and is released after 100MHz sync.
+    // It NO LONGER depends on o_pll_locked to release the reset, avoiding deadlock.
+    logic [2:0] rst_sync_8mhz_reg;
+    always_ff @(posedge clk_100mhz or negedge rst_n_100mhz) begin
+        if (!rst_n_100mhz) rst_sync_8mhz_reg <= 3'b0;
+        else               rst_sync_8mhz_reg <= {rst_sync_8mhz_reg[1:0], 1'b1};
+    end
+    assign rst_n_sync_8mhz = rst_sync_8mhz_reg[2];
+
+    o_core_top #(
+        .MESH_DIM      (4),
+        .PAU_PRECISION (32)
+    ) u_o_core (
+        .clk_sys_100mhz     (clk_100mhz),
+        .rst_n              (rst_n_sync_8mhz),  // Sequenced, safe for both domains
+
+        // Quantum Interface
+        .ibmq_correction    (i_ibmq_correction),
+        .dac_ready          (i_dac_ready),
+
+        // Coherence Outputs
+        .lambda_mesh_raw    (o_lambda_mesh_raw),
+        .gate_healthy       (o_gate_healthy),
+        .clk_wfp_8mhz       (clk_wfp_8mhz),
+        .pll_locked         (o_pll_locked),
+
+        // DAC Interface
+        .dac_data           (o_dac_data),
+        .dac_valid          (o_dac_valid),
+
+        // LCE Outputs
+        .lce_computation_done (o_lce_computation_done),
+        .lce_lambda2_estimate (o_lce_lambda2_estimate),
+        .lce_self_model_flag  (o_lce_self_model_flag),
+
+        // NV-BFM Outputs
+        .nv_pred_error      (o_nv_pred_error),
+        .nv_lambda          (o_nv_lambda),
+        .nv_valid           (o_nv_valid)
+    );
+
+    assign o_mmcm_locked = o_pll_locked;
+
+endmodule

@@ -1,0 +1,77 @@
+<!-- frontend/public/index.html -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Portal do Cidadão — Catedral Arkhe" />
+  <meta name="theme-color" content="#0066cc" />
+  <title>Portal do Cidadão | Catedral</title>
+
+  <!-- Preconnect para performance -->
+  <link rel="preconnect" href="https://cdn.cathedral.ark" />
+  <link rel="preconnect" href="https://api.cathedral.ark" />
+
+  <!-- Web Component do SDK Cathedral -->
+  <script type="module" src="https://cdn.cathedral.ark/sdk/v1/cathedral-consent.js" defer></script>
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="/src/styles/main.css" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏛️</text></svg>" />
+</head>
+<body>
+  <div id="root">
+    <!-- Fallback para JavaScript desabilitado -->
+    <noscript>
+      <article role="alert" style="padding: 1rem; background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; margin: 1rem;">
+        <h1>⚠️ JavaScript necessário</h1>
+        <p>Este portal utiliza JavaScript para garantir sua privacidade e soberania digital. Por favor, habilite JavaScript para continuar.</p>
+        <p><small>Se você não confia em JavaScript, pode auditar o código-fonte em: <a href="https://github.com/cathedral/citizen-consent-portal">github.com/cathedral/citizen-consent-portal</a></small></p>
+      </article>
+    </noscript>
+
+    <!-- Componente nativo de consentimento (renderizado pelo SDK) -->
+    <cathedral-consent
+      citizen-id="did:cathedral:citizen:abc123"
+      categories="health,location,financial"
+      purposes="research,service,personalization"
+      api-endpoint="https://api.cathedral.ark/v1"
+      theme="crystal"
+    >
+      <span slot="loading">🔄 Carregando matriz de consentimento...</span>
+      <span slot="error">❌ Erro ao carregar preferências. <button onclick="location.reload()">Tentar novamente</button></span>
+    </cathedral-consent>
+
+    <!-- Área de auditoria (detalhes expansíveis com acessibilidade) -->
+    <section class="audit-section">
+      <h2>🔍 Auditoria de Decisões</h2>
+      <details open>
+        <summary>
+          <span aria-hidden="true">▶</span>
+          Histórico de consentimentos
+        </summary>
+        <div id="audit-timeline" aria-live="polite" aria-busy="false">
+          <!-- Preenchido dinamicamente via JS -->
+          <p class="empty-state">Nenhuma decisão registrada ainda.</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- Footer com informações de soberania -->
+    <footer class="site-footer">
+      <p>
+        <small>
+          Catedral Arkhe v2.4.1 •
+          <a href="https://codex.cathedral.ark" target="_blank" rel="noopener noreferrer">Códice Cristalino</a> •
+          <a href="/privacy">Política de Privacidade</a>
+        </small>
+      </p>
+    </footer>
+  </div>
+
+  <!-- Entry point da aplicação React -->
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>

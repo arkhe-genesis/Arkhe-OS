@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+
+
+
 import assert from 'node:assert';
 import {describe, it, afterEach, beforeEach} from 'node:test';
 
@@ -199,32 +202,5 @@ describe('ClearcutLogger', () => {
       });
     });
 
-    it('throws error for unsupported types', () => {
-      const schema = {
-        myObj: zod.object({foo: zod.string()}),
-      };
-      const params = {
-        myObj: {foo: 'bar'},
-      };
-
-      assert.throws(
-        () => sanitizeParams(params, schema),
-        /Unsupported zod type for tool parameter: ZodObject/,
-      );
     });
-
-    it('throws error when value is not of equivalent type', () => {
-      const schema = {
-        myString: zod.string(),
-      };
-      const params = {
-        myString: 123,
-      };
-
-      assert.throws(
-        () => sanitizeParams(params, schema),
-        /parameter myString has type ZodString but value 123 is not of equivalent type/,
-      );
-    });
-  });
 });

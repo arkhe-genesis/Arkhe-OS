@@ -7,7 +7,7 @@
 
 import path from "node:path";
 
-import { ApolloServer, gql } from 'apollo-server-express';
+// import { ApolloServer, gql } from 'apollo-server-express';
 import cors from "cors";
 import express from "express";
 import rateLimit from "express-rate-limit";
@@ -87,6 +87,7 @@ async function startServer() {
   app.use(express.json());
 
   // Setup GraphQL Apollo Server
+  const { ApolloServer } = await import('apollo-server-express');
   const apollo = new ApolloServer({
     typeDefs,
     resolvers,

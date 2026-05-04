@@ -57,6 +57,15 @@ const HelioLinkPanel: React.FC<HelioLinkPanelProps> = ({ helio, onListen, onSync
         </Badge>
       </div>
 
+      className="bg-black/80 border-arkhe-cyan/30 text-white font-mono"
+      title="PHASE D: HELIO-LINK COUPLING"
+      icon={<Sun className="w-4 h-4 text-orange-500 animate-pulse" />}
+      action={
+        <div className="border border-arkhe-cyan px-2 py-0.5 rounded text-arkhe-cyan text-[10px]">
+          {(helio.ethicalMode || 'unknown').toUpperCase()}
+        </div>
+      }
+    >
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-2 text-[10px]">
           <div className="space-y-1">
@@ -72,7 +81,10 @@ const HelioLinkPanel: React.FC<HelioLinkPanelProps> = ({ helio, onListen, onSync
         <div className="space-y-1">
           <div className="flex justify-between text-[10px]">
             <span className="text-arkhe-muted">SOLAR COHERENCE (3mHz)</span>
-            <span className="text-arkhe-cyan">{(helio.solarCoherence * 100).toFixed(2)}%</span>
+            <span className="text-arkhe-cyan">{((helio.solarCoherence || 0) * 100).toFixed(2)}%</span>
+          </div>
+          <div className="h-1 bg-arkhe-cyan/10 w-full rounded-full overflow-hidden">
+             <div className="h-full bg-arkhe-cyan" style={{ width: `${(helio.solarCoherence || 0) * 100}%` }} />
           </div>
           <Progress value={helio.solarCoherence * 100} className="h-1 text-arkhe-cyan" />
         </div>
@@ -105,8 +117,8 @@ const HelioLinkPanel: React.FC<HelioLinkPanelProps> = ({ helio, onListen, onSync
             SCHUMANN MODES (IONOSFERA)
           </p>
           <div className="flex justify-between text-[9px] text-arkhe-cyan/70">
-            {helio.schumannModes.map((mode, i) => (
-              <span key={i}>{mode.toFixed(2)}Hz</span>
+            {(helio.schumannModes || []).map((mode: number | string, i: number) => (
+              <span key={i}>{typeof mode === 'number' ? mode.toFixed(2) : mode}Hz</span>
             ))}
           </div>
         </div>

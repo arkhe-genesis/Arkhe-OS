@@ -1,0 +1,21 @@
+# agent_task_shape.ttl
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix arkhe: <http://arkhe.ai/ontology/2026#> .
+
+arkhe:TaskShape
+    a sh:NodeShape ;
+    sh:targetClass arkhe:Task ;
+    sh:property [
+        sh:path arkhe:priority ;
+        sh:datatype xsd:integer ;
+        sh:minInclusive 1 ;
+        sh:maxInclusive 10 ;
+        sh:message "Priority must be between 1 and 10" ;
+    ] ;
+    sh:property [
+        sh:path arkhe:assignedTo ;
+        sh:nodeKind sh:IRI ;
+        sh:minCount 1 ;
+        sh:message "Task must be assigned to an agent IRI" ;
+    ] .

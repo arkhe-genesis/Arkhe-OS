@@ -5,7 +5,7 @@ Manifesto de Governança 2027 (Consórcio CorvOS)
 import numpy as np
 import hashlib
 import json
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone, timedelta, timezone
 from typing import Dict, List, Any
 
 class GovernanceManifesto2027:

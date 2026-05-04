@@ -1,0 +1,32 @@
+# Intermediate Java Projects (Exhaustive List)
+
+- **GUI Calculator (Swing/JavaFX)**: Interface development.
+- **GUI To-Do List App**: Visual task management.
+- **GUI Contact Manager**: Database with UI.
+- **GUI Email Client (SMTP/IMAP)**: Network protocols in UI.
+- **REST API using Spring Boot**: Web service architecture.
+- **CRUD API with Spring Boot + MySQL**: Enterprise data management.
+- **Authentication System (JWT + Spring Security)**: Modern web security.
+- **Blog Backend with Spring Boot**: CMS architecture.
+- **E-commerce Backend (basic)**: Market logic.
+- **File Upload Service**: Multipart data handling.
+- **URL Shortener API**: Hashing and persistence.
+- **API Rate Limiter**: Traffic control.
+- **Logging System with Log4j**: Production observability.
+- **Caching System with Redis**: Speed optimization.
+- **Multithreading File Processor**: High-concurrency I/O.
+- **Producer-Consumer System**: Thread communication patterns.
+- **Web Scraper with Jsoup**: Automatic data extraction.
+- **Chat Server with WebSockets**: Real-time interactivity.
+- **Notification System**: Push and messaging logic.
+- **Email Service Backend**: Integration with providers.
+- **Scheduling System (Quartz)**: Automated job execution.
+- **Search Engine (basic)**: Indexing and retrieval.
+- **Recommendation System (basic)**: Simple filtering logic.
+- **Payment Integration Backend**: Processing transactions.
+- **REST Client Application**: Consuming external APIs.
+- **GraphQL API with Java**: Flexible query interfaces.
+- **Dockerized Java App**: Modern deployment.
+- **Microservice with Spring Boot**: Decoupled architecture.
+- **API Gateway (Spring Cloud)**: Routing and security.
+- **Config Server (Spring Cloud)**: Centralized management.

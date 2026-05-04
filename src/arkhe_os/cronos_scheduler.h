@@ -21,12 +21,12 @@ typedef struct cronos_thread {
     uint64_t id;
     void* stack_ptr;
     void* instruction_ptr;
-    
+
     // Temporal & Phase Properties
     double lambda_alloc;       // Coherence at the time of thread creation
     arkhe_phase_t phase;       // Current internal phase of the thread
     double natural_freq;       // ω_i (Natural frequency of the task)
-    
+
     thread_state_t state;
     struct cronos_thread* next;
     struct cronos_thread* prev;

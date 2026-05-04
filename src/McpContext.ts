@@ -1,3 +1,11 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * @license
  * Copyright 2025 Google LLC
@@ -112,13 +120,13 @@ export class McpContext implements Context {
 
     this.#consoleCollector = new ConsoleCollector(this.browser, collect => {
       return {
-        console: event => {
+        console: (event: any) => {
           collect(event);
         },
-        uncaughtError: event => {
+        uncaughtError: (event: any) => {
           collect(event);
         },
-        issue: event => {
+        issue: (event: any) => {
           collect(event);
         },
       } as ListenerMap;
@@ -705,7 +713,7 @@ export class McpContext implements Context {
         },
       );
       return {cdpBackendNodeId, cdpRequestId};
-    } catch (err) {
+    } catch (err: any) {
       this.logger('error getting devtools data', err);
     }
     return {};
@@ -816,7 +824,7 @@ export class McpContext implements Context {
       await fs.mkdir(path.dirname(filePath), {recursive: true});
       await fs.writeFile(filePath, data);
       return {filename: filePath};
-    } catch (err) {
+    } catch (err: any) {
       this.logger(err);
       throw new Error('Could not save a file', {cause: err});
     }
@@ -874,11 +882,11 @@ export class McpContext implements Context {
   async setUpNetworkCollectorForTesting() {
     this.#networkCollector = new NetworkCollector(this.browser, collect => {
       return {
-        request: req => {
+        request: (req: any) => {
           if (req.url().includes('favicon.ico')) {
             return;
           }
-          collect(req);
+          collect(req as any);
         },
       } as ListenerMap;
     });

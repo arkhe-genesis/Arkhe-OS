@@ -1,0 +1,15 @@
+arkhe:
+  platform:
+    azure:
+      subscription-id: ${AZURE_SUBSCRIPTION_ID}
+      resource-group: arkhe-${arkhe.environment}
+      key-vault-name: arkhe-kv-${arkhe.environment}
+      aks-cluster: arkhe-aks-${arkhe.environment}
+      region: eastus
+      monitor:
+        log-analytics-workspace: /subscriptions/${AZURE_SUBSCRIPTION_ID}/resourceGroups/arkhe-${arkhe.environment}/providers/Microsoft.OperationalInsights/workspaces/arkhe-la
+        metrics-interval: 60s
+      network:
+        vnet-name: arkhe-vnet-${arkhe.environment}
+        subnet-name: arkhe-subnet-${arkhe.environment}
+        use-private-endpoints: true

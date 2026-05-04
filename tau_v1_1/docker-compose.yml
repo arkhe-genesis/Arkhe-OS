@@ -1,0 +1,267 @@
+version: '3.8'
+
+# =============================================================================
+# TAU v1.1 – Orquestração Completa dos Agentes
+# =============================================================================
+
+services:
+  # -------------------------------------------------------------------------
+  # INFRAESTRUTURA BASE
+  # -------------------------------------------------------------------------
+  ollama:
+    image: ollama/ollama:latest
+    container_name: tau-ollama
+    restart: always
+    volumes:
+      - dados_ollama:/root/.ollama
+    ports:
+      - "11434:11434"
+    networks:
+      - rede_tau
+    deploy:
+      resources:
+        limits:
+          memory: 20G
+
+  chroma:
+    image: chromadb/chroma:latest
+    container_name: tau-chroma
+    restart: always
+    volumes:
+      - dados_chroma:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+      - ANONYMIZED_TELEMETRY=FALSE
+    ports:
+      - "8000:8000"
+    networks:
+      - rede_tau
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+
+  # -------------------------------------------------------------------------
+  # AGENTES DO CONSELHO (12)
+  # -------------------------------------------------------------------------
+  alfa:
+    build: ./agentes/alfa
+    container_name: tau-alfa
+    restart: always
+    env_file:
+      - ./secrets/.env
+    volumes:
+      - ./genoma:/genoma:ro
+    networks:
+      - rede_tau
+    depends_on:
+      - ollama
+      - chroma
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+
+  beta:
+    build: ./agentes/beta
+    container_name: tau-beta
+    restart: always
+    env_file:
+      - ./secrets/.env
+    volumes:
+      - ./genoma:/genoma:ro
+      - dados_chroma:/dados/chroma
+    networks:
+      - rede_tau
+    depends_on:
+      - ollama
+      - chroma
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  gama:
+    build: ./agentes/gama
+    container_name: tau-gama
+    restart: always
+    env_file:
+      - ./secrets/.env
+    volumes:
+      - ./genoma:/genoma:ro
+      - ~/.ssh:/root/.ssh:ro
+    networks:
+      - rede_tau
+    depends_on:
+      - alfa
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+
+  delta:
+    build: ./agentes/delta
+    container_name: tau-delta
+    restart: always
+    env_file:
+      - ./secrets/.env
+    volumes:
+      - ./genoma:/genoma:ro
+    ports:
+      - "8080:8080"
+    networks:
+      - rede_tau
+    depends_on:
+      - alfa
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+
+  epsilon:
+    build: ./agentes/epsilon
+    container_name: tau-epsilon
+    restart: always
+    env_file:
+      - ./secrets/.env
+    volumes:
+      - ./genoma:/genoma:ro
+    networks:
+      - rede_tau
+    depends_on:
+      - alfa
+    deploy:
+      resources:
+        limits:
+          memory: 150M
+
+  zeta:
+    build: ./agentes/zeta
+    container_name: tau-zeta
+    restart: always
+    env_file:
+      - ./secrets/.env
+    volumes:
+      - ./genoma:/genoma:ro
+    networks:
+      - rede_tau
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+
+  eta:
+    build: ./agentes/eta
+    container_name: tau-eta
+    restart: always
+    env_file:
+      - ./secrets/.env
+    volumes:
+      - ./genoma:/genoma:ro
+      - ./cortex:/cortex
+    networks:
+      - rede_tau
+    depends_on:
+      - chroma
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+
+  teta:
+    build: ./agentes/teta
+    container_name: tau-teta
+    restart: always
+    env_file:
+      - ./secrets/.env
+    volumes:
+      - ./genoma:/genoma:ro
+      - ./ddg:/usr/share/nginx/html:ro
+    ports:
+      - "8081:80"
+    networks:
+      - rede_tau
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+
+  iota:
+    build: ./agentes/iota
+    container_name: tau-iota
+    restart: always
+    env_file:
+      - ./secrets/.env
+    volumes:
+      - ./genoma:/genoma:ro
+    networks:
+      - rede_tau
+    depends_on:
+      - ollama
+    deploy:
+      resources:
+        limits:
+          memory: 10G
+
+  capa:
+    build: ./agentes/capa
+    container_name: tau-capa
+    restart: always
+    env_file:
+      - ./secrets/.env
+    volumes:
+      - ./genoma:/genoma:ro
+      - ./forge:/forge
+    networks:
+      - rede_tau
+    depends_on:
+      - ollama
+      - iota
+    deploy:
+      resources:
+        limits:
+          memory: 10G
+
+  lambda:
+    build: ./agentes/lambda
+    container_name: tau-lambda
+    restart: always
+    env_file:
+      - ./secrets/.env
+    volumes:
+      - ./genoma:/genoma:ro
+      - ./cortex:/cortex
+    networks:
+      - rede_tau
+    depends_on:
+      - chroma
+      - iota
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  mu:
+    build: ./agentes/mu
+    container_name: tau-mu
+    restart: always
+    env_file:
+      - ./secrets/.env
+    volumes:
+      - ./genoma:/genoma:ro
+    networks:
+      - rede_tau
+    depends_on:
+      - beta
+    deploy:
+      resources:
+        limits:
+          memory: 150M
+
+networks:
+  rede_tau:
+    driver: bridge
+
+volumes:
+  dados_ollama:
+  dados_chroma:

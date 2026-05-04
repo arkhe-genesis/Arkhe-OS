@@ -5,11 +5,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Shield, Cpu, Code, Activity, BarChart, Zap, Globe, Lock, Brain, Database, Network, Server, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { Shield, Code, BarChart, Globe, Lock, Brain, Network, X } from 'lucide-react';
+import { motion } from 'motion/react';
 import React from 'react';
 
 import type { EnterpriseSubagentState } from '../../server/types';
+import type { SimulationState } from '../../server/types';
 import { useArkheSimulation } from '../hooks/useArkheSimulation';
 
 interface DomainSectionProps {
@@ -114,7 +115,7 @@ interface EnterprisePlusPanelProps {
 }
 
 export const EnterprisePlusPanel: React.FC<EnterprisePlusPanelProps> = ({ onClose }) => {
-  const state = useArkheSimulation();
+  const state: SimulationState = useArkheSimulation();
   const enterprise = state.enterpriseSubagents;
 
   if (!enterprise) {return null;}
@@ -208,3 +209,4 @@ export const EnterprisePlusPanel: React.FC<EnterprisePlusPanelProps> = ({ onClos
     </div>
   );
 };
+export default EnterprisePlusPanel;

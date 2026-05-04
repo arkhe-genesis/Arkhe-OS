@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://api.arkhe.ai/schemas/visual-telemetry.json",
+  "title": "Visual Navigation Telemetry Event",
+  "description": "Evento anônimo de navegação espacial. O backend mapeia coordenadas para ontologia.",
+  "type": "object",
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "description": "UUID v4 gerado pelo backend no início da sessão. Não contém identificação do usuário ou tenant."
+    },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "viewport": {
+      "type": "object",
+      "description": "Estado da câmera no momento do evento.",
+      "properties": {
+        "position": {
+          "type": "object",
+          "properties": {
+            "x": { "type": "number" },
+            "y": { "type": "number" },
+            "z": { "type": "number" }
+          }
+        },
+        "direction": {
+          "type": "object",
+          "properties": {
+            "x": { "type": "number" },
+            "y": { "type": "number" },
+            "z": { "type": "number" }
+          }
+        }
+      }
+    },
+    "interaction": {
+      "type": "object",
+      "description": "Ação física do usuário (sem contexto semântico).",
+      "properties": {
+        "type": { "enum": ["hover", "click", "dwell"] },
+        "duration_ms": { "type": "number" }
+      }
+    },
+    "rendering_metrics": {
+      "type": "object",
+      "description": "Métricas do shader (úteis para detectar problemas de performance, não de segurança).",
+      "properties": {
+        "fps": { "type": "number" },
+        "draw_calls": { "type": "number" }
+      }
+    }
+  },
+  "required": ["session_id", "timestamp", "viewport"]
+}

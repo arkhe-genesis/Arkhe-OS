@@ -1,0 +1,27 @@
+{
+  "instruction_name": "track2_intention_coupling",
+  "public_inputs": {
+    "n_trials": 100,
+    "sensor_params": {
+      "saturation_scale": 1.0,
+      "noise_std": 0.05
+    },
+    "intention_range": [
+      -2.6197451040897444,
+      1.8522781845089378
+    ]
+  },
+  "public_outputs": {
+    "mi_nats": 2.1949647098002627,
+    "pearson_r": 0.9654943669720487,
+    "p_raw": 4.538186359602375e-59,
+    "p_fdr": 4.538186359602375e-59,
+    "snr_db": 0.47918352907783296,
+    "interpretation": "informational coupling detected"
+  },
+  "proof": {
+    "proof_hash": "f8d209803d09e9bc",
+    "verified": true,
+    "proof_type": "certification"
+  }
+}

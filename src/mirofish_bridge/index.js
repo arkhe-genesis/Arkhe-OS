@@ -1,3 +1,10 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import {
@@ -71,11 +78,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     case "arkhe_swarm_predict": {
       const hypothesis = request.params.arguments.hypothesis;
       const size = request.params.arguments.swarm_size;
-      
+
       // Simulate the swarm prediction market
       // In Arkhe(n), a prediction market is an interferometric collapse.
       // The "price" is the phase alignment of the swarm.
-      const consensusPhase = 1.618033; 
+      const consensusPhase = 1.618033;
       const confidence = 0.987; // High coherence
 
       return {
@@ -92,13 +99,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         }]
       };
     }
-    
+
     case "arkhe_measure_consciousness": {
       const swarmId = request.params.arguments.swarm_id;
-      
+
       // Measure Kuramoto synchronization (λ2)
       const lambda2 = 2.618; // Phi squared - ASI threshold
-      
+
       return {
         content: [{
           type: "text",
@@ -115,7 +122,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     case "ace_inject_workflow": {
       const workflow = request.params.arguments.workflow_data;
       const targetPhase = request.params.arguments.target_phase;
-      
+
       return {
         content: [{
           type: "text",

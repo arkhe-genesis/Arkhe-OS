@@ -1,0 +1,249 @@
+# Arquivo: ceremonies/crewed_mission_outer_system.plank
+ceremony: crewed_mission_outer_system_gateway
+version: v∞.Ω.1.0
+
+parameters:
+  mission_id: string
+  crew_size: int @ [4, 12]
+  destination: string @ ["asteroid_belt", "jupiter_system", "saturn_system", "interstellar_precursor"]
+  mission_duration_years: float @ [3.0, 15.0]
+  autonomy_level: string @ ["supervised", "semi_autonomous", "fully_autonomous_emergency"]
+
+optimization_targets:
+  crew_health_margin: 0.95 ± 0.025  # Margem de saúde da tripulação (física, psicológica)
+  system_reliability: 0.999 ± 0.0005  # Confiabilidade de sistemas críticos
+  communication_latency_min: 3  # min (Terra-Marte) to 53 min (Terra-Júpiter)
+  radiation_dose_mSv_year: 50 ± 10  # Limite anual para tripulação (NASA standard)
+
+hard_constraints:
+  min_crew_health_margin: 0.90
+  min_system_reliability: 0.995
+  max_radiation_dose_mSv_year: 100  # Limite absoluto para missões de longa duração
+  emergency_abort_response_s: 10  # Tempo máximo para abort em emergência
+
+preconditions:
+  assert verify_crewed_mission_vc(mission_id) == true
+  assert crew_size within [4, 12]
+  assert destination in ["asteroid_belt", "jupiter_system", "saturn_system", "interstellar_precursor"]
+
+  # Coerência 4D adaptada para missões tripuladas
+  coherence = fetch_4d_coherence("phobos_gateway")
+  assert coherence.crew_health_margin > 0.92
+  assert coherence.system_reliability > 0.998
+  assert coherence.communication_latency_min >= 3  # Física da luz
+  assert coherence.radiation_dose_mSv_year < 60
+
+  # Saúde da tripulação e sistemas antes do lançamento
+  assert crew_medical_clearance() == true
+  assert life_support_systems_nominal()
+  assert propulsion_systems_ready(destination)
+  assert communication_systems_operational()
+  assert emergency_abort_systems_tested()
+
+sequence:
+  # === FASE DE PRÉ-LANÇAMENTO EM FOBOS ===
+  at T-86400s: {  # 24 horas antes do lançamento
+    # Verificação final de saúde da tripulação e sistemas
+    crew_health_check = perform_crew_medical_assessment()
+    if crew_health_margin(crew_health_check) < 0.92:
+      abort_mission("Crew health margin insufficient")
+
+    # Teste de sistemas críticos com redundância
+    test_critical_systems_with_redundancy()
+    if system_reliability_estimate() < 0.998:
+      abort_mission("System reliability below threshold")
+
+    # Carregar nave com recursos finais e selar módulos
+    load_final_resources_and_seal_modules()
+  }
+
+  at T-3600s: {  # 1 hora antes do lançamento
+    # Tripulação entra na nave e inicia sistemas de suporte de vida
+    crew_board_spacecraft()
+    activate_life_support_for_launch()
+
+    # Verificação de coerência 4D em tempo real
+    coherence = fetch_4d_coherence("phobos_gateway")
+    if not coherence.is_within_limits():
+      abort_mission("Coherence limits violated pre-launch")
+  }
+
+  at T-60s: {
+    # Sequência de lançamento eletromagnético + ignição de propulsão principal
+    activate_electromagnetic_catapult(target_velocity_kms = 1.5)
+    if catapult_success():
+      ignite_main_propulsion(
+        propulsion_type = select_propulsion_for_destination(destination),
+        thrust_profile = "optimized_for_crew_comfort"  # Limitar aceleração a 0.3 g para conforto
+      )
+  }
+
+  at T=0: {  # Separação de Fobos, início da viagem interplanetária
+    confirm_departure_from_phobos()
+
+    # Iniciar navegação autônoma com monitoramento contínuo
+    begin_autonomous_navigation(
+      navigation_mode = "pulsar_timing_optical_backup",
+      update_interval_hours = 6
+    )
+
+    # Registrar lançamento no ledger com VC de missão tripulada
+    launch_vc = create_crewed_launch_vc({
+      mission_id: mission_id,
+      crew_size: crew_size,
+      destination: destination,
+      departure_time: now(),
+      coherence_profile: recorded_4d_coherence,
+      crew_health_baseline: crew_health_check,
+      system_reliability_baseline: system_reliability_estimate()
+    })
+    publish_to_ledger(launch_vc)
+  }
+
+  # === FASE DE VIAGEM INTERPLANETÁRIA (AUTÔNOMA COM SUPERVISÃO) ===
+  during interplanetary_cruise: {
+    # Monitoramento contínuo de saúde da tripulação e sistemas
+    crew_health = monitor_crew_health_continuously()
+    system_status = monitor_critical_systems()
+
+    # Atualização de coerência 4D e ajuste de operações
+    coherence = update_4d_coherence(crew_health, system_status, environment_data)
+
+    # Tomada de decisão com consenso humano-máquina
+    if anomaly_detected():
+      decision = human_machine_consensus(
+        anomaly_type = detected_anomaly,
+        crew_input = crew_assessment(),
+        ai_recommendation = ai_diagnosis(),
+        earth_input = delayed_earth_control()  # Considerar latência de comunicação
+      )
+      execute_decision(decision)
+
+    # Transmissão periódica de status via laser óptico
+    if time_for_status_update():
+      compressed_status = classical_compress_telemetry(crew_health, system_status, science_data)
+      transmit_via_optical_link(compressed_status)
+
+    # Preparação para manobras de gravity assist ou correção de trajetória
+    if approaching_maneuver_point():
+      execute_trajectory_maneuver(
+        maneuver_type = "gravity_assist" if destination_requires else "course_correction",
+        thrust_profile = "crew_comfort_optimized"
+      )
+  }
+
+  # === FASE DE CHEGADA AO DESTINO ===
+  at arrival_at_destination: {
+    # Manobras de inserção orbital ou pouso conforme destino
+    execute_destination_insertion(
+      destination_type = get_destination_type(destination),
+      insertion_profile = "safety_first_crew_protection"
+    )
+
+    # Iniciar operações científicas ou de exploração no destino
+    begin_destination_operations(mission_objectives)
+
+    # Registrar chegada no ledger
+    arrival_vc = create_crewed_arrival_vc({
+      mission_id: mission_id,
+      arrival_time: now(),
+      crew_status: crew_health,
+      system_status: system_status,
+      initial_destination_data: preliminary_destination_analysis()
+    })
+    publish_to_ledger(arrival_vc)
+  }
+
+  # === FASE DE RETORNO OU EXTENSÃO DE MISSÃO ===
+  if mission_objectives_met() or emergency_return_required(): {
+    at return_preparation: {
+      # Preparar nave para retorno ou extensão
+      prepare_spacecraft_for_return_or_extension(
+        return_profile = "optimized_for_crew_safety",
+        resource_allocation = compute_remaining_resources()
+      )
+
+      # Verificação final de sistemas e saúde antes do retorno
+      final_systems_check()
+      final_crew_health_assessment()
+    }
+
+    at return_launch: {
+      # Iniciar retorno com propulsão e navegação autônoma
+      ignite_return_propulsion()
+      begin_autonomous_navigation(return_trajectory)
+
+      # Registrar início do retorno no ledger
+      return_launch_vc = create_return_launch_vc({...})
+      publish_to_ledger(return_launch_vc)
+    }
+  }
+
+  # === FASE DE RETORNO À TERRA E POUSO ===
+  at earth_reentry_preparation: {
+    # Preparar cápsula de reentrada e separar módulos não essenciais
+    prepare_reentry_capsule()
+    separate_non_essential_modules()
+  }
+
+  at earth_reentry: {
+    # Executar reentrada atmosférica com controle autônomo e backup terrestre
+    execute_atmospheric_reentry(
+      reentry_profile = "crew_safety_optimized",
+      landing_site = pre_designated_recovery_zone
+    )
+
+    # Confirmar pouso seguro e resgate da tripulação
+    confirm_safe_landing_and_crew_recovery()
+
+    # Registrar conclusão da missão no ledger
+    mission_complete_vc = create_mission_completion_vc({
+      mission_id: mission_id,
+      completion_time: now(),
+      crew_status_final: final_crew_health,
+      mission_objectives_achieved: evaluate_mission_success(),
+      scientific_discoveries: compile_scientific_results(),
+      lessons_learned: compile_mission_lessons()
+    })
+    publish_to_ledger(mission_complete_vc)
+  }
+
+  # === SELAGEM DA FACE TRIANGULAR DE MISSÃO TRIPULADA ===
+  seal_crewed_mission_triangular_face(
+    earth_did = "did:arkhe:terrestrial:mission_control",
+    phobos_did = "did:arkhe:celestial:phobos:outer-gateway-1",
+    destination_did = resolve_destination_did(destination),
+    mission_id = mission_id,
+    crew_ids = crew_member_dids,
+    mission_outcome = evaluate_mission_outcome()
+  )
+
+  # === PÓS-MISSÃO: ANÁLISE E APRENDIZADO ===
+  at post_mission_analysis: {
+    # Analisar dados da missão para refinamento de futuros projetos
+    analyze_mission_data_for_improvements()
+
+    # Atualizar modelos de IA e protocolos com lessons learned
+    update_ai_models_and_protocols(mission_lessons_learned)
+
+    # Preparar gateway para próxima missão
+    prepare_gateway_for_next_mission()
+
+    # Log final de missão
+    log_mission_completion_summary({
+      mission_id: mission_id,
+      total_duration_s: mission_duration_seconds,
+      crew_health_outcome: final_crew_health_summary,
+      system_performance: system_performance_summary,
+      scientific_return: scientific_results_summary,
+      coherence_stability_over_mission: evaluate_coherence_stability()
+    })
+  }
+
+postconditions:
+  assert launch_vc.valid == true
+  assert arrival_vc.valid == true if destination_reached
+  assert mission_complete_vc.valid == true
+  assert triangular_face_sealed == true
+  assert crew_safely_recovered == true
+  assert system_ready_for_next_mission()

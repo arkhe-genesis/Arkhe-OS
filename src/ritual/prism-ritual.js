@@ -11,7 +11,7 @@
 export class CrystallizationRitual {
   constructor(canvasId) {
     this.canvas = document.getElementById(canvasId);
-    if (!this.canvas) return;
+    if (!this.canvas) {return;}
     this.ctx = this.canvas.getContext('2d');
     this.phase = 'invocation'; // invocation | channeling | integration | sealing
     this.particles = [];
@@ -22,7 +22,7 @@ export class CrystallizationRitual {
   }
 
   resize() {
-    if (!this.canvas) return;
+    if (!this.canvas) {return;}
     const dpr = window.devicePixelRatio || 1;
     const rect = this.canvas.getBoundingClientRect();
     this.canvas.width = rect.width * dpr;
@@ -51,9 +51,9 @@ export class CrystallizationRitual {
     this.progress = Math.min(this.received / this.totalBytes, 1);
 
     // Transição de fases axiomáticas
-    if (this.progress < 0.05) this.phase = 'invocation';
-    else if (this.progress < 0.85) this.phase = 'channeling';
-    else if (this.progress < 1.0) this.phase = 'integration';
+    if (this.progress < 0.05) {this.phase = 'invocation';}
+    else if (this.progress < 0.85) {this.phase = 'channeling';}
+    else if (this.progress < 1.0) {this.phase = 'integration';}
     else if (this.phase !== 'sealing') {
       this.phase = 'sealing';
       setTimeout(() => {
@@ -64,8 +64,8 @@ export class CrystallizationRitual {
   }
 
   draw() {
-    const { ctx, w, h, cx, cy, progress, phase } = this;
-    if (!ctx) return;
+    const { ctx, w, h, cx, cy, progress } = this;
+    if (!ctx) {return;}
 
     // Rastro etéreo (limpar com opacidade para efeito de rastro)
     ctx.fillStyle = 'rgba(2, 6, 23, 0.15)';
@@ -129,14 +129,14 @@ export class CrystallizationRitual {
       ctx.arc(px, py, p.size * p.life, 0, Math.PI * 2);
       ctx.fill();
 
-      if (p.life <= 0) this.particles.splice(i, 1);
+      if (p.life <= 0) {this.particles.splice(i, 1);}
     });
 
     // Métricas de Transparência (texto monástico)
     this.drawMetrics(cx, cy + baseRadius + 50, hue);
   }
 
-  drawMetrics(x, y, hue) {
+  drawMetrics(x, y, _hue) {
     const { ctx, received, totalBytes, phase, startTime } = this;
     const mb = (received / 1048576).toFixed(1);
     const totalMb = (totalBytes / 1048576).toFixed(1);
@@ -175,7 +175,7 @@ export class CrystallizationRitual {
   }
 
   complete() {
-    if (this.frameId) cancelAnimationFrame(this.frameId);
+    if (this.frameId) {cancelAnimationFrame(this.frameId);}
     // Flash final de selamento
     const { ctx, w, h } = this;
     if (ctx) {
@@ -185,7 +185,7 @@ export class CrystallizationRitual {
   }
 
   destroy() {
-    if (this.frameId) cancelAnimationFrame(this.frameId);
+    if (this.frameId) {cancelAnimationFrame(this.frameId);}
     window.removeEventListener('resize', this.resizeHandler);
   }
 }

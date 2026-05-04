@@ -20,7 +20,7 @@ import threading
 import time
 import sys
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from dataclasses import dataclass
 from typing import Dict, List, Tuple, Optional
 import logging

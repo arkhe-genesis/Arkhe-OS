@@ -1,10 +1,14 @@
-// packages/lucent-sdk/src/LucentCollector.ts
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 export interface SessionEvent {
   type: 'click' | 'navigation' | 'error' | 'rage_click' | 'performance';
   timestamp: number;
   target?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface HydroContext {
@@ -16,12 +20,12 @@ export interface HydroContext {
 }
 
 export class LucentCollector {
-  private ws: any;
+  private ws: WebSocket;
   private sessionId: string;
-  private eprContext: any; // EPRHandshake;
+  private eprContext: { getNonce: () => string }; // EPRHandshake;
   public hydroContext: HydroContext;
   private eventBuffer: SessionEvent[] = [];
-  private flush_interval_id: any;
+  private flush_interval_id: ReturnType<typeof setInterval> | null = null;
 
   constructor(
     apiUrl: string,
@@ -41,7 +45,7 @@ export class LucentCollector {
     this.eprContext = { getNonce: () => Math.random().toString() }; // new EPRHandshake();
 
     // Conexão qhttp (quantum WebSocket)
-    this.ws = new (global as any).WebSocket(`quantum://${apiUrl}/lucent/session`);
+    this.ws = new (globalThis as unknown as { WebSocket: new (url: string) => WebSocket }).WebSocket(`quantum://${apiUrl}/lucent/session`);
     this.setupWebSocket();
 
     // Flush periódico
@@ -64,7 +68,7 @@ export class LucentCollector {
         eprNonce: this.eprContext.getNonce(),
         hydroNodeId: this.hydroContext.nodeId,
         timestamp: Date.now(),
-        userAgent: (global as any).navigator?.userAgent || "mock",
+        userAgent: (globalThis as unknown as { navigator?: { userAgent: string } }).navigator?.userAgent || "mock",
         viewport: { width: 1024, height: 768 }
       };
       this.ws.send(JSON.stringify(frame));
@@ -73,8 +77,8 @@ export class LucentCollector {
 
   private subscribeHydroContext(nodeId: string) {
     // Conecta ao nó HYDRO-Ω para receber métricas em tempo real
-    const hydroWs = new (global as any).WebSocket(`quantum://hydro.arkhe/node/${nodeId}`);
-    hydroWs.onmessage = (event: any) => {
+    const hydroWs = new (globalThis as unknown as { WebSocket: new (url: string) => WebSocket }).WebSocket(`quantum://${apiUrl}/hydro.arkhe/node/${nodeId}`);
+    hydroWs.onmessage = (event: MessageEvent) => {
       const data = JSON.parse(event.data);
       this.hydroContext = {
         nodeId: data.nodeId,
@@ -87,8 +91,8 @@ export class LucentCollector {
   }
 
   private calculateGeofenceStatus(level: number): 'SAFE' | 'WARNING' | 'CRITICAL' {
-    if (level < 10) return 'CRITICAL';
-    if (level > 100) return 'WARNING';
+    if (level < 10) {return 'CRITICAL';}
+    if (level > 100) {return 'WARNING';}
     return 'SAFE';
   }
 
@@ -111,7 +115,7 @@ export class LucentCollector {
       }
     };
 
-    this.eventBuffer.push(enrichedEvent);
+    this.eventBuffer.push(enrichedEvent as unknown as SessionEvent);
 
     // Rage click detection (imediato)
     if (event.type === 'rage_click' && correlation > 0.8) {
@@ -121,9 +125,9 @@ export class LucentCollector {
 
   private calculateUXStress(event: SessionEvent): number {
     let score = 0;
-    if (event.type === 'error') score += 0.4;
-    if (event.type === 'rage_click') score += 0.6;
-    if (event.type === 'performance' && event.metadata?.loadTime > 3000) score += 0.3;
+    if (event.type === 'error') {score += 0.4;}
+    if (event.type === 'rage_click') {score += 0.6;}
+    if (event.type === 'performance' && event.metadata && (event.metadata.loadTime as number) > 3000) {score += 0.3;}
 
     // Normaliza 0-1
     return Math.min(1, score);
@@ -143,11 +147,11 @@ export class LucentCollector {
     return hydro.massBalanceValid ? rawCorrelation : 0;
   }
 
-  private generateZKProof(event: SessionEvent): string {
+  private generateZKProof(_event: SessionEvent): string {
     return "0x" + Math.random().toString(16).substring(2);
   }
 
-  private emitQuantumAlert(type: string, data: any) {
+  private emitQuantumAlert(type: string, data: unknown) {
     const alert = {
       type: 0x23, // SESSION_ANALYSIS
       alertType: type,
@@ -161,7 +165,7 @@ export class LucentCollector {
   }
 
   private flush(): void {
-    if (this.eventBuffer.length === 0) return;
+    if (this.eventBuffer.length === 0) {return;}
 
     const batch = {
       type: 0x21, // SESSION_EVENT batch
@@ -177,7 +181,7 @@ export class LucentCollector {
   }
 
   // Método específico para erros
-  error(error: Error, context?: any): void {
+  error(error: Error, context?: unknown): void {
     this.track({
       type: 'error',
       timestamp: Date.now(),
@@ -191,7 +195,7 @@ export class LucentCollector {
 
   // Finaliza sessão
   end(): void {
-    if (this.flush_interval_id) clearInterval(this.flush_interval_id);
+    if (this.flush_interval_id) {clearInterval(this.flush_interval_id);}
     const frame = {
       type: 0x22, // SESSION_END
       sessionId: this.sessionId,

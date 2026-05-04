@@ -1,0 +1,288 @@
+{
+  "timestamp": 1777700827.9529138,
+  "raw_results": [
+    {
+      "scenario": "sim_base",
+      "track": "track2",
+      "total_time_ms": 1.707791999933761,
+      "proof_time_ms": 0,
+      "verify_time_ms": 0,
+      "proof_size_bytes": 0,
+      "effective_khz": 585551.4020669885,
+      "optimizations": {},
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "sim_base",
+      "track": "track2",
+      "total_time_ms": 0.023520000013377285,
+      "proof_time_ms": 0,
+      "verify_time_ms": 0,
+      "proof_size_bytes": 0,
+      "effective_khz": 42517006.778539024,
+      "optimizations": {},
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "sim_base",
+      "track": "track2",
+      "total_time_ms": 0.019009999959962443,
+      "proof_time_ms": 0,
+      "verify_time_ms": 0,
+      "proof_size_bytes": 0,
+      "effective_khz": 52603892.79884963,
+      "optimizations": {},
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "sim_opt",
+      "track": "track2",
+      "total_time_ms": 0.02216899997620203,
+      "proof_time_ms": 0,
+      "verify_time_ms": 0,
+      "proof_size_bytes": 0,
+      "effective_khz": 45108033.78923179,
+      "optimizations": {
+        "mi_bins": 20
+      },
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "sim_opt",
+      "track": "track2",
+      "total_time_ms": 0.017263000017919694,
+      "proof_time_ms": 0,
+      "verify_time_ms": 0,
+      "proof_size_bytes": 0,
+      "effective_khz": 57927359.031568065,
+      "optimizations": {
+        "mi_bins": 20
+      },
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "sim_opt",
+      "track": "track2",
+      "total_time_ms": 0.023190000092654373,
+      "proof_time_ms": 0,
+      "verify_time_ms": 0,
+      "proof_size_bytes": 0,
+      "effective_khz": 43122035.18777727,
+      "optimizations": {
+        "mi_bins": 20
+      },
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "real_opt",
+      "track": "track2",
+      "total_time_ms": 0.8041879998472723,
+      "proof_time_ms": 0.0015779999102960574,
+      "verify_time_ms": 0.002521000169508625,
+      "proof_size_bytes": 312,
+      "effective_khz": 1243490.3283683858,
+      "optimizations": {
+        "mi_bins": 20
+      },
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "real_opt",
+      "track": "track2",
+      "total_time_ms": 0.02454900004522642,
+      "proof_time_ms": 0.0014739998732693493,
+      "verify_time_ms": 0.0020039999526488828,
+      "proof_size_bytes": 312,
+      "effective_khz": 40734856.741932794,
+      "optimizations": {
+        "mi_bins": 20
+      },
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "real_opt",
+      "track": "track2",
+      "total_time_ms": 0.019297000108053908,
+      "proof_time_ms": 0.000878000037118909,
+      "verify_time_ms": 0.0010100000054080738,
+      "proof_size_bytes": 312,
+      "effective_khz": 51821526.37199987,
+      "optimizations": {
+        "mi_bins": 20
+      },
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "sim_base",
+      "track": "track3",
+      "total_time_ms": 0.7276740000179416,
+      "proof_time_ms": 0,
+      "verify_time_ms": 0,
+      "proof_size_bytes": 0,
+      "effective_khz": 1374241.7620738735,
+      "optimizations": {},
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "sim_base",
+      "track": "track3",
+      "total_time_ms": 0.021483999944393872,
+      "proof_time_ms": 0,
+      "verify_time_ms": 0,
+      "proof_size_bytes": 0,
+      "effective_khz": 46546267.10986119,
+      "optimizations": {},
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "sim_base",
+      "track": "track3",
+      "total_time_ms": 0.017737999996825238,
+      "proof_time_ms": 0,
+      "verify_time_ms": 0,
+      "proof_size_bytes": 0,
+      "effective_khz": 56376141.62695799,
+      "optimizations": {},
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "sim_opt",
+      "track": "track3",
+      "total_time_ms": 0.025079000124605955,
+      "proof_time_ms": 0,
+      "verify_time_ms": 0,
+      "proof_size_bytes": 0,
+      "effective_khz": 39873997.967680626,
+      "optimizations": {
+        "sample_rate": 0.25
+      },
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "sim_opt",
+      "track": "track3",
+      "total_time_ms": 0.017597999885765603,
+      "proof_time_ms": 0,
+      "verify_time_ms": 0,
+      "proof_size_bytes": 0,
+      "effective_khz": 56824639.53240871,
+      "optimizations": {
+        "sample_rate": 0.25
+      },
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "sim_opt",
+      "track": "track3",
+      "total_time_ms": 0.01578999990670127,
+      "proof_time_ms": 0,
+      "verify_time_ms": 0,
+      "proof_size_bytes": 0,
+      "effective_khz": 63331222.666796885,
+      "optimizations": {
+        "sample_rate": 0.25
+      },
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "real_opt",
+      "track": "track3",
+      "total_time_ms": 1.9123990000480262,
+      "proof_time_ms": 0.0019460001112747705,
+      "verify_time_ms": 0.002246000121886027,
+      "proof_size_bytes": 312,
+      "effective_khz": 522903.4317498006,
+      "optimizations": {
+        "sample_rate": 0.25
+      },
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "real_opt",
+      "track": "track3",
+      "total_time_ms": 0.024171999939426314,
+      "proof_time_ms": 0.0012730001799354795,
+      "verify_time_ms": 0.0010170001587539446,
+      "proof_size_bytes": 312,
+      "effective_khz": 41370180.477657795,
+      "optimizations": {
+        "sample_rate": 0.25
+      },
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "real_opt",
+      "track": "track3",
+      "total_time_ms": 0.019850999933623825,
+      "proof_time_ms": 0.0008560000424040481,
+      "verify_time_ms": 0.001291999979002867,
+      "proof_size_bytes": 312,
+      "effective_khz": 50375296.12330459,
+      "optimizations": {
+        "sample_rate": 0.25
+      },
+      "security_bits": 40,
+      "success": true
+    }
+  ],
+  "summary": {
+    "track2": {
+      "sim_base": {
+        "avg_time_ms": 0.5834406666357003,
+        "std_time_ms": 0.795038584196585,
+        "avg_khz": 31902150.326485217,
+        "n_runs": 3
+      },
+      "sim_opt": {
+        "avg_time_ms": 0.020874000028925366,
+        "std_time_ms": 0.00258716074994206,
+        "avg_khz": 48719142.66952571,
+        "n_runs": 3
+      },
+      "real_opt": {
+        "avg_time_ms": 0.2826780000001842,
+        "std_time_ms": 0.36876949063176523,
+        "avg_khz": 31266624.480767015,
+        "n_runs": 3
+      }
+    },
+    "track3": {
+      "sim_base": {
+        "avg_time_ms": 0.2556319999863869,
+        "std_time_ms": 0.33378760260006113,
+        "avg_khz": 34765550.16629768,
+        "n_runs": 3
+      },
+      "sim_opt": {
+        "avg_time_ms": 0.019488999972357608,
+        "std_time_ms": 0.004021052288284461,
+        "avg_khz": 53343286.7222954,
+        "n_runs": 3
+      },
+      "real_opt": {
+        "avg_time_ms": 0.6521406666403587,
+        "std_time_ms": 0.8911389595915504,
+        "avg_khz": 30756126.67757073,
+        "n_runs": 3
+      }
+    }
+  },
+  "projected_200khz": true
+}

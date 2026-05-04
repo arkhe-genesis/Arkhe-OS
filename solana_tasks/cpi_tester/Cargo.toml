@@ -1,0 +1,11 @@
+[package]
+name = "cpi_tester"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anchor-lang = "0.30.1"
+counter = { path = "../counter", features = ["cpi"] }
+
+[lib]
+crate-type = ["cdylib", "lib"]

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <ComponentGroup Id="BackendComponents" Directory="INSTALLFOLDER">
+      <Component Id="BackendExe" Guid="E3B7C30D-802B-4F4C-9D0E-1F2A3B4C5D6E" Win64="yes">
+        <File Source="..\..\dist\cathedral_backend.exe" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

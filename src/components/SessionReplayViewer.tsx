@@ -37,6 +37,24 @@ export default function SessionReplayViewer({ onClose, session }: SessionReplayV
 
   const progress = (currentEventIndex / (session.events.length - 1)) * 100;
   const currentEvent = session.events[currentEventIndex];
+    const fetchSessions = async () => {
+      try {
+        const res = await fetch('/api/lucent/sessions');
+        const data = await res.json() as UserSession[];
+        setSessions(data);
+        setLoading(false);
+      } catch (e) {
+        console.error('Failed to fetch sessions:', e);
+        setLoading(false);
+      }
+    };
+
+    void fetchSessions();
+    const interval = setInterval(() => {
+      void fetchSessions();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
@@ -140,6 +158,25 @@ export default function SessionReplayViewer({ onClose, session }: SessionReplayV
                        <span className="opacity-50">[{new Date(e.timestamp).toISOString().split('T')[1].slice(0, 8)}]</span>
                        <span className="mx-2 font-bold">{e.type}</span>
                        <span className="opacity-70">{JSON.stringify((e as any).payload || {})}</span>
+                )}
+
+                <div className="space-y-2">
+                  <h4 className="text-[9px] text-cyan-500/60 uppercase tracking-widest border-b border-cyan-500/10 pb-1">Event Log (qhttp State Frames)</h4>
+                  {selectedSession.events.map((event, idx) => (
+                    <div key={idx} className="flex gap-3 text-[10px] items-start border-l border-cyan-500/20 pl-3 py-1">
+                      <span className="text-cyan-500/40 whitespace-nowrap">{new Date(event.timestamp).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+                      <span className={`font-bold ${event.type === 'SESSION_START' ? 'text-emerald-400' : event.type === 'SESSION_END' ? 'text-amber-400' : 'text-cyan-400'}`}>
+                        {event.type}
+                      </span>
+                      <span className="text-cyan-200">
+                        {(event.payload as { type?: string, message?: string })?.type === 'error' ? (
+                          <span className="text-red-400 flex items-center gap-1">
+                            <Bug className="w-3 h-3" /> {(event.payload as { message: string }).message}
+                          </span>
+                        ) : (
+                          (event.payload as { type?: string })?.type || JSON.stringify(event.payload || {})
+                        )}
+                      </span>
                     </div>
                   ))}
                 </div>

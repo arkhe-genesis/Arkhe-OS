@@ -1,0 +1,61 @@
+# arkhe-api-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arkhe-api
+  namespace: cathedral
+  labels:
+    app: arkhe-api
+    version: "inf.2.1"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: arkhe-api
+  template:
+    metadata:
+      labels:
+        app: arkhe-api
+    spec:
+      containers:
+      - name: arkhe-api
+        image: arkhe-os/api:inf.2.1
+        ports:
+        - containerPort: 8000
+          name: http
+        env:
+        - name: SCAFFOLD_COHERENCE_SEED
+          value: "0.92"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: arkhe-api-service
+  namespace: cathedral
+spec:
+  selector:
+    app: arkhe-api
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8000
+  type: ClusterIP

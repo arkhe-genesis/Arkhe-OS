@@ -1,0 +1,56 @@
+sensor:
+  name: "Cathedral-BioPhoton-COTS-Prototype-v1"
+  type: "PMT_based_spectral_scanner"
+  manufacturer: "Cathedral Hardware Forge (COTS Edition)"
+  version: "0.1.0-alpha"
+
+components:
+  # Detetor principal: Fotomultiplicador (PMT)
+  detector:
+    model: "Hamamatsu H10721-210"
+    type: "Photomultiplier Tube Module"
+    spectral_range: "230 to 700 nm"
+    peak_sensitivity_nm: 400
+    dark_count_rate_cps: 50
+    supply_voltage_v: 5.0
+    control_voltage_v: "0.5 to 1.1"
+
+  # Filtragem espectral baseada em roda de filtros ou filtros manuais
+  optics:
+    filters:
+      - name: "UV-Bandpass"
+        center_nm: 370
+        bandwidth_nm: 10
+        model: "Thorlabs FB370-10"
+      - name: "Blue-Bandpass"
+        center_nm: 450
+        bandwidth_nm: 10
+        model: "Thorlabs FB450-10"
+      - name: "Green-Bandpass"
+        center_nm: 550
+        bandwidth_nm: 10
+        model: "Thorlabs FB550-10"
+      - name: "Red-Bandpass"
+        center_nm: 650
+        bandwidth_nm: 10
+        model: "Thorlabs FB650-10"
+    collection_lens: "Thorlabs ACL2520U-A (Aspheric Lens)"
+
+  # Processamento e Aquisição
+  electronics:
+    microcontroller: "ESP32-S3-DevKitC-1"
+    adc: "ADS1256 (24-bit High Precision ADC)" # Para ler a saída analógica do PMT se não for em modo de contagem
+    counter: "SN74LV8154 (Dual 16-bit Counter)" # Para modo de contagem de fótons se disponível
+
+architecture:
+  - PMT_Analog_Out -> Low_Pass_Filter -> ADS1256 -> ESP32_SPI
+  - ESP32 -> WiFi/mTLS -> Cathedral_Quantum_Bus
+
+privacy_features:
+  on_device_hashing: "Implemented in ESP32 firmware (mbedTLS)"
+  consent_enforcement: "Software-level check against Cathedral Consent Engine before transmission"
+  data_minimization: "Aggregation into 5 spectral bins (UV, Blue, Green, Red, NIR/Ambient)"
+
+notes:
+  - "This prototype uses COTS components for proof-of-concept validation of biophoton signaling."
+  - "Sensitivity is lower than the SPAD array spec, requiring dark-box isolation."

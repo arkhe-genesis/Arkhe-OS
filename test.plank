@@ -1,0 +1,7 @@
+const KAPPA: u256 = 920;
+
+fn main() {
+    @evm_sstore(0, KAPPA);
+    u256 result = @evm_sload(0);
+    @evm_return(result);
+}

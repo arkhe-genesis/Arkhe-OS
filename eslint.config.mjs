@@ -32,12 +32,32 @@ export default defineConfig([
 
       parserOptions: {
         projectService: {
-          allowDefaultProject: [ "src/*.tsx",
+          allowDefaultProject: [
             '.prettierrc.cjs',
             'puppeteer.config.cjs',
             'eslint.config.mjs',
             'rollup.config.mjs',
             'skills/memory-leak-debugging/references/compare_snapshots.js',
+            'src/index.ts',
+            'src/main.tsx',
+            'src/issue-descriptions.ts',
+            'skills/career-ops/dedup-tracker.mjs',
+            'skills/career-ops/generate-pdf.mjs',
+            'skills/career-ops/merge-tracker.mjs',
+            'skills/career-ops/normalize-statuses.mjs',
+            'skills/career-ops/verify-pipeline.mjs',
+            'snap/src/index.ts',
+            'src/gpd_bridge/index.js',
+            'src/mirofish_bridge/index.js',
+            'src/storage/embryovault.js',
+            'src/velxio_bridge/index.js',
+            'src/workers/inference.worker.js',
+            'test_btc.ts',
+            'test_lucent.ts',
+            'trigger_handshake.js',
+            'verify_design_final.test.ts',
+            'vite.config.ts',
+            'src/components/zkp/ArkheTruth.tsx',
           ],
         },
       },
@@ -75,6 +95,7 @@ export default defineConfig([
         {
           argsIgnorePattern: '^_',
           varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
         },
       ],
       '@typescript-eslint/no-explicit-any': [

@@ -2,6 +2,17 @@
 
 #include <torch/torch.h>
 #include <vector>
+#include <unordered_map>
+#include <chrono>
+#include <string>
+#include <mutex>
+
+struct OverrideEntry {
+    float multiplier;                     // fator de multiplicação (ex: 2.0)
+    std::chrono::steady_clock::time_point expiry; // momento de expiração
+    std::string technician_id;
+    std::string reason;
+};
 
 class PhaseGradientRedistributor : public torch::nn::Module {
 public:
@@ -34,6 +45,28 @@ public:
     // Acessar a matriz K (parâmetro treinável)
     torch::Tensor get_K() const { return K_; }
 
+    // Aplica override temporário em um nó (aumenta todos os K_ij do nó)
+    void apply_node_override(int64_t node_idx, float multiplier, int duration_sec,
+                             const std::string& technician_id, const std::string& reason);
+
+    // Remove override (manual ou por expiração)
+    void clear_override(int64_t node_idx);
+
+    // Atualiza overrides (chamado a cada iteração do loop)
+    void update_overrides();
+
+private:
+    torch::nn::Parameter K_;            // matriz de acoplamento [n_nodes x n_nodes]
+    torch::Tensor dist_mask_;           // máscara de distância (buffer não treinável)
+    torch::Tensor original_K_;          // cópia dos valores originais (sem override)
+    int64_t n_nodes_;
+    float sparse_weight_;               // regularização L1
+
+    std::unordered_map<int64_t, OverrideEntry> node_overrides_;
+    std::mutex override_mutex_;
+
+    void log_override(int64_t node_idx, float multiplier, int duration_sec,
+                      const std::string& technician_id, const std::string& reason);
 private:
     torch::nn::Parameter K_;            // matriz de acoplamento [n_nodes x n_nodes]
     torch::Tensor dist_mask_;           // máscara de distância (buffer não treinável)

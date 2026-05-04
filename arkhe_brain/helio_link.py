@@ -7,7 +7,7 @@ for the Arkhe(n) Project - Phase D (Ionosfera).
 import numpy as np
 from dataclasses import dataclass
 from typing import List, Dict
-from datetime import datetime
+from datetime import datetime, timezone
 
 class SchumannMonitor:
     """Monitors terrestrial ionospheric resonances (7.83Hz, 14.3Hz, etc.)"""

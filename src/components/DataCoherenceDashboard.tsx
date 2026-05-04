@@ -5,10 +5,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { X, Database, Activity, AlertCircle, RefreshCcw, Layout, Shield, Network, Server } from 'lucide-react';
+import { X, Database, Activity, AlertCircle, RefreshCcw,  Shield, Network, Server } from 'lucide-react';
 import { motion } from 'motion/react';
 import React from 'react';
 
+import type { SimulationState } from '../../server/types';
 import { useArkheSimulation } from '../hooks/useArkheSimulation';
 
 interface DataCoherenceDashboardProps {
@@ -16,7 +17,7 @@ interface DataCoherenceDashboardProps {
 }
 
 export default function DataCoherenceDashboard({ onClose }: DataCoherenceDashboardProps) {
-  const state = useArkheSimulation();
+  const state: SimulationState = useArkheSimulation();
   const { domains, overallHealth } = state.scaData;
 
   return (

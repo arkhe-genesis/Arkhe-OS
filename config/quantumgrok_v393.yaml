@@ -1,0 +1,29 @@
+version: "v∞.393.1"
+status: "UNIFIED_FRAMEWORK_CONJECTURAL_COMPONENTS_FLAGGED"
+p4_reproducibility:
+  seed_numpy: 103
+  seed_torch: 103
+  mp_dps: 50
+  voxel_grid: [24, 24, 24]
+  lattice_spacing: 0.1
+  fractal_iterations: 4
+  theta_cs: 0.1
+  memory_alpha: 0.7
+  relaxon_tau: 1.0
+  holographic_observers: 12
+  tolerance_unitarity: 1e-10
+  falsifiability_sigma: 3.0
+p5_conventions:
+  units:
+    hbar: 1.0
+    c: 1.0
+    k_B: 1.0
+    length: "planck_reduced"
+    time: "planck_reduced"
+    energy: "planck_reduced"
+  observable_mapping:
+    SCAR_IPR: "gauge_mode_localization"
+    Hall_current: "topological_response"
+    Friedmann_params: "emergent_cosmological_scale"
+  boundary_conditions: "periodic_torus_3D"
+  gauge_normalization: "SU2_unitary_by_construction"

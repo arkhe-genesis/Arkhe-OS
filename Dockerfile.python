@@ -1,0 +1,16 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Instala dependências da Catedral
+# COPY requirements.txt .
+# RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install numpy scipy rich fastapi uvicorn requests
+
+# Copia o código do módulo
+COPY . .
+
+# Verifica invariância antes de iniciar (Simulado)
+# RUN python -c "from cathedral_verify import check; check()"
+
+CMD ["python", "catedrald_part2.py", "daemon"]

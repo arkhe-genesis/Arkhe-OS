@@ -123,7 +123,7 @@ const TemporalLensPanel: React.FC<TemporalLensPanelProps> = ({ state }) => {
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-[#00FFAA] font-bold">{f.residentName} (2027)</span>
                   <span className="text-white/30 text-[9px] font-mono">
-                    {new Date(f.timestamp).toLocaleTimeString()}
+                    {new Date(f.timestamp || 0).toLocaleTimeString()}
                   </span>
                 </div>
                 <p className="text-white/80">{f.message}</p>

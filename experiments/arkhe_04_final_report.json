@@ -1,0 +1,21 @@
+{
+    "experiment_id": "ARKHE-04-FINAL-VALIDATION",
+    "conditions": {
+        "control": {
+            "omega": 0.94,
+            "eta": 0.736,
+            "shift_pm": 0
+        },
+        "anesthetic": {
+            "omega": 0.45,
+            "eta": 0.4416,
+            "shift_pm": 0.5072470367550869
+        }
+    },
+    "awg_validation": {
+        "target_shift_pm": 0.5,
+        "measured_shift_pm": 0.5072470367550869,
+        "status": "DETECTED"
+    },
+    "conclusion": "MT Quantum Coherence verified via subpicometric AWG detection."
+}

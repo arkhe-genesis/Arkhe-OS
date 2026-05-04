@@ -1,0 +1,56 @@
+@prefix catedraltranslucida: <http://cathedral.ark/ontology/catedraltranslucida#> .
+@prefix meta: <http://cathedral.ark/ontology/meta/v1#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+catedraltranslucida:AnchorSpectrum a owl:Class ;
+    rdfs:subClassOf meta:Action .
+
+catedraltranslucida:CodexSpectrum a owl:Class ;
+    meta:dpEpsilon 5e-01 ;
+    rdfs:subClassOf meta:Entity .
+
+catedraltranslucida:GeneratePhCDesign a owl:Class ;
+    rdfs:subClassOf meta:Action .
+
+catedraltranslucida:IssueSpectrumReceipt a owl:Class ;
+    rdfs:subClassOf meta:Action .
+
+catedraltranslucida:PhotonFederated a owl:Class ;
+    meta:dpEpsilon 5e-01 ;
+    rdfs:subClassOf meta:Entity .
+
+catedraltranslucida:PhotonForge a owl:Class ;
+    meta:dpEpsilon 5e-01 ;
+    rdfs:subClassOf meta:Entity .
+
+catedraltranslucida:SpectrumReceipt a owl:Class ;
+    meta:dpEpsilon 5e-01 ;
+    rdfs:subClassOf meta:Entity .
+
+meta:Audit a owl:Class .
+
+meta:Proof a owl:Class .
+
+meta:Substrate a owl:Class .
+
+meta:dpEpsilon a owl:DatatypeProperty ;
+    rdfs:domain meta:Entity ;
+    rdfs:range xsd:float .
+
+meta:fulfillsPurpose a owl:ObjectProperty ;
+    rdfs:domain meta:Action ;
+    rdfs:range meta:Purpose .
+
+meta:hasConsent a owl:ObjectProperty ;
+    rdfs:domain meta:Entity ;
+    rdfs:range meta:Consent .
+
+meta:Consent a owl:Class .
+
+meta:Purpose a owl:Class .
+
+meta:Action a owl:Class .
+
+meta:Entity a owl:Class .

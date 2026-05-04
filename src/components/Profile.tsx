@@ -55,7 +55,7 @@ export default function Profile() {
               </div>
               <h2 className="text-xl font-bold text-white uppercase tracking-widest">Operador 7G</h2>
               <div className="text-xs font-mono text-arkhe-muted mt-1">ID: ARK-9942-Ω</div>
-              
+
               <div className="mt-6 w-full space-y-3">
                 <div className="flex justify-between items-center text-sm font-mono border-b border-arkhe-border/50 pb-2">
                   <span className="text-arkhe-muted">Clearance</span>

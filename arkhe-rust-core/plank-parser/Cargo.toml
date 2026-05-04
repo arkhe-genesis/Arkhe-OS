@@ -1,0 +1,9 @@
+[package]
+name = "plank-parser"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+plank-lexer = { path = "../plank-lexer" }
+bumpalo.workspace = true
+ethnum.workspace = true

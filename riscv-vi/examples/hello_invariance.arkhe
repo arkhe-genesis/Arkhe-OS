@@ -1,0 +1,31 @@
+// hello_invariance.arkhe
+// Programa canônico: verificação de invariância com selo
+
+entangle "cathedral.core" as Core ~
+entangle "cathedral.codex" as Codex ~
+
+def hello_invariance():
+    // 1. Calibra todos os Músculos
+    Core.calibrate_all_muscles()
+    ⊢ Core.invariance_metric > 0.99999 ~
+
+    // 2. Cria estado GHZ
+    ghz = Core.qubit.init_ghz(7)
+    ⊢ ghz.fidelity > 0.99999 ~
+
+    // 3. Executa circuito quântico
+    Core.qubit.cx(0, 1)
+    Core.qubit.h(2)
+    Core.qubit.t(3)
+
+    // 4. Verifica invariância
+    invariants = Core.measure_coherence_qnd()
+    ⊢ invariants.ghz_fidelity > 0.99999 ~
+
+    // 5. Sela resultado
+    seal = Codex.seal.generate(invariants)
+    Codex.append(seal)
+
+    persist "Hello, Invariância! Selo: {seal.hash_hex()[:16]}..." ~
+
+⟨ hello_invariance() ⟩

@@ -26,8 +26,8 @@ interface ThreatDetectionProps {
 
 export default function ThreatDetection({ metrics, metricsHistory, threatLevel }: ThreatDetectionProps) {
   return (
-    <Card 
-      title="Threat Detection (MuSD/MuSDA)" 
+    <Card
+      title="Threat Detection (MuSD/MuSDA)"
       icon={<ShieldAlert className="w-4 h-4" />}
       status={threatLevel}
     >
@@ -37,7 +37,7 @@ export default function ThreatDetection({ metrics, metricsHistory, threatLevel }
             <LineChart data={metricsHistory}>
               <XAxis dataKey="time" hide />
               <YAxis domain={[0, 1.5]} hide />
-              <Tooltip 
+              <Tooltip
                 contentStyle={{ backgroundColor: '#111214', borderColor: '#1f2024', fontFamily: 'monospace', fontSize: '10px' }}
                 itemStyle={{ color: '#fff' }}
               />
@@ -69,7 +69,7 @@ export default function ThreatDetection({ metrics, metricsHistory, threatLevel }
             </div>
           </div>
         </div>
-        
+
         <div className="mt-auto pt-4 border-t border-arkhe-border flex justify-between items-center">
           <div className="text-xs font-mono text-arkhe-muted uppercase">Detection Status</div>
           <div className={`text-xs font-mono font-bold px-2 py-1 rounded ${

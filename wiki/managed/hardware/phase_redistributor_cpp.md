@@ -16,6 +16,12 @@ updated: 2026-04-05
 - Executado como serviço systemd nos nós de borda (Raspberry Pi / Jetson).
 - Acionado automaticamente quando `R < 0.7` e a taxa de nós ativos `alive_ratio < 0.85`.
 
+## Override Manual (via AR/Tablet)
+- **Métodos**: `apply_node_override`, `update_overrides`.
+- **Funcionalidade**: Permite que técnicos em campo forcem o aumento de acoplamento ($K$) em nós específicos por uma duração definida.
+- **Segurança**: Overrides expiram automaticamente, restaurando os pesos otimizados.
+- **Auditoria**: Registrado em `manual_overrides.csv` com ID do técnico e motivo.
+
 ## Performance (Benchmarking)
 - **Cenário**: 1000 nós.
 - **Duração**: 50 iterações em ~0,8 segundos (NVIDIA Jetson Nano).

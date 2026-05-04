@@ -1,0 +1,30 @@
+[workspace]
+resolver = "2"
+members = [
+    "plank-lexer",
+    "plank-parser",
+    "plank-hir",
+    "plank-comptime",
+    "plank-wasm",
+    "plank-evm",
+    "plank-cli",
+    "qhttp-protocol",
+    "qhttp-node",
+    "qhttp-routing"
+]
+
+[workspace.dependencies]
+bumpalo = "3.14"
+cranelift-codegen = "0.104"
+cranelift-frontend = "0.104"
+cranelift-wasm = "0.104"
+wasmtime = "18.0"
+rayon = "1.8"
+keccak-hash = "0.10"
+ethnum = "1.5"
+clap = { version = "4.4", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.35", features = ["full"] }
+log = "0.4"
+thiserror = "1.0"

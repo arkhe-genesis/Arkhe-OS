@@ -1,0 +1,11 @@
+[package]
+name = "plank-cli"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap.workspace = true
+bumpalo.workspace = true
+plank-lexer = { path = "../plank-lexer" }
+plank-parser = { path = "../plank-parser" }
+plank-evm = { path = "../plank-evm" }

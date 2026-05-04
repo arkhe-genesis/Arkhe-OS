@@ -12,7 +12,7 @@
 
 export interface ContextNode {
   /** Tempo de origem da informação (Onda Avançada) */
-  timestamp: number;
+  timestamp?: number;
   /** Representação vetorial no espaço latente */
   embedding: number[];
   /** Relevância atual (sujeita ao decaimento de Warp) */
@@ -33,30 +33,30 @@ export interface MemoryEngram {
 export interface TzinorMemoryState {
   /** Identificador único do Bio-Nó na Teknet */
   agentId: string;
-  
+
   /** Época atual da Timechain */
   currentEpoch: number;
-  
-  /** 
+
+  /**
    * Potencial F (Contexto Imediato / Onda Avançada)
    * A janela de atenção ativa (KV Cache / PNM)
    * "O que importa agora"
    */
   fContext: ContextNode[];
-  
-  /** 
+
+  /**
    * Potencial G (Memória Histórica / Onda Retardada)
    * O reservatório persistente de interações passadas (HBF)
    * "Por que importa"
    */
   gMemory: MemoryEngram[];
-  
-  /** 
+
+  /**
    * Fator de Warp (Decaimento de Randall-Sundrum)
    * W = e^{-k Δt}
    */
   warpFactor: number;
-  
+
   /** Coerência λ₂ do Estado Evolutivo */
   lambdaCoherence: number;
 }

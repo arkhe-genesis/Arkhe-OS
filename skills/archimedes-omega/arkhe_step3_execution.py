@@ -8,7 +8,7 @@ Integrates dispensing and LED curing into a synchronized sequence.
 import time
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from arkhe_dispenser_automation import PrecisionDispenser, well_id_to_xy, load_plate_layout, DISPENSE_Z_MM
 from arkhe_photonics_leveling import PhotonicLeveler
 

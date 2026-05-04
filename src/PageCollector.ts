@@ -1,3 +1,11 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * @license
  * Copyright 2025 Google LLC
@@ -32,8 +40,8 @@ export class UncaughtError {
   }
 }
 
-interface PageEvents extends PuppeteerPageEvents {
-  issue: DevTools.AggregatedIssue;
+interface PageEvents extends Omit<PuppeteerPageEvents, 'issue'> {
+  issue: any;
   uncaughtError: UncaughtError;
 }
 
@@ -137,7 +145,7 @@ export class PageCollector<T> {
       navigations[0].push(withId);
     });
 
-    listeners['framenavigated'] = (frame: Frame) => {
+    listeners['framenavigated'] = (frame: any) => {
       // Only split the storage on main frame navigation
       if (frame !== page.mainFrame()) {
         return;
@@ -318,7 +326,7 @@ class PageEventSubscriber {
       return;
     }
     this.#seenIssues.add(event.data);
-    this.#page.emit('issue', event.data);
+    this.#page.emit('issue', event.data as any);
   };
 
   #onExceptionThrown = (event: Protocol.Runtime.ExceptionThrownEvent) => {
@@ -378,7 +386,7 @@ export class NetworkCollector extends PageCollector<HTTPRequest> {
       collector: (item: HTTPRequest) => void,
     ) => ListenerMap<PageEvents> = collect => {
       return {
-        request: req => {
+        request: (req: any) => {
           collect(req);
         },
       } as ListenerMap;

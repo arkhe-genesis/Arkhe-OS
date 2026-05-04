@@ -1,0 +1,15 @@
+{
+  "block_0": {
+    "timestamp": "genesis",
+    "event": "CRYSTAL_HOMEOSTASIS_INIT",
+    "parameters": {
+      "kappa": null,
+      "lambda_l1": null,
+      "binarization_threshold": null,
+      "embedding_dim": null,
+      "capture_threshold": 0.0
+    },
+    "proof_hash": "genesis",
+    "parent_hash": "0000000000000000000000000000000000000000000000000000000000000000"
+  }
+}

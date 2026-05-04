@@ -1,0 +1,206 @@
+sensor:
+  name: "Cathedral-BioPhoton-Spec-v1"
+  type: "SPAD_array_with_spectral_filtering"
+  manufacturer: "Cathedral Photonics Division"
+  version: "1.0.0"
+
+optics:
+  # Sistema de coleta de luz
+  collection_optics:
+    lens_type: "aspheric_UV-NIR"
+    focal_length_mm: 25
+    f_number: 1.4  # Alta abertura para máxima coleta
+    transmission_range: "200-1100 nm"
+    anti_reflection_coating: "multi-layer broadband"
+
+  # Filtragem espectral
+  spectral_filtering:
+    type: "tunable_filter_wheel"  # Ou: "integrated_spectral_splitter"
+    bands:
+      - name: "UV-A"
+        center_nm: 365
+        bandwidth_nm: 20
+        transmission_pct: 85
+      - name: "blue"
+        center_nm: 450
+        bandwidth_nm: 30
+        transmission_pct: 90
+      - name: "green"
+        center_nm: 550
+        bandwidth_nm: 40
+        transmission_pct: 92
+      - name: "red"
+        center_nm: 650
+        bandwidth_nm: 50
+        transmission_pct: 94
+      - name: "NIR"
+        center_nm: 850
+        bandwidth_nm: 100
+        transmission_pct: 88
+    switching_time_ms: 5  # Tempo para trocar de banda
+    out_of_band_rejection: ">OD4"  # Rejeição de luz fora da banda
+
+detector:
+  # Array SPAD (Single-Photon Avalanche Diode)
+  type: "SPAD_array"
+  model: "Cathedral-SPAD-512"
+  specs:
+    pixel_count: "32x16"  # 512 pixels totais
+    pixel_pitch_um: 50
+    active_area_cm2: 0.8  # 32×50µm × 16×50µm
+    fill_factor_pct: 65
+    photon_detection_probability:
+      400nm: 45
+      500nm: 52
+      600nm: 48
+      700nm: 41
+      800nm: 35
+    dark_count_rate: 0.008  # counts/pixel/s @ 20°C
+    afterpulsing_probability: 0.02
+    dead_time_ns: 45
+    timing_jitter_ps: 85  # RMS
+
+  # Resfriamento para reduzir ruído térmico
+  cooling:
+    type: "TEC_2stage"  # Thermoelectric cooler, 2 estágios
+    target_temperature_C: -10
+    temperature_stability_C: 0.1
+    power_consumption_W: 3.5
+
+electronics:
+  # Leitura e processamento de sinal
+  readout:
+    architecture: "parallel_TDC_per_column"  # Time-to-Digital Converter por coluna
+    tdc_resolution_ps: 25
+    max_count_rate_Mcps: 10  # Por pixel
+    data_interface: "LVDS_8lane_400Mbps"
+
+  # Sincronização temporal
+  synchronization:
+    external_trigger: true
+    trigger_input: "SMA_connector_3.3V_LVTTL"
+    trigger_to_capture_latency_ns: 150
+    jitter_rms_ps: 50
+    timestamp_source: "GPS_disciplined_OCXO"  # Precisão <100 ns absoluto
+
+  # Processamento onboard para redução de dados
+  onboard_processing:
+    features:
+      - "real_time_dark_count_subtraction"
+      - "spectral_band_aggregation"
+      - "coherence_metric_precomputation"
+      - "ZK_proof_input_formatting"
+    fpga_model: "Xilinx_Artix-7_XC7A200T"
+    firmware_version: "cathedral_biophoton_v1.0.0"
+
+mechanical:
+  # Integração com sistema de neuroprótese
+  form_factor:
+    dimensions_mm: [45, 30, 15]  # L×W×H
+    weight_g: 42
+    mounting: "M2_threaded_holes_4x"
+
+  # Interface óptica com tecido
+  tissue_interface:
+    window_material: "fused_silica"
+    window_thickness_mm: 1
+    anti_fog_coating: true
+    sterilization_compatible: ["EtO", "gamma", "plasma"]  # Métodos de esterilização suportados
+
+environmental:
+  operating_conditions:
+    temperature_range_C: [15, 35]
+    humidity_range_pct: [20, 80]
+    shock_tolerance_g: 50  # Meia-seno, 11ms
+    vibration_tolerance: "10-500 Hz, 2g RMS"
+
+  electromagnetic_compatibility:
+    emissions: "FCC Part 15 Class B"
+    immunity: "IEC 61000-4-3, 10 V/m"
+
+power:
+  supply:
+    voltage_V: 5.0
+    tolerance_pct: 5
+    current_max_A: 1.2
+    connectors: ["USB-C_PD", "Molex_PicoBlade_4pin"]
+
+  power_management:
+    features:
+      - "dynamic_power_scaling"
+      - "low_power_standby_mode"
+      - "brownout_protection"
+    standby_current_mA: 5
+
+data_output:
+  # Formato de dados para pipeline de processamento
+  raw_format:
+    type: "binary_frame"
+    frame_structure:
+      header_bytes: 32
+      timestamp_ns: 64
+      band_id: 8
+      pixel_data: "512x16bit"  # Contagens por pixel
+      checksum: 32
+    frame_rate_max_hz: 100
+
+  processed_format:
+    type: "JSON_over_gRPC"
+    schema_version: "1.0.0"
+    fields:
+      - "spectral_hash"
+      - "coherence_estimate"
+      - "metabolic_context_summary"
+      - "zk_proof_input_blob"
+      - "participant_did_hash"
+    compression: "zstd_level_3"
+
+calibration:
+  # Procedimentos de calibração
+  procedures:
+    - name: "dark_count_calibration"
+      frequency: "daily"
+      duration_min: 5
+      method: "measure_with_shutter_closed"
+
+    - name: "spectral_response_calibration"
+      frequency: "weekly"
+      duration_min: 20
+      method: "NIST_traceable_lamp_scan"
+
+    - name: "timing_calibration"
+      frequency: "monthly"
+      duration_min: 10
+      method: "pulser_with_known_delay"
+
+  calibration_data_storage:
+    location: "onboard_FRAM_256KB"
+    format: "CBOR_with_signature"
+    signature_key: "ECDSA_P256_device_unique"
+
+security:
+  # Proteção de dados e integridade
+  data_encryption:
+    in_transit: "TLS_1.3_with_mTLS"
+    at_rest: "AES-256-GCM_with_device_key"
+
+  integrity_verification:
+    firmware_signature: "ECDSA_P256_with_Cathedral_CA"
+    runtime_attestation: "RISC-V_PMP_with_measured_boot"
+
+  privacy_features:
+    on_device_hashing: true  # Hash de dados brutos antes de sair do sensor
+    participant_did_binding: true  # Vincular dados ao DID do participante no hardware
+    zero_knowledge_ready: true  # Formatar output compatível com circuito ZK
+
+compliance:
+  certifications:
+    - "ISO 13485:2016 (Medical devices)"
+    - "IEC 60601-1 (Electrical safety)"
+    - "IEC 60601-1-2 (EMC for medical)"
+    - "FDA 510(k) pending"
+
+  ethical_safeguards:
+    consent_enforcement: "hardware_enforced_scope_check"
+    data_minimization: "on_device_aggregation_before_transmit"
+    right_to_silence: "hardware_shutter_with_consent_override"

@@ -81,7 +81,7 @@ export default function ArkheCliPanel({ onClose }: { onClose: () => void }) {
     "VotingPower": "10000"
   }
 }`, 800);
-    
+
     await addLog("\n[SUCCESS] Arkhe CLI configured for testnet (arkhe-asi-1).", 1000);
     setIsExecuting(false);
     setStep(4);
@@ -104,7 +104,7 @@ export default function ArkheCliPanel({ onClose }: { onClose: () => void }) {
           <div className="space-y-6 md:col-span-1">
             <div className="bg-black/40 border border-[#1f2024] rounded-lg p-4">
               <h3 className="font-mono text-xs uppercase tracking-widest text-arkhe-muted mb-4">Initialization Sequence</h3>
-              
+
               <div className="space-y-4">
                 <div className={`flex items-center gap-3 p-3 rounded border ${step >= 2 ? 'bg-arkhe-green/10 border-arkhe-green/30 text-arkhe-green' : step === 1 ? 'bg-arkhe-cyan/10 border-arkhe-cyan/30 text-arkhe-cyan' : 'bg-[#1a1b1e] border-[#2a2b2e] text-arkhe-muted'}`}>
                   {step >= 2 ? <CheckCircle2 className="w-5 h-5" /> : step === 1 ? <Zap className="w-5 h-5 animate-pulse" /> : <Shield className="w-5 h-5" />}
@@ -148,8 +148,8 @@ export default function ArkheCliPanel({ onClose }: { onClose: () => void }) {
                 Get Bootstrap Command
               </button>
             </div>
-            
-            <button 
+
+            <button
               onClick={executeSequence}
               disabled={step > 0}
               className={`w-full py-3 rounded uppercase tracking-widest font-bold transition-all flex items-center justify-center gap-2 ${step > 0 ? 'bg-arkhe-cyan/20 text-arkhe-cyan border border-arkhe-cyan/50 cursor-not-allowed' : 'bg-arkhe-cyan text-black hover:bg-arkhe-cyan/80 shadow-[0_0_15px_rgba(0,255,170,0.3)]'}`}

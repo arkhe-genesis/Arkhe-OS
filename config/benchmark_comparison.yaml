@@ -1,0 +1,3 @@
+name: 5_level_model_comparison
+test_cases: test_cases/substrate85_hybrid.json
+output: results/model_comparison_benchmark_v402.7.json

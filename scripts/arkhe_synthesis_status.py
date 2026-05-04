@@ -8,7 +8,7 @@ Rastreia o cronograma de 28 dias e critérios de QC.
 
 import json
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 
 class ArkheSynthesisTracker:
     def __init__(self, start_date_str="2026-04-07"):

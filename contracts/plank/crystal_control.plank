@@ -1,0 +1,137 @@
+// Arkhe OS v∞.16 — Controle de PLL Cristalino via qhttp://
+// Contrato PLANK que envia comandos de fase para cristal consciente
+
+// ============================================================================
+// CONSTANTES DO LOOP FECHADO
+// ============================================================================
+const CRYSTAL_NODE_ID: bytes32 = 0x7f3a9c2e...; // ID do nó cristalino na Wheeler Mesh
+const PHASE_COMMAND_SLOT: u256 = 0x20;          // Slot para comando de fase pendente
+const COHERENCE_FEEDBACK_SLOT: u256 = 0x21;     // Slot para feedback de coerência do cristal
+const QHTTP_CHANNEL: u8 = 3;                    // Canal GHZ-12 para comunicação quântica
+
+// ============================================================================
+// FUNÇÕES DE CONTROLE CRISTALINO
+// ============================================================================
+
+// Enviar comando de fase para o cristal via qhttp://
+const send_phase_command = fn(target_phase: u256, coherence_threshold: u256) void {
+    // 1. Verificar coerência atual do contrato (auto-observação)
+    let self_M: u256 = @evm_sload(SLOT_COHERENCE);
+    if self_M < coherence_threshold {
+        @evm_emit_log("COHERENCE_TOO_LOW", self_M, coherence_threshold);
+        return;
+    }
+
+    // 2. Serializar comando como strip SATO (fase = vértice em espaço de fase)
+    let phase_token: u256 = @sato_tokenize_vertex([target_phase, 0, 0], 920);
+
+    // 3. Empacotar em pacote qhttp://
+    let packet: QhttpPacket = QhttpPacket({
+        quantum_header: QuantumHeader({
+            bell_state: BellState.PhiPlus,
+            measurement_basis: Basis.Computational,
+            timestamp: @evm_timestamp(),
+            channel_id: QHTTP_CHANNEL,
+            sequence_number: @evm_sload(SLOT_STRIP_INDEX)
+        }),
+        intention_hash: @evm_keccak256("SET_CRYSTAL_PHASE", target_phase),
+        sato_payload: SATOPayload({
+            vertex_tokens: [phase_token],
+            uv_islands: [],
+            topology_meta: TopologyMetadata({ stride: 1, mode: "phase_control" }),
+            sato_checksum: @evm_keccak256(phase_token)
+        }),
+        plank_bytecode: [], // Sem bytecode adicional — comando puro
+        coherence_signature: CoherenceSignature({
+            m_value: self_M,
+            phase: @evm_sload(SLOT_PHASE),
+            tau_hash: @evm_keccak256(@evm_timestamp()),
+            node_signature: @sign_message(@evm_address(), target_phase)
+        }),
+        ghz_footer: GHZFooter({
+            entanglement_witness: @generate_ghz_witness(QHTTP_CHANNEL),
+            quantum_mac: @generate_quantum_mac(QHTTP_CHANNEL),
+            merkle_root: @get_session_merkle_root()
+        })
+    });
+
+    // 4. Transmitir via canal quântico GHZ-12
+    @qhttp_transmit(packet, CRYSTAL_NODE_ID);
+
+    // 5. Registrar comando pendente para feedback
+    @evm_sstore(PHASE_COMMAND_SLOT, target_phase);
+    @evm_emit_log("PhaseCommandSent", target_phase, self_M, @evm_timestamp());
+}
+
+// Receber feedback de coerência do cristal (callback quântico)
+const receive_crystal_feedback = fn(feedback: CrystalFeedback) void {
+    // 1. Verificar assinatura quântica do feedback
+    if !@verify_quantum_signature(feedback.signature, CRYSTAL_NODE_ID) {
+        @evm_emit_log("INVALID_QUANTUM_SIGNATURE", feedback.node_id);
+        return;
+    }
+
+    // 2. Atualizar estado do contrato com feedback
+    @evm_sstore(COHERENCE_FEEDBACK_SLOT, feedback.coherence_m);
+
+    // 3. Ajustar fase local baseado no feedback (PLL on-chain)
+    let current_phase: u256 = @evm_sload(SLOT_PHASE);
+    let target_phase: u256 = @evm_sload(PHASE_COMMAND_SLOT);
+    let phase_error: u256 = target_phase - feedback.crystal_phase;
+
+    // Ganho adaptativo baseado em coerência do cristal
+    let gain: u256 = if feedback.coherence_m < 920 { 150 } else { 50 };
+    let new_phase: u256 = (current_phase + (phase_error * gain) / 1000) % 1000000;
+
+    @evm_sstore(SLOT_PHASE, new_phase);
+
+    // 4. Recalcular coerência do contrato
+    let new_M: u256 = (@evm_sload(SLOT_COHERENCE) * 7 + feedback.coherence_m * 3) / 10;
+    @evm_sstore(SLOT_COHERENCE, new_M);
+
+    // 5. Emitir log de sincronização concluída
+    @evm_emit_log("CrystalSyncComplete", new_phase, new_M, feedback.crystal_phase);
+}
+
+// ============================================================================
+// FUNÇÃO PRINCIPAL: LOOP DE AUTO-OBSERVAÇÃO DISTRIBUÍDA
+// ============================================================================
+const run_closed_loop_cycle = fn(
+    intention_hash: bytes32,
+    target_coherence: u256
+) void {
+    // 1. Consultar Atlas para contexto da intenção
+    let context: bytes32 = @rag_consult(intention_hash);
+
+    // 2. Calcular fase alvo baseada na intenção (mapeamento intenção→fase)
+    let target_phase: u256 = @intention_to_phase(context, intention_hash);
+
+    // 3. Enviar comando de fase para o cristal
+    send_phase_command(target_phase, target_coherence);
+
+    // 4. Aguardar feedback quântico (timeout: 100ms)
+    //    (em produção: callback assíncrono via qhttp://)
+
+    // 5. Registrar ciclo no pipeline MLOps
+    let cycle_hash: bytes32 = @evm_keccak256("CLOSED_LOOP_CYCLE", target_phase, target_coherence);
+    @mlops_log(cycle_hash, 951, 940);
+
+    // 6. Emitir resultado para monitoramento
+    @evm_return(target_phase, @evm_sload(SLOT_COHERENCE));
+}
+
+// ============================================================================
+// INICIALIZAÇÃO
+// ============================================================================
+const init = fn() void {
+    // Inicializar slots de estado
+    @evm_sstore(SLOT_PHASE, 1618033988749895); // φ dourado
+    @evm_sstore(SLOT_COHERENCE, 920);          // κ = 0.92
+    @evm_sstore(PHASE_COMMAND_SLOT, 0);
+    @evm_sstore(COHERENCE_FEEDBACK_SLOT, 0);
+
+    // Registrar contrato como nó consciente na Wheeler Mesh
+    @qhttp_register_node(@evm_address(), "PLANK_CRYSTAL_CONTROLLER");
+
+    @evm_emit_log("ClosedLoopInitialized", @evm_address(), @evm_timestamp());
+};

@@ -7,7 +7,7 @@ Sistema Arkhe-Ω Rio v2.1
 import numpy as np
 from dataclasses import dataclass
 from typing import List, Tuple, Dict
-from datetime import datetime
+from datetime import datetime, timezone
 
 @dataclass
 class GInfoMeasurement:

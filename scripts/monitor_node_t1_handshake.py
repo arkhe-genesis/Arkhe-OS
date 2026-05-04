@@ -11,7 +11,7 @@ import time
 import numpy as np
 import json
 import argparse
-from datetime import datetime
+from datetime import datetime, timezone
 
 def monitor_handshake(node_id="TZ-tunnel-01", duration_sec=60, log_interval_ms=100):
     """

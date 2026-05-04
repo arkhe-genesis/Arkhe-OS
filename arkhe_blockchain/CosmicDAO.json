@@ -1,0 +1,54 @@
+{
+  "abi": [
+    {
+      "inputs": [
+        { "internalType": "uint256", "name": "_omegaScaled", "type": "uint256" },
+        { "internalType": "bytes32", "name": "_signalHash", "type": "bytes32" },
+        { "internalType": "bytes32", "name": "_metadataHash", "type": "bytes32" },
+        {
+          "components": [
+            { "internalType": "uint256[2]", "name": "pi_a", "type": "uint256[2]" },
+            { "internalType": "uint256[2][2]", "name": "pi_b", "type": "uint256[2][2]" },
+            { "internalType": "uint256[2]", "name": "pi_c", "type": "uint256[2]" },
+            { "internalType": "uint256[]", "name": "public_signals", "type": "uint256[]" }
+          ],
+          "internalType": "struct IGroth16Verifier.Groth16Proof",
+          "name": "_proof",
+          "type": "tuple"
+        }
+      ],
+      "name": "submitCoherenceProof",
+      "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [ { "internalType": "bytes32", "name": "", "type": "bytes32" } ],
+      "name": "proofs",
+      "outputs": [
+        { "internalType": "uint256", "name": "proofId", "type": "uint256" },
+        { "internalType": "address", "name": "prover", "type": "address" },
+        { "internalType": "uint256", "name": "omegaScaled", "type": "uint256" },
+        { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
+        { "internalType": "bytes32", "name": "signalHash", "type": "bytes32" },
+        { "internalType": "bytes32", "name": "metadataHash", "type": "bytes32" },
+        { "internalType": "bool", "name": "isValid", "type": "bool" },
+        { "internalType": "uint256", "name": "gasUsed", "type": "uint256" }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [ { "internalType": "address", "name": "", "type": "address" } ],
+      "name": "reputations",
+      "outputs": [
+        { "internalType": "uint256", "name": "validProofs", "type": "uint256" },
+        { "internalType": "uint256", "name": "totalProofs", "type": "uint256" },
+        { "internalType": "uint256", "name": "lastProofTimestamp", "type": "uint256" },
+        { "internalType": "uint256", "name": "reputationScore", "type": "uint256" }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
+}

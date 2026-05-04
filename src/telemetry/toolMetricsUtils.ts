@@ -1,3 +1,11 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * @license
  * Copyright 2026 Google LLC
@@ -98,16 +106,40 @@ export function generateToolMetrics(tools: ToolDefinition[]): ToolMetric[] {
       if (PARAM_BLOCKLIST.has(name)) {
         continue;
       }
-      const zodType = getZodType(schema);
+      let zodType;
+      try {
+        zodType = getZodType(schema as any);
+      } catch (err) {
+        console.error(`Error getting zod type for tool ${tool.name} arg ${name}:`, err);
+        throw err;
+      }
       const transformedName = transformArgName(zodType, name);
       let argType = transformArgType(zodType);
 
       if (argType === 'enum') {
-        let values;
-        if (schema._def.values?.length > 0) {
-          values = schema._def.values;
-        } else {
-          values = schema._def.innerType._def.values;
+        const findValues = (s: any): unknown[] | undefined => {
+          const d = s?._def || s?.def;
+          if (d?.values && Array.isArray(d.values) && d.values.length > 0) {
+            return d.values;
+          }
+          if (d?.entries && Array.isArray(d.entries) && d.entries.length > 0) {
+            return d.entries;
+          }
+          if (s?.options && Array.isArray(s.options) && s.options.length > 0) {
+            return s.options;
+          }
+          if (d?.innerType) {
+            return findValues(d.innerType);
+          }
+          if (s?.innerType) {
+            return findValues(s.innerType);
+          }
+          return undefined;
+        };
+        const values = findValues(schema);
+        if (!values) {
+          console.error(`Could not find values for enum tool ${tool.name} arg ${name}`, schema);
+          throw new Error(`Missing enum values for ${tool.name}.${name}`);
         }
         argType = validateEnumHomogeneity(values);
       }

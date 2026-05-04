@@ -1,20 +1,29 @@
+
 /**
  * @license
  * Copyright 2026 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { cjk } from "@streamdown/cjk";
+import { code } from "@streamdown/code";
+import { createMathPlugin } from "@streamdown/math";
+import { mermaid } from "@streamdown/mermaid";
+import { X, Send, Square, Info, History } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
 // @ts-ignore
+import { Streamdown } from "streamdown";
+
 import { CrystallizationRitual } from '../ritual/prism-ritual.js';
 // @ts-ignore
 import { ChronicleVault } from '../storage/chroniclevault.js';
-import { X, Send, Square, Info, History } from 'lucide-react';
-import { Streamdown } from "streamdown";
-import { code } from "@streamdown/code";
-import { mermaid } from "@streamdown/mermaid";
-import { createMathPlugin } from "@streamdown/math";
-import { cjk } from "@streamdown/cjk";
 
 const math = createMathPlugin({ singleDollarTextMath: true });
 const STREAMDOWN_PLUGINS = { code, mermaid, math, cjk };
@@ -24,6 +33,7 @@ const PRISM_GLYPH_CLASS =
 
 interface Message {
   role: 'user' | 'assistant';
+  role: string;
   content: string;
 }
 
@@ -45,16 +55,19 @@ export default function BonsaiPrismPanel({ onClose }: BonsaiPrismPanelProps) {
   const workerRef = useRef<Worker | null>(null);
   const ritualRef = useRef<any>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const ritualRef = useRef<CrystallizationRitual | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const chronicle = useRef(new ChronicleVault()).current;
 
   // Inicialização do Worker e Chronique
   useEffect(() => {
-    workerRef.current = new Worker(
+    const worker = new Worker(
       new URL('../workers/inference.worker.js', import.meta.url),
       { type: 'module' }
     );
+    workerRef.current = worker;
 
-    workerRef.current.onmessage = (e) => {
+    worker.onmessage = (e: MessageEvent) => {
       const { status, token, output, error, progress: prog, loaded, total } = e.data;
 
       switch (status) {
@@ -83,33 +96,33 @@ export default function BonsaiPrismPanel({ onClose }: BonsaiPrismPanelProps) {
           setStage('error');
           break;
         case 'token':
-          setMessages(prev => {
+          setMessages((prev: Message[]) => {
             const last = prev[prev.length - 1];
             if (last?.role === 'assistant') {
               return [...prev.slice(0, -1), { ...last, content: last.content + token }];
             }
             return [...prev, { role: 'assistant', content: token }];
           });
-          if (e.data.tps) setTps(e.data.tps.toFixed(1));
+          if (e.data.tps) {setTps(e.data.tps.toFixed(1));}
           break;
         case 'update':
-           setMessages(prev => {
+           setMessages((prev: Message[]) => {
             const last = prev[prev.length - 1];
             if (last?.role === 'assistant') {
-              return [...prev.slice(0, -1), { ...last, content: last.content + e.data.output }];
+              return [...prev.slice(0, -1), { ...last, content: last.content + output }];
             }
-            return [...prev, { role: 'assistant', content: e.data.output }];
+            return [...prev, { role: 'assistant', content: output }];
           });
-          if (e.data.tps) setTps(e.data.tps.toFixed(1));
+          if (e.data.tps) {setTps(e.data.tps.toFixed(1));}
           break;
         case 'complete':
           setIsGenerating(false);
-          chronicle.saveChronicle(messages, selectedModel);
+          void chronicle.saveChronicle(messages, selectedModel);
           break;
       }
     };
 
-    chronicle.init();
+    void chronicle.init();
 
     return () => {
       workerRef.current?.terminate();
@@ -117,22 +130,24 @@ export default function BonsaiPrismPanel({ onClose }: BonsaiPrismPanelProps) {
     };
   }, [chronicle, messages, selectedModel]);
 
-  const initiateRitual = useCallback(async () => {
+  const initiateRitual = useCallback(() => {
     setStage('ritual');
     // We'll need to wait for the next render for canvasRef to be available
   }, []);
 
   useEffect(() => {
       if (stage === 'ritual' && canvasRef.current && !ritualRef.current) {
-          ritualRef.current = new CrystallizationRitual(canvasRef.current.id);
+          const ritual = new CrystallizationRitual(canvasRef.current.id);
+          ritualRef.current = ritual;
           const estimatedSize = selectedModel.includes('1.7b') ? 290_000_000 : 1_200_000_000;
           ritualRef.current.initiate(estimatedSize);
+          void ritual.initiate(estimatedSize);
           workerRef.current?.postMessage({ type: 'load', data: selectedModel });
       }
   }, [stage, selectedModel]);
 
   const sendMessage = () => {
-    if (!input.trim() || isGenerating) return;
+    if (!input.trim() || isGenerating) {return;}
 
     const userMsg: Message = { role: 'user', content: input };
     const nextMessages: Message[] = [...messages, userMsg, { role: 'assistant', content: '' }];

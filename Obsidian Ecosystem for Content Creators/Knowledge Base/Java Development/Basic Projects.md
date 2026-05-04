@@ -1,0 +1,42 @@
+# Basic Java Projects (Exhaustive List)
+
+- **Basic Banking System (CLI)**: Fundamental financial logic.
+- **Student Grade Calculator**: Calculation and data entry.
+- **Multiplication Table Generator**: Loop and output practice.
+- **Palindrome Checker**: String manipulation.
+- **Prime Number Generator**: Numerical algorithms.
+- **Random Password Generator**: Security and randomness.
+- **To-Do List (CLI)**: Task management.
+- **Contact Book (CLI)**: Persistence and searching.
+- **Random Quote Generator**: Text retrieval.
+- **Simple Interest Calculator**: Financial mathematics.
+- **Unit Converter (Length, Weight)**: Data transformation.
+- **Basic File Reader/Writer**: I/O operations.
+- **Word Count Tool**: File analysis.
+- **Email Slicer Tool**: Pattern extraction.
+- **Random Name Generator**: Identity synthesis.
+- **Random Username Generator**: String combination.
+- **Basic Encryption Tool (Caesar Cipher)**: Cryptographic foundations.
+- **Basic Decryption Tool**: Symmetric decryption.
+- **Random Sentence Generator**: Algorithmic grammar.
+- **Random Math Quiz**: Interaction and logic.
+- **Random Story Generator**: Template-based synthesis.
+- **Simple Reminder App (CLI)**: Basic scheduling.
+- **Basic Calendar CLI**: Time management.
+- **Random Lottery Picker**: Selection algorithms.
+- **Random Team Generator**: Grouping logic.
+- **Simple CSV Reader**: Structured data parsing.
+- **JSON Parser Tool**: Modern data formats.
+- **Random Data Generator**: Testing utility.
+- **File Organizer Tool**: OS interaction.
+- **Basic Backup Script**: Data preservation.
+- **Random File Finder**: Search algorithms.
+- **Text Formatter Tool**: Formatting logic.
+- **String Manipulation Toolkit**: Advanced string handling.
+- **Basic Chatbot (rule-based)**: Initial AI concepts.
+- **Random Joke Generator**: Content delivery.
+- **Random Event Generator**: Simulation basics.
+- **Random Task Generator**: Productivity logic.
+- **Random Habit Generator**: Behavioral tracking.
+- **Random Password List Generator**: Bulk data creation.
+- **Random Note CLI App**: Notes management.

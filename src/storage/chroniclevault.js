@@ -15,7 +15,7 @@ export class ChronicleVault {
   }
 
   async init() {
-    if (this.db) return;
+    if (this.db) {return;}
     return new Promise((resolve, reject) => {
       if (typeof indexedDB === 'undefined') {
           resolve();
@@ -46,7 +46,7 @@ export class ChronicleVault {
   // Opcode 0x298: AKASHA_LOCAL_WRITE
   async saveChronicle(messages, modelId, coherenceHash = null) {
     await this.init();
-    if (!this.db) return;
+    if (!this.db) {return;}
     const tx = this.db.transaction(['chronicles'], 'readwrite');
     const store = tx.objectStore('chronicles');
 
@@ -70,7 +70,7 @@ export class ChronicleVault {
 
   async loadChronicles(limit = 50) {
     await this.init();
-    if (!this.db) return [];
+    if (!this.db) {return [];}
     return new Promise((resolve, reject) => {
       const tx = this.db.transaction(['chronicles'], 'readonly');
       const store = tx.objectStore('chronicles');
@@ -93,7 +93,7 @@ export class ChronicleVault {
 
   async deleteChronicle(id) {
     await this.init();
-    if (!this.db) return;
+    if (!this.db) {return;}
     const tx = this.db.transaction(['chronicles'], 'readwrite');
     const store = tx.objectStore('chronicles');
     return store.delete(id);
