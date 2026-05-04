@@ -11,10 +11,14 @@ import * as arkheGnuTools from './arkhe_gnu.js';
 import * as arkheNetTools from './arkhe_net.js';
 import * as consoleTools from './console.js';
 import * as decentralizedTools from './decentralized.js';
+import * as ebpfTools from './ebpf.js';
 import * as emulationTools from './emulation.js';
 import * as epistemologyTools from './epistemology.js';
 import * as evoskillTools from './evoskill.js';
 import * as extensionTools from './extensions.js';
+import * as fortytwoTools from './fortytwo.js';
+import * as gnoTools from './gno.js';
+import * as gridTools from './grid.js';
 import * as inPageTools from './inPage.js';
 import * as inputTools from './input.js';
 import * as lambdaTools from './lambda_tools.js';
@@ -23,9 +27,10 @@ import * as gitnexusTools from './gitnexus.js';
 import * as lighthouseTools from './lighthouse.js';
 import * as logosLibraryTools from './logos_library.js';
 import * as memoryTools from './memory.js';
-import * as meshtasticTools from './meshtastic.js';
 import * as mercuryTools from './mercury.js';
+import * as meshtasticTools from './meshtastic.js';
 import * as microsandboxTools from './microsandbox.js';
+import * as nashTools from './nash.js';
 import * as nekoTools from './neko.js';
 import * as networkTools from './network.js';
 import * as oasisTools from './oasis.js';
@@ -42,6 +47,8 @@ import * as spectraTools from './spectra.js';
 import * as storageTools from './storage.js';
 import * as tauTools from './tau.js';
 import type {ToolDefinition} from './ToolDefinition.js';
+import * as tribev2Tools from './tribev2.js';
+import * as urbitTools from './urbit.js';
 
 export const createTools = (args: ParsedArguments) => {
   const rawTools = args.slim
@@ -65,10 +72,13 @@ export const createTools = (args: ParsedArguments) => {
         ...Object.values(storageTools),
         ...Object.values(epistemologyTools),
         ...Object.values(evoskillTools),
+        ...Object.values(fortytwoTools),
+        ...Object.values(gridTools),
         ...Object.values(arkheTools),
         ...Object.values(decentralizedTools),
         ...Object.values(arkheGnuTools),
         ...Object.values(arkheNetTools),
+        ...Object.values(ebpfTools),
         ...Object.values(lambdaTools),
         ...Object.values(osCathedralTools),
         ...Object.values(spectraTools),
@@ -81,6 +91,9 @@ export const createTools = (args: ParsedArguments) => {
         ...Object.values(meshtasticTools),
         ...Object.values(gnoTools),
         ...Object.values(gitnexusTools),
+        ...Object.values(nashTools),
+        ...Object.values(tribev2Tools),
+        ...Object.values(urbitTools),
       ];
 
   const tools = [];

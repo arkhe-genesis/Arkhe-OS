@@ -1,3 +1,13 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+
 import React from 'react';
 
 export const Switch = ({ checked, onCheckedChange, ...props }: any) => (

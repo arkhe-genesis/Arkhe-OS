@@ -1,0 +1,13 @@
+{
+  "root_hash": "995b0dfc172cdd99a5dc49225f3dec116bdbf125f66be7c2fe0161e6dd891ae1",
+  "leaf_proofs": [
+    "3a2be2f03fb1c063313c6950105346bd58cc70d526795e5349d5671c91c29703",
+    "dd3c490e6447117fcc734f06d14dea37b27fef540fb17fbaa5bb1068bae8af56",
+    "81c45005305410024b54f7a0137ef219a7def37a231b77281c189cd9744c62f7"
+  ],
+  "security": {
+    "bits": 80,
+    "post_quantum": true
+  },
+  "constant_size_bytes": 43008
+}

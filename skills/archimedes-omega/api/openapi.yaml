@@ -3,6 +3,9 @@ info:
   title: Archimedes-Ω Agent API
   description: |
     API for the Archimedes-Ω coherence interrogation agent.
+    Provides endpoints for simulating quantum coherence under SU(2), SL(3,ℤ), W‑state,
+    Rainbow (energy-dependent), Collective (Kuramoto), and Xenoactualization models.
+  version: 4.0.0
     Provides endpoints for simulating quantum coherence under SU(2) (continuous),
     SL(3,ℤ) (discrete), W‑state (multipartite entanglement), and Rainbow (energy-dependent) models.
     Detects resonance peaks and assesses teleportation readiness.
@@ -314,6 +317,11 @@ paths:
   /therapy/optimize-combined-protocol:
     post:
       summary: Otimiza intervalo entre LIPUS e administração de fármaco
+      description: |
+        Calcula o intervalo ótimo entre a aplicação de LIPUS (Low-Intensity Pulsed Ultrasound)
+        e a administração de um fármaco para maximizar a absorção cerebral via abertura
+        da barreira hematoencefálica. Utiliza um modelo de farmacocinética cruzado com
+        a dinâmica de permeabilidade induzida por microbolhas.
       operationId: optimizeCombinedProtocol
       tags: [therapy]
       requestBody:
@@ -329,6 +337,11 @@ paths:
   /therapy/monitoring:
     get:
       summary: WebSocket para monitoramento em tempo real da limpeza glinfática
+      description: |
+        Endpoint de WebSocket que fornece telemetria em tempo real sobre a eficiência
+        da limpeza glinfática baseada em dados de coerência FRET. Permite o ajuste
+        dinâmico de parâmetros terapêuticos e a detecção de assinaturas de tranças
+        de Fibonacci no citoesqueleto durante o processo de monitoramento.
       responses:
         '101':
           description: WebSocket connection upgraded
@@ -406,12 +419,20 @@ components:
       properties:
         energy_thz:
           type: number
+          description: Frequência de Proba (THz) para o Princípio Rainbow
           description: Probe frequency in THz
           minimum: 1.0
           maximum: 1000.0
           default: 10.0
         num_points:
           type: integer
+          description: Número de pontos na simulação de fase
+          default: 1000
+        resonance_scale:
+          type: number
+          description: Escalonamento da amplitude das ressonâncias
+          default: 1.0
+      required: [energy_thz]
           description: Number of points in coherence curve
           default: 1000
         resonance_scale:
@@ -424,6 +445,20 @@ components:
     RainbowResponse:
       type: object
       properties:
+        energy_ev: {type: number}
+        rainbow_factor: {type: number}
+        phases: {type: array, items: {type: number}}
+        coherence: {type: array, items: {type: number}}
+        shifted_peaks: {type: object}
+        regime: {type: string}
+        philosophical_note: {type: string}
+
+    CollectiveCoherenceRequest:
+      type: object
+      properties:
+        nodes:
+          type: array
+          items:
         energy_ev:
           type: number
           description: Energy in electronvolts
@@ -544,6 +579,12 @@ components:
     PeakDetectionRequest:
       type: object
       properties:
+        phases: {type: array, items: {type: number}}
+        coherence: {type: array, items: {type: number}}
+        threshold_multiplier: {type: number}
+        min_prominence: {type: number}
+        threshold: {type: number}
+      required: [phases, coherence]
         phases:
           type: array
           items:
@@ -573,6 +614,15 @@ components:
     PeakInfo:
       type: object
       properties:
+        phase: {type: number}
+        phase_degrees: {type: number}
+        coherence: {type: number}
+        prominence: {type: number}
+        is_resonance: {type: boolean}
+        fivefold_deviation_rad: {type: number}
+        index: {type: integer}
+        shift_from_base: {type: number}
+        peak_type: {type: string}
         phase:
           type: number
           format: double
@@ -661,6 +711,28 @@ components:
     OptimizationRequest:
       type: object
       properties:
+        t_peak:
+          type: number
+          description: Tempo até pico de abertura da BBE (min)
+          default: 30.0
+        t_decay:
+          type: number
+          description: Constante de decaimento da permeabilidade (min)
+          default: 60.0
+        drug_halflife:
+          type: number
+          description: Meia-vida do fármaco na corrente sanguínea (min)
+          default: 120.0
+        microbubbles:
+          type: boolean
+          description: Uso de microbolhas para potencializar abertura
+          default: true
+        mi:
+          type: number
+          description: Mechanical Index (0.1-0.6)
+          minimum: 0.1
+          maximum: 0.6
+          default: 0.4
         t_peak: {type: number}
         t_decay: {type: number}
         drug_halflife: {type: number}

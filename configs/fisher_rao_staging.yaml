@@ -1,0 +1,4 @@
+local_branch_phase: "0.5j" # Equivalent to np.exp(1j * 0.5) roughly representation
+coherence_threshold: 0.75
+phase_tolerance: 0.1
+jones_verification: true

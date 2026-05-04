@@ -4,8 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
+
 import { VolumeX, CheckCircle2, AlertCircle, Hash } from 'lucide-react';
 import React, { useState } from 'react';
+
 import { useArkheSimulation } from '../hooks/useArkheSimulation';
 
 export const FinalSilencePanel: React.FC = () => {

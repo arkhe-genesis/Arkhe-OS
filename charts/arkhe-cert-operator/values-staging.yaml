@@ -1,0 +1,30 @@
+# Staging values for Arkhe Certificate Operator
+replicaCount: 2
+
+certManager:
+  issuerName: "arkhe-internal-issuer"
+
+prometheus:
+  serviceMonitor:
+    enabled: true
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "200m"
+    memory: "256Mi"
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
+          matchExpressions:
+          - key: app.kubernetes.io/name
+            operator: In
+            values:
+            - arkhe-cert-operator
+        topologyKey: kubernetes.io/hostname

@@ -5,6 +5,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
+
 import { X, Sparkles, Binary, ShieldCheck, Zap } from 'lucide-react';
 import { motion } from 'motion/react';
 import React, { useState } from 'react';

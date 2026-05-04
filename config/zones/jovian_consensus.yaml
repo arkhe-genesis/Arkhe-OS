@@ -1,0 +1,8 @@
+# Arquivo: config/zones/jovian_consensus.yaml
+zone: Jovian
+nodes: ["EUROPA", "GANYMEDE"]
+consensus_model: "async_crdt"  # Não Tendermint síncrono
+physical_rtt_s: 2.7  # Europa<->Ganymede via laser óptico
+timeout_propose_s: 3600  # 1 hora para batch settlement
+finality_model: "eventual_with_merkle_root"
+sync_frequency: "daily_batch"  # Sincronização diária, não contínua

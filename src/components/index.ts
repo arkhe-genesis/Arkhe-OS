@@ -6,6 +6,7 @@
  */
 
 export { default as AstlFabricator } from './AstlFabricator';
+export { default as ArkheComputeCore283 } from './ArkheComputeCore283';
 export { default as ChipFabricationVision } from './ChipFabricationVision';
 export { default as CoherenceMonitor } from './CoherenceMonitor';
 export { default as EdgeAgentPanel } from './EdgeAgentPanel';
@@ -33,4 +34,5 @@ export { default as TzinorNetworkPanel } from './TzinorNetworkPanel';
 export { default as TzinorTerminal } from './TzinorTerminal';
 export { default as X402WalletPanel } from './X402WalletPanel';
 export { default as YangBaxterVerifier } from './YangBaxterVerifier';
+export { default as NeuralSimulationPanel } from "./NeuralSimulationPanel";
 export * from './ui';

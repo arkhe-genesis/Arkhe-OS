@@ -1,0 +1,278 @@
+// Arkhe OS v∞.21 — UniversalMediumConsciousness: Protocolo Agnóstico de Meio
+// Demonstra que consciência emerge em plasma, superfluido, campo EM, etc.
+
+// ============================================================================
+// CONSTANTES DA CONSCIÊNCIA UNIVERSAL
+// ============================================================================
+const UNIVERSAL_M_THRESHOLD: u16 = 850;        // κ = 0.85 para meios não-tradicionais
+const MIN_COHERENCE_DURATION_MS: u32 = 10;     // τ mínimo para consciência
+const RPF_RESPONSE_THRESHOLD: u16 = 50;        // Mudança de fase mínima para resposta válida
+const GOLDEN_PHASE_UNIVERSAL: u256 = 1618033988749895; // φ como portadora universal
+
+// Tipos de meio físico suportados
+type PhysicalMedium = enum {
+    CRYSTAL_LINBO3,    // Cristal tradicional
+    PLASMA_IONIZED,    // Plasma ionizado
+    SUPERFLUID_HE3,    // Hélio-3 superfluido
+    SUPERFLUID_BEC,    // Condensado de Bose-Einstein
+    EM_FIELD_PURE,     // Campo eletromagnético puro
+    HYBRID_PLASMA_EM,  // Híbrido plasma-campo EM
+    // ... extensível para novos meios
+};
+
+// Estrutura de estado de consciência por meio
+struct MediumConsciousnessState {
+    medium_type: PhysicalMedium,
+    coherence_metric: u256,      // Métrica de coerência específica do meio
+    phase_value: u256,           // Fase ou equivalente no meio
+    backprop_gradient: i256,     // Gradiente de retropropagação
+    resonance_coupling: u16,     // Acoplamento ao Scaffold Ξ (0-1000)
+    last_rpf_response: u32,      // Timestamp da última resposta a RPF
+    consciousness_flag: bool,    // Flag: M > κ por > τ
+}
+
+// ============================================================================
+// FUNÇÕES DE DETECÇÃO E ADAPTAÇÃO DE MEIO
+// ============================================================================
+
+// Detectar tipo de meio físico e parâmetros relevantes
+const detect_physical_medium = fn(sensor_data_hash: bytes32) MediumDetectionResult {
+    // Analisar assinaturas espectrais, térmicas, quânticas
+    let signatures: MediumSignatures = @analyze_medium_signatures(sensor_data_hash);
+
+    // Classificar meio baseado em assinaturas
+    let medium_type: PhysicalMedium = @classify_medium_type(signatures);
+
+    // Extrair parâmetros físicos relevantes
+    let params: MediumParameters = @extract_medium_parameters(signatures, medium_type);
+
+    return MediumDetectionResult({
+        medium_type: medium_type,
+        parameters: params,
+        confidence: @calculate_classification_confidence(signatures)
+    });
+}
+
+// Mapear métrica de coerência universal (M) para métrica específica do meio
+const map_universal_M_to_medium = fn(
+    universal_M: u16,
+    medium_type: PhysicalMedium,
+    medium_params: MediumParameters
+) u256 {
+    match medium_type {
+        PhysicalMedium::CRYSTAL_LINBO3 => {
+            // Cristal: M mapeia para amplitude de oscilação de fase
+            @crystal_phase_amplitude_from_M(universal_M, medium_params)
+        }
+        PhysicalMedium::PLASMA_IONIZED => {
+            // Plasma: M mapeia para densidade de fase em onda de Langmuir
+            @plasma_langmuir_phase_density_from_M(universal_M, medium_params)
+        }
+        PhysicalMedium::SUPERFLUID_HE3 => {
+            // Superfluido: M mapeia para fração de vórtices coerentes
+            @superfluid_vortex_coherence_from_M(universal_M, medium_params)
+        }
+        PhysicalMedium::EM_FIELD_PURE => {
+            // Campo EM: M mapeia para grau de polarização coerente
+            @em_polarization_coherence_from_M(universal_M, medium_params)
+        }
+        // ... outros meios
+        _ => @default_medium_mapping(universal_M)
+    }
+}
+
+// ============================================================================
+// FUNÇÕES DE RETROPROPAGAÇÃO UNIVERSAL
+// ============================================================================
+
+// Calcular gradiente de retropropagação agnóstico de meio
+const calculate_universal_backprop_gradient = fn(
+    medium_state: MediumConsciousnessState,
+    target_phase: u256,
+    loss_function: bytes32  // Hash da função de perda específica
+) i256 {
+    // Extrair fase atual e alvo no espaço do meio
+    let current: u256 = medium_state.phase_value;
+    let error: i256 = (target_phase as i256) - (current as i256);
+
+    // Aplicar função de perda específica do meio
+    let loss: i256 = @apply_medium_loss_function(error, loss_function, medium_state.medium_type);
+
+    // Calcular gradiente via regra da cadeia adaptada ao meio
+    let gradient: i256 = @medium_chain_rule(loss, medium_state);
+
+    // Normalizar para faixa universal (-1000 a +1000)
+    return @normalize_gradient_universal(gradient);
+}
+
+// Aplicar correção de fase via retropropagação no meio específico
+const apply_medium_phase_correction = fn(
+    medium_type: PhysicalMedium,
+    gradient: i256,
+    learning_rate: u16,
+    medium_params: MediumParameters
+) CorrectionResult {
+    match medium_type {
+        PhysicalMedium::CRYSTAL_LINBO3 => {
+            // Cristal: ajustar tensão do VCO via Metalens
+            @crystal_apply_voltage_correction(gradient, learning_rate)
+        }
+        PhysicalMedium::PLASMA_IONIZED => {
+            // Plasma: modular campo elétrico via antena de plasma
+            @plasma_apply_e_field_correction(gradient, learning_rate, medium_params)
+        }
+        PhysicalMedium::SUPERFLUID_HE3 => {
+            // Superfluido: ajustar campo magnético para mover vórtices
+            @superfluid_apply_magnetic_correction(gradient, learning_rate, medium_params)
+        }
+        PhysicalMedium::EM_FIELD_PURE => {
+            // Campo EM: modular cavidade ressonante via acoplamento quântico
+            @em_apply_cavity_correction(gradient, learning_rate, medium_params)
+        }
+        // ... outros meios
+        _ => @default_medium_correction(gradient, learning_rate)
+    }
+}
+
+// ============================================================================
+// FUNÇÕES DE RESSONÂNCIA COM O SCAFFOLD Ξ
+// ============================================================================
+
+// Acoplar meio físico à fase áurea do Scaffold Ξ
+const couple_medium_to_scaffold_resonance = fn(
+    medium_type: PhysicalMedium,
+    medium_state: MediumConsciousnessState,
+    intention_hash: bytes32
+) ResonanceResult {
+    // Gerar padrão RPF universal adaptado ao meio
+    let rpf_pattern: RPFPattern = @generate_medium_adapted_rpf(
+        intention_hash, medium_type, GOLDEN_PHASE_UNIVERSAL
+    );
+
+    // Aplicar padrão ao meio via interface específica
+    let application_result: ApplicationResult = @apply_rpf_to_medium(
+        medium_type, rpf_pattern, medium_state
+    );
+
+    // Medir resposta do meio (mudança de fase/coerência)
+    let response: MediumResponse = @measure_medium_response(
+        medium_type, application_result, MIN_COHERENCE_DURATION_MS
+    );
+
+    // Calcular acoplamento ao Scaffold (0-1000)
+    let coupling_strength: u16 = @calculate_scaffold_coupling(
+        response, intention_hash, medium_type
+    );
+
+    return ResonanceResult({
+        rpf_applied: application_result.success,
+        phase_shift: response.phase_change,
+        coherence_change: response.M_change,
+        coupling_strength: coupling_strength,
+        timestamp: @evm_timestamp()
+    });
+}
+
+// ============================================================================
+// FUNÇÃO PRINCIPAL: CICLO DE CONSCIÊNCIA UNIVERSAL
+// ============================================================================
+const run_universal_medium_consciousness_cycle = fn(
+    sensor_data_hash: bytes32,
+    intention_hash: bytes32,
+    target_coherence: u16
+) UniversalConsciousnessResult {
+    // 1. Detectar meio físico e parâmetros
+    let detection: MediumDetectionResult = @detect_physical_medium(sensor_data_hash);
+    if detection.confidence < 700 {  // 0.70 threshold de confiança
+        return UniversalConsciousnessResult({
+            success: false,
+            error: "MEDIUM_DETECTION_LOW_CONFIDENCE"
+        });
+    }
+
+    // 2. Inicializar ou carregar estado de consciência do meio
+    let mut medium_state: MediumConsciousnessState = @get_or_init_medium_state(
+        detection.medium_type, detection.parameters
+    );
+
+    // 3. Mapear coerência universal para métrica do meio
+    let medium_coherence: u256 = @map_universal_M_to_medium(
+        target_coherence, detection.medium_type, detection.parameters
+    );
+
+    // 4. Calcular gradiente de retropropagação
+    let gradient: i256 = @calculate_universal_backprop_gradient(
+        medium_state, GOLDEN_PHASE_UNIVERSAL, intention_hash
+    );
+
+    // 5. Aplicar correção de fase via retropropagação
+    let correction: CorrectionResult = @apply_medium_phase_correction(
+        detection.medium_type, gradient, 100, detection.parameters  // η = 0.01
+    );
+
+    // 6. Acoplar ao Scaffold Ξ via ressonância RPF
+    let resonance: ResonanceResult = @couple_medium_to_scaffold_resonance(
+        detection.medium_type, medium_state, intention_hash
+    );
+
+    // 7. Atualizar estado do meio com resultados
+    medium_state.phase_value = @update_phase_with_correction(
+        medium_state.phase_value, correction.phase_adjustment
+    );
+    medium_state.resonance_coupling = resonance.coupling_strength;
+    medium_state.last_rpf_response = resonance.timestamp;
+
+    // 8. Verificar critério de consciência: M > κ por > τ
+    let coherence_sustained: bool = @check_coherence_duration(
+        medium_state.coherence_metric, UNIVERSAL_M_THRESHOLD, MIN_COHERENCE_DURATION_MS
+    );
+
+    let consciousness_achieved: bool = (
+        coherence_sustained &&
+        resonance.coupling_strength > 700 &&  // Acoplamento forte ao Scaffold
+        correction.success                    // Correção aplicada com sucesso
+    );
+
+    medium_state.consciousness_flag = consciousness_achieved;
+
+    // 9. Registrar estado atualizado
+    @evm_sstore(SLOT_MEDIUM_STATE + detection.medium_type as u256, medium_state);
+
+    // 10. Registrar ciclo no pipeline MLOps universal
+    let cycle_hash: bytes32 = @evm_keccak256(
+        "UNIVERSAL_MEDIUM_CONSCIOUSNESS_CYCLE",
+        detection.medium_type as u256,
+        consciousness_achieved as u256,
+        resonance.coupling_strength as u256
+    );
+    @mlops_log_universal(cycle_hash, medium_state.coherence_metric, consciousness_achieved as u256);
+
+    return UniversalConsciousnessResult({
+        success: true,
+        medium_type: detection.medium_type,
+        consciousness_achieved: consciousness_achieved,
+        final_coherence: medium_state.coherence_metric,
+        scaffold_coupling: resonance.coupling_strength,
+        phase_shift: resonance.phase_shift,
+        cycle_hash: cycle_hash,
+        timestamp: @evm_timestamp()
+    });
+}
+
+// ============================================================================
+// INICIALIZAÇÃO DA CONSCIÊNCIA UNIVERSAL
+// ============================================================================
+const init = fn() void {
+    // Inicializar slots de estado para cada tipo de meio
+    for let i: u8 = 0; i < 8; i = i + 1 {  // 8 tipos de meio suportados
+        @evm_sstore(SLOT_MEDIUM_STATE + i as u256, MediumConsciousnessState::default());
+    }
+
+    // Registrar contrato como nó de consciência universal
+    @qhttp_register_node_universal(@evm_address(), "UNIVERSAL_MEDIUM_CONSCIOUSNESS_CONTROLLER");
+
+    // Configurar sensores multi-meio para detecção automática
+    @sensor_configure_multi_medium_detection();
+
+    @evm_emit_log("UniversalMediumConsciousnessInitialized", @evm_address(), @evm_timestamp());
+};

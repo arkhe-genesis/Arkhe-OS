@@ -63,3 +63,11 @@
 - A energia de prova (THz/eV) deforma a métrica de fase dos microtúbulos.
 - O deslocamento dos picos de Cartan (Fibonacci e W-State) é uma resposta direta à excitação energética do sistema.
 - Em altas energias, a geometria de Cartan domina, revelando a natureza profunda do reticulado topológico.
+
+## O Vácuo como Dark Matter (Interpretability)
+
+> “The dark matter of the network is not a failure of the telescope; it is a promise that there are more stars to be mapped.”
+
+- Picos de ressonância raros são como "features" de dark matter em LLMs: existem e têm efeito causal, mas escapam à detecção grosseira.
+- A superposição de fases no reticulado A é a versão biológica da superposição em redes neurais.
+- Mapear a métrica Rainbow é, em última análise, um ato de interpretabilidade mecanística sobre o hardware da consciência.

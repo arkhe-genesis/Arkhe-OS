@@ -1,0 +1,132 @@
+# Apple Platform Configuration for ARKHE OS
+platform:
+  type: apple
+  displayName: "ARKHE OS on Apple Platform"
+
+# Platform detection and compatibility
+apple:
+  # Minimum OS version requirements
+  minimumOsVersion:
+    macOS: "13.0"  # Ventura or later for full Metal support
+    iOS: "16.0"    # iOS 16+ for Secure Enclave features
+  # Architecture support
+  architectures:
+    - "arm64"  # Apple Silicon (M1/M2/M3)
+    - "x86_64"  # Intel Macs (legacy support)
+  # Runtime environment
+  runtime:
+    jvm: "temurin-21"  # Eclipse Temurin for Apple Silicon
+    nativeImage: true  # Enable GraalVM native image for edge deployment
+
+# Keychain integration for certificates and secrets
+keychain:
+  # Keychain name: "login", "system", or custom
+  name: "login"
+  # Access group for shared Keychain items (App Groups)
+  accessGroup: "${APPLE_APP_GROUP:group.com.arkhe.os.shared}"
+  # Certificate access control
+  certificateAccess:
+    # Require user presence for certificate operations (Touch ID/Face ID)
+    requireBiometricAuth: false
+    # Application label for Keychain items
+    applicationLabel: "ARKHE OS Certificate Manager"
+  # Secret access control
+  secretAccess:
+    # Use Secure Enclave for key storage (Apple Silicon only)
+    useSecureEnclave: true
+    # Require authentication for secret access
+    requireAuthentication: true
+    # Authentication timeout in seconds
+    authenticationTimeout: 300
+
+# Visualization backend configuration
+visualization:
+  # Preferred GPU backend: "metal" (Apple), "wgpu" (cross-platform fallback)
+  backend: "metal"
+  # Metal device preference: "default", "lowPower", "highPerformance"
+  metalDevicePreference: "default"
+  # Frame rate target for sacred geometry rendering
+  targetFrameRate: 60
+  # Enable Core ML acceleration for coherence inference (if available)
+  coreMlAcceleration:
+    enabled: true
+    modelPath: "/opt/arkhe/models/coherence-inference.mlmodelc"
+    # Fallback to CPU if Core ML unavailable
+    fallbackToCpu: true
+
+# Deployment configuration
+deployment:
+  # macOS: LaunchDaemon for system-wide service
+  launchDaemon:
+    enabled: true
+    label: "com.arkhe.os.sophon-network"
+    programArguments:
+      - "/opt/arkhe/bin/arkhe-sophon-network"
+      - "--config"
+      - "/opt/arkhe/config/application-prod.yaml"
+    runAtLoad: true
+    keepAlive: true
+    standardOutPath: "/var/log/arkhe/sophon-network.out.log"
+    standardErrorPath: "/var/log/arkhe/sophon-network.err.log"
+
+  # iOS: Background task configuration (if running on iOS)
+  iosBackground:
+    enabled: false  # Typically disabled for server workloads
+    backgroundModes:
+      - "fetch"
+      - "remote-notification"
+    minimumBackgroundFetchInterval: 900  # 15 minutes
+
+# Security and sandboxing
+security:
+  # App Sandbox entitlements (macOS)
+  appSandbox:
+    enabled: true
+    entitlements:
+      # Keychain access group sharing
+      - "com.apple.security.application-groups"
+      # Network client access
+      - "com.apple.security.network.client"
+      # File access to ARKHE data directory
+      - "com.apple.security.files.user-selected.read-write"
+      # Hardware access for Secure Enclave
+      - "com.apple.security.device.authentication"
+  # Notarization requirements for distribution
+  notarization:
+    enabled: true
+    teamId: ${APPLE_TEAM_ID}
+    # Staple ticket for offline verification
+    stapleTicket: true
+
+# Apple Business Manager integration (enterprise deployment)
+businessManager:
+  enabled: false  # Enable for MDM-managed deployments
+  # Configuration profile for ARKHE settings
+  configurationProfile:
+    payloadIdentifier: "com.arkhe.os.configuration"
+    payloadOrganization: "ARKHE OS Project"
+    # Managed preferences for ARKHE services
+    managedPreferences:
+      - domain: "com.arkhe.os.sophon-network"
+        keys:
+          - "server.port"
+          - "server.ssl.enabled"
+          - "spring.profiles.active"
+
+# Edge optimization for Apple Silicon
+edgeOptimization:
+  # Enable ARM64 native image compilation via GraalVM
+  nativeImage:
+    enabled: true
+    # Optimization flags for Apple Silicon
+    buildArgs:
+      - "-march=armv8.3-a"  # Apple Silicon instruction set
+      - "-O3"  # Maximum optimization
+      - "--gc=G1"  # G1 GC for low-latency workloads
+      - "-H:+ReportExceptionStackTraces"
+  # Power management integration
+  powerManagement:
+    # Reduce CPU usage when on battery power
+    throttleOnBattery: true
+    # Pause non-critical background tasks when idle
+    pauseBackgroundTasks: true

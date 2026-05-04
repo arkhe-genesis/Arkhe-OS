@@ -1,4 +1,3 @@
-
 /**
  * @license
  * Copyright 2026 Google LLC
@@ -69,6 +68,10 @@ export default function DimOSDistributionPanel({ onClose }: DimOSPanelProps) {
       // Update node statuses randomly during deployment
       if (progress < 100) {
         setFleet(prev => prev.map(node => {
+          if (node.status === 'syncing') {return node;}
+          if (Math.random() > 0.7) {
+             const newStatus = (Math.random() > 0.5 ? 'syncing' : 'active') as any;
+             if (newStatus === 'syncing' && node.status !== 'active') {
           if ((node.status as string) === 'active') {return node;}
           if (Math.random() > 0.7) {
              const newStatus = Math.random() > 0.5 ? 'syncing' : 'active';
@@ -78,8 +81,8 @@ export default function DimOSDistributionPanel({ onClose }: DimOSPanelProps) {
              return {
                ...node,
                status: newStatus,
-               genomeVersion: newStatus === 'active' ? 'v2.14.0' : node.genomeVersion,
-               coherence: newStatus === 'active' ? 0.95 + Math.random() * 0.04 : node.coherence
+               genomeVersion: newStatus === 'syncing' ? 'v2.14.0' : node.genomeVersion,
+               coherence: newStatus === 'syncing' ? 0.95 + Math.random() * 0.04 : node.coherence
              };
           }
           return node;
@@ -90,6 +93,8 @@ export default function DimOSDistributionPanel({ onClose }: DimOSPanelProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+      <div className="w-full max-w-4xl bg-[#0a0a0c] border border-arkhe-cyan/30 rounded-xl shadow-[0_0_30px_rgba(0,255,170,0.1)] overflow-hidden flex flex-col max-h-[90vh]">
+        
       <div className="w-full max-w-4xl bg-arkhe-card border border-arkhe-cyan/30 rounded-xl shadow-[0_0_30px_rgba(0,255,170,0.1)] overflow-hidden flex flex-col max-h-[90vh]">
 
         {/* Header */}
@@ -207,10 +212,11 @@ export default function DimOSDistributionPanel({ onClose }: DimOSPanelProps) {
                       <span>Type: {node.type}</span>
                       <span>OS: <span className={node.genomeVersion === 'v2.14.0' ? 'text-arkhe-cyan' : ''}>{node.genomeVersion}</span></span>
                     </div>
+                    {(node.status === 'syncing' || node.status === 'active') && (
                     {node.status as string === 'active' && (
                       <div className="flex justify-between text-[10px]">
                         <span className="text-arkhe-muted">Coherence:</span>
-                        <span className="text-arkhe-green">{(node.coherence * 100).toFixed(2)}%</span>
+                        <span className={node.status === 'active' ? 'text-arkhe-green' : 'text-arkhe-cyan'}>{(node.coherence * 100).toFixed(2)}%</span>
                       </div>
                     )}
                   </div>

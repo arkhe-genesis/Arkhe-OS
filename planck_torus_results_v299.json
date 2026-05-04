@@ -1,0 +1,27 @@
+{
+  "config": {
+    "l_min": 2,
+    "l_max": 2500,
+    "N_harmonics": 50,
+    "significance_threshold": 5.0,
+    "correction_method": "bonferroni",
+    "null_model": "LCDM_planck2018",
+    "alternative_model": "LCDM_plus_torus_modulation"
+  },
+  "bayesian_results": {
+    "bayes_factor": 150.0,
+    "prob_detection": 0.0,
+    "posterior_A": 0.001127157550002093,
+    "posterior_P": 1.721743818209752,
+    "posterior_phi": 3.2481913617174065
+  },
+  "validation": {
+    "power": 0.0,
+    "fpr": 0.0,
+    "bias": -0.04170555842917233
+  },
+  "interpretation": {
+    "evidence_level": "strong",
+    "pipeline_validated": false
+  }
+}

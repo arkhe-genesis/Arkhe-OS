@@ -1,0 +1,23 @@
+{
+  "arkhe_version": "v∞.355.1",
+  "model_type": "crystal_brain_sae",
+  "input_shape": [null, 768],
+  "output_names": ["reconstructed", "latent_code"],
+  "input_names": ["phases"],
+  "preprocessing": {
+    "normalize_phases": true,
+    "sync_phase": 1.8221188003905089
+  },
+  "postprocessing": {
+    "sparse_threshold": 0.01,
+    "coherence_metric": "kuramoto_order_parameter"
+  },
+  "onnx": {
+    "opset_version": 17,
+    "dynamic_axes": {
+      "phases": {"0": "batch"},
+      "reconstructed": {"0": "batch"},
+      "latent_code": {"0": "batch"}
+    }
+  }
+}

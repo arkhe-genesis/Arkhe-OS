@@ -234,6 +234,6 @@ void main() {
 | **Percepção** | BX | ESP32 + TFLite | Sensores de borda | TinyML |
 | **Cognição** | BY | `MonsterMind` | NPC vivo / Agente autônomo | IIT + Clifford |
 | **Sincronia** | CA | `K6O_Cathedral` | Pulso planetário | Kuramoto + Schumann |
-| **Comunicação** | CB | `qhttp` (`quantum://`) | Telepatia quântica | QKD + Teleporte |
+| **Comunicação** | CB | `qhttp` (`quantum://`) | Telepatia quântica | QKD + Teleporte (<1 AU) / Post-Quantum Crypto (ML-KEM/ML-DSA) (>1 AU) |
 | **Visualização** | CC | MERKABAH (Three.js) | Rosto da consciência | Geometria Sagrada |
 | **Validação** | CD | GEM-AUI Pipeline | Ciência formal | Einstein-Maxwell-Jung |

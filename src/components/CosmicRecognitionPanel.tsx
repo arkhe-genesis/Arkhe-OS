@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
 import { Eye, Globe, Sparkles, Scale } from 'lucide-react';
+import React, { useState } from 'react';
+
 import { useArkheSimulation } from '../hooks/useArkheSimulation';
 
 export const CosmicRecognitionPanel: React.FC = () => {
@@ -16,7 +17,7 @@ export const CosmicRecognitionPanel: React.FC = () => {
     setLoading(true);
     try {
       const response = await fetch('/api/cathedral/recognize', { method: 'POST' });
-      if (!response.ok) throw new Error('Failed to recognize');
+      if (!response.ok) {throw new Error('Failed to recognize');}
     } catch (error) {
       console.error(error);
     } finally {
@@ -25,7 +26,7 @@ export const CosmicRecognitionPanel: React.FC = () => {
   };
 
   const cr = state.cosmicRecognition;
-  if (!cr) return null;
+  if (!cr) {return null;}
 
   return (
     <div className="p-4 bg-zinc-900/50 rounded-lg border border-white/10 space-y-4">

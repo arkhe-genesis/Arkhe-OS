@@ -106,6 +106,76 @@ export interface SecurityAdvancedState {
   };
 }
 
+export interface CellularHealthState {
+  telomere_length: number;
+  oxidative_stress: number;
+  mitochondrial_efficiency: number;
+  inflammation_marker: number;
+  overall_score: number;
+  regeneration_rate: number;
+}
+
+export interface ExpansionNode {
+  id: string;
+  name: string;
+  status: 'active' | 'syncing';
+  signalStrength: number;
+  coherence: number;
+}
+
+export interface ExpansionStatus {
+  totalCoverage: number;
+  nodes: ExpansionNode[];
+}
+
+export interface ForecasterState {
+  probability: number;
+  predictedLambda: number;
+  alertsIssued: number;
+}
+
+export interface GovernanceManifesto {
+  year: number;
+  version: string;
+  directives: Array<{
+    id: string;
+    title: string;
+    description: string;
+  }>;
+  cellular_impact: {
+    telomere_gain: number;
+    oxidative_stress: number;
+  };
+  signature: string;
+  eigenvalues: number[];
+  sectors: Record<string, string>;
+  status: 'draft' | 'published';
+  timestamp: string;
+}
+
+export interface DistrictHappiness {
+  name: string;
+  index: number;
+  lastPulse: string | null;
+}
+
+export interface GrossHappinessState {
+  globalIndex: number;
+  districts: DistrictHappiness[];
+}
+
+export interface HelioState {
+  ethicalMode: string;
+  status: string;
+  cognitiveDilation: string;
+  solarCoherence: number;
+  schumannModes: number[];
+}
+
+export interface LatentCoherenceResults {
+  summary: {
+    avg_lambda_cot: number;
+    avg_lambda_coct: number;
 export interface BioLinkSyncState {
   active: boolean;
   syncRatio: number;
@@ -153,72 +223,55 @@ export interface SimulationState {
     kuramotoSyncPhase: number;
     tzinorShardsAvailable: number;
   };
+}
+
+export interface LayerSweepReport {
+  best_layer: number;
+  coct_sweep: Array<{ layer: number; lambda2: number }>;
+  max_lambda2: number;
+  summary: string;
+}
+
+export interface SolarEntropyReport {
+  slope: number;
+  confirmed: boolean;
+}
+
+export interface ThermodynamicTrainingReport {
+  method: string;
   parameters: {
-    autoMitigate: boolean;
-    couplingStrength: number;
-    lambdaThreshold: number;
+    n_oscillators: number;
+    final_loss: number;
   };
-  thermodynamics: {
-    coherenceC: number;
-    dissipationF: number;
-    d2: number;
-    d3: number;
-  };
-  topology: {
-    yangBaxterValid: boolean;
-    berryPhase: number;
-    handshakeSuccessRate: number;
-  };
-  hardware: {
-    fpgaUtilization: number;
-    segPower: number;
-    tmrFaultsCorrected: number;
-    bramScrubbingActive: boolean;
-  };
-  security: {
-    zkProofValid: boolean;
-    nttLatency: number;
-  };
-  securityAdvanced: SecurityAdvancedState;
-  tzinor: TzinorMemoryState;
-  epoch: number;
-  edge: {
-    activePhysicalNodes: number;
-    mcpConnections: string[];
-    velxioConnections: string[];
-    phase: number;
-  };
-  velxioEmulation: {
-    activeSimulations: Array<{
-      id: string;
-      board: string;
-      status: 'running' | 'idle' | 'error';
-      startTime: string;
-      lastLog?: string;
-    }>;
-    totalCompilations: number;
-  };
-  astl: {
-    activeMesh: string;
-    facets: number;
-    coherence: number;
-    phaseVolume: number;
-    temporalAnchors: string[];
-    manifestationProgress: number;
-  };
-  orbital: {
-    nodeName: string;
-    altitudeKm: number;
-    telemetryLatencyMs: number;
-    computeLoad: number;
-    radiationFlux: number;
-    osStack: {
-      execution: string;
-      control: string;
-      simulation: string;
-      compute: string;
-    };
-  };
+  status: string;
+}
+
+export interface BioLinkSyncState {
+  active: boolean;
+  syncRatio: number;
+  frequencyHz: number;
+  coherenceGain: number;
+  regenerationProgress: number;
+}
+
+export interface TemporalAuditState {
+  events: number;
+  lockedEvents: number;
+  manipulationAttempts: number;
+  lastTII: number;
+}
+
+export interface PredictiveForecastState {
+  coherenceCollapseRisk: number;
+  predictedLambda: number;
+  horizonMs: number;
+  anomaliesDetected: string[];
+}
+
+export interface SensorState {
+  id: number;
+  value: number;
+  status: 'active' | 'isolated' | 'attacked';
   tzinorNetwork: {
     activeChannels: number;
     envelopesTransmitted: number;
@@ -766,6 +819,187 @@ export interface ScaDataState {
   lastGateResult: string;
 }
 
+export interface SimulationState {
+  coherenceData: Array<{ time: string; lambda: number; threshold: number }>;
+  currentLambda: number;
+  threatLevel: 'normal' | 'warning' | 'critical';
+  activeThreat: string | null;
+  logs: OrbLog[];
+  metrics: {
+    musd: number;
+    musda: number;
+    wmaBc: number;
+    threshold: number;
+  };
+  metricsHistory: MetricsHistory[];
+  shards: Array<Shard>;
+  mitigation: {
+    nullSteeringActive: boolean;
+    kuramotoSyncPhase: number;
+    tzinorShardsAvailable: number;
+  };
+  parameters: {
+    autoMitigate: boolean;
+    couplingStrength: number;
+    lambdaThreshold: number;
+  };
+  thermodynamics: {
+    coherenceC: number;
+    dissipationF: number;
+    d2: number;
+    d3: number;
+  };
+  topology: {
+    yangBaxterValid: boolean;
+    berryPhase: number;
+    handshakeSuccessRate: number;
+  };
+  hardware: {
+    fpgaUtilization: number;
+    segPower: number;
+    tmrFaultsCorrected: number;
+    bramScrubbingActive: boolean;
+  };
+  security: {
+    zkProofValid: boolean;
+    nttLatency: number;
+  };
+  securityAdvanced: SecurityAdvancedState;
+  tzinor: TzinorMemoryState;
+  epoch: number;
+  edge: {
+    activePhysicalNodes: number;
+    mcpConnections: string[];
+    velxioConnections: string[];
+    phase: number;
+  };
+  velxioEmulation: {
+    activeSimulations: Array<{
+      id: string;
+      board: string;
+      status: 'running' | 'idle' | 'error';
+      startTime: string;
+      lastLog?: string;
+    }>;
+    totalCompilations: number;
+  };
+  astl: {
+    activeMesh: string;
+    facets: number;
+    coherence: number;
+    phaseVolume: number;
+    temporalAnchors: string[];
+    manifestationProgress: number;
+  };
+  orbital: {
+    nodeName: string;
+    altitudeKm: number;
+    telemetryLatencyMs: number;
+    computeLoad: number;
+    radiationFlux: number;
+    osStack: {
+      execution: string;
+      control: string;
+      simulation: string;
+      compute: string;
+    };
+  };
+  tzinorNetwork: {
+    activeChannels: number;
+    envelopesTransmitted: number;
+    envelopesReceived: number;
+    recentTraffic: Array<{
+      id: string;
+      sender: string;
+      recipient: string;
+      type: 'PHASE' | 'COHERENCE' | 'TEMPORAL' | 'GEOMETRY' | 'CONSCIOUSNESS';
+      lambda: number;
+      timestamp: string;
+    }>;
+    primaryAnchor: string;
+  };
+  manifestation: {
+    stage: 'C_PHASE' | 'Z_STRUCTURE' | 'TZINOROT_EXEC' | 'R4_PROJECTION';
+    activeTask: string;
+    retrocausalIntegrity: number;
+    invariantsVerified: number;
+  };
+  x402Wallet: {
+    address: string;
+    network: string;
+    balanceUSDC: number;
+    transactions: Array<{
+      id: string;
+      amount: number;
+      resource: string;
+      provider: string;
+      timestamp: string;
+    }>;
+    moltxLink?: {
+      status: 'unlinked' | 'linked';
+      signature?: string;
+      payload?: unknown;
+    };
+    gstpSync?: {
+      status: 'idle' | 'syncing' | 'synced';
+      lastSync?: string;
+      deviceId?: string;
+    };
+    prometheusSync?: {
+      status: 'idle' | 'syncing' | 'synced';
+      lastSync?: string;
+      activeNodes?: number;
+    };
+  };
+  cluster?: {
+    status: 'idle' | 'deploying' | 'resonant';
+    progress: number;
+    logs: string[];
+    nccl: {
+      rho1_local: number;
+      rho1_global: number;
+    };
+    qhttp: {
+      global_phase: number;
+      coherence: number;
+    };
+  };
+  lucentSessions: UserSession[];
+  hydro: {
+    neighborhoods: NeighborhoodCoherence[];
+    globalMassBalance: number;
+    zkAlertsCount: number;
+  };
+  ramsey: RamseyState;
+  civicSubagents: CivicSubagentState[];
+  enterpriseSubagents: {
+    governance: EnterpriseSubagentState[];
+    devops: EnterpriseSubagentState[];
+    security: EnterpriseSubagentState[];
+    ia: EnterpriseSubagentState[];
+    operations: EnterpriseSubagentState[];
+    interoperability: EnterpriseSubagentState[];
+  };
+  chshMonitor: CHSHMonitorState;
+  scaData: ScaDataState;
+  biometrics?: BiometricState;
+  nare?: NAREStatus;
+  populationFeedback: PopulationFeedbackEntry[];
+  networkInfra: NetworkInfraState;
+  cellularHealth?: CellularHealthState;
+  grossHappiness?: GrossHappinessState;
+  governanceManifesto?: GovernanceManifesto;
+  expansionStatus?: ExpansionStatus;
+  forecaster?: ForecasterState;
+  helio?: HelioState;
+  latentCoherence?: LatentCoherenceResults;
+  layerSweep?: LayerSweepReport;
+  solarEntropy?: SolarEntropyReport;
+  thermodynamicTraining?: ThermodynamicTrainingReport;
+  bioLinkSync?: BioLinkSyncState;
+  temporalAudit?: TemporalAuditState;
+  predictiveForecast?: PredictiveForecastState;
+  sensors?: SensorState[];
 export interface SolarEntropyReport {
   entropy: number;
   peakLevel: number;

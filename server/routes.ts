@@ -503,6 +503,18 @@ export function setupRoutes(app: express.Express, broadcastState: () => void, cl
     });
   });
 
+  // Coherence Bridge - Translates Arkhe OS kernel_omega to frontend UI
+  app.post("/api/bridge/omega", express.json(), (req: any, res: any) => {
+    const { omega } = req.body;
+    if (typeof omega !== 'number') {
+      return res.status(400).json({ error: "Invalid or missing omega value" });
+    }
+    logger.info(`🌉 [BRIDGE] Transliterating coherence (omega: ${omega}) into state.currentLambda`);
+    state.currentLambda = omega;
+    broadcastState();
+    res.json({ success: true, newLambda: state.currentLambda });
+  });
+
   // Beacon of Freedom - Interstate Phase API
   app.post("/api/beacon/broadcast", express.json(), (req: any, res: any) => {
     const { trainId, signature, phase } = req.body;

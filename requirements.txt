@@ -3,4 +3,12 @@ scipy
 rich
 fastapi
 uvicorn
-requests
+httpx
+msgpack-python
+
+eth-account
+web3
+torch
+qiskit
+qiskit-machine-learning
+kubernetes

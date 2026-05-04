@@ -5,6 +5,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/* eslint-disable @typescript-eslint/no-unused-vars, no-shadow-restricted-names */
+
+
 import { X, Box, Zap, AlertTriangle, Infinity } from 'lucide-react';
 import { motion } from 'motion/react';
 import React from 'react';

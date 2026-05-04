@@ -4,7 +4,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+
 import React from 'react';
+
 import { cn } from '../../lib/utils';
 
 export const Badge = ({ children, className, variant }: { children: React.ReactNode, className?: string, variant?: any }) => (

@@ -1,0 +1,19 @@
+{
+    "version": "v120",
+    "description": "Holographic Renormalization + z > 1 Mesh",
+    "features": [
+        "entropy_renormalization",
+        "quantum_harmonic_oscillator_bath",
+        "holographic_screen",
+        "high_redshift_mesh"
+    ],
+    "redshift_range": [0, 12],
+    "galaxies_count": 200,
+    "galaxy_types": [
+        "Pop III (z>8)",
+        "primordial (z>5)",
+        "cosmic noon (z>1.5)",
+        "local (z<1.5)"
+    ],
+    "sfr_density_model": "Madau & Dickinson (2014)"
+}

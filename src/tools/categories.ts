@@ -24,6 +24,10 @@ export enum ToolCategory {
   GNO = 'gno',
   GITNEXUS = 'gitnexus',
   EPISTEMOLOGY = 'epistemology',
+  FORTYTWO = 'fortytwo',
+  GRID = 'grid',
+  NASH = 'nash',
+  URBIT = 'urbit',
 }
 
 export const labels = {
@@ -46,4 +50,8 @@ export const labels = {
   [ToolCategory.GNO]: 'Gno.land Execution Layer',
   [ToolCategory.GITNEXUS]: 'GitNexus Code Intelligence',
   [ToolCategory.EPISTEMOLOGY]: 'Epistemic Defense System (PSA/PEFM)',
+  [ToolCategory.FORTYTWO]: 'Fortytwo Prime Collective',
+  [ToolCategory.GRID]: 'Lightspark Grid API',
+  [ToolCategory.NASH]: 'Nash Identity Safe',
+  [ToolCategory.URBIT]: 'Urbit',
 };

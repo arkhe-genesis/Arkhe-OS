@@ -1,0 +1,18 @@
+{
+  "status": "success",
+  "version": "v∞.402.6",
+  "results": {
+    "substrate_85_extended": {
+      "450nm": {"chi2_dof": 0.095, "p_value": 0.996},
+      "1000nm": {"chi2_dof": 0.103, "p_value": 0.995}
+    },
+    "substrate_89_extended": {
+      "8mm": {"chi2_dof": 0.130, "p_value": 0.989},
+      "12mm": {"chi2_dof": 0.120, "p_value": 0.992}
+    },
+    "global_metrics": {
+      "mean_material_bias_reduction": 7.1,
+      "sensitivity_error_percent": 4.1
+    }
+  }
+}

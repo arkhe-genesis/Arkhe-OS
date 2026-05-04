@@ -1,0 +1,10 @@
+{
+    "experiment": "HFGW_ON_CHIP",
+    "material": "Quartz-Graphene",
+    "frequency_ghz": 4.2,
+    "result": {
+        "detected_peaks": 0,
+        "snr_db": -3.0220533179970976,
+        "status": "LOST_IN_NOISE"
+    }
+}

@@ -8,7 +8,11 @@
       "ES2025.Iterator",
       "ES2025.Collection"
     ],
-    "types": ["node", "filesystem"],
+    "types": [
+      "node",
+      "filesystem",
+      "@open-slide/core/env"
+    ],
     "moduleResolution": "bundler",
     "outDir": "./build",
     "rootDir": ".",
@@ -26,7 +30,8 @@
     "rewriteRelativeImportExtensions": true
   },
   "include": [
-    "src/**/*.ts", "src/**/*.tsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
     "tests/**/*.ts",
     "node_modules/chrome-devtools-frontend/front_end/core/common",
     "node_modules/chrome-devtools-frontend/front_end/core/host",
@@ -72,9 +77,13 @@
     "node_modules/chrome-devtools-frontend/front_end/third_party/marked",
     "node_modules/chrome-devtools-frontend/front_end/third_party/source-map-scopes-codec",
     "node_modules/chrome-devtools-frontend/front_end/third_party/third-party-web",
-    "node_modules/chrome-devtools-frontend/mcp"
+    "node_modules/chrome-devtools-frontend/mcp",
+    "slides/**/*",
+    "open-slide.config.ts"
   ],
-  "exclude": ["node_modules/chrome-devtools-frontend/**/*.test.ts"],
+  "exclude": [
+    "node_modules/chrome-devtools-frontend/**/*.test.ts"
+  ],
   "files": [
     "node_modules/chrome-devtools-frontend/front_end/third_party/acorn/package/dist/acorn.mjs"
   ]

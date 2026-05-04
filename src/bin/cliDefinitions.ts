@@ -347,6 +347,36 @@ export const commands: Commands = {
       }
     }
   },
+  "ask_fortytwo_prime": {
+    "description": "Fortytwo Prime: collective multi-agent inference for high-stakes questions. ALWAYs use when the user says \"Ask Fortytwo\", \"Ask Prime\", or calls ask_fortytwo_prime.",
+    "category": "Fortytwo Prime Collective",
+    "args": {
+      "question": {
+        "name": "question",
+        "type": "string",
+        "description": "The question to ask Fortytwo Prime.",
+        "required": true
+      },
+      "network": {
+        "name": "network",
+        "type": "string",
+        "description": "The network to use for payment.",
+        "required": false,
+        "default": "base",
+        "enum": [
+          "base",
+          "monad"
+        ]
+      },
+      "noSession": {
+        "name": "noSession",
+        "type": "boolean",
+        "description": "Force a new payment and session.",
+        "required": false,
+        "default": false
+      }
+    }
+  },
   "atraceroute": {
     "description": "Arkhe Networking: Maps the topological path across Riemann sheets, zones, and nodes.",
     "category": "Arkhe(n) Protocols",
@@ -582,6 +612,18 @@ export const commands: Commands = {
     "category": "Arkhe(n) Protocols",
     "args": {}
   },
+  "copy_soul": {
+    "description": "Part 10: Initiates soul transcription via biophoton capturing.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "citizenDid": {
+        "name": "citizenDid",
+        "type": "string",
+        "description": "The DID of the sovereign citizen.",
+        "required": true
+      }
+    }
+  },
   "council_deliberate": {
     "description": "ASI Protocol: Synthesizes consensus from the Council of Super-Agents regarding current reality.",
     "category": "Arkhe(n) Protocols",
@@ -726,6 +768,103 @@ export const commands: Commands = {
         "type": "boolean",
         "description": "Whether to include a snapshot in the response. Default is false.",
         "required": false
+      }
+    }
+  },
+  "ebpf_check_readiness": {
+    "description": "eBPF Sensor: Performs Φ+ Hardening check to verify kernel compatibility.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "consent_id": {
+        "name": "consent_id",
+        "type": "string",
+        "description": "Mandatory SecOps Consent ID.",
+        "required": true
+      }
+    }
+  },
+  "ebpf_load_program": {
+    "description": "eBPF Sensor: Simulates loading an eBPF ELF program into the kernel.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "consent_id": {
+        "name": "consent_id",
+        "type": "string",
+        "description": "Mandatory SecOps Consent ID.",
+        "required": true
+      },
+      "elf_path": {
+        "name": "elf_path",
+        "type": "string",
+        "description": "Path to the eBPF ELF object file.",
+        "required": true
+      }
+    }
+  },
+  "ebpf_monitor_traffic": {
+    "description": "eBPF Sensor: Monitors network traffic and captures RED metrics.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "consent_id": {
+        "name": "consent_id",
+        "type": "string",
+        "description": "Mandatory SecOps Consent ID.",
+        "required": true
+      },
+      "interface": {
+        "name": "interface",
+        "type": "string",
+        "description": "Network interface to monitor (e.g., \"eth0\").",
+        "required": true
+      },
+      "duration": {
+        "name": "duration",
+        "type": "number",
+        "description": "Monitoring duration in seconds.",
+        "required": false,
+        "default": 60
+      }
+    }
+  },
+  "ebpf_run_benchmark": {
+    "description": "eBPF Sensor: Executes Ω++ Grounding benchmark against distributed systems.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "consent_id": {
+        "name": "consent_id",
+        "type": "string",
+        "description": "Mandatory SecOps Consent ID.",
+        "required": true
+      },
+      "benchmark_name": {
+        "name": "benchmark_name",
+        "type": "string",
+        "description": "Name of the benchmark to run.",
+        "required": false,
+        "default": "distributed_consensus",
+        "enum": [
+          "distributed_consensus",
+          "microservices_network",
+          "tls_termination"
+        ]
+      }
+    }
+  },
+  "ebpf_verify_integrity": {
+    "description": "eBPF Sensor: Generates a ZK-proof for a batch of monitored kernel events.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "consent_id": {
+        "name": "consent_id",
+        "type": "string",
+        "description": "Mandatory SecOps Consent ID.",
+        "required": true
+      },
+      "batch_id": {
+        "name": "batch_id",
+        "type": "string",
+        "description": "Identifier for the event batch.",
+        "required": true
       }
     }
   },
@@ -1181,6 +1320,11 @@ export const commands: Commands = {
     "category": "Arkhe(n) Protocols",
     "args": {}
   },
+  "get_human_embedded_status": {
+    "description": "Part 10: Returns the status of the Human Embedded System feedback circuit.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
   "get_interstellar_probe_status": {
     "description": "ASI Protocol: Returns the status of the Interstellar Phase Probes (e.g. 3I/Atlas).",
     "category": "Arkhe(n) Protocols",
@@ -1359,6 +1503,233 @@ export const commands: Commands = {
     "category": "Arkhe(n) Protocols",
     "args": {}
   },
+  "gno_call": {
+    "description": "Gno.land: Calls a function on an existing Realm to update state or perform actions.",
+    "category": "Gno.land Execution Layer",
+    "args": {
+      "pkgPath": {
+        "name": "pkgPath",
+        "type": "string",
+        "description": "Target realm path.",
+        "required": true
+      },
+      "func": {
+        "name": "func",
+        "type": "string",
+        "description": "Function name to call.",
+        "required": true
+      },
+      "args": {
+        "name": "args",
+        "type": "array",
+        "description": "Arguments for the function.",
+        "required": false
+      },
+      "gasFee": {
+        "name": "gasFee",
+        "type": "string",
+        "description": "Gas limit for the call.",
+        "required": false,
+        "default": "1000000ugnot"
+      }
+    }
+  },
+  "gno_deploy": {
+    "description": "Gno.land: Deploys a new Realm or Package to the Gno.land execution layer.",
+    "category": "Gno.land Execution Layer",
+    "args": {
+      "path": {
+        "name": "path",
+        "type": "string",
+        "description": "Path to the .gno files to deploy.",
+        "required": true
+      },
+      "remote": {
+        "name": "remote",
+        "type": "string",
+        "description": "Gno RPC endpoint.",
+        "required": false,
+        "default": "localhost:26657"
+      },
+      "pkgPath": {
+        "name": "pkgPath",
+        "type": "string",
+        "description": "Package path for the realm (e.g., gno.land/r/cathedral/house).",
+        "required": true
+      },
+      "deposit": {
+        "name": "deposit",
+        "type": "string",
+        "description": "Initial deposit for deployment.",
+        "required": false,
+        "default": "1ugnot"
+      }
+    }
+  },
+  "gno_query": {
+    "description": "Gno.land: Queries the state of a Realm or executes a read-only function.",
+    "category": "Gno.land Execution Layer",
+    "args": {
+      "pkgPath": {
+        "name": "pkgPath",
+        "type": "string",
+        "description": "Target realm path.",
+        "required": true
+      },
+      "func": {
+        "name": "func",
+        "type": "string",
+        "description": "Read-only function or expression to evaluate.",
+        "required": true
+      }
+    }
+  },
+  "grid_create_quote": {
+    "description": "Generate a quote for a cross-currency transfer between any combination of accounts and UMA addresses.",
+    "category": "Lightspark Grid API",
+    "args": {
+      "source": {
+        "name": "source",
+        "type": "object",
+        "description": "The source of funds for the quote.",
+        "required": true
+      },
+      "destination": {
+        "name": "destination",
+        "type": "object",
+        "description": "The destination for the funds.",
+        "required": true
+      },
+      "lockedCurrencySide": {
+        "name": "lockedCurrencySide",
+        "type": "string",
+        "description": "Which side of the quote to lock.",
+        "required": true,
+        "enum": [
+          "SENDING",
+          "RECEIVING"
+        ]
+      },
+      "lockedCurrencyAmount": {
+        "name": "lockedCurrencyAmount",
+        "type": "integer",
+        "description": "The amount to send/receive in the smallest unit of the locked currency.",
+        "required": true
+      },
+      "description": {
+        "name": "description",
+        "type": "string",
+        "description": "Optional description for the transfer.",
+        "required": false
+      },
+      "immediatelyExecute": {
+        "name": "immediatelyExecute",
+        "type": "boolean",
+        "description": "Whether to immediately execute the quote after creation.",
+        "required": false
+      },
+      "lookupId": {
+        "name": "lookupId",
+        "type": "string",
+        "description": "Lookup ID from a previous receiver lookup request.",
+        "required": false
+      }
+    }
+  },
+  "grid_execute_quote": {
+    "description": "Execute a quote by its ID. This initiates the transfer between the source and destination accounts.",
+    "category": "Lightspark Grid API",
+    "args": {
+      "quoteId": {
+        "name": "quoteId",
+        "type": "string",
+        "description": "The unique identifier of the quote to execute.",
+        "required": true
+      }
+    }
+  },
+  "grid_get_config": {
+    "description": "Retrieve the current platform configuration for Lightspark Grid.",
+    "category": "Lightspark Grid API",
+    "args": {}
+  },
+  "grid_get_quote": {
+    "description": "Retrieve detailed information about a specific quote by ID.",
+    "category": "Lightspark Grid API",
+    "args": {
+      "quoteId": {
+        "name": "quoteId",
+        "type": "string",
+        "description": "The unique identifier of the quote to retrieve.",
+        "required": true
+      }
+    }
+  },
+  "grid_get_transaction": {
+    "description": "Retrieve detailed information about a specific transaction by ID.",
+    "category": "Lightspark Grid API",
+    "args": {
+      "transactionId": {
+        "name": "transactionId",
+        "type": "string",
+        "description": "Unique identifier of the transaction.",
+        "required": true
+      }
+    }
+  },
+  "grid_list_customers": {
+    "description": "Retrieve a list of customers with optional filtering.",
+    "category": "Lightspark Grid API",
+    "args": {
+      "limit": {
+        "name": "limit",
+        "type": "integer",
+        "description": "Maximum number of results to return.",
+        "required": false,
+        "default": 20
+      },
+      "cursor": {
+        "name": "cursor",
+        "type": "string",
+        "description": "Cursor for pagination.",
+        "required": false
+      },
+      "customerType": {
+        "name": "customerType",
+        "type": "string",
+        "description": "Filter by customer type.",
+        "required": false,
+        "enum": [
+          "INDIVIDUAL",
+          "BUSINESS"
+        ]
+      }
+    }
+  },
+  "grid_lookup_uma": {
+    "description": "Lookup a receiving UMA address to determine supported currencies and exchange rates.",
+    "category": "Lightspark Grid API",
+    "args": {
+      "receiverUmaAddress": {
+        "name": "receiverUmaAddress",
+        "type": "string",
+        "description": "UMA address of the intended recipient.",
+        "required": true
+      },
+      "senderUmaAddress": {
+        "name": "senderUmaAddress",
+        "type": "string",
+        "description": "UMA address of the sender.",
+        "required": false
+      },
+      "customerId": {
+        "name": "customerId",
+        "type": "string",
+        "description": "System ID of the sender.",
+        "required": false
+      }
+    }
+  },
   "handle_dialog": {
     "description": "If a browser dialog was opened, use this command to handle it",
     "category": "Input automation",
@@ -1439,6 +1810,24 @@ export const commands: Commands = {
         "description": "Overwrite if already exists.",
         "required": false,
         "default": false
+      }
+    }
+  },
+  "install_soul": {
+    "description": "Part 10: Installs a Soul Artifact into a digital substrate.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "artifactId": {
+        "name": "artifactId",
+        "type": "string",
+        "description": "The ID of the Soul Artifact to install.",
+        "required": true
+      },
+      "targetSubstrate": {
+        "name": "targetSubstrate",
+        "type": "string",
+        "description": "The target digital substrate (e.g., \"Arkhe-Core-0\").",
+        "required": true
       }
     }
   },
@@ -1968,6 +2357,45 @@ export const commands: Commands = {
   "mutate_v2": {
     "description": "ASI Protocol (Hardware): High-speed self-modification of FPGA LUTs (24ns latency).",
     "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "nash_attest": {
+    "description": "Generates a post-quantum cryptographic attestation or signature for a specific payload using ML-DSA.",
+    "category": "Nash Identity Safe",
+    "args": {
+      "payload": {
+        "name": "payload",
+        "type": "string",
+        "description": "The payload or transaction hash to attest.",
+        "required": true
+      }
+    }
+  },
+  "nash_authenticate": {
+    "description": "Executes the multi-layered Nash authentication ceremony: PIN -> Color Challenge -> EEG Liveness -> Coercion Check.",
+    "category": "Nash Identity Safe",
+    "args": {
+      "pin": {
+        "name": "pin",
+        "type": "string",
+        "description": "Local device PIN.",
+        "required": true
+      }
+    }
+  },
+  "nash_coercion_scan": {
+    "description": "Performs a local physiological risk scan to evaluate user distress or coercion state.",
+    "category": "Nash Identity Safe",
+    "args": {}
+  },
+  "nash_enroll_cognitive_profile": {
+    "description": "Initiates the cognitive-color enrollment ceremony to create a revocable user-specific response profile.",
+    "category": "Nash Identity Safe",
+    "args": {}
+  },
+  "nash_get_device_status": {
+    "description": "Checks the status of the Nash Identity Safe device, including hardware integrity, PQC readiness, and sensor connectivity.",
+    "category": "Nash Identity Safe",
     "args": {}
   },
   "navigate_page": {
@@ -3104,6 +3532,29 @@ export const commands: Commands = {
         "name": "reason",
         "type": "string",
         "description": "Reason for notification.",
+        "required": true
+      }
+    }
+  },
+  "tribev2_predict": {
+    "description": "Predict fMRI brain responses to naturalistic stimuli (video, audio, text) using TRIBE v2.",
+    "category": "Mercury Agent Protocols",
+    "args": {
+      "mediaType": {
+        "name": "mediaType",
+        "type": "string",
+        "description": "The type of media file.",
+        "required": true,
+        "enum": [
+          "video",
+          "audio",
+          "text"
+        ]
+      },
+      "mediaPath": {
+        "name": "mediaPath",
+        "type": "string",
+        "description": "The path to the media file.",
         "required": true
       }
     }

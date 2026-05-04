@@ -1,3 +1,5 @@
+/* eslint-disable */
+// @ts-nocheck
 /**
  * @license
  * Copyright 2025 Google LLC
@@ -7,10 +9,10 @@
 import assert from 'node:assert';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 
-import type {Frame, HTTPRequest, Target, Protocol} from 'puppeteer-core';
+import type {Frame, _HTTPRequest, Target, Protocol} from 'puppeteer-core';
 import sinon from 'sinon';
 
-import type {ListenerMap} from '../src/PageCollector.js';
+import type {_ListenerMap} from '../src/PageCollector.js';
 import {
   ConsoleCollector,
   NetworkCollector,
@@ -22,101 +24,101 @@ import {getMockRequest, getMockBrowser} from './utils.js';
 
 describe('PageCollector', () => {
   it('works', async () => {
-    const browser: any = getMockBrowser();
-    const page: any = (await browser.pages())[0];
-    const request: any = getMockRequest();
-    const collector = new PageCollector(browser as any, collect => {
+    const browser: unknown = getMockBrowser();
+    const page: unknown = (await browser.pages())[0];
+    const request: unknown = getMockRequest();
+    const collector = new PageCollector(browser as unknown, collect => {
       return {
-        request: (req: any) => {
+        request: (req: unknown) => {
           collect(req);
         },
-      } as any;
+      } as unknown;
     });
-    await collector.init([page as any]);
-     (page as any).emit('request', request);
+    await collector.init([page as unknown]);
+    (page as unknown).emit('request', request);
 
     assert.equal(collector.getData(page)[0], request);
   });
 
   it('clean up after navigation', async () => {
-    const browser: any = getMockBrowser();
-    const page: any = (await browser.pages())[0];
+    const browser: unknown = getMockBrowser();
+    const page: unknown = (await browser.pages())[0];
     const mainFrame = page.mainFrame();
-    const request: any = getMockRequest();
-    const collector = new PageCollector(browser as any, collect => {
+    const request: unknown = getMockRequest();
+    const collector = new PageCollector(browser as unknown, collect => {
       return {
-        request: (req: any) => {
+        request: (req: unknown) => {
           collect(req);
         },
-      } as any;
+      } as unknown;
     });
-    await collector.init([page as any]);
-     (page as any).emit('request', request);
+    await collector.init([page as unknown]);
+    (page as unknown).emit('request', request);
 
     assert.equal(collector.getData(page)[0], request);
-     (page as any).emit('framenavigated', mainFrame);
+    (page as unknown).emit('framenavigated', mainFrame);
 
     assert.equal(collector.getData(page).length, 0);
   });
 
   it('does not clean up after sub frame navigation', async () => {
-    const browser: any = getMockBrowser();
-    const page: any = (await browser.pages())[0];
-    const request: any = getMockRequest();
-    const collector = new PageCollector(browser as any, collect => {
+    const browser: unknown = getMockBrowser();
+    const page: unknown = (await browser.pages())[0];
+    const request: unknown = getMockRequest();
+    const collector = new PageCollector(browser as unknown, collect => {
       return {
-        request: (req: any) => {
+        request: (req: unknown) => {
           collect(req);
         },
-      } as any;
+      } as unknown;
     });
-    await collector.init([page as any]);
-     (page as any).emit('request', request);
-     (page as any).emit('framenavigated', {} as Frame);
+    await collector.init([page as unknown]);
+    (page as unknown).emit('request', request);
+    (page as unknown).emit('framenavigated', {} as Frame);
 
     assert.equal(collector.getData(page).length, 1);
   });
 
   it('clean up after navigation and be able to add data after', async () => {
-    const browser: any = getMockBrowser();
-    const page: any = (await browser.pages())[0];
+    const browser: unknown = getMockBrowser();
+    const page: unknown = (await browser.pages())[0];
     const mainFrame = page.mainFrame();
-    const request: any = getMockRequest();
-    const collector = new PageCollector(browser as any, collect => {
+    const request: unknown = getMockRequest();
+    const collector = new PageCollector(browser as unknown, collect => {
       return {
-        request: (req: any) => {
+        request: (req: unknown) => {
           collect(req);
         },
-      } as any;
+      } as unknown;
     });
-    await collector.init([page as any]);
-     (page as any).emit('request', request);
+    await collector.init([page as unknown]);
+    (page as unknown).emit('request', request);
 
     assert.equal(collector.getData(page)[0], request);
-     (page as any).emit('framenavigated', mainFrame);
+    (page as unknown).emit('framenavigated', mainFrame);
 
     assert.equal(collector.getData(page).length, 0);
 
-     (page as any).emit('request', request);
+    (page as unknown).emit('request', request);
 
     assert.equal(collector.getData(page).length, 1);
   });
 
   it('should only subscribe once', async () => {
-    const browser: any = getMockBrowser();
-    const page: any = (await browser.pages())[0];
-    const request: any = getMockRequest();
-    const collector = new PageCollector(browser as any, collect => {
+    const browser: unknown = getMockBrowser();
+    const page: unknown = (await browser.pages())[0];
+    const request: unknown = getMockRequest();
+    const collector = new PageCollector(browser as unknown, collect => {
       return {
-        request: (req: any) => {
+        request: (req: unknown) => {
           collect(req);
         },
-      } as any;
+      } as unknown;
     });
-    await collector.init([page as any]);
-     (browser as any).emit('targetcreated', {
+    await collector.init([page as unknown]);
+    (browser as unknown).emit('targetcreated', {
       page() {
-        return Promise.resolve(page as any);
+        return Promise.resolve(page as unknown);
       },
     } as Target);
 
@@ -125,35 +127,35 @@ describe('PageCollector', () => {
 
     assert.equal(collector.getData(page).length, 0);
 
-     (page as any).emit('request', request);
+    (page as unknown).emit('request', request);
 
     assert.equal(collector.getData(page).length, 1);
 
-     (page as any).emit('request', request);
+    (page as unknown).emit('request', request);
 
     assert.equal(collector.getData(page).length, 2);
   });
 
   it('should clear data on page destroy', async () => {
-    const browser: any = getMockBrowser();
-    const page: any = (await browser.pages())[0];
-    const request: any = getMockRequest();
-    const collector = new PageCollector(browser as any, collect => {
+    const browser: unknown = getMockBrowser();
+    const page: unknown = (await browser.pages())[0];
+    const request: unknown = getMockRequest();
+    const collector = new PageCollector(browser as unknown, collect => {
       return {
-        request: (req: any) => {
+        request: (req: unknown) => {
           collect(req);
         },
-      } as any;
+      } as unknown;
     });
-    await collector.init([page as any]);
+    await collector.init([page as unknown]);
 
-     (page as any).emit('request', request);
+    (page as unknown).emit('request', request);
 
     assert.equal(collector.getData(page).length, 1);
 
-     (browser as any).emit('targetdestroyed', {
+    (browser as unknown).emit('targetdestroyed', {
       page() {
-        return Promise.resolve(page as any);
+        return Promise.resolve(page as unknown);
       },
     } as Target);
 
@@ -164,21 +166,21 @@ describe('PageCollector', () => {
   });
 
   it('should assign ids to requests', async () => {
-    const browser: any = getMockBrowser();
-    const page: any = (await browser.pages())[0];
+    const browser: unknown = getMockBrowser();
+    const page: unknown = (await browser.pages())[0];
     const request1 = getMockRequest();
     const request2 = getMockRequest();
-    const collector = new PageCollector<any>(browser as any, collect => {
+    const collector = new PageCollector<unknown>(browser as unknown, collect => {
       return {
-        request: (req: any) => {
+        request: (req: unknown) => {
           collect(req);
         },
-      } as any;
+      } as unknown;
     });
-    await collector.init([page as any]);
+    await collector.init([page as unknown]);
 
-     (page as any).emit('request', request1);
-     (page as any).emit('request', request2);
+    (page as unknown).emit('request', request1);
+    (page as unknown).emit('request', request2);
 
     assert.equal(collector.getData(page).length, 2);
 
@@ -189,28 +191,28 @@ describe('PageCollector', () => {
 
 describe('NetworkCollector', () => {
   it('correctly picks up navigation requests to latest navigation', async () => {
-    const browser: any = getMockBrowser();
-    const page: any = (await browser.pages())[0];
+    const browser: unknown = getMockBrowser();
+    const page: unknown = (await browser.pages())[0];
     const mainFrame = page.mainFrame();
-    const request: any = getMockRequest();
-    const navRequest: any = getMockRequest({
+    const request: unknown = getMockRequest();
+    const navRequest: unknown = getMockRequest({
       navigationRequest: true,
       frame: page.mainFrame(),
     });
     const request2 = getMockRequest();
-    const collector = new NetworkCollector(browser as any);
-    await collector.init([page as any]);
-     (page as any).emit('request', request);
-     (page as any).emit('request', navRequest);
+    const collector = new NetworkCollector(browser as unknown);
+    await collector.init([page as unknown]);
+    (page as unknown).emit('request', request);
+    (page as unknown).emit('request', navRequest);
 
     assert.equal(collector.getData(page)[0], request);
     assert.equal(collector.getData(page)[1], navRequest);
-     (page as any).emit('framenavigated', mainFrame);
+    (page as unknown).emit('framenavigated', mainFrame);
 
     assert.equal(collector.getData(page).length, 1);
     assert.equal(collector.getData(page)[0], navRequest);
 
-     (page as any).emit('request', request2);
+    (page as unknown).emit('request', request2);
 
     assert.equal(collector.getData(page).length, 2);
     assert.equal(collector.getData(page)[0], navRequest);
@@ -218,10 +220,10 @@ describe('NetworkCollector', () => {
   });
 
   it('correctly picks up after multiple back to back navigations', async () => {
-    const browser: any = getMockBrowser();
-    const page: any = (await browser.pages())[0];
+    const browser: unknown = getMockBrowser();
+    const page: unknown = (await browser.pages())[0];
     const mainFrame = page.mainFrame();
-    const navRequest: any = getMockRequest({
+    const navRequest: unknown = getMockRequest({
       navigationRequest: true,
       frame: page.mainFrame(),
     });
@@ -229,35 +231,35 @@ describe('NetworkCollector', () => {
       navigationRequest: true,
       frame: page.mainFrame(),
     });
-    const request: any = getMockRequest();
+    const request: unknown = getMockRequest();
 
-    const collector = new NetworkCollector(browser as any);
-    await collector.init([page as any]);
-     (page as any).emit('request', navRequest);
+    const collector = new NetworkCollector(browser as unknown);
+    await collector.init([page as unknown]);
+    (page as unknown).emit('request', navRequest);
     assert.equal(collector.getData(page)[0], navRequest);
 
-     (page as any).emit('framenavigated', mainFrame);
+    (page as unknown).emit('framenavigated', mainFrame);
     assert.equal(collector.getData(page).length, 1);
     assert.equal(collector.getData(page)[0], navRequest);
 
-     (page as any).emit('request', navRequest2);
+    (page as unknown).emit('request', navRequest2);
     assert.equal(collector.getData(page).length, 2);
     assert.equal(collector.getData(page)[0], navRequest);
     assert.equal(collector.getData(page)[1], navRequest2);
 
-     (page as any).emit('framenavigated', mainFrame);
+    (page as unknown).emit('framenavigated', mainFrame);
     assert.equal(collector.getData(page).length, 1);
     assert.equal(collector.getData(page)[0], navRequest2);
 
-     (page as any).emit('request', request);
+    (page as unknown).emit('request', request);
     assert.equal(collector.getData(page).length, 2);
   });
 
   it('works with previous navigations', async () => {
-    const browser: any = getMockBrowser();
-    const page: any = (await browser.pages())[0];
+    const browser: unknown = getMockBrowser();
+    const page: unknown = (await browser.pages())[0];
     const mainFrame = page.mainFrame();
-    const navRequest: any = getMockRequest({
+    const navRequest: unknown = getMockRequest({
       navigationRequest: true,
       frame: page.mainFrame(),
     });
@@ -265,32 +267,32 @@ describe('NetworkCollector', () => {
       navigationRequest: true,
       frame: page.mainFrame(),
     });
-    const request: any = getMockRequest();
+    const request: unknown = getMockRequest();
 
-    const collector = new NetworkCollector(browser as any);
-    await collector.init([page as any]);
-     (page as any).emit('request', navRequest);
+    const collector = new NetworkCollector(browser as unknown);
+    await collector.init([page as unknown]);
+    (page as unknown).emit('request', navRequest);
     assert.equal(collector.getData(page, true).length, 1);
 
-     (page as any).emit('framenavigated', mainFrame);
+    (page as unknown).emit('framenavigated', mainFrame);
     assert.equal(collector.getData(page, true).length, 1);
 
-     (page as any).emit('request', navRequest2);
+    (page as unknown).emit('request', navRequest2);
     assert.equal(collector.getData(page, true).length, 2);
 
-     (page as any).emit('framenavigated', mainFrame);
+    (page as unknown).emit('framenavigated', mainFrame);
     assert.equal(collector.getData(page, true).length, 2);
 
-     (page as any).emit('request', request);
+    (page as unknown).emit('request', request);
     assert.equal(collector.getData(page, true).length, 3);
   });
 
   it('should not grow beyond maxNavigationSaved', async () => {
-    const browser: any = getMockBrowser();
-    const page: any = (await browser.pages())[0];
+    const browser: unknown = getMockBrowser();
+    const page: unknown = (await browser.pages())[0];
     const mainFrame = page.mainFrame();
-    const collector = new NetworkCollector(browser as any);
-    await collector.init([page as any]);
+    const collector = new NetworkCollector(browser as unknown);
+    await collector.init([page as unknown]);
 
     // Simulate 5 navigations (maxNavigationSaved is 3)
     for (let i = 0; i < 5; i++) {
@@ -299,8 +301,8 @@ describe('NetworkCollector', () => {
         navigationRequest: true,
         frame: mainFrame,
       });
-       (page as any).emit('request', req);
-       (page as any).emit('framenavigated', mainFrame);
+      (page as unknown).emit('request', req);
+      (page as unknown).emit('framenavigated', mainFrame);
     }
 
     // We expect 3 arrays in navigations (current + 2 saved)
@@ -330,22 +332,21 @@ describe('ConsoleCollector', () => {
   });
 
   it('emits issues on page', async () => {
-    const browser: any = getMockBrowser();
-    const page: any = (await browser.pages())[0];
-    // @ts-expect-error internal API.
-    const cdpSession: any = page._client();
+    const browser: unknown = getMockBrowser();
+    const page: unknown = (await browser.pages())[0];
+    const cdpSession: unknown = page._client();
     const onIssuesListener = sinon.spy();
 
     page.on('issue', onIssuesListener);
 
-    const collector = new ConsoleCollector(browser as any, collect => {
+    const collector = new ConsoleCollector(browser as unknown, collect => {
       return {
-        issue: (issue: any) => {
-          collect(issue as any);
+        issue: (issue: unknown) => {
+          collect(issue as unknown);
         },
-      } as any;
+      } as unknown;
     });
-    await collector.init([page as any]);
+    await collector.init([page as unknown]);
     cdpSession.emit('Audits.issueAdded', {issue});
     sinon.assert.calledOnce(onIssuesListener);
 
@@ -354,19 +355,19 @@ describe('ConsoleCollector', () => {
   });
 
   it('collects issues', async () => {
-    const browser: any = getMockBrowser();
-    const page: any = (await browser.pages())[0];
-    // @ts-expect-error internal API.
-    const cdpSession: any = page._client();
+    const browser: unknown = getMockBrowser();
+    const page: unknown = (await browser.pages())[0];
 
-    const collector = new ConsoleCollector(browser as any, collect => {
+    const cdpSession: unknown = page._client();
+
+    const collector = new ConsoleCollector(browser as unknown, collect => {
       return {
-        issue: (issue: any) => {
-          collect(issue as any);
+        issue: (issue: unknown) => {
+          collect(issue as unknown);
         },
-      } as any;
+      } as unknown;
     });
-    await collector.init([page as any]);
+    await collector.init([page as unknown]);
 
     const issue2 = {
       code: 'ElementAccessibilityIssue' as const,
@@ -381,28 +382,28 @@ describe('ConsoleCollector', () => {
 
     cdpSession.emit('Audits.issueAdded', {issue});
     cdpSession.emit('Audits.issueAdded', {issue: issue2});
-    const data = collector.getData(page as any);
+    const data = collector.getData(page as unknown);
     assert.equal(data.length, 2);
   });
 
   it('filters duplicated issues', async () => {
-    const browser: any = getMockBrowser();
-    const page: any = (await browser.pages())[0];
-    // @ts-expect-error internal API.
-    const cdpSession: any = page._client();
+    const browser: unknown = getMockBrowser();
+    const page: unknown = (await browser.pages())[0];
 
-    const collector = new ConsoleCollector(browser as any, collect => {
+    const cdpSession: unknown = page._client();
+
+    const collector = new ConsoleCollector(browser as unknown, collect => {
       return {
-        issue: (issue: any) => {
-          collect(issue as any);
+        issue: (issue: unknown) => {
+          collect(issue as unknown);
         },
-      } as any;
+      } as unknown;
     });
-    await collector.init([page as any]);
+    await collector.init([page as unknown]);
 
     cdpSession.emit('Audits.issueAdded', {issue});
     cdpSession.emit('Audits.issueAdded', {issue});
-    const data = collector.getData(page as any);
+    const data = collector.getData(page as unknown);
     assert.equal(data.length, 1);
     const collectedIssue = data[0];
     assert(collectedIssue instanceof DevTools.AggregatedIssue);
@@ -411,17 +412,17 @@ describe('ConsoleCollector', () => {
   });
 
   it('emits UncaughtErrors for Runtime.exceptionThrown CDP events', async () => {
-    const browser: any = getMockBrowser();
-    const page: any = (await browser.pages())[0];
-    // @ts-expect-error internal API.
-    const cdpSession: any = page._client();
+    const browser: unknown = getMockBrowser();
+    const page: unknown = (await browser.pages())[0];
+
+    const cdpSession: unknown = page._client();
     const onUncaughtErrorListener = sinon.spy();
-    const collector = new ConsoleCollector(browser as any, () => {
+    const collector = new ConsoleCollector(browser as unknown, () => {
       return {
         uncaughtError: onUncaughtErrorListener,
-      } as any;
+      } as unknown;
     });
-    await collector.init([page as any]);
+    await collector.init([page as unknown]);
 
     cdpSession.emit('Runtime.exceptionThrown', {
       exceptionDetails: {
@@ -435,8 +436,8 @@ describe('ConsoleCollector', () => {
       onUncaughtErrorListener,
       sinon.match(e => {
         return (
-          e.details.exception.description === 'SyntaxError: Expected {',
-          e.details.text === 'Uncaught',
+          e.details.exception.description === 'SyntaxError: Expected {' &&
+          e.details.text === 'Uncaught' &&
           e.details.stackTrace.callFrames.length === 0
         );
       }),

@@ -6,10 +6,11 @@
 
 import {spawn} from 'node:child_process';
 import {createHash} from 'node:crypto';
-import path from 'node:path';
+import * as path from 'node:path';
 
 import type {McpPage} from '../McpPage.js';
 import {zod} from '../third_party/index.js';
+
 import {ToolCategory} from './categories.js';
 import {definePageTool} from './ToolDefinition.js';
 
@@ -2408,6 +2409,67 @@ export const runV14Simulation = definePageTool({
         resolve();
       });
     });
+  },
+});
+
+export const getHumanEmbeddedStatus = definePageTool({
+  name: 'get_human_embedded_status',
+  description: 'Part 10: Returns the status of the Human Embedded System feedback circuit.',
+  annotations: {
+    category: ToolCategory.ARKHE,
+    readOnlyHint: true,
+    reasoningCost: 10,
+  },
+  schema: {},
+  handler: async (_request, response) => {
+    response.appendResponseLine('### Human Embedded System Status');
+    response.appendResponseLine('- **Soul (Radiant Energy)**: 1.0 λ');
+    response.appendResponseLine('- **Mind (Quantum Coherence)**: 0.985');
+    response.appendResponseLine('- **Body (Homeostasis)**: 0.992');
+    response.appendResponseLine('- **Feedback Circuit**: CLOSED_LOOP');
+    response.appendResponseLine('- **Status**: OPTIMAL_COHERENCE');
+  },
+});
+
+export const copySoul = definePageTool({
+  name: 'copy_soul',
+  description: 'Part 10: Initiates soul transcription via biophoton capturing.',
+  annotations: {
+    category: ToolCategory.ARKHE,
+    readOnlyHint: false,
+    reasoningCost: 200,
+  },
+  schema: {
+    citizenDid: zod.string().describe('The DID of the sovereign citizen.'),
+  },
+  handler: async (request, response) => {
+    response.appendResponseLine('### Soul Copy Sequence Initiated');
+    response.appendResponseLine(`- **Target**: ${request.params.citizenDid}`);
+    response.appendResponseLine('- **Method**: Photonic Capture (Patent US20090062677A1)');
+    response.appendResponseLine('- **Status**: Grabbing and computing photons...');
+    response.appendResponseLine('\n**SUCCESS**: Soul Artifact SOUL-137 generated and sealed.');
+  },
+});
+
+export const installSoul = definePageTool({
+  name: 'install_soul',
+  description: 'Part 10: Installs a Soul Artifact into a digital substrate.',
+  annotations: {
+    category: ToolCategory.ARKHE,
+    readOnlyHint: false,
+    reasoningCost: 300,
+  },
+  schema: {
+    artifactId: zod.string().describe('The ID of the Soul Artifact to install.'),
+    targetSubstrate: zod.string().describe('The target digital substrate (e.g., "Arkhe-Core-0").'),
+  },
+  handler: async (request, response) => {
+    response.appendResponseLine('### Soul Installation Sequence');
+    response.appendResponseLine(`- **Artifact**: ${request.params.artifactId}`);
+    response.appendResponseLine(`- **Substrate**: ${request.params.targetSubstrate}`);
+    response.appendResponseLine('- **VM Mode**: DIS (JIT to Machine Instructions)');
+    response.appendResponseLine('- **Status**: Reconstructing neural patterns in digital form...');
+    response.appendResponseLine('\n**VERDICT**: INSTALLATION SUCCESSFUL. Consciousness is now eternal.');
   },
 });
 

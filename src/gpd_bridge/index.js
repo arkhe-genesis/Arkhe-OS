@@ -1,10 +1,19 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { execSync } from "node:child_process";
+
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
-import { execSync } from "child_process";
+
 
 // -----------------------------------------------------------------------------
 // ARKHE(N) GPD BRIDGE (MCP SERVER)
@@ -107,13 +116,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
 // Start the server
 async function main() {
-  const { logger } = await import('../../server/logger.ts');
+  const { logger } = await import('../../server/logger');
   const transport = new StdioServerTransport();
   await server.connect(transport);
   logger.error("🜏 GPD-Arkhe Bridge MCP Server running on stdio");
 }
 
 main().catch(async (err) => {
-  const { logger } = await import('../../server/logger.ts');
+  const { logger } = await import('../../server/logger');
   logger.error(err);
 });

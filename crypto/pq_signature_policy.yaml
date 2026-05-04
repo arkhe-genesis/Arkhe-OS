@@ -1,0 +1,15 @@
+# Arquivo: crypto/pq_signature_policy.yaml
+signature_policy:
+  short_term_ops:  # VCs frequentes, baixa criticidade
+    algorithm: "LMS-XMSS"  # Hash-based, assinaturas ~1 KB
+    key_rotation: "daily"
+    use_case: ["telemetry_ack", "resource_transfer", "operational_log"]
+
+  long_term_ops:  # VCs críticos, alta criticidade
+    algorithm: "ML-DSA-87"  # NIST PQC padrão, assinaturas ~3,3 KB
+    key_rotation: "monthly"
+    use_case: ["crewed_mission_vc", "scientific_discovery_vc", "triangular_face_seal"]
+
+  key_exchange:
+    algorithm: "ML-KEM-1024"  # Encapsulamento de chave
+    use_case: ["session_establishment", "batch_settlement_auth"]

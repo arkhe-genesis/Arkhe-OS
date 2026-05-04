@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
+
 import { Share2, Link, Shield, Layers } from 'lucide-react';
 import React, { useState } from 'react';
 

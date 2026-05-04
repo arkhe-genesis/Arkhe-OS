@@ -5,6 +5,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
+
 import { X, Cpu, Activity, ShieldCheck, Grid3X3 } from 'lucide-react';
 import { motion } from 'motion/react';
 import React from 'react';
@@ -17,7 +20,7 @@ interface CrystalComputationPanelProps {
 }
 
 export default function CrystalComputationPanel({ state, onClose }: CrystalComputationPanelProps) {
-  if (!state) return null;
+  if (!state) {return null;}
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">

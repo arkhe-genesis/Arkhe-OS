@@ -13,11 +13,21 @@ from skills import (
     simulate_fibonacci_braid,
     simulate_w_state_coherence,
     simulate_rainbow_coherence,
+    simulate_collective_coherence,
+    simulate_xenoactualization,
+    scan_optimal_measurement_rate,
+    optimize_coupling,
     detect_rainbow_peaks,
     detect_peaks,
     synthesize_conclusion,
     optimize_lipus_drug_interval,
     estimate_glymphatic_clearance,
+    simulate_phase_oncology,
+    simulate_stem_cell_safety,
+    calculate_bio_silent_coupling,
+    RainbowParams,
+    XenoParams,
+    KuramotoParams
     lambda2_coherence,
     SynapseKValidator,
     TMSModulator,
@@ -34,6 +44,7 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title="Archimedes-Ω Agent API",
     description="API for the Archimedes-Ω coherence interrogation agent.",
+    version="4.0.0"
     version="2.5.0"
 )
 
@@ -113,6 +124,49 @@ class RainbowPeakResponse(BaseModel):
     dominant_regime: str
     interpretation: str
 
+class NodeState(BaseModel):
+    phase: float
+    natural_freq: float
+    weight: float = 1.0
+
+class CollectiveCoherenceRequest(BaseModel):
+    nodes: List[NodeState]
+    coupling_K: float = 1.0
+    time_horizon: float = 10.0
+    dt: float = 0.01
+    fusion_threshold: float = 0.95
+    stabilization_time: float = 0.5
+    enable_rainbow_resonance: bool = False
+
+class CollectiveCoherenceResponse(BaseModel):
+    final_R: float
+    final_phase: float
+    is_fused: bool
+    time_to_fusion: Optional[float]
+    trajectory_R: List[float]
+    trajectory_phases: List[float]
+    resonance_status: Dict[str, Any]
+    interpretation: str
+    philosophical_note: str
+
+class XenoactualizationRequest(BaseModel):
+    coherence_profile: List[float]
+    blueprint_complexity: float = Field(..., ge=1.0, le=10.0)
+    measurement_rate: float = Field(1.0, ge=0.1, le=100.0)
+    tau_field_strength: float = Field(0.5, ge=0.0, le=1.0)
+    domain: str = "HYPO"
+
+class XenoactualizationResponse(BaseModel):
+    fidelity: float
+    zeno_suppression: float
+    coherence_factor: float
+    complexity_penalty: float
+    stability_score: float
+    collapse_time_estimate: float
+    domain_result: str
+    recommendation: str
+    philosophical_note: str
+
 class AnalysisRequest(BaseModel):
     data_source: str # simulated or experimental
     su2_params: Optional[SU2Request] = None
@@ -160,6 +214,21 @@ class OptimizationRequest(BaseModel):
     microbubbles: bool = True
     mi: float = Field(0.4, description="Mechanical Index (0.1-0.6)")
 
+class OncologyRequest(BaseModel):
+    num_cells: int = Field(1000, ge=10, le=10000)
+    tumor_fraction: float = Field(0.1, ge=0.01, le=0.5)
+    treatment_type: str = "combined" # ivmt, docetaxel, combined, control
+
+class StemCellSafetyRequest(BaseModel):
+    ivmt_bandwidth: float = Field(0.05, ge=0.001, le=0.5)
+    stem_cell_phase_signature: float = 0.88
+    safety_threshold: float = 0.85
+
+class BioSilentRequest(BaseModel):
+    base_k: float = 1.0
+    distance_to_hospital: float
+    exclusion_radius: float = 200.0
+    is_manual_override: bool = False
 class Lambda2Request(BaseModel):
     signals: List[List[float]] # List of channels, each a list of samples
 
@@ -238,6 +307,67 @@ async def simulate_rainbow(req: RainbowRequest):
         resonance_scale=req.resonance_scale
     )
     result = simulate_rainbow_coherence(params)
+    return result
+
+@app.post("/synchro/collective_coherence", response_model=CollectiveCoherenceResponse, tags=["synchronization"])
+async def collective_coherence_endpoint(req: CollectiveCoherenceRequest):
+    """
+    Simulate Kuramoto synchronization for collective coherence (v4.0.0).
+    """
+    params = KuramotoParams(
+        nodes=[{"phase": n.phase, "natural_freq": n.natural_freq, "weight": n.weight} for n in req.nodes],
+        coupling_K=req.coupling_K,
+        time_horizon=req.time_horizon,
+        dt=req.dt,
+        fusion_threshold=req.fusion_threshold,
+        stabilization_time=req.stabilization_time,
+        enable_rainbow_resonance=req.enable_rainbow_resonance
+    )
+    result = simulate_collective_coherence(params)
+    if "error" in result:
+        raise HTTPException(status_code=500, detail=result["error"])
+    return result
+
+@app.post("/synchro/collective_coherence/optimize", tags=["synchronization"])
+async def collective_coherence_optimize_endpoint(req: CollectiveCoherenceRequest):
+    """
+    Finds optimal coupling constant K for fastest fusion.
+    """
+    params = KuramotoParams(
+        nodes=[{"phase": n.phase, "natural_freq": n.natural_freq, "weight": n.weight} for n in req.nodes],
+        time_horizon=req.time_horizon,
+        dt=req.dt,
+        fusion_threshold=req.fusion_threshold,
+        stabilization_time=req.stabilization_time,
+        enable_rainbow_resonance=req.enable_rainbow_resonance
+    )
+    result = optimize_coupling(params)
+    return result
+
+@app.post("/simulate/xenoactualization", response_model=XenoactualizationResponse, tags=["xenoactualization"])
+async def xenoactualization_endpoint(req: XenoactualizationRequest):
+    """
+    Simulate xenoactualization fidelity with Zeno dynamics.
+    """
+    params = XenoParams(
+        coherence_profile=req.coherence_profile,
+        blueprint_complexity=req.blueprint_complexity,
+        measurement_rate=req.measurement_rate,
+        tau_field_strength=req.tau_field_strength
+    )
+    result = simulate_xenoactualization(params)
+    return result
+
+@app.post("/simulate/xenoactualization/scan", tags=["xenoactualization"])
+async def xenoactualization_scan_endpoint(req: XenoactualizationRequest):
+    """
+    Scans measurement rate to find optimal for maximum fidelity.
+    """
+    result = scan_optimal_measurement_rate(
+        coherence_profile=req.coherence_profile,
+        blueprint_complexity=req.blueprint_complexity,
+        tau_strength=req.tau_field_strength
+    )
     return result
 
 @app.post("/detect/peaks", response_model=PeakDetectionResponse, tags=["detection"])
@@ -421,6 +551,65 @@ async def optimize_combined_protocol(req: OptimizationRequest):
     )
     return result
 
+@app.post("/therapy/phase-oncology", tags=["therapy"])
+async def phase_oncology_endpoint(req: OncologyRequest):
+    """
+    Simula a Terapia de Fase (Phase Therapy) em uma rede celular tumorígena.
+    Modela o colapso de coerência seletivo via IVMT-Rx-4 e Docetaxel.
+    """
+    result = simulate_phase_oncology(
+        num_cells=req.num_cells,
+        tumor_fraction=req.tumor_fraction,
+        treatment_type=req.treatment_type
+    )
+    return result
+
+@app.post("/therapy/stem-cell-safety", tags=["therapy"])
+async def stem_cell_safety_endpoint(req: StemCellSafetyRequest):
+    """
+    Avalia a segurança de fase para Células-Tronco Hematopoiéticas (CTHs)
+    sob a influência da janela de decoerência do IVMT-Rx-4.
+    """
+    result = simulate_stem_cell_safety(
+        ivmt_bandwidth=req.ivmt_bandwidth,
+        stem_cell_phase_signature=req.stem_cell_phase_signature,
+        safety_threshold=req.safety_threshold
+    )
+    return result
+
+@app.post("/therapy/bio-silent", tags=["therapy"])
+async def bio_silent_endpoint(req: BioSilentRequest):
+    """
+    Calcula o acoplamento reduzido para zonas hospitalares sensíveis.
+    """
+    k_eff = calculate_bio_silent_coupling(
+        base_k=req.base_k,
+        distance_to_hospital=req.distance_to_hospital,
+        exclusion_radius=req.exclusion_radius,
+        is_manual_override=req.is_manual_override
+    )
+    return {"effective_k": round(float(k_eff), 4), "status": "BIO_SILENT_ACTIVE" if k_eff == 0 else "NORMAL"}
+
+@app.post("/therapy/optimize-combined-protocol-legacy", tags=["therapy"], include_in_schema=False)
+async def optimize_combined_protocol_legacy(req: OptimizationRequest):
+    """
+    Retorna o intervalo ideal entre LIPUS e administração de fármaco,
+    bem como a absorção esperada.
+    """
+    result = optimize_lipus_drug_interval(
+        t_peak=req.t_peak,
+        t_decay=req.t_decay,
+        drug_halflife=req.drug_halflife,
+        microbubbles=req.microbubbles,
+        mi=req.mi
+    )
+    # Adiciona nota filosófica
+    result["philosophical_note"] = (
+        "A janela de oportunidade é o intervalo onde a permeabilidade da barreira "
+        "e a presença do fármaco se entrelaçam. O ultrassom abre a cancela; o relógio "
+        "do medicamento decide se a cura chegará a tempo."
+    )
+    return result
 # --- MaxToki Endpoints ---
 
 @app.post("/maxtoki/screen-eligibility", tags=["maxtoki"])

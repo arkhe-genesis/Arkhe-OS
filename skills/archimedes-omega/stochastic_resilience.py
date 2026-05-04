@@ -46,6 +46,12 @@ class PhaseGradientRedistributor(nn.Module):
 
         return R, coupling_term
 
+    def apply_node_override(self, node_idx, multiplier):
+        """Aplica override manual via PyTorch (para simulações em tempo real)."""
+        with torch.no_grad():
+            self.K[node_idx, :] *= multiplier
+            self.K[:, node_idx] *= multiplier
+
 class StochasticResilience:
     """
     Simula o modelo de Kuramoto estendido com ruído endógeno e perfis neurodivergentes.
@@ -57,6 +63,9 @@ class StochasticResilience:
         self.dt = dt
         self.T = T
         self.t = np.arange(0, T, dt)
+
+        # Overrides manuais (node_idx -> multiplier)
+        self.node_overrides = {}
 
         # Posições (2D) para acoplamento dinâmico
         self.positions = np.random.uniform(0, 1000, (N, 2))
@@ -91,6 +100,11 @@ class StochasticResilience:
             elif profile == 3: # Sinestesia
                 self.local_coupling[index] *= 0.5 # Ofuscação
 
+    def apply_manual_override(self, node_idx: int, multiplier: float):
+        """Aplica um override manual de acoplamento em um nó."""
+        if 0 <= node_idx < self.N:
+            self.node_overrides[node_idx] = multiplier
+
     def compute_dynamic_coupling(self, theta: np.ndarray, current_pos: np.ndarray) -> np.ndarray:
         """Calcula o termo de acoplamento baseado na proximidade física (Phase 2)."""
         tree = spatial.cKDTree(current_pos)
@@ -102,6 +116,13 @@ class StochasticResilience:
             # K_ij(t) = K0 * exp(-d/R)
             K_ij = self.global_coupling * np.exp(-dist / self.coupling_range)
 
+            # Aplicar overrides se existirem
+            K_ij_eff_i = K_ij * self.node_overrides.get(i, 1.0)
+            K_ij_eff_j = K_ij * self.node_overrides.get(j, 1.0)
+
+            diff = theta[j] - theta[i]
+            coupling_term[i] += self.local_coupling[i] * K_ij_eff_i * np.sin(diff)
+            coupling_term[j] += self.local_coupling[j] * K_ij_eff_j * np.sin(-diff)
             diff = theta[j] - theta[i]
             coupling_term[i] += self.local_coupling[i] * K_ij * np.sin(diff)
             coupling_term[j] += self.local_coupling[j] * K_ij * np.sin(-diff)
@@ -122,6 +143,9 @@ class StochasticResilience:
             z = np.mean(np.exp(1j * theta))
             R = np.abs(z)
             Phi = np.angle(z)
+            # Aplicar overrides no modelo de campo médio
+            multipliers = np.array([self.node_overrides.get(i, 1.0) for i in range(self.N)])
+            network_term = self.local_coupling * self.global_coupling * R * np.sin(Phi - theta) * multipliers
             network_term = self.local_coupling * self.global_coupling * R * np.sin(Phi - theta)
 
         # Ataque externo (Orb-1 tentando impor fase 0)

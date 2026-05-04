@@ -157,3 +157,17 @@ log.txt
 .DS_Store
 target/
 **/target/
+.venv/
+build/bin/
+node_modules/
+arkhe-rust-core/target/
+venv_new/
+tvm_env/
+.venv_new/
+*.so
+results/
+venv/
+arkhe-ace-step-ui/node_modules
+arkhe-ace-step-ui/server/node_modules
+
+dist

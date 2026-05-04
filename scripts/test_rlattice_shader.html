@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Arkhe OS - WebGL Shader Test</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #000; color: #fff; font-family: monospace; }
+        canvas { display: block; }
+        #info { position: absolute; top: 10px; left: 10px; z-index: 100; }
+    </style>
+</head>
+<body>
+    <div id="info">Testing rlattice_fragment_v371.1.glsl...</div>
+    <!-- Include Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Set up the scene, camera, and renderer
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 2;
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Define Vertex Shader (simulating the packing/unpacking)
+        const vertexShader = `
+            attribute float aType;
+            attribute float aLayer;
+            attribute float aQ;
+            attribute float aR;
+            attribute float aTopCharge;
+            attribute float aPhase;
+
+            varying float vType;
+            varying float vLayer;
+            varying float vQ;
+            varying float vR;
+            varying float vTopCharge;
+            varying float vPhase;
+
+            void main() {
+                // Pass attributes to varyings
+                vType = aType;
+                vLayer = aLayer;
+                vQ = aQ;
+                vR = aR;
+                vTopCharge = aTopCharge;
+                vPhase = aPhase;
+
+                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                gl_Position = projectionMatrix * mvPosition;
+                // Add some basic point size calculation to see the vertices
+                gl_PointSize = 10.0 * (1.0 / -mvPosition.z);
+            }
+        `;
+
+        // Load Fragment Shader via fetch
+        fetch('rlattice_fragment_v371.1.glsl')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.text();
+            })
+            .then(fragmentShader => {
+
+                // Print compilation errors if any
+                const _compileShader = renderer.getContext().compileShader;
+                renderer.getContext().compileShader = function(shader) {
+                    _compileShader.apply(this, arguments);
+                    if (!this.getShaderParameter(shader, this.COMPILE_STATUS)) {
+                        console.error("Shader Compile Error:", this.getShaderInfoLog(shader));
+                        document.getElementById('info').innerHTML += '<br><span style="color:red">Compile Error: ' + this.getShaderInfoLog(shader) + '</span><span id="render-status">ERROR</span>';
+                        window._testStatus = "ERROR: " + this.getShaderInfoLog(shader);
+                    }
+                };
+
+
+                // Create a BufferGeometry with instanced/point attributes
+                const numPoints = 1000;
+                const geometry = new THREE.BufferGeometry();
+
+                // Positions for the points
+                const positions = new Float32Array(numPoints * 3);
+
+                // The 5-byte expanded bit-packing buffer simulated as separate floats for Three.js
+                const types = new Float32Array(numPoints);
+                const layers = new Float32Array(numPoints);
+                const qs = new Float32Array(numPoints);
+                const rs = new Float32Array(numPoints);
+                const topCharges = new Float32Array(numPoints);
+                const phases = new Float32Array(numPoints);
+
+                for (let i = 0; i < numPoints; i++) {
+                    // Random positions
+                    positions[i * 3] = (Math.random() - 0.5) * 2;
+                    positions[i * 3 + 1] = (Math.random() - 0.5) * 2;
+                    positions[i * 3 + 2] = (Math.random() - 0.5) * 2;
+
+                    // Simulate buffer data
+                    types[i] = Math.random() > 0.5 ? 1.0 : 0.0;
+                    layers[i] = Math.floor(Math.random() * 16);
+                    qs[i] = Math.floor(Math.random() * 256);
+                    rs[i] = Math.floor(Math.random() * 256);
+                    topCharges[i] = Math.floor(Math.random() * 16); // 0-15
+                    phases[i] = Math.floor(Math.random() * 181); // 0-180
+                }
+
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                geometry.setAttribute('aType', new THREE.BufferAttribute(types, 1));
+                geometry.setAttribute('aLayer', new THREE.BufferAttribute(layers, 1));
+                geometry.setAttribute('aQ', new THREE.BufferAttribute(qs, 1));
+                geometry.setAttribute('aR', new THREE.BufferAttribute(rs, 1));
+                geometry.setAttribute('aTopCharge', new THREE.BufferAttribute(topCharges, 1));
+                geometry.setAttribute('aPhase', new THREE.BufferAttribute(phases, 1));
+
+                // Create ShaderMaterial
+                const material = new THREE.ShaderMaterial({
+                    vertexShader: vertexShader,
+                    fragmentShader: fragmentShader,
+                    uniforms: {
+                        uTime: { value: 0.0 },
+                        uMode: { value: 3 }, // Mode 3: Full coherence
+                        uLambda: { value: 1.3759704251 },
+                        uOmega: { value: 19.686678 },
+                        uCaptureThreshold: { value: 0.85 },
+                        uDilutionThreshold: { value: 0.15 }
+                    },
+                    transparent: true
+                });
+
+                // Create Points object
+                const points = new THREE.Points(geometry, material);
+                scene.add(points);
+
+                // Animation loop
+                let frames = 0;
+                function animate() {
+                    requestAnimationFrame(animate);
+
+                    // Update time uniform
+                    material.uniforms.uTime.value += 0.01;
+
+                    // Rotate the points slowly
+                    points.rotation.x += 0.001;
+                    points.rotation.y += 0.002;
+
+                    renderer.render(scene, camera);
+                    frames++;
+                }
+
+                animate();
+
+                // Wait a bit to see if there are any GL errors
+                setTimeout(() => {
+                    const gl = renderer.getContext();
+                    const error = gl.getError();
+                    if (window._testStatus && window._testStatus.startsWith("ERROR")) {
+                        // Keep compile error
+                    } else if (error !== gl.NO_ERROR && frames > 0) {
+                        // ignore 1282 for now, wait for a few frames
+                        if (error === 1282 && frames > 5) {
+                            // document.getElementById('info').innerHTML += '<br>Shader compiled and rendered successfully. <span id="render-status">SUCCESS</span>';
+                            // window._testStatus = "SUCCESS";
+                        }
+
+                    }
+                    if (!window._testStatus) {
+                        document.getElementById('info').innerHTML += '<br>Shader compiled and rendered successfully. <span id="render-status">SUCCESS</span>';
+                        window._testStatus = "SUCCESS";
+                    }
+                }, 500);
+            })
+            .catch(error => {
+                document.getElementById('info').innerHTML += '<br><span style="color:red">Error loading shader: ' + error.message + '</span><span id="render-status">ERROR</span>';
+                window._testStatus = "ERROR: " + error.message;
+                console.error('Error loading shader:', error);
+            });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>

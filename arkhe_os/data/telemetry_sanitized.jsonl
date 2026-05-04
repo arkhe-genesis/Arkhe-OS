@@ -1,0 +1,3 @@
+{"consent": true, "event_type": "enemy_wave", "level": 3, "coherence": 0.72, "entropy": 0.44, "temperature": 0.68, "attention_spread": 0.51, "player_action": "dash_left", "game_outcome": "survived"}
+{"consent": true, "event_type": "powerup_seen", "level": 3, "coherence": 0.81, "entropy": 0.39, "temperature": 0.61, "attention_spread": 0.48, "player_action": "collect", "game_outcome": "boosted"}
+{"consent": true, "event_type": "narrative_beat", "level": 4, "coherence": 0.65, "entropy": 0.52, "temperature": 0.75, "attention_spread": 0.60, "player_action": "observe", "game_outcome": "neutral"}

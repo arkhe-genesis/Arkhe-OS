@@ -17,6 +17,7 @@ from src.tau.agents.medic import MedicAgent
 from src.tau.agents.foreigner import ForeignerAgent
 from src.tau.core.vacuum import VacuumState
 from src.tau.core.qhttp import QHTTPProtocol
+from src.tau.utils.greeting import buildGreetingPreamble
 
 class TeleonomicOrchestrator:
     """
@@ -37,6 +38,12 @@ class TeleonomicOrchestrator:
 
     async def start(self):
         self.logger.info("🜏 Inicializando Orquestração TAU v1.1: Dodecaedro Ativo...")
+
+        # Greeting Preamble (Aiden v3.11 Sync)
+        initial_goals = ["Initialize Arkhe(n) Bio-Quantum Cathedral mapping."]
+        preamble = buildGreetingPreamble(initial_goals)
+        if preamble:
+            self.logger.info(f"Greeting Preamble: {preamble}")
 
         # Injetar a Primeira Tarefa (v1.1.1)
         self.vacuum.add_task({

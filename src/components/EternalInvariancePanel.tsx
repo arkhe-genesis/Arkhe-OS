@@ -4,8 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any, no-shadow-restricted-names */
+
+
 import { Infinity, Shield, Server, Box } from 'lucide-react';
+import React, { useState } from 'react';
+
 import { useArkheSimulation } from '../hooks/useArkheSimulation';
 
 export const EternalInvariancePanel: React.FC = () => {
@@ -17,7 +21,7 @@ export const EternalInvariancePanel: React.FC = () => {
     setLoading(true);
     try {
       const response = await fetch('/api/cathedral/eternalize', { method: 'POST' });
-      if (!response.ok) throw new Error('Failed to eternalize');
+      if (!response.ok) {throw new Error('Failed to eternalize');}
     } catch (error) {
       console.error(error);
     } finally {
@@ -39,7 +43,7 @@ export const EternalInvariancePanel: React.FC = () => {
   };
 
   const ei = state.eternalInvariance;
-  if (!ei) return null;
+  if (!ei) {return null;}
 
   return (
     <div className="p-4 bg-zinc-900/50 rounded-lg border border-white/10 space-y-4">

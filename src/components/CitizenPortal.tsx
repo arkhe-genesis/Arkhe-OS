@@ -1,11 +1,22 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
-import { Button } from './ui/Button';
+
 import { Badge } from './ui/Badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/Tabs';
+import { Button } from './ui/Button';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
+import { Label } from './ui/Label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/Select';
 import { Switch } from './ui/Switch';
-import { Label } from './ui/Label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/Tabs';
 
 interface PrivacyProfile {
   citizenId: string;
@@ -80,7 +91,7 @@ const CitizenPortal: React.FC = () => {
                 <div className="space-y-2">
                   <Label>Perfil de Privacidade</Label>
                   <Select
-                    value={profile.profile}
+                    data-value={profile.profile}
                     onValueChange={(val: any) => updateProfile(val)}
                   >
                     <SelectTrigger>

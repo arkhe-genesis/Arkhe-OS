@@ -11,6 +11,28 @@ import type { HelioState } from '../../server/types';
 
 import { Card } from './ui/Card';
 
+interface BadgeProps {
+    children: React.ReactNode;
+    className?: string;
+}
+
+const Badge: React.FC<BadgeProps> = ({ children, className }) => (
+    <div className={`px-2 py-0.5 rounded-full border text-[10px] ${className}`}>
+        {children}
+    </div>
+);
+
+interface ProgressProps {
+    value: number;
+    className?: string;
+}
+
+const Progress: React.FC<ProgressProps> = ({ value, className }) => (
+    <div className={`w-full bg-white/10 rounded-full overflow-hidden ${className}`}>
+        <div className="h-full bg-current transition-all duration-300" style={{ width: `${value}%` }} />
+    </div>
+);
+
 interface HelioLinkPanelProps {
   helio?: HelioState;
   onListen: () => void;
@@ -25,6 +47,16 @@ const HelioLinkPanel: React.FC<HelioLinkPanelProps> = ({ helio, onListen, onSync
 
   return (
     <Card
+      title="PHASE D: HELIO-LINK COUPLING"
+      icon={<Sun className="w-4 h-4 text-orange-500 animate-pulse" />}
+      className="bg-black/80 border-arkhe-cyan/30 text-white font-mono"
+    >
+      <div className="absolute top-4 right-4">
+        <Badge className="border-arkhe-cyan text-arkhe-cyan">
+          {helio.ethicalMode.toUpperCase()}
+        </Badge>
+      </div>
+
       className="bg-black/80 border-arkhe-cyan/30 text-white font-mono"
       title="PHASE D: HELIO-LINK COUPLING"
       icon={<Sun className="w-4 h-4 text-orange-500 animate-pulse" />}
@@ -54,6 +86,7 @@ const HelioLinkPanel: React.FC<HelioLinkPanelProps> = ({ helio, onListen, onSync
           <div className="h-1 bg-arkhe-cyan/10 w-full rounded-full overflow-hidden">
              <div className="h-full bg-arkhe-cyan" style={{ width: `${(helio.solarCoherence || 0) * 100}%` }} />
           </div>
+          <Progress value={helio.solarCoherence * 100} className="h-1 text-arkhe-cyan" />
         </div>
 
         <div className="grid grid-cols-2 gap-2">
