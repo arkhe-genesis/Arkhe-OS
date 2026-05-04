@@ -18,9 +18,11 @@ import { createMathPlugin } from "@streamdown/math";
 import { mermaid } from "@streamdown/mermaid";
 import { X, Send, Square, Info, History } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
+// @ts-ignore
 import { Streamdown } from "streamdown";
 
 import { CrystallizationRitual } from '../ritual/prism-ritual.js';
+// @ts-ignore
 import { ChronicleVault } from '../storage/chroniclevault.js';
 
 const math = createMathPlugin({ singleDollarTextMath: true });
@@ -30,6 +32,7 @@ const PRISM_GLYPH_CLASS =
   "h-9 w-9 overflow-hidden opacity-90 [clip-path:polygon(50%_4%,100%_100%,0%_100%)] bg-[radial-gradient(circle_at_50%_18%,rgba(255,255,255,0.3),transparent_28%),linear-gradient(180deg,rgba(255,122,92,1)_0%,rgba(255,184,77,1)_42%,rgba(182,123,232,1)_100%)] drop-shadow-[0_0_18px_rgba(255,184,77,0.18)]";
 
 interface Message {
+  role: 'user' | 'assistant';
   role: string;
   content: string;
 }
@@ -40,7 +43,7 @@ interface BonsaiPrismPanelProps {
 
 export default function BonsaiPrismPanel({ onClose }: BonsaiPrismPanelProps) {
   // Estados do Ciclo de Vida
-  const [stage, setStage] = useState('selection'); // selection | ritual | ready | error
+  const [stage, setStage] = useState<'selection' | 'ritual' | 'ready' | 'error'>('selection');
   const [selectedModel, setSelectedModel] = useState('bonsai-1.7b');
   const [progress, setProgress] = useState(0);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -50,6 +53,8 @@ export default function BonsaiPrismPanel({ onClose }: BonsaiPrismPanelProps) {
 
   // Refs
   const workerRef = useRef<Worker | null>(null);
+  const ritualRef = useRef<any>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const ritualRef = useRef<CrystallizationRitual | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const chronicle = useRef(new ChronicleVault()).current;
@@ -135,6 +140,7 @@ export default function BonsaiPrismPanel({ onClose }: BonsaiPrismPanelProps) {
           const ritual = new CrystallizationRitual(canvasRef.current.id);
           ritualRef.current = ritual;
           const estimatedSize = selectedModel.includes('1.7b') ? 290_000_000 : 1_200_000_000;
+          ritualRef.current.initiate(estimatedSize);
           void ritual.initiate(estimatedSize);
           workerRef.current?.postMessage({ type: 'load', data: selectedModel });
       }
@@ -143,8 +149,8 @@ export default function BonsaiPrismPanel({ onClose }: BonsaiPrismPanelProps) {
   const sendMessage = () => {
     if (!input.trim() || isGenerating) {return;}
 
-    const userMsg = { role: 'user', content: input };
-    const nextMessages = [...messages, userMsg, { role: 'assistant', content: '' }];
+    const userMsg: Message = { role: 'user', content: input };
+    const nextMessages: Message[] = [...messages, userMsg, { role: 'assistant', content: '' }];
     setMessages(nextMessages);
     setInput('');
     setIsGenerating(true);
@@ -286,6 +292,7 @@ export default function BonsaiPrismPanel({ onClose }: BonsaiPrismPanelProps) {
                                       {m.role === 'assistant' ? (
                                           <Streamdown
                                             className="text-sm leading-relaxed"
+                                            // @ts-ignore
                                             plugins={STREAMDOWN_PLUGINS}
                                           >
                                               {m.content}

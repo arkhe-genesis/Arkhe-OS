@@ -1,4 +1,3 @@
-
 /**
  * @license
  * Copyright 2026 Google LLC
@@ -57,6 +56,12 @@ export function useArkheSimulation() {
       nttLatency: 10.24,
     },
     securityAdvanced: {
+      l1: { teeStatus: 'secure', intrusionSensor: 'nominal', thermalDestructionArmed: false, hsmBackupSynced: true, lastRemoteAttestation: new Date().toISOString() },
+      l2: { eprHandshake: 'active', muSig2Heartbeat: 'verified', pneumaOutlierDetected: false, qrngJitterMs: 0.42 },
+      l3: { nullifierVerified: true, timestampQRNG: new Date().toISOString(), ttlValid: true, t2StarMicroseconds: 150 },
+      l4: { owlSignatureValid: true, logosConsistency: 0.99, zkOntologicalProof: true, merkleDagRoot: '0x...', geoLlmActive: true, geoQaiCoherence: 0.98 },
+      l5: { cspStatus: 'enforced', sriVerified: true, antiCsrfToken: '...', zkUiVerified: true, pwaCacheSigned: true },
+      qhttp: { pqTlsStatus: 'Kyber+ECDH', xKuramotoHeader: '...', bellViolationS: 2.82 }
       l1: {
         teeStatus: 'secure',
         intrusionSensor: 'nominal',
@@ -113,6 +118,8 @@ export function useArkheSimulation() {
       phase: 26.0,
     },
     velxioEmulation: {
+        activeSimulations: [],
+        totalCompilations: 0
       activeSimulations: [],
       totalCompilations: 0
     },
@@ -168,6 +175,27 @@ export function useArkheSimulation() {
       protocolLogs: [],
       lastGateResult: 'N/A'
     },
+    enterpriseSubagents: {
+        governance: [],
+        devops: [],
+        security: [],
+        ia: [],
+        operations: [],
+        interoperability: []
+    },
+    chshMonitor: {
+        status: 'IDLE',
+        timestamp: new Date().toISOString(),
+        arkheChainBlock: 0,
+        measurementSetup: { instrument: '', targetSystem: '', referenceLattice: '', angleBases: [], coincidenceWindowNs: 0, integrationTimeSec: 0 },
+        expectedOutcomes: { classicalLimit: 2, quantumLimit: 2.82, thresholdEntangled: 2.5, targetEntanglement: '' },
+        liveTelemetry: { status: 'OFFLINE', dataPoints: 0, currentS: null, stabilityIndicator: '', nextUpdate: '', history: [] },
+        preFlightChecks: { tzinorInjector: '', fibonacciPhaseAnchor: '', treeLacamGeodesic: '', pdsmIgnitionSequence: '' },
+        archimedesComment: '',
+        nextMilestone: { time: '', action: '' }
+    },
+    ramsey: {
+        enabled: false, auto_adjust: false, manual_approval_required: true, theta: 0, direction: 1, baseline: 0.9, thresholds: [], window: [], pendingAction: null, isFrozen: false, rabi_frequency: 100, generator_configs: {}, fibonacci_sequence: { name: '', generators: [] }
     cluster: {
       status: 'idle',
       progress: 0,
@@ -286,11 +314,24 @@ export function useArkheSimulation() {
     },
     sensors: [],
     networkInfra: {
-      tor: { status: 'CIRCUIT_ESTABLISHING', nodes: [], latencyMs: 0 },
+      tor: { status: 'CONNECTED', nodes: [], latencyMs: 0 },
       broker: { status: 'IDLE', messagesProcessed: 0, queueDepth: 0, activeTopics: [] },
       redis: { status: 'READY', cacheHits: 0, memoryUsageMb: 0 },
       dns: { totalQueries: 0, successfulResolutions: 0, failedResolutions: 0 }
     },
+    cluster: {
+        status: 'idle',
+        progress: 0,
+        logs: [],
+        nccl: { rho1_local: 0, rho1_global: 0 },
+        qhttp: { global_phase: 0, coherence: 0 }
+    },
+    lucentSessions: [],
+    civicSubagents: [],
+    hydro: {
+        neighborhoods: [],
+        globalMassBalance: 0,
+        zkAlertsCount: 0
     spectra: {
       vaults: [
         { id: 'sDAI', name: 'sDAI MetaVault', chain: 'Ethereum', asset: 'DAI', tvl: 5420000, apy: 4.5, epoch: 42 },

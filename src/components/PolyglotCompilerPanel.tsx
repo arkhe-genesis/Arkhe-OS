@@ -1,4 +1,3 @@
-
 /**
  * @license
  * Copyright 2026 Google LLC
@@ -76,6 +75,7 @@ export default function PolyglotCompilerPanel({ onClose }: PolyglotCompilerPanel
       }
     }
     return () => {
+      if (timer) clearTimeout(timer);
       if (timer) {clearTimeout(timer);}
     };
   }, [compilationState, activeLangIndex]);

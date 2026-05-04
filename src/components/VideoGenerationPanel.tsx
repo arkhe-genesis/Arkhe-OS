@@ -64,6 +64,7 @@ export default function VideoGenerationPanel({ onClose }: VideoGenerationPanelPr
       setVideoUrl(data.videoUrl);
       setStage('IDLE');
     } catch (err: unknown) {
+      setError((err as any).message || 'An unexpected error occurred.');
       setError((err as Error).message || 'An unexpected error occurred.');
       setStage('IDLE');
     }

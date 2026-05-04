@@ -35,7 +35,7 @@ const LayerSweepPanel: React.FC<LayerSweepPanelProps> = ({ report, onRunSweep })
         </div>
 
         <div className="h-24 flex items-end gap-0.5 border-b border-arkhe-border pb-1">
-          {report.coct_sweep.map((l, i) => (
+          {report.coct_sweep.map((l: any, i: number) => (
             <div
               key={i}
               className="bg-emerald-500/40 hover:bg-emerald-500 transition-colors flex-1"
