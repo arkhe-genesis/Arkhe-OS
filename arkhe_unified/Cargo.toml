@@ -1,0 +1,130 @@
+# Cargo.toml — Configuração de build para ARKHE OS v168
+[package]
+name = "arkhe-unified"
+version = "168.0.0"
+edition = "2021"
+authors = ["ARKHE OS Cathedral <core@arkhe.so>"]
+description = "Unified orchestrator binary for ARKHE OS — quantum-aware, privacy-preserving, cosmic-scale"
+license = "Proprietary"
+repository = "https://github.com/arkhe-os/unified"
+keywords = ["quantum", "privacy", "distributed", "orchestrator", "cosmic"]
+categories = ["science", "cryptography", "network-programming"]
+
+[features]
+default = ["std", "tokio-runtime", "serde-support"]
+std = []
+tokio-runtime = ["tokio/rt-multi-thread", "tokio/macros", "tokio/sync"]
+serde-support = ["serde", "serde_json", "serde_yaml"]
+quantum-hardware = ["numpy"]
+python-bindings = ["pyo3"]
+cosmic-scale = []
+experimental = []
+production = []
+
+# All features combined for full build
+full = [
+    "std", "tokio-runtime", "serde-support",
+    "quantum-hardware", "python-bindings",
+    "cosmic-scale", "experimental", "production"
+]
+
+[dependencies]
+# Core async runtime
+tokio = { version = "1.38", features = ["full"], optional = true }
+async-trait = "0.1"
+futures = "0.3"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"], optional = true }
+serde_json = { version = "1.0", optional = true }
+serde_yaml = { version = "0.9", optional = true }
+toml = "0.8"
+
+# Error handling
+anyhow = "1.0"
+thiserror = "1.0"
+
+# Logging and tracing
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+libloading = "0.8"
+chrono = { version = "0.4", features = ["serde"] }
+
+# Cryptography and integrity
+sha2 = "0.10"
+hmac = "0.12"
+ed25519-dalek = "2.1"
+aes-gcm = "0.10"
+
+# Quantum hardware bridges (optional)
+# qiskit-sys = { version = "0.1", optional = true }
+# pennylane-sys = { version = "0.1", optional = true }
+numpy = { version = "0.21", optional = true }
+
+# Python bindings (optional)
+pyo3 = { version = "0.21", features = ["extension-module"], optional = true }
+
+# Cosmic/astronomy calculations (optional)
+# astronomy-sys = { version = "0.1", optional = true }
+# coordinate-transform = { version = "0.3", optional = true }
+
+# CLI parsing
+clap = { version = "4.5", features = ["derive", "env"] }
+
+# Configuration
+config = { version = "0.14", features = ["yaml"] }
+
+# Metrics and monitoring
+metrics = "0.23"
+metrics-exporter-prometheus = { version = "0.15", optional = true }
+
+[dev-dependencies]
+criterion = "0.5"
+tokio-test = "0.4"
+mockall = "0.12"
+
+[build-dependencies]
+chrono = "0.4"
+sha2 = "0.10"
+serde_json = "1.0"
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[profile.dev]
+opt-level = 0
+debug = true
+
+# Platform-specific dependencies
+[target.'cfg(target_os = "linux")'.dependencies]
+nix = { version = "0.27", features = ["process", "signal"] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+# macOS-specific libs if needed
+
+[target.'cfg(target_os = "windows")'.dependencies]
+windows-sys = { version = "0.52", features = ["Win32_System_Console"] }
+
+# Package metadata for distribution
+[package.metadata.deb]
+maintainer = "ARKHE OS Team <core@arkhe.so>"
+copyright = "2026, ARKHE OS Cathedral"
+license-file = ["LICENSE", "4"]
+depends = "$auto"
+section = "science"
+priority = "optional"
+assets = [
+    ["target/release/arkhe-unified", "usr/bin/", "755"],
+    ["config/*.yaml", "etc/arkhe/", "644"],
+    ["README.md", "usr/share/doc/arkhe-unified/", "644"],
+]
+
+[package.metadata.generate-rpm]
+assets = [
+    { source = "target/release/arkhe-unified", dest = "/usr/bin/arkhe-unified", mode = "755" },
+    { source = "config/*.yaml", dest = "/etc/arkhe/", mode = "644" },
+]

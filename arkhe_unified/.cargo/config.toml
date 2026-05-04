@@ -1,0 +1,27 @@
+# .cargo/config.toml — Configuração de linking e flags
+[target.x86_64-unknown-linux-gnu]
+rustflags = [
+    "-C", "link-arg=-Wl,-z,relro,-z,now",  # RELRO completo
+    "-C", "link-arg=-fstack-protector-strong",  # Stack protector
+    "-C", "target-cpu=x86-64-v2",  # Otimizações para CPU moderna
+]
+
+[target.aarch64-unknown-linux-gnu]
+rustflags = [
+    "-C", "link-arg=-Wl,-z,relro,-z,now",
+    "-C", "link-arg=-fstack-protector-strong",
+    "-C", "target-cpu=neoverse-n1",
+]
+
+# Quantum hardware linking (se feature habilitada)
+[env]
+QISKIT_SYS_LIB_DIR = { value = "", force = false }
+PENNYLANE_SYS_LIB_DIR = { value = "", force = false }
+
+# Alias para comandos comuns
+[alias]
+build-unified = "build --release --features full"
+build-quantum = "build --release --features quantum-hardware"
+build-cosmic = "build --release --features cosmic-scale"
+verify = "run -- verify"
+repl = "run -- repl"

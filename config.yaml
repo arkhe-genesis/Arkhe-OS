@@ -1,0 +1,15 @@
+substrates:
+  enable_6g_noma: true
+
+sdr:
+  enabled: true          # true quando hardware conectado
+  device: rtl             # rtl, usrp, hackrf
+  frequency_mhz: 915.0
+  sample_rate_msps: 2.4
+  gain_db: 40.0
+
+noma:
+  total_devices: 24
+  sub_channels: 12
+  max_power_sink: 20
+  monte_carlo_runs: 500
