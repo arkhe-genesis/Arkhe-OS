@@ -1,0 +1,40 @@
+# docker/Dockerfile.lkrg — Contêiner para validação do módulo stealth com LKRG
+FROM ubuntu:24.04
+
+ARG KERNEL_VERSION=6.8.0-40-generic
+ARG DEBIAN_FRONTEND=noninteractive
+
+# Instalar dependências de build do kernel e LKRG
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    linux-headers-${KERNEL_VERSION} \
+    linux-image-${KERNEL_VERSION} \
+    kmod \
+    git \
+    cmake \
+    libelf-dev \
+    libcap-dev \
+    python3 \
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Clonar e compilar LKRG
+RUN git clone https://github.com/lkrg-org/lkrg.git /opt/lkrg && \
+    cd /opt/lkrg && \
+    make && \
+    make install
+
+# Copiar módulo ARKHE stealth
+COPY kernel/arkhe_stealth.c /opt/arkhe_stealth/
+COPY kernel/Makefile /opt/arkhe_stealth/
+
+# Compilar módulo ARKHE
+RUN cd /opt/arkhe_stealth && \
+    make -C /lib/modules/${KERNEL_VERSION}/build M=$PWD modules
+
+# Script de validação
+COPY scripts/validate_stealth.sh /opt/validate_stealth.sh
+RUN chmod +x /opt/validate_stealth.sh
+
+# Comando padrão: carregar LKRG + módulo ARKHE + executar validação
+CMD ["/opt/validate_stealth.sh"]
