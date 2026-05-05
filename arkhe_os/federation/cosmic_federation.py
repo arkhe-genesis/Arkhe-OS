@@ -206,3 +206,100 @@ class CosmicFederationNetwork:
         logging.info(f"Consenso global alcançado (quórum={consensus_state['quorum_size']}). Transmitindo...")
         # Aqui, na prática, enviaria para a rede/endpoints dos nós.
         pass
+
+@dataclass
+class WheelerConsensusMetricsPayload:
+    """Metadados de métricas cósmicas assinadas baseados na Wheeler Mesh."""
+    node_id: str
+    timestamp: float
+    mesh_fidelity: float
+    global_coherence: float
+    topological_charge: int
+    signature: str = ""
+
+    def to_dict(self) -> Dict:
+        return {
+            'node_id': self.node_id,
+            'timestamp': self.timestamp,
+            'mesh_fidelity': self.mesh_fidelity,
+            'global_coherence': self.global_coherence,
+            'topological_charge': self.topological_charge,
+            'signature': self.signature
+        }
+
+class WheelerMeshConsensusProtocol:
+    """
+    Protocolo de consenso federado para decisões cósmicas baseado em métricas agregadas da Wheeler Mesh.
+    """
+    def __init__(self, key_manager: Any, minimum_quorum: int = 3):
+        self.key_manager = key_manager
+        self.minimum_quorum = minimum_quorum
+
+    def _build_signature_payload(self, node_id: str, timestamp: float, fidelity: float, coherence: float, charge: int) -> str:
+        """Constrói payload canônico para assinatura de métricas da Wheeler Mesh."""
+        payload_parts = [
+            node_id,
+            str(int(timestamp)),
+            f"{fidelity:.4f}",
+            f"{coherence:.4f}",
+            str(charge)
+        ]
+        return '|'.join(payload_parts)
+
+    def _verify_signature(self, payload: WheelerConsensusMetricsPayload) -> bool:
+        """Verifica a assinatura criptográfica de um payload da Wheeler Mesh."""
+        payload_str = self._build_signature_payload(
+            payload.node_id,
+            payload.timestamp,
+            payload.mesh_fidelity,
+            payload.global_coherence,
+            payload.topological_charge
+        )
+
+        # A API do KeyManager retorna (valid, key_id)
+        valid, _ = self.key_manager.verify_signature(
+            content_hash=payload_str,
+            signature=payload.signature
+        )
+        return valid
+
+    def verify_and_aggregate(self, payloads: List[WheelerConsensusMetricsPayload]) -> Dict[str, Any]:
+        """
+        Verifica as assinaturas e calcula o estado global de consenso para decisões cósmicas.
+        """
+        verified_payloads = []
+        for payload in payloads:
+            if self._verify_signature(payload):
+                verified_payloads.append(payload)
+            else:
+                logging.warning(f"Falha na verificação de assinatura para o nó {payload.node_id}")
+
+        if len(verified_payloads) < self.minimum_quorum:
+            logging.error(f"Quórum não alcançado. Verificados: {len(verified_payloads)}, Necessário: {self.minimum_quorum}")
+            return {'status': 'failed', 'reason': 'insufficient_quorum'}
+
+        # Cálculo de consenso
+        import statistics
+
+        avg_fidelity = statistics.median([p.mesh_fidelity for p in verified_payloads])
+        avg_coherence = statistics.median([p.global_coherence for p in verified_payloads])
+        total_charge = sum([p.topological_charge for p in verified_payloads])
+
+        # Lógica de decisão cósmica baseada no Substrato 119
+        decision = "HOLD"
+        if avg_fidelity > 0.90 and avg_coherence > 0.95:
+            decision = "ACTIVATE_COSMIC_VORTEX"
+        elif avg_fidelity < 0.50 or avg_coherence < 0.50:
+            decision = "EMERGENCY_SHUTDOWN"
+
+        return {
+            'status': 'success',
+            'quorum_size': len(verified_payloads),
+            'timestamp': time.time(),
+            'consensus_metrics': {
+                'avg_mesh_fidelity': avg_fidelity,
+                'avg_global_coherence': avg_coherence,
+                'total_topological_charge': total_charge
+            },
+            'cosmic_decision': decision
+        }
