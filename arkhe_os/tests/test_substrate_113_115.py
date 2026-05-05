@@ -5,6 +5,7 @@ Testes integrados para Substratos 113-115.
 import asyncio
 import numpy as np
 import torch
+import pytest
 import time
 from arkhe_os.network.qhttp_wheeler_mesh import WheelerMeshProtocol, WheelerMeshNode, WheelerNodeType, QuantumStatePacket
 from arkhe_os.timing.parametric_quantum_clock import ParametricQuantumClock
@@ -14,6 +15,7 @@ class MockBaseMetric:
     def geodesic_distance(self, a, b):
         return np.linalg.norm(a - b)
 
+@pytest.mark.asyncio
 async def test_wheeler_mesh_protocol():
     """Testa protocolo qhttp:// para Wheeler Mesh."""
     print("🔗 [Teste 1] Wheeler Mesh Protocol (qhttp://)...")
@@ -84,6 +86,7 @@ async def test_wheeler_mesh_protocol():
 
     return True
 
+@pytest.mark.asyncio
 async def test_parametric_quantum_clock():
     """Testa clock quântico por ressonância paramétrica."""
     print("⏱️ [Teste 2] Parametric Quantum Clock...")
@@ -154,6 +157,7 @@ def test_magnon_photon_transducer():
 
     return True
 
+@pytest.mark.asyncio
 async def test_integrated_system():
     """Testa sistema neural integrado completo."""
     print("🧠 [Teste 4] Integrated Neural System (112+113+114+115)...")

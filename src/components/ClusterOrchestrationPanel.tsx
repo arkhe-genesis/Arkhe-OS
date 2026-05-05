@@ -41,6 +41,17 @@ export default function ClusterOrchestrationPanel({ onClose, cluster }: ClusterO
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
       <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="text-arkhe-muted"
+                      >
+                        <span className="text-emerald-500/50 mr-2">[{new Date().toLocaleTimeString()}]</span>
+                        {log}
+                      </motion.div>
+                  ))}
+                </div>
+              </div>
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
@@ -91,8 +102,6 @@ export default function ClusterOrchestrationPanel({ onClose, cluster }: ClusterO
               </button>
               
               {((cluster?.logs?.length ?? 0) > 0) && (
-
-              {cluster.logs.length > 0 && (
                 <button
                   onClick={() => setActiveTab('logs')}
                   className={`w-full flex items-center gap-3 px-3 py-3 rounded text-xs font-mono transition-colors text-left ${activeTab === 'logs' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'text-arkhe-muted hover:bg-[#1f2024] hover:text-arkhe-text border border-transparent'}`}
@@ -112,8 +121,6 @@ export default function ClusterOrchestrationPanel({ onClose, cluster }: ClusterO
                 disabled={isDeploying || cluster?.status === 'resonant'}
                 className={`w-full py-3 rounded font-mono text-xs font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
                   isDeploying || cluster?.status === 'resonant'
-                    ? 'bg-[#111214] text-arkhe-muted border border-arkhe-border cursor-not-allowed' 
-                  isDeploying || cluster.status === 'resonant'
                     ? 'bg-[#111214] text-arkhe-muted border border-arkhe-border cursor-not-allowed'
                     : 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.2)]'
                 }`}
@@ -146,7 +153,7 @@ export default function ClusterOrchestrationPanel({ onClose, cluster }: ClusterO
                 </div>
 
                 <div className="flex-1 bg-black border border-[#1f2024] rounded-xl p-4 font-mono text-xs overflow-y-auto custom-scrollbar space-y-2">
-                  {((deployLogs ?? []).map)((log, i) => (
+                  {(deployLogs ?? []).map((log, i) => (
                     <motion.div 
                   {deployLogs.map((log, i) => (
                     <motion.div
@@ -340,8 +347,8 @@ async def run_qhttp_client(node_id, state_queue, bias_queue):
                     </div>
 
                     <div className="flex-1 bg-black border border-[#1f2024] rounded-xl p-4 font-mono text-xs overflow-y-auto custom-scrollbar space-y-2">
-                      {((deployLogs ?? []).map)((log, i) => (
-                        <motion.div 
+                      {(deployLogs ?? []).map((log, i) => (
+                    <motion.div
                       {deployLogs.map((log, i) => (
                         <motion.div
                           key={i}
