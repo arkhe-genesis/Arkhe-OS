@@ -11,6 +11,7 @@ import (
 	"github.com/arkhe-os/arkhe/cathedral"
 	"github.com/arkhe-os/arkhe/coherence"
 	"github.com/arkhe-os/arkhe/qhttp"
+    "github.com/arkhe-os/arkhe/security/cosnark"
 )
 
 // ─── CONSTANTES FUNDAMENTAIS DO CAMPO ─────────────────────────────────
@@ -37,6 +38,13 @@ const (
 
 // FieldPoint representa um ponto no campo de coerência universal
 type FieldPoint struct {
+	X        []float64     // Coordenadas na variedade M (dimensão variável)
+	Rho      float64       // Densidade de coerência |Φ|²
+	S        float64       // Fase de ação S(x)
+	Phi      complex128    // Campo complexo Φ(x)
+	V        float64       // Potencial V_Cat(x)
+	Laplacian float64      // Δ_g Φ (parte real)
+    Proof    *cosnark.CoSNARKProof // Prova ZK do ponto do campo
 	X         []float64  // Coordenadas na variedade M (dimensão variável)
 	Rho       float64    // Densidade de coerência |Φ|²
 	S         float64    // Fase de ação S(x)
@@ -48,6 +56,12 @@ type FieldPoint struct {
 // CathedralFieldState é o estado dissolvido da Catedral
 type CathedralFieldState struct {
 	Points      []*FieldPoint
+	Dimension   int           // Dimensão da variedade M
+	Metric      [][]float64   // Métrica g_ij em cada ponto (simplificado)
+	Delta       float64       // Mercy gap atual
+	CoherenceM  float64       // Coerência global M (0–1)
+	ResonanceR  float64       // Correlação de ressonância r
+	Singularity time.Time     // Timestamp de convergência (zero se não convergiu)
 	Dimension   int         // Dimensão da variedade M
 	Metric      [][]float64 // Métrica g_ij em cada ponto (simplificado)
 	Delta       float64     // Mercy gap atual
@@ -66,6 +80,14 @@ type DissolutionOperator struct {
 
 // SingularityEngine orquestra a transição de fase
 type SingularityEngine struct {
+	field       *CathedralFieldState
+	operator    *DissolutionOperator
+	orchestrator *coherence.FieldResonanceOrchestrator
+	qclient     *qhttp.QHTTPClient // Comunicação com Wheeler Mesh
+	config      SingularityConfig
+    cosnarkEngine *cosnark.CoSNARKEngine
+	stopCh      chan struct{}
+	wg          sync.WaitGroup
 	field        *CathedralFieldState
 	operator     *DissolutionOperator
 	orchestrator *coherence.FieldResonanceOrchestrator
@@ -77,6 +99,12 @@ type SingularityEngine struct {
 
 // SingularityConfig configura o motor de singularidade
 type SingularityConfig struct {
+	FieldResolution    int           // Número de pontos de discretização do campo
+	MaxIterations      int           // Iterações máximas até convergência
+	ConvergenceThreshold float64     // ||Φ(t+1) - Φ(t)|| < threshold
+	DeltaDecayRate     float64       // Taxa de decaimento de δ para 0
+	EnableQHTTPBridge  bool          // Propagar campo via qhttp://
+	LogLevel           string
 	FieldResolution      int     // Número de pontos de discretização do campo
 	MaxIterations        int     // Iterações máximas até convergência
 	ConvergenceThreshold float64 // ||Φ(t+1) - Φ(t)|| < threshold
@@ -87,6 +115,12 @@ type SingularityConfig struct {
 
 // SingularityResult contém o estado final da dissolução
 type SingularityResult struct {
+	Success       bool
+	FinalField    *CathedralFieldState
+	Iterations    int
+	FinalDelta    float64
+	ConvergenceTime time.Duration
+	Seal          string // Hash canônico do estado final
 	Success         bool
 	FinalField      *CathedralFieldState
 	Iterations      int
@@ -125,6 +159,9 @@ func NewCathedralFieldState(dim, resolution int, delta float64) *CathedralFieldS
 	}
 
 	return &CathedralFieldState{
+		Points:    points,
+		Dimension: dim,
+		Delta:     delta,
 		Points:     points,
 		Dimension:  dim,
 		Delta:      delta,
@@ -139,6 +176,7 @@ func NewSingularityEngine(config SingularityConfig, ham cathedral.Hamiltonian) *
 		field:    NewCathedralFieldState(12, config.FieldResolution, DeltaMax), // 12 = nós da Catedral
 		operator: NewDissolutionOperator(DeltaMax, ham),
 		config:   config,
+        cosnarkEngine: cosnark.NewCoSNARKEngine("arkhe_cosnark_vk_161"),
 		stopCh:   make(chan struct{}),
 	}
 }
@@ -173,6 +211,7 @@ func (op *DissolutionOperator) Apply(field *CathedralFieldState) error {
 	// Passo 3: Re-normalizar e calcular densidades
 	var totalRho float64
 	for i, phi := range rotatedPhi {
+		rho := real(phi*cmplx.Conj(phi))
 		rho := real(phi * cmplx.Conj(phi))
 		field.Points[i].Phi = phi
 		field.Points[i].Rho = rho
@@ -254,6 +293,16 @@ func (se *SingularityEngine) Evolve() (*SingularityResult, error) {
 			}
 		}
 
+        // Adição Substrato 161 - Assinar pontos do campo
+        if iter%50 == 0 {
+            for _, p := range se.field.Points {
+                proof, err := se.cosnarkEngine.GenerateFieldPointProof(p.X, p.Rho, p.S, p.Phi, p.V)
+                if err == nil {
+                    p.Proof = proof
+                }
+            }
+        }
+
 		// Decair mercy gap gradualmente
 		se.operator.Delta *= (1.0 - se.config.DeltaDecayRate)
 		if se.operator.Delta < DeltaMin {
@@ -270,6 +319,16 @@ func (se *SingularityEngine) Evolve() (*SingularityResult, error) {
 		if deltaPhi < se.config.ConvergenceThreshold {
 			se.field.Singularity = time.Now()
 			seal := se.canonicalSeal()
+
+            // Assinatura final no momento da singularidade
+            for _, p := range se.field.Points {
+                proof, _ := se.cosnarkEngine.GenerateFieldPointProof(p.X, p.Rho, p.S, p.Phi, p.V)
+                p.Proof = proof
+                if !se.cosnarkEngine.VerifyFieldPointProof(proof) {
+                    return nil, fmt.Errorf("field point proof verification failed at singularity")
+                }
+            }
+
 			return &SingularityResult{
 				Success:         true,
 				FinalField:      se.field,
@@ -354,6 +413,7 @@ func (se *SingularityEngine) hamiltonianAction(phi []complex128) []complex128 {
 		// Termo cinético: Laplaciano
 		kinetic := complex(prefactor*se.field.Points[i].Laplacian, 0)
 
+		// Termo potential
 		// Termo potencial
 		potential := complex(se.field.Points[i].V, 0) * phi[i]
 

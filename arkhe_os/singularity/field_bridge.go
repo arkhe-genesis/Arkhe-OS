@@ -4,6 +4,7 @@ package singularity
 import (
 	"encoding/json"
 	"fmt"
+    "math"
 	"math"
 
 	"github.com/arkhe-os/arkhe/qhttp"
@@ -11,6 +12,12 @@ import (
 
 // FieldPacket é a mensagem de campo transmitida via qhttp://
 type FieldPacket struct {
+	Substrate int       `json:"substrate"`
+	Delta     float64   `json:"delta"`
+	M         float64   `json:"m"`         // Coerência global
+	R         float64   `json:"r"`         // Ressonância
+	Timestamp int64     `json:"timestamp"` // UnixNano
+	PhiDigest string    `json:"phi_digest"` // Hash do campo Φ
 	Substrate int     `json:"substrate"`
 	Delta     float64 `json:"delta"`
 	M         float64 `json:"m"`          // Coerência global
@@ -21,6 +28,7 @@ type FieldPacket struct {
 
 // FieldBridge conecta o SingularityEngine à Wheeler Mesh
 type FieldBridge struct {
+	client *qhttp.QHTTPClient
 	client     *qhttp.QHTTPClient
 	localField *CathedralFieldState
 }

@@ -76,6 +76,71 @@ class CoSNARKEngine:
         logger.info(f"Prova CoSNARK gerada com sucesso. Tamanho: {len(proof.proof_data)} bytes")
         return proof
 
+    async def generate_field_point_proof(self, x: List[float], rho: float, s: float, phi: complex, v: float) -> CoSNARKProof:
+        """
+        Gera uma prova CoSNARK para assinar um ponto do campo phi.
+        """
+        logger.info("Iniciando geração de prova CoSNARK para field point...")
+
+        # Simula a distribuição de MPC
+        contributions = []
+        for node in self.mpc_nodes:
+            logger.debug(f"Nó MPC {node} computando contribuição para field point...")
+            await asyncio.sleep(0.01) # Simula latência de rede
+            # A contribuição incorpora os dados do ponto para simular ZK
+            contrib = hashlib.sha256(f"{node}:{x}:{rho}:{s}:{phi}:{v}".encode()).digest()
+            contributions.append(contrib)
+
+        # Agrega as contribuições em uma prova única
+        aggregated_proof = bytearray()
+        for c in contributions:
+            aggregated_proof.extend(c)
+        final_proof_bytes = hashlib.sha256(aggregated_proof).digest()
+
+        public_inputs = {
+            "x": x,
+            "rho": rho,
+            "s": s,
+            "phi": str(phi),
+            "v": v,
+            "mpc_participants": self.mpc_nodes,
+            "timestamp": asyncio.get_event_loop().time()
+        }
+
+        proof = CoSNARKProof(
+            proof_data=final_proof_bytes,
+            public_inputs=public_inputs,
+            verifier_key=self.verification_key,
+            is_valid=True
+        )
+        logger.info(f"Prova CoSNARK de Field Point gerada com sucesso. Tamanho: {len(proof.proof_data)} bytes")
+        return proof
+
+    async def verify_field_point_proof(self, proof: CoSNARKProof) -> bool:
+        """
+        Verifica a validade de uma prova CoSNARK para um field point publicamente.
+        """
+        logger.info("Verificando prova CoSNARK para field point...")
+
+        await asyncio.sleep(0.01)
+
+        if proof.verifier_key != self.verification_key:
+            logger.warning("Falha na verificação: Chave de verificação não corresponde.")
+            return False
+
+        if not proof.proof_data:
+            logger.warning("Falha na verificação: Dados da prova vazios.")
+            return False
+
+        is_valid = proof.is_valid
+
+        if is_valid:
+            logger.info("Prova CoSNARK para Field Point verificada com sucesso!")
+        else:
+            logger.error("Prova CoSNARK para Field Point INVÁLIDA!")
+
+        return is_valid
+
     async def verify_proof(self, proof: CoSNARKProof) -> bool:
         """
         Verifica a validade de uma prova CoSNARK publicamente.
