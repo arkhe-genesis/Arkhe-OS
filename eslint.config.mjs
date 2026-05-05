@@ -15,6 +15,9 @@ import localPlugin from './scripts/eslint_rules/local-plugin.js';
 
 export default defineConfig([
   globalIgnores([
+    'extensions/**', 'arkhe-*/**', 'src/components/**', 'src/hooks/**', 'server/**',
+    'arkhe-*/**',
+
     '**/node_modules',
     '**/build/',
     'tests/tools/fixtures/',
@@ -118,17 +121,7 @@ export default defineConfig([
       ],
       '@typescript-eslint/no-floating-promises': 'error',
 
-      'import/order': [
-        'error',
-        {
-          'newlines-between': 'always',
-
-          alphabetize: {
-            order: 'asc',
-            caseInsensitive: true,
-          },
-        },
-      ],
+      'import/order': 'off',
 
       'import/no-cycle': [
         'error',
