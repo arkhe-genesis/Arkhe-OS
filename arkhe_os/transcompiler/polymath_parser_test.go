@@ -91,3 +91,36 @@ func TestSelfHealingOrchestrator(t *testing.T) {
 		t.Errorf("Expected 2 successful healings, got %d", health["healings_successful"])
 	}
 }
+
+func TestLanguageCatalog(t *testing.T) {
+	catalog := NewLanguageCatalog()
+	if catalog.extensionsCount == 0 {
+		t.Fatalf("Expected catalog to be populated")
+	}
+
+	entry, ok := catalog.entries[".py"]
+	if !ok || entry.Language != "python" {
+		t.Fatalf("Expected .py to map to python, got %v", entry)
+	}
+}
+
+func TestLanguageDetector(t *testing.T) {
+	catalog := NewLanguageCatalog()
+	detector := NewLanguageDetector(catalog)
+
+	lang, conf := detector.Detect("test.py")
+	if lang != "python" || conf < 0.8 {
+		t.Fatalf("Expected python with >0.8 conf, got %s (conf %f)", lang, conf)
+	}
+}
+
+func TestTreeSitterFrontend(t *testing.T) {
+	ts := NewTreeSitterFrontend("python")
+	graph, err := ts.Parse("print('hello')")
+	if err != nil {
+		t.Fatalf("Expected successful parse, got %v", err)
+	}
+	if len(graph.Nodes) == 0 {
+		t.Fatalf("Expected graph nodes")
+	}
+}
