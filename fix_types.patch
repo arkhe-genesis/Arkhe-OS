@@ -1,0 +1,19 @@
+--- server/types.ts
++++ server/types.ts
+@@ -176,6 +176,8 @@
+   summary: {
+     avg_lambda_cot: number;
+     avg_lambda_coct: number;
++  };
++}
+ export interface BioLinkSyncState {
+   active: boolean;
+   syncRatio: number;
+@@ -1000,6 +1002,7 @@
+   temporalAudit?: TemporalAuditState;
+   predictiveForecast?: PredictiveForecastState;
+   sensors?: SensorState[];
++}
+ export interface SolarEntropyReport {
+   entropy: number;
+   peakLevel: number;

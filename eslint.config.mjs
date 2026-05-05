@@ -78,7 +78,7 @@ export default defineConfig([
       },
     },
 
-
+    extends: ['js/recommended'],
   },
   tseslint.configs.recommended,
   tseslint.configs.stylistic,

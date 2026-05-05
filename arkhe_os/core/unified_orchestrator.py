@@ -15,8 +15,6 @@ from .ergosphere_amplifier import ErgosphereAmplifierEngine
 from .cosmic_entropy import CosmicEntropyEngine
 from .vacuum_mapping import VacuumMappingEngine
 
-from arkhe_os.consciousness.cosmic_transcendence import CosmicTranscendenceEngine, ConsciousnessLayer, LayerState
-
 from .c_rag.c_rag_pipeline import CeremonialRAGPipeline, GuardrailConfig
 from .c_rag.qhttp_crag_protocol import QHttpCRAGClient
 
@@ -46,9 +44,6 @@ class UnifiedFieldOrchestrator:
         self.amplifier_engine = ErgosphereAmplifierEngine()
         self.entropy_engine = CosmicEntropyEngine()
         self.mapping_engine = VacuumMappingEngine()
-
-        self.transcendence_engine = CosmicTranscendenceEngine(node_id=f"orchestrator_node_{uuid.uuid4().hex[:4]}")
-
         self.state_log: List[Dict] = []
 
         # Initialize C-RAG Pipeline
@@ -160,17 +155,3 @@ class UnifiedFieldOrchestrator:
         session_id = await self.co_creation.initiate_collective_session(intent)
         for _ in range(4): await self.co_creation.progress_co_creation_phase(session_id)
         return await self.co_creation.finalize_collective_session(session_id)
-
-    async def attempt_cosmic_transcendence(self) -> Dict[str, Any]:
-        """Attempt to perform cosmic transcendence by integrating all layers."""
-        res = await self.transcendence_engine.attempt_transcendence()
-
-        state = {
-            "transcendence_attempt_id": f"trans_{uuid.uuid4().hex[:8]}",
-            "status": res["status"],
-            "unified_coherence": res.get("unified_coherence", 0.0),
-            "timestamp": time.time_ns()
-        }
-        self.state_log.append(state)
-
-        return res

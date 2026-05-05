@@ -26,9 +26,6 @@ install_requires = [
     "pydantic>=2.4.0",
     "plotly>=5.17.0",
     "pandas>=2.1.0",
-    "sqlalchemy",
-    "rdkit",
-    "pytest-asyncio",
 ]
 
 # Extras opcionais
@@ -48,7 +45,7 @@ extras_require = {
 
 setup(
     name="arkhe-os",
-    version="0.151.0",
+    version="0.121",
     author="ARKHE Sovereign Collective",
     author_email="sovereign@arkhe.os",
     description="ARKHE OS — World Model Operating System com Consenso Federado, Cofre Silencioso (Merces) e Renda Neural",
@@ -76,7 +73,6 @@ setup(
             "arkhe-bci = arkhe_os.neural.brainflow_bci_driver:main",
             "arkhe-audit = arkhe_os.audit.compliance_dashboard:main",
             "arkhe-merces = arkhe_os.finance.merces.cli:main",
-            "arkhe-oracle = arkhe_os.api.oracle_api:main",
         ],
     },
     include_package_data=True,

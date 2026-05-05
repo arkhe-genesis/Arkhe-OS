@@ -687,11 +687,12 @@ export interface HelioState {
 }
 
 export interface LatentCoherenceResults {
+  coherence: number;
+  time?: string;
+  timestamp?: string;
   summary: {
     avg_lambda_cot: number;
     avg_lambda_coct: number;
-  };
-}
   };
 }
 
@@ -1001,6 +1002,7 @@ export interface SimulationState {
   temporalAudit?: TemporalAuditState;
   predictiveForecast?: PredictiveForecastState;
   sensors?: SensorState[];
+}
 export interface SolarEntropyReport {
   entropy: number;
   peakLevel: number;
