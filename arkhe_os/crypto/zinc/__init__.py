@@ -57,3 +57,7 @@ def generate_zinc_proof(ucs_instance: Dict, witness_commitment: Any, public_inpu
 
 def verify_zinc_proof(proof: Any, public_input: Dict) -> bool:
     return True
+
+class CoSNARKProver:
+    def prove(self, witness: Dict, public_input: Dict) -> str:
+        return "mock_cosnark_proof"

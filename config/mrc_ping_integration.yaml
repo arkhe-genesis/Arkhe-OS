@@ -1,0 +1,14 @@
+ping_integration:
+  enabled: true
+  probe_interval_sec: 30
+  targets:
+    - "gateway.internal"
+    - "replica-us-east.arkhe.local"
+    - "storage-cluster.arkhe.local"
+  coherence_thresholds:
+    active_probe_trigger: 0.6
+    path_degradation_alert: 0.4
+    path_failure_alert: 0.2
+  baseline:
+    adaptation_alpha: 0.1
+    r_max_ms: 1000.0

@@ -1,152 +1,120 @@
-import { LFIRGraph, LFIRNode, LFIRNodeType, ParseResult } from '../lfir';
+import { LFIRGraph, LFIRNode, LFIRNodeType, ParseResult, ParseMetrics } from '../lfir.js';
 
 export enum IDETool {
-    VSCODE = 'vscode',
-    CURSOR = 'cursor',
-    ANTIGRAVITY = 'antigravity',
-    OPEN_CODE = 'open_code'
+  VS_CODE = 'vscode',
+  CURSOR = 'cursor',
+  ANTIGRAVITY = 'antigravity',
+  CLAUDE_CODE = 'claude_code'
 }
 
 export interface DevEvent {
-    tool: IDETool;
-    event_type: string;
-    file_path: string;
-    content_snippet?: string;
-    timestamp: number;
-    session_id: string;
-    metadata?: Record<string, any>;
-}
-
-export interface PrivacyConfig {
-    redact_content: boolean;
-    hash_file_paths: boolean;
+  tool: IDETool;
+  event_type: string;      // "edit", "save", "completion_accept", "agent_action", ...
+  file_path: string;
+  content_snippet?: string;
+  timestamp: number;
+  session_id: string;
+  metadata?: Record<string, unknown>;
 }
 
 export class IDEAndAIParser {
-    private privacyConfig: PrivacyConfig;
+  getLanguage(): string { return 'dev-tools'; }
+  getExtensions(): string[] { return ['.devlog', '.session', '.agent-trace']; }
 
-    constructor(privacyConfig: PrivacyConfig = { redact_content: true, hash_file_paths: false }) {
-        this.privacyConfig = privacyConfig;
+  parse(source: string, filename: string): ParseResult {
+    const graph = new LFIRGraph();
+    const startTime = Date.now();
+
+    try {
+      // Detecta formato baseado no conteúdo ou extensão
+      const payload = JSON.parse(source);
+      const events: DevEvent[] = Array.isArray(payload) ? payload : payload.events;
+
+      const sessionNode = new LFIRNode(
+        `session/${payload.session_id || filename}`,
+        LFIRNodeType.Module,
+        'dev-tools'
+      );
+      sessionNode.attributes['tool'] = detectTool(events);
+      sessionNode.attributes['event_count'] = events.length;
+      sessionNode.attributes['duration_sec'] = events.length > 1
+        ? (events[events.length - 1].timestamp - events[0].timestamp) / 1000 : 0;
+      graph.addNode(sessionNode);
+      graph.rootNodes.push(sessionNode.id);
+
+      // Criar nós para cada evento
+      let lastNodeId = sessionNode.id;
+      for (const event of events) {
+        const eventNode = new LFIRNode(
+          `event/${event.session_id}_${event.timestamp}`,
+          mapEventToLFIRType(event.event_type),
+          event.tool
+        );
+        eventNode.attributes['event_type'] = event.event_type;
+        eventNode.attributes['file_path'] = event.file_path;
+        eventNode.attributes['timestamp'] = event.timestamp;
+        if (event.content_snippet) eventNode.attributes['content'] = event.content_snippet.slice(0, 100);
+        if (event.metadata) Object.assign(eventNode.attributes, event.metadata);
+        graph.addNode(eventNode);
+        graph.link(lastNodeId, eventNode.id);
+        lastNodeId = eventNode.id;
+      }
+
+      // Calcular coerência da sessão
+      const coherence = this.computeSessionCoherence(events);
+      sessionNode.attributes['coherence_score'] = coherence;
+
+      return {
+        success: true,
+        graph,
+        errors: [],
+        warnings: [],
+        metrics: {
+          parseTimeMs: Date.now() - startTime,
+          nodesCreated: graph.nodes.length,
+          edgesCreated: graph.edges.length,
+          maxDepth: graph.nodes.length + 1,
+          coherenceScore: coherence
+        }
+      };
+
+    } catch (err) {
+      return {
+        success: false,
+        graph: null,
+        errors: [{ code: 'PARSE_ERROR', message: String(err), severity: 'fatal' }],
+        warnings: [],
+        metrics: { parseTimeMs: Date.now() - startTime, nodesCreated: 0, edgesCreated: 0, maxDepth: 0, coherenceScore: 0 }
+      };
     }
+  }
 
-    public parse(eventsJson: string, namespace: string): ParseResult {
-        const startTime = Date.now();
-        let events: DevEvent[] = [];
-
-        try {
-            events = JSON.parse(eventsJson);
-        } catch (e) {
-            return {
-                success: false,
-                graph: null,
-                errors: [{ code: 'PARSE_ERROR', message: 'Invalid JSON payload', severity: 'fatal' }],
-                warnings: [],
-                metrics: { parseTimeMs: Date.now() - startTime, nodesCreated: 0, edgesCreated: 0, maxDepth: 0, coherenceScore: 0 }
-            };
-        }
-
-        const graph = new LFIRGraph();
-        let coherenceNumerator = 0;
-        let coherenceDenominator = 0;
-
-        let previousNodeId: string | null = null;
-
-        // Ensure events are sorted chronologically
-        events.sort((a, b) => a.timestamp - b.timestamp);
-
-        const now = Date.now();
-
-        for (const event of events) {
-            const nodeId = `event_${event.timestamp}_${Math.random().toString(36).substring(7)}`;
-
-            // Map event to valid LFIRNodeType
-            let type = LFIRNodeType.Operation;
-            if (event.event_type === 'save' || event.event_type === 'edit') type = LFIRNodeType.Operation;
-            else if (event.event_type === 'completion_accept' || event.event_type === 'completion_reject') type = LFIRNodeType.Metadata;
-
-            const processedEvent = this.applyPrivacyConfig(event);
-
-            const node = new LFIRNode(nodeId, type, 'DevEvent');
-            node.attributes = {
-                event_type: processedEvent.event_type,
-                file_path: processedEvent.file_path,
-                timestamp: processedEvent.timestamp,
-                tool: processedEvent.tool,
-                content: processedEvent.content_snippet,
-                ...processedEvent.metadata
-            };
-
-            const eventCoherence = this.calculateEventCoherence(processedEvent);
-            node.attributes['event_coherence'] = eventCoherence;
-
-            if (eventCoherence > 0) {
-                // Decaimento temporal: eventos mais antigos pesam menos (ex: meia-vida de 1 hora)
-                const ageSec = (now - processedEvent.timestamp) / 1000;
-                const decayWeight = Math.exp(-ageSec / 3600);
-
-                coherenceNumerator += eventCoherence * decayWeight;
-                coherenceDenominator += decayWeight;
-            }
-
-            graph.addNode(node);
-
-            if (previousNodeId) {
-                graph.link(previousNodeId, nodeId);
-            }
-            previousNodeId = nodeId;
-        }
-
-        const sessionCoherence = coherenceDenominator > 0 ? coherenceNumerator / coherenceDenominator : 0;
-
-        // Add session coherence to the first node (if exists) or a root node
-        if (graph.nodes.length > 0) {
-            graph.nodes[0].attributes['coherence_score'] = sessionCoherence;
-        }
-
-        return {
-            success: true,
-            graph,
-            errors: [],
-            warnings: [],
-            metrics: {
-                parseTimeMs: Date.now() - startTime,
-                nodesCreated: graph.nodes.length,
-                edgesCreated: Math.max(0, graph.nodes.length - 1),
-                maxDepth: graph.nodes.length, // simple linear sequence
-                coherenceScore: sessionCoherence
-            }
-        };
+  private computeSessionCoherence(events: DevEvent[]): number {
+    if (events.length === 0) return 0;
+    let score = 0;
+    const weights: Record<string, number> = {
+      'edit': 0.5, 'save': 0.8, 'completion_accept': 0.7,
+      'completion_reject': -0.2, 'agent_action': 0.9,
+      'diagnostic_error': -0.5, 'diagnostic_fix': 0.6
+    };
+    for (const event of events) {
+      score += weights[event.event_type] || 0.1;
     }
+    return Math.max(0, Math.min(1, score / events.length + 0.3));
+  }
+}
 
-    private applyPrivacyConfig(event: DevEvent): DevEvent {
-        let newEvent = { ...event };
+function detectTool(events: DevEvent[]): IDETool {
+  if (events.length === 0) return IDETool.VS_CODE;
+  return events[0].tool;
+}
 
-        if (this.privacyConfig.redact_content && newEvent.content_snippet) {
-            // Simple regex for secrets/tokens redaction MVP
-            newEvent.content_snippet = newEvent.content_snippet.replace(/(bearer\s+|token\s*=\s*|key\s*=\s*)['"]?([a-zA-Z0-9_\-\.]{10,})['"]?/gi, '$1"[REDACTED]"');
-            newEvent.content_snippet = newEvent.content_snippet.replace(/(password\s*=\s*)['"]?([^'"\s]+)['"]?/gi, '$1"[REDACTED]"');
-        }
-        if (this.privacyConfig.hash_file_paths) {
-             // Simple pseudo-hash
-             let hash = 0;
-             for (let i = 0; i < newEvent.file_path.length; i++) {
-                 hash = Math.imul(31, hash) + newEvent.file_path.charCodeAt(i) | 0;
-             }
-             newEvent.file_path = `hash_${Math.abs(hash)}`;
-        }
-        return newEvent;
-    }
-
-    private calculateEventCoherence(event: DevEvent): number {
-        switch (event.event_type) {
-            case 'save': return 0.9;
-            case 'completion_accept': return 0.8;
-            case 'completion_reject': return 0.2;
-            case 'edit': return 0.5;
-            case 'diagnostic_fix': return 0.95;
-            case 'diagnostic_error': return 0.1;
-            case 'agent_action': return 0.7;
-            default: return 0.5;
-        }
-    }
+function mapEventToLFIRType(eventType: string): LFIRNodeType {
+  switch (eventType) {
+    case 'edit': case 'save': return LFIRNodeType.Operation;
+    case 'completion_accept': case 'completion_reject': return LFIRNodeType.Operation;
+    case 'agent_action': return LFIRNodeType.Module;
+    case 'diagnostic_error': case 'diagnostic_fix': return LFIRNodeType.Metadata;
+    default: return LFIRNodeType.Type;
+  }
 }
