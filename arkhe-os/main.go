@@ -63,6 +63,8 @@ func main() {
 	router.RegisterNode("mars_node_1", "10.0.0.1:8080", "pubkey_mars", "Mars")
 	router.EstablishRoute("earth_node_1", "mars_node_1")
 
+	ConnectToCosmos()
+
 	RegisterSubstrates170and171()
 
 	// Sleep briefly to ensure async operations complete if any
