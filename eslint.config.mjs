@@ -7,7 +7,7 @@
 import js from '@eslint/js';
 import stylisticPlugin from '@stylistic/eslint-plugin';
 import {defineConfig, globalIgnores} from 'eslint/config';
-import importPlugin from 'eslint-plugin-import';
+import importPlugin from 'eslint-plugin-import-x';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
@@ -70,6 +70,7 @@ export default defineConfig([
       '@local': localPlugin,
       '@typescript-eslint': tseslint.plugin,
       '@stylistic': stylisticPlugin,
+      'import': importPlugin,
     },
 
     settings: {
@@ -137,7 +138,7 @@ export default defineConfig([
         },
       ],
 
-      'import/enforce-node-protocol-usage': ['error', 'always'],
+      // 'import/enforce-node-protocol-usage': ['error', 'always'], // Note: Not natively supported by import-x?
 
       '@stylistic/function-call-spacing': 'error',
       '@stylistic/semi': 'error',
