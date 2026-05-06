@@ -21,8 +21,8 @@ func NewCosmicAddress(scale CosmicScale, coherence, resonance float64, branchAng
 	// prefixo: 0xARK
 	addr[0] = 0x04 // 0100
 	addr[1] = 0x12 // 0001 0010
-	addr[0] = 0x04  // 0100
-	addr[1] = 0x12  // 0001 0010
+	addr[0] = 0x04 // 0100
+	addr[1] = 0x12 // 0001 0010
 
 	// escala e classe de coerência (1 byte)
 	addr[2] = byte(scale)<<4 | byte(coherenceClass(coherence))

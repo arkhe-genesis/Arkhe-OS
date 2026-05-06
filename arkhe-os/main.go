@@ -70,19 +70,14 @@ func main() {
 	// Sleep briefly to ensure async operations complete if any
 	time.Sleep(100 * time.Millisecond)
 
-
-
-
-
 	// 174
 
 	InitSubstrate170()
 	InitSubstrate171()
 
-
 	InitSubstrate174()
 	InitSubstrates179to185()
-simulateQKDAndStorage()
+	simulateQKDAndStorage()
 
 	fmt.Println("\nARKHE OS Initialization Complete.")
 }
