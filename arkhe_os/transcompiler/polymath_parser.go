@@ -949,6 +949,7 @@ func NewPolymathParser() *PolymathParser {
 	pp.RegisterBackend(NewWasmBackend())
 	pp.RegisterBackend(NewPythonBackend())
 
+	pp.registerAdditionalLanguages()
 	pp.metrics.LanguagesSupported = len(pp.Frontends)
 
 	return pp
