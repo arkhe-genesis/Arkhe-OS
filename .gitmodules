@@ -1,3 +1,6 @@
 [submodule "extensions/arkhe-deer-flow"]
 	path = extensions/arkhe-deer-flow
 	url = https://github.com/bytedance/deer-flow.git
+[submodule "blackbox_node"]
+	path = blackbox_node
+	url = https://github.com/wadadawadada/blackbox_node
