@@ -17,6 +17,8 @@ export default defineConfig([
   globalIgnores([
     '**/node_modules',
     '**/build/',
+    'evm-smith/',
+    'extensions/',
     'tests/tools/fixtures/',
     'src/third_party/lighthouse-devtools-mcp-bundle.js',
   ]),
