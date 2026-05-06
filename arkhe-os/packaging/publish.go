@@ -1,5 +1,5 @@
 // publish.go
-package main
+package packaging
 
 import (
 	"fmt"
@@ -45,7 +45,7 @@ func publishToPyPI() error {
 	return nil
 }
 
-func main() {
+func PublishMain() {
 	fmt.Println("📦 ARKHE OS Federation Packaging")
 	if err := publishToGoModules(); err != nil {
 		fmt.Printf("Go publish error: %v\n", err)
