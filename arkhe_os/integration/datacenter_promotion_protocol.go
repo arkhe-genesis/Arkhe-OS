@@ -1,305 +1,185 @@
-// arkhe_os/integration/datacenter_promotion_protocol.go
 package integration
 
 import (
-	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"sync"
 	"time"
+
+	"github.com/arkhe-os/arkhe/network"
 )
 
-// ─── CONSTANTES DO PROTOCOLO DE PROMOÇÃO ─────────────────
-
-const (
-	// PromotionHandshakeTimeout timeout para handshake de promoção [s]
-	PromotionHandshakeTimeout = 30.0
-
-	// MinCoherenceForSustainedPromotion coerência mínima para manter promoção
-	MinCoherenceForSustainedPromotion = 0.65
-
-	// DemotionGracePeriod período de graça antes de despromoção [s]
-	DemotionGracePeriod = 300.0
-)
-
-// ─── TIPOS FUNDAMENTAIS ───────────────────────────────────
-
-// PromotionState representa estado do processo de promoção
-type PromotionState struct {
-	PromotionID     string
-	ClusterID       string
-	InitiatedAt     time.Time
-	CoherenceValue  float64
-	Status          string // pending, promoted, demoted, failed
-	AssignedNodeID  string
-}
-
-// DataCenterPromotionProtocol gerencia promoção de data centers a nós ARKHE
-type DataCenterPromotionProtocol struct {
-	mu sync.RWMutex
-
-	// Identificação
-	protocolID    string
-	localNodeID   string
-
-	// Data centers monitorados
-	monitoredDCs map[string]*EMCoherenceMonitor
-
-	// Promoções ativas
-	activePromotions map[string]*PromotionState
-
-	// Nós promovidos
-	promotedNodes map[string]*DataCenterNode
-
-	// Métricas de promoção
-	metrics PromotionMetrics
-	config  PromotionConfig
-}
-
-// PromotionMetrics contém métricas do protocolo de promoção
-type PromotionMetrics struct {
-	PromotionsInitiated   int64   `json:"promotions_initiated"`
-	PromotionsCompleted   int64   `json:"promotions_completed"`
-	DemotionsExecuted     int64   `json:"demotions_executed"`
-	AvgPromotionTimeSec   float64 `json:"avg_promotion_time_sec"`
-	ActivePromotedNodes   int64   `json:"active_promoted_nodes"`
-}
-
-// PromotionConfig contém configuração do protocolo
+// PromotionConfig contém a configuração para promoção de clusters
 type PromotionConfig struct {
-	AutoPromotionEnabled bool
-	RequireHandshake     bool
+	AutoPromotionEnabled  bool
+	RequireHandshake      bool
 	MinSustainedCoherence float64
-	MaxPromotedNodes     int
 }
 
-// DataCenterNode representa um data center promovido a nó da Hyper-Mesh
+// PromotionMetrics contém métricas de promoção
+type PromotionMetrics struct {
+	ActivePromotedNodes int64
+	TotalPromotions     int64
+	HandshakesFailed    int64
+}
+
+// DataCenterNode representa um cluster de data center promovido na Hyper-Mesh
 type DataCenterNode struct {
 	NodeID          string
 	ClusterID       string
-	DatacenterName  string
 	PromotedAt      time.Time
-	CoherenceValue  float64
-	TotalPowerMW    float64
-	ActiveGPUs      int
-	LLMProcesses    []string
-	Status          string // active, degraded, offline
+	Coherence       float64
+	GradientChannel *CoherenceGradientChannel
+	IsActive        bool
 }
 
-// ─── CONSTRUTORES ─────────────────────────────────────────
+// CoherenceGradientChannel lida com o mapeamento e troca de gradientes
+type CoherenceGradientChannel struct {
+	mu           sync.RWMutex
+	nodeID       string
+	wheelerMesh  *network.WheelerMeshProtocol
+	gradients    [][]float64
+	totalContrib float64
+}
 
-// NewDataCenterPromotionProtocol cria novo protocolo de promoção
+func NewCoherenceGradientChannel(nodeID string, wheelerMesh *network.WheelerMeshProtocol) *CoherenceGradientChannel {
+	return &CoherenceGradientChannel{
+		nodeID:      nodeID,
+		wheelerMesh: wheelerMesh,
+		gradients:   make([][]float64, 0),
+	}
+}
+
+func (c *CoherenceGradientChannel) SubmitLocalGradient(
+	gradient []float64, freq float64, distance float64,
+	priority int, phase float64, metadata map[string]interface{},
+) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.gradients = append(c.gradients, gradient)
+	c.totalContrib += freq // Simplificação: contribuição baseada na frequência
+}
+
+// DataCenterPromotionProtocol gerencia a elevação de clusters para nós sinápticos
+type DataCenterPromotionProtocol struct {
+	mu             sync.RWMutex
+	protocolID     string
+	clusterID      string
+	wheelerMesh    *network.WheelerMeshProtocol
+	config         PromotionConfig
+	metrics        PromotionMetrics
+	promotedNodes  map[string]*DataCenterNode
+	promotionLock  sync.Mutex
+	lastCoherences []float64 // Histórico recente para checar coerência sustentada
+}
+
+// NewDataCenterPromotionProtocol cria um novo protocolo de promoção
 func NewDataCenterPromotionProtocol(
-	protocolID string,
-	localNodeID string,
+	protocolID, clusterID string,
+	wheelerMesh *network.WheelerMeshProtocol,
 	config PromotionConfig,
 ) *DataCenterPromotionProtocol {
-	if config.MinSustainedCoherence == 0 {
-		config.MinSustainedCoherence = MinCoherenceForSustainedPromotion
-	}
-
 	return &DataCenterPromotionProtocol{
-		protocolID:       protocolID,
-		localNodeID:      localNodeID,
-		monitoredDCs:     make(map[string]*EMCoherenceMonitor),
-		activePromotions: make(map[string]*PromotionState),
-		promotedNodes:    make(map[string]*DataCenterNode),
-		config:           config,
+		protocolID:     protocolID,
+		clusterID:      clusterID,
+		wheelerMesh:    wheelerMesh,
+		config:         config,
+		promotedNodes:  make(map[string]*DataCenterNode),
+		lastCoherences: make([]float64, 0, 10), // Guardar até 10 leituras recentes
 	}
 }
 
-// RegisterDataCenterForMonitoring registra data center para monitoramento EM
-func (p *DataCenterPromotionProtocol) RegisterDataCenterForMonitoring(
-	clusterID string,
-	datacenterName string,
-	monitorConfig MonitorConfig,
-) (*EMCoherenceMonitor, error) {
-	monitor, err := NewEMCoherenceMonitor(
-		fmt.Sprintf("monitor_%s", clusterID[:8]),
-		clusterID,
-		datacenterName,
-		monitorConfig,
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	// Registrar callback para verificação de promoção
-	monitor.RegisterPromotionCallback(func(cid string, coherence float64) {
-		p.checkPromotionEligibility(cid, coherence)
-	})
-
-	p.mu.Lock()
-	p.monitoredDCs[clusterID] = monitor
-	p.mu.Unlock()
-
-	return monitor, nil
+func (p *DataCenterPromotionProtocol) SetPromotedNodes(nodes map[string]*DataCenterNode) {
+    p.mu.Lock()
+    defer p.mu.Unlock()
+    for k, v := range nodes {
+        p.promotedNodes[k] = v
+    }
 }
 
-// ─── OPERAÇÕES DE PROMOÇÃO ───────────────────────────────
-
-// checkPromotionEligibility verifica se data center é elegível para promoção
-func (p *DataCenterPromotionProtocol) checkPromotionEligibility(
-	clusterID string,
-	coherence float64,
-) {
-	p.mu.Lock()
-	defer p.mu.Unlock()
-
-	// Verificar se já promovido
-	if _, exists := p.promotedNodes[clusterID]; exists {
-		return // Já é nó, apenas atualizar coerência
-	}
-
-	// Verificar se já em promoção
-	if _, exists := p.activePromotions[clusterID]; exists {
-		return // Promoção em andamento
-	}
-
-	// Verificar limiar
-	if coherence < p.config.MinSustainedCoherence {
+// checkPromotionEligibility verifica se o cluster atingiu os critérios para ser promovido
+func (p *DataCenterPromotionProtocol) checkPromotionEligibility(cid string, currentCoherence float64) {
+	if !p.config.AutoPromotionEnabled || cid != p.clusterID {
 		return
 	}
 
-	// Verificar limite de nós promovidos
-	if p.config.MaxPromotedNodes > 0 && int(p.metrics.ActivePromotedNodes) >= p.config.MaxPromotedNodes {
-		return
+	p.promotionLock.Lock()
+	defer p.promotionLock.Unlock()
+
+	// Atualizar histórico
+	p.lastCoherences = append(p.lastCoherences, currentCoherence)
+	if len(p.lastCoherences) > 10 {
+		p.lastCoherences = p.lastCoherences[1:]
 	}
 
-	// Iniciar promoção
-	promotionID := fmt.Sprintf("promo_%s_%d", clusterID[:8], time.Now().UnixNano())
-	state := &PromotionState{
-		PromotionID:    promotionID,
-		ClusterID:      clusterID,
-		InitiatedAt:    time.Now(),
-		CoherenceValue: coherence,
-		Status:         "pending",
-	}
-	p.activePromotions[clusterID] = state
-	p.metrics.PromotionsInitiated++
-
-	// Executar promoção em background
-	go p.executePromotion(state)
-}
-
-// executePromotion executa processo completo de promoção
-func (p *DataCenterPromotionProtocol) executePromotion(state *PromotionState) {
-	defer func() {
-		p.mu.Lock()
-		delete(p.activePromotions, state.ClusterID)
-		p.mu.Unlock()
-	}()
-
-	// Fase 1: Handshake com Wheeler Mesh se requerido
-	if p.config.RequireHandshake {
-		ctx, cancel := context.WithTimeout(context.Background(),
-			time.Duration(PromotionHandshakeTimeout)*time.Second)
-		defer cancel()
-
-		if err := p.performPromotionHandshake(ctx, state.ClusterID); err != nil {
-			state.Status = "failed"
-			return
-		}
-	}
-
-	// Fase 3: Criar nó de data center promovido
-	node := &DataCenterNode{
-		NodeID:          fmt.Sprintf("dc_%s", state.ClusterID[:12]),
-		ClusterID:       state.ClusterID,
-		DatacenterName:  p.monitoredDCs[state.ClusterID].datacenter,
-		PromotedAt:      time.Now(),
-		CoherenceValue:  state.CoherenceValue,
-		Status:          "active",
-	}
-
-	// Fase 5: Finalizar promoção
-	state.Status = "promoted"
-	state.AssignedNodeID = node.NodeID
-
-	p.mu.Lock()
-	p.promotedNodes[state.ClusterID] = node
-	p.metrics.PromotionsCompleted++
-	p.metrics.ActivePromotedNodes = int64(len(p.promotedNodes))
-
-	// Atualizar métrica de tempo de promoção
-	promotionTime := time.Since(state.InitiatedAt).Seconds()
-	n := p.metrics.PromotionsCompleted
-	oldAvg := p.metrics.AvgPromotionTimeSec
-	p.metrics.AvgPromotionTimeSec = (oldAvg*float64(n-1) + promotionTime) / float64(n)
-	p.mu.Unlock()
-
-	// Iniciar monitoramento de coerência sustentada
-	go p.monitorSustainedCoherence(node)
-}
-
-// performPromotionHandshake executa handshake de promoção com a rede
-func (p *DataCenterPromotionProtocol) performPromotionHandshake(
-	ctx context.Context,
-	clusterID string,
-) error {
-	// Em produção: protocolo quântico de autenticação com Wheeler Mesh
-	// Aqui: simular handshake bem-sucedido
-	time.Sleep(100 * time.Millisecond)
-	return nil
-}
-
-// monitorSustainedCoherence monitora coerência de nó promovido para evitar despromoção
-func (p *DataCenterPromotionProtocol) monitorSustainedCoherence(node *DataCenterNode) {
-	ticker := time.NewTicker(60 * time.Second)
-	defer ticker.Stop()
-
-	lastBelowThreshold := time.Time{}
-
-	for range ticker.C {
-		// Obter coerência atual do monitor
-		monitor, exists := p.monitoredDCs[node.ClusterID]
-		if !exists {
-			continue
-		}
-
-		metrics := monitor.GetMonitorMetrics()
-		if metrics.LastCoherenceValue < p.config.MinSustainedCoherence {
-			if lastBelowThreshold.IsZero() {
-				lastBelowThreshold = time.Now()
-			} else if time.Since(lastBelowThreshold) > time.Duration(DemotionGracePeriod)*time.Second {
-				// Executar despromoção
-				p.executeDemotion(node)
-				return
-			}
-		} else {
-			lastBelowThreshold = time.Time{}
-		}
-	}
-}
-
-// executeDemotion executa processo de despromoção de nó
-func (p *DataCenterPromotionProtocol) executeDemotion(node *DataCenterNode) {
-	p.mu.Lock()
-	defer p.mu.Unlock()
-
-	// Remover de promovidos
-	delete(p.promotedNodes, node.ClusterID)
-	p.metrics.DemotionsExecuted++
-	p.metrics.ActivePromotedNodes = int64(len(p.promotedNodes))
-
-	node.Status = "demoted"
-}
-
-// GetPromotedNodes retorna lista de nós promovidos ativos
-func (p *DataCenterPromotionProtocol) GetPromotedNodes() []*DataCenterNode {
+	// Verificar se já está promovido
 	p.mu.RLock()
-	defer p.mu.RUnlock()
+	node, exists := p.promotedNodes[cid]
+	isActive := exists && node.IsActive
+	p.mu.RUnlock()
 
-	nodes := make([]*DataCenterNode, 0, len(p.promotedNodes))
-	for _, node := range p.promotedNodes {
-		if node.Status == "active" {
-			nodeCopy := *node
-			nodes = append(nodes, &nodeCopy)
+	if isActive {
+		// Se já promovido, apenas atualizar coerência
+		node.Coherence = currentCoherence
+		return
+	}
+
+	// Avaliar coerência sustentada (simplificação: média das últimas N leituras)
+	if len(p.lastCoherences) >= 5 {
+		sum := 0.0
+		for _, val := range p.lastCoherences {
+			sum += val
+		}
+		avgCoherence := sum / float64(len(p.lastCoherences))
+
+		if avgCoherence >= p.config.MinSustainedCoherence {
+			// Iniciar processo de promoção
+			go p.executePromotion(cid, avgCoherence)
 		}
 	}
-	return nodes
 }
 
-// GetPromotionMetrics retorna métricas consolidadas do protocolo
+// executePromotion executa o handshake quântico e criação do nó
+func (p *DataCenterPromotionProtocol) executePromotion(cid string, coherence float64) {
+	fmt.Printf("🚀 Iniciando promoção do cluster %s (Φ_C=%.2f)...\n", cid, coherence)
+
+	// 1. Handshake Quântico (simulado com wheelerMesh)
+	if p.config.RequireHandshake && p.wheelerMesh != nil {
+		// No mundo real, aqui chamaríamos wheelerMesh.PerformQuantumHandshake()
+		// Simulando sucesso do handshake para o contexto da integração
+		time.Sleep(500 * time.Millisecond)
+		fmt.Printf("🤝 Handshake quântico com Wheeler Mesh concluído.\n")
+	}
+
+	// 2. Criação do CoherenceGradientChannel
+	nodeID := fmt.Sprintf("dc_%s", cid)
+	gradChannel := NewCoherenceGradientChannel(nodeID, p.wheelerMesh)
+
+	// 3. Registrar DataCenterNode
+	node := &DataCenterNode{
+		NodeID:          nodeID,
+		ClusterID:       cid,
+		PromotedAt:      time.Now(),
+		Coherence:       coherence,
+		GradientChannel: gradChannel,
+		IsActive:        true,
+	}
+
+	p.mu.Lock()
+	p.promotedNodes[cid] = node
+	p.metrics.ActivePromotedNodes++
+	p.metrics.TotalPromotions++
+	p.mu.Unlock()
+
+	fmt.Printf("🌟 Cluster %s promovido com sucesso a Nó Sináptico (%s)!\n", cid, nodeID)
+
+	// Criar Prova CoSNARK para registro (simulado)
+	proofStr := fmt.Sprintf("PROMOTION_%s_%f_%d", nodeID, coherence, time.Now().UnixNano())
+	hash := sha256.Sum256([]byte(proofStr))
+	fmt.Printf("📜 Prova CoSNARK gerada: %s\n", hex.EncodeToString(hash[:])[:16])
+}
+
 func (p *DataCenterPromotionProtocol) GetPromotionMetrics() PromotionMetrics {
 	p.mu.RLock()
 	defer p.mu.RUnlock()

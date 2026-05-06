@@ -1,4 +1,3 @@
-// arkhe_os/integration/gradient_to_action_potential_mapper.go
 package integration
 
 import (
@@ -8,232 +7,124 @@ import (
 	"time"
 )
 
-// ─── CONSTANTES DO MAPEAMENTO GRADIENTE→POTENCIAL ───────
-
-const (
-	// GradientToVoltageScale fator de escala para converter gradiente para volts
-	GradientToVoltageScale = 1e-6 // V por unidade de gradiente
-
-	// ActionPotentialThreshold threshold para "disparo" de potencial de ação
-	ActionPotentialThreshold = 0.1 // unidades de gradiente normalizado
-
-	// RestingPotential potencial de repouso biológico [V]
-	RestingPotential = -0.070 // -70 mV
-
-	// PeakActionPotential pico de potencial de ação [V]
-	PeakActionPotential = 0.030 // +30 mV
-
-	// RefractoryPeriod período refratário após disparo [s]
-	RefractoryPeriod = 0.002 // 2 ms
-)
-
-// ─── TIPOS FUNDAMENTAIS ─────────────────────────────────
-
-// ActionPotential representa um potencial de ação gerado a partir de gradiente
+// ActionPotential representa um disparo neuronal simulado
 type ActionPotential struct {
-	PotentialID   string
-	SourceGPU     string
-	Timestamp     time.Time
-	AmplitudeV    float64 // amplitude do potencial [V]
-	Duration_ms   float64 // duração do pulso [ms]
-	Frequency_Hz  float64 // frequência de disparo [Hz]
-	GradientNorm  float64 // norma do gradiente original
-	Fired         bool    // se atingiu threshold de disparo
+	PotentialID  string
+	GPUID        string
+	Timestamp    time.Time
+	AmplitudeV   float64 // Voltagem do potencial de ação (geralmente em mV mas armazenado em V)
+	Frequency_Hz float64 // Taxa de disparo
+	Fired        bool    // Se ultrapassou o threshold
 }
 
-// GradientToActionPotentialMapper converte gradientes de LLM em potenciais de ação
+// GradientToActionPotentialMapper converte gradientes de loss em potenciais de ação
 type GradientToActionPotentialMapper struct {
-	mu sync.RWMutex
-
-	// Configuração
-	scaleFactor     float64
-	fireThreshold   float64
-	restingPotential float64
-	peakPotential   float64
-
-	// Histórico de potenciais gerados
-	potentialHistory []ActionPotential
-
-	// Estado de disparo por GPU (para período refratário)
-	firingState map[string]FiringState
-
-	// Métricas
-	metrics MapperMetrics
+	mu             sync.Mutex
+	config         map[string]float64
+	gpuRefractory  map[string]time.Time // Período refratário por GPU
+	potentialCount int64
 }
 
-// FiringState rastreia estado de disparo de uma GPU
-type FiringState struct {
-	LastFireTime    time.Time
-	ConsecutiveFires int
-	RefractoryUntil time.Time
-}
-
-// MapperMetrics contém métricas do mapeador
-type MapperMetrics struct {
-	GradientsProcessed  int64   `json:"gradients_processed"`
-	PotentialsGenerated int64   `json:"potentials_generated"`
-	FiringRate_Hz       float64 `json:"firing_rate_Hz"`
-	AvgAmplitude_mV     float64 `json:"avg_amplitude_mV"`
-}
-
-// ─── CONSTRUTORES ───────────────────────────────────────
-
-// NewGradientToActionPotentialMapper cria novo mapeador
+// NewGradientToActionPotentialMapper cria um novo mapeador
 func NewGradientToActionPotentialMapper(config map[string]float64) *GradientToActionPotentialMapper {
-	mapper := &GradientToActionPotentialMapper{
-		scaleFactor:      config["scale_factor"],
-		fireThreshold:    config["fire_threshold"],
-		restingPotential: RestingPotential,
-		peakPotential:    PeakActionPotential,
-		firingState:      make(map[string]FiringState),
+	if config == nil {
+		config = map[string]float64{
+			"scale_factor":   1e-6,
+			"fire_threshold": 0.1,
+			"resting_mv":     -70.0,
+			"peak_mv":        30.0,
+			"refractory_ms":  2.0, // Período refratário absoluto
+		}
 	}
 
-	// Valores padrão se não configurados
-	if mapper.scaleFactor == 0 {
-		mapper.scaleFactor = GradientToVoltageScale
-	}
-	if mapper.fireThreshold == 0 {
-		mapper.fireThreshold = ActionPotentialThreshold
-	}
+	// Garantir defaults
+	if _, ok := config["scale_factor"]; !ok { config["scale_factor"] = 1e-6 }
+	if _, ok := config["fire_threshold"]; !ok { config["fire_threshold"] = 0.1 }
+	if _, ok := config["resting_mv"]; !ok { config["resting_mv"] = -70.0 }
+	if _, ok := config["peak_mv"]; !ok { config["peak_mv"] = 30.0 }
+	if _, ok := config["refractory_ms"]; !ok { config["refractory_ms"] = 2.0 }
 
-	return mapper
+	return &GradientToActionPotentialMapper{
+		config:        config,
+		gpuRefractory: make(map[string]time.Time),
+	}
 }
 
-// MapGradientToPotential converte gradiente em potencial de ação
+// MapGradientToPotential mapeia um vetor gradiente ∇ℒ para um ActionPotential
 func (m *GradientToActionPotentialMapper) MapGradientToPotential(
 	gpuID string,
 	gradient []float64,
 	timestamp time.Time,
-) *ActionPotential {
-	// Calcular norma do gradiente
-	gradNorm := computeL2Norm(gradient)
-
-	// Normalizar gradiente para faixa [0, 1]
-	normalized := normalizeGradient(gradNorm)
-
-	// Verificar período refratário
-	if m.isInRefractoryPeriod(gpuID) {
-		return &ActionPotential{
-			PotentialID:  fmt.Sprintf("pot_%s_%d", gpuID[:8], timestamp.UnixNano()),
-			SourceGPU:    gpuID,
-			Timestamp:    timestamp,
-			AmplitudeV:   m.restingPotential,
-			Fired:        false,
-			GradientNorm: gradNorm,
-		}
-	}
-
-	// Verificar se atinge threshold de disparo
-	fired := normalized >= m.fireThreshold
-
-	var amplitude float64
-	if fired {
-		// Amplitude proporcional à magnitude do gradiente
-		amplitude = m.restingPotential + (m.peakPotential-m.restingPotential)*normalized
-		m.updateFiringState(gpuID, true)
-	} else {
-		amplitude = m.restingPotential
-		m.updateFiringState(gpuID, false)
-	}
-
-	// Criar potencial de ação
-	potential := &ActionPotential{
-		PotentialID:   fmt.Sprintf("pot_%s_%d", gpuID[:8], timestamp.UnixNano()),
-		SourceGPU:     gpuID,
-		Timestamp:     timestamp,
-		AmplitudeV:    amplitude,
-		Duration_ms:   1.0, // simplificação: duração fixa
-		Frequency_Hz:  m.computeFiringRate(gpuID),
-		GradientNorm:  gradNorm,
-		Fired:         fired,
-	}
-
-	// Atualizar histórico e métricas
-	m.mu.Lock()
-	m.potentialHistory = append(m.potentialHistory, *potential)
-	if len(m.potentialHistory) > 10000 {
-		m.potentialHistory = m.potentialHistory[1000:]
-	}
-	m.metrics.GradientsProcessed++
-	if fired {
-		m.metrics.PotentialsGenerated++
-	}
-	m.mu.Unlock()
-
-	return potential
-}
-
-// computeL2Norm calcula norma L2 de vetor
-func computeL2Norm(vec []float64) float64 {
-	sum := 0.0
-	for _, v := range vec {
-		sum += v * v
-	}
-	return math.Sqrt(sum)
-}
-
-// normalizeGradient normaliza gradiente para faixa [0, 1]
-func normalizeGradient(norm float64) float64 {
-	// Função sigmoide para normalização suave
-	return 1.0 / (1.0 + math.Exp(-norm*10.0 + 5.0))
-}
-
-// isInRefractoryPeriod verifica se GPU está em período refratário
-func (m *GradientToActionPotentialMapper) isInRefractoryPeriod(gpuID string) bool {
-	m.mu.RLock()
-	defer m.mu.RUnlock()
-
-	state, exists := m.firingState[gpuID]
-	if !exists {
-		return false
-	}
-	return time.Now().Before(state.RefractoryUntil)
-}
-
-// updateFiringState atualiza estado de disparo de GPU
-func (m *GradientToActionPotentialMapper) updateFiringState(gpuID string, fired bool) {
+) ActionPotential {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	state := m.firingState[gpuID]
-	now := time.Now()
-
-	if fired {
-		state.LastFireTime = now
-		state.ConsecutiveFires++
-		state.RefractoryUntil = now.Add(time.Duration(RefractoryPeriod * 1e9) * time.Nanosecond)
-	} else {
-		state.ConsecutiveFires = 0
-	}
-
-	m.firingState[gpuID] = state
-}
-
-// computeFiringRate calcula taxa de disparo recente para GPU
-func (m *GradientToActionPotentialMapper) computeFiringRate(gpuID string) float64 {
-	m.mu.RLock()
-	defer m.mu.RUnlock()
-
-	state := m.firingState[gpuID]
-	if state.ConsecutiveFires == 0 {
-		return 0.0
-	}
-
-	// Taxa baseada em disparos recentes (janela de 1 segundo)
-	windowStart := time.Now().Add(-1 * time.Second)
-	count := 0
-	for _, pot := range m.potentialHistory {
-		if pot.SourceGPU == gpuID && pot.Timestamp.After(windowStart) && pot.Fired {
-			count++
+	// 1. Checar período refratário
+	if lastFire, exists := m.gpuRefractory[gpuID]; exists {
+		refractoryDuration := time.Duration(m.config["refractory_ms"] * float64(time.Millisecond))
+		if timestamp.Sub(lastFire) < refractoryDuration {
+			// Ainda no período refratário, não dispara
+			return ActionPotential{
+				PotentialID:  fmt.Sprintf("ap_refractory_%d", m.potentialCount),
+				GPUID:        gpuID,
+				Timestamp:    timestamp,
+				AmplitudeV:   m.config["resting_mv"] / 1000.0,
+				Frequency_Hz: 0,
+				Fired:        false,
+			}
 		}
 	}
 
-	return float64(count) // Hz
-}
+	// 2. Calcular a norma L2 do gradiente (||∇ℒ||)
+	var normSq float64
+	for _, val := range gradient {
+		normSq += val * val
+	}
+	norm := math.Sqrt(normSq)
 
-// GetMapperMetrics retorna métricas consolidadas do mapeador
-func (m *GradientToActionPotentialMapper) GetMapperMetrics() MapperMetrics {
-	m.mu.RLock()
-	defer m.mu.RUnlock()
-	return m.metrics
+	// 3. Normalização sigmoide (simulando a resposta não-linear de um neurônio)
+	// scaled_norm = norm * scale_factor
+	scaledNorm := norm * m.config["scale_factor"]
+
+	// sigmoid(x) = 1 / (1 + exp(-x))
+	// Nós ajustamos para que entrada 0 resulte em ativação ~0
+	normalized := (2.0 / (1.0 + math.Exp(-scaledNorm))) - 1.0
+
+	// 4. Checar threshold de disparo
+	threshold := m.config["fire_threshold"]
+	fired := normalized >= threshold
+
+	var amplitudeV float64
+	var freqHz float64
+
+	if fired {
+		// V_action = V_resting + (V_peak - V_resting) * normalized
+		resting := m.config["resting_mv"]
+		peak := m.config["peak_mv"]
+
+		// Calcular a amplitude interpolada e converter de mV para V
+		amplitudeMV := resting + ((peak - resting) * normalized)
+		amplitudeV = amplitudeMV / 1000.0
+
+		// Frequência baseada na intensidade (Rate Coding)
+		// Quanto maior a ativação, maior a taxa de disparo (ex: 10Hz a 150Hz)
+		freqHz = 10.0 + (normalized * 140.0)
+
+		// Atualizar período refratário
+		m.gpuRefractory[gpuID] = timestamp
+		m.potentialCount++
+	} else {
+		// Mantém o potencial de repouso
+		amplitudeV = m.config["resting_mv"] / 1000.0
+		freqHz = 0.0
+	}
+
+	return ActionPotential{
+		PotentialID:  fmt.Sprintf("ap_%s_%d", gpuID, m.potentialCount),
+		GPUID:        gpuID,
+		Timestamp:    timestamp,
+		AmplitudeV:   amplitudeV,
+		Frequency_Hz: freqHz,
+		Fired:        fired,
+	}
 }
