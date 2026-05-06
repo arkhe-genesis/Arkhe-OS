@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
+    "paths": {
+      "@arkhe-os/*": ["arkhe-os/*"]
+    },
+    "types": ["node"]
+  },
+  "include": [
+    "arkhe-os/parser/frontends/msi_extended_frontend.ts",
+    "arkhe-os/integration/pagerank_orphan_mapper.ts",
+    "arkhe-os/integration/msi_code_audit_bridge.ts",
+    "arkhe-os/audit/cosnark_msi_auditor.ts"
+  ]
+}
