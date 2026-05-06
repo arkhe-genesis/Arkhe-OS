@@ -6,7 +6,7 @@ import (
 
 func InitSubstrate170() {
 	fmt.Println("\n[SUBSTRATO 170] Endereçamento Cósmico & Subnetting")
-	engine := NewCosmologyEngine()
+	engine := NewCosmologyEngine("Default")
 	engine.RegisterNode("SUN_01", "Sun", ScaleStellar, 0.999, 0.99)
 	sm := engine.SetupAddressing()
 	sm.PrintSubnets()

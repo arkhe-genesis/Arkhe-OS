@@ -81,6 +81,8 @@ func main() {
 
 
 	InitSubstrate174()
+	InitSubstrates179to185()
+simulateQKDAndStorage()
 
 	fmt.Println("\nARKHE OS Initialization Complete.")
 }

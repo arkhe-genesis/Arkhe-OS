@@ -1,190 +1,144 @@
-// routing.go — Substrato 171: Distributed Coherence Routing Protocol
-// A geometria da rede emerge do campo de coerência Φ_C
 package main
 
 import (
 	"fmt"
 	"math"
 	"sync"
-	"time"
+	"arkhe/photonic"
 )
 
-// ─── Roteamento por Coerência ──────────────────────────
-
-// RouteEntry representa uma rota na tabela de roteamento.
-type RouteEntry struct {
-	Destination   string         // destino (network ou nodeID)
-	PrefixLen     int            // comprimento do prefixo
-	NextHop       string         // próximo salto
-	Coherence     float64        // coerência acumulada da rota (Φ_C)
-	EntropyCost   float64        // custo em entropia de von Neumann
-	HopCount      int
-	ChannelID     string         // canal de teleportação, se aplicável
-	LastUpdate    float64
-	IsDirect      bool
+// RoutingTableEntry holds route information prioritizing coherence and resonance
+type RoutingTableEntry struct {
+	Destination  CosmicAddress
+	PrefixLen    int
+	NextHop      string  // NodeID of the next hop
+	Coherence    float64 // $\Phi_C$ value for this route
+	Entanglement float64 // Measure of entanglement (lower entropy = higher entanglement)
+	Cost         float64 // Computed path cost (e.g. von Neumann entropy)
 }
 
-// RoutingTable mantém as rotas conhecidas por um nó.
-type RoutingTable struct {
-	mu         sync.RWMutex
-	entries    map[string]*RouteEntry // key: "dest/prefixLen"
-	nodeID     string
-}
-
-func NewRoutingTable(nodeID string) *RoutingTable {
-	return &RoutingTable{
-		entries: make(map[string]*RouteEntry),
-		nodeID:  nodeID,
-	}
-}
-
-func (rt *RoutingTable) AddRoute(dest string, prefixLen int, nextHop string, coherence, entropyCost float64, hopCount int, channelID string, isDirect bool) {
-	rt.mu.Lock()
-	defer rt.mu.Unlock()
-	key := fmt.Sprintf("%s/%d", dest, prefixLen)
-	rt.entries[key] = &RouteEntry{
-		Destination: dest,
-		PrefixLen:   prefixLen,
-		NextHop:     nextHop,
-		Coherence:   coherence,
-		EntropyCost: entropyCost,
-		HopCount:    hopCount,
-		ChannelID:   channelID,
-		LastUpdate:  float64(time.Now().UnixNano()) / 1e9,
-		IsDirect:    isDirect,
-	}
-}
-
-func (rt *RoutingTable) BestRoute(dest string) *RouteEntry {
-	rt.mu.RLock()
-	defer rt.mu.RUnlock()
-	var best *RouteEntry
-	bestScore := -1.0
-	for _, entry := range rt.entries {
-		if entry.Destination == dest || (entry.PrefixLen > 0 && len(dest) >= entry.PrefixLen && dest[:entry.PrefixLen] == entry.Destination[:entry.PrefixLen]) {
-			// Score: coerência - custo de entropia, favorecendo rotas diretas
-			score := entry.Coherence - 0.1*entry.EntropyCost - 0.05*float64(entry.HopCount)
-			if entry.IsDirect {
-				score += 0.2 // bônus para roteamento direto (teleportação)
-			}
-			if score > bestScore {
-				bestScore = score
-				best = entry
-			}
-		}
-	}
-	return best
-}
-
-// ─── Coherence Router ──────────────────────────────────
-
-// CoherenceRouter implementa o protocolo distribuído de roteamento por Φ_C.
+// CoherenceRouter manages the routing tables and field interactions
 type CoherenceRouter struct {
-	engine       *CosmologyEngine
-	table        *RoutingTable
-	subnetMgr    *CosmicSubnetManager
-	mu           sync.Mutex
+	mu           sync.RWMutex
+	LocalNodeID  string
+	LocalAddress CosmicAddress
+	Routes       map[string]*RoutingTableEntry // key is dest/prefix
+	Neighbors    map[string]*CosmicNode
+	Engine       *CosmologyEngine
+	OAMTransceiver *photonic.OAMTransceiver
 }
 
-func NewCoherenceRouter(engine *CosmologyEngine, subnetMgr *CosmicSubnetManager, nodeID string) *CoherenceRouter {
-	cr := &CoherenceRouter{
-		engine:    engine,
-		table:     NewRoutingTable(nodeID),
-		subnetMgr: subnetMgr,
-	}
-	// Initial routing table build
-	cr.buildInitialTable(nodeID)
-	// Start periodic table updates (background)
-	go cr.periodicUpdate()
-	return cr
-}
-
-// buildInitialTable popula a tabela de roteamento com rotas diretas e de sub‑rede.
-func (cr *CoherenceRouter) buildInitialTable(nodeID string) {
-	engine := cr.engine
-	myNode, ok := engine.Nodes[nodeID]
-	if !ok {
-		return
-	}
-	// Adicionar rotas diretas via canais de teleportação já estabelecidos
-	engine.mu.Lock()
-	defer engine.mu.Unlock()
-	for _, ch := range engine.Channels {
-		if ch.SourceNode == nodeID && ch.IsHealthy() {
-			tgtNode := engine.Nodes[ch.TargetNode]
-			if tgtNode != nil {
-				tgtAddr := NewCosmicAddress(tgtNode.Scale, tgtNode.Coherence, tgtNode.Resonance, 0, 0, 0, tgtNode.Name)
-				coherence := ch.EntanglementFidelity * myNode.Coherence
-				entropyCost := tgtNode.Entropy / math.Max(tgtNode.InformationContent, 1)
-				cr.table.AddRoute(tgtAddr.String(), 256, ch.TargetNode, coherence, entropyCost, 1, ch.ChannelID, true)
-			}
-		}
-	}
-	// Adicionar rotas de sub‑rede agregadas
-	for _, sn := range cr.subnetMgr.subnets {
-		netAddr := sn.NetworkAddress
-		coherence := 0.95 // coerência média da sub‑rede
-		cr.table.AddRoute(fmt.Sprintf("%x", netAddr[:]), sn.PrefixLen, nodeID, coherence, 0.5, 2, "", false)
+func NewCoherenceRouter(engine *CosmologyEngine, localNodeID string, localAddr CosmicAddress) *CoherenceRouter {
+	return &CoherenceRouter{
+		LocalNodeID:  localNodeID,
+		LocalAddress: localAddr,
+		Routes:       make(map[string]*RoutingTableEntry),
+		Neighbors:    make(map[string]*CosmicNode),
+		Engine:       engine,
+		OAMTransceiver: photonic.NewOAMTransceiver(7, 10),
 	}
 }
 
-// periodicUpdate mantém a tabela atualizada, trocando informações de roteamento
-// com vizinhos via ecos de coerência.
-func (cr *CoherenceRouter) periodicUpdate() {
-	ticker := time.NewTicker(30 * time.Second)
-	defer ticker.Stop()
-	for range ticker.C {
-		cr.updateRoutes()
-	}
-}
-
-func (cr *CoherenceRouter) updateRoutes() {
+// AddNeighbor adds a direct quantum link to another node
+func (cr *CoherenceRouter) AddNeighbor(node *CosmicNode) {
 	cr.mu.Lock()
 	defer cr.mu.Unlock()
-	engine := cr.engine
-	engine.mu.Lock()
-	// Para cada canal ativo, pedir a tabela de roteamento do vizinho
-	for _, ch := range engine.Channels {
-		if ch.ChannelState != "ACTIVE" || !ch.IsHealthy() {
-			continue
-		}
-		// Simula troca de tabelas: o vizinho responderia com suas melhores rotas.
-		// Aqui, simplesmente recalcula as rotas diretas baseado na coerência atual.
-		tgtNode := engine.Nodes[ch.TargetNode]
-		if tgtNode == nil {
-			continue
-		}
-		srcNode := engine.Nodes[ch.SourceNode]
-		coherence := ch.EntanglementFidelity * srcNode.Coherence * tgtNode.Coherence
-		entropyCost := tgtNode.Entropy / math.Max(tgtNode.InformationContent, 1)
-		tgtAddr := NewCosmicAddress(tgtNode.Scale, tgtNode.Coherence, tgtNode.Resonance, 0, 0, 0, tgtNode.Name)
-		cr.table.AddRoute(tgtAddr.String(), 256, ch.TargetNode, coherence, entropyCost, 1, ch.ChannelID, true)
-	}
-	engine.mu.Unlock()
+	cr.Neighbors[node.ID] = node
 }
 
-// RoutePacket encaminha um pacote ao seu destino usando a tabela.
-// Retorna o próximo salto e se deve usar teleportação (via canal).
-func (cr *CoherenceRouter) RoutePacket(destAddr CosmicAddress) (nextHop string, channelID string, direct bool, err error) {
-	destStr := destAddr.String()
-	route := cr.table.BestRoute(destStr)
-	if route == nil {
-		return "", "", false, fmt.Errorf("no route to %s", destStr)
+// UpdateRoute adds or updates a route if it has higher coherence/lower entropy
+func (cr *CoherenceRouter) UpdateRoute(dest CosmicAddress, prefixLen int, nextHop string, coherence, entanglement, cost float64) {
+	cr.mu.Lock()
+	defer cr.mu.Unlock()
+
+	key := fmt.Sprintf("%x/%d", dest[:prefixLen/8], prefixLen)
+
+	existing, exists := cr.Routes[key]
+	if !exists || coherence > existing.Coherence || (coherence == existing.Coherence && cost < existing.Cost) {
+		cr.Routes[key] = &RoutingTableEntry{
+			Destination:  dest,
+			PrefixLen:    prefixLen,
+			NextHop:      nextHop,
+			Coherence:    coherence,
+			Entanglement: entanglement,
+			Cost:         cost,
+		}
 	}
-	return route.NextHop, route.ChannelID, route.IsDirect, nil
 }
 
-// ─── Integração com CosmologyEngine ───────────────────
+// CalculatePhiInteraction computes the resonance field $\Phi_C \cdot \Phi_C'$ between two nodes
+func (cr *CoherenceRouter) CalculatePhiInteraction(nodeA, nodeB *CosmicNode) float64 {
+	// A simple interaction model based on coherence and resonance
+	return nodeA.Coherence * nodeB.Coherence * math.Exp(-math.Abs(nodeA.Resonance-nodeB.Resonance))
+}
 
-// Integração do roteador no engine.
-func (ce *CosmologyEngine) EnableCoherenceRouting() *CoherenceRouter {
-	sm := ce.SetupAddressing()
-	// usa o primeiro nó registrado como roteador local
-	var localID string
-	for id := range ce.Nodes {
-		localID = id
-		break
+// FindBestRoute uses the $\Phi_C$ field geometry to find the next hop
+func (cr *CoherenceRouter) FindBestRoute(destAddr CosmicAddress) (*RoutingTableEntry, error) {
+	cr.mu.RLock()
+	defer cr.mu.RUnlock()
+
+	var bestRoute *RoutingTableEntry
+	var bestMatchLen int = -1
+
+	// Longest prefix match with coherence priority
+	for _, route := range cr.Routes {
+		if destAddr.IsInSubnet(route.Destination, route.PrefixLen) {
+			if route.PrefixLen > bestMatchLen {
+				bestMatchLen = route.PrefixLen
+				bestRoute = route
+			} else if route.PrefixLen == bestMatchLen {
+				// Tie-breaker based on coherence
+				if route.Coherence > bestRoute.Coherence {
+					bestRoute = route
+				}
+			}
+		}
 	}
-	router := NewCoherenceRouter(ce, sm, localID)
-	return router
+
+	if bestRoute != nil {
+		return bestRoute, nil
+	}
+	return nil, fmt.Errorf("no route found for %s", destAddr.String())
+}
+
+// PropagateField propagates routing information to neighbors, simulating the emergence of network geometry
+func (cr *CoherenceRouter) PropagateField() {
+	cr.mu.RLock()
+	neighbors := cr.Neighbors
+	cr.mu.RUnlock()
+
+	for _, neighbor := range neighbors {
+		// Calculate the interaction field with this neighbor
+		localNode := cr.Engine.Nodes[cr.LocalNodeID]
+		if localNode == nil {
+			continue
+		}
+
+		phiInteraction := cr.CalculatePhiInteraction(localNode, neighbor)
+
+		// In a real implementation, we would send our routing table to the neighbor,
+		// adjusting the cost based on the phiInteraction (higher interaction = lower cost)
+		// For simulation, we log it
+		// fmt.Printf("Propagating field from %s to %s with interaction strength %.4f\n", cr.LocalNodeID, neighbor.ID, phiInteraction)
+		_ = phiInteraction
+	}
+}
+
+// RoutePacket intercepts packet routing to use the Coherence Field
+func (cr *CoherenceRouter) RoutePacket(packet []byte, destAddr CosmicAddress) error {
+	route, err := cr.FindBestRoute(destAddr)
+	if err != nil {
+		return fmt.Errorf("coherence routing failed: %v", err)
+	}
+
+	fmt.Printf("Coherence Field Routing: Packet to %s via Next Hop %s (Coherence: %.3f)\n", destAddr.String(), route.NextHop, route.Coherence)
+
+	// Delegate transmission to OAM Transceiver for ultra-high capacity link
+	symbols := cr.OAMTransceiver.EncodeSymbols(packet)
+	beam := cr.OAMTransceiver.GenerateCompositeBeam(symbols)
+	err = cr.OAMTransceiver.TransmitBeam(beam)
+	if err != nil {
+	    return fmt.Errorf("OAM transmission failed: %v", err)
+	}
+	return nil
 }
