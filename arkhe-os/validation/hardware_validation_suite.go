@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"arkhe/integration"
+	"arkhe/parser/lfir"
 	"arkhe/sensors"
 )
 
@@ -63,11 +64,11 @@ type HardwareValidationSuite struct {
 	clusterID     string
 
 	// Componentes de validação
-	emSensor        *sensors.GeomagneticSensor
-	metasurface     *sensors.GrapheneMetasurface
-	parser          *integration.DataCenterFrontend
+	emSensor         *sensors.GeomagneticSensor
+	metasurface      *sensors.GrapheneMetasurface
+	parser           *integration.DataCenterFrontend
 	coherenceMonitor *integration.EMCoherenceMonitor
-	gradientMapper  *integration.GradientToActionPotentialMapper
+	gradientMapper   *integration.GradientToActionPotentialMapper
 
 	// Resultados de validação
 	results []HardwareValidationResult
@@ -79,11 +80,11 @@ type HardwareValidationSuite struct {
 
 // ValidationMetrics contém métricas da suite de validação
 type ValidationMetrics struct {
-	TestsExecuted        int64   `json:"tests_executed"`
-	TestsPassed          int64   `json:"tests_passed"`
-	AvgErrorPercent      float64 `json:"avg_error_percent"`
+	TestsExecuted          int64   `json:"tests_executed"`
+	TestsPassed            int64   `json:"tests_passed"`
+	AvgErrorPercent        float64 `json:"avg_error_percent"`
 	TotalValidationTimeSec float64 `json:"total_validation_time_sec"`
-	HardwareUtilization  float64 `json:"hardware_utilization"`
+	HardwareUtilization    float64 `json:"hardware_utilization"`
 }
 
 // ─── CONSTRUTORES ─────────────────────────────────────────
@@ -134,10 +135,10 @@ func (s *HardwareValidationSuite) RunFullValidation(ctx context.Context) ([]Hard
 		allResults = append(allResults, result)
 	} else {
 		allResults = append(allResults, HardwareValidationResult{
-			TestName:      "GPU_Parsing",
-			Passed:        false,
-			Timestamp:     time.Now(),
-			Notes:         fmt.Sprintf("Parsing validation failed: %v", err),
+			TestName:        "GPU_Parsing",
+			Passed:          false,
+			Timestamp:       time.Now(),
+			Notes:           fmt.Sprintf("Parsing validation failed: %v", err),
 			HardwareDetails: map[string]interface{}{"vendor": s.clusterConfig.Vendor},
 		})
 	}
@@ -147,10 +148,10 @@ func (s *HardwareValidationSuite) RunFullValidation(ctx context.Context) ([]Hard
 		allResults = append(allResults, result)
 	} else {
 		allResults = append(allResults, HardwareValidationResult{
-			TestName:      "EM_Coherence_Measurement",
-			Passed:        false,
-			Timestamp:     time.Now(),
-			Notes:         fmt.Sprintf("EM coherence validation failed: %v", err),
+			TestName:  "EM_Coherence_Measurement",
+			Passed:    false,
+			Timestamp: time.Now(),
+			Notes:     fmt.Sprintf("EM coherence validation failed: %v", err),
 		})
 	}
 
@@ -159,10 +160,10 @@ func (s *HardwareValidationSuite) RunFullValidation(ctx context.Context) ([]Hard
 		allResults = append(allResults, result)
 	} else {
 		allResults = append(allResults, HardwareValidationResult{
-			TestName:      "Gradient_to_Potential_Mapping",
-			Passed:        false,
-			Timestamp:     time.Now(),
-			Notes:         fmt.Sprintf("Gradient mapping validation failed: %v", err),
+			TestName:  "Gradient_to_Potential_Mapping",
+			Passed:    false,
+			Timestamp: time.Now(),
+			Notes:     fmt.Sprintf("Gradient mapping validation failed: %v", err),
 		})
 	}
 
@@ -217,7 +218,7 @@ func (s *HardwareValidationSuite) validateGPUParsing(ctx context.Context) (Hardw
 
 	// Parsear saída com DataCenterFrontend
 	parser, _ := integration.NewDataCenterFrontend(s.clusterID, integration.ParserConfig{
-		EnableNvidiaSMI: s.clusterConfig.Vendor == "nvidia",
+		EnableNvidiaSMI:  s.clusterConfig.Vendor == "nvidia",
 		EnableLogParsing: false,
 	})
 	graph, err := parser.Parse(output)
@@ -228,7 +229,7 @@ func (s *HardwareValidationSuite) validateGPUParsing(ctx context.Context) (Hardw
 	// Validar que GPUs foram detectadas corretamente
 	gpuNodes := 0
 	for _, node := range graph.Nodes {
-		if node.Type == "LFIRType" && node.Attributes["type"] == "GPU" {
+		if node.Type == lfir.LFIRType && node.Attributes["type"] == "GPU" {
 			gpuNodes++
 		}
 	}
@@ -306,15 +307,15 @@ func (s *HardwareValidationSuite) validateEMCoherenceMeasurement(ctx context.Con
 	errorPercent := math.Abs(measuredCoherence-expectedCoherence) / expectedCoherence * 100
 
 	result := HardwareValidationResult{
-		TestName:        "EM_Coherence_Measurement",
-		Passed:          errorPercent <= CoherenceValidationThreshold*100,
-		MeasuredValue:   measuredCoherence,
-		ExpectedValue:   expectedCoherence,
-		ErrorPercent:    errorPercent,
-		Timestamp:       time.Now(),
+		TestName:      "EM_Coherence_Measurement",
+		Passed:        errorPercent <= CoherenceValidationThreshold*100,
+		MeasuredValue: measuredCoherence,
+		ExpectedValue: expectedCoherence,
+		ErrorPercent:  errorPercent,
+		Timestamp:     time.Now(),
 		HardwareDetails: map[string]interface{}{
-			"em_sensor_readings": len(emReadings),
-			"metasurface_readings": len(msReadings),
+			"em_sensor_readings":       len(emReadings),
+			"metasurface_readings":     len(msReadings),
 			"measurement_duration_sec": EMMeasurementDuration,
 		},
 		Notes: fmt.Sprintf("Measured Φ_C^DC=%.4f vs expected=%.4f (error=%.2f%%)",
@@ -362,15 +363,15 @@ func (s *HardwareValidationSuite) validateGradientToPotentialMapping(ctx context
 	passed := correlation >= 0.85 && firingRate >= 0.05 && firingRate <= 0.50
 
 	result := HardwareValidationResult{
-		TestName:        "Gradient_to_Potential_Mapping",
-		Passed:          passed,
-		MeasuredValue:   correlation,
-		ExpectedValue:   0.85,
-		ErrorPercent:    math.Max(0, (0.85-correlation)/0.85*100),
-		Timestamp:       time.Now(),
+		TestName:      "Gradient_to_Potential_Mapping",
+		Passed:        passed,
+		MeasuredValue: correlation,
+		ExpectedValue: 0.85,
+		ErrorPercent:  math.Max(0, (0.85-correlation)/0.85*100),
+		Timestamp:     time.Now(),
 		HardwareDetails: map[string]interface{}{
-			"total_samples": GradientMappingSamples,
-			"firing_rate": firingRate,
+			"total_samples":       GradientMappingSamples,
+			"firing_rate":         firingRate,
 			"gradient_norm_range": "[0.01, 2.0]", // faixa típica de normas de gradiente
 		},
 		Notes: fmt.Sprintf("Correlation=%.3f, FiringRate=%.3f (threshold=0.85)",
@@ -393,16 +394,16 @@ func (s *HardwareValidationSuite) validateNodePromotion(ctx context.Context) (Ha
 	promotionTimeSec := 2.5 + 0.5*randFloat() // 2.5-3.0s típico
 
 	result := HardwareValidationResult{
-		TestName:        "Node_Promotion_Simulation",
-		Passed:          promoted && promotionTimeSec <= 5.0,
-		MeasuredValue:   promotionTimeSec,
-		ExpectedValue:   3.0,
-		ErrorPercent:    math.Abs(promotionTimeSec-3.0)/3.0*100,
-		Timestamp:       time.Now(),
+		TestName:      "Node_Promotion_Simulation",
+		Passed:        promoted && promotionTimeSec <= 5.0,
+		MeasuredValue: promotionTimeSec,
+		ExpectedValue: 3.0,
+		ErrorPercent:  math.Abs(promotionTimeSec-3.0) / 3.0 * 100,
+		Timestamp:     time.Now(),
 		HardwareDetails: map[string]interface{}{
-			"measured_coherence": measuredCoherence,
+			"measured_coherence":  measuredCoherence,
 			"promotion_threshold": promotionThreshold,
-			"cluster_id": s.clusterID,
+			"cluster_id":          s.clusterID,
 		},
 		Notes: fmt.Sprintf("Coherence=%.3f → Promoted=%v in %.2fs",
 			measuredCoherence, promoted, promotionTimeSec),
@@ -428,12 +429,12 @@ func (s *HardwareValidationSuite) GetValidationMetrics() ValidationMetrics {
 // ExportValidationReport exporta relatório de validação para auditoria
 func (s *HardwareValidationSuite) ExportValidationReport(outputPath string) error {
 	report := map[string]interface{}{
-		"cluster_id": s.clusterID,
-		"cluster_config": s.clusterConfig,
+		"cluster_id":           s.clusterID,
+		"cluster_config":       s.clusterConfig,
 		"validation_timestamp": time.Now(),
-		"metrics": s.GetValidationMetrics(),
-		"results": s.results,
-		"recommendations": s.generateRecommendations(),
+		"metrics":              s.GetValidationMetrics(),
+		"results":              s.results,
+		"recommendations":      s.generateRecommendations(),
 	}
 
 	// Serializar para JSON

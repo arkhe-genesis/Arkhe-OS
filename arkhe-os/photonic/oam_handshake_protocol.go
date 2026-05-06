@@ -9,11 +9,11 @@ import (
 type OAMHandshake struct {
 	InitiatorID   string
 	ResponderID   string
-	ProposedModes []int      // cargas ℓ propostas
-	ChannelK      int        // canal espectral φ proposto
-	GrapheneEF    float64    // nível de Fermi calculado para metassuperfície
+	ProposedModes []int   // cargas ℓ propostas
+	ChannelK      int     // canal espectral φ proposto
+	GrapheneEF    float64 // nível de Fermi calculado para metassuperfície
 	Timestamp     float64
-	Signature     string     // assinatura criptográfica da proposta
+	Signature     string // assinatura criptográfica da proposta
 }
 
 func (h *OAMHandshake) Validate() error {

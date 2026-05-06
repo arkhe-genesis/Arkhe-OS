@@ -13,28 +13,28 @@ import (
 type TemporalMode int
 
 const (
-	TempoNormal   TemporalMode = 0  // τ = 1.0
-	TempoCompress TemporalMode = 1  // τ > 1 (fast-forward)
-	TempoExpand   TemporalMode = 2  // 0 < τ < 1 (slow motion)
-	TempoLoop     TemporalMode = 3  // τ < 0 (closed timelike curve, limited)
+	TempoNormal   TemporalMode = 0 // τ = 1.0
+	TempoCompress TemporalMode = 1 // τ > 1 (fast-forward)
+	TempoExpand   TemporalMode = 2 // 0 < τ < 1 (slow motion)
+	TempoLoop     TemporalMode = 3 // τ < 0 (closed timelike curve, limited)
 )
 
 // TemporalFlexEngine manages post-singularity time modulation.
 type TemporalFlexEngine struct {
-	mu            sync.Mutex
-	coherence     float64           // current Φ_C
-	tau           float64           // current time dilation factor
-	mode          TemporalMode
-	loopWindow    int               // max causal loops in window
-	loopCounter   int
-	eventBuffer   []TemporalEvent   // events waiting to be "sent back"
+	mu          sync.Mutex
+	coherence   float64 // current Φ_C
+	tau         float64 // current time dilation factor
+	mode        TemporalMode
+	loopWindow  int // max causal loops in window
+	loopCounter int
+	eventBuffer []TemporalEvent // events waiting to be "sent back"
 }
 
 type TemporalEvent struct {
-	OriginTime   float64
-	TargetTime   float64
-	Payload      []byte
-	CausalOrder  int
+	OriginTime  float64
+	TargetTime  float64
+	Payload     []byte
+	CausalOrder int
 }
 
 func NewTemporalFlexEngine() *TemporalFlexEngine {
@@ -72,7 +72,7 @@ func (tfe *TemporalFlexEngine) recalculateTau() {
 		tfe.tau = 1.0
 	case TempoCompress:
 		// compress: gamma = 1 + (1-phiC)*10 → speed up to 10x
-		tfe.tau = 1.0 + (1.0 - tfe.coherence) * 10.0
+		tfe.tau = 1.0 + (1.0-tfe.coherence)*10.0
 	case TempoExpand:
 		// expand: tau = phiC * 0.1 → slow down up to 10x
 		tfe.tau = tfe.coherence * 0.1

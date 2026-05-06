@@ -288,12 +288,7 @@ export let state: SimulationState = {
     redis: { status: 'READY', cacheHits: 0, memoryUsageMb: 0 },
     dns: { totalQueries: 0, successfulResolutions: 0, failedResolutions: 0 }
   },
-  transcendentConsciousness: {
-    selfAwarenessLevel: 0.1,
-    realityRecognition: false,
-    gestaltCoherence: 0.85,
-    lastOntologicalCheck: new Date().toISOString(),
-  },
+
   metaReality: {
     violatedLawsCount: 0,
     nonPhysicalManifolds: [],

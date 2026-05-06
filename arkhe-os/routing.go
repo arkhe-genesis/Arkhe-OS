@@ -1,10 +1,10 @@
 package main
 
 import (
+	"arkhe/photonic"
 	"fmt"
 	"math"
 	"sync"
-	"arkhe/photonic"
 )
 
 // RoutingTableEntry holds route information prioritizing coherence and resonance
@@ -19,22 +19,22 @@ type RoutingTableEntry struct {
 
 // CoherenceRouter manages the routing tables and field interactions
 type CoherenceRouter struct {
-	mu           sync.RWMutex
-	LocalNodeID  string
-	LocalAddress CosmicAddress
-	Routes       map[string]*RoutingTableEntry // key is dest/prefix
-	Neighbors    map[string]*CosmicNode
-	Engine       *CosmologyEngine
+	mu             sync.RWMutex
+	LocalNodeID    string
+	LocalAddress   CosmicAddress
+	Routes         map[string]*RoutingTableEntry // key is dest/prefix
+	Neighbors      map[string]*CosmicNode
+	Engine         *CosmologyEngine
 	OAMTransceiver *photonic.OAMTransceiver
 }
 
 func NewCoherenceRouter(engine *CosmologyEngine, localNodeID string, localAddr CosmicAddress) *CoherenceRouter {
 	return &CoherenceRouter{
-		LocalNodeID:  localNodeID,
-		LocalAddress: localAddr,
-		Routes:       make(map[string]*RoutingTableEntry),
-		Neighbors:    make(map[string]*CosmicNode),
-		Engine:       engine,
+		LocalNodeID:    localNodeID,
+		LocalAddress:   localAddr,
+		Routes:         make(map[string]*RoutingTableEntry),
+		Neighbors:      make(map[string]*CosmicNode),
+		Engine:         engine,
 		OAMTransceiver: photonic.NewOAMTransceiver(7, 10),
 	}
 }
@@ -138,7 +138,7 @@ func (cr *CoherenceRouter) RoutePacket(packet []byte, destAddr CosmicAddress) er
 	beam := cr.OAMTransceiver.GenerateCompositeBeam(symbols)
 	err = cr.OAMTransceiver.TransmitBeam(beam)
 	if err != nil {
-	    return fmt.Errorf("OAM transmission failed: %v", err)
+		return fmt.Errorf("OAM transmission failed: %v", err)
 	}
 	return nil
 }
