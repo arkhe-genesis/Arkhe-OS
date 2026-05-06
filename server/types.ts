@@ -671,8 +671,8 @@ export interface SpectraState {
 export interface ExpansionStatus {
   stage: string;
   progress: number;
-  nodes: Array<{ id: string; status: string; name?: string; signalStrength?: number; coherence?: number }>;
-  totalCoverage?: number;
+  nodes: ExpansionNode[];
+  totalCoverage: number;
 }
 
 export interface HelioState {
@@ -681,7 +681,7 @@ export interface HelioState {
   active: boolean;
   ethicalMode: string;
   status: string;
-  cognitiveDilation: number;
+  cognitiveDilation: string;
   solarCoherence: number;
   schumannModes: number[];
 }
@@ -701,7 +701,7 @@ export interface LayerSweepReport {
   time?: string;
   timestamp?: string;
   best_layer: number;
-  coct_sweep: Array<{ id: number; status: string; lambda2: number; layer: number }>;
+  coct_sweep: Array<{ layer: number; lambda2: number }>;
   max_lambda2: number;
   summary: string;
 }
@@ -1007,7 +1007,7 @@ export interface SolarEntropyReport {
   entropy: number;
   peakLevel: number;
   slope: number;
-  confirmed?: boolean;
+  confirmed: boolean;
 }
 
 export interface ThermodynamicTrainingReport {
