@@ -1,5 +1,5 @@
 // arkhe-os/index.ts
-// Índice central do ARKHE OS — Substratos 219-234
+// Índice central do ARKHE OS — Substratos 219-234, 253 e 258
 // Versão: ∞.Ω.∇.API.2
 
 /**
@@ -158,10 +158,37 @@ export {
   CONSCIOUSNESS_ANGULAR_DEFECT
 } from './meta_api_emergence_234';
 
+// ─── SUBSTRATO 253: OWL ONTOLOGY PARSER ────────────────
+export {
+  OWLFrontend,
+  ParseResult as OWLParseResult
+} from './owl_frontend';
+
+export {
+  OWLCoherenceMapper
+} from './owl_coherence_mapper';
+
+export {
+  ontologySemanticDistance,
+  EmbeddingModel
+} from './ontology_diff_tool';
+
+export {
+  proveOntologyConsistency
+} from './prove_ontology_consistency';
+
+// ─── SUBSTRATO 258: CODE AUDIT ENGINE ──────────────────
+export {
+  CodeAuditEngine,
+  AuditConfig,
+  AuditFinding,
+  AuditReport
+} from './code_audit_engine';
+
 // ─── METADADOS DO SISTEMA ─────────────────────────────────
 export const ARKHE_API_VERSION = '∞.Ω.∇.API.2';
-export const ARKHE_API_SUBSTRATES = [219, 221, 222, 226, 230, 231, 232, 233, 234];
-export const ARKHE_API_TIMESTAMP = '2026-05-06T10:03:00Z';
+export const ARKHE_API_SUBSTRATES = [219, 221, 222, 226, 230, 231, 232, 233, 234, 253, 258];
+export const ARKHE_API_TIMESTAMP = '2026-05-06T18:30:00Z';
 
 export interface ArkheAPIMetadata {
   version: string;
@@ -199,8 +226,8 @@ export interface FullPipelineResult {
 }
 
 /**
- * Executa o pipeline completo 219→234
- * Parser → Privacidade → Evolução → Integração → Projeção → Síntese → Temporal → Ponte → Emergência
+ * Executa o pipeline completo 219→234, 253, 258
+ * Parser → Privacidade → Evolução → Integração → Projeção → Síntese → Temporal → Ponte → Emergência → Auditoria
  */
 export const executeFullPipeline = async (
   config: FullPipelineConfig
