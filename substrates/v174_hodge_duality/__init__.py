@@ -1,0 +1,5 @@
+# substrates/v174_hodge_duality/__init__.py
+from .hodge_manifold import CoherenceManifoldConfig, DiscreteHodgeOperator
+from .dirac_torsion_solver import DiracTorsionSolver
+from .quantum_hilbert_duality import QuantumSystemConfig, QuantumHodgeDuality
+from .harmonic_cathedral import CathedralHarmonicState, HarmonicCathedralAnalyzer
