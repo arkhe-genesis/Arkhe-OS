@@ -22,14 +22,14 @@ class LFIRtoUCSCompiler:
         """Gera constraints de sintaxe para nós/arestas LFIR."""
         constraints = []
 
-        for node in lfir_graph.get('nodes', []):
+        for node in lfir_graph['nodes']:
             # Constraint: node_type ∈ {valid_types}
             valid_types = ['FUNCTION', 'CLASS', 'IMPORT', 'ENDPOINT', 'CONTRACT']
             constraints.append(UCSConstraint(
                 ring="Q[X]",
                 polynomial=f"node_type_{node['id']} * (node_type_{node['id']} - 1) * ...",
                 ideal_generator="0",  # Equality constraint
-                row_selector=f"row_{node.get('line_start', 0)}",
+                row_selector=f"row_{node['line_start']}",
                 lookup_set=valid_types
             ))
 
@@ -38,11 +38,11 @@ class LFIRtoUCSCompiler:
                 ring="Q[X]",
                 polynomial=f"line_end_{node['id']} - line_start_{node['id']}",
                 ideal_generator="0",
-                row_selector=f"row_{node.get('line_start', 0)}"
+                row_selector=f"row_{node['line_start']}"
             ))
 
         # Constraints de arestas: source/target existem
-        for edge in lfir_graph.get('edges', []):
+        for edge in lfir_graph['edges']:
             constraints.append(UCSConstraint(
                 ring="Q[X]",
                 polynomial=f"edge_exists_{edge['source']}_{edge['target']}",
@@ -98,18 +98,12 @@ class LFIRtoUCSCompiler:
 
         return constraints
 
-    def _extract_public_input(self, lfir_graph: Dict, source: str) -> Dict:
-        return {"source_hash": hash(source)}
-
-    def _define_witness_typing(self, lfir_graph: Dict) -> Dict:
-        return {"types": "defined"}
-
     def compile_full_instance(self, lfir_graph: Dict, source: str) -> Dict:
         """Compila instância UCS completa para Zinc+."""
         return {
             "index": {
-                "n": lfir_graph.get('num_rows', 100),  # número de linhas/rows
-                "c": lfir_graph.get('num_columns', 10),  # número de colunas/witness
+                "n": lfir_graph['num_rows'],  # número de linhas/rows
+                "c": lfir_graph['num_columns'],  # número de colunas/witness
                 "q": [2, self.prime_p],  # campos: F2 para bits, Fp para ints
                 "B": 32,  # bit-size bound para coeficientes
                 "d": [32, 1],  # degree bounds: Q[X] degree 32, Fp[X] degree 1
@@ -122,3 +116,9 @@ class LFIRtoUCSCompiler:
             "public_input": self._extract_public_input(lfir_graph, source),
             "witness_typing": self._define_witness_typing(lfir_graph),
         }
+
+    def _extract_public_input(self, lfir_graph: Dict, source: str) -> Dict:
+        return {}
+
+    def _define_witness_typing(self, lfir_graph: Dict) -> Dict:
+        return {}

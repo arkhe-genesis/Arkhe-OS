@@ -1,7 +1,7 @@
 from typing import Dict, List, Tuple
 from dataclasses import dataclass
 import numpy as np
-from .diffusion_proof_engine import ZipPlusProof
+from arkhe_os.crypto.zinc.diffusion_proof_engine import ZipPlusProof
 
 @dataclass
 class LayerProof:
@@ -52,8 +52,8 @@ class MetaEmergenceComposer:
             w * c * np.exp(-lambda_sync * d)
             for w, c, d in zip(weights, coherence_values, sync_deltas)
         )
-        Z = sum(weights) if sum(weights) > 0 else 1.0  # Fator de normalização
-        global_coherence = weighted_sum / Z
+        Z = sum(weights)  # Fator de normalização
+        global_coherence = weighted_sum / Z if Z > 0 else 0
 
         # 3. Gerar prova sumcheck para agregação ponderada
         aggregation_proof = self._generate_sumcheck_proof(

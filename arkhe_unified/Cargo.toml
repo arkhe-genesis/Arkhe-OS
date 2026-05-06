@@ -20,12 +20,24 @@ python-bindings = ["pyo3"]
 cosmic-scale = []
 experimental = []
 production = []
+hodge-duality = []
+quantum-hodge-realtime = []
+fpga-dirac-acceleration = []
+federated-quantum-duality = ["libp2p"]
+calabi-yau-generalization = ["num-complex"]
+torsion-computational-resource = ["numpy"]
 
 # All features combined for full build
 full = [
     "std", "tokio-runtime", "serde-support",
     "quantum-hardware", "python-bindings",
-    "cosmic-scale", "experimental", "production"
+    "cosmic-scale", "experimental", "production",
+    "hodge-duality",
+    "quantum-hodge-realtime",
+    "fpga-dirac-acceleration",
+    "federated-quantum-duality",
+    "calabi-yau-generalization",
+    "torsion-computational-resource"
 ]
 
 [dependencies]
@@ -64,6 +76,10 @@ numpy = { version = "0.21", optional = true }
 # Python bindings (optional)
 pyo3 = { version = "0.21", features = ["extension-module"], optional = true }
 
+# Novas dependencias (optional) para v175
+num-complex = { version = "0.4", optional = true }
+libp2p = { version = "0.52", optional = true }
+
 # Cosmic/astronomy calculations (optional)
 # astronomy-sys = { version = "0.1", optional = true }
 # coordinate-transform = { version = "0.3", optional = true }
@@ -77,6 +93,7 @@ config = { version = "0.14", features = ["yaml"] }
 # Metrics and monitoring
 metrics = "0.23"
 metrics-exporter-prometheus = { version = "0.15", optional = true }
+nalgebra = "0.34.2"
 
 [dev-dependencies]
 criterion = "0.5"

@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "keys": {
+    "20260505_044726_6b6a4835": {
+      "key_id": "20260505_044726_6b6a4835",
+      "key_hex": "ea2bd43387048f5a772773a9e9c5ae62abbf9eeea8ae66870377d6b11ec76bd3",
+      "valid_from": 1777956446.7555375,
+      "valid_until": 1777960109.923146,
+      "is_active": true,
+      "created_by": "auto",
+      "comment": "Gera\u00e7\u00e3o manual"
+    },
+    "20260505_044829_b958d7df": {
+      "key_id": "20260505_044829_b958d7df",
+      "key_hex": "b0ede7efd7a66f3140e1971d25b918a323917eed0f6af371ede4c7dae98bbb98",
+      "valid_from": 1777956509.923146,
+      "valid_until": null,
+      "is_active": true,
+      "created_by": "rotation_script",
+      "comment": "Rota\u00e7\u00e3o via CLI"
+    }
+  },
+  "last_modified": 1777956509.9236972
+}

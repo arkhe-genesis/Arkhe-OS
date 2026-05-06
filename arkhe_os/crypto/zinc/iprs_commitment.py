@@ -65,13 +65,13 @@ class IPRSCommitment:
 
             commitments.append({
                 "degree": j,
-                "encoded_vector": encoded.tolist() if isinstance(encoded, np.ndarray) else encoded,
+                "encoded_vector": encoded.tolist(),
                 "norm_bound": self._compute_norm_bound(coeffs),
             })
 
             # Opening data para provas futuras
             openings.append({
-                "original_coeffs": coeffs.tolist() if isinstance(coeffs, np.ndarray) else coeffs,
+                "original_coeffs": coeffs.tolist(),
                 "encoding_randomness": None,  # Determinístico para now
             })
 
@@ -138,7 +138,7 @@ class IPRSCommitment:
         depth = self.config.depth
 
         bound = max_coeff * (q / 2)**(depth + 1) * k
-        return bound
+        return float(bound)
 
     def verify_opening(self, commitment: Dict, opening: Dict,
                       evaluation_point: np.ndarray, claimed_value) -> bool:
