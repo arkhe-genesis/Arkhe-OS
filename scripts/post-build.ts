@@ -1,19 +1,8 @@
-/**
- * @license
- * Copyright 2025 Google LLC
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
 const BUILD_DIR = path.join(process.cwd(), 'build');
 
-/**
- * Writes content to a file.
- * @param filePath The path to the file.
- * @param content The content to write.
- */
 function writeFile(filePath: string, content: string): void {
   fs.writeFileSync(filePath, content, 'utf-8');
 }
@@ -26,6 +15,7 @@ function main(): void {
 
   // Create i18n mock
   const i18nDir = path.join(BUILD_DIR, devtoolsFrontEndCorePath, 'i18n');
+  fs.mkdirSync(i18nDir, {recursive: true});
   const localesFile = path.join(i18nDir, 'locales.js');
   const localesContent = `
 export const LOCALES = [
@@ -106,7 +96,9 @@ function copyDevToolsDescriptionFiles() {
     'third_party',
     'issue-descriptions',
   );
-  fs.cpSync(sourceDir, destDir, {recursive: true});
+  if (fs.existsSync(sourceDir)) {
+      fs.cpSync(sourceDir, destDir, {recursive: true});
+  }
 }
 
 main();
