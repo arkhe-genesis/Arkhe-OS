@@ -68,6 +68,7 @@
     "@types/yargs": "^17.0.33",
     "@typescript-eslint/eslint-plugin": "^8.43.0",
     "@typescript-eslint/parser": "^8.43.0",
+    "@vscode/test-electron": "^2.5.2",
     "@webgpu/types": "^0.1.69",
     "chrome-devtools-frontend": "1.0.1622369",
     "core-js": "3.49.0",
