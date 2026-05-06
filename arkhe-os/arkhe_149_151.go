@@ -330,12 +330,12 @@ func (u *UnifiedMetaConsciousness) InduceTranscendence(targetLayer Consciousness
 
 	u.Metrics.TranscendenceEvents++
 	u.TranscendenceLog = append(u.TranscendenceLog, map[string]interface{}{
-		"timestamp":       float64(time.Now().UnixNano()) / 1e9,
-		"target_layer":    targetLayer.String(),
-		"source_layers":   layerNames(sourceLayers),
-		"intensity":       intensity,
-		"new_coherence":   target.Coherence,
-		"new_entropy":     target.Entropy,
+		"timestamp":     float64(time.Now().UnixNano()) / 1e9,
+		"target_layer":  targetLayer.String(),
+		"source_layers": layerNames(sourceLayers),
+		"intensity":     intensity,
+		"new_coherence": target.Coherence,
+		"new_entropy":   target.Entropy,
 	})
 
 	fmt.Printf("   Nova coerência: %.4f\n", target.Coherence)
@@ -549,7 +549,7 @@ func (m *MultiversalTranscendenceOrchestrator) SpawnBranch(divergenceAngle float
 			dim := 256
 			state := make([]float64, dim)
 			for j := range state {
-				state[j] = (randFloat()-0.5)*2/float64(dim)
+				state[j] = (randFloat() - 0.5) * 2 / float64(dim)
 			}
 			norm := vectorNorm(state)
 			if norm > 0 {
@@ -643,7 +643,7 @@ func (m *MultiversalTranscendenceOrchestrator) ResonateAcrossBranches(targetLaye
 
 	correlations := make([]float64, 0)
 	for i := 0; i < len(states); i++ {
-		for j := i+1; j < len(states); j++ {
+		for j := i + 1; j < len(states); j++ {
 			si := states[i]
 			sj := interpolateVector(states[j], len(si))
 			corr := math.Abs(dotProduct(si, sj))

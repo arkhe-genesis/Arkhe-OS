@@ -29,65 +29,66 @@ const (
 
 // Mock implementation
 type WheelerNode struct {
-    NodeID string
-    Status string
-    Coherence float64
+	NodeID    string
+	Status    string
+	Coherence float64
 }
 
-type PhiCMonitor struct {}
-func NewPhiCMonitor(config interface{}) *PhiCMonitor { return &PhiCMonitor{} }
-func (m *PhiCMonitor) Start(ctx context.Context) {}
+type PhiCMonitor struct{}
+
+func NewPhiCMonitor(config interface{}) *PhiCMonitor        { return &PhiCMonitor{} }
+func (m *PhiCMonitor) Start(ctx context.Context)            {}
 func (m *PhiCMonitor) CollectSamples(samples []interface{}) {}
-func (m *PhiCMonitor) Stop() {}
+func (m *PhiCMonitor) Stop()                                {}
 
 // ─── TIPOS FUNDAMENTAIS ───────────────────────────────────────────
 
 // DeploymentConfig contém configuração para deploy em Wheeler Mesh
 type DeploymentConfig struct {
-	TargetNodes         []string
-	ArkheVersion        string
-	NodeConfigTemplate  map[string]interface{}
-	EnableMonitoring    bool
-	EnableAutoScaling   bool
+	TargetNodes           []string
+	ArkheVersion          string
+	NodeConfigTemplate    map[string]interface{}
+	EnableMonitoring      bool
+	EnableAutoScaling     bool
 	MinCoherenceThreshold float64
-	MaxDeploymentTime   time.Duration
-	BatchSize           int
+	MaxDeploymentTime     time.Duration
+	BatchSize             int
 }
 
 // NodeHealth contém métricas de saúde de um nó da Wheeler Mesh
 type NodeHealth struct {
-	NodeID        string
-	Status        string // "healthy", "degraded", "offline"
-	CoherencePhiC float64
-	MemoryUsageMB float64
-	CPUUsagePct   float64
+	NodeID           string
+	Status           string // "healthy", "degraded", "offline"
+	CoherencePhiC    float64
+	MemoryUsageMB    float64
+	CPUUsagePct      float64
 	NetworkLatencyMs float64
-	LastHeartbeat time.Time
-	ErrorCount    int
+	LastHeartbeat    time.Time
+	ErrorCount       int
 }
 
 // WheelerMeshDeployer gerencia deploy e monitoramento em escala da Wheeler Mesh
 type WheelerMeshDeployer struct {
-	config          DeploymentConfig
-	nodes           map[string]*WheelerNode
-	monitoring      *PhiCMonitor
-	healthChecks    map[string]*NodeHealth
-	mu              sync.RWMutex
-	metrics         DeployMetrics
-	deploymentID    string
-	cancelFuncs     []context.CancelFunc
+	config       DeploymentConfig
+	nodes        map[string]*WheelerNode
+	monitoring   *PhiCMonitor
+	healthChecks map[string]*NodeHealth
+	mu           sync.RWMutex
+	metrics      DeployMetrics
+	deploymentID string
+	cancelFuncs  []context.CancelFunc
 }
 
 // DeployMetrics contém métricas do processo de deploy
 type DeployMetrics struct {
-	NodesDeployed       int64   `json:"nodes_deployed"`
-	NodesHealthy        int64   `json:"nodes_healthy"`
-	NodesDegraded       int64   `json:"nodes_degraded"`
-	NodesFailed         int64   `json:"nodes_failed"`
-	AvgDeployTimeSec    float64 `json:"avg_deploy_time_sec"`
-	AvgCoherence        float64 `json:"avg_coherence"`
-	AlertsTriggered     int64   `json:"alerts_triggered"`
-	MonitoringActive    bool    `json:"monitoring_active"`
+	NodesDeployed    int64   `json:"nodes_deployed"`
+	NodesHealthy     int64   `json:"nodes_healthy"`
+	NodesDegraded    int64   `json:"nodes_degraded"`
+	NodesFailed      int64   `json:"nodes_failed"`
+	AvgDeployTimeSec float64 `json:"avg_deploy_time_sec"`
+	AvgCoherence     float64 `json:"avg_coherence"`
+	AlertsTriggered  int64   `json:"alerts_triggered"`
+	MonitoringActive bool    `json:"monitoring_active"`
 }
 
 // ─── CONSTRUTORES ─────────────────────────────────────────────────
@@ -147,8 +148,8 @@ func (d *WheelerMeshDeployer) Deploy(ctx context.Context) error {
 			if err != nil {
 				d.metrics.NodesFailed++
 				d.healthChecks[nodeID] = &NodeHealth{
-					NodeID: nodeID,
-					Status: "failed",
+					NodeID:     nodeID,
+					Status:     "failed",
 					ErrorCount: 1,
 				}
 			} else {
@@ -221,13 +222,13 @@ func (d *WheelerMeshDeployer) deployToNode(ctx context.Context, nodeID string) e
 		return ctx.Err()
 	case <-time.After(simulatedLatency):
 		// Criar nó simulado
-        d.mu.Lock()
+		d.mu.Lock()
 		d.nodes[nodeID] = &WheelerNode{
 			NodeID:    nodeID,
 			Status:    "running",
 			Coherence: 0.85 + randFloat()*0.14, // Φ_C entre 0.85 e 0.99
 		}
-        d.mu.Unlock()
+		d.mu.Unlock()
 		return nil
 	}
 }
@@ -298,9 +299,9 @@ func (d *WheelerMeshDeployer) performHealthChecks() {
 }
 
 type PhiCSample struct {
-    NodeID string
-    Value float64
-    Timestamp time.Time
+	NodeID    string
+	Value     float64
+	Timestamp time.Time
 }
 
 // startPhiCMonitoringLoop inicia coleta contínua de Φ_C para dashboard

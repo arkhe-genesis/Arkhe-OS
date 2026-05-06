@@ -10,13 +10,13 @@ import (
 
 // Dummy types for references not provided
 type CosmicNode struct {
-	ID        string
-	Name      string
-	Coherence float64
-	Resonance float64
-	Scale     int
-	Address   CosmicAddress
-	Reputation float64
+	ID          string
+	Name        string
+	Coherence   float64
+	Resonance   float64
+	Scale       int
+	Address     CosmicAddress
+	Reputation  float64
 	CurrentLoad float64
 	MaxCapacity float64
 	UptimeHours float64
@@ -28,10 +28,10 @@ func NewCosmicAddress(scale int, coherence, resonance float64, branchAngle float
 	return CosmicAddress{}
 }
 
-func (ca CosmicAddress) Scale() int { return 0 }
+func (ca CosmicAddress) Scale() int         { return 0 }
 func (ca CosmicAddress) Coherence() float64 { return 0.5 }
-func (ca CosmicAddress) BranchID() uint64 { return 0 }
-func (ca CosmicAddress) NodeHash() []byte { return make([]byte, 12) }
+func (ca CosmicAddress) BranchID() uint64   { return 0 }
+func (ca CosmicAddress) NodeHash() []byte   { return make([]byte, 12) }
 
 // ─── CONSTANTES DO CAMPO DE COERÊNCIA ─────────────────────────────────
 
@@ -53,13 +53,13 @@ const (
 
 // CoherencePotentialField modela Φ_C(x,t) como campo escalar contínuo
 type CoherencePotentialField struct {
-	nodes          map[string]*CosmicNode // referência aos nós da rede
-	addressMapper  *AddressSpaceMapper              // mapeamento CosmicAddress → ℝ³
-	kernelWidth    float64                          // σ do kernel Gaussiano
-	cache          *FieldCache                      // cache de avaliações recentes
-	mu             sync.RWMutex
-	lastUpdate     time.Time
-	metrics        FieldMetrics
+	nodes         map[string]*CosmicNode // referência aos nós da rede
+	addressMapper *AddressSpaceMapper    // mapeamento CosmicAddress → ℝ³
+	kernelWidth   float64                // σ do kernel Gaussiano
+	cache         *FieldCache            // cache de avaliações recentes
+	mu            sync.RWMutex
+	lastUpdate    time.Time
+	metrics       FieldMetrics
 }
 
 // FieldMetrics contém métricas do campo de coerência
@@ -266,7 +266,7 @@ func (f *CoherencePotentialField) FindNextHop(
 	currentAddr := f.nodes[currentNodeID].Address
 	bestHop := ""
 	bestScore := -math.MaxFloat64
-    _ = currentAddr
+	_ = currentAddr
 
 	for _, neighborID := range neighbors {
 		neighbor := f.nodes[neighborID]
@@ -286,7 +286,7 @@ func (f *CoherencePotentialField) FindNextHop(
 		// Entropia estimada do vizinho
 
 		// Score combinado (pesos ajustáveis)
-		score := 0.4*neighborPhi - 0.3*distToDest - 0.3*(1.0 - neighbor.Coherence)
+		score := 0.4*neighborPhi - 0.3*distToDest - 0.3*(1.0-neighbor.Coherence)
 
 		if score > bestScore {
 			bestScore = score
@@ -315,9 +315,9 @@ func gaussianKernel(distance, sigma float64) float64 {
 func computeNodeWeight(node *CosmicNode) float64 {
 	// Peso baseado em: reputação, carga, estabilidade temporal
 	reputationWeight := node.Reputation // [0, 1]
-    if node.MaxCapacity == 0 {
-        node.MaxCapacity = 1
-    }
+	if node.MaxCapacity == 0 {
+		node.MaxCapacity = 1
+	}
 	loadFactor := 1.0 - math.Min(1.0, node.CurrentLoad/node.MaxCapacity)
 	stabilityFactor := 0.9 + 0.1*node.UptimeHours/(24*30) // estabiliza após 30 dias
 
@@ -346,7 +346,7 @@ func vectorNorm(v [3]float64) float64 {
 // addressDistance calcula distância normalizada entre dois CosmicAddress
 func addressDistance(a, b CosmicAddress) float64 {
 	// Distância baseada em: diferença de escala, coerência, ramo, e ID
-	scaleDiff := math.Abs(float64(a.Scale()) - float64(b.Scale())) / 13.0 // 13 escalas
+	scaleDiff := math.Abs(float64(a.Scale())-float64(b.Scale())) / 13.0 // 13 escalas
 	cohDiff := math.Abs(a.Coherence() - b.Coherence())
 	branchDiff := branchDistance(a.BranchID(), b.BranchID())
 	idDiff := float64(hammingDistance(a.NodeHash(), b.NodeHash())) / 96.0 // 96 bits de ID

@@ -11,6 +11,15 @@ const (
 )
 
 // LFIRNode represents a node in the intermediate representation graph.
+type LFIRNodeType int
+
+const (
+	LFIRModule LFIRNodeType = iota
+	LFIRType
+	LFIRMetadata
+	LFIROperation
+)
+
 type LFIRNode struct {
 	ID         string
 	Type       LFIRNodeType
@@ -26,6 +35,14 @@ func NewLFIRNode(nodeType LFIRNodeType, name string, namespace string) *LFIRNode
 		Type:       nodeType,
 		Name:       name,
 		Namespace:  namespace,
+	Attributes map[string]interface{}
+}
+
+func NewLFIRNode(nodeType LFIRNodeType, name, context string) *LFIRNode {
+	return &LFIRNode{
+		ID:         name + "_" + context,
+		Type:       nodeType,
+		Name:       name,
 		Attributes: make(map[string]interface{}),
 	}
 }
@@ -47,6 +64,19 @@ func NewLFIRGraph() *LFIRGraph {
 }
 
 // AddNode adds a node to the graph.
+type LFIRGraph struct {
+	Nodes     map[string]*LFIRNode
+	Edges     map[string][]string
+	RootNodes []string
+}
+
+func NewLFIRGraph() *LFIRGraph {
+	return &LFIRGraph{
+		Nodes: make(map[string]*LFIRNode),
+		Edges: make(map[string][]string),
+	}
+}
+
 func (g *LFIRGraph) AddNode(node *LFIRNode) {
 	g.Nodes[node.ID] = node
 }

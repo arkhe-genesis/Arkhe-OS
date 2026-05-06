@@ -8,7 +8,6 @@ import (
 	"os"
 	"sync"
 	"time"
-
 	// "github.com/arkhe-os/arkhe/ai" - removed as it is not used in this file
 )
 
@@ -44,7 +43,7 @@ type FHEParameters struct {
 type EncryptedGradient struct {
 	GradientID      string
 	Scheme          string
-	Ciphertext      []byte           // dados criptografados (serializados)
+	Ciphertext      []byte // dados criptografados (serializados)
 	Metadata        map[string]interface{}
 	ContributorHash string
 	Timestamp       time.Time
@@ -53,10 +52,10 @@ type EncryptedGradient struct {
 
 // DPParameters contém parâmetros de privacidade diferencial composicional
 type DPParameters struct {
-	Epsilon       float64 // orçamento de privacidade ε
-	Delta         float64 // probabilidade de falha δ
-	CompositionMethod string // "basic", "advanced", "zero-concentrated"
-	QueriesComposed int   // número de queries compostas
+	Epsilon           float64 // orçamento de privacidade ε
+	Delta             float64 // probabilidade de falha δ
+	CompositionMethod string  // "basic", "advanced", "zero-concentrated"
+	QueriesComposed   int     // número de queries compostas
 }
 
 // FederatedFHEEngine gerencia agregação federada com criptografia homomórfica
@@ -64,9 +63,9 @@ type FederatedFHEEngine struct {
 	mu sync.RWMutex
 
 	// Configuração criptográfica
-	params          FHEParameters
-	localPublicKey  []byte
-	localSecretKey  []byte // mantido seguro, nunca transmitido
+	params         FHEParameters
+	localPublicKey []byte
+	localSecretKey []byte // mantido seguro, nunca transmitido
 
 	// Cache de chaves públicas de contribuidores
 	publicKeyCache map[string][]byte
@@ -93,19 +92,19 @@ type FHEConfig struct {
 
 // FHEMetrics contém métricas do motor FHE
 type FHEMetrics struct {
-	GradientsEncrypted    int64   `json:"gradients_encrypted"`
-	GradientsAggregated   int64   `json:"gradients_aggregated"`
-	AvgEncryptionTimeMs   float64 `json:"avg_encryption_time_ms"`
-	AvgAggregationTimeMs  float64 `json:"avg_aggregation_time_ms"`
-	PrivacyBudgetSpent    float64 `json:"privacy_budget_spent"`
-	SecurityLevelBits     int     `json:"security_level_bits"`
+	GradientsEncrypted   int64   `json:"gradients_encrypted"`
+	GradientsAggregated  int64   `json:"gradients_aggregated"`
+	AvgEncryptionTimeMs  float64 `json:"avg_encryption_time_ms"`
+	AvgAggregationTimeMs float64 `json:"avg_aggregation_time_ms"`
+	PrivacyBudgetSpent   float64 `json:"privacy_budget_spent"`
+	SecurityLevelBits    int     `json:"security_level_bits"`
 }
 
 // HomomorphicAggregator implementa operações homomórficas para agregação
 type HomomorphicAggregator struct {
-	scheme          string
-	rotationKeys    map[string][]byte // para operações de rotação (SIMD)
-	relinearizationKeys []byte      // para reduzir tamanho de ciphertext após multiplicação
+	scheme              string
+	rotationKeys        map[string][]byte // para operações de rotação (SIMD)
+	relinearizationKeys []byte            // para reduzir tamanho de ciphertext após multiplicação
 }
 
 // ─── CONSTRUTORES ─────────────────────────────────────────
@@ -129,7 +128,7 @@ func NewFederatedFHEEngine(
 
 	// Inicializar agregador homomórfico
 	engine.aggregator = &HomomorphicAggregator{
-		scheme: params.Scheme,
+		scheme:       params.Scheme,
 		rotationKeys: make(map[string][]byte),
 	}
 
@@ -186,10 +185,10 @@ func (e *FederatedFHEEngine) EncryptGradient(
 	var dpParams *DPParameters
 	if e.config.EnableDPComposition {
 		dpParams = &DPParameters{
-			Epsilon: e.config.DefaultEpsilon,
-			Delta:   e.config.DefaultDelta,
+			Epsilon:           e.config.DefaultEpsilon,
+			Delta:             e.config.DefaultDelta,
 			CompositionMethod: "advanced",
-			QueriesComposed: 1, // será incrementado na composição
+			QueriesComposed:   1, // será incrementado na composição
 		}
 		// Adicionar ruído de Gaussian para DP
 		sensitivity := computeL2Sensitivity(gradient)
@@ -365,15 +364,15 @@ func (e *FederatedFHEEngine) GetFHEMetrics() FHEMetrics {
 // ExportPrivacyAudit exporta auditoria de privacidade para compliance
 func (e *FederatedFHEEngine) ExportPrivacyAudit(outputPath string) error {
 	audit := map[string]interface{}{
-		"timestamp": time.Now(),
+		"timestamp":           time.Now(),
 		"security_level_bits": e.params.SecurityLevel,
 		"privacy_budget": map[string]interface{}{
-			"epsilon_spent": e.metrics.PrivacyBudgetSpent,
-			"epsilon_remaining": math.Max(0, DPCompositionBudget - e.metrics.PrivacyBudgetSpent),
+			"epsilon_spent":      e.metrics.PrivacyBudgetSpent,
+			"epsilon_remaining":  math.Max(0, DPCompositionBudget-e.metrics.PrivacyBudgetSpent),
 			"composition_method": "advanced",
 		},
 		"operations": map[string]int64{
-			"encryptions": e.metrics.GradientsEncrypted,
+			"encryptions":  e.metrics.GradientsEncrypted,
 			"aggregations": e.metrics.GradientsAggregated,
 		},
 		"parameters": e.params,
@@ -490,7 +489,6 @@ func computeL2Norm(vec []float64) float64 {
 	return math.Sqrt(sum)
 }
 
-
 func randNormal(mean, stdDev float64) float64 {
 	// Box-Muller transform
 	u1 := randFloat()
@@ -502,7 +500,6 @@ func randNormal(mean, stdDev float64) float64 {
 func randFloat() float64 {
 	return float64(time.Now().UnixNano()%10000) / 10000.0
 }
-
 
 func composeDPParameters(gradients []*EncryptedGradient, baseEpsilon, baseDelta float64) *DPParameters {
 	// Composição avançada de privacidade diferencial
@@ -517,9 +514,9 @@ func composeDPParameters(gradients []*EncryptedGradient, baseEpsilon, baseDelta 
 	deltaTotal := float64(k)*baseDelta + 1e-7
 
 	return &DPParameters{
-		Epsilon: epsilonTotal,
-		Delta:   deltaTotal,
+		Epsilon:           epsilonTotal,
+		Delta:             deltaTotal,
 		CompositionMethod: "advanced",
-		QueriesComposed: k,
+		QueriesComposed:   k,
 	}
 }
