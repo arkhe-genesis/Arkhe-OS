@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`OpenAPIParser 📸 Snapshot of LFIR graph 1`] = `
+{
+  "edges": [
+    {
+      "relation": "method_of",
+      "source": "get_/users",
+      "target": "get_/users_func",
+    },
+  ],
+  "metadata": ObjectContaining {
+    "parseTimestamp": Any<Date>,
+  },
+  "nodes": [
+    LFIRNode {
+      "attributes": {
+        "method": "get",
+        "path": "/users",
+      },
+      "id": "get_/users",
+      "name": "get_/users",
+      "namespace": "openapi",
+      "type": "endpoint",
+    },
+    LFIRNode {
+      "attributes": {},
+      "id": "get_/users_func",
+      "name": "get_/users_func",
+      "namespace": "openapi",
+      "type": "function",
+    },
+  ],
+  "rootNodes": [],
+}
+`;
