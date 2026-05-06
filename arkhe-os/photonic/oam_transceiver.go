@@ -46,30 +46,30 @@ type OAMMode struct {
 
 // OAMSymbol representa um símbolo modulado em um modo OAM.
 type OAMSymbol struct {
-	Mode     *OAMMode    // modo OAM associado
-	SymbolIQ complex128  // ponto da constelação (ex: QPSK, 16-QAM)
-	Timestamp float64   // timestamp de transmissão
+	Mode      *OAMMode   // modo OAM associado
+	SymbolIQ  complex128 // ponto da constelação (ex: QPSK, 16-QAM)
+	Timestamp float64    // timestamp de transmissão
 }
 
 // OAMCompositeBeam é a superposição coerente de múltiplos modos OAM coaxiais.
 type OAMCompositeBeam struct {
-	Modes      []*OAMMode     // modos ativos neste feixe composto
-	Symbols    []complex128   // símbolo modulado por modo
-	Wavelength float64        // comprimento de onda central do feixe
+	Modes        []*OAMMode   // modos ativos neste feixe composto
+	Symbols      []complex128 // símbolo modulado por modo
+	Wavelength   float64      // comprimento de onda central do feixe
 	Polarization string       // "linear", "circular_L", "circular_R"
-	Timestamp  float64        // timestamp de geração do feixe
+	Timestamp    float64      // timestamp de geração do feixe
 }
 
 // OAMTransceiver implementa o protocolo de comunicação OAM baseado em φ.
 type OAMTransceiver struct {
-	mu               sync.RWMutex
-	ActiveModes      []*OAMMode        // modos OAM configurados para transmissão/recepção
-	DefaultWavelength float64          // comprimento de onda padrão
-	ModulationScheme string           // "QPSK", "16QAM", "64QAM"
-	SNRPerMode       float64          // SNR estimado por modo (dB)
-	ChannelCapacity  float64          // capacidade total calculada (bits/s/Hz)
-	receiveBuffer    chan OAMSymbol   // buffer para símbolos recebidos
-	transmitQueue    chan OAMSymbol   // fila para símbolos a transmitir
+	mu                sync.RWMutex
+	ActiveModes       []*OAMMode     // modos OAM configurados para transmissão/recepção
+	DefaultWavelength float64        // comprimento de onda padrão
+	ModulationScheme  string         // "QPSK", "16QAM", "64QAM"
+	SNRPerMode        float64        // SNR estimado por modo (dB)
+	ChannelCapacity   float64        // capacidade total calculada (bits/s/Hz)
+	receiveBuffer     chan OAMSymbol // buffer para símbolos recebidos
+	transmitQueue     chan OAMSymbol // fila para símbolos a transmitir
 }
 
 // ─── FUNÇÕES AUXILIARES DA GRADE ESPECTRAL φ ─────────────────────
@@ -141,12 +141,12 @@ func NewOAMTransceiver(numModes int, baseK int) *OAMTransceiver {
 	}
 
 	return &OAMTransceiver{
-		ActiveModes:      modes,
+		ActiveModes:       modes,
 		DefaultWavelength: DefaultWavelength,
-		ModulationScheme: "QPSK",
-		SNRPerMode:       30.0, // 30 dB típico para enlace óptico livre
-		receiveBuffer:    make(chan OAMSymbol, 1000),
-		transmitQueue:    make(chan OAMSymbol, 1000),
+		ModulationScheme:  "QPSK",
+		SNRPerMode:        30.0, // 30 dB típico para enlace óptico livre
+		receiveBuffer:     make(chan OAMSymbol, 1000),
+		transmitQueue:     make(chan OAMSymbol, 1000),
 	}
 }
 
@@ -273,8 +273,8 @@ func (t *OAMTransceiver) DemultiplexOAM(
 	defer t.mu.RUnlock()
 
 	results := make([]complex128, len(t.ActiveModes))
-	steps := 64    // passos azimutais para integração
-	rSteps := 10   // passos radiais
+	steps := 64  // passos azimutais para integração
+	rSteps := 10 // passos radiais
 	dr := DefaultBeamWaist / float64(rSteps)
 
 	for i, mode := range t.ActiveModes {
@@ -379,14 +379,14 @@ func (t *OAMTransceiver) GetTransceiverStatus() map[string]interface{} {
 	}
 
 	return map[string]interface{}{
-		"active_modes":        len(t.ActiveModes),
-		"modulation_scheme":   t.ModulationScheme,
-		"snr_per_mode_dB":     t.SNRPerMode,
+		"active_modes":           len(t.ActiveModes),
+		"modulation_scheme":      t.ModulationScheme,
+		"snr_per_mode_dB":        t.SNRPerMode,
 		"channel_capacity_bpsHz": t.ChannelCapacity,
-		"default_wavelength_nm": t.DefaultWavelength * 1e9,
-		"modes":               modeInfo,
-		"receive_buffer_size": len(t.receiveBuffer),
-		"transmit_queue_size": len(t.transmitQueue),
+		"default_wavelength_nm":  t.DefaultWavelength * 1e9,
+		"modes":                  modeInfo,
+		"receive_buffer_size":    len(t.receiveBuffer),
+		"transmit_queue_size":    len(t.transmitQueue),
 	}
 }
 
@@ -400,8 +400,8 @@ func (t *OAMTransceiver) UpdateSNR(newSNR_dB float64) {
 		snrLinear := math.Pow(10, newSNR_dB/10)
 		t.ChannelCapacity = 0.0
 		for range t.ActiveModes {
-		    t.ChannelCapacity += math.Log2(1 + snrLinear)
-	    }
+			t.ChannelCapacity += math.Log2(1 + snrLinear)
+		}
 	}
 }
 
@@ -415,7 +415,7 @@ func ConfigureGrapheneMetasurface(k int) (fermiLevel_eV float64, reflectance flo
 	// Modelo simplificado de reflectância: pico em E_F sintonizado
 	// Reflectância máxima ~95% quando sintonizado, cai para ~10% fora do pico
 	detuning := math.Abs(float64(k - ReferenceChannelK))
-	reflectance = 0.95 * math.Exp(-detuning*0.5) + 0.05
+	reflectance = 0.95*math.Exp(-detuning*0.5) + 0.05
 
 	return fermiLevel_eV, reflectance
 }

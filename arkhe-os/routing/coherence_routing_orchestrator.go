@@ -4,35 +4,42 @@ package routing
 import (
 	"context"
 	"fmt"
+	"math"
 	"sync"
 	"time"
-	"math"
 )
 
 type PathEntropyCalculator struct{}
-func NewPathEntropyCalculator(a *CoherencePotentialField, b *NodeRegistry) *PathEntropyCalculator { return &PathEntropyCalculator{} }
+
+func NewPathEntropyCalculator(a *CoherencePotentialField, b *NodeRegistry) *PathEntropyCalculator {
+	return &PathEntropyCalculator{}
+}
+
 type TopologySelfOptimizer struct{}
-func NewTopologySelfOptimizer(a *CoherencePotentialField, b *NodeRegistry, c bool) *TopologySelfOptimizer { return &TopologySelfOptimizer{} }
+
+func NewTopologySelfOptimizer(a *CoherencePotentialField, b *NodeRegistry, c bool) *TopologySelfOptimizer {
+	return &TopologySelfOptimizer{}
+}
 func (t *TopologySelfOptimizer) OptimizationLoop(ch chan struct{}) {}
 
 // ─── TIPO PRINCIPAL ───────────────────────────────────────────────────
 
 // CoherenceRoutingOrchestrator orquestra todos os componentes de roteamento por coerência
 type CoherenceRoutingOrchestrator struct {
-	config          OrchestratorConfig
-	field           *CoherencePotentialField
-	router          *GradientFollowingRouter
-	pathFormation   *DynamicPathFormation
-	entropyCalc     *PathEntropyCalculator
-	topologyOpt     *TopologySelfOptimizer
+	config        OrchestratorConfig
+	field         *CoherencePotentialField
+	router        *GradientFollowingRouter
+	pathFormation *DynamicPathFormation
+	entropyCalc   *PathEntropyCalculator
+	topologyOpt   *TopologySelfOptimizer
 
-	nodeRegistry   *NodeRegistry
-	teleportMgr    *TeleportationManager
+	nodeRegistry *NodeRegistry
+	teleportMgr  *TeleportationManager
 
-	activeRoutes   map[string]*ActiveRoute // packetID → rota ativa
-	mu             sync.RWMutex
-	metrics        OrchestratorMetrics
-	shutdownCh     chan struct{}
+	activeRoutes map[string]*ActiveRoute // packetID → rota ativa
+	mu           sync.RWMutex
+	metrics      OrchestratorMetrics
+	shutdownCh   chan struct{}
 }
 
 // OrchestratorConfig contém configuração do orquestrador
@@ -48,23 +55,23 @@ type OrchestratorConfig struct {
 
 // ActiveRoute representa uma rota ativa para um pacote em trânsito
 type ActiveRoute struct {
-	PacketID      string
-	Path          *Path
-	CurrentNode   string
-	HopCount      int
-	TotalEntropy  float64
-	StartTime     time.Time
-	LastHopTime   time.Time
+	PacketID     string
+	Path         *Path
+	CurrentNode  string
+	HopCount     int
+	TotalEntropy float64
+	StartTime    time.Time
+	LastHopTime  time.Time
 }
 
 // OrchestratorMetrics contém métricas consolidadas do roteamento
 type OrchestratorMetrics struct {
-	PacketsProcessed    int64   `json:"packets_processed"`
-	AvgHopsPerPacket    float64 `json:"avg_hops_per_packet"`
-	AvgRoutingTimeMs    float64 `json:"avg_routing_time_ms"`
-	TeleportUsageRate   float64 `json:"teleport_usage_rate"`
-	AvgPathEntropy      float64 `json:"avg_path_entropy"`
-	SuccessRate         float64 `json:"success_rate"`
+	PacketsProcessed  int64   `json:"packets_processed"`
+	AvgHopsPerPacket  float64 `json:"avg_hops_per_packet"`
+	AvgRoutingTimeMs  float64 `json:"avg_routing_time_ms"`
+	TeleportUsageRate float64 `json:"teleport_usage_rate"`
+	AvgPathEntropy    float64 `json:"avg_path_entropy"`
+	SuccessRate       float64 `json:"success_rate"`
 }
 
 // ─── CONSTRUTOR ───────────────────────────────────────────────────────
@@ -271,12 +278,12 @@ func (orch *CoherenceRoutingOrchestrator) GetMetrics() OrchestratorMetrics {
 	_ = orch.field.GetMetrics()
 
 	return OrchestratorMetrics{
-		PacketsProcessed:    orch.metrics.PacketsProcessed,
-		AvgHopsPerPacket:    orch.metrics.AvgHopsPerPacket,
-		AvgRoutingTimeMs:    orch.metrics.AvgRoutingTimeMs,
-		TeleportUsageRate:   float64(routerMetrics.TeleportsUsed) / math.Max(1, float64(orch.metrics.PacketsProcessed)),
-		AvgPathEntropy:      orch.metrics.AvgPathEntropy,
-		SuccessRate:         orch.metrics.SuccessRate,
+		PacketsProcessed:  orch.metrics.PacketsProcessed,
+		AvgHopsPerPacket:  orch.metrics.AvgHopsPerPacket,
+		AvgRoutingTimeMs:  orch.metrics.AvgRoutingTimeMs,
+		TeleportUsageRate: float64(routerMetrics.TeleportsUsed) / math.Max(1, float64(orch.metrics.PacketsProcessed)),
+		AvgPathEntropy:    orch.metrics.AvgPathEntropy,
+		SuccessRate:       orch.metrics.SuccessRate,
 	}
 }
 

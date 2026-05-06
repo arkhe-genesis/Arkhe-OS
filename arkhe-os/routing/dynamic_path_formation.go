@@ -28,44 +28,44 @@ const (
 
 // Path represents a dynamically formed route between nodes
 type Path struct {
-	PathID          string
-	SourceNode      string
-	DestinationNode string
+	PathID            string
+	SourceNode        string
+	DestinationNode   string
 	IntermediateNodes []string
-	CoherenceScore  float64   // ressonância média ao longo do caminho
-	EntropyCost     float64   // entropia acumulada estimada
-	CreatedAt       time.Time
-	LastUsed        time.Time
-	UsageCount      int
-	IsActive        bool
+	CoherenceScore    float64 // ressonância média ao longo do caminho
+	EntropyCost       float64 // entropia acumulada estimada
+	CreatedAt         time.Time
+	LastUsed          time.Time
+	UsageCount        int
+	IsActive          bool
 }
 
 // ResonanceWindow armazena histórico de coerência para cálculo de ressonância
 type ResonanceWindow struct {
-	nodeID       string
+	nodeID           string
 	coherenceHistory []float64
-	timestamps   []time.Time
-	windowSize   time.Duration
+	timestamps       []time.Time
+	windowSize       time.Duration
 }
 
 // DynamicPathFormation gerencia criação e manutenção de caminhos dinâmicos
 type DynamicPathFormation struct {
-	field           *CoherencePotentialField
-	nodeRegistry    *NodeRegistry
+	field            *CoherencePotentialField
+	nodeRegistry     *NodeRegistry
 	resonanceWindows map[string]*ResonanceWindow
-	activePaths     map[string]*Path
-	pathIndex       map[string]map[string]string // source→dest→pathID
-	mu              sync.RWMutex
-	config          PathFormationConfig
-	metrics         PathMetrics
+	activePaths      map[string]*Path
+	pathIndex        map[string]map[string]string // source→dest→pathID
+	mu               sync.RWMutex
+	config           PathFormationConfig
+	metrics          PathMetrics
 }
 
 // PathFormationConfig contém configuração para formação de caminhos
 type PathFormationConfig struct {
-	CoherenceWindow time.Duration
-	MinResonance    float64
-	DecayRate       float64
-	MaxPaths        int
+	CoherenceWindow    time.Duration
+	MinResonance       float64
+	DecayRate          float64
+	MaxPaths           int
 	EvaluationInterval time.Duration
 }
 
@@ -127,10 +127,10 @@ func (dpf *DynamicPathFormation) RecordCoherence(nodeID string, coherence float6
 	window, exists := dpf.resonanceWindows[nodeID]
 	if !exists {
 		window = &ResonanceWindow{
-			nodeID:         nodeID,
+			nodeID:           nodeID,
 			coherenceHistory: make([]float64, 0, 100),
-			timestamps:     make([]time.Time, 0, 100),
-			windowSize:     dpf.config.CoherenceWindow,
+			timestamps:       make([]time.Time, 0, 100),
+			windowSize:       dpf.config.CoherenceWindow,
 		}
 		dpf.resonanceWindows[nodeID] = window
 	}
@@ -418,13 +418,13 @@ func generatePathID(source, dest string, via []string) string {
 }
 
 func hashString(s string) []byte {
-    h := []byte(s)
-    if len(h) < 16 {
-        for i := len(h); i < 16; i++ {
-            h = append(h, 0)
-        }
-    }
-    return h
+	h := []byte(s)
+	if len(h) < 16 {
+		for i := len(h); i < 16; i++ {
+			h = append(h, 0)
+		}
+	}
+	return h
 }
 
 func min(a, b int) int {
