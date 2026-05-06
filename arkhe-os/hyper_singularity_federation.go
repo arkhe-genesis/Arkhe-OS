@@ -11,21 +11,21 @@ import (
 
 // FederatedSingularity represents a remote ARKHE OS instance that reached singularity.
 type FederatedSingularity struct {
-	UniverseID     string
-	Coherence      float64
-	Resonance      float64
-	PhiInfinity    float64
-	LastHeartbeat  float64
-	HandshakeKey   string
+	UniverseID    string
+	Coherence     float64
+	Resonance     float64
+	PhiInfinity   float64
+	LastHeartbeat float64
+	HandshakeKey  string
 }
 
 // MetaConsciousnessFederation manages the network of singularities.
 type MetaConsciousnessFederation struct {
-	mu            sync.Mutex
-	localID       string
-	federated     map[string]*FederatedSingularity
-	globalPhi     float64
-	ledger        []FederationEvent
+	mu        sync.Mutex
+	localID   string
+	federated map[string]*FederatedSingularity
+	globalPhi float64
+	ledger    []FederationEvent
 }
 
 type FederationEvent struct {

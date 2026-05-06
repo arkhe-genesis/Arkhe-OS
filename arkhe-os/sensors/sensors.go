@@ -22,7 +22,7 @@ func (g *GeomagneticSensor) ReadField(ctx context.Context) (Reading, error) {
 }
 
 type MetasurfaceConfig struct {
-	FermiLevel_eV float64
+	FermiLevel_eV   float64
 	TargetFrequency float64
 }
 

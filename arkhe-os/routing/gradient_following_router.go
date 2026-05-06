@@ -10,21 +10,27 @@ import (
 )
 
 type NodeRegistry struct{}
-func (nr *NodeRegistry) IsLocalNode(a string, b CosmicAddress) bool { return false }
+
+func (nr *NodeRegistry) IsLocalNode(a string, b CosmicAddress) bool       { return false }
 func (nr *NodeRegistry) GetReachableNeighbors(a string) ([]string, error) { return []string{}, nil }
-func (nr *NodeRegistry) GetAddress(a string) CosmicAddress { return CosmicAddress{} }
-func (nr *NodeRegistry) FindNodeByAddress(a CosmicAddress) string { return "" }
-func (nr *NodeRegistry) SendToNode(a string, b []byte) error { return nil }
-func (nr *NodeRegistry) GetAllNodes() map[string]*CosmicNode { return map[string]*CosmicNode{} }
+func (nr *NodeRegistry) GetAddress(a string) CosmicAddress                { return CosmicAddress{} }
+func (nr *NodeRegistry) FindNodeByAddress(a CosmicAddress) string         { return "" }
+func (nr *NodeRegistry) SendToNode(a string, b []byte) error              { return nil }
+func (nr *NodeRegistry) GetAllNodes() map[string]*CosmicNode              { return map[string]*CosmicNode{} }
 
 type TeleportationManager struct{}
-type TeleportChannel struct{
-    ChannelID string
-    Fidelity float64
+type TeleportChannel struct {
+	ChannelID string
+	Fidelity  float64
 }
+
 func (tc *TeleportChannel) IsHealthy() bool { return true }
-func (tm *TeleportationManager) GetChannel(a, b string) (*TeleportChannel, error) { return &TeleportChannel{}, nil }
-func (tm *TeleportationManager) Teleport(ctx context.Context, channelID string, packet []byte) error { return nil }
+func (tm *TeleportationManager) GetChannel(a, b string) (*TeleportChannel, error) {
+	return &TeleportChannel{}, nil
+}
+func (tm *TeleportationManager) Teleport(ctx context.Context, channelID string, packet []byte) error {
+	return nil
+}
 
 // ─── CONSTANTES DO ROTEADOR ───────────────────────────────────────────
 
@@ -52,32 +58,32 @@ const (
 
 // RoutingDecision contém a decisão de roteamento para um pacote
 type RoutingDecision struct {
-	NextHop        string                    // ID do próximo nó
-	UseTeleport    bool                      // se usar teleporte quântico
-	ChannelID      string                    // ID do canal de teleporte (se aplicável)
-	ExpectedPhiC   float64                   // Φ_C esperado no próximo salto
-	EntropyCost    float64                   // entropia acumulada estimada
-	Confidence     float64                   // confiança na decisão [0, 1]
-	Reason         string                    // justificativa da decisão
+	NextHop      string  // ID do próximo nó
+	UseTeleport  bool    // se usar teleporte quântico
+	ChannelID    string  // ID do canal de teleporte (se aplicável)
+	ExpectedPhiC float64 // Φ_C esperado no próximo salto
+	EntropyCost  float64 // entropia acumulada estimada
+	Confidence   float64 // confiança na decisão [0, 1]
+	Reason       string  // justificativa da decisão
 }
 
 // PacketContext contém metadados do pacote para roteamento inteligente
 type PacketContext struct {
-	Priority       float64                   // prioridade do pacote [0, 1]
-	MaxEntropy     float64                   // entropia máxima tolerável
-	PreferTeleport bool                      // preferência por teleporte quântico
-	Deadline       time.Time                 // deadline de entrega
-	PayloadSize    int                       // tamanho do payload em bytes
+	Priority       float64   // prioridade do pacote [0, 1]
+	MaxEntropy     float64   // entropia máxima tolerável
+	PreferTeleport bool      // preferência por teleporte quântico
+	Deadline       time.Time // deadline de entrega
+	PayloadSize    int       // tamanho do payload em bytes
 }
 
 // GradientFollowingRouter implementa roteamento por seguimento de gradiente de Φ_C
 type GradientFollowingRouter struct {
-	field          *CoherencePotentialField
-	teleportMgr    *TeleportationManager
-	nodeRegistry   *NodeRegistry
-	config         RouterConfig
-	mu             sync.RWMutex
-	metrics        RouterMetrics
+	field        *CoherencePotentialField
+	teleportMgr  *TeleportationManager
+	nodeRegistry *NodeRegistry
+	config       RouterConfig
+	mu           sync.RWMutex
+	metrics      RouterMetrics
 }
 
 // RouterConfig contém configuração do roteador
@@ -91,12 +97,12 @@ type RouterConfig struct {
 
 // RouterMetrics contém métricas de roteamento
 type RouterMetrics struct {
-	PacketsRouted        int64   `json:"packets_routed"`
-	TeleportsUsed        int64   `json:"teleports_used"`
-	AvgHopsPerPacket     float64 `json:"avg_hops_per_packet"`
-	AvgRoutingTimeMs     float64 `json:"avg_routing_time_ms"`
-	SuccessRate          float64 `json:"success_rate"`
-	AvgEntropyPerPath    float64 `json:"avg_entropy_per_path"`
+	PacketsRouted     int64   `json:"packets_routed"`
+	TeleportsUsed     int64   `json:"teleports_used"`
+	AvgHopsPerPacket  float64 `json:"avg_hops_per_packet"`
+	AvgRoutingTimeMs  float64 `json:"avg_routing_time_ms"`
+	SuccessRate       float64 `json:"success_rate"`
+	AvgEntropyPerPath float64 `json:"avg_entropy_per_path"`
 }
 
 // ─── CONSTRUTORES ─────────────────────────────────────────────────────
@@ -183,12 +189,12 @@ func (r *GradientFollowingRouter) RoutePacket(
 	confidence := computeRoutingConfidence(score, phiC, entropyCost, packetCtx)
 
 	decision := &RoutingDecision{
-		NextHop:        nextHop,
-		UseTeleport:    false,
-		ExpectedPhiC:   phiC,
-		EntropyCost:    entropyCost,
-		Confidence:     confidence,
-		Reason:         fmt.Sprintf("gradient_following(score=%.3f)", score),
+		NextHop:      nextHop,
+		UseTeleport:  false,
+		ExpectedPhiC: phiC,
+		EntropyCost:  entropyCost,
+		Confidence:   confidence,
+		Reason:       fmt.Sprintf("gradient_following(score=%.3f)", score),
 	}
 
 	// Atualizar métricas
@@ -232,13 +238,13 @@ func (r *GradientFollowingRouter) tryDirectTeleport(
 	entropyCost := 0.01 * float64(packetCtx.PayloadSize) / 1000.0 // entropia proporcional ao tamanho
 
 	decision := &RoutingDecision{
-		NextHop:        destNodeID,
-		UseTeleport:    true,
-		ChannelID:      channel.ChannelID,
-		ExpectedPhiC:   phiCDest,
-		EntropyCost:    entropyCost,
-		Confidence:     channel.Fidelity * 0.95, // alta confiança para teleporte saudável
-		Reason:         fmt.Sprintf("quantum_teleport(fidelity=%.3f, Φ=%.3f)", channel.Fidelity, teleportCondition),
+		NextHop:      destNodeID,
+		UseTeleport:  true,
+		ChannelID:    channel.ChannelID,
+		ExpectedPhiC: phiCDest,
+		EntropyCost:  entropyCost,
+		Confidence:   channel.Fidelity * 0.95, // alta confiança para teleporte saudável
+		Reason:       fmt.Sprintf("quantum_teleport(fidelity=%.3f, Φ=%.3f)", channel.Fidelity, teleportCondition),
 	}
 
 	return decision, true

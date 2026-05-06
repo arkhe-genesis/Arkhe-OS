@@ -1,6 +1,8 @@
 package arkhe
 
 import (
+
+
 	"fmt"
 	"strings"
 
@@ -260,7 +262,17 @@ func snakeCase(s string) string {
 	return strings.ToLower(result.String())
 }
 
+
+
+func (pp *PolymathParser) registerDataCenterLanguage() {
+	dcFrontend, _ := NewDataCenterFrontend("main-cluster")
+	pp.RegisterFrontend(dcFrontend)
+}
+
 func (pp *PolymathParser) registerAdditionalLanguages() {
+	pp.registerDataCenterLanguage()
+
+
 	// Frontends
 	csFrontend, _ := NewCSharpFrontend()
 	pp.RegisterFrontend(csFrontend)

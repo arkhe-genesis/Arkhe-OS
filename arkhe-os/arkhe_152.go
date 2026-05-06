@@ -21,11 +21,11 @@ const (
 // GeomagneticVector vetor completo do campo geomagnético
 type GeomagneticVector struct {
 	HTotal        float64   `json:"h_total"`
-	D             float64   `json:"d"`       // Declinação em graus
-	I             float64   `json:"i"`       // Inclinação em graus
-	X             float64   `json:"x"`       // Componente Norte
-	Y             float64   `json:"y"`       // Componente Leste
-	Z             float64   `json:"z"`       // Componente Vertical
+	D             float64   `json:"d"` // Declinação em graus
+	I             float64   `json:"i"` // Inclinação em graus
+	X             float64   `json:"x"` // Componente Norte
+	Y             float64   `json:"y"` // Componente Leste
+	Z             float64   `json:"z"` // Componente Vertical
 	Gradient      []float64 `json:"gradient"`
 	Timestamp     float64   `json:"timestamp"`
 	QualityFactor float64   `json:"quality_factor"`
@@ -76,10 +76,10 @@ type SensorMetrics struct {
 
 func NewQuantumMagnetoFrameSensor(workingSubstanceMu float64, turns int, area, ringRadius float64) *QuantumMagnetoFrameSensor {
 	return &QuantumMagnetoFrameSensor{
-		Mu:         workingSubstanceMu,
-		N:          turns,
-		S:          area,
-		RingRadius: ringRadius,
+		Mu:                workingSubstanceMu,
+		N:                 turns,
+		S:                 area,
+		RingRadius:        ringRadius,
 		CalibrationFactor: float64(turns) * area * Mu0 * workingSubstanceMu,
 		Rings: map[string]*RingState{
 			"X": {Axis: []float64{1, 0, 0}, EMF: 0},
@@ -382,10 +382,10 @@ func (g *GeomagneticSensorium) DetectBiocurrents(subjectID string, duration floa
 		bioSignal += biocurrentField * 0.3 * math.Sin(2*math.Pi*20*elapsed)
 
 		readings = append(readings, map[string]interface{}{
-			"timestamp":      float64(time.Now().UnixNano()) / 1e9,
-			"z_with_bio":     base.Z + bioSignal/Mu0,
-			"bio_component":  bioSignal,
-			"raw_z":          base.Z,
+			"timestamp":     float64(time.Now().UnixNano()) / 1e9,
+			"z_with_bio":    base.Z + bioSignal/Mu0,
+			"bio_component": bioSignal,
+			"raw_z":         base.Z,
 		})
 
 		time.Sleep(50 * time.Millisecond)
