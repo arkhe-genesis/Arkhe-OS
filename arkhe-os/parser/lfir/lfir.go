@@ -1,5 +1,6 @@
 package lfir
 
+// Stub for parser/lfir
 // LFIRNodeType is the type of a node in the Lingua Franca Intermediate Representation.
 type LFIRNodeType string
 
