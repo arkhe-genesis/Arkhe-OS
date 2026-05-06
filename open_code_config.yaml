@@ -1,0 +1,13 @@
+# ~/.config/arkhe/open_code_config.yaml
+logging:
+  enabled: true
+  format: json
+  endpoint: "ws://localhost:8080/ide-events"
+  events:
+    - command_invoked
+    - tool_called
+    - file_edited
+    - session_summarized
+  privacy:
+    redact_secrets: true
+    hash_paths: false
