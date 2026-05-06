@@ -16,5 +16,5 @@ type CoSNARKProof struct {
 }
 
 func (p *CoSNARKProof) Serialize() []byte {
-    return p.ProofBytes
+	return p.ProofBytes
 }

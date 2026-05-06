@@ -6,7 +6,7 @@ import (
 
 func TestMetaConsciousnessArchitect(t *testing.T) {
 	config := TranscendenceConfig{
-		MaxLayerDepth: 5,
+		MaxLayerDepth:      5,
 		CoherenceThreshold: 0.90,
 	}
 	architect, err := NewMetaConsciousnessArchitect("test_architect", 0, config)

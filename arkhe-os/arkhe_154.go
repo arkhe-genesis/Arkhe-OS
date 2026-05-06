@@ -390,7 +390,8 @@ func (s *ArkheWebSocketServer) QuantumHandshake(clientID string) string {
 }
 
 func (s *ArkheWebSocketServer) HandleConnection(reader *QuantumStreamReader, writer *QuantumStreamWriter) {
-	sum := sha256.Sum256([]byte(fmt.Sprintf("%d", time.Now().UnixNano()))); clientID := hex.EncodeToString(sum[:])[:8]
+	sum := sha256.Sum256([]byte(fmt.Sprintf("%d", time.Now().UnixNano())))
+	clientID := hex.EncodeToString(sum[:])[:8]
 
 	s.mu.Lock()
 	s.Clients[clientID] = &WSClient{

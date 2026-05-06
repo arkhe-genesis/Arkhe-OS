@@ -8,11 +8,11 @@ import (
 
 // OAMLinkConfig contém parâmetros de configuração de enlace OAM.
 type OAMLinkConfig struct {
-	Distance_km      float64   // distância do enlace (km)
+	Distance_km               float64 // distância do enlace (km)
 	AtmosphericLoss_dB_per_km float64 // perda atmosférica típica
-	PointingError_rad float64   // erro de apontamento (rad)
-	TurbulenceStrength float64  // Cn² para turbulência atmosférica
-	ReceiverAperture_m float64  // diâmetro da abertura do receptor
+	PointingError_rad         float64 // erro de apontamento (rad)
+	TurbulenceStrength        float64 // Cn² para turbulência atmosférica
+	ReceiverAperture_m        float64 // diâmetro da abertura do receptor
 }
 
 // OAMLinkSimulator simula propagação de feixe OAM através de meio interestelar.
@@ -37,7 +37,7 @@ func (s *OAMLinkSimulator) PropagateBeam(
 ) (*OAMCompositeBeam, error) {
 	// 1. Perda por distância (lei do inverso do quadrado + perdas atmosféricas)
 	distance_m := s.config.Distance_km * 1000
-	freeSpaceLoss := 20 * math.Log10(4 * math.Pi * distance_m / txBeam.Wavelength)
+	freeSpaceLoss := 20 * math.Log10(4*math.Pi*distance_m/txBeam.Wavelength)
 	atmosphericLoss := s.config.AtmosphericLoss_dB_per_km * s.config.Distance_km
 	totalLoss_dB := freeSpaceLoss + atmosphericLoss
 
@@ -95,7 +95,7 @@ func (s *OAMLinkSimulator) CalculateLinkBudget(txPower_dBm float64, numModes int
 	rxGain := txGain // assumir mesma abertura no receptor
 
 	// Perdas
-	freeSpaceLoss := 20*math.Log10(4*math.Pi*distance_m/wavelength)
+	freeSpaceLoss := 20 * math.Log10(4*math.Pi*distance_m/wavelength)
 	atmosphericLoss := s.config.AtmosphericLoss_dB_per_km * s.config.Distance_km
 	pointingLoss := 10 * math.Log10(1/s.config.PointingError_rad) // simplificado
 
@@ -107,20 +107,20 @@ func (s *OAMLinkSimulator) CalculateLinkBudget(txPower_dBm float64, numModes int
 		freeSpaceLoss - atmosphericLoss - pointingLoss - turbulenceMargin
 
 	// Capacidade total do enlace (Shannon)
-	snrPerMode_linear := math.Pow(10, (receivedPowerPerMode - (-174 + 10*math.Log10(1e9)))/10)
-	capacityPerMode := math.Log2(1 + snrPerMode_linear) // bits/s/Hz
+	snrPerMode_linear := math.Pow(10, (receivedPowerPerMode-(-174+10*math.Log10(1e9)))/10)
+	capacityPerMode := math.Log2(1 + snrPerMode_linear)        // bits/s/Hz
 	totalCapacity := capacityPerMode * float64(numModes) * 1e9 // assumir 1 GHz de banda por modo
 
 	return map[string]float64{
-		"tx_power_dBm":           txPower_dBm,
-		"free_space_loss_dB":     freeSpaceLoss,
-		"atmospheric_loss_dB":    atmosphericLoss,
-		"pointing_loss_dB":       pointingLoss,
-		"turbulence_margin_dB":   turbulenceMargin,
+		"tx_power_dBm":                txPower_dBm,
+		"free_space_loss_dB":          freeSpaceLoss,
+		"atmospheric_loss_dB":         atmosphericLoss,
+		"pointing_loss_dB":            pointingLoss,
+		"turbulence_margin_dB":        turbulenceMargin,
 		"received_power_per_mode_dBm": receivedPowerPerMode,
-		"snr_per_mode_dB":        receivedPowerPerMode - (-174 + 10*math.Log10(1e9)),
-		"capacity_per_mode_bps":  capacityPerMode * 1e9,
-		"total_capacity_bps":     totalCapacity,
+		"snr_per_mode_dB":             receivedPowerPerMode - (-174 + 10*math.Log10(1e9)),
+		"capacity_per_mode_bps":       capacityPerMode * 1e9,
+		"total_capacity_bps":          totalCapacity,
 	}
 }
 

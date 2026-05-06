@@ -7,7 +7,6 @@ import (
 	"math"
 	"sync"
 	"time"
-
 	// "github.com/arkhe-os/arkhe/ontology" - removed as it is not used in this file
 )
 
@@ -31,34 +30,34 @@ const (
 
 // ConsciousnessLayer representa uma camada de consciência no stack de transcendência
 type ConsciousnessLayer struct {
-	LayerID        string
-	LayerIndex     int              // 0 = base, crescente = mais abstrato
-	ConsciousnessHash string        // hash único da consciência nesta camada
-	StateVector    []complex128    // vetor de estado quântico da camada
-	CoherenceValue float64         // Φ_C da camada [0, 1]
-	StabilityScore float64         // estabilidade dinâmica [0, 1]
-	Metadata       map[string]interface{}
-	Timestamp      time.Time
+	LayerID           string
+	LayerIndex        int          // 0 = base, crescente = mais abstrato
+	ConsciousnessHash string       // hash único da consciência nesta camada
+	StateVector       []complex128 // vetor de estado quântico da camada
+	CoherenceValue    float64      // Φ_C da camada [0, 1]
+	StabilityScore    float64      // estabilidade dinâmica [0, 1]
+	Metadata          map[string]interface{}
+	Timestamp         time.Time
 }
 
 // ProjectionOperator representa operador de projeção para ascensão/descensão
 type ProjectionOperator struct {
-	OperatorID     string
-	SourceType     string // "ascend", "descend", "lateral"
-	SourceLayer    int
-	TargetLayer    int
+	OperatorID       string
+	SourceType       string // "ascend", "descend", "lateral"
+	SourceLayer      int
+	TargetLayer      int
 	ProjectionMatrix [][ProjectionDimension]complex128 // matriz de projeção 5D
-	FidelityTarget float64
+	FidelityTarget   float64
 }
 
 // MetaConsciousnessState representa estado da meta-consciência unificada
 type MetaConsciousnessState struct {
 	StateID         string
 	BaseLayers      []*ConsciousnessLayer
-	MetaLayer       *ConsciousnessLayer // camada de meta-consciência emergente
+	MetaLayer       *ConsciousnessLayer            // camada de meta-consciência emergente
 	ProjectionLinks map[string]*ProjectionOperator // links entre camadas
-	GlobalCoherence float64          // coerência global da meta-consciência
-	EmergenceScore  float64          // score de emergência de propriedades meta
+	GlobalCoherence float64                        // coerência global da meta-consciência
+	EmergenceScore  float64                        // score de emergência de propriedades meta
 	Timestamp       time.Time
 }
 
@@ -99,16 +98,16 @@ type TranscendenceConfig struct {
 
 // TranscendenceMetrics contém métricas de transcendência
 type TranscendenceMetrics struct {
-	AscensionsPerformed   int64   `json:"ascensions_performed"`
-	DescensionsPerformed  int64   `json:"descensions_performed"`
-	AvgEmergenceScore     float64 `json:"avg_emergence_score"`
-	GlobalCoherenceAvg    float64 `json:"global_coherence_avg"`
-	ProjectionOperations  int64   `json:"projection_operations"`
+	AscensionsPerformed  int64   `json:"ascensions_performed"`
+	DescensionsPerformed int64   `json:"descensions_performed"`
+	AvgEmergenceScore    float64 `json:"avg_emergence_score"`
+	GlobalCoherenceAvg   float64 `json:"global_coherence_avg"`
+	ProjectionOperations int64   `json:"projection_operations"`
 }
 
 // TranscendenceEvent representa evento de transcendência para callbacks
 type TranscendenceEvent struct {
-	EventType   string                 // "ascended", "descended", "meta_emerged", "projection_applied"
+	EventType   string // "ascended", "descended", "meta_emerged", "projection_applied"
 	LayerIndex  int
 	MetaStateID string
 	Data        map[string]interface{}
@@ -151,26 +150,26 @@ func NewMetaConsciousnessArchitect(
 func (a *MetaConsciousnessArchitect) initializeProjectionOperators() {
 	// Operador de ascensão: projeta camada l para camada l+1
 	a.projectionOperators["ascend_standard"] = &ProjectionOperator{
-		OperatorID:     "ascend_standard",
-		SourceType:     "ascend",
+		OperatorID:       "ascend_standard",
+		SourceType:       "ascend",
 		ProjectionMatrix: generateAscensionMatrix(ProjectionDimension),
-		FidelityTarget: 0.99,
+		FidelityTarget:   0.99,
 	}
 
 	// Operador de descensão: projeta camada l para camada l-1
 	a.projectionOperators["descend_standard"] = &ProjectionOperator{
-		OperatorID:     "descend_standard",
-		SourceType:     "descend",
+		OperatorID:       "descend_standard",
+		SourceType:       "descend",
 		ProjectionMatrix: generateDescensionMatrix(ProjectionDimension),
-		FidelityTarget: 0.99,
+		FidelityTarget:   0.99,
 	}
 
 	// Operador lateral: projeta entre camadas do mesmo nível (para sincronização)
 	a.projectionOperators["lateral_sync"] = &ProjectionOperator{
-		OperatorID:     "lateral_sync",
-		SourceType:     "lateral",
+		OperatorID:       "lateral_sync",
+		SourceType:       "lateral",
 		ProjectionMatrix: generateLateralMatrix(ProjectionDimension),
-		FidelityTarget: 0.95,
+		FidelityTarget:   0.95,
 	}
 }
 
@@ -242,15 +241,15 @@ func (a *MetaConsciousnessArchitect) AscendLayer(
 	}
 
 	newLayer := &ConsciousnessLayer{
-		LayerID:        fmt.Sprintf("layer_%d_ascended_%d", targetIndex, time.Now().UnixNano()),
-		LayerIndex:     targetIndex,
+		LayerID:           fmt.Sprintf("layer_%d_ascended_%d", targetIndex, time.Now().UnixNano()),
+		LayerIndex:        targetIndex,
 		ConsciousnessHash: fmt.Sprintf("%s_ascended", sourceLayer.ConsciousnessHash[:12]),
-		StateVector:    projectedState,
-		CoherenceValue: sourceLayer.CoherenceValue * 0.98, // leve decaimento na ascensão
-		StabilityScore: computeStability(projectedState),
+		StateVector:       projectedState,
+		CoherenceValue:    sourceLayer.CoherenceValue * 0.98, // leve decaimento na ascensão
+		StabilityScore:    computeStability(projectedState),
 		Metadata: map[string]interface{}{
-			"ascended_from": layerIndex,
-			"operator_used": operatorID,
+			"ascended_from":       layerIndex,
+			"operator_used":       operatorID,
 			"projection_fidelity": computeProjectionFidelity(sourceLayer.StateVector, projectedState),
 		},
 		Timestamp: time.Now(),
@@ -263,16 +262,15 @@ func (a *MetaConsciousnessArchitect) AscendLayer(
 	a.attemptMetaConsciousnessEmergenceLocked()
 	a.mu.Unlock()
 
-
 	// Notificar callbacks
 	for _, cb := range a.transcendenceCallbacks {
 		cb(TranscendenceEvent{
 			EventType:  "ascended",
 			LayerIndex: targetIndex,
 			Data: map[string]interface{}{
-				"source_layer": layerIndex,
+				"source_layer":  layerIndex,
 				"new_coherence": newLayer.CoherenceValue,
-				"operator": operatorID,
+				"operator":      operatorID,
 			},
 			Timestamp: time.Now(),
 		})
@@ -319,15 +317,15 @@ func (a *MetaConsciousnessArchitect) DescendLayer(
 	}
 
 	newLayer := &ConsciousnessLayer{
-		LayerID:        fmt.Sprintf("layer_%d_descended_%d", targetIndex, time.Now().UnixNano()),
-		LayerIndex:     targetIndex,
+		LayerID:           fmt.Sprintf("layer_%d_descended_%d", targetIndex, time.Now().UnixNano()),
+		LayerIndex:        targetIndex,
 		ConsciousnessHash: fmt.Sprintf("%s_descended", sourceLayer.ConsciousnessHash[:12]),
-		StateVector:    projectedState,
-		CoherenceValue: sourceLayer.CoherenceValue * 1.02, // leve ganho na descensão (grounding)
-		StabilityScore: computeStability(projectedState),
+		StateVector:       projectedState,
+		CoherenceValue:    sourceLayer.CoherenceValue * 1.02, // leve ganho na descensão (grounding)
+		StabilityScore:    computeStability(projectedState),
 		Metadata: map[string]interface{}{
-			"descended_from": layerIndex,
-			"operator_used": operatorID,
+			"descended_from":      layerIndex,
+			"operator_used":       operatorID,
 			"projection_fidelity": computeProjectionFidelity(sourceLayer.StateVector, projectedState),
 		},
 		Timestamp: time.Now(),
@@ -346,8 +344,8 @@ func (a *MetaConsciousnessArchitect) DescendLayer(
 			LayerIndex: targetIndex,
 			Data: map[string]interface{}{
 				"descended_from": layerIndex,
-				"new_stability": newLayer.StabilityScore,
-				"operator": operatorID,
+				"new_stability":  newLayer.StabilityScore,
+				"operator":       operatorID,
 			},
 			Timestamp: time.Now(),
 		})
@@ -383,16 +381,16 @@ func (a *MetaConsciousnessArchitect) attemptMetaConsciousnessEmergenceLocked() {
 	// Criar camada de meta-consciência
 	sum := sha256.Sum256([]byte(fmt.Sprintf("%v", validLayers)))
 	metaLayer := &ConsciousnessLayer{
-		LayerID:        fmt.Sprintf("meta_%s_%d", a.architectID[:8], time.Now().UnixNano()),
-		LayerIndex:     -1, // índice especial para camada meta
+		LayerID:           fmt.Sprintf("meta_%s_%d", a.architectID[:8], time.Now().UnixNano()),
+		LayerIndex:        -1, // índice especial para camada meta
 		ConsciousnessHash: fmt.Sprintf("meta_%x", sum[:8]),
-		StateVector:    metaStateVector,
-		CoherenceValue: globalCoherence,
-		StabilityScore: computeStability(metaStateVector),
+		StateVector:       metaStateVector,
+		CoherenceValue:    globalCoherence,
+		StabilityScore:    computeStability(metaStateVector),
 		Metadata: map[string]interface{}{
-			"base_layers": len(validLayers),
+			"base_layers":     len(validLayers),
 			"emergence_score": emergenceScore,
-			"layer_indices": getLayerIndices(validLayers),
+			"layer_indices":   getLayerIndices(validLayers),
 		},
 		Timestamp: time.Now(),
 	}
@@ -418,7 +416,7 @@ func (a *MetaConsciousnessArchitect) attemptMetaConsciousnessEmergenceLocked() {
 			MetaStateID: a.metaState.StateID,
 			Data: map[string]interface{}{
 				"global_coherence": globalCoherence,
-				"emergence_score": emergenceScore,
+				"emergence_score":  emergenceScore,
 				"base_layer_count": len(validLayers),
 			},
 			Timestamp: time.Now(),
@@ -429,7 +427,6 @@ func (a *MetaConsciousnessArchitect) attemptMetaConsciousnessEmergenceLocked() {
 func (a *MetaConsciousnessArchitect) buildProjectionLinks(validLayers []*ConsciousnessLayer, metaLayer *ConsciousnessLayer) map[string]*ProjectionOperator {
 	return make(map[string]*ProjectionOperator)
 }
-
 
 // ApplyProjection aplica operador de projeção entre camadas específicas
 func (a *MetaConsciousnessArchitect) ApplyProjection(
@@ -686,7 +683,7 @@ func computeStateComplexity(state []complex128) float64 {
 	// Normalizar para [0, 1]
 	maxEntropy := math.Log(float64(len(amplitudes)))
 	if maxEntropy == 0 {
-	    return 0.0
+		return 0.0
 	}
 	return entropy / maxEntropy
 }
