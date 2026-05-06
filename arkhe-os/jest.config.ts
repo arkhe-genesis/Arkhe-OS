@@ -1,13 +1,17 @@
-import type { Config } from '@jest/types';
-export default {
+import type {Config} from 'jest';
+
+const config: Config = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  testMatch: ['**/*.test.ts'],
-  globals: {
-    'ts-jest': {
-      tsconfig: {
-        types: ['jest', 'node']
-      }
-    }
+  moduleNameMapper: {
+    '^@arkhe-os/(.*)$': '<rootDir>/$1',
+  },
+  transform: {
+    '^.+\\.tsx?$': ['ts-jest', {
+      tsconfig: 'tsconfig.msi.json',
+      isolatedModules: true
+    }]
   }
 };
+
+export default config;
