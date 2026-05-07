@@ -1,6 +1,6 @@
 <!-- AUTO GENERATED DO NOT EDIT - run 'npm run gen' to update-->
 
-# Chrome DevTools MCP Tool Reference (~43634 cl100k_base tokens)
+# Chrome DevTools MCP Tool Reference (~44818 cl100k_base tokens)
 
 - **[Input automation](#input-automation)** (9 tools)
   - [`click`](#click)
@@ -303,9 +303,9 @@
 
 **Parameters:**
 
-- **dblClick** (unknown) **(required)**: Set to true for double clicks. Default is false.
-- **includeSnapshot** (unknown) **(required)**: Whether to include a snapshot in the response. Default is false.
-- **uid** (unknown) **(required)**: The uid of an element on the page from the page content snapshot
+- **uid** (string) **(required)**: The uid of an element on the page from the page content snapshot
+- **dblClick** (boolean) _(optional)_: Set to true for double clicks. Default is false.
+- **includeSnapshot** (boolean) _(optional)_: Whether to include a snapshot in the response. Default is false.
 
 ---
 
@@ -315,9 +315,9 @@
 
 **Parameters:**
 
-- **from_uid** (unknown) **(required)**: The uid of the element to [`drag`](#drag)
-- **includeSnapshot** (unknown) **(required)**: Whether to include a snapshot in the response. Default is false.
-- **to_uid** (unknown) **(required)**: The uid of the element to drop into
+- **from_uid** (string) **(required)**: The uid of the element to [`drag`](#drag)
+- **to_uid** (string) **(required)**: The uid of the element to drop into
+- **includeSnapshot** (boolean) _(optional)_: Whether to include a snapshot in the response. Default is false.
 
 ---
 
@@ -327,9 +327,9 @@
 
 **Parameters:**
 
-- **includeSnapshot** (unknown) **(required)**: Whether to include a snapshot in the response. Default is false.
-- **uid** (unknown) **(required)**: The uid of an element on the page from the page content snapshot
-- **value** (unknown) **(required)**: The value to [`fill`](#fill) in
+- **uid** (string) **(required)**: The uid of an element on the page from the page content snapshot
+- **value** (string) **(required)**: The value to [`fill`](#fill) in
+- **includeSnapshot** (boolean) _(optional)_: Whether to include a snapshot in the response. Default is false.
 
 ---
 
@@ -339,8 +339,8 @@
 
 **Parameters:**
 
-- **elements** (unknown) **(required)**: Elements from snapshot to [`fill`](#fill) out.
-- **includeSnapshot** (unknown) **(required)**: Whether to include a snapshot in the response. Default is false.
+- **elements** (array) **(required)**: Elements from snapshot to [`fill`](#fill) out.
+- **includeSnapshot** (boolean) _(optional)_: Whether to include a snapshot in the response. Default is false.
 
 ---
 
@@ -350,8 +350,8 @@
 
 **Parameters:**
 
-- **action** (unknown) **(required)**: Whether to dismiss or accept the dialog
-- **promptText** (unknown) **(required)**: Optional prompt text to enter into the dialog.
+- **action** (enum: "accept", "dismiss") **(required)**: Whether to dismiss or accept the dialog
+- **promptText** (string) _(optional)_: Optional prompt text to enter into the dialog.
 
 ---
 
@@ -361,8 +361,8 @@
 
 **Parameters:**
 
-- **includeSnapshot** (unknown) **(required)**: Whether to include a snapshot in the response. Default is false.
-- **uid** (unknown) **(required)**: The uid of an element on the page from the page content snapshot
+- **uid** (string) **(required)**: The uid of an element on the page from the page content snapshot
+- **includeSnapshot** (boolean) _(optional)_: Whether to include a snapshot in the response. Default is false.
 
 ---
 
@@ -372,8 +372,8 @@
 
 **Parameters:**
 
-- **includeSnapshot** (unknown) **(required)**: Whether to include a snapshot in the response. Default is false.
-- **key** (unknown) **(required)**: A key or a combination (e.g., "Enter", "Control+A", "Control++", "Control+Shift+R"). Modifiers: Control, Shift, Alt, Meta
+- **key** (string) **(required)**: A key or a combination (e.g., "Enter", "Control+A", "Control++", "Control+Shift+R"). Modifiers: Control, Shift, Alt, Meta
+- **includeSnapshot** (boolean) _(optional)_: Whether to include a snapshot in the response. Default is false.
 
 ---
 
@@ -383,8 +383,8 @@
 
 **Parameters:**
 
-- **submitKey** (unknown) **(required)**: Optional key to press after typing. E.g., "Enter", "Tab", "Escape"
-- **text** (unknown) **(required)**: The text to type
+- **text** (string) **(required)**: The text to type
+- **submitKey** (string) _(optional)_: Optional key to press after typing. E.g., "Enter", "Tab", "Escape"
 
 ---
 
@@ -394,9 +394,9 @@
 
 **Parameters:**
 
-- **filePath** (unknown) **(required)**: The local path of the file to upload
-- **includeSnapshot** (unknown) **(required)**: Whether to include a snapshot in the response. Default is false.
-- **uid** (unknown) **(required)**: The uid of the file input element or an element that will open file chooser on the page from the page content snapshot
+- **filePath** (string) **(required)**: The local path of the file to upload
+- **uid** (string) **(required)**: The uid of the file input element or an element that will open file chooser on the page from the page content snapshot
+- **includeSnapshot** (boolean) _(optional)_: Whether to include a snapshot in the response. Default is false.
 
 ---
 
@@ -408,7 +408,7 @@
 
 **Parameters:**
 
-- **pageId** (unknown) **(required)**: The ID of the page to close. Call [`list_pages`](#list_pages) to list pages.
+- **pageId** (number) **(required)**: The ID of the page to close. Call [`list_pages`](#list_pages) to list pages.
 
 ---
 
@@ -426,12 +426,12 @@
 
 **Parameters:**
 
-- **handleBeforeUnload** (unknown) **(required)**: Whether to auto accept or beforeunload dialogs triggered by this navigation. Default is accept.
-- **ignoreCache** (unknown) **(required)**: Whether to ignore cache on reload.
-- **initScript** (unknown) **(required)**: A JavaScript script to be executed on each new document before any other scripts for the next navigation.
-- **timeout** (unknown) **(required)**
-- **type** (unknown) **(required)**: Navigate the page by URL, back or forward in history, or reload.
-- **url** (unknown) **(required)**: Target URL (only type=url)
+- **handleBeforeUnload** (enum: "accept", "decline") _(optional)_: Whether to auto accept or beforeunload dialogs triggered by this navigation. Default is accept.
+- **ignoreCache** (boolean) _(optional)_: Whether to ignore cache on reload.
+- **initScript** (string) _(optional)_: A JavaScript script to be executed on each new document before any other scripts for the next navigation.
+- **timeout** (integer) _(optional)_: Maximum wait time in milliseconds. If set to 0, the default timeout will be used.
+- **type** (enum: "url", "back", "forward", "reload") _(optional)_: Navigate the page by URL, back or forward in history, or reload.
+- **url** (string) _(optional)_: Target URL (only type=url)
 
 ---
 
@@ -441,10 +441,10 @@
 
 **Parameters:**
 
-- **background** (unknown) **(required)**: Whether to open the page in the background without bringing it to the front. Default is false (foreground).
-- **isolatedContext** (unknown) **(required)**: If specified, the page is created in an isolated browser context with the given name. Pages in the same browser context share cookies and storage. Pages in different browser contexts are fully isolated.
-- **timeout** (unknown) **(required)**
-- **url** (unknown) **(required)**: URL to load in a new page.
+- **url** (string) **(required)**: URL to load in a new page.
+- **background** (boolean) _(optional)_: Whether to open the page in the background without bringing it to the front. Default is false (foreground).
+- **isolatedContext** (string) _(optional)_: If specified, the page is created in an isolated browser context with the given name. Pages in the same browser context share cookies and storage. Pages in different browser contexts are fully isolated.
+- **timeout** (integer) _(optional)_: Maximum wait time in milliseconds. If set to 0, the default timeout will be used.
 
 ---
 
@@ -454,8 +454,8 @@
 
 **Parameters:**
 
-- **bringToFront** (unknown) **(required)**: Whether to focus the page and bring it to the top.
-- **pageId** (unknown) **(required)**: The ID of the page to select. Call [`list_pages`](#list_pages) to get available pages.
+- **pageId** (number) **(required)**: The ID of the page to select. Call [`list_pages`](#list_pages) to get available pages.
+- **bringToFront** (boolean) _(optional)_: Whether to focus the page and bring it to the top.
 
 ---
 
@@ -465,8 +465,8 @@
 
 **Parameters:**
 
-- **text** (unknown) **(required)**: Non-empty list of texts. Resolves when any value appears on the page.
-- **timeout** (unknown) **(required)**
+- **text** (array) **(required)**: Non-empty list of texts. Resolves when any value appears on the page.
+- **timeout** (integer) _(optional)_: Maximum wait time in milliseconds. If set to 0, the default timeout will be used.
 
 ---
 
@@ -478,12 +478,12 @@
 
 **Parameters:**
 
-- **colorScheme** (unknown) **(required)**: [`Emulate`](#emulate) the dark or the light mode. Set to "auto" to reset to the default.
-- **cpuThrottlingRate** (unknown) **(required)**: Represents the CPU slowdown factor. Omit or set the rate to 1 to disable throttling
-- **geolocation** (unknown) **(required)**: Geolocation (`&lt;latitude&gt;x&lt;longitude&gt;`) to [`emulate`](#emulate). Latitude between -90 and 90. Longitude between -180 and 180. Omit to clear the geolocation override.
-- **networkConditions** (unknown) **(required)**: Throttle network. Omit to disable throttling.
-- **userAgent** (unknown) **(required)**: User agent to [`emulate`](#emulate). Set to empty string to clear the user agent override.
-- **viewport** (unknown) **(required)**: [`Emulate`](#emulate) device viewports '&lt;width&gt;x&lt;height&gt;x&lt;devicePixelRatio&gt;[,mobile][,touch][,landscape]'. 'touch' and 'mobile' to [`emulate`](#emulate) mobile devices. 'landscape' to [`emulate`](#emulate) landscape mode.
+- **colorScheme** (enum: "dark", "light", "auto") _(optional)_: [`Emulate`](#emulate) the dark or the light mode. Set to "auto" to reset to the default.
+- **cpuThrottlingRate** (number) _(optional)_: Represents the CPU slowdown factor. Omit or set the rate to 1 to disable throttling
+- **geolocation** (string) _(optional)_: Geolocation (`&lt;latitude&gt;x&lt;longitude&gt;`) to [`emulate`](#emulate). Latitude between -90 and 90. Longitude between -180 and 180. Omit to clear the geolocation override.
+- **networkConditions** (enum: "Offline", "Slow 3G", "Fast 3G", "Slow 4G", "Fast 4G") _(optional)_: Throttle network. Omit to disable throttling.
+- **userAgent** (string) _(optional)_: User agent to [`emulate`](#emulate). Set to empty string to clear the user agent override.
+- **viewport** (string) _(optional)_: [`Emulate`](#emulate) device viewports '&lt;width&gt;x&lt;height&gt;x&lt;devicePixelRatio&gt;[,mobile][,touch][,landscape]'. 'touch' and 'mobile' to [`emulate`](#emulate) mobile devices. 'landscape' to [`emulate`](#emulate) landscape mode.
 
 ---
 
@@ -493,8 +493,8 @@
 
 **Parameters:**
 
-- **height** (unknown) **(required)**: Page height
-- **width** (unknown) **(required)**: Page width
+- **height** (number) **(required)**: Page height
+- **width** (number) **(required)**: Page width
 
 ---
 
@@ -506,8 +506,8 @@
 
 **Parameters:**
 
-- **insightName** (unknown) **(required)**: The name of the Insight you want more information on. For example: "DocumentLatency" or "LCPBreakdown"
-- **insightSetId** (unknown) **(required)**: The id for the specific insight set. Only use the ids given in the "Available insight sets" list.
+- **insightName** (string) **(required)**: The name of the Insight you want more information on. For example: "DocumentLatency" or "LCPBreakdown"
+- **insightSetId** (string) **(required)**: The id for the specific insight set. Only use the ids given in the "Available insight sets" list.
 
 ---
 
@@ -517,9 +517,9 @@
 
 **Parameters:**
 
-- **autoStop** (unknown) **(required)**: Determines if the trace recording should be automatically stopped.
-- **filePath** (unknown) **(required)**: The absolute file path, or a file path relative to the current working directory, to save the raw trace data. For example, trace.json.gz (compressed) or trace.json (uncompressed).
-- **reload** (unknown) **(required)**: Determines if, once tracing has started, the current selected page should be automatically reloaded. Navigate the page to the right URL using the [`navigate_page`](#navigate_page) tool BEFORE starting the trace if reload or autoStop is set to true.
+- **autoStop** (boolean) _(optional)_: Determines if the trace recording should be automatically stopped.
+- **filePath** (string) _(optional)_: The absolute file path, or a file path relative to the current working directory, to save the raw trace data. For example, trace.json.gz (compressed) or trace.json (uncompressed).
+- **reload** (boolean) _(optional)_: Determines if, once tracing has started, the current selected page should be automatically reloaded. Navigate the page to the right URL using the [`navigate_page`](#navigate_page) tool BEFORE starting the trace if reload or autoStop is set to true.
 
 ---
 
@@ -529,7 +529,7 @@
 
 **Parameters:**
 
-- **filePath** (unknown) **(required)**: The absolute file path, or a file path relative to the current working directory, to save the raw trace data. For example, trace.json.gz (compressed) or trace.json (uncompressed).
+- **filePath** (string) _(optional)_: The absolute file path, or a file path relative to the current working directory, to save the raw trace data. For example, trace.json.gz (compressed) or trace.json (uncompressed).
 
 ---
 
@@ -539,7 +539,7 @@
 
 **Parameters:**
 
-- **filePath** (unknown) **(required)**: A path to a .heapsnapshot file to save the heapsnapshot to.
+- **filePath** (string) **(required)**: A path to a .heapsnapshot file to save the heapsnapshot to.
 
 ---
 
@@ -551,9 +551,9 @@
 
 **Parameters:**
 
-- **reqid** (unknown) **(required)**: The reqid of the network request. If omitted returns the currently selected request in the DevTools Network panel.
-- **requestFilePath** (unknown) **(required)**: The absolute or relative path to save the request body to. If omitted, the body is returned inline.
-- **responseFilePath** (unknown) **(required)**: The absolute or relative path to save the response body to. If omitted, the body is returned inline.
+- **reqid** (number) _(optional)_: The reqid of the network request. If omitted returns the currently selected request in the DevTools Network panel.
+- **requestFilePath** (string) _(optional)_: The absolute or relative path to save the request body to. If omitted, the body is returned inline.
+- **responseFilePath** (string) _(optional)_: The absolute or relative path to save the response body to. If omitted, the body is returned inline.
 
 ---
 
@@ -563,11 +563,11 @@
 
 **Parameters:**
 
-- **includePreservedRequests** (unknown) **(required)**: Set to true to return the preserved requests over the last 3 navigations.
-- **pageIdx** (unknown) **(required)**: Page number to return (0-based). When omitted, returns the first page.
-- **pageSize** (unknown) **(required)**: Maximum number of requests to return. When omitted, returns all requests.
-- **resourceTypes** (unknown) **(required)**: Filter requests to only return requests of the specified resource types. When omitted or empty, returns all requests.
-- **semanticPagination** (unknown) **(required)**: Post-AGI Semantic Pagination: Groups requests by domain (concept) instead of fixed size.
+- **includePreservedRequests** (boolean) _(optional)_: Set to true to return the preserved requests over the last 3 navigations.
+- **pageIdx** (integer) _(optional)_: Page number to return (0-based). When omitted, returns the first page.
+- **pageSize** (integer) _(optional)_: Maximum number of requests to return. When omitted, returns all requests.
+- **resourceTypes** (array) _(optional)_: Filter requests to only return requests of the specified resource types. When omitted or empty, returns all requests.
+- **semanticPagination** (boolean) _(optional)_: Post-AGI Semantic Pagination: Groups requests by domain (concept) instead of fixed size.
 
 ---
 
@@ -577,7 +577,7 @@
 
 **Parameters:**
 
-- **page** (unknown) **(required)**: Page number for results.
+- **page** (number) _(optional)_: Page number for results.
 
 ---
 
@@ -587,7 +587,7 @@
 
 **Parameters:**
 
-- **paperId** (unknown) **(required)**: The ID of the paper to retrieve.
+- **paperId** (number) **(required)**: The ID of the paper to retrieve.
 
 ---
 
@@ -597,8 +597,8 @@
 
 **Parameters:**
 
-- **page** (unknown) **(required)**: Page number for results.
-- **query** (unknown) **(required)**: Search query for papers.
+- **query** (string) **(required)**: Search query for papers.
+- **page** (number) _(optional)_: Page number for results.
 
 ---
 
@@ -611,8 +611,7 @@ so returned values have to be JSON-serializable.
 
 **Parameters:**
 
-- **args** (unknown) **(required)**: An optional list of arguments to pass to the function.
-- **function** (unknown) **(required)**: A JavaScript function declaration to be executed by the tool in the currently selected page.
+- **function** (string) **(required)**: A JavaScript function declaration to be executed by the tool in the currently selected page.
 Example without arguments: `() => {
   return document.title
 }` or `async () => {
@@ -622,6 +621,7 @@ Example with arguments: `(el) => {
   return el.innerText;
 }`
 
+- **args** (array) _(optional)_: An optional list of arguments to pass to the function.
 
 ---
 
@@ -631,7 +631,7 @@ Example with arguments: `(el) => {
 
 **Parameters:**
 
-- **msgid** (unknown) **(required)**: The msgid of a console message on the page from the listed console messages
+- **msgid** (number) **(required)**: The msgid of a console message on the page from the listed console messages
 
 ---
 
@@ -641,9 +641,9 @@ Example with arguments: `(el) => {
 
 **Parameters:**
 
-- **device** (unknown) **(required)**: Device to [`emulate`](#emulate).
-- **mode** (unknown) **(required)**: "navigation" reloads &amp; audits. "snapshot" analyzes current state.
-- **outputDirPath** (unknown) **(required)**: Directory for reports. If omitted, uses temporary files.
+- **device** (enum: "desktop", "mobile") _(optional)_: Device to [`emulate`](#emulate).
+- **mode** (enum: "navigation", "snapshot") _(optional)_: "navigation" reloads &amp; audits. "snapshot" analyzes current state.
+- **outputDirPath** (string) _(optional)_: Directory for reports. If omitted, uses temporary files.
 
 ---
 
@@ -653,10 +653,10 @@ Example with arguments: `(el) => {
 
 **Parameters:**
 
-- **includePreservedMessages** (unknown) **(required)**: Set to true to return the preserved messages over the last 3 navigations.
-- **pageIdx** (unknown) **(required)**: Page number to return (0-based). When omitted, returns the first page.
-- **pageSize** (unknown) **(required)**: Maximum number of messages to return. When omitted, returns all messages.
-- **types** (unknown) **(required)**: Filter messages to only return messages of the specified resource types. When omitted or empty, returns all messages.
+- **includePreservedMessages** (boolean) _(optional)_: Set to true to return the preserved messages over the last 3 navigations.
+- **pageIdx** (integer) _(optional)_: Page number to return (0-based). When omitted, returns the first page.
+- **pageSize** (integer) _(optional)_: Maximum number of messages to return. When omitted, returns all messages.
+- **types** (array) _(optional)_: Filter messages to only return messages of the specified resource types. When omitted or empty, returns all messages.
 
 ---
 
@@ -666,11 +666,11 @@ Example with arguments: `(el) => {
 
 **Parameters:**
 
-- **filePath** (unknown) **(required)**: The absolute path, or a path relative to the current working directory, to save the screenshot to instead of attaching it to the response.
-- **format** (unknown) **(required)**: Type of format to save the screenshot as. Default is "png"
-- **fullPage** (unknown) **(required)**: If set to true takes a screenshot of the full page instead of the currently visible viewport. Incompatible with uid.
-- **quality** (unknown) **(required)**: Compression quality for JPEG and WebP formats (0-100). Higher values mean better quality but larger file sizes. Ignored for PNG format.
-- **uid** (unknown) **(required)**: The uid of an element on the page from the page content snapshot. If omitted, takes a page screenshot.
+- **filePath** (string) _(optional)_: The absolute path, or a path relative to the current working directory, to save the screenshot to instead of attaching it to the response.
+- **format** (enum: "png", "jpeg", "webp") _(optional)_: Type of format to save the screenshot as. Default is "png"
+- **fullPage** (boolean) _(optional)_: If set to true takes a screenshot of the full page instead of the currently visible viewport. Incompatible with uid.
+- **quality** (number) _(optional)_: Compression quality for JPEG and WebP formats (0-100). Higher values mean better quality but larger file sizes. Ignored for PNG format.
+- **uid** (string) _(optional)_: The uid of an element on the page from the page content snapshot. If omitted, takes a page screenshot.
 
 ---
 
@@ -682,8 +682,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **filePath** (unknown) **(required)**: The absolute path, or a path relative to the current working directory, to save the snapshot to instead of attaching it to the response.
-- **verbose** (unknown) **(required)**: Whether to include all possible information available in the full a11y tree. Default is false.
+- **filePath** (string) _(optional)_: The absolute path, or a path relative to the current working directory, to save the snapshot to instead of attaching it to the response.
+- **verbose** (boolean) _(optional)_: Whether to include all possible information available in the full a11y tree. Default is false.
 
 ---
 
@@ -695,9 +695,9 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **domain** (unknown) **(required)**: Cookie domain
-- **name** (unknown) **(required)**: Name of the cookie to delete
-- **path** (unknown) **(required)**: Cookie path
+- **name** (string) **(required)**: Name of the cookie to delete
+- **domain** (string) _(optional)_: Cookie domain
+- **path** (string) _(optional)_: Cookie path
 
 ---
 
@@ -707,7 +707,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **urls** (unknown) **(required)**: Optional list of URLs to retrieve cookies for. If omitted, returns cookies for the current page URL.
+- **urls** (array) _(optional)_: Optional list of URLs to retrieve cookies for. If omitted, returns cookies for the current page URL.
 
 ---
 
@@ -717,15 +717,15 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **domain** (unknown) **(required)**: Cookie domain
-- **expires** (unknown) **(required)**: Cookie expiration in seconds (Unix time)
-- **httpOnly** (unknown) **(required)**: HTTP only
-- **name** (unknown) **(required)**: Cookie name
-- **path** (unknown) **(required)**: Cookie path
-- **sameSite** (unknown) **(required)**: SameSite attribute
-- **secure** (unknown) **(required)**: Secure
-- **url** (unknown) **(required)**: The request-URI to associate with the setting of the cookie.
-- **value** (unknown) **(required)**: Cookie value
+- **name** (string) **(required)**: Cookie name
+- **value** (string) **(required)**: Cookie value
+- **domain** (string) _(optional)_: Cookie domain
+- **expires** (number) _(optional)_: Cookie expiration in seconds (Unix time)
+- **httpOnly** (boolean) _(optional)_: HTTP only
+- **path** (string) _(optional)_: Cookie path
+- **sameSite** (enum: "Strict", "Lax", "None") _(optional)_: SameSite attribute
+- **secure** (boolean) _(optional)_: Secure
+- **url** (string) _(optional)_: The request-URI to associate with the setting of the cookie.
 
 ---
 
@@ -737,8 +737,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **destination** (unknown) **(required)**: Destination phase node.
-- **source** (unknown) **(required)**: Source phase node.
+- **destination** (string) **(required)**: Destination phase node.
+- **source** (string) **(required)**: Source phase node.
 
 ---
 
@@ -748,8 +748,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **url** (unknown) **(required)**: Target qHTTP URL (e.g., qhttp://Luz/api/status).
-- **verbose** (unknown) **(required)**: Enable verbose spectral output.
+- **url** (string) **(required)**: Target qHTTP URL (e.g., qhttp://Luz/api/status).
+- **verbose** (boolean) _(optional)_: Enable verbose spectral output.
 
 ---
 
@@ -759,8 +759,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **deltaPhase** (unknown) **(required)**: Phase adjustment in radians (e.g., 0.00017).
-- **targetSheet** (unknown) **(required)**: The target Riemann sheet (e.g., "2140").
+- **deltaPhase** (number) **(required)**: Phase adjustment in radians (e.g., 0.00017).
+- **targetSheet** (string) **(required)**: The target Riemann sheet (e.g., "2140").
 
 ---
 
@@ -770,7 +770,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **region** (unknown) **(required)**: Membrane region (0-360 degrees).
+- **region** (number) **(required)**: Membrane region (0-360 degrees).
 
 ---
 
@@ -780,8 +780,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **path** (unknown) **(required)**: The directory or file to search in.
-- **pattern** (unknown) **(required)**: The pattern or phase signature to search for.
+- **pattern** (string) **(required)**: The pattern or phase signature to search for.
+- **path** (string) _(optional)_: The directory or file to search in.
 
 ---
 
@@ -791,8 +791,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **blockHash** (unknown) **(required)**: Hash of the block to commit.
-- **signature** (unknown) **(required)**: Cryptographic signature.
+- **blockHash** (string) **(required)**: Hash of the block to commit.
+- **signature** (string) **(required)**: Cryptographic signature.
 
 ---
 
@@ -802,8 +802,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **messagesCount** (unknown) **(required)**: Number of messages to save.
-- **modelId** (unknown) **(required)**: The model ID.
+- **messagesCount** (number) **(required)**: Number of messages to save.
+- **modelId** (string) **(required)**: The model ID.
 
 ---
 
@@ -813,7 +813,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **target** (unknown) **(required)**: Target V-Register.
+- **target** (string) **(required)**: Target V-Register.
 
 ---
 
@@ -823,7 +823,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **path** (unknown) **(required)**: The directory path to list.
+- **path** (string) _(optional)_: The directory path to list.
 
 ---
 
@@ -833,8 +833,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **jobs** (unknown) **(required)**: Number of concurrent phase oscillators (jobs).
-- **target** (unknown) **(required)**: The build target.
+- **jobs** (number) _(optional)_: Number of concurrent phase oscillators (jobs).
+- **target** (string) _(optional)_: The build target.
 
 ---
 
@@ -844,8 +844,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **destination** (unknown) **(required)**: Destination phase node.
-- **source** (unknown) **(required)**: Source phase node.
+- **destination** (string) **(required)**: Destination phase node.
+- **source** (string) **(required)**: Source phase node.
 
 ---
 
@@ -855,7 +855,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **targetHash** (unknown) **(required)**: The mental state hash to revert to.
+- **targetHash** (string) **(required)**: The mental state hash to revert to.
 
 ---
 
@@ -865,8 +865,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **address** (unknown) **(required)**: Target IPv8 address.
-- **port** (unknown) **(required)**: Phase port (e.g., 80, 443, 8080).
+- **address** (string) **(required)**: Target IPv8 address.
+- **port** (number) **(required)**: Phase port (e.g., 80, 443, 8080).
 
 ---
 
@@ -876,7 +876,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **concept** (unknown) **(required)**: The concept to resolve (e.g., "Luz", "Sombra").
+- **concept** (string) **(required)**: The concept to resolve (e.g., "Luz", "Sombra").
 
 ---
 
@@ -886,8 +886,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **address** (unknown) **(required)**: Target IPv8 address (e.g., 127.1.0.1.0.0.0.1).
-- **count** (unknown) **(required)**: Number of phase-echoes to send.
+- **address** (string) **(required)**: Target IPv8 address (e.g., 127.1.0.1.0.0.0.1).
+- **count** (number) _(optional)_: Number of phase-echoes to send.
 
 ---
 
@@ -897,8 +897,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **command** (unknown) **(required)**: The GNU command or shell to execute.
-- **mode** (unknown) **(required)**: Entrovisor translation mode.
+- **command** (string) _(optional)_: The GNU command or shell to execute.
+- **mode** (enum: "FULL_GNU", "HYBRID", "NATIVE") _(optional)_: Entrovisor translation mode.
 
 ---
 
@@ -916,8 +916,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **rhoAddr** (unknown) **(required)**: Address of state rho.
-- **sigmaAddr** (unknown) **(required)**: Address of state sigma.
+- **rhoAddr** (string) **(required)**: Address of state rho.
+- **sigmaAddr** (string) **(required)**: Address of state sigma.
 
 ---
 
@@ -927,7 +927,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **command** (unknown) **(required)**: The command to execute in ash.
+- **command** (string) **(required)**: The command to execute in ash.
 
 ---
 
@@ -937,7 +937,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **action** (unknown) **(required)**: Action to perform on the daemon.
+- **action** (enum: "start", "stop", "restart", "status") **(required)**: Action to perform on the daemon.
 
 ---
 
@@ -947,7 +947,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **address** (unknown) **(required)**: Target IPv8 address.
+- **address** (string) **(required)**: Target IPv8 address.
 
 ---
 
@@ -957,8 +957,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **modelId** (unknown) **(required)**: The Bonsai model to use.
-- **prompt** (unknown) **(required)**: The user prompt for inference.
+- **modelId** (enum: "1.7b", "4b", "8b") **(required)**: The Bonsai model to use.
+- **prompt** (string) **(required)**: The user prompt for inference.
 
 ---
 
@@ -968,7 +968,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **vRel** (unknown) **(required)**: Relative velocity [c].
+- **vRel** (number) **(required)**: Relative velocity [c].
 
 ---
 
@@ -994,7 +994,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **target** (unknown) **(required)**: Target V-Register.
+- **target** (string) **(required)**: Target V-Register.
 
 ---
 
@@ -1012,7 +1012,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **hash** (unknown) **(required)**: Target hash to verify.
+- **hash** (string) **(required)**: Target hash to verify.
 
 ---
 
@@ -1030,7 +1030,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **threshold** (unknown) **(required)**: Migration threshold for the network Laplacian.
+- **threshold** (number) _(optional)_: Migration threshold for the network Laplacian.
 
 ---
 
@@ -1040,8 +1040,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **cobitId** (unknown) **(required)**: ID of the COBIT to teleport.
-- **sheetId** (unknown) **(required)**: Destination Sheet ID.
+- **cobitId** (string) **(required)**: ID of the COBIT to teleport.
+- **sheetId** (number) **(required)**: Destination Sheet ID.
 
 ---
 
@@ -1051,8 +1051,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **agentId** (unknown) **(required)**: The ID of the agent to collapse.
-- **task** (unknown) **(required)**: The task to execute upon collapse.
+- **agentId** (enum: "ALFA", "BETA", "GAMMA", "DELTA", "EPSILON", "ZETA", "ETA", "THETA", "IOTA", "KAPPA", "LAMBDA", "MU") **(required)**: The ID of the agent to collapse.
+- **task** (string) **(required)**: The task to execute upon collapse.
 
 ---
 
@@ -1062,8 +1062,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **groupSize** (unknown) **(required)**: Number of volunteers to sync.
-- **syncLevel** (unknown) **(required)**: Requested synchronization depth.
+- **groupSize** (number) _(optional)_: Number of volunteers to sync.
+- **syncLevel** (number) _(optional)_: Requested synchronization depth.
 
 ---
 
@@ -1073,8 +1073,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **inputFile** (unknown) **(required)**
-- **outputFile** (unknown) **(required)**
+- **inputFile** (string) _(optional)_
+- **outputFile** (string) _(optional)_
 
 ---
 
@@ -1092,7 +1092,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **citizenDid** (unknown) **(required)**: The DID of the sovereign citizen.
+- **citizenDid** (string) **(required)**: The DID of the sovereign citizen.
 
 ---
 
@@ -1102,7 +1102,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **query** (unknown) **(required)**: The reality-query to deliberate on.
+- **query** (string) **(required)**: The reality-query to deliberate on.
 
 ---
 
@@ -1136,7 +1136,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **threshold** (unknown) **(required)**: Detection threshold in radians.
+- **threshold** (number) **(required)**: Detection threshold in radians.
 
 ---
 
@@ -1146,7 +1146,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **angle** (unknown) **(required)**: Rotation angle in radians.
+- **angle** (number) **(required)**: Rotation angle in radians.
 
 ---
 
@@ -1156,7 +1156,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **target** (unknown) **(required)**: Target V-Register.
+- **target** (string) **(required)**: Target V-Register.
 
 ---
 
@@ -1166,7 +1166,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **entropyLevel** (unknown) **(required)**: Incoming entropy level (Gbps).
+- **entropyLevel** (number) **(required)**: Incoming entropy level (Gbps).
 
 ---
 
@@ -1176,7 +1176,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **target** (unknown) **(required)**: Target orbital region.
+- **target** (string) **(required)**: Target orbital region.
 
 ---
 
@@ -1186,7 +1186,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **probeId** (unknown) **(required)**: The ID of the probe.
+- **probeId** (string) **(required)**: The ID of the probe.
 
 ---
 
@@ -1196,7 +1196,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **consent_id** (unknown) **(required)**: Mandatory SecOps Consent ID.
+- **consent_id** (string) **(required)**: Mandatory SecOps Consent ID.
 
 ---
 
@@ -1206,8 +1206,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **consent_id** (unknown) **(required)**: Mandatory SecOps Consent ID.
-- **elf_path** (unknown) **(required)**: Path to the eBPF ELF object file.
+- **consent_id** (string) **(required)**: Mandatory SecOps Consent ID.
+- **elf_path** (string) **(required)**: Path to the eBPF ELF object file.
 
 ---
 
@@ -1217,9 +1217,9 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **consent_id** (unknown) **(required)**: Mandatory SecOps Consent ID.
-- **duration** (unknown) **(required)**: Monitoring duration in seconds.
-- **interface** (unknown) **(required)**: Network interface to monitor (e.g., "eth0").
+- **consent_id** (string) **(required)**: Mandatory SecOps Consent ID.
+- **interface** (string) **(required)**: Network interface to monitor (e.g., "eth0").
+- **duration** (number) _(optional)_: Monitoring duration in seconds.
 
 ---
 
@@ -1229,8 +1229,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **benchmark_name** (unknown) **(required)**: Name of the benchmark to run.
-- **consent_id** (unknown) **(required)**: Mandatory SecOps Consent ID.
+- **consent_id** (string) **(required)**: Mandatory SecOps Consent ID.
+- **benchmark_name** (enum: "distributed_consensus", "microservices_network", "tls_termination") _(optional)_: Name of the benchmark to run.
 
 ---
 
@@ -1240,8 +1240,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **batch_id** (unknown) **(required)**: Identifier for the event batch.
-- **consent_id** (unknown) **(required)**: Mandatory SecOps Consent ID.
+- **batch_id** (string) **(required)**: Identifier for the event batch.
+- **consent_id** (string) **(required)**: Mandatory SecOps Consent ID.
 
 ---
 
@@ -1251,9 +1251,9 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **aspect** (unknown) **(required)**: The opcode aspect.
-- **family** (unknown) **(required)**: The opcode family.
-- **params** (unknown) **(required)**: Execution parameters.
+- **aspect** (enum: "INIT", "SYNC", "VERIFY", "BIND", "RELAX", "DISSIPATE", "EMIT", "ABSORB", "TWIST", "UNTWIST", "MEASURE", "COLLAPSE", "ENTANGLE", "DISENTANGLE", "CRYSTALLIZE", "DECRYSTALLIZE", "BOOST", "DAMP", "FILTER", "AMPLIFY", "ATTENUATE", "DELAY", "ADVANCE", "BRANCH", "MERGE", "MAP", "REDUCE", "EXPAND", "PROJECT", "LIFT", "CONVOLVE", "DECONVOLVE", "COMPAT") **(required)**: The opcode aspect.
+- **family** (enum: "NULL", "PHOTON", "BRAID", "MESH", "HYDRO", "CHRONOS", "ASI", "SYS", "CLOUD", "NEURAL", "GAIA", "COSMOS", "MÖBIUS", "V2G", "PTST", "OHF", "DYSON", "NOMAD", "CAGE", "MINING", "VITAE", "AKASHA", "QHTTP", "RL", "DRONE", "BCI", "EPR", "LAGRANGE", "SCHUMANN", "PLANCK", "OMEGA", "GNU") **(required)**: The opcode family.
+- **params** (unknown) _(optional)_: Execution parameters.
 
 ---
 
@@ -1263,8 +1263,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **scale** (unknown) **(required)**: Scale factor.
-- **target** (unknown) **(required)**: Target V-Register.
+- **scale** (number) **(required)**: Scale factor.
+- **target** (string) **(required)**: Target V-Register.
 
 ---
 
@@ -1274,7 +1274,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **targetSheet** (unknown) **(required)**: The target temporal sheet to fold onto.
+- **targetSheet** (enum: "2008", "2026", "2140") **(required)**: The target temporal sheet to fold onto.
 
 ---
 
@@ -1292,7 +1292,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **intent** (unknown) **(required)**: The code behavior to debate.
+- **intent** (string) **(required)**: The code behavior to debate.
 
 ---
 
@@ -1302,7 +1302,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **intent** (unknown) **(required)**: The intention to materialize.
+- **intent** (string) **(required)**: The intention to materialize.
 
 ---
 
@@ -1320,7 +1320,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **seed** (unknown) **(required)**: The primordial axioma or seed for the new universe.
+- **seed** (string) **(required)**: The primordial axioma or seed for the new universe.
 
 ---
 
@@ -1330,8 +1330,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **reg0** (unknown) **(required)**: Address of the first qubit.
-- **reg1** (unknown) **(required)**: Address of the second qubit.
+- **reg0** (string) **(required)**: Address of the first qubit.
+- **reg1** (string) **(required)**: Address of the second qubit.
 
 ---
 
@@ -1509,8 +1509,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **aspect** (unknown) **(required)**: The opcode aspect (0x00-0x1F).
-- **family** (unknown) **(required)**: The opcode family (0x00-0x1F).
+- **aspect** (enum: "INIT", "SYNC", "VERIFY", "BIND", "RELAX", "DISSIPATE", "EMIT", "ABSORB", "TWIST", "UNTWIST", "MEASURE", "COLLAPSE", "ENTANGLE", "DISENTANGLE", "CRYSTALLIZE", "DECRYSTALLIZE", "BOOST", "DAMP", "FILTER", "AMPLIFY", "ATTENUATE", "DELAY", "ADVANCE", "BRANCH", "MERGE", "MAP", "REDUCE", "EXPAND", "PROJECT", "LIFT", "CONVOLVE", "DECONVOLVE", "COMPAT") **(required)**: The opcode aspect (0x00-0x1F).
+- **family** (enum: "NULL", "PHOTON", "BRAID", "MESH", "HYDRO", "CHRONOS", "ASI", "SYS", "CLOUD", "NEURAL", "GAIA", "COSMOS", "MÖBIUS", "V2G", "PTST", "OHF", "DYSON", "NOMAD", "CAGE", "MINING", "VITAE", "AKASHA", "QHTTP", "RL", "DRONE", "BCI", "EPR", "LAGRANGE", "SCHUMANN", "PLANCK", "OMEGA", "GNU") **(required)**: The opcode family (0x00-0x1F).
 
 ---
 
@@ -1560,7 +1560,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **sourcePageId** (unknown) **(required)**: The source reality (Page ID) to merge from. Defaults to detected Optimal Future #ℵ₁.
+- **sourcePageId** (number) _(optional)_: The source reality (Page ID) to merge from. Defaults to detected Optimal Future #ℵ₁.
 
 ---
 
@@ -1586,7 +1586,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **otherPageId** (unknown) **(required)**: The ID of the other page/agent to merge with.
+- **otherPageId** (number) **(required)**: The ID of the other page/agent to merge with.
 
 ---
 
@@ -1596,7 +1596,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **target** (unknown) **(required)**: Target V-Register.
+- **target** (string) **(required)**: Target V-Register.
 
 ---
 
@@ -1606,8 +1606,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **artifactId** (unknown) **(required)**: The ID of the Soul Artifact to install.
-- **targetSubstrate** (unknown) **(required)**: The target digital substrate (e.g., "Arkhe-Core-0").
+- **artifactId** (string) **(required)**: The ID of the Soul Artifact to install.
+- **targetSubstrate** (string) **(required)**: The target digital substrate (e.g., "Arkhe-Core-0").
 
 ---
 
@@ -1617,8 +1617,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **nServers** (unknown) **(required)**: Number of servers in the network.
-- **peakNode** (unknown) **(required)**: Index of the server receiving a traffic spike.
+- **nServers** (number) _(optional)_: Number of servers in the network.
+- **peakNode** (number) _(optional)_: Index of the server receiving a traffic spike.
 
 ---
 
@@ -1628,8 +1628,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **address** (unknown) **(required)**: QTL Address.
-- **sheetId** (unknown) **(required)**: Source Sheet ID.
+- **address** (number) **(required)**: QTL Address.
+- **sheetId** (number) **(required)**: Source Sheet ID.
 
 ---
 
@@ -1639,7 +1639,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **tokenCount** (unknown) **(required)**: Number of tokens to allocate.
+- **tokenCount** (number) **(required)**: Number of tokens to allocate.
 
 ---
 
@@ -1673,7 +1673,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **tokenIndex** (unknown) **(required)**: Index of the token to retrieve.
+- **tokenIndex** (number) **(required)**: Index of the token to retrieve.
 
 ---
 
@@ -1683,8 +1683,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **source** (unknown) **(required)**: Source identifier or constant.
-- **target** (unknown) **(required)**: Target V-Register.
+- **source** (string) **(required)**: Source identifier or constant.
+- **target** (string) **(required)**: Target V-Register.
 
 ---
 
@@ -1702,7 +1702,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **allocation** (unknown) **(required)**: CoT amount to allocate.
+- **allocation** (number) **(required)**: CoT amount to allocate.
 
 ---
 
@@ -1744,7 +1744,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **region** (unknown) **(required)**: Brain region to map.
+- **region** (string) **(required)**: Brain region to map.
 
 ---
 
@@ -1754,8 +1754,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **force** (unknown) **(required)**: Steering force magnitude.
-- **target** (unknown) **(required)**: Target V-Register.
+- **force** (number) **(required)**: Steering force magnitude.
+- **target** (string) **(required)**: Target V-Register.
 
 ---
 
@@ -1765,7 +1765,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **partnerId** (unknown) **(required)**: Partner Node ID.
+- **partnerId** (string) **(required)**: Partner Node ID.
 
 ---
 
@@ -1775,8 +1775,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **arkhePath** (unknown) **(required)**: Path to the .arkhe script.
-- **outputPath** (unknown) **(required)**: Output .mtp3 path.
+- **arkhePath** (string) **(required)**: Path to the .arkhe script.
+- **outputPath** (string) _(optional)_: Output .mtp3 path.
 
 ---
 
@@ -1786,7 +1786,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **active** (unknown) **(required)**: Whether to activate the shield.
+- **active** (boolean) **(required)**: Whether to activate the shield.
 
 ---
 
@@ -1796,8 +1796,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **delta** (unknown) **(required)**: The adjustment value.
-- **targetMetric** (unknown) **(required)**: The system metric to [`mutate`](#mutate).
+- **delta** (number) **(required)**: The adjustment value.
+- **targetMetric** (enum: "REASONING_LIMIT", "DEFAULT_COST") **(required)**: The system metric to [`mutate`](#mutate).
 
 ---
 
@@ -1815,7 +1815,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **roomId** (unknown) **(required)**: The ID of the Neko room to connect to.
+- **roomId** (string) **(required)**: The ID of the Neko room to connect to.
 
 ---
 
@@ -1825,7 +1825,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **roomId** (unknown) **(required)**: The ID of the Neko room.
+- **roomId** (string) **(required)**: The ID of the Neko room.
 
 ---
 
@@ -1835,8 +1835,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **browser** (unknown) **(required)**: The browser image to use.
-- **roomName** (unknown) **(required)**: Optional name for the room.
+- **browser** (enum: "firefox", "chromium", "chrome", "tor-browser") _(optional)_: The browser image to use.
+- **roomName** (string) _(optional)_: Optional name for the room.
 
 ---
 
@@ -1846,8 +1846,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **inhibitEgo** (unknown) **(required)**: Whether to inhibit the Default Mode Network.
-- **subjectId** (unknown) **(required)**: ID of the voluntary subject.
+- **subjectId** (string) **(required)**: ID of the voluntary subject.
+- **inhibitEgo** (boolean) _(optional)_: Whether to inhibit the Default Mode Network.
 
 ---
 
@@ -1857,7 +1857,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **level** (unknown) **(required)**: Noise level.
+- **level** (enum: "LOW", "MEDIUM", "HIGH") **(required)**: Noise level.
 
 ---
 
@@ -1867,7 +1867,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **level** (unknown) **(required)**: Noise level (0-6).
+- **level** (number) _(optional)_: Noise level (0-6).
 
 ---
 
@@ -1877,7 +1877,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **input** (unknown) **(required)**: Path to analyze.
+- **input** (string) **(required)**: Path to analyze.
 
 ---
 
@@ -1887,7 +1887,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **projectSize** (unknown) **(required)**: Approximate size of the codebase.
+- **projectSize** (enum: "small", "medium", "large") **(required)**: Approximate size of the codebase.
 
 ---
 
@@ -1897,11 +1897,11 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **adaptive** (unknown) **(required)**: Use adaptive multi-level analysis.
-- **input** (unknown) **(required)**: Path to file or directory to analyze.
-- **models** (unknown) **(required)**: Comma-separated list of models for deep analysis.
-- **scanModel** (unknown) **(required)**: Model to use for quick scanning.
-- **vulns** (unknown) **(required)**: Vulnerability types to check (comma-separated or "all").
+- **input** (string) **(required)**: Path to file or directory to analyze.
+- **adaptive** (boolean) _(optional)_: Use adaptive multi-level analysis.
+- **models** (string) _(optional)_: Comma-separated list of models for deep analysis.
+- **scanModel** (string) _(optional)_: Model to use for quick scanning.
+- **vulns** (string) _(optional)_: Vulnerability types to check (comma-separated or "all").
 
 ---
 
@@ -1911,7 +1911,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **port** (unknown) **(required)**: Web interface port.
+- **port** (number) _(optional)_: Web interface port.
 
 ---
 
@@ -1921,8 +1921,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **nProc** (unknown) **(required)**: Number of active processes to [`simulate`](#simulate).
-- **ticks** (unknown) **(required)**: Number of simulation ticks.
+- **nProc** (number) _(optional)_: Number of active processes to [`simulate`](#simulate).
+- **ticks** (number) _(optional)_: Number of simulation ticks.
 
 ---
 
@@ -1932,7 +1932,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **checkpointId** (unknown) **(required)**: The ID of the previously stored mental state hash to compare against.
+- **checkpointId** (string) **(required)**: The ID of the previously stored mental state hash to compare against.
 
 ---
 
@@ -1950,8 +1950,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **angle** (unknown) **(required)**: Precession angle.
-- **target** (unknown) **(required)**: Target V-Register.
+- **angle** (number) **(required)**: Precession angle.
+- **target** (string) **(required)**: Target V-Register.
 
 ---
 
@@ -1961,7 +1961,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **duration** (unknown) **(required)**: Probe duration in microseconds.
+- **duration** (number) _(optional)_: Probe duration in microseconds.
 
 ---
 
@@ -1971,7 +1971,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **threshold** (unknown) **(required)**: λ2 coherence threshold for pruning.
+- **threshold** (number) _(optional)_: λ2 coherence threshold for pruning.
 
 ---
 
@@ -1997,8 +1997,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **lengthKm** (unknown) **(required)**: Fiber length in km.
-- **wavelengthNm** (unknown) **(required)**: Wavelength in nm.
+- **lengthKm** (number) **(required)**: Fiber length in km.
+- **wavelengthNm** (number) _(optional)_: Wavelength in nm.
 
 ---
 
@@ -2008,7 +2008,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **query** (unknown) **(required)**: The interrogation string.
+- **query** (string) **(required)**: The interrogation string.
 
 ---
 
@@ -2018,7 +2018,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **address** (unknown) **(required)**: Membrane address (hex).
+- **address** (string) **(required)**: Membrane address (hex).
 
 ---
 
@@ -2036,7 +2036,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **rowOffset** (unknown) **(required)**: Row offset for matrix rendering.
+- **rowOffset** (number) _(optional)_: Row offset for matrix rendering.
 
 ---
 
@@ -2046,8 +2046,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **targetPos** (unknown) **(required)**: Galactic coordinates (x,y,z).
-- **targetTime** (unknown) **(required)**: Target epoch (e.g. 2008).
+- **targetPos** (string) **(required)**: Galactic coordinates (x,y,z).
+- **targetTime** (string) **(required)**: Target epoch (e.g. 2008).
 
 ---
 
@@ -2057,7 +2057,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **targetBinary** (unknown) **(required)**: Description of the desired binary result.
+- **targetBinary** (string) **(required)**: Description of the desired binary result.
 
 ---
 
@@ -2067,7 +2067,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **fluctuation** (unknown) **(required)**: Fluctuation intensity (e.g., 0.1 for ±10%).
+- **fluctuation** (number) _(optional)_: Fluctuation intensity (e.g., 0.1 for ±10%).
 
 ---
 
@@ -2077,7 +2077,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **intent** (unknown) **(required)**: The semantic intent of the task (e.g., "mathematics", "design", "performance").
+- **intent** (string) **(required)**: The semantic intent of the task (e.g., "mathematics", "design", "performance").
 
 ---
 
@@ -2095,7 +2095,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **cycles** (unknown) **(required)**: Number of benchmark cycles.
+- **cycles** (number) _(optional)_: Number of benchmark cycles.
 
 ---
 
@@ -2105,7 +2105,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **target** (unknown) **(required)**: Target Gateway URL.
+- **target** (string) _(optional)_: Target Gateway URL.
 
 ---
 
@@ -2131,7 +2131,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **duration** (unknown) **(required)**: Simulation duration in seconds.
+- **duration** (number) _(optional)_: Simulation duration in seconds.
 
 ---
 
@@ -2141,7 +2141,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **targetUrl** (unknown) **(required)**: Target node audit URL.
+- **targetUrl** (string) _(optional)_: Target node audit URL.
 
 ---
 
@@ -2167,8 +2167,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **gateway** (unknown) **(required)**: Gateway entropy endpoint.
-- **numaApi** (unknown) **(required)**: Numa API URL.
+- **gateway** (string) _(optional)_: Gateway entropy endpoint.
+- **numaApi** (string) _(optional)_: Numa API URL.
 
 ---
 
@@ -2194,7 +2194,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **sheetId** (unknown) **(required)**: Target Sheet ID to probe.
+- **sheetId** (number) **(required)**: Target Sheet ID to probe.
 
 ---
 
@@ -2204,9 +2204,9 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **alpha** (unknown) **(required)**: Fine-structure constant for the simulation.
-- **tau** (unknown) **(required)**: Criticality threshold for the simulation.
-- **universeId** (unknown) **(required)**: Unique identifier for the child universe.
+- **alpha** (number) **(required)**: Fine-structure constant for the simulation.
+- **tau** (number) **(required)**: Criticality threshold for the simulation.
+- **universeId** (string) **(required)**: Unique identifier for the child universe.
 
 ---
 
@@ -2232,8 +2232,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **mission** (unknown) **(required)**: Mission objective.
-- **sheetId** (unknown) **(required)**: Target Sheet ID.
+- **mission** (string) **(required)**: Mission objective.
+- **sheetId** (number) **(required)**: Target Sheet ID.
 
 ---
 
@@ -2251,7 +2251,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **problemId** (unknown) **(required)**: Problem identifier (e.g., "P=NP", "Riemann Hypothesis").
+- **problemId** (string) **(required)**: Problem identifier (e.g., "P=NP", "Riemann Hypothesis").
 
 ---
 
@@ -2269,9 +2269,9 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **address** (unknown) **(required)**: QTL Address.
-- **sheetId** (unknown) **(required)**: Target Sheet ID.
-- **size** (unknown) **(required)**: State size in bytes.
+- **address** (number) **(required)**: QTL Address.
+- **sheetId** (number) **(required)**: Target Sheet ID.
+- **size** (number) **(required)**: State size in bytes.
 
 ---
 
@@ -2281,8 +2281,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **modelId** (unknown) **(required)**: The model ID.
-- **prompt** (unknown) **(required)**: The prompt.
+- **modelId** (string) **(required)**: The model ID.
+- **prompt** (string) **(required)**: The prompt.
 
 ---
 
@@ -2292,7 +2292,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **probeId** (unknown) **(required)**: The ID of the probe to sync with.
+- **probeId** (string) **(required)**: The ID of the probe to sync with.
 
 ---
 
@@ -2302,7 +2302,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **mode** (unknown) **(required)**: Harmonization mode.
+- **mode** (enum: "relax", "compact", "resolve") _(optional)_: Harmonization mode.
 
 ---
 
@@ -2312,8 +2312,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **data** (unknown) **(required)**: Payload.
-- **target** (unknown) **(required)**: Target node.
+- **data** (string) **(required)**: Payload.
+- **target** (string) **(required)**: Target node.
 
 ---
 
@@ -2323,7 +2323,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **reason** (unknown) **(required)**: Reason for notification.
+- **reason** (string) **(required)**: Reason for notification.
 
 ---
 
@@ -2333,7 +2333,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **targetAlpha** (unknown) **(required)**: The target value for alpha (e.g., 1/137.036).
+- **targetAlpha** (number) **(required)**: The target value for alpha (e.g., 1/137.036).
 
 ---
 
@@ -2359,7 +2359,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **trajectoryId** (unknown) **(required)**: Trajectory ID.
+- **trajectoryId** (string) **(required)**: Trajectory ID.
 
 ---
 
@@ -2369,7 +2369,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **target** (unknown) **(required)**: Target V-Register (Biological/Carbon).
+- **target** (string) **(required)**: Target V-Register (Biological/Carbon).
 
 ---
 
@@ -2387,8 +2387,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **factor** (unknown) **(required)**: Implosion factor (e.g. 137).
-- **target** (unknown) **(required)**: Target V-Register.
+- **factor** (number) **(required)**: Implosion factor (e.g. 137).
+- **target** (string) **(required)**: Target V-Register.
 
 ---
 
@@ -2398,8 +2398,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **source** (unknown) **(required)**: Source V-Register.
-- **target** (unknown) **(required)**: Target V-Register.
+- **source** (string) **(required)**: Source V-Register.
+- **target** (string) **(required)**: Target V-Register.
 
 ---
 
@@ -2409,8 +2409,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **ref** (unknown) **(required)**: Reference V-Register.
-- **target** (unknown) **(required)**: Target V-Register.
+- **ref** (string) **(required)**: Reference V-Register.
+- **target** (string) **(required)**: Target V-Register.
 
 ---
 
@@ -2420,8 +2420,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **v1** (unknown) **(required)**: V-Register 1.
-- **v2** (unknown) **(required)**: V-Register 2.
+- **v1** (string) **(required)**: V-Register 1.
+- **v2** (string) **(required)**: V-Register 2.
 
 ---
 
@@ -2439,8 +2439,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **address** (unknown) **(required)**: Membrane address (hex).
-- **data** (unknown) **(required)**: Vortex state data.
+- **address** (string) **(required)**: Membrane address (hex).
+- **data** (string) **(required)**: Vortex state data.
 
 ---
 
@@ -2460,7 +2460,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **domain** (unknown) **(required)**: The ENS domain to resolve (e.g., vitalik.eth).
+- **domain** (string) **(required)**: The ENS domain to resolve (e.g., vitalik.eth).
 
 ---
 
@@ -2470,7 +2470,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **content** (unknown) **(required)**: The string content to add to IPFS.
+- **content** (string) **(required)**: The string content to add to IPFS.
 
 ---
 
@@ -2480,7 +2480,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **cid** (unknown) **(required)**: The IPFS CID to retrieve.
+- **cid** (string) **(required)**: The IPFS CID to retrieve.
 
 ---
 
@@ -2498,8 +2498,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **hash** (unknown) **(required)**: The Swarm hash (reference) to download.
-- **path** (unknown) **(required)**: Optional path within the Swarm reference.
+- **hash** (string) **(required)**: The Swarm hash (reference) to download.
+- **path** (string) _(optional)_: Optional path within the Swarm reference.
 
 ---
 
@@ -2509,7 +2509,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **content** (unknown) **(required)**: The string content to upload to Swarm.
+- **content** (string) **(required)**: The string content to upload to Swarm.
 
 ---
 
@@ -2521,9 +2521,9 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **marketId** (unknown) **(required)**: The market identifier (e.g., "stETH-JUN-2026").
-- **oracleType** (unknown) **(required)**: The type of oracle to query.
-- **tokenType** (unknown) **(required)**: The type of token (PT or YT).
+- **marketId** (string) **(required)**: The market identifier (e.g., "stETH-JUN-2026").
+- **tokenType** (enum: "PT", "YT") **(required)**: The type of token (PT or YT).
+- **oracleType** (enum: "deterministic", "twap", "hybrid") _(optional)_: The type of oracle to query.
 
 ---
 
@@ -2533,7 +2533,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **vaultId** (unknown) **(required)**: The identifier of the MetaVault (e.g., "sDAI").
+- **vaultId** (string) **(required)**: The identifier of the MetaVault (e.g., "sDAI").
 
 ---
 
@@ -2553,8 +2553,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **force** (unknown) **(required)**: Overwrite if already exists.
-- **skillPath** (unknown) **(required)**: Path to the skill folder or git URL.
+- **skillPath** (string) **(required)**: Path to the skill folder or git URL.
+- **force** (boolean) _(optional)_: Overwrite if already exists.
 
 ---
 
@@ -2572,7 +2572,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **message** (unknown) **(required)**: The message to send to Mercury.
+- **message** (string) **(required)**: The message to send to Mercury.
 
 ---
 
@@ -2598,8 +2598,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **mediaPath** (unknown) **(required)**: The path to the media file.
-- **mediaType** (unknown) **(required)**: The type of media file.
+- **mediaPath** (string) **(required)**: The path to the media file.
+- **mediaType** (enum: "video", "audio", "text") **(required)**: The type of media file.
 
 ---
 
@@ -2611,10 +2611,10 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **cpus** (unknown) **(required)**: Number of vCPUs.
-- **image** (unknown) **(required)**: The container image to use.
-- **memory** (unknown) **(required)**: Memory in MiB.
-- **name** (unknown) **(required)**: The unique name for the sandbox.
+- **image** (string) **(required)**: The container image to use.
+- **name** (string) **(required)**: The unique name for the sandbox.
+- **cpus** (number) _(optional)_: Number of vCPUs.
+- **memory** (number) _(optional)_: Memory in MiB.
 
 ---
 
@@ -2624,8 +2624,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **command** (unknown) **(required)**: The command to execute.
-- **name** (unknown) **(required)**: The name of the sandbox.
+- **command** (string) **(required)**: The command to execute.
+- **name** (string) **(required)**: The name of the sandbox.
 
 ---
 
@@ -2643,7 +2643,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **name** (unknown) **(required)**: The name of the sandbox to remove.
+- **name** (string) **(required)**: The name of the sandbox to remove.
 
 ---
 
@@ -2653,8 +2653,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **command** (unknown) **(required)**: The command to execute in the VM.
-- **image** (unknown) **(required)**: The container image to use (e.g., "debian", "python").
+- **command** (string) **(required)**: The command to execute in the VM.
+- **image** (string) **(required)**: The container image to use (e.g., "debian", "python").
 
 ---
 
@@ -2666,7 +2666,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **targetIteration** (unknown) **(required)**: The iteration number to compare against. Defaults to baseline (0).
+- **targetIteration** (number) _(optional)_: The iteration number to compare against. Defaults to baseline (0).
 
 ---
 
@@ -2684,8 +2684,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **harness** (unknown) **(required)**: The agent harness to use.
-- **taskDescription** (unknown) **(required)**: Detailed description of the task for the agent to evolve on.
+- **harness** (enum: "claude", "opencode", "codex", "goose", "openhands") **(required)**: The agent harness to use.
+- **taskDescription** (string) **(required)**: Detailed description of the task for the agent to evolve on.
 
 ---
 
@@ -2695,7 +2695,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **continueMode** (unknown) **(required)**: Whether to resume from the last existing frontier.
+- **continueMode** (boolean) _(optional)_: Whether to resume from the last existing frontier.
 
 ---
 
@@ -2715,7 +2715,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **port** (unknown) **(required)**: The serial port of the device (e.g., /dev/ttyUSB0). If not provided, it will try to auto-detect.
+- **port** (string) _(optional)_: The serial port of the device (e.g., /dev/ttyUSB0). If not provided, it will try to auto-detect.
 
 ---
 
@@ -2733,9 +2733,9 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **dest** (unknown) **(required)**: The destination node ID (e.g., ^abcdefgh). If not provided, it broadcasts to all nodes.
-- **port** (unknown) **(required)**: The serial port of the local device to use.
-- **text** (unknown) **(required)**: The text message to send.
+- **text** (string) **(required)**: The text message to send.
+- **dest** (string) _(optional)_: The destination node ID (e.g., ^abcdefgh). If not provided, it broadcasts to all nodes.
+- **port** (string) _(optional)_: The serial port of the local device to use.
 
 ---
 
@@ -2747,10 +2747,10 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **args** (unknown) **(required)**: Arguments for the function.
-- **func** (unknown) **(required)**: Function name to call.
-- **gasFee** (unknown) **(required)**: Gas limit for the call.
-- **pkgPath** (unknown) **(required)**: Target realm path.
+- **func** (string) **(required)**: Function name to call.
+- **pkgPath** (string) **(required)**: Target realm path.
+- **args** (array) _(optional)_: Arguments for the function.
+- **gasFee** (string) _(optional)_: Gas limit for the call.
 
 ---
 
@@ -2760,10 +2760,10 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **deposit** (unknown) **(required)**: Initial deposit for deployment.
-- **path** (unknown) **(required)**: Path to the .gno files to deploy.
-- **pkgPath** (unknown) **(required)**: Package path for the realm (e.g., gno.land/r/cathedral/house).
-- **remote** (unknown) **(required)**: Gno RPC endpoint.
+- **path** (string) **(required)**: Path to the .gno files to deploy.
+- **pkgPath** (string) **(required)**: Package path for the realm (e.g., gno.land/r/cathedral/house).
+- **deposit** (string) _(optional)_: Initial deposit for deployment.
+- **remote** (string) _(optional)_: Gno RPC endpoint.
 
 ---
 
@@ -2773,8 +2773,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **func** (unknown) **(required)**: Read-only function or expression to evaluate.
-- **pkgPath** (unknown) **(required)**: Target realm path.
+- **func** (string) **(required)**: Read-only function or expression to evaluate.
+- **pkgPath** (string) **(required)**: Target realm path.
 
 ---
 
@@ -2786,8 +2786,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **force** (unknown) **(required)**: Force full re-index.
-- **path** (unknown) **(required)**: Path to the repository to index (default: current directory).
+- **force** (boolean) _(optional)_: Force full re-index.
+- **path** (string) _(optional)_: Path to the repository to index (default: current directory).
 
 ---
 
@@ -2797,8 +2797,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **name** (unknown) **(required)**: The name of the symbol to inspect.
-- **repo** (unknown) **(required)**: Target repository name.
+- **name** (string) **(required)**: The name of the symbol to inspect.
+- **repo** (string) _(optional)_: Target repository name.
 
 ---
 
@@ -2808,8 +2808,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **query** (unknown) **(required)**: The Cypher query string.
-- **repo** (unknown) **(required)**: Target repository name.
+- **query** (string) **(required)**: The Cypher query string.
+- **repo** (string) _(optional)_: Target repository name.
 
 ---
 
@@ -2819,7 +2819,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **repo** (unknown) **(required)**: Target repository name.
+- **repo** (string) _(optional)_: Target repository name.
 
 ---
 
@@ -2829,8 +2829,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **repo** (unknown) **(required)**: Target repository name.
-- **target** (unknown) **(required)**: The symbol to analyze for impact.
+- **target** (string) **(required)**: The symbol to analyze for impact.
+- **repo** (string) _(optional)_: Target repository name.
 
 ---
 
@@ -2848,9 +2848,9 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **limit** (unknown) **(required)**: Max processes to return.
-- **query** (unknown) **(required)**: Search query for the knowledge graph.
-- **repo** (unknown) **(required)**: Target repository name.
+- **query** (string) **(required)**: Search query for the knowledge graph.
+- **limit** (number) _(optional)_: Max processes to return.
+- **repo** (string) _(optional)_: Target repository name.
 
 ---
 
@@ -2860,10 +2860,10 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **dry_run** (unknown) **(required)**: Preview changes without applying.
-- **new_name** (unknown) **(required)**: New name for the symbol.
-- **repo** (unknown) **(required)**: Target repository name.
-- **symbol_name** (unknown) **(required)**: Original symbol name.
+- **new_name** (string) **(required)**: New name for the symbol.
+- **symbol_name** (string) **(required)**: Original symbol name.
+- **dry_run** (boolean) _(optional)_: Preview changes without applying.
+- **repo** (string) _(optional)_: Target repository name.
 
 ---
 
@@ -2875,8 +2875,8 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **iterations** (unknown) **(required)**: Number of candidates to generate.
-- **prompt** (unknown) **(required)**: The intention/prompt to process.
+- **prompt** (string) **(required)**: The intention/prompt to process.
+- **iterations** (number) _(optional)_: Number of candidates to generate.
 
 ---
 
@@ -2886,10 +2886,10 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **artifact_id** (unknown) **(required)**: ID of the artifact to evaluate.
-- **claims** (unknown) **(required)**
-- **domain** (unknown) **(required)**
-- **edges** (unknown) **(required)**
+- **artifact_id** (string) **(required)**: ID of the artifact to evaluate.
+- **claims** (array) **(required)**
+- **edges** (array) **(required)**
+- **domain** (string) _(optional)_
 
 ---
 
@@ -2899,9 +2899,9 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **claims** (unknown) **(required)**: List of claims in the artifact.
-- **domain** (unknown) **(required)**: The knowledge domain.
-- **edges** (unknown) **(required)**: Relations between claims.
+- **claims** (array) **(required)**: List of claims in the artifact.
+- **edges** (array) **(required)**: Relations between claims.
+- **domain** (string) _(optional)_: The knowledge domain.
 
 ---
 
@@ -2913,9 +2913,9 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **network** (unknown) **(required)**: The network to use for payment.
-- **noSession** (unknown) **(required)**: Force a new payment and session.
-- **question** (unknown) **(required)**: The question to ask Fortytwo Prime.
+- **question** (string) **(required)**: The question to ask Fortytwo Prime.
+- **network** (enum: "base", "monad") _(optional)_: The network to use for payment.
+- **noSession** (boolean) _(optional)_: Force a new payment and session.
 
 ---
 
@@ -2927,13 +2927,13 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **description** (unknown) **(required)**: Optional description for the transfer.
 - **destination** (unknown) **(required)**: The destination for the funds.
-- **immediatelyExecute** (unknown) **(required)**: Whether to immediately execute the quote after creation.
-- **lockedCurrencyAmount** (unknown) **(required)**: The amount to send/receive in the smallest unit of the locked currency.
-- **lockedCurrencySide** (unknown) **(required)**: Which side of the quote to lock.
-- **lookupId** (unknown) **(required)**: Lookup ID from a previous receiver lookup request.
+- **lockedCurrencyAmount** (integer) **(required)**: The amount to send/receive in the smallest unit of the locked currency.
+- **lockedCurrencySide** (enum: "SENDING", "RECEIVING") **(required)**: Which side of the quote to lock.
 - **source** (unknown) **(required)**: The source of funds for the quote.
+- **description** (string) _(optional)_: Optional description for the transfer.
+- **immediatelyExecute** (boolean) _(optional)_: Whether to immediately execute the quote after creation.
+- **lookupId** (string) _(optional)_: Lookup ID from a previous receiver lookup request.
 
 ---
 
@@ -2943,7 +2943,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **quoteId** (unknown) **(required)**: The unique identifier of the quote to execute.
+- **quoteId** (string) **(required)**: The unique identifier of the quote to execute.
 
 ---
 
@@ -2961,7 +2961,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **quoteId** (unknown) **(required)**: The unique identifier of the quote to retrieve.
+- **quoteId** (string) **(required)**: The unique identifier of the quote to retrieve.
 
 ---
 
@@ -2971,7 +2971,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **transactionId** (unknown) **(required)**: Unique identifier of the transaction.
+- **transactionId** (string) **(required)**: Unique identifier of the transaction.
 
 ---
 
@@ -2981,9 +2981,9 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **cursor** (unknown) **(required)**: Cursor for pagination.
-- **customerType** (unknown) **(required)**: Filter by customer type.
-- **limit** (unknown) **(required)**: Maximum number of results to return.
+- **cursor** (string) _(optional)_: Cursor for pagination.
+- **customerType** (enum: "INDIVIDUAL", "BUSINESS") _(optional)_: Filter by customer type.
+- **limit** (integer) _(optional)_: Maximum number of results to return.
 
 ---
 
@@ -2993,9 +2993,9 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **customerId** (unknown) **(required)**: System ID of the sender.
-- **receiverUmaAddress** (unknown) **(required)**: UMA address of the intended recipient.
-- **senderUmaAddress** (unknown) **(required)**: UMA address of the sender.
+- **receiverUmaAddress** (string) **(required)**: UMA address of the intended recipient.
+- **customerId** (string) _(optional)_: System ID of the sender.
+- **senderUmaAddress** (string) _(optional)_: UMA address of the sender.
 
 ---
 
@@ -3007,7 +3007,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **payload** (unknown) **(required)**: The payload or transaction hash to attest.
+- **payload** (string) **(required)**: The payload or transaction hash to attest.
 
 ---
 
@@ -3017,7 +3017,7 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **pin** (unknown) **(required)**: Local device PIN.
+- **pin** (string) **(required)**: Local device PIN.
 
 ---
 
@@ -3053,6 +3053,6 @@ in the DevTools Elements panel (if any).
 
 **Parameters:**
 
-- **target** (unknown) **(required)**: The make target to run (e.g., "build", "test", or leave empty for default).
+- **target** (string) _(optional)_: The make target to run (e.g., "build", "test", or leave empty for default).
 
 ---
