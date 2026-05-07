@@ -76,6 +76,23 @@ export const LOCAL_FETCH_PATTERN = './locales/@LOCALE@.json';`;
   fs.mkdirSync(path.join(codeMirrorModesDir, 'xml'), {recursive: true});
   writeFile(path.join(codeMirrorModesDir, 'xml', 'xml.mjs'), 'export default {}');
 
+  fs.mkdirSync(path.join(codeMirrorModesDir, 'css'), {recursive: true});
+  writeFile(path.join(codeMirrorModesDir, 'css', 'css.mjs'), 'export default {}');
+
+  fs.mkdirSync(path.join(codeMirrorModesDir, 'javascript'), {recursive: true});
+  writeFile(path.join(codeMirrorModesDir, 'javascript', 'javascript.mjs'), 'export default {}');
+
+  const codeMirrorAddonDir = path.join(
+    BUILD_DIR,
+    devtoolsThirdPartyPath,
+    'codemirror',
+    'package',
+    'addon',
+    'runmode'
+  );
+  fs.mkdirSync(codeMirrorAddonDir, {recursive: true});
+  writeFile(path.join(codeMirrorAddonDir, 'runmode-standalone.mjs'), 'export default {}');
+
   // Create root mock
   const rootDir = path.join(BUILD_DIR, devtoolsFrontEndCorePath, 'root');
   fs.mkdirSync(rootDir, {recursive: true});
