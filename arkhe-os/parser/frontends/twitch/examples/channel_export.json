@@ -1,0 +1,114 @@
+{
+  "channel": {
+    "broadcaster_id": "123456789",
+    "broadcaster_login": "example_creator",
+    "broadcaster_name": "ExampleCreator",
+    "display_name": "Example Creator",
+    "description": "Variety streamer | Just Chatting & Indie Games | !discord !socials",
+    "created_at": "2019-03-15T10:30:00Z",
+    "follower_count": 45230,
+    "view_count": 1250000,
+    "broadcaster_language": "en",
+    "game_name": "Just Chatting",
+    "tags": ["English", "Variety", "Chill", "Interactive"],
+    "is_mature": false,
+    "is_partner": true
+  },
+  "live_stream": {
+    "id": "stream_abc123",
+    "user_id": "123456789",
+    "user_name": "ExampleCreator",
+    "game_name": "Just Chatting",
+    "type": "live",
+    "title": "Morning Coffee Chat + Viewer Games! | !commands",
+    "viewer_count": 1247,
+    "started_at": "2024-05-07T14:00:00Z",
+    "language": "en",
+    "thumbnail_url": "https://static-cdn.jtvnw.net/previews-ttv/live_user_example_creator-{width}x{height}.jpg",
+    "tag_ids": ["6ea6bca4-4712-4ab9-a906-e3336a9d8039"],
+    "is_mature": false
+  },
+  "recent_streams": [
+    {
+      "id": "vod_001",
+      "type": "vod",
+      "title": "Indie Game Marathon - Part 3",
+      "game_name": "Hollow Knight",
+      "started_at": "2024-05-06T18:00:00Z",
+      "ended_at": "2024-05-06T22:30:00Z",
+      "duration_minutes": 270,
+      "peak_viewers": 890,
+      "avg_viewers": 650,
+      "chat_messages": 3420,
+      "unique_chatters": 412
+    },
+    {
+      "id": "vod_002",
+      "type": "vod",
+      "title": "Q&A + Community Highlights",
+      "game_name": "Just Chatting",
+      "started_at": "2024-05-05T19:00:00Z",
+      "ended_at": "2024-05-05T21:00:00Z",
+      "duration_minutes": 120,
+      "peak_viewers": 1100,
+      "avg_viewers": 850,
+      "chat_messages": 5200,
+      "unique_chatters": 623
+    }
+  ],
+  "chat_sample": {
+    "stream_id": "stream_abc123",
+    "sample_window_minutes": 5,
+    "messages": [
+      {
+        "username": "viewer123",
+        "display_name": "Viewer123",
+        "content": "Good morning! ☕",
+        "timestamp": "2024-05-07T14:05:23Z",
+        "badges": ["subscriber/6"],
+        "sentiment": 0.8,
+        "message_type": "chat"
+      },
+      {
+        "username": "mod_sarah",
+        "display_name": "ModSarah",
+        "content": "Remember to follow the rules everyone! ❤️",
+        "timestamp": "2024-05-07T14:06:01Z",
+        "badges": ["moderator/1", "subscriber/24"],
+        "sentiment": 0.9,
+        "message_type": "chat"
+      },
+      {
+        "username": "tmi.twitch.tv",
+        "content": "SpamBot99 has been timed out for 600 seconds. Reason: excessive caps",
+        "timestamp": "2024-05-07T14:07:15Z",
+        "message_type": "timeout"
+      }
+    ],
+    "metrics": {
+      "total_messages": 342,
+      "unique_users": 87,
+      "msgs_per_minute": 68.4,
+      "avg_sentiment": 0.72,
+      "toxicity_rate": 0.012,
+      "command_rate": 0.08
+    }
+  },
+  "revenue_summary_30d": {
+    "subscriptions": {"count": 412, "revenue_usd": 2060},
+    "bits": {"total_bits": 15420, "revenue_usd": 154.20},
+    "donations": {"count": 23, "revenue_usd": 340.50},
+    "ads": {"revenue_usd": 180.00},
+    "sponsorships": {"count": 1, "revenue_usd": 500.00},
+    "total_revenue_usd": 3234.70,
+    "revenue_diversity_index": 0.78
+  },
+  "moderation_stats_7d": {
+    "timeouts": 12,
+    "bans": 2,
+    "deleted_messages": 45,
+    "avg_response_time_seconds": 23.5,
+    "appeals_granted": 3,
+    "appeals_denied": 1
+  }
+}
