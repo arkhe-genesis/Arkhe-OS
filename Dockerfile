@@ -1,36 +1,57 @@
-FROM node:20-alpine
+# ═══════════════════════════════════════════════════════
+# ARKHE RSP Parser — Dockerfile Multi-Platform
+# ═══════════════════════════════════════════════════════
 
-WORKDIR /app
+# Stage 1: Builder base (comum a todas as plataformas)
+FROM python:3.11-slim AS builder-base
+WORKDIR /build
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential cmake git libopenblas-dev liblapack-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Instalar dependências para o ReportLab (Python)
-RUN apk add --no-cache python3 py3-pip g++ make
-
-# Criar ambiente virtual para o Python
-RUN python3 -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
-
-# Instalar reportlab
-RUN pip install reportlab
-
-COPY package*.json ./
-COPY arkhe-chain-node/package*.json ./arkhe-chain-node/
-COPY arkhe-chain-node/apps/api-nest/package*.json ./arkhe-chain-node/apps/api-nest/
-COPY arkhe-chain-node/apps/telemetry-fastify/package*.json ./arkhe-chain-node/apps/telemetry-fastify/
-COPY arkhe-chain-node/apps/express-bridge/package*.json ./arkhe-chain-node/apps/express-bridge/
-COPY arkhe-chain-node/packages/shared/package*.json ./arkhe-chain-node/packages/shared/
-
-RUN cd arkhe-chain-node && npm install
-
+# Stage 2: CPU-only builder
+FROM builder-base AS builder-cpu
 COPY . .
+RUN pip install --no-cache-dir --prefix=/install -e .[dev]
 
-# Gerar Prisma Client
-RUN cd arkhe-chain-node/apps/api-nest && npx prisma generate
+# Stage 3: GPU builder (Linux CUDA)
+FROM nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04 AS builder-gpu-linux
+WORKDIR /build
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3.11 python3.11-dev python3-pip cmake git \
+    && rm -rf /var/lib/apt/lists/*
+COPY . .
+RUN pip install --no-cache-dir --prefix=/install -e .[gpu,dev]
 
-# 13/ Run as non-root user
-RUN addgroup -S arkhe && adduser -S arkhe -G arkhe
-RUN chown -R arkhe:arkhe /app
+# Stage 4: Runtime CPU (multi-arch)
+FROM python:3.11-slim AS runtime-cpu
+LABEL org.opencontainers.image.title="ARKHE RSP Parser (CPU)"
+LABEL org.opencontainers.image.platforms="linux/amd64,linux/arm64"
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libopenblas-base liblapack3 ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && useradd -m -s /bin/bash arkhe
+COPY --from=builder-cpu /install /usr/local
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 ARKHE_HOME=/home/arkhe
+RUN mkdir -p ${ARKHE_HOME} && chown -R arkhe:arkhe ${ARKHE_HOME}
 USER arkhe
+WORKDIR ${ARKHE_HOME}
+ENTRYPOINT ["arkhe-rsp"]
+CMD ["--help"]
 
-EXPOSE 3000 3001
-
-CMD ["npm", "run", "dev", "--prefix", "arkhe-chain-node"]
+# Stage 5: Runtime GPU (Linux only)
+FROM nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04 AS runtime-gpu
+LABEL org.opencontainers.image.title="ARKHE RSP Parser (GPU)"
+LABEL org.opencontainers.image.platforms="linux/amd64"
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3.11 ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && useradd -m -s /bin/bash arkhe
+COPY --from=builder-gpu-linux /install /usr/local
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 \
+    ARKHE_HOME=/home/arkhe CUDA_VISIBLE_DEVICES=0
+RUN mkdir -p ${ARKHE_HOME} && chown -R arkhe:arkhe ${ARKHE_HOME}
+USER arkhe
+WORKDIR ${ARKHE_HOME}
+ENTRYPOINT ["arkhe-rsp"]
+CMD ["--help"]
