@@ -25,12 +25,16 @@ import "os"
 type LFIRNodeType string
 
 const (
+	LFIRNodeTypeModule    LFIRNodeType = "LFIRNodeTypeModule"
+    LFIRModule LFIRNodeType = "LFIRModule"
 	LFIRNodeTypeModule    LFIRNodeType = "LFIRModule"
 	LFIRNodeTypeDependency LFIRNodeType = "LFIRDependency"
 	LFIRNodeTypeProperty LFIRNodeType = "LFIRProperty"
 	LFIROperation LFIRNodeType = "LFIROperation"
 	LFIRType      LFIRNodeType = "LFIRType"
 	LFIRMetadata  LFIRNodeType = "LFIRMetadata"
+    LFIRNodeTypeDependency LFIRNodeType = "LFIRDependency"
+	LFIRNodeTypeComponent LFIRNodeType = "LFIRComponent"
 )
 
 type LFIRNode struct {
@@ -117,4 +121,13 @@ func (g *LFIRGraph) ToJSONFile(filepath string) error {
 		return err
 	}
 	return os.WriteFile(filepath, data, 0644)
+}
+
+func (g *LFIRGraph) FindNodeByAttribute(key string, value interface{}) (*LFIRNode, bool) {
+	for _, node := range g.Nodes {
+		if val, exists := node.Attributes[key]; exists && val == value {
+			return node, true
+		}
+	}
+	return nil, false
 }
