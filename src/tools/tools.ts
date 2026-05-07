@@ -19,7 +19,6 @@ import * as extensionTools from './extensions.js';
 import * as fortytwoTools from './fortytwo.js';
 import * as gitnexusTools from './gitnexus.js';
 import * as gnoTools from './gno.js';
-import * as gnoTools from './gno.js';
 import * as gridTools from './grid.js';
 import * as inPageTools from './inPage.js';
 import * as inputTools from './input.js';
