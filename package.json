@@ -16,7 +16,7 @@
     "typecheck": "tsc --noEmit",
     "format": "echo 'Skipping format'",
     "check-format": "echo 'Skipping format'",
-    "gen": "NODE_OPTIONS='--max-old-space-size=8192' npm run docs:generate && NODE_OPTIONS='--max-old-space-size=8192' npm run cli:generate",
+    "gen": "npm run build && NODE_OPTIONS='--max-old-space-size=8192' npm run docs:generate && NODE_OPTIONS='--max-old-space-size=8192' npm run cli:generate",
     "docs:generate": "node --experimental-strip-types --max-old-space-size=8192 scripts/generate-docs.ts",
     "start": "npm run build && node build/src/index.js",
     "start-debug": "DEBUG=mcp:* DEBUG_COLORS=false npm run build && node build/src/index.js",
