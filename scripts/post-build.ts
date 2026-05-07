@@ -52,6 +52,7 @@ export const LOCAL_FETCH_PATTERN = './locales/@LOCALE@.json';`;
 export function getChromeVersion() { return ''; };
 export const hostConfig = {};
 export const Runtime = {
+  experiments: { isEnabled: () => false },
   isDescriptorEnabled: () => true,
   queryParam: () => null,
 }
