@@ -15,20 +15,10 @@ const (
 	LFIRNodeTypeMetadata  LFIRNodeType = "LFIRMetadata"
 	LFIRNodeTypeCall      LFIRNodeType = "LFIRCall"
 	LFIRNodeTypeExpr      LFIRNodeType = "LFIRExpr"
-)
-
-import "encoding/json"
-import "os"
-
-// LFIRNodeType is the type of a node in the Lingua Franca Intermediate Representation.
-type LFIRNodeType string
-
-const (
-	LFIRNodeTypeModule    LFIRNodeType = "LFIRNodeTypeModule"
-	LFIRNodeTypeModule    LFIRNodeType = "LFIRModule"
-	LFIROperation LFIRNodeType = "LFIROperation"
-	LFIRType      LFIRNodeType = "LFIRType"
-	LFIRMetadata  LFIRNodeType = "LFIRMetadata"
+	LFIRNodeTypeMetric    LFIRNodeType = "LFIRMetric"
+	LFIRNodeTypeVariable  LFIRNodeType = "LFIRVariable"
+	LFIRNodeTypeRule      LFIRNodeType = "LFIRRule"
+	LFIRNodeTypeAlert     LFIRNodeType = "LFIRAlert"
 )
 
 type LFIRNode struct {
@@ -40,13 +30,6 @@ type LFIRNode struct {
 	Attributes map[string]interface{}
 }
 
-	SourceLang  string
-	Attributes map[string]interface{}
-}
-
-func NewLFIRNode(nodeType LFIRNodeType, name, context string) *LFIRNode {
-	return &LFIRNode{
-		ID:         name + "_" + context,
 // NewLFIRNode creates a new LFIR node.
 func NewLFIRNode(nodeType LFIRNodeType, name string, sourceLang string) *LFIRNode {
 	return &LFIRNode{
@@ -72,13 +55,6 @@ type LFIRGraph struct {
     Metrics   LFIRMetrics
 }
 
-type LFIRMetrics struct {
-    CoherenceScore float64
-    NodeCount int
-    EdgeCount int
-	Metrics   LFIRMetrics
-}
-
 func NewLFIRGraph() *LFIRGraph {
 	return &LFIRGraph{
 		RootNodes: make([]string, 0),
@@ -96,12 +72,12 @@ func (g *LFIRGraph) Link(parentID, childID string) {
 	g.Edges[parentID] = append(g.Edges[parentID], childID)
 }
 
-func (g *LFIRGraph) ToJSONFile(path string) error {
-	b, err := json.MarshalIndent(g, "", "  ")
+func (g *LFIRGraph) ToJSONFile(filepath string) error {
+	data, err := json.MarshalIndent(g, "", "  ")
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(path, b, 0644)
+	return os.WriteFile(filepath, data, 0644)
 }
 
 func (g *LFIRGraph) FindNodeByAttribute(key string, val interface{}) (*LFIRNode, bool) {
@@ -111,11 +87,4 @@ func (g *LFIRGraph) FindNodeByAttribute(key string, val interface{}) (*LFIRNode,
 		}
 	}
 	return nil, false
-func (g *LFIRGraph) ToJSONFile(filepath string) error {
-    return nil
-	data, err := json.MarshalIndent(g, "", "  ")
-	if err != nil {
-		return err
-	}
-	return os.WriteFile(filepath, data, 0644)
 }
