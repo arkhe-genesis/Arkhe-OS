@@ -1,3 +1,8 @@
+# arkhe_os/starter/shared/lfir_parser.py
+"""
+Parser LFIR (Language-agnostic Intermediate Representation) para múltiplas linguagens bancárias.
+Extrai grafos de dependência, métricas de coerência Φ_C e predicados regulatórios.
+"""
 from typing import Dict, List, Optional, Union
 from dataclasses import dataclass, field
 from enum import Enum, auto

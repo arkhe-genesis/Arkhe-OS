@@ -1,3 +1,8 @@
+# arkhe_os/starter/shared/compliance_validator.py
+"""
+Validador de compliance regulatório com integração Zinc+ para proofs ZK.
+Suporta múltiplas jurisdições (BCB, ECB, GDPR, LGPD) e predicados UCS.
+"""
 from typing import Dict, List, Optional, Tuple, Any
 from dataclasses import dataclass, field
 from enum import Enum, auto
@@ -184,6 +189,8 @@ class ComplianceValidator:
             if not relevant_jurisdictions:
                 continue
 
+            evaluation_result = self._evaluate_predicate(predicate, lfir_graph, relevant_jurisdictions)
+
             # Avaliar predicado (simulado - em produção: compilar UCS → avaliar)
             evaluation_result = self._evaluate_predicate(predicate, lfir_graph, relevant_jurisdictions)
 
@@ -192,6 +199,11 @@ class ComplianceValidator:
                 status = evaluation_result.get(jur, VerificationStatus.UNVERIFIED)
                 jurisdiction_results[jur] = status
 
+            if generate_zk_proof and predicate.zinc_circuit_path:
+                zk_circuits_used.append(predicate.zinc_circuit_path)
+
+        zk_proof_hash = None
+        if generate_zk_proof and zk_circuits_used:
             # Coletar circuitos Zinc+ se proof for solicitado
             if generate_zk_proof and predicate.zinc_circuit_path:
                 zk_circuits_used.append(predicate.zinc_circuit_path)
@@ -219,6 +231,8 @@ class ComplianceValidator:
             zk_proof_hash = self.zinc_prover.generate_proof(
                 zk_circuits_used[0], witness, public_inputs
             )
+
+        coherence_score = lfir_graph.compute_global_coherence()
 
         # Calcular coerência final do artefato
         coherence_score = lfir_graph.compute_global_coherence()
@@ -253,6 +267,9 @@ class ComplianceValidator:
     ) -> Dict[Jurisdiction, VerificationStatus]:
         """
         Avalia predicado contra grafo LFIR (simulado).
+        """
+        results = {}
+        for jur in jurisdictions:
 
         Em produção: compilar expressão UCS → avaliar contra nós/arestas do LFIR.
         """
@@ -264,6 +281,8 @@ class ComplianceValidator:
                 if jur.value in node.regulatory_tags
             ]
             if matching_nodes:
+                results[jur] = VerificationStatus.COMPLIANT
+            else:
                 # Se há nós com tag da jurisdição, considerar compliant (simplificado)
                 results[jur] = VerificationStatus.COMPLIANT
             else:
