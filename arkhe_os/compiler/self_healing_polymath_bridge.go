@@ -7,17 +7,17 @@ import (
     "time"
     "sync"
 
-    "github.com/arkhe-os/arkhe/resilience"
-    "github.com/arkhe-os/arkhe/network"
-    "github.com/arkhe-os/arkhe/parser/lfir"
+    "arkhe_os/resilience"
+    "arkhe_os/network"
+    "arkhe_os/parser/lfir"
 	"context"
 	"fmt"
 	"sync"
 	"time"
 
-	"github.com/arkhe-os/arkhe/network"
-	"github.com/arkhe-os/arkhe/parser/lfir"
-	"github.com/arkhe-os/arkhe/resilience"
+	"arkhe_os/network"
+	"arkhe_os/parser/lfir"
+	"arkhe_os/resilience"
 )
 
 // SelfHealingPolymathBridge integra Parser Universal com sistema de auto-cura

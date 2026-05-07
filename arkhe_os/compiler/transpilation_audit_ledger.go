@@ -2,8 +2,8 @@
 package compiler
 
 import (
-    "github.com/arkhe-os/arkhe/parser/lfir"
-    "github.com/arkhe-os/arkhe/security/cosnark"
+    "arkhe_os/parser/lfir"
+    "arkhe_os/security/cosnark"
     "crypto/sha256"
     "fmt"
     "encoding/hex"

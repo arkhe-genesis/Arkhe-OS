@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/arkhe-os/arkhe/cathedral"
+	"arkhe_os/cathedral"
 )
 
 func TestDissolutionOperator(t *testing.T) {

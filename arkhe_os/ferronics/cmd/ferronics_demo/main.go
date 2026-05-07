@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/arkhe-os/arkhe/ferronics"
+	"arkhe_os/ferronics"
 )
 
 func main() {

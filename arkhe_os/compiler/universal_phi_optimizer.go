@@ -2,7 +2,7 @@
 package compiler
 
 import (
-	"github.com/arkhe-os/arkhe/parser/lfir"
+	"arkhe_os/parser/lfir"
 	"math"
 )
 

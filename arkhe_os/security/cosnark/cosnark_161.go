@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/arkhe-os/arkhe/singularity"
+	"arkhe_os/singularity"
 )
 
 // Substrato 161: CoSNARK — Segurança Quântica

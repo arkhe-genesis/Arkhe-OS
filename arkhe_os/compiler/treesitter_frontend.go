@@ -9,7 +9,7 @@ import (
     "strings"
     "sync"
 
-    "github.com/arkhe-os/arkhe/parser/lfir"
+    "arkhe_os/parser/lfir"
 /*
 #cgo LDFLAGS: -L${SRCDIR}/lib -ltree-sitter
 #include <tree_sitter/api.h>
@@ -27,7 +27,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/arkhe-os/arkhe/parser/lfir"
+	"arkhe_os/parser/lfir"
 	tree_sitter "github.com/tree-sitter/go-tree-sitter"
 )
 
