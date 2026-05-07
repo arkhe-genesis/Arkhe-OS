@@ -5,20 +5,10 @@ package lfir
 type LFIRNodeType string
 
 const (
-	LFIRModule    LFIRNodeType = "LFIRModule"
+	LFIRNodeTypeModule    LFIRNodeType = "LFIRNodeTypeModule"
 	LFIROperation LFIRNodeType = "LFIROperation"
 	LFIRType      LFIRNodeType = "LFIRType"
 	LFIRMetadata  LFIRNodeType = "LFIRMetadata"
-)
-
-// LFIRNode represents a node in the intermediate representation graph.
-type LFIRNodeType int
-
-const (
-	LFIRModule LFIRNodeType = iota
-	LFIRType
-	LFIRMetadata
-	LFIROperation
 )
 
 type LFIRNode struct {
@@ -26,16 +16,6 @@ type LFIRNode struct {
 	Type       LFIRNodeType
 	Name       string
 	Namespace  string
-	Attributes map[string]interface{}
-}
-
-// NewLFIRNode creates a new LFIR node.
-func NewLFIRNode(nodeType LFIRNodeType, name string, namespace string) *LFIRNode {
-	return &LFIRNode{
-		ID:         name + "_" + string(nodeType), // Simple ID generation
-		Type:       nodeType,
-		Name:       name,
-		Namespace:  namespace,
 	Attributes map[string]interface{}
 }
 
@@ -53,6 +33,13 @@ type LFIRGraph struct {
 	RootNodes []string
 	Nodes     map[string]*LFIRNode
 	Edges     map[string][]string // directed edges parent -> children
+    Metrics   LFIRMetrics
+}
+
+type LFIRMetrics struct {
+    CoherenceScore float64
+    NodeCount int
+    EdgeCount int
 }
 
 // NewLFIRGraph creates a new LFIR graph.
@@ -64,20 +51,6 @@ func NewLFIRGraph() *LFIRGraph {
 	}
 }
 
-// AddNode adds a node to the graph.
-type LFIRGraph struct {
-	Nodes     map[string]*LFIRNode
-	Edges     map[string][]string
-	RootNodes []string
-}
-
-func NewLFIRGraph() *LFIRGraph {
-	return &LFIRGraph{
-		Nodes: make(map[string]*LFIRNode),
-		Edges: make(map[string][]string),
-	}
-}
-
 func (g *LFIRGraph) AddNode(node *LFIRNode) {
 	g.Nodes[node.ID] = node
 }
@@ -85,4 +58,8 @@ func (g *LFIRGraph) AddNode(node *LFIRNode) {
 // Link links a parent node to a child node.
 func (g *LFIRGraph) Link(parentID, childID string) {
 	g.Edges[parentID] = append(g.Edges[parentID], childID)
+}
+
+func (g *LFIRGraph) ToJSONFile(filepath string) error {
+    return nil
 }
