@@ -1,27 +1,38 @@
 import pytest
-from arkhe_os.simulation.clinical_simulator import InSilicoClinicalTrialSimulator, VirtualPatient
-from arkhe_os.therapeutic.intervention_planner import TherapeuticInterventionPlanner
-from arkhe_os.therapeutic.meta_learning import MetaTherapeuticLearner
-from arkhe_os.crypto.vault.patient_vault import RedoxDataVault
-from arkhe_os.therapeutic.cross_species import CrossSpeciesMapper
+from arkhe_os.clinical_trial.clinical_trial_simulator import ClinicalTrialSimulator, CohortDefinition, InterventionDefinition, TrialPhase
+from arkhe_os.patient_vault.patient_data_vault import PatientDataVault as RedoxDataVault
+from arkhe_os.cross_species.coherence_mapper import CrossSpeciesMapper
 
 def test_clinical_trial_simulator():
-    planner = TherapeuticInterventionPlanner()
-    meta_learner = MetaTherapeuticLearner()
-    simulator = InSilicoClinicalTrialSimulator(planner, meta_learner)
+    class MockMetaLearner:
+        def calibrate_trial_predictions(self, raw_results, historical_data):
+            return raw_results
 
-    cohort = [
-        VirtualPatient(patient_id="p1", baseline_redox_state={}, baseline_phi_c=0.6, demographics={"age": 40}),
-        VirtualPatient(patient_id="p2", baseline_redox_state={}, baseline_phi_c=0.5, demographics={"age": 45}),
-    ]
+    meta_learner = MockMetaLearner()
+    simulator = ClinicalTrialSimulator("dummy_path", meta_learner, "dummy_db_path")
 
-    outcomes = simulator.simulate_trial(cohort, "intervention_1")
+    cohort = CohortDefinition(
+        cohort_id="test_cohort",
+        inclusion_criteria={"age": [40, 70]},
+        exclusion_criteria={},
+        sample_size=2
+    )
 
-    assert len(outcomes) == 2
-    assert outcomes[0]["patient_id"] == "p1"
-    assert "predicted_delta" in outcomes[0]
-    assert "simulated_actual_delta" in outcomes[0]
-    assert len(meta_learner.history) == 2
+    intervention = InterventionDefinition(
+        intervention_id="intervention_1",
+        name="test_intervention",
+        type="small_molecule",
+        mechanism="test_mech",
+        dosing_regimen={"dose_mg": 100},
+        target_redox_pairs=["NAD+/NADH"],
+        expected_effect_profile={"NAD+/NADH": 5.0}
+    )
+
+    result = simulator.simulate_trial(cohort, intervention, TrialPhase.PHASE_II, n_virtual_patients=2)
+
+    assert result.n_simulated_patients == 2
+    assert "mean_delta_phi_c" in result.efficacy
+    assert result.phase == TrialPhase.PHASE_II
 
 def test_patient_vault():
     vault = RedoxDataVault(patient_id="patient_xyz")

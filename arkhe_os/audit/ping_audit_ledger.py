@@ -53,11 +53,8 @@ class PingAuditLedger:
         # Persistir no ledger em formato JSONL
         with open(self.ledger_path, 'a') as f:
             f.write(json.dumps(entry) + '\n')
-                "jitter": result.jitter_ms
-            },
-            "timestamp": result.timestamp,
-            "proof_hash": self._compute_proof_hash(result, session_id)
-        }
+
+        entry["proof_hash"] = self._compute_proof_hash(result, session_id)
         self.ledger.append(entry)
         # Em produção: assinar com chave do nó e propagar para Hyper-Mesh
         return entry
