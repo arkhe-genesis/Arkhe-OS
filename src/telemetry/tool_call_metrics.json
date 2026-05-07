@@ -2608,5 +2608,168 @@
         "argType": "number"
       }
     ]
+  },
+  {
+    "name": "diamond_pipeline",
+    "args": [
+      {
+        "name": "prompt_length",
+        "argType": "number"
+      },
+      {
+        "name": "iterations",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "gitnexus_analyze",
+    "args": [
+      {
+        "name": "path_length",
+        "argType": "number"
+      },
+      {
+        "name": "force",
+        "argType": "boolean"
+      }
+    ]
+  },
+  {
+    "name": "gitnexus_context",
+    "args": [
+      {
+        "name": "name_length",
+        "argType": "number"
+      },
+      {
+        "name": "repo_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "gitnexus_cypher",
+    "args": [
+      {
+        "name": "query_length",
+        "argType": "number"
+      },
+      {
+        "name": "repo_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "gitnexus_detect_changes",
+    "args": [
+      {
+        "name": "repo_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "gitnexus_impact",
+    "args": [
+      {
+        "name": "target_length",
+        "argType": "number"
+      },
+      {
+        "name": "repo_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "gitnexus_list_repos",
+    "args": []
+  },
+  {
+    "name": "gitnexus_query",
+    "args": [
+      {
+        "name": "query_length",
+        "argType": "number"
+      },
+      {
+        "name": "repo_length",
+        "argType": "number"
+      },
+      {
+        "name": "limit",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "gitnexus_rename",
+    "args": [
+      {
+        "name": "symbol_name_length",
+        "argType": "number"
+      },
+      {
+        "name": "new_name_length",
+        "argType": "number"
+      },
+      {
+        "name": "dry_run",
+        "argType": "boolean"
+      },
+      {
+        "name": "repo_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "pefm_predict",
+    "args": [
+      {
+        "name": "artifact_id_length",
+        "argType": "number"
+      },
+      {
+        "name": "claims_count",
+        "argType": "number"
+      },
+      {
+        "name": "edges_count",
+        "argType": "number"
+      },
+      {
+        "name": "domain_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "psa_evaluate",
+    "args": [
+      {
+        "name": "claims_count",
+        "argType": "number"
+      },
+      {
+        "name": "edges_count",
+        "argType": "number"
+      },
+      {
+        "name": "domain_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "urbit_make",
+    "args": [
+      {
+        "name": "target_length",
+        "argType": "number"
+      }
+    ]
   }
 ]

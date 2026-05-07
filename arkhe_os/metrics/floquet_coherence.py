@@ -3,6 +3,11 @@ import numpy as np
 def floquet_coherence_metric(
     baseline_coherence: float,
     driving_params,
+from arkhe_os.temporal.floquet_driven_qubit import FloquetParameters
+
+def floquet_coherence_metric(
+    baseline_coherence: float,
+    driving_params: FloquetParameters,
     operation_time: float,
     gamma_0: float = 1.0
 ) -> dict:
@@ -47,4 +52,5 @@ def _classify_stability_regime(omega_R: float, omega_d: float) -> str:
     elif ratio < 10.0:
         return "strong_driving"    # Ganho máximo, cuidado com aquecimento
     else:
+        return "ultra_strong"      # Regime não-perturbativo, efeitos exóticos
         return "ultra_strong"      # Regime não-perturbativo, efeitos exóticos

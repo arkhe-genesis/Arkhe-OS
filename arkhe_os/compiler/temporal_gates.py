@@ -2,10 +2,14 @@ import numpy as np
 
 class TemporalOp:
     def __init__(self, op_type, ctc_ids, estimated_duration, metadata=None):
+    def __init__(self, op_type: str, ctc_ids: list[int], estimated_duration: float, metadata: dict = None):
         self.op_type = op_type
         self.ctc_ids = ctc_ids
         self.estimated_duration = estimated_duration
         self.metadata = metadata or {}
+
+    def compile_to_pulse_sequence(self, hardware_config: dict) -> list[dict]:
+        raise NotImplementedError
 
 class TemporalCircuit:
     def __init__(self):
@@ -20,6 +24,10 @@ class TemporalCircuit:
             if hasattr(gate, 'compile_to_pulse_sequence'):
                 all_pulses.extend(gate.compile_to_pulse_sequence(hardware_config))
         return all_pulses
+        sequence = []
+        for gate in self.gates:
+            sequence.extend(gate.compile_to_pulse_sequence(hardware_config))
+        return sequence
 
 class FloquetStabilizeGate(TemporalOp):
     """
@@ -86,4 +94,5 @@ class FloquetStabilizeGate(TemporalOp):
             return np.exp(-0.5 * ((t - self.estimated_duration/2) / sigma)**2)
         elif envelope_type == "square":
             return 1.0 if 0 <= t <= self.estimated_duration else 0.0
+        return 1.0  # Fallback
         return 1.0  # Fallback

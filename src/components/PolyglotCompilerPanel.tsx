@@ -75,7 +75,7 @@ export default function PolyglotCompilerPanel({ onClose }: PolyglotCompilerPanel
       }
     }
     return () => {
-      if (timer) clearTimeout(timer);
+      if (timer) {clearTimeout(timer);}
       if (timer) {clearTimeout(timer);}
     };
   }, [compilationState, activeLangIndex]);

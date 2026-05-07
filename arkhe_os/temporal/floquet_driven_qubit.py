@@ -1,3 +1,4 @@
+# arkhe_os/temporal/floquet_driven_qubit.py — Versão Canônica v280.1
 import numpy as np
 from dataclasses import dataclass
 from typing import Optional, Callable
@@ -88,3 +89,10 @@ class FloquetStabilizedQubit:
                 qubit = FloquetStabilizedQubit(params, self.gamma_0)
                 gains[i, j] = qubit.effective_decoherence_rate() / self.gamma_0
         return 1 / gains  # Fator de melhoria em T_2
+
+    def stability_gain(self) -> float:
+        """Retorna o ganho em T_2 (γ_0 / γ_eff)."""
+        gamma_eff = self.effective_decoherence_rate()
+        if gamma_eff < 1e-12:
+            return float('inf')
+        return self.gamma_0 / gamma_eff

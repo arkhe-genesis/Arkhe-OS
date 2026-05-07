@@ -1,6 +1,6 @@
 <!-- AUTO GENERATED DO NOT EDIT - run 'npm run gen' to update-->
 
-# Chrome DevTools MCP Tool Reference (~42345 cl100k_base tokens)
+# Chrome DevTools MCP Tool Reference (~44818 cl100k_base tokens)
 
 - **[Input automation](#input-automation)** (9 tools)
   - [`click`](#click)
@@ -263,6 +263,19 @@
   - [`gno_call`](#gno_call)
   - [`gno_deploy`](#gno_deploy)
   - [`gno_query`](#gno_query)
+- **[GitNexus Code Intelligence](#gitnexus-code-intelligence)** (8 tools)
+  - [`gitnexus_analyze`](#gitnexus_analyze)
+  - [`gitnexus_context`](#gitnexus_context)
+  - [`gitnexus_cypher`](#gitnexus_cypher)
+  - [`gitnexus_detect_changes`](#gitnexus_detect_changes)
+  - [`gitnexus_impact`](#gitnexus_impact)
+  - [`gitnexus_list_repos`](#gitnexus_list_repos)
+  - [`gitnexus_query`](#gitnexus_query)
+  - [`gitnexus_rename`](#gitnexus_rename)
+- **[Epistemic Defense System (PSA/PEFM)](#epistemic-defense-system-(psa/pefm))** (3 tools)
+  - [`diamond_pipeline`](#diamond_pipeline)
+  - [`pefm_predict`](#pefm_predict)
+  - [`psa_evaluate`](#psa_evaluate)
 - **[Fortytwo Prime Collective](#fortytwo-prime-collective)** (1 tools)
   - [`ask_fortytwo_prime`](#ask_fortytwo_prime)
 - **[Lightspark Grid API](#lightspark-grid-api)** (7 tools)
@@ -279,6 +292,8 @@
   - [`nash_coercion_scan`](#nash_coercion_scan)
   - [`nash_enroll_cognitive_profile`](#nash_enroll_cognitive_profile)
   - [`nash_get_device_status`](#nash_get_device_status)
+- **[Urbit](#urbit)** (1 tools)
+  - [`urbit_make`](#urbit_make)
 
 ## Input automation
 
@@ -2763,6 +2778,133 @@ in the DevTools Elements panel (if any).
 
 ---
 
+## GitNexus Code Intelligence
+
+### `gitnexus_analyze`
+
+**Description:** GitNexus: Index a repository (full analysis) to build a knowledge graph.
+
+**Parameters:**
+
+- **force** (boolean) _(optional)_: Force full re-index.
+- **path** (string) _(optional)_: Path to the repository to index (default: current directory).
+
+---
+
+### `gitnexus_context`
+
+**Description:** GitNexus: 360-degree view of a code symbol: callers, callees, processes.
+
+**Parameters:**
+
+- **name** (string) **(required)**: The name of the symbol to inspect.
+- **repo** (string) _(optional)_: Target repository name.
+
+---
+
+### `gitnexus_cypher`
+
+**Description:** GitNexus: Execute raw Cypher query against the knowledge graph.
+
+**Parameters:**
+
+- **query** (string) **(required)**: The Cypher query string.
+- **repo** (string) _(optional)_: Target repository name.
+
+---
+
+### `gitnexus_detect_changes`
+
+**Description:** GitNexus: Map git diff hunks to indexed symbols and affected execution flows.
+
+**Parameters:**
+
+- **repo** (string) _(optional)_: Target repository name.
+
+---
+
+### `gitnexus_impact`
+
+**Description:** GitNexus: Blast radius analysis: what breaks if you change a symbol.
+
+**Parameters:**
+
+- **target** (string) **(required)**: The symbol to analyze for impact.
+- **repo** (string) _(optional)_: Target repository name.
+
+---
+
+### `gitnexus_list_repos`
+
+**Description:** GitNexus: Discover all indexed repositories and their status.
+
+**Parameters:** None
+
+---
+
+### `gitnexus_query`
+
+**Description:** GitNexus: Search the knowledge graph for execution flows related to a concept.
+
+**Parameters:**
+
+- **query** (string) **(required)**: Search query for the knowledge graph.
+- **limit** (number) _(optional)_: Max processes to return.
+- **repo** (string) _(optional)_: Target repository name.
+
+---
+
+### `gitnexus_rename`
+
+**Description:** GitNexus: Multi-file coordinated rename with graph + text search.
+
+**Parameters:**
+
+- **new_name** (string) **(required)**: New name for the symbol.
+- **symbol_name** (string) **(required)**: Original symbol name.
+- **dry_run** (boolean) _(optional)_: Preview changes without applying.
+- **repo** (string) _(optional)_: Target repository name.
+
+---
+
+## Epistemic Defense System (PSA/PEFM)
+
+### `diamond_pipeline`
+
+**Description:** Diamond Pipeline: Multi-stage hallucination reduction (Diverge -> Filter -> Converge).
+
+**Parameters:**
+
+- **prompt** (string) **(required)**: The intention/prompt to process.
+- **iterations** (number) _(optional)_: Number of candidates to generate.
+
+---
+
+### `pefm_predict`
+
+**Description:** PEFM v1.0: Anticipate epistemic failure probability from enriched PSA features.
+
+**Parameters:**
+
+- **artifact_id** (string) **(required)**: ID of the artifact to evaluate.
+- **claims** (array) **(required)**
+- **edges** (array) **(required)**
+- **domain** (string) _(optional)_
+
+---
+
+### `psa_evaluate`
+
+**Description:** PSA v2.1: Deterministic Predicted Safety Analysis of a semantic graph.
+
+**Parameters:**
+
+- **claims** (array) **(required)**: List of claims in the artifact.
+- **edges** (array) **(required)**: Relations between claims.
+- **domain** (string) _(optional)_: The knowledge domain.
+
+---
+
 ## Fortytwo Prime Collective
 
 ### `ask_fortytwo_prime`
@@ -2900,5 +3042,17 @@ in the DevTools Elements panel (if any).
 **Description:** Checks the status of the Nash Identity Safe device, including hardware integrity, PQC readiness, and sensor connectivity.
 
 **Parameters:** None
+
+---
+
+## Urbit
+
+### `urbit_make`
+
+**Description:** Run make commands in the Urbit repository.
+
+**Parameters:**
+
+- **target** (string) _(optional)_: The make target to run (e.g., "build", "test", or leave empty for default).
 
 ---
