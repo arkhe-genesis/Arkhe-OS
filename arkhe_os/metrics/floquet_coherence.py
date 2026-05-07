@@ -1,5 +1,10 @@
 # arkhe_os/metrics/floquet_coherence.py
 import numpy as np
+import numpy as np
+
+def floquet_coherence_metric(
+    baseline_coherence: float,
+    driving_params,
 from arkhe_os.temporal.floquet_driven_qubit import FloquetParameters
 
 def floquet_coherence_metric(
@@ -31,11 +36,14 @@ def floquet_coherence_metric(
         gain_factor = 1.0
         effective_gamma = gamma_0
         floquet_periods = 0.0
+    sinc_term = np.sinc(omega_d * tau / np.pi)  # np.sinc usa π normalizado
+    gain_factor = np.exp((omega_R / omega_d) * sinc_term)
 
     # Coerência efetiva
     phi_c_floquet = baseline_coherence * gain_factor
 
     # Métricas auxiliares
+    effective_gamma = gamma_0 * np.exp(-(omega_R**2)/(omega_d**2))
     t2_improvement = gamma_0 / effective_gamma if effective_gamma > 0 else float('inf')
 
     return {
@@ -46,6 +54,7 @@ def floquet_coherence_metric(
         "effective_decoherence_rate": effective_gamma,
         "t2_improvement_factor": t2_improvement,
         "floquet_periods_in_operation": floquet_periods,
+        "floquet_periods_in_operation": tau / (2*np.pi/omega_d),
         "stability_regime": _classify_stability_regime(omega_R, omega_d)
     }
 
@@ -59,4 +68,7 @@ def _classify_stability_regime(omega_R: float, omega_d: float) -> str:
     elif ratio < 10.0:
         return "strong_driving"    # Ganho máximo, cuidado com aquecimento
     else:
+        return "ultra_strong"      # Regime não-perturbativo, efeitos exóticos
+        return "ultra_strong"      # Regime não-perturbativo, efeitos exóticos
+        return "ultra_strong"      # Regime não-perturbativo, efeitos exóticos
         return "ultra_strong"      # Regime não-perturbativo, efeitos exóticos

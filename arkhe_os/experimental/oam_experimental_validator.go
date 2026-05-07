@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/arkhe-os/arkhe/photonic"
+	"arkhe_os/photonic"
 )
 
 // ─── CONSTANTES DE VALIDAÇÃO EXPERIMENTAL ──────────────────────

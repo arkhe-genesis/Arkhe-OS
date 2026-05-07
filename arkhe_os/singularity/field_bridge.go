@@ -7,7 +7,7 @@ import (
     "math"
 	"math"
 
-	"github.com/arkhe-os/arkhe/qhttp"
+	"arkhe_os/qhttp"
 )
 
 // FieldPacket é a mensagem de campo transmitida via qhttp://

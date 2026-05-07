@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/arkhe-os/arkhe/parser/lfir"
+	"arkhe_os/parser/lfir"
 )
 
 // GooseFrontend parser Goose recipes and config -> LFIR

@@ -1,3 +1,3 @@
-module github.com/arkhe-os/arkhe/parser/lfir
+module arkhe_os/parser/lfir
 
 go 1.24.3

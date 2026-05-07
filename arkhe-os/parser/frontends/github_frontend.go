@@ -125,22 +125,22 @@ func (f *GitHubFrontend) parseRepositoryPayload(source []byte, graph *lfir.LFIRG
 
 	node := lfir.NewLFIRNode(lfir.LFIRModule, fmt.Sprintf("repo/%v", repo["full_name"]), "github")
 	node.Attributes["type"] = "repository"
-	node.Attributes["description"] = getString(repo, "description")
-	node.Attributes["homepage"] = getString(repo, "homepage")
-	node.Attributes["language"] = getString(repo, "language")
+	node.Attributes["description"] = getStringFromMap(repo, "description")
+	node.Attributes["homepage"] = getStringFromMap(repo, "homepage")
+	node.Attributes["language"] = getStringFromMap(repo, "language")
 	node.Attributes["topics"] = getStringSlice(repo, "topics")
 
 	// Métricas de engajamento social
-	node.Attributes["stargazers_count"] = getInt(repo, "stargazers_count")
-	node.Attributes["watchers_count"] = getInt(repo, "watchers_count")
-	node.Attributes["forks_count"] = getInt(repo, "forks_count")
-	node.Attributes["open_issues_count"] = getInt(repo, "open_issues_count")
-	node.Attributes["subscribers_count"] = getInt(repo, "subscribers_count")
+	node.Attributes["stargazers_count"] = getIntFromMap(repo, "stargazers_count")
+	node.Attributes["watchers_count"] = getIntFromMap(repo, "watchers_count")
+	node.Attributes["forks_count"] = getIntFromMap(repo, "forks_count")
+	node.Attributes["open_issues_count"] = getIntFromMap(repo, "open_issues_count")
+	node.Attributes["subscribers_count"] = getIntFromMap(repo, "subscribers_count")
 
 	// Metadados temporais
-	node.Attributes["created_at"] = getString(repo, "created_at")
-	node.Attributes["updated_at"] = getString(repo, "updated_at")
-	node.Attributes["pushed_at"] = getString(repo, "pushed_at")
+	node.Attributes["created_at"] = getStringFromMap(repo, "created_at")
+	node.Attributes["updated_at"] = getStringFromMap(repo, "updated_at")
+	node.Attributes["pushed_at"] = getStringFromMap(repo, "pushed_at")
 
 	// Saúde do repositório (calculado)
 	healthScore := computeRepositoryHealth(repo)
@@ -182,25 +182,25 @@ func (f *GitHubFrontend) parseIssueItem(item map[string]interface{}, graph *lfir
 	}
 
 	// É uma issue
-	issueNum := getInt(item, "number")
+	issueNum := getIntFromMap(item, "number")
 	id := fmt.Sprintf("issue/%d", issueNum)
 	node := lfir.NewLFIRNode(lfir.LFIROperation, id, "github")
 
 	node.Attributes["type"] = "issue"
-	node.Attributes["title"] = getString(item, "title")
-	node.Attributes["state"] = getString(item, "state") // open/closed
+	node.Attributes["title"] = getStringFromMap(item, "title")
+	node.Attributes["state"] = getStringFromMap(item, "state") // open/closed
 	node.Attributes["locked"] = getBool(item, "locked")
-	node.Attributes["created_at"] = getString(item, "created_at")
-	node.Attributes["updated_at"] = getString(item, "updated_at")
-	node.Attributes["closed_at"] = getString(item, "closed_at")
+	node.Attributes["created_at"] = getStringFromMap(item, "created_at")
+	node.Attributes["updated_at"] = getStringFromMap(item, "updated_at")
+	node.Attributes["closed_at"] = getStringFromMap(item, "closed_at")
 
 	// Autor e atribuição
 	if user, ok := item["user"].(map[string]interface{}); ok {
-		node.Attributes["author"] = getString(user, "login")
-		node.Attributes["author_type"] = getString(user, "type") // User/Org/Bot
+		node.Attributes["author"] = getStringFromMap(user, "login")
+		node.Attributes["author_type"] = getStringFromMap(user, "type") // User/Org/Bot
 	}
 	if assignee, ok := item["assignee"].(map[string]interface{}); ok {
-		node.Attributes["assignee"] = getString(assignee, "login")
+		node.Attributes["assignee"] = getStringFromMap(assignee, "login")
 	}
 
 	// Labels como tags semânticas
@@ -208,8 +208,8 @@ func (f *GitHubFrontend) parseIssueItem(item map[string]interface{}, graph *lfir
 		var labelNames, labelColors []string
 		for _, l := range labels {
 			if label, ok := l.(map[string]interface{}); ok {
-				labelNames = append(labelNames, getString(label, "name"))
-				labelColors = append(labelColors, getString(label, "color"))
+				labelNames = append(labelNames, getStringFromMap(label, "name"))
+				labelColors = append(labelColors, getStringFromMap(label, "color"))
 			}
 		}
 		node.Attributes["labels"] = strings.Join(labelNames, ",")
@@ -222,18 +222,18 @@ func (f *GitHubFrontend) parseIssueItem(item map[string]interface{}, graph *lfir
 	}
 
 	// Engajamento: comentários, reações
-	node.Attributes["comments_count"] = getInt(item, "comments")
+	node.Attributes["comments_count"] = getIntFromMap(item, "comments")
 	if reactions, ok := item["reactions"].(map[string]interface{}); ok {
-		node.Attributes["reactions_total"] = getInt(reactions, "total_count")
-		node.Attributes["reactions_+1"] = getInt(reactions, "+1")
-		node.Attributes["reactions_-1"] = getInt(reactions, "-1")
-		node.Attributes["reactions_laugh"] = getInt(reactions, "laugh")
-		node.Attributes["reactions_heart"] = getInt(reactions, "heart")
+		node.Attributes["reactions_total"] = getIntFromMap(reactions, "total_count")
+		node.Attributes["reactions_+1"] = getIntFromMap(reactions, "+1")
+		node.Attributes["reactions_-1"] = getIntFromMap(reactions, "-1")
+		node.Attributes["reactions_laugh"] = getIntFromMap(reactions, "laugh")
+		node.Attributes["reactions_heart"] = getIntFromMap(reactions, "heart")
 	}
 
 	// Análise de sentimento se habilitado
 	if f.parserConfig.SentimentAnalysis {
-		sentiment := analyzeIssueSentiment(getString(item, "title"), getString(item, "body"))
+		sentiment := analyzeIssueSentiment(getStringFromMap(item, "title"), getStringFromMap(item, "body"))
 		node.Attributes["sentiment_score"] = sentiment.Score
 		node.Attributes["sentiment_label"] = sentiment.Label
 	}
@@ -254,26 +254,26 @@ func (f *GitHubFrontend) parseIssueItem(item map[string]interface{}, graph *lfir
 
 // parseComment processa comentário de issue ou PR
 func (f *GitHubFrontend) parseComment(item map[string]interface{}, graph *lfir.LFIRGraph, parentID string) {
-	id := fmt.Sprintf("comment/%d", getInt(item, "id"))
+	id := fmt.Sprintf("comment/%d", getIntFromMap(item, "id"))
 	node := lfir.NewLFIRNode(lfir.LFIRMetadata, id, "github")
 
 	node.Attributes["type"] = "comment"
-	node.Attributes["body"] = getString(item, "body")
-	node.Attributes["created_at"] = getString(item, "created_at")
-	node.Attributes["updated_at"] = getString(item, "updated_at")
+	node.Attributes["body"] = getStringFromMap(item, "body")
+	node.Attributes["created_at"] = getStringFromMap(item, "created_at")
+	node.Attributes["updated_at"] = getStringFromMap(item, "updated_at")
 
 	if user, ok := item["user"].(map[string]interface{}); ok {
-		node.Attributes["author"] = getString(user, "login")
+		node.Attributes["author"] = getStringFromMap(user, "login")
 	}
 
 	// Reações ao comentário
 	if reactions, ok := item["reactions"].(map[string]interface{}); ok {
-		node.Attributes["reactions_total"] = getInt(reactions, "total_count")
+		node.Attributes["reactions_total"] = getIntFromMap(reactions, "total_count")
 	}
 
 	// Sentimento do comentário se habilitado
 	if f.parserConfig.SentimentAnalysis {
-		sentiment := analyzeTextSentiment(getString(item, "body"))
+		sentiment := analyzeTextSentiment(getStringFromMap(item, "body"))
 		node.Attributes["sentiment_score"] = sentiment.Score
 		node.Attributes["sentiment_label"] = sentiment.Label
 	}
@@ -309,47 +309,47 @@ func (f *GitHubFrontend) parsePRItem(item map[string]interface{}, graph *lfir.LF
 	}
 
 	// É um pull request
-	prNum := getInt(item, "number")
+	prNum := getIntFromMap(item, "number")
 	id := fmt.Sprintf("pr/%d", prNum)
 	node := lfir.NewLFIRNode(lfir.LFIROperation, id, "github")
 
 	node.Attributes["type"] = "pull_request"
-	node.Attributes["title"] = getString(item, "title")
-	node.Attributes["state"] = getString(item, "state") // open/closed/merged
+	node.Attributes["title"] = getStringFromMap(item, "title")
+	node.Attributes["state"] = getStringFromMap(item, "state") // open/closed/merged
 	node.Attributes["draft"] = getBool(item, "draft")
-	node.Attributes["created_at"] = getString(item, "created_at")
-	node.Attributes["updated_at"] = getString(item, "updated_at")
-	node.Attributes["merged_at"] = getString(item, "merged_at")
-	node.Attributes["closed_at"] = getString(item, "closed_at")
+	node.Attributes["created_at"] = getStringFromMap(item, "created_at")
+	node.Attributes["updated_at"] = getStringFromMap(item, "updated_at")
+	node.Attributes["merged_at"] = getStringFromMap(item, "merged_at")
+	node.Attributes["closed_at"] = getStringFromMap(item, "closed_at")
 
 	// Branches
-	node.Attributes["head_branch"] = getString(item, "head", "ref")
-	node.Attributes["base_branch"] = getString(item, "base", "ref")
+	node.Attributes["head_branch"] = getStringFromMap(item, "head", "ref")
+	node.Attributes["base_branch"] = getStringFromMap(item, "base", "ref")
 
 	// Autor e revisores
 	if user, ok := item["user"].(map[string]interface{}); ok {
-		node.Attributes["author"] = getString(user, "login")
+		node.Attributes["author"] = getStringFromMap(user, "login")
 	}
 	if requestedReviewers, ok := item["requested_reviewers"].([]interface{}); ok {
 		var reviewers []string
 		for _, r := range requestedReviewers {
 			if reviewer, ok := r.(map[string]interface{}); ok {
-				reviewers = append(reviewers, getString(reviewer, "login"))
+				reviewers = append(reviewers, getStringFromMap(reviewer, "login"))
 			}
 		}
 		node.Attributes["requested_reviewers"] = strings.Join(reviewers, ",")
 	}
 
 	// Métricas de mudança de código
-	node.Attributes["additions"] = getInt(item, "additions")
-	node.Attributes["deletions"] = getInt(item, "deletions")
-	node.Attributes["changed_files"] = getInt(item, "changed_files")
-	node.Attributes["commits_count"] = getInt(item, "commits")
+	node.Attributes["additions"] = getIntFromMap(item, "additions")
+	node.Attributes["deletions"] = getIntFromMap(item, "deletions")
+	node.Attributes["changed_files"] = getIntFromMap(item, "changed_files")
+	node.Attributes["commits_count"] = getIntFromMap(item, "commits")
 
 	// Status de revisão e merge
-	node.Attributes["reviews_count"] = getInt(item, "reviews", "total")
-	node.Attributes["approved_reviews"] = getInt(item, "reviews", "approved")
-	node.Attributes["changes_requested"] = getInt(item, "reviews", "changes_requested")
+	node.Attributes["reviews_count"] = getIntFromMap(item, "reviews", "total")
+	node.Attributes["approved_reviews"] = getIntFromMap(item, "reviews", "approved")
+	node.Attributes["changes_requested"] = getIntFromMap(item, "reviews", "changes_requested")
 	node.Attributes["mergeable"] = getBool(item, "mergeable")
 	node.Attributes["merged"] = getBool(item, "merged")
 
@@ -367,21 +367,21 @@ func (f *GitHubFrontend) parsePRItem(item map[string]interface{}, graph *lfir.LF
 
 // parsePRReview processa review de pull request
 func (f *GitHubFrontend) parsePRReview(item map[string]interface{}, graph *lfir.LFIRGraph, parentID string) {
-	id := fmt.Sprintf("review/%d", getInt(item, "id"))
+	id := fmt.Sprintf("review/%d", getIntFromMap(item, "id"))
 	node := lfir.NewLFIRNode(lfir.LFIRMetadata, id, "github")
 
 	node.Attributes["type"] = "pull_request_review"
-	node.Attributes["state"] = getString(item, "state") // APPROVED/CHANGES_REQUESTED/COMMENTED
-	node.Attributes["body"] = getString(item, "body")
-	node.Attributes["submitted_at"] = getString(item, "submitted_at")
+	node.Attributes["state"] = getStringFromMap(item, "state") // APPROVED/CHANGES_REQUESTED/COMMENTED
+	node.Attributes["body"] = getStringFromMap(item, "body")
+	node.Attributes["submitted_at"] = getStringFromMap(item, "submitted_at")
 
 	if user, ok := item["user"].(map[string]interface{}); ok {
-		node.Attributes["reviewer"] = getString(user, "login")
+		node.Attributes["reviewer"] = getStringFromMap(user, "login")
 	}
 
 	// Sentimento do review se habilitado
 	if f.parserConfig.SentimentAnalysis {
-		sentiment := analyzeTextSentiment(getString(item, "body"))
+		sentiment := analyzeTextSentiment(getStringFromMap(item, "body"))
 		node.Attributes["sentiment_score"] = sentiment.Score
 		node.Attributes["sentiment_label"] = sentiment.Label
 	}
@@ -397,29 +397,29 @@ func (f *GitHubFrontend) parseActionsPayload(source []byte, graph *lfir.LFIRGrap
 		return nil, err
 	}
 
-	id := fmt.Sprintf("workflow/%d", getInt(item, "run_id"))
+	id := fmt.Sprintf("workflow/%d", getIntFromMap(item, "run_id"))
 	node := lfir.NewLFIRNode(lfir.LFIROperation, id, "github")
 
 	node.Attributes["type"] = "workflow_run"
-	node.Attributes["name"] = getString(item, "workflow", "name")
-	node.Attributes["status"] = getString(item, "status") // queued/in_progress/completed
-	node.Attributes["conclusion"] = getString(item, "conclusion") // success/failure/cancelled
-	node.Attributes["event"] = getString(item, "event") // push/pull_request/schedule
-	node.Attributes["created_at"] = getString(item, "created_at")
-	node.Attributes["updated_at"] = getString(item, "updated_at")
+	node.Attributes["name"] = getStringFromMap(item, "workflow", "name")
+	node.Attributes["status"] = getStringFromMap(item, "status") // queued/in_progress/completed
+	node.Attributes["conclusion"] = getStringFromMap(item, "conclusion") // success/failure/cancelled
+	node.Attributes["event"] = getStringFromMap(item, "event") // push/pull_request/schedule
+	node.Attributes["created_at"] = getStringFromMap(item, "created_at")
+	node.Attributes["updated_at"] = getStringFromMap(item, "updated_at")
 
 	// Duração e timing
-	if started, err := time.Parse(time.RFC3339, getString(item, "run_started_at")); err == nil {
-		if completed, err := time.Parse(time.RFC3339, getString(item, "updated_at")); err == nil {
+	if started, err := time.Parse(time.RFC3339, getStringFromMap(item, "run_started_at")); err == nil {
+		if completed, err := time.Parse(time.RFC3339, getStringFromMap(item, "updated_at")); err == nil {
 			duration := completed.Sub(started).Milliseconds()
 			node.Attributes["duration_ms"] = duration
 		}
 	}
 
 	// Trigger e contexto
-	node.Attributes["trigger_actor"] = getString(item, "actor", "login")
-	node.Attributes["head_branch"] = getString(item, "head_branch")
-	node.Attributes["head_sha"] = getString(item, "head_sha")
+	node.Attributes["trigger_actor"] = getStringFromMap(item, "actor", "login")
+	node.Attributes["head_branch"] = getStringFromMap(item, "head_branch")
+	node.Attributes["head_sha"] = getStringFromMap(item, "head_sha")
 
 	// Coerência operacional: workflows bem-sucedidos contribuem positivamente
 	if f.parserConfig.CoherenceMapping {
@@ -443,16 +443,16 @@ func (f *GitHubFrontend) parseActivityPayload(source []byte, graph *lfir.LFIRGra
 		return nil, err
 	}
 
-	id := fmt.Sprintf("%s/%s", activityType, getString(item, "action", "event"))
+	id := fmt.Sprintf("%s/%s", activityType, getStringFromMap(item, "action", "event"))
 	node := lfir.NewLFIRNode(lfir.LFIRMetadata, id, "github")
 
 	node.Attributes["type"] = activityType
-	node.Attributes["action"] = getString(item, "action")
-	node.Attributes["timestamp"] = getString(item, "created_at", "published_at", "starred_at")
+	node.Attributes["action"] = getStringFromMap(item, "action")
+	node.Attributes["timestamp"] = getStringFromMap(item, "created_at", "published_at", "starred_at")
 
 	if sender, ok := item["sender"].(map[string]interface{}); ok {
-		node.Attributes["actor"] = getString(sender, "login")
-		node.Attributes["actor_type"] = getString(sender, "type")
+		node.Attributes["actor"] = getStringFromMap(sender, "login")
+		node.Attributes["actor_type"] = getStringFromMap(sender, "type")
 	}
 
 	// Contribuição para campo de atenção social
@@ -490,11 +490,11 @@ func (f *GitHubFrontend) parseGenericPayload(source []byte, graph *lfir.LFIRGrap
 func (f *GitHubFrontend) parseItemGeneric(item map[string]interface{}, graph *lfir.LFIRGraph, parentID string) {
 	// Heurísticas simples baseadas em campos presentes
 	if _, ok := item["html_url"]; ok {
-		if strings.Contains(getString(item, "html_url"), "/pull/") {
+		if strings.Contains(getStringFromMap(item, "html_url"), "/pull/") {
 			f.parsePRItem(item, graph, parentID)
 			return
 		}
-		if strings.Contains(getString(item, "html_url"), "/issues/") {
+		if strings.Contains(getStringFromMap(item, "html_url"), "/issues/") {
 			f.parseIssueItem(item, graph, parentID)
 			return
 		}
@@ -504,7 +504,7 @@ func (f *GitHubFrontend) parseItemGeneric(item map[string]interface{}, graph *lf
 		return
 	}
 	// Fallback: nó genérico com todos os campos
-	node := lfir.NewLFIRNode(lfir.LFIRMetadata, fmt.Sprintf("generic/%s", getString(item, "id", "unknown")), "github")
+	node := lfir.NewLFIRNode(lfir.LFIRMetadata, fmt.Sprintf("generic/%s", getStringFromMap(item, "id", "unknown")), "github")
 	for k, v := range item {
 		if k != "node_id" { // Evitar duplicação de ID
 			node.Attributes[k] = v
@@ -515,7 +515,7 @@ func (f *GitHubFrontend) parseItemGeneric(item map[string]interface{}, graph *lf
 }
 
 // Helper functions para extração segura de campos JSON
-func getString(obj map[string]interface{}, keys ...string) string {
+func getStringFromMap(obj map[string]interface{}, keys ...string) string {
 	var current interface{} = obj
 	for i, key := range keys {
 		if m, ok := current.(map[string]interface{}); ok {
@@ -533,7 +533,7 @@ func getString(obj map[string]interface{}, keys ...string) string {
 	return ""
 }
 
-func getInt(obj map[string]interface{}, keys ...string) int {
+func getIntFromMap(obj map[string]interface{}, keys ...string) int {
 	var current interface{} = obj
 	for i, key := range keys {
 		if m, ok := current.(map[string]interface{}); ok {
@@ -593,10 +593,10 @@ func jsonMustMarshal(v interface{}) []byte {
 // Funções de cálculo de métricas de coerência social
 func computeRepositoryHealth(repo map[string]interface{}) float64 {
 	// Heurística simplificada de saúde do repositório
-	stars := float64(getInt(repo, "stargazers_count"))
-	forks := float64(getInt(repo, "forks_count"))
-	issues := float64(getInt(repo, "open_issues_count"))
-	updated := getString(repo, "updated_at")
+	stars := float64(getIntFromMap(repo, "stargazers_count"))
+	forks := float64(getIntFromMap(repo, "forks_count"))
+	issues := float64(getIntFromMap(repo, "open_issues_count"))
+	updated := getStringFromMap(repo, "updated_at")
 
 	// Score base em engajamento
 	engagement := math.Log1p(stars) + 0.5*math.Log1p(forks)
@@ -731,8 +731,8 @@ func computePRConsensus(item map[string]interface{}) PRConsensusResult {
 	result := PRConsensusResult{Score: 0.5, Status: "needs_review"}
 
 	// Contar reviews aprovados vs. mudanças solicitadas
-	approved := getInt(item, "reviews", "approved")
-	requested := getInt(item, "reviews", "changes_requested")
+	approved := getIntFromMap(item, "reviews", "approved")
+	requested := getIntFromMap(item, "reviews", "changes_requested")
 	total := approved + requested
 
 	if total > 0 {
@@ -757,8 +757,8 @@ func computePRConsensus(item map[string]interface{}) PRConsensusResult {
 }
 
 func computeWorkflowCoherenceDelta(item map[string]interface{}) float64 {
-	status := getString(item, "status")
-	conclusion := getString(item, "conclusion")
+	status := getStringFromMap(item, "status")
+	conclusion := getStringFromMap(item, "conclusion")
 
 	// Workflows bem-sucedidos contribuem positivamente
 	if status == "completed" && conclusion == "success" {

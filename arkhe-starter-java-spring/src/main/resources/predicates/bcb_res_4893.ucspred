@@ -1,0 +1,29 @@
+[
+  {
+    "id": "credit_fairness_bcb",
+    "name": "Credit Demographic Parity - BCB RES 4.893",
+    "description": "Credit approval rates must have similar positive rates across demographic groups per BCB Resolution 4.893/2021",
+    "jurisdictions": ["BCB"],
+    "expression": "∀g_i,g_j∈G: |P[APPROVED|G=g_i] - P[APPROVED|G=g_j]| ≤ α",
+    "parameters": {
+      "alpha": 0.03,
+      "protected_groups": ["age", "sex", "ethnicity", "region"],
+      "statistical_test": "two_proportion_z_test",
+      "confidence_level": 0.95
+    },
+    "zinc_circuit": "src/main/resources/zinc/credit_fairness.zinc"
+  },
+  {
+    "id": "capital_adequacy_basel",
+    "name": "Capital Adequacy Ratio - BASILEIA III",
+    "description": "Tier 1 Capital / Risk-Weighted Assets must meet regulatory minimums",
+    "jurisdictions": ["BCB", "ECB", "BASILEIA"],
+    "expression": "Tier1_Capital / Risk_Weighted_Assets ≥ ρ_min + Δ_buffer",
+    "parameters": {
+      "rho_min": 0.145,
+      "buffer_types": ["countercyclical", "systemic", "G-SIB"],
+      "calculation_frequency": "quarterly"
+    },
+    "zinc_circuit": "src/main/resources/zinc/capital_adequacy.zinc"
+  }
+]

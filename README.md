@@ -339,6 +339,19 @@ Add the following config to your MCP client:
   - [`gno_call`](docs/tool-reference.md#gno_call)
   - [`gno_deploy`](docs/tool-reference.md#gno_deploy)
   - [`gno_query`](docs/tool-reference.md#gno_query)
+- **GitNexus Code Intelligence** (8 tools)
+  - [`gitnexus_analyze`](docs/tool-reference.md#gitnexus_analyze)
+  - [`gitnexus_context`](docs/tool-reference.md#gitnexus_context)
+  - [`gitnexus_cypher`](docs/tool-reference.md#gitnexus_cypher)
+  - [`gitnexus_detect_changes`](docs/tool-reference.md#gitnexus_detect_changes)
+  - [`gitnexus_impact`](docs/tool-reference.md#gitnexus_impact)
+  - [`gitnexus_list_repos`](docs/tool-reference.md#gitnexus_list_repos)
+  - [`gitnexus_query`](docs/tool-reference.md#gitnexus_query)
+  - [`gitnexus_rename`](docs/tool-reference.md#gitnexus_rename)
+- **Epistemic Defense System (PSA/PEFM)** (3 tools)
+  - [`diamond_pipeline`](docs/tool-reference.md#diamond_pipeline)
+  - [`pefm_predict`](docs/tool-reference.md#pefm_predict)
+  - [`psa_evaluate`](docs/tool-reference.md#psa_evaluate)
 - **Fortytwo Prime Collective** (1 tools)
   - [`ask_fortytwo_prime`](docs/tool-reference.md#ask_fortytwo_prime)
 - **Lightspark Grid API** (7 tools)
@@ -355,6 +368,8 @@ Add the following config to your MCP client:
   - [`nash_coercion_scan`](docs/tool-reference.md#nash_coercion_scan)
   - [`nash_enroll_cognitive_profile`](docs/tool-reference.md#nash_enroll_cognitive_profile)
   - [`nash_get_device_status`](docs/tool-reference.md#nash_get_device_status)
+- **Urbit** (1 tools)
+  - [`urbit_make`](docs/tool-reference.md#urbit_make)
 
 <!-- END AUTO GENERATED TOOLS -->
 

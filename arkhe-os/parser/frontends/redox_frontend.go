@@ -10,7 +10,7 @@ type RedoxFrontend struct{}
 func (f *RedoxFrontend) ParseRedoxNode(name string, e0 float64, ratio float64, n int, compartment string) *lfir.LFIRNode {
 	node := &lfir.LFIRNode{
 		ID:         "redox_" + name,
-		Type:       lfir.NodeType("RedoxState"),
+		Type:       lfir.LFIRNodeType("RedoxState"),
 		Attributes: make(map[string]interface{}),
 	}
 

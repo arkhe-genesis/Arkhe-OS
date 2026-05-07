@@ -46,6 +46,8 @@ class FloquetStabilizedQubit:
             couplings = [self.params.instantaneous_coupling(t) for t in ts]
             omega_R_eff = np.sqrt(np.mean(np.array(couplings)**2))
 
+        # NOTE: the formula in doc is γ_0 * exp(-Ω_R²/ω_d²) or something similar
+        # Implementation is using exp(-(omega_R_eff**2) / (self.params.omega_d**2))
         return self.gamma_0 * np.exp(-(omega_R_eff**2) / (self.params.omega_d**2))
 
     def coherence_time(self, confidence: float = 0.95) -> float:
@@ -67,6 +69,8 @@ class FloquetStabilizedQubit:
         if gamma_eff == 0:
             return float('inf')
         return self.gamma_0 / gamma_eff
+        gamma_eff = self.effective_decoherence_rate()
+        return self.gamma_0 / gamma_eff if gamma_eff > 0 else float('inf')
 
     def floquet_quasienergy_spectrum(self, n_harmonics: int = 5) -> np.ndarray:
         """
@@ -92,3 +96,16 @@ class FloquetStabilizedQubit:
                 qubit = FloquetStabilizedQubit(params, self.gamma_0)
                 gains[i, j] = qubit.effective_decoherence_rate() / self.gamma_0
         return 1 / gains  # Fator de melhoria em T_2
+
+    def stability_gain(self) -> float:
+        """
+        Retorna o ganho de estabilidade T_2.
+        Helper para retornar fator de melhoria em T_2 diretamente: γ_0 / γ_eff
+        """
+        gamma_eff = self.effective_decoherence_rate()
+        if gamma_eff == 0:
+        """Retorna o ganho em T_2 (γ_0 / γ_eff)."""
+        gamma_eff = self.effective_decoherence_rate()
+        if gamma_eff < 1e-12:
+            return float('inf')
+        return self.gamma_0 / gamma_eff

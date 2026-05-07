@@ -439,7 +439,7 @@ export default function Component() {
     return () => {
       mounted = false;
       cancelAnimationFrame(requestRef);
-      if (wsInterval) clearInterval(wsInterval);
+      if (wsInterval) {clearInterval(wsInterval);}
       if (ws && ws.readyState === 1) {
         // OPEN
         ws.close();
