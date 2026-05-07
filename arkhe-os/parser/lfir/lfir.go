@@ -10,12 +10,16 @@ import (
 type LFIRNodeType string
 
 const (
+	NodeTypeSystem        LFIRNodeType = "LFIRNodeTypeSystem"
 	LFIRNodeTypeModule    LFIRNodeType = "LFIRModule"
 	LFIRNodeTypeOperation LFIRNodeType = "LFIROperation"
 	LFIRNodeTypeType      LFIRNodeType = "LFIRType"
 	LFIRNodeTypeMetadata  LFIRNodeType = "LFIRMetadata"
 	LFIRNodeTypeCall      LFIRNodeType = "LFIRCall"
 	LFIRNodeTypeExpr      LFIRNodeType = "LFIRExpr"
+	LFIROperation         LFIRNodeType = "LFIROperation"
+	LFIRType              LFIRNodeType = "LFIRType"
+	LFIRMetadata          LFIRNodeType = "LFIRMetadata"
 )
 
 import "encoding/json"
