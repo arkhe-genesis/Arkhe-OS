@@ -40,6 +40,10 @@ class KagomeQSLSimulator:
             # Spin projection
             # To get a non-zero commutator we need off-diagonal elements in chi
             # Let's map directly to: χ = i(S+S+S+ - S-S-S-) / 2 as suggested in the problem context
+            # Actually, the user prompt states:
+            # χ_△ = S1 · (S2 × S3)
+            # A simplified form the prompt provided had:
+            # χ = (i/2) * (σ1^+ σ2^+ σ3^+ - σ1^- σ2^- σ3^-)
 
             if s1 == 0 and s2 == 0 and s3 == 0:
                 # All spins down -> up

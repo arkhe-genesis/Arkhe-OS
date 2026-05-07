@@ -283,7 +283,7 @@ export default [
         './lighthouse-devtools-mcp-bundle.js',
       ];
 
-      if (existingExternals.includes(source)) {
+      if (existingExternals.includes(source) || source.endsWith('bidi.js')) {
         return true;
       }
       return false;
