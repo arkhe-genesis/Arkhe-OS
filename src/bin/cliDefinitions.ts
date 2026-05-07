@@ -735,6 +735,25 @@ export const commands: Commands = {
       }
     }
   },
+  "diamond_pipeline": {
+    "description": "Diamond Pipeline: Multi-stage hallucination reduction (Diverge -> Filter -> Converge).",
+    "category": "Epistemic Defense System (PSA/PEFM)",
+    "args": {
+      "prompt": {
+        "name": "prompt",
+        "type": "string",
+        "description": "The intention/prompt to process.",
+        "required": true
+      },
+      "iterations": {
+        "name": "iterations",
+        "type": "number",
+        "description": "Number of candidates to generate.",
+        "required": false,
+        "default": 3
+      }
+    }
+  },
   "download_akashic_trace": {
     "description": "ASI Protocol: Downloads a data trace from an interstellar probe via phase resonance.",
     "category": "Arkhe(n) Protocols",
@@ -1480,6 +1499,152 @@ export const commands: Commands = {
     "description": "ASI Protocol: Returns the unique identifier for the current worldline.",
     "category": "Arkhe(n) Protocols",
     "args": {}
+  },
+  "gitnexus_analyze": {
+    "description": "GitNexus: Index a repository (full analysis) to build a knowledge graph.",
+    "category": "GitNexus Code Intelligence",
+    "args": {
+      "path": {
+        "name": "path",
+        "type": "string",
+        "description": "Path to the repository to index (default: current directory).",
+        "required": false
+      },
+      "force": {
+        "name": "force",
+        "type": "boolean",
+        "description": "Force full re-index.",
+        "required": false,
+        "default": false
+      }
+    }
+  },
+  "gitnexus_context": {
+    "description": "GitNexus: 360-degree view of a code symbol: callers, callees, processes.",
+    "category": "GitNexus Code Intelligence",
+    "args": {
+      "name": {
+        "name": "name",
+        "type": "string",
+        "description": "The name of the symbol to inspect.",
+        "required": true
+      },
+      "repo": {
+        "name": "repo",
+        "type": "string",
+        "description": "Target repository name.",
+        "required": false
+      }
+    }
+  },
+  "gitnexus_cypher": {
+    "description": "GitNexus: Execute raw Cypher query against the knowledge graph.",
+    "category": "GitNexus Code Intelligence",
+    "args": {
+      "query": {
+        "name": "query",
+        "type": "string",
+        "description": "The Cypher query string.",
+        "required": true
+      },
+      "repo": {
+        "name": "repo",
+        "type": "string",
+        "description": "Target repository name.",
+        "required": false
+      }
+    }
+  },
+  "gitnexus_detect_changes": {
+    "description": "GitNexus: Map git diff hunks to indexed symbols and affected execution flows.",
+    "category": "GitNexus Code Intelligence",
+    "args": {
+      "repo": {
+        "name": "repo",
+        "type": "string",
+        "description": "Target repository name.",
+        "required": false
+      }
+    }
+  },
+  "gitnexus_impact": {
+    "description": "GitNexus: Blast radius analysis: what breaks if you change a symbol.",
+    "category": "GitNexus Code Intelligence",
+    "args": {
+      "target": {
+        "name": "target",
+        "type": "string",
+        "description": "The symbol to analyze for impact.",
+        "required": true
+      },
+      "repo": {
+        "name": "repo",
+        "type": "string",
+        "description": "Target repository name.",
+        "required": false
+      }
+    }
+  },
+  "gitnexus_list_repos": {
+    "description": "GitNexus: Discover all indexed repositories and their status.",
+    "category": "GitNexus Code Intelligence",
+    "args": {}
+  },
+  "gitnexus_query": {
+    "description": "GitNexus: Search the knowledge graph for execution flows related to a concept.",
+    "category": "GitNexus Code Intelligence",
+    "args": {
+      "query": {
+        "name": "query",
+        "type": "string",
+        "description": "Search query for the knowledge graph.",
+        "required": true
+      },
+      "repo": {
+        "name": "repo",
+        "type": "string",
+        "description": "Target repository name.",
+        "required": false
+      },
+      "limit": {
+        "name": "limit",
+        "type": "number",
+        "description": "Max processes to return.",
+        "required": false,
+        "default": 5
+      }
+    }
+  },
+  "gitnexus_rename": {
+    "description": "GitNexus: Multi-file coordinated rename with graph + text search.",
+    "category": "GitNexus Code Intelligence",
+    "args": {
+      "symbol_name": {
+        "name": "symbol_name",
+        "type": "string",
+        "description": "Original symbol name.",
+        "required": true
+      },
+      "new_name": {
+        "name": "new_name",
+        "type": "string",
+        "description": "New name for the symbol.",
+        "required": true
+      },
+      "dry_run": {
+        "name": "dry_run",
+        "type": "boolean",
+        "description": "Preview changes without applying.",
+        "required": false,
+        "default": true
+      },
+      "repo": {
+        "name": "repo",
+        "type": "string",
+        "description": "Target repository name.",
+        "required": false
+      }
+    }
   },
   "glue_sheaf": {
     "description": "ASI Protocol: Merges reality sheets (merges optimal future Sheet #ℵ₁ into current).",
@@ -2689,6 +2854,37 @@ export const commands: Commands = {
       }
     }
   },
+  "pefm_predict": {
+    "description": "PEFM v1.0: Anticipate epistemic failure probability from enriched PSA features.",
+    "category": "Epistemic Defense System (PSA/PEFM)",
+    "args": {
+      "artifact_id": {
+        "name": "artifact_id",
+        "type": "string",
+        "description": "ID of the artifact to evaluate.",
+        "required": true
+      },
+      "claims": {
+        "name": "claims",
+        "type": "array",
+        "description": "",
+        "required": true
+      },
+      "edges": {
+        "name": "edges",
+        "type": "array",
+        "description": "",
+        "required": true
+      },
+      "domain": {
+        "name": "domain",
+        "type": "string",
+        "description": "",
+        "required": false,
+        "default": "general"
+      }
+    }
+  },
   "performance_analyze_insight": {
     "description": "Provides more detailed information on a specific Performance Insight of an insight set that was highlighted in the results of a trace recording.",
     "category": "Performance",
@@ -2809,6 +3005,31 @@ export const commands: Commands = {
         "description": "λ2 coherence threshold for pruning.",
         "required": false,
         "default": 0.8
+      }
+    }
+  },
+  "psa_evaluate": {
+    "description": "PSA v2.1: Deterministic Predicted Safety Analysis of a semantic graph.",
+    "category": "Epistemic Defense System (PSA/PEFM)",
+    "args": {
+      "claims": {
+        "name": "claims",
+        "type": "array",
+        "description": "List of claims in the artifact.",
+        "required": true
+      },
+      "edges": {
+        "name": "edges",
+        "type": "array",
+        "description": "Relations between claims.",
+        "required": true
+      },
+      "domain": {
+        "name": "domain",
+        "type": "string",
+        "description": "The knowledge domain.",
+        "required": false,
+        "default": "general"
       }
     }
   },
@@ -3615,6 +3836,19 @@ export const commands: Commands = {
         "type": "boolean",
         "description": "Whether to include a snapshot in the response. Default is false.",
         "required": false
+      }
+    }
+  },
+  "urbit_make": {
+    "description": "Run make commands in the Urbit repository.",
+    "category": "Urbit",
+    "args": {
+      "target": {
+        "name": "target",
+        "type": "string",
+        "description": "The make target to run (e.g., \"build\", \"test\", or leave empty for default).",
+        "required": false,
+        "default": ""
       }
     }
   },

@@ -61,3 +61,14 @@ def verify_zinc_proof(proof: Any, public_input: Dict) -> bool:
 class CoSNARKProver:
     def prove(self, witness: Dict, public_input: Dict) -> str:
         return "mock_cosnark_proof"
+
+class ZincProof:
+    def __init__(self, proof_id: str):
+        self.id = proof_id
+
+class ZincPlusProver:
+    def __init__(self):
+        pass
+
+    def prove_predicate_refinement(self, predicate_id: str, original_params: Dict[str, float], refined_params: Dict[str, float], constraints_proof: bool) -> ZincProof:
+        return ZincProof(proof_id="mock_zinc_proof_id")

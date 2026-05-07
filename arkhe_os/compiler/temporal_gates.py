@@ -1,11 +1,33 @@
 import numpy as np
 
 class TemporalOp:
+    def __init__(self, op_type, ctc_ids, estimated_duration, metadata=None):
     def __init__(self, op_type: str, ctc_ids: list[int], estimated_duration: float, metadata: dict = None):
         self.op_type = op_type
         self.ctc_ids = ctc_ids
         self.estimated_duration = estimated_duration
         self.metadata = metadata or {}
+
+    def compile_to_pulse_sequence(self, hardware_config: dict) -> list[dict]:
+        raise NotImplementedError
+
+class TemporalCircuit:
+    def __init__(self):
+        self.gates = []
+
+    def add_gate(self, gate: TemporalOp):
+        self.gates.append(gate)
+
+    def compile_to_hardware(self, hardware_config: dict) -> list[dict]:
+        all_pulses = []
+        for gate in self.gates:
+            if hasattr(gate, 'compile_to_pulse_sequence'):
+                all_pulses.extend(gate.compile_to_pulse_sequence(hardware_config))
+        return all_pulses
+        sequence = []
+        for gate in self.gates:
+            sequence.extend(gate.compile_to_pulse_sequence(hardware_config))
+        return sequence
 
 class FloquetStabilizeGate(TemporalOp):
     """
@@ -35,6 +57,8 @@ class FloquetStabilizeGate(TemporalOp):
                 "envelope": envelope_type,
                 "floquet_period_s": 2 * np.pi / driving_freq if driving_freq > 0 else float('inf'),
                 "expected_coherence_gain": np.exp((rabi_freq/driving_freq)**2 / 2) if driving_freq > 0 else 1.0
+                "floquet_period_s": 2 * np.pi / driving_freq,
+                "expected_coherence_gain": np.exp((rabi_freq/driving_freq)**2 / 2)
             }
         )
 
@@ -87,3 +111,4 @@ class TemporalCircuit:
             if hasattr(gate, 'compile_to_pulse_sequence'):
                 all_pulses.extend(gate.compile_to_pulse_sequence(hardware_config))
         return all_pulses
+        return 1.0  # Fallback
