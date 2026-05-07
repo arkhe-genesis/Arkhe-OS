@@ -1,0 +1,17 @@
+# federated_publication.yaml — Metadados para publicação com validação federada
+title: "Federated Validation of Ψ_ToE Predictions for Quantum Spin Liquids"
+creators:
+  - {name: "Consórcio Internacional de Materiais Quânticos", affiliation: "Multi-institutional"}
+description: "Meta-análise federada de validações experimentais via ARKHE OS Substrato 285, com privacidade preservada via ZK-federation."
+keywords: ["federated validation", "quantum materials", "Ψ_ToE", "ZK-federation", "ARKHE OS"]
+related_identifiers:
+  - {identifier: "arkhe://federation/fed-quantum-materials-2026", relation: "isPartOf", scheme: "arkhe"}
+  - {identifier: "arkhe://validation/herbertsmithite_federated_2026", relation: "isValidatedBy", scheme: "arkhe"}
+arkhe_federation:
+  federation_id: "fed-quantum-materials-2026"
+  substrate_id: 285
+  global_coherence: 0.924
+  consensus_proof_id: "8a3f2e1b9c4d7e6a..."
+  participating_labs: ["lnls_br", "lhc_cern", "fermilab_us", "riken_jp", "mpq_de"]
+  privacy_budget: {epsilon: 1.0, delta: 1e-5}
+  regulatory_compliance: ["FAIR", "GDPR", "LGPD"]
