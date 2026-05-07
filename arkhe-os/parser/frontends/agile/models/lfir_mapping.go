@@ -139,7 +139,7 @@ func (b *AgileLFIRBuilder) Build(project *AgileProject) error {
 }
 
 func (b *AgileLFIRBuilder) createWorkItemNode(item WorkItem) *lfir.LFIRNode {
-	nodeType := lfir.LFIRModule // default
+	nodeType := lfir.LFIRNodeTypeModule // default
 	switch item.Type {
 	case TypeEpic:
 		nodeType = LFIRNodeTypeEpic

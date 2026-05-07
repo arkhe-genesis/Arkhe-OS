@@ -41,7 +41,7 @@ func (p *AgileParser) GetExtensions() []string {
 func (p *AgileParser) Parse(source []byte, filename string, metadata map[string]interface{}) (*lfir.LFIRGraph, error) {
 	graph := lfir.NewLFIRGraph()
 	root := lfir.NewLFIRNode(
-		lfir.LFIRModule,
+		lfir.LFIRNodeTypeModule,
 		fmt.Sprintf("agile_project_%s_%d", filepath.Base(filename), time.Now().Unix()),
 		"agile",
 	)
