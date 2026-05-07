@@ -1,1 +1,1 @@
-export function useArkheSimulation() { return {}; }
+export function useArkheSimulation() { return {} as any; }
