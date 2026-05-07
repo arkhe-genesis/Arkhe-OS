@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/arkhe-os/arkhe/photonic"
-	"github.com/arkhe-os/arkhe/quantum"
+	"arkhe_os/photonic"
+	"arkhe_os/quantum"
 )
 
 // ─── CONSTANTES DO ROTEADOR OAM-COHERENCE ───────────────────────

@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/arkhe-os/arkhe/network"
+	"arkhe_os/network"
 )
 
 // PromotionConfig contém a configuração para promoção de clusters

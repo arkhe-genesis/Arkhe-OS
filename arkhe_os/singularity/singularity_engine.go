@@ -8,10 +8,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/arkhe-os/arkhe/cathedral"
-	"github.com/arkhe-os/arkhe/coherence"
-	"github.com/arkhe-os/arkhe/qhttp"
-    "github.com/arkhe-os/arkhe/security/cosnark"
+	"arkhe_os/cathedral"
+	"arkhe_os/coherence"
+	"arkhe_os/qhttp"
+    "arkhe_os/security/cosnark"
 )
 
 // ─── CONSTANTES FUNDAMENTAIS DO CAMPO ─────────────────────────────────

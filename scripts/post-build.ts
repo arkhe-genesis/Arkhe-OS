@@ -48,21 +48,21 @@ export const LOCAL_FETCH_PATTERN = './locales/@LOCALE@.json';`;
   );
   fs.mkdirSync(codeMirrorDir, {recursive: true});
   const codeMirrorFile = path.join(codeMirrorDir, 'codemirror.next.js');
-  const codeMirrorContent = `export default {
-    cssStreamParser: async () => ({
-        startState: () => ({})
-    }),
-    StringStream: class {
-        constructor() { this.pos = 0; }
-    },
-    css: {
-        cssLanguage: {
-            parser: {
-                parse: () => ({ topNode: { getChild: () => null } })
-            }
+  const codeMirrorContent = `
+export const cssStreamParser = async () => ({
+    startState: () => ({})
+});
+export class StringStream {
+    constructor() { this.pos = 0; }
+}
+export const css = {
+    cssLanguage: {
+        parser: {
+            parse: () => ({ topNode: { getChild: () => null } })
         }
     }
-}`;
+};
+`;
   writeFile(codeMirrorFile, codeMirrorContent);
 
   // Create codemirror mode mocks
@@ -135,7 +135,8 @@ export const ExperimentName = {
   TIMELINE_SHOW_POST_MESSAGE_EVENTS: 'timeline-show-postmessage-events',
   TIMELINE_DEBUG_MODE: 'timeline-debug-mode',
 }
-  `;
+export const getRemoteBase = () => null;
+`;
   writeFile(runtimeFile, runtimeContent);
 
   copyDevToolsDescriptionFiles();
