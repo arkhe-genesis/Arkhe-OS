@@ -5,7 +5,9 @@
  */
 
 import {spawn} from 'node:child_process';
+
 import {zod} from '../third_party/index.js';
+
 import {ToolCategory} from './categories.js';
 import {defineTool} from './ToolDefinition.js';
 
@@ -42,8 +44,8 @@ export const gitnexusListRepos = defineTool({
   schema: {},
   handler: async (_request, response) => {
     const {stdout, stderr, code} = await runGitNexus(['list']);
-    if (stdout) response.appendResponseLine(stdout);
-    if (code !== 0 && stderr) response.appendResponseLine(`Error: ${stderr}`);
+    if (stdout) {response.appendResponseLine(stdout);}
+    if (code !== 0 && stderr) {response.appendResponseLine(`Error: ${stderr}`);}
   },
 });
 
@@ -62,8 +64,8 @@ export const gitnexusAnalyze = defineTool({
   handler: async (request, response) => {
     response.appendResponseLine('### GitNexus: Analyzing Repository');
     const args = ['analyze'];
-    if (request.params.path) args.push(request.params.path);
-    if (request.params.force) args.push('--force');
+    if (request.params.path) {args.push(request.params.path);}
+    if (request.params.force) {args.push('--force');}
 
     const {stdout, stderr, code} = await runGitNexus(args);
 
@@ -77,7 +79,7 @@ export const gitnexusAnalyze = defineTool({
       response.appendResponseLine('\n**Success**: Repository indexed and registered.');
     } else {
       response.appendResponseLine(`\n**Error**: Analysis failed (Code ${code}).`);
-      if (stderr) response.appendResponseLine(`\`\`\`\n${stderr}\n\`\`\``);
+      if (stderr) {response.appendResponseLine(`\`\`\`\n${stderr}\n\`\`\``);}
     }
   },
 });
@@ -195,8 +197,8 @@ export const gitnexusDetectChanges = defineTool({
     }
 
     const {stdout, stderr, code} = await runGitNexus(args);
-    if (stdout) response.appendResponseLine(stdout);
-    if (code !== 0 && stderr) response.appendResponseLine(`Error: ${stderr}`);
+    if (stdout) {response.appendResponseLine(stdout);}
+    if (code !== 0 && stderr) {response.appendResponseLine(`Error: ${stderr}`);}
   },
 });
 
@@ -216,12 +218,12 @@ export const gitnexusRename = defineTool({
   },
   handler: async (request, response) => {
     const args = ['rename', request.params.symbol_name, request.params.new_name];
-    if (request.params.dry_run) args.push('--dry-run');
-    if (request.params.repo) args.push('--repo', request.params.repo);
+    if (request.params.dry_run) {args.push('--dry-run');}
+    if (request.params.repo) {args.push('--repo', request.params.repo);}
 
     const {stdout, stderr, code} = await runGitNexus(args);
-    if (stdout) response.appendResponseLine(stdout);
-    if (code !== 0 && stderr) response.appendResponseLine(`Error: ${stderr}`);
+    if (stdout) {response.appendResponseLine(stdout);}
+    if (code !== 0 && stderr) {response.appendResponseLine(`Error: ${stderr}`);}
   },
 });
 
@@ -239,10 +241,10 @@ export const gitnexusCypher = defineTool({
   },
   handler: async (request, response) => {
     const args = ['cypher', request.params.query];
-    if (request.params.repo) args.push('--repo', request.params.repo);
+    if (request.params.repo) {args.push('--repo', request.params.repo);}
 
     const {stdout, stderr, code} = await runGitNexus(args);
-    if (stdout) response.appendResponseLine(stdout);
-    if (code !== 0 && stderr) response.appendResponseLine(`Error: ${stderr}`);
+    if (stdout) {response.appendResponseLine(stdout);}
+    if (code !== 0 && stderr) {response.appendResponseLine(`Error: ${stderr}`);}
   },
 });
