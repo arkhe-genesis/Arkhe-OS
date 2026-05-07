@@ -1,3 +1,4 @@
+# arkhe_os/temporal/floquet_driven_qubit.py — Versão Canônica v280.1
 import numpy as np
 from dataclasses import dataclass
 from typing import Optional, Callable
@@ -62,6 +63,15 @@ class FloquetStabilizedQubit:
         # Tempo para decaimento a (1-confidence) da amplitude inicial
         return -np.log(1 - confidence) / gamma_eff
 
+    def stability_gain(self) -> float:
+        """Retorna o fator de ganho em tempo de coerência (T2_novo / T2_antigo)."""
+        gamma_eff = self.effective_decoherence_rate()
+        if gamma_eff == 0:
+            return float('inf')
+        return self.gamma_0 / gamma_eff
+        gamma_eff = self.effective_decoherence_rate()
+        return self.gamma_0 / gamma_eff if gamma_eff > 0 else float('inf')
+
     def floquet_quasienergy_spectrum(self, n_harmonics: int = 5) -> np.ndarray:
         """
         Calcula o espectro de quasi-energias de Floquet:
@@ -94,5 +104,8 @@ class FloquetStabilizedQubit:
         """
         gamma_eff = self.effective_decoherence_rate()
         if gamma_eff == 0:
+        """Retorna o ganho em T_2 (γ_0 / γ_eff)."""
+        gamma_eff = self.effective_decoherence_rate()
+        if gamma_eff < 1e-12:
             return float('inf')
         return self.gamma_0 / gamma_eff

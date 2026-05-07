@@ -1,0 +1,3 @@
+backup:
+  provider: s3
+  retention: 30d

@@ -1,3 +1,10 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
@@ -41,8 +48,50 @@ export const LOCAL_FETCH_PATTERN = './locales/@LOCALE@.json';`;
   );
   fs.mkdirSync(codeMirrorDir, {recursive: true});
   const codeMirrorFile = path.join(codeMirrorDir, 'codemirror.next.js');
-  const codeMirrorContent = `export default {}`;
+  const codeMirrorContent = `export default {
+    cssStreamParser: async () => ({
+        startState: () => ({})
+    }),
+    StringStream: class {
+        constructor() { this.pos = 0; }
+    },
+    css: {
+        cssLanguage: {
+            parser: {
+                parse: () => ({ topNode: { getChild: () => null } })
+            }
+        }
+    }
+}`;
   writeFile(codeMirrorFile, codeMirrorContent);
+
+  // Create codemirror mode mocks
+  const codeMirrorModesDir = path.join(
+    BUILD_DIR,
+    devtoolsThirdPartyPath,
+    'codemirror',
+    'package',
+    'mode'
+  );
+  fs.mkdirSync(path.join(codeMirrorModesDir, 'xml'), {recursive: true});
+  writeFile(path.join(codeMirrorModesDir, 'xml', 'xml.mjs'), 'export default {}');
+
+  fs.mkdirSync(path.join(codeMirrorModesDir, 'css'), {recursive: true});
+  writeFile(path.join(codeMirrorModesDir, 'css', 'css.mjs'), 'export default {}');
+
+  fs.mkdirSync(path.join(codeMirrorModesDir, 'javascript'), {recursive: true});
+  writeFile(path.join(codeMirrorModesDir, 'javascript', 'javascript.mjs'), 'export default {}');
+
+  const codeMirrorAddonDir = path.join(
+    BUILD_DIR,
+    devtoolsThirdPartyPath,
+    'codemirror',
+    'package',
+    'addon',
+    'runmode'
+  );
+  fs.mkdirSync(codeMirrorAddonDir, {recursive: true});
+  writeFile(path.join(codeMirrorAddonDir, 'runmode-standalone.mjs'), 'export default {}');
 
   // Create root mock
   const rootDir = path.join(BUILD_DIR, devtoolsFrontEndCorePath, 'root');
@@ -52,8 +101,14 @@ export const LOCAL_FETCH_PATTERN = './locales/@LOCALE@.json';`;
 export function getChromeVersion() { return ''; };
 export const hostConfig = {};
 export const Runtime = {
+  experiments: { isEnabled: () => false },
   isDescriptorEnabled: () => true,
   queryParam: () => null,
+  getRemoteBase: () => null,
+  GdpProfilesEnterprisePolicyValue: {
+      DISABLED: 0,
+      ENABLED: 1
+  }
 }
 export const experiments = {
   isEnabled: () => false,
@@ -84,6 +139,8 @@ export const ExperimentName = {
   writeFile(runtimeFile, runtimeContent);
 
   copyDevToolsDescriptionFiles();
+
+  fs.mkdirSync(path.join(BUILD_DIR, 'src', 'bin'), {recursive: true});
 }
 
 function copyDevToolsDescriptionFiles() {

@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arkhe-server
+  labels:
+    app: arkhe-server
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: arkhe-server
+  template:
+    metadata:
+      labels:
+        app: arkhe-server
+    spec:
+      containers:
+      - name: arkhe-server
+        image: arkhe-server:latest
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
