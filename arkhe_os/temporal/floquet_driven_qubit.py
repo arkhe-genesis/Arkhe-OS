@@ -61,6 +61,10 @@ class FloquetStabilizedQubit:
         # Tempo para decaimento a (1-confidence) da amplitude inicial
         return -np.log(1 - confidence) / gamma_eff
 
+    def stability_gain(self) -> float:
+        gamma_eff = self.effective_decoherence_rate()
+        return self.gamma_0 / gamma_eff if gamma_eff > 0 else float('inf')
+
     def floquet_quasienergy_spectrum(self, n_harmonics: int = 5) -> np.ndarray:
         """
         Calcula o espectro de quasi-energias de Floquet:
