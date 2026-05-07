@@ -25,8 +25,9 @@ import "os"
 type LFIRNodeType string
 
 const (
-	LFIRNodeTypeModule    LFIRNodeType = "LFIRNodeTypeModule"
 	LFIRNodeTypeModule    LFIRNodeType = "LFIRModule"
+	LFIRNodeTypeDependency LFIRNodeType = "LFIRDependency"
+	LFIRNodeTypeProperty LFIRNodeType = "LFIRProperty"
 	LFIROperation LFIRNodeType = "LFIROperation"
 	LFIRType      LFIRNodeType = "LFIRType"
 	LFIRMetadata  LFIRNodeType = "LFIRMetadata"
@@ -45,9 +46,6 @@ type LFIRNode struct {
 	Attributes map[string]interface{}
 }
 
-func NewLFIRNode(nodeType LFIRNodeType, name, context string) *LFIRNode {
-	return &LFIRNode{
-		ID:         name + "_" + context,
 // NewLFIRNode creates a new LFIR node.
 func NewLFIRNode(nodeType LFIRNodeType, name string, sourceLang string) *LFIRNode {
 	return &LFIRNode{
@@ -73,6 +71,7 @@ type LFIRGraph struct {
     Metrics   LFIRMetrics
 }
 
+// NewLFIRGraph creates a new LFIR graph.
 type LFIRMetrics struct {
     CoherenceScore float64
     NodeCount int
@@ -113,7 +112,6 @@ func (g *LFIRGraph) FindNodeByAttribute(key string, val interface{}) (*LFIRNode,
 	}
 	return nil, false
 func (g *LFIRGraph) ToJSONFile(filepath string) error {
-    return nil
 	data, err := json.MarshalIndent(g, "", "  ")
 	if err != nil {
 		return err
