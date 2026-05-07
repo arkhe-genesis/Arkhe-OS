@@ -1,3 +1,8 @@
+# arkhe_os/compiler/temporal_gates.py — Extensão v280
+import numpy as np
+
+class TemporalOp:
+    """Base class for temporal operations/gates."""
 import numpy as np
 
 class TemporalOp:
@@ -9,6 +14,11 @@ class TemporalOp:
         self.metadata = metadata or {}
 
     def compile_to_pulse_sequence(self, hardware_config: dict) -> list[dict]:
+        raise NotImplementedError("Subclasses must implement this method")
+
+
+class TemporalCircuit:
+    """A circuit consisting of temporal operations."""
         raise NotImplementedError
 
 class TemporalCircuit:
@@ -19,6 +29,12 @@ class TemporalCircuit:
         self.gates.append(gate)
 
     def compile_to_hardware(self, hardware_config: dict) -> list[dict]:
+        pulse_sequence = []
+        for gate in self.gates:
+            pulses = gate.compile_to_pulse_sequence(hardware_config)
+            pulse_sequence.extend(pulses)
+        return pulse_sequence
+
         all_pulses = []
         for gate in self.gates:
             if hasattr(gate, 'compile_to_pulse_sequence'):
@@ -55,6 +71,8 @@ class FloquetStabilizeGate(TemporalOp):
                 "rabi_frequency_Hz": rabi_freq / (2 * np.pi),
                 "phase_offset_rad": phase,
                 "envelope": envelope_type,
+                "floquet_period_s": 2 * np.pi / driving_freq if driving_freq > 0 else 0,
+                "expected_coherence_gain": np.exp((rabi_freq/driving_freq)**2 / 2) if driving_freq > 0 else 1.0
                 "floquet_period_s": 2 * np.pi / driving_freq if driving_freq > 0 else float('inf'),
                 "expected_coherence_gain": np.exp((rabi_freq/driving_freq)**2 / 2) if driving_freq > 0 else 1.0
                 "floquet_period_s": 2 * np.pi / driving_freq,
@@ -93,6 +111,13 @@ class FloquetStabilizeGate(TemporalOp):
             return 1.0
         elif envelope_type == "gaussian":
             sigma = self.estimated_duration / 6  # 99.7% em ±3σ
+            # Avoid division by zero
+            if sigma == 0:
+                return 1.0
+            return np.exp(-0.5 * ((t - self.estimated_duration/2) / sigma)**2)
+        elif envelope_type == "square":
+            return 1.0 if 0 <= t <= self.estimated_duration else 0.0
+        return 1.0  # Fallback
             return np.exp(-0.5 * ((t - self.estimated_duration/2) / sigma)**2)
         elif envelope_type == "square":
             return 1.0 if 0 <= t <= self.estimated_duration else 0.0

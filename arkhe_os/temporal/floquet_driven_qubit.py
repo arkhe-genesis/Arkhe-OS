@@ -64,6 +64,11 @@ class FloquetStabilizedQubit:
         return -np.log(1 - confidence) / gamma_eff
 
     def stability_gain(self) -> float:
+        """Retorna o fator de ganho em tempo de coerência (T2_novo / T2_antigo)."""
+        gamma_eff = self.effective_decoherence_rate()
+        if gamma_eff == 0:
+            return float('inf')
+        return self.gamma_0 / gamma_eff
         gamma_eff = self.effective_decoherence_rate()
         return self.gamma_0 / gamma_eff if gamma_eff > 0 else float('inf')
 
