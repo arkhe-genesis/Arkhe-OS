@@ -270,7 +270,7 @@ export default [
     },
     (source, importer, _isResolved) => {
       if (
-        source === 'yargs' &&
+        source === 'yargs' || source.includes('puppeteer-core') || source.includes('codemirror') &&
         importer &&
         importer.includes('puppeteer-core')
       ) {
@@ -294,6 +294,6 @@ export default [
     {
       inlineDynamicImports: true,
     },
-    (_source, _importer, _isResolved) => false,
+    (_source, _importer, _isResolved) => _source.includes('codemirror'),
   ),
 ];
