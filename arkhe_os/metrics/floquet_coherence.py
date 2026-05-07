@@ -71,3 +71,4 @@ def _classify_stability_regime(omega_R: float, omega_d: float) -> str:
         return "ultra_strong"      # Regime não-perturbativo, efeitos exóticos
         return "ultra_strong"      # Regime não-perturbativo, efeitos exóticos
         return "ultra_strong"      # Regime não-perturbativo, efeitos exóticos
+        return "ultra_strong"      # Regime não-perturbativo, efeitos exóticos

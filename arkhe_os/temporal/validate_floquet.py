@@ -24,6 +24,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+    main()
     parser = argparse.ArgumentParser(description="Validar estabilização de Floquet.")
     parser.add_argument("--qubit-type", type=str, required=True, help="Tipo de qubit (ex: temporal)")
     parser.add_argument("--driving-strength", type=float, required=True, help="Força do driving (ex: 5.0)")

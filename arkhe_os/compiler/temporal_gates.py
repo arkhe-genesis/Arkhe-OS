@@ -118,6 +118,7 @@ class FloquetStabilizeGate(TemporalOp):
         elif envelope_type == "square":
             return 1.0 if 0 <= t <= self.estimated_duration else 0.0
         return 1.0  # Fallback
+        return 1.0  # Fallback
             return np.exp(-0.5 * ((t - self.estimated_duration/2) / sigma)**2)
         elif envelope_type == "square":
             return 1.0 if 0 <= t <= self.estimated_duration else 0.0
