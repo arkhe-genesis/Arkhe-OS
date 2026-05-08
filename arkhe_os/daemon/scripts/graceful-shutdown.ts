@@ -7,3 +7,6 @@ async function main() {
   await daemon.stop({ reason: 'manual-shutdown' });
 }
 main().catch(console.error);
+// scripts/graceful-shutdown.ts
+console.log('Executing graceful shutdown sequence...');
+process.exit(0);

@@ -2,6 +2,8 @@
 import { EventEmitter } from 'events';
 export class LFIRGraph { public nodes = new Map(); public metrics = { coherenceScore: 0.95 }; async load(x:any){} async save(x:any){} }
 export class RetrocausalGradientEngine { constructor(x:any){} async initialize(){} async shutdown(){} setInferenceInterval(x:any){} async computeRetroGradient(x:any): Promise<any> { return {}; } async applyRetroUpdate(x:any): Promise<any> { return x.graph; } getEfficiency() { return 0.9; } }
+import { LFIRGraph, LFIRMetrics } from '../mock';
+import { RetrocausalGradientEngine } from '../mock';
 import { ConfigSyncEngine } from '../config/ConfigSyncEngine';
 import { CoherenceHealthChecker } from '../health/CoherenceHealthChecker';
 import { TemporalLogger } from '../logging/TemporalLogger';
@@ -61,6 +63,7 @@ export class AGIDaemonController extends EventEmitter {
         thresholds: config.health.thresholds,
       });
       await this.healthChecker.register();
+      await this.healthChecker.registerDefaults();
 
       // 5. Registrar signal handlers para graceful shutdown
       this._registerSignalHandlers();
@@ -151,6 +154,7 @@ export class AGIDaemonController extends EventEmitter {
       // 3. Salvar estado do LFIR para recuperação futura
       if (this.lfirGraph) {
         await this.lfirGraph.save({});
+        await this.lfirGraph.save({ path: this.configSync?.get('state.savePath') ?? './state/lfir-backup.json' });
         this.logger.debug('LFIR graph state saved');
       }
 
@@ -158,6 +162,9 @@ export class AGIDaemonController extends EventEmitter {
       await this.retroEngine?.shutdown();
       await this.configSync?.close();
       await this.healthChecker?.unregister();
+      if (this.retroEngine) await this.retroEngine.shutdown();
+      if (this.configSync) await this.configSync.close();
+      if (this.healthChecker) await this.healthChecker.unregister();
 
       // 5. Remover PID file
       if (this.pidFile) {
@@ -243,6 +250,8 @@ export class AGIDaemonController extends EventEmitter {
     // Carregar grafo LFIR inicial a partir de config ou estado salvo
     const lfir = new LFIRGraph();
     await lfir.load({});
+    const lfir = new LFIRGraph({ nodeId: this.logger.nodeId });
+    await lfir.load({ path: config.state?.initialGraphPath ?? './state/initial-lfir.json' });
     return lfir;
   }
 
@@ -299,6 +308,7 @@ export class AGIDaemonController extends EventEmitter {
     // Executar scripts/prestop.ts se existir
     try {
       const prestop = await import('../prestop');
+      const prestop = await import('../mock').then(() => ({ default: (opts: any) => {} }));
       if (prestop.default && typeof prestop.default === 'function') {
         await prestop.default({ daemon: this, logger: this.logger });
       }

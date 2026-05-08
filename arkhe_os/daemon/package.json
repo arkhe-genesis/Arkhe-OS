@@ -35,6 +35,11 @@
     "lint:fix": "eslint src --ext .ts --fix",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build && npm run test"
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build && npm run test",
+    "postinstall": "node scripts/postinstall.js"
   },
   "keywords": ["agi", "daemon", "arkhe", "temporal", "coherence", "federated"],
   "author": "Arkhe OS Collective",

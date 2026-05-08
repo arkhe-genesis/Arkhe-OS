@@ -30,12 +30,17 @@ spec:
           requests:
             memory: "2Gi"
             cpu: "1"
+        image: arkhe-agi:latest
+        ports:
+        - containerPort: 3000
         livenessProbe:
           httpGet:
             path: /health
             port: 3000
           initialDelaySeconds: 30
           periodSeconds: 10
+          initialDelaySeconds: 15
+          periodSeconds: 20
         readinessProbe:
           httpGet:
             path: /health

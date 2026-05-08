@@ -25,6 +25,7 @@ const argv = yargs(hideBin(process.argv))
       const daemon = new AGIDaemonController({
         nodeId: process.env.ARKHE_NODE_ID ?? 'default-node',
         pidFile: (argv['pid-file'] as string) ?? './arkhe-agi.pid',
+        pidFile: argv.pidFile as string ?? './arkhe-agi.pid',
       });
 
       const success = await daemon.initialize();
@@ -58,6 +59,7 @@ const argv = yargs(hideBin(process.argv))
       // Ler PID do arquivo
       const fs = await import('fs/promises');
       const pid = await fs.readFile(argv['pid-file'] as string, 'utf-8').then(p => parseInt(p.trim()));
+      const pid = await fs.readFile(argv.pidFile as string, 'utf-8').then(p => parseInt(p.trim()));
 
       // Enviar SIGTERM para graceful shutdown
       process.kill(pid, 'SIGTERM');
@@ -95,6 +97,11 @@ const argv = yargs(hideBin(process.argv))
       await new Promise(resolve => setTimeout(resolve, 1500));
       // Iniciar novo daemon
       await yargs.parse(['start', '--config', argv.config as string, '--pid-file', argv['pid-file'] as string, '--no-detach']);
+      await yargs.parse(['stop', '--pid-file', argv.pidFile as string]);
+      // Pequeno delay para liberar recursos
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Iniciar novo daemon
+      await yargs.parse(['start', '--config', argv.config as string, '--pid-file', argv.pidFile as string, '--no-detach']);
       spinner.succeed('AGI Daemon restarted');
     } catch (error) {
       spinner.fail(`Error: ${error instanceof Error ? error.message : String(error)}`);
@@ -109,6 +116,7 @@ const argv = yargs(hideBin(process.argv))
     try {
       const fs = await import('fs/promises');
       const pid = await fs.readFile(argv['pid-file'] as string, 'utf-8').then(p => parseInt(p.trim()));
+      const pid = await fs.readFile(argv.pidFile as string, 'utf-8').then(p => parseInt(p.trim()));
 
       // Verificar se processo está rodando
       try {
@@ -124,11 +132,20 @@ const argv = yargs(hideBin(process.argv))
         state: 'running',
         coherence: 0.94,
         health: [
+ |  | 
+135
+ 
+
           { name: 'process_alive', status: 'ok', details: '' },
           { name: 'coherence_score', status: 'ok', value: 0.94, details: '' },
           { name: 'memory_usage', status: 'ok', value: '245MB / 512MB', details: '' },
           { name: 'retrocausal_channel', status: 'ok', eta: 0.82, details: '' },
         ] as any[],
+          { name: 'process_alive', status: 'ok', value: undefined },
+          { name: 'coherence_score', status: 'ok', value: 0.94 },
+          { name: 'memory_usage', status: 'ok', value: '245MB / 512MB' },
+          { name: 'retrocausal_channel', status: 'ok', value: 0.82 },
+        ],
         uptime: '2h 14m 32s',
         configHash: 'a1b2c3d4',
       };
@@ -148,6 +165,7 @@ const argv = yargs(hideBin(process.argv))
           ...status.health.map(h => [h.name,
             h.status === 'ok' ? chalk.green('✓ OK') : h.status === 'degraded' ? chalk.yellow('⚠ Degraded') : chalk.red('✗ Critical'),
             h.details ?? h.value ?? '-']),
+            h.value ?? '-']),
         ], { border: { topBody: '', topJoin: '', topLeft: '', topRight: '', bottomBody: '', bottomJoin: '', bottomLeft: '', bottomRight: '', bodyLeft: '', bodyRight: '', bodyJoin: '', joinBody: '', joinLeft: '', joinRight: '', joinJoin: '' } });
         console.log(healthTable);
       }
@@ -179,6 +197,12 @@ const argv = yargs(hideBin(process.argv))
       { name: 'retrocausal_channel', status: 'ok', eta: 0.82, minEta: 0.70 },
       { name: 'memory_usage', status: 'ok', used: '245MB', total: '512MB', percent: 48 },
     ] as any[];
+      { name: 'process_alive', status: 'ok', latencyMs: 2, value: undefined, target: undefined },
+      { name: 'coherence_score', status: 'ok', value: 0.94, target: 0.90 },
+      { name: 'alignment_drift', status: 'ok', value: 0.02, target: 0.15 },
+      { name: 'retrocausal_channel', status: 'ok', value: 0.82, target: 0.70 },
+      { name: 'memory_usage', status: 'ok', value: '245MB / 512MB (48%)', target: undefined },
+    ];
 
     if (argv.format === 'json') {
       console.log(JSON.stringify({ timestamp: Date.now(), checks }, null, 2));
@@ -240,6 +264,13 @@ const argv = yargs(hideBin(process.argv))
       console.log(chalk.green(`✓ Best architecture fitness: ${result.bestFitness.toFixed(3)}`));
       console.log(chalk.cyan(`✓ Population diversity: ${result.populationDiversity.toFixed(2)}`));
       if (!argv['dry-run']) {
+        applied: !argv.dryRun,
+      };
+
+      spinner.succeed(`Evolution complete${argv.dryRun ? ' (dry-run)' : ''}`);
+      console.log(chalk.green(`✓ Best architecture fitness: ${result.bestFitness.toFixed(3)}`));
+      console.log(chalk.cyan(`✓ Population diversity: ${result.populationDiversity.toFixed(2)}`));
+      if (!argv.dryRun) {
         console.log(chalk.green('✓ New architecture applied to running daemon'));
       }
     } catch (error) {

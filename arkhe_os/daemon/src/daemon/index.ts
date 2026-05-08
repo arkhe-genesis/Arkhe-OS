@@ -18,4 +18,14 @@ if (require.main === module) {
       process.exit(1);
     }
   }).catch(console.error);
+
+export async function stop() {
+    console.log("Stopping from script...");
+    const daemon = new AGIDaemonController({ nodeId: 'stop-script' });
+    await daemon.stop();
+}
+
+if (require.main === module) {
+    const daemon = new AGIDaemonController({ nodeId: 'main-daemon' });
+    daemon.initialize().then(() => daemon.run()).catch(console.error);
 }

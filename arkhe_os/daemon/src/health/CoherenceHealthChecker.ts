@@ -1,4 +1,6 @@
 // src/health/CoherenceHealthChecker.ts
+import { LFIRGraph } from '../mock';
+import { RetrocausalGradientEngine } from '../mock';
 
 export interface HealthCheck {
   name: string;
@@ -20,6 +22,8 @@ export class CoherenceHealthChecker {
   private lastResults: Map<string, HealthCheckResult> = new Map();
   private lfirGraph?: any;
   private retroEngine?: any;
+  private lfirGraph?: LFIRGraph;
+  private retroEngine?: RetrocausalGradientEngine;
   private thresholds: {
     minCoherence: number;
     maxAlignmentDrift: number;
@@ -30,6 +34,8 @@ export class CoherenceHealthChecker {
   constructor(options: {
     lfirGraph?: any;
     retroEngine?: any;
+    lfirGraph?: LFIRGraph;
+    retroEngine?: RetrocausalGradientEngine;
     thresholds?: Partial<{
       minCoherence: number;
       maxAlignmentDrift: number;
@@ -56,6 +62,13 @@ export class CoherenceHealthChecker {
   }
 
   unregister() {}
+  register(check: HealthCheck): void {
+    this.checks.set(check.name, check);
+  }
+
+  async unregister(): Promise<void> {
+    this.checks.clear();
+  }
 
   /**
    * Registra health checks padrão baseados em coerência
