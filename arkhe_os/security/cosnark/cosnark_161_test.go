@@ -4,7 +4,7 @@ package cosnark
 import (
 	"testing"
 
-	"github.com/arkhe-os/arkhe/singularity"
+	"arkhe_os/singularity"
 )
 
 func TestFieldIntegrityVerifier(t *testing.T) {

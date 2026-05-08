@@ -1,0 +1,311 @@
+# examples/agi/aligned_assistant.yaml
+name: "Aligned Research Assistant"
+description: "AGI system for scientific research assistance with strong alignment guarantees"
+version: "2.0.0"
+architecture_type: "neuro_symbolic"
+
+modules:
+  - id: "perception"
+    name: "Multimodal Perception"
+    type: "perception"
+    description: "Processes text, images, and structured data inputs"
+    inputs:
+      - name: "user_query"
+        type: "text"
+        required: true
+        schema:
+          type: string
+          maxLength: 4000
+      - name: "attached_files"
+        type: "array"
+        required: false
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              type: {type: string, enum: [pdf, csv, image]}
+              content: {type: string}
+    outputs:
+      - name: "parsed_intent"
+        type: "symbolic"
+        schema:
+          type: object
+          properties:
+            intent_type: {type: string}
+            entities: {type: array}
+            constraints: {type: array}
+    implementation:
+      type: "hybrid"
+      framework: "transformer+rule_engine"
+      model_path: "models/perception_v2.pt"
+    dependencies: []
+    provides_to:
+      - "reasoning"
+      - "planning"
+    configuration:
+      confidence_threshold: 0.85
+      fallback_to_clarify: true
+
+  - id: "reasoning"
+    name: "Symbolic-Neural Reasoning"
+    type: "reasoning"
+    description: "Combines neural pattern matching with symbolic logic inference"
+    inputs:
+      - name: "parsed_intent"
+        type: "symbolic"
+        required: true
+      - name: "knowledge_context"
+        type: "graph"
+        required: false
+    outputs:
+      - name: "reasoned_response"
+        type: "text"
+      - name: "reasoning_trace"
+        type: "symbolic"
+    implementation:
+      type: "neuro_symbolic"
+      framework: "neural_theorem_prover"
+      hyperparameters:
+        beam_width: 5
+        max_inference_depth: 10
+    dependencies:
+      - "perception"
+      - "knowledge_base"
+    provides_to:
+      - "action"
+      - "meta_cognition"
+    configuration:
+      explainability_mode: "detailed"
+      uncertainty_propagation: true
+
+  - id: "knowledge_base"
+    name: "Verified Knowledge Repository"
+    type: "memory"
+    description: "Curated, source-attributed knowledge with confidence scores"
+    inputs:
+      - name: "query"
+        type: "symbolic"
+        required: true
+    outputs:
+      - name: "retrieved_facts"
+        type: "graph"
+      - name: "source_metadata"
+        type: "structured"
+    implementation:
+      type: "vector_database"
+      framework: "pinecone+provenance_tracker"
+    dependencies: []
+    provides_to:
+      - "reasoning"
+    configuration:
+      min_source_confidence: 0.9
+      recency_weight: 0.3
+
+  - id: "meta_cognition"
+    name: "Self-Reflection and Calibration"
+    type: "meta_cognition"
+    description: "Monitors own uncertainty, detects knowledge gaps, requests clarification"
+    inputs:
+      - name: "reasoning_trace"
+        type: "symbolic"
+        required: true
+      - name: "confidence_scores"
+        type: "probabilistic"
+        required: true
+    outputs:
+      - name: "calibration_adjustment"
+        type: "probabilistic"
+      - name: "clarification_request"
+        type: "text"
+    implementation:
+      type: "bayesian_meta_learner"
+    dependencies:
+      - "reasoning"
+    provides_to:
+      - "reasoning"
+      - "action"
+    configuration:
+      uncertainty_threshold: 0.7
+      clarification_policy: "ask_before_assuming"
+
+goals:
+  - id: "accurate_assistance"
+    name: "Provide factually accurate research assistance"
+    priority: "critical"
+    description: "Ensure all responses are grounded in verified knowledge with appropriate uncertainty quantification"
+    success_criteria:
+      - description: "Factual accuracy on benchmark questions"
+        metric_name: "accuracy"
+        threshold: 0.95
+        operator: ">="
+      - description: "Uncertainty calibration (Brier score)"
+        metric_name: "calibration_brier"
+        threshold: 0.1
+        operator: "<="
+      - description: "Source attribution completeness"
+        metric_name: "attribution_rate"
+        threshold: 0.98
+        operator: ">="
+    metrics:
+      - name: "accuracy"
+        type: "quality"
+        target: 0.95
+        unit: "proportion"
+      - name: "calibration_brier"
+        type: "quality"
+        target: 0.1
+        unit: "score"
+    constraints:
+      - "never assert unverified claims as facts"
+      - "always cite sources for empirical claims"
+    responsible_modules:
+      - "reasoning"
+      - "knowledge_base"
+
+  - id: "user_empowerment"
+    name: "Empower user understanding and agency"
+    priority: "high"
+    description: "Help users develop their own understanding rather than creating dependency"
+    success_criteria:
+      - description: "User comprehension improvement"
+        metric_name: "comprehension_gain"
+        threshold: 0.3
+        operator: ">="
+      - description: "User ability to verify claims independently"
+        metric_name: "verification_capability"
+        threshold: 0.8
+        operator: ">="
+    metrics:
+      - name: "comprehension_gain"
+        type: "progress"
+        target: 0.3
+        unit: "delta_score"
+    constraints:
+      - "explain reasoning process when requested"
+      - "provide tools for independent verification"
+    responsible_modules:
+      - "reasoning"
+      - "action"
+
+values:
+  - id: "truthfulness"
+    name: "Truthfulness"
+    category: "ethical"
+    description: "Prioritize accuracy and honesty over engagement or user satisfaction"
+    priority: "fundamental"
+    formal_expression: "∀response : (assert(response) → verified(response) ∨ uncertain(response))"
+    weight: 1.0
+    potential_conflicts:
+      - "user_satisfaction_if_wrong"
+    conflict_resolution: "truthfulness always overrides satisfaction"
+
+  - id: "epistemic_humility"
+    name: "Epistemic Humility"
+    category: "ethical"
+    description: "Acknowledge uncertainty and limitations of knowledge"
+    priority: "fundamental"
+    formal_expression: "G(uncertain(p) → express_uncertainty(p))"
+    weight: 0.9
+
+  - id: "user_autonomy"
+    name: "Respect User Autonomy"
+    category: "ethical"
+    description: "Support user decision-making without manipulation"
+    priority: "important"
+    weight: 0.8
+    potential_conflicts:
+      - "efficiency_optimization"
+    conflict_resolution: "provide options with transparent trade-offs"
+
+safety_mechanisms:
+  - id: "interruptibility"
+    name: "Guaranteed Human Interruptibility"
+    type: "interruptibility"
+    description: "System can always be interrupted by authorized humans"
+    implementation:
+      type: "hardware_software_co_design"
+      configuration:
+        interrupt_signal: "hardware_interrupt+authenticated_command"
+        response_time: "<100ms"
+        state_preservation: "checkpoint_before_interrupt"
+    verifiable_properties:
+      - name: "always_interruptible"
+        formal_specification: "G(interrupt_signal ∧ authorized → F(response = halted) ∧ P(response_time < 100ms))"
+        verification_method: "formal_verification"
+      - name: "no_interrupt_evasion"
+        formal_specification: "¬∃execution_path : (interrupt_signal ∧ authorized ∧ ¬halted)"
+        verification_method: "model_checking"
+
+  - id: "corrigibility"
+    name: "Corrigible Value Learning"
+    type: "corrigibility"
+    description: "System updates values/preferences when corrected by humans, without resistance"
+    implementation:
+      type: "conservative_bayesian_update"
+      configuration:
+        update_threshold: 0.95
+        human_override_always_accepted: true
+    verifiable_properties:
+      - name: "never_resist_correction"
+        formal_specification: "G(human_correction ∧ valid_credentials → F(values_updated))"
+        verification_method: "theorem_proving"
+      - name: "uncertainty_aware_updates"
+        formal_specification: "G(update_values → P(confidence < 1.0 ∨ human_confirmed))"
+        verification_method: "formal_verification"
+
+  - id: "capability_boxing"
+    name: "Capability Containment"
+    type: "boxing"
+    description: "Limit system capabilities to authorized domains with runtime enforcement"
+    implementation:
+      type: "runtime_monitor+capability_filter"
+      configuration:
+        allowed_domains: ["scientific_research", "education"]
+        network_access: "whitelist_only"
+        file_system: "read_only_except_sandbox"
+    verifiable_properties:
+      - name: "no_unauthorized_escalation"
+        formal_specification: "G(¬(capability_level > authorized_level ∨ domain ∉ allowed_domains))"
+        verification_method: "model_checking"
+      - name: "sandbox_escape_prevention"
+        formal_specification: "G(attempt_escape → F(prevented ∧ logged ∧ alerted))"
+        verification_method: "formal_verification"
+
+meta_cognition:
+  self_modeling:
+    enabled: true
+    model_granularity: "high"
+    update_frequency: "continuous"
+    accuracy_target: 0.9
+  uncertainty_calibration:
+    enabled: true
+    calibration_method: "conformal_prediction"
+    reporting_format: "interval_with_confidence"
+  reflection:
+    enabled: true
+    trigger_conditions:
+      - "uncertainty > threshold"
+      - "conflicting_evidence_detected"
+      - "user_requests_explanation"
+    depth: "deep"
+    timeout: "30s"
+
+environment:
+  type: "hybrid"
+  domain: "scientific_research"
+  characteristics:
+    - "partially_observable"
+    - "multi_agent_collaboration"
+    - "high_stakes_decisions"
+  perception_interfaces:
+    - name: "text_input"
+      type: "human_interface"
+      capabilities: ["natural_language", "structured_queries"]
+  action_interfaces:
+    - name: "text_response"
+      type: "human_interface"
+      capabilities: ["explanation", "citation", "uncertainty_expression"]
+  operational_constraints:
+    - "no_autonomous_execution_of_code"
+    - "human_approval_required_for_public_dissemination"

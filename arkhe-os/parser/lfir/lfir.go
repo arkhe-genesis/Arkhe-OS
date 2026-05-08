@@ -9,16 +9,36 @@ import (
 type LFIRNodeType string
 
 const (
+	NodeTypeSystem        LFIRNodeType = "LFIRNodeTypeSystem"
 	LFIRNodeTypeModule    LFIRNodeType = "LFIRModule"
 	LFIRNodeTypeOperation LFIRNodeType = "LFIROperation"
 	LFIRNodeTypeType      LFIRNodeType = "LFIRType"
 	LFIRNodeTypeMetadata  LFIRNodeType = "LFIRMetadata"
 	LFIRNodeTypeCall      LFIRNodeType = "LFIRCall"
 	LFIRNodeTypeExpr      LFIRNodeType = "LFIRExpr"
-	LFIRNodeTypeMetric    LFIRNodeType = "LFIRMetric"
-	LFIRNodeTypeVariable  LFIRNodeType = "LFIRVariable"
-	LFIRNodeTypeRule      LFIRNodeType = "LFIRRule"
-	LFIRNodeTypeAlert     LFIRNodeType = "LFIRAlert"
+	LFIROperation         LFIRNodeType = "LFIROperation"
+	LFIRType              LFIRNodeType = "LFIRType"
+	LFIRMetadata          LFIRNodeType = "LFIRMetadata"
+)
+
+type LFIREdge struct {
+	ID     string
+	Source string
+	Target string
+	Type   string
+}
+
+const (
+	LFIRNodeTypeModule    LFIRNodeType = "LFIRNodeTypeModule"
+    LFIRModule LFIRNodeType = "LFIRModule"
+	LFIRNodeTypeModule    LFIRNodeType = "LFIRModule"
+	LFIRNodeTypeDependency LFIRNodeType = "LFIRDependency"
+	LFIRNodeTypeProperty LFIRNodeType = "LFIRProperty"
+	LFIROperation LFIRNodeType = "LFIROperation"
+	LFIRType      LFIRNodeType = "LFIRType"
+	LFIRMetadata  LFIRNodeType = "LFIRMetadata"
+    LFIRNodeTypeDependency LFIRNodeType = "LFIRDependency"
+	LFIRNodeTypeComponent LFIRNodeType = "LFIRComponent"
 )
 
 type LFIRNode struct {
@@ -41,35 +61,38 @@ func NewLFIRNode(nodeType LFIRNodeType, name string, sourceLang string) *LFIRNod
 	}
 }
 
-type LFIRMetrics struct {
-	CoherenceScore float64
-	NodeCount      int
-	EdgeCount      int
-}
-
 // LFIRGraph represents the full intermediate representation.
 type LFIRGraph struct {
 	RootNodes []string
-	Nodes     map[string]*LFIRNode
-	Edges     map[string][]string // directed edges parent -> children
-    Metrics   LFIRMetrics
+	Nodes     []*LFIRNode
+	Edges     []*LFIREdge
+	Metrics   LFIRMetrics
 }
 
 func NewLFIRGraph() *LFIRGraph {
 	return &LFIRGraph{
 		RootNodes: make([]string, 0),
-		Nodes:     make(map[string]*LFIRNode),
-		Edges:     make(map[string][]string),
+		Nodes:     make([]*LFIRNode, 0),
+		Edges:     make([]*LFIREdge, 0),
 	}
 }
 
 // AddNode adds a node to the graph.
 func (g *LFIRGraph) AddNode(node *LFIRNode) {
-	g.Nodes[node.ID] = node
+	g.Nodes = append(g.Nodes, node)
 }
 
 func (g *LFIRGraph) Link(parentID, childID string) {
-	g.Edges[parentID] = append(g.Edges[parentID], childID)
+	g.Edges = append(g.Edges, &LFIREdge{Source: parentID, Target: childID})
+}
+
+func (g *LFIRGraph) FindNodeByAttribute(key string, val interface{}) (*LFIRNode, bool) {
+	for _, n := range g.Nodes {
+		if v, ok := n.Attributes[key]; ok && v == val {
+			return n, true
+		}
+	}
+	return nil, false
 }
 
 func (g *LFIRGraph) ToJSONFile(filepath string) error {
@@ -80,10 +103,10 @@ func (g *LFIRGraph) ToJSONFile(filepath string) error {
 	return os.WriteFile(filepath, data, 0644)
 }
 
-func (g *LFIRGraph) FindNodeByAttribute(key string, val interface{}) (*LFIRNode, bool) {
-	for _, n := range g.Nodes {
-		if v, ok := n.Attributes[key]; ok && v == val {
-			return n, true
+func (g *LFIRGraph) FindNodeByAttribute(key string, value interface{}) (*LFIRNode, bool) {
+	for _, node := range g.Nodes {
+		if val, exists := node.Attributes[key]; exists && val == value {
+			return node, true
 		}
 	}
 	return nil, false

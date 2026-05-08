@@ -12,7 +12,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/arkhe-os/arkhe/photonic"
+	"arkhe_os/photonic"
 	"golang.org/x/crypto/hkdf"
 )
 

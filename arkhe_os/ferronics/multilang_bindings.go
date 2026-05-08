@@ -520,7 +520,7 @@ func getInstallationInstructions(lang LanguageTarget) string {
 	case LangRust:
 		return "cargo add arkhe-ferronics"
 	case LangGo:
-		return "go get github.com/arkhe-os/arkhe/ferronics"
+		return "go get arkhe_os/ferronics"
 	case LangCpp:
 		return "#include <arkhe/ferronics.hpp> // via vcpkg or conan"
 	default:

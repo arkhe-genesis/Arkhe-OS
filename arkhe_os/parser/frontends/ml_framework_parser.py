@@ -23,7 +23,12 @@ class MLFrameworkParser:
 
     def parse(self, source: bytes, filename: str, metadata: Optional[Dict] = None) -> LFIRGraph:
         ext = Path(filename).suffix.lower()
-        if ext in (".pt", ".pth"):
+
+        framework = metadata.get("framework", "") if metadata else ""
+
+        if framework == "kronos" or ext in (".kronos",) or "kronos" in filename.lower():
+            return self._parse_kronos(source, metadata, filename)
+        elif ext in (".pt", ".pth"):
             return self._parse_pytorch(source, metadata, filename)
         elif ext in (".h5", ".pb"):
             return self._parse_tensorflow(source, metadata, filename)
@@ -64,6 +69,37 @@ class MLFrameworkParser:
         root.metadata["architecture"] = "ResNet-50" # default mock
 
         # Calculate Phi_C
+        auc = metadata.get("auc", 0.942) if metadata else 0.942
+        bias = metadata.get("bias", 0.03) if metadata else 0.03
+        latency = metadata.get("latency", 2.3) if metadata else 2.3
+
+        coherence = self._compute_phi_c(auc, total_params, bias, latency)
+        root.metadata["coherence"] = coherence
+
+        return graph
+
+    def _parse_kronos(self, source: bytes, metadata: Dict, filename: str) -> LFIRGraph:
+        graph = LFIRGraph(project_id="ml_models", language=Language.UNKNOWN)
+        root = LFIRNode("kronos_model", "kronos_model", "kronos", Language.UNKNOWN, filename, 0, 0)
+        graph.add_node(root)
+
+        try:
+            import torch
+            model = torch.load(io.BytesIO(source), map_location="cpu")
+            if hasattr(model, "state_dict"):
+                state = model.state_dict()
+            else:
+                state = model
+            total_params = sum(p.numel() for p in state.values() if hasattr(p, 'numel'))
+        except Exception:
+            total_params = 24700000 # Default fallback to Kronos-small size 24.7M
+
+        root.metadata["total_params"] = total_params
+        root.metadata["architecture"] = "Kronos Foundation Model"
+
+        root.metadata["lookback"] = metadata.get("lookback", 400) if metadata else 400
+        root.metadata["pred_len"] = metadata.get("pred_len", 120) if metadata else 120
+
         auc = metadata.get("auc", 0.942) if metadata else 0.942
         bias = metadata.get("bias", 0.03) if metadata else 0.03
         latency = metadata.get("latency", 2.3) if metadata else 2.3

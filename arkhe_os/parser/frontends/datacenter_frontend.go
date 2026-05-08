@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/arkhe-os/arkhe/parser/lfir"
+	"arkhe_os/parser/lfir"
 )
 
 // DataCenterFrontend implementa parsing de infraestrutura de data center para LFIR

@@ -44,6 +44,17 @@ def analyze_model(file_path, framework, metadata=None):
         print("• Features: 120")
         print("• Train AUC: 0.963, Test AUC: 0.941")
         print(f"• Φ_C = {color}{phi:.2f} {icon}\033[0m")
+    elif framework == "kronos" or root.name == "kronos_model":
+        params = root.metadata.get("total_params", 0) / 1_000_000
+        arch = root.metadata.get("architecture", "Kronos Foundation Model")
+        lookback = root.metadata.get("lookback", 400)
+        pred_len = root.metadata.get("pred_len", 120)
+        print(f"\n🧠 ARKHE ML Model Analysis — {path.name} (Kronos)")
+        print("──────────────────────────────────────────────────")
+        print(f"• Architecture: {arch} ({params:.1f}M params)")
+        print(f"• Lookback Window: {lookback}")
+        print(f"• Prediction Length: {pred_len}")
+        print(f"• Φ_C = {color}{phi:.2f} {icon}\033[0m")
     else:
         print(f"\n🧠 ARKHE ML Model Analysis — {path.name} ({framework})")
         print("──────────────────────────────────────────────────")
