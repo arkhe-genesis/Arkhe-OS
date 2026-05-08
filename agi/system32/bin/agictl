@@ -1,2 +1,2 @@
 #!/bin/bash
-echo "agictl mock"
+exec python3 "$(dirname "$0")/../nexus/agictl.py" "$@"

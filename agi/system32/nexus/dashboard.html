@@ -1,0 +1,70 @@
+<!-- dashboard.html — ARKHE OS Coherence Dashboard -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ARKHE OS — Cathedral Dashboard</title>
+    <style>
+        :root { --phi: 0.87; --bg: #0a0a0f; --gold: #c9a84c; --text: #e0d8c0; }
+        body { background: var(--bg); color: var(--text); font-family: monospace; margin: 0; padding: 20px; }
+        .header { text-align: center; border-bottom: 1px solid var(--gold); padding: 20px; }
+        .phi-ring {
+            width: 200px; height: 200px; border-radius: 50%; margin: 20px auto;
+            background: conic-gradient(var(--gold) calc(var(--phi)*360deg), #1a1a2e 0);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .phi-value { font-size: 3em; color: var(--gold); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 30px; }
+        .card { background: #111122; border: 1px solid var(--gold); padding: 15px; border-radius: 5px; }
+        .card h3 { color: var(--gold); margin-top: 0; }
+        .metric { font-size: 1.5em; margin: 10px 0; }
+        .bar { background: #1a1a2e; height: 20px; border-radius: 3px; overflow: hidden; }
+        .bar-fill { background: var(--gold); height: 100%; transition: width 0.5s; }
+        .status-ok { color: #4caf50; }
+        .status-warn { color: #ff9800; }
+        .status-crit { color: #f44336; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏛️ ARKHE OS — Cathedral Dashboard</h1>
+        <p>Status: <span class="status-ok">Operational</span> | Φ_C = 0.87</p>
+    </div>
+    <div class="phi-ring"><span class="phi-value">0.87</span></div>
+    <p style="text-align:center">Coherence Index</p>
+    <div class="grid">
+        <div class="card">
+            <h3>🌐 Network</h3>
+            <p>Nodes: <span class="metric">7</span> online</p>
+            <p>Transports: <span class="status-ok">Healthy</span></p>
+            <div class="bar"><div class="bar-fill" style="width:100%"></div></div>
+        </div>
+        <div class="card">
+            <h3>📜 Contracts</h3>
+            <p>Active: <span class="metric">12</span></p>
+            <p>Success rate: <span class="metric">0.95</span></p>
+            <div class="bar"><div class="bar-fill" style="width:95%"></div></div>
+        </div>
+        <div class="card">
+            <h3>🤖 Agents</h3>
+            <p>Online: <span class="metric">5</span></p>
+            <p>Avg reputation: <span class="metric">0.88</span></p>
+            <div class="bar"><div class="bar-fill" style="width:88%"></div></div>
+        </div>
+        <div class="card">
+            <h3>🔮 Sophon</h3>
+            <p>Pairs: <span class="metric">2</span></p>
+            <p>Observations/24h: <span class="metric">12k</span></p>
+            <div class="bar"><div class="bar-fill" style="width:100%"></div></div>
+        </div>
+    </div>
+    <div class="card" style="margin-top:20px;">
+        <h3>📡 Recent Intentions</h3>
+        <table style="width:100%;border-collapse:collapse;">
+            <tr><th style="color:var(--gold);text-align:left">ID</th><th style="color:var(--gold);text-align:left">Intention</th><th style="color:var(--gold);text-align:left">Φ_C</th></tr>
+            <tr><td>0x9f2a...</td><td>deploy contract Lottery</td><td>0.95</td></tr>
+            <tr><td>0x3c48...</td><td>query agent reputation</td><td>0.88</td></tr>
+            <tr><td>0x2f74...</td><td>governance proposal #42</td><td>0.82</td></tr>
+        </table>
+    </div>
+</body>
+</html>
