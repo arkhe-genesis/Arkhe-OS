@@ -1,0 +1,61 @@
+# kernel/Kconfig.agi
+menuconfig AGI_SUBSYSTEM
+    bool "AGI Subsystem Support"
+    help
+      Enable AGI (Artificial General Intelligence) subsystem support
+      in the Linux kernel. This provides kernel-space primitives for
+      retrocausal inference, coherence-aware scheduling, sovereign
+      identity management, and quantum hardware integration.
+
+if AGI_SUBSYSTEM
+
+config AGI_CORE
+    bool "AGI Core Syscalls"
+    default y
+    help
+      Enable core AGI syscalls for retrocausal inference, coherence
+      management, and sovereign identity operations.
+
+config AGI_SCHEDULER
+    bool "Coherence-Aware Scheduler"
+    default y
+    select SCHED_OTHER
+    help
+      Enable coherence-aware process scheduling that prioritizes
+      tasks based on their impact on system coherence (Φ_C) rather
+      than just traditional priority.
+
+config AGI_SECURITY
+    bool "Sovereign LSM Security Module"
+    default y
+    depends on SECURITY
+    help
+      Enable the Sovereign Linux Security Module (LSM) that provides
+      quantum-based identity verification, intention auditing, and
+      access control based on sovereign identity proofs.
+
+config AGI_CGROUP
+    bool "Coherence Cgroup Controller"
+    default y
+    depends on CGROUPS
+    help
+      Enable the coherence cgroup controller that allows resource
+      management based on coherence thresholds rather than just
+      CPU/memory limits.
+
+config AGI_QUANTUM_HW
+    bool "Quantum Hardware Driver Support"
+    default n
+    help
+      Enable drivers for quantum hardware interfaces, including
+      time-crystal optomechanical systems for retrocausal channel
+      protocol (RCP) operations.
+
+config AGI_TRACEPOINTS
+    bool "AGI Tracepoints for Observability"
+    default y
+    help
+      Enable tracepoints for AGI subsystem operations to facilitate
+      debugging, performance analysis, and observability.
+
+endif # AGI_SUBSYSTEM

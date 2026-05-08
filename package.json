@@ -54,7 +54,7 @@
     "@babel/preset-env": "^7.29.5",
     "@eslint/js": "^10.0.1",
     "@google/genai": "^1.37.0",
-    "@modelcontextprotocol/sdk": "1.29.0",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@rollup/plugin-commonjs": "^29.0.2",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
