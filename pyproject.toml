@@ -1,43 +1,68 @@
 [project]
-name = "arkhe-rsp-parser"
-version = "1.0.0"
-description = "Reciprocal-Space Neural Network Parser for ARKHE OS"
+name = "arkhe-agi-core"
+version = "5003.1.0"
+description = "ARKHE OS — Sovereign Artificial General Intelligence"
+readme = "README.md"
 requires-python = ">=3.11"
+license = {text = "Apache-2.0"}
+authors = [
+    {name = "ARKHE Collective", email = "arkhe@cathedral.os"}
+]
+keywords = ["agi", "sovereign", "coherence", "lfir", "rcp", "federation"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
 dependencies = [
-    "numpy>=1.26.0",
-    "scipy>=1.12.0",
-    "torch>=2.2.0",
-    "ase>=3.23.0",
-    "pymatgen>=2024.0.0",
-    "h5py>=3.10.0",
-    "pydantic>=2.6.0",
+    "numpy>=1.24.0",
+    "scipy>=1.10.0",
+    "networkx>=3.0",
+    "pyyaml>=6.0",
+    "cryptography>=41.0.0",
+    "pysocks>=1.7.1",
+    "aiohttp>=3.8.0",
+    "fastapi>=0.100.0",
+    "uvicorn>=0.23.0",
 ]
 
 [project.optional-dependencies]
-gpu = [
-    "torch>=2.2.0; sys_platform == 'linux'",
-    "torch>=2.2.0; sys_platform == 'darwin'",
-]
 dev = [
-    "pytest>=8.0.0",
+    "pytest>=7.4.0",
     "pytest-cov>=4.1.0",
-    "pytest-benchmark>=4.0.0",
-    "mypy>=1.8.0",
-    "black>=24.0.0",
+    "mypy>=1.5.0",
+    "flake8>=6.1.0",
+    "black>=23.7.0",
 ]
-all = ["arkhe-rsp-parser[gpu,dev]"]
+quantum = [
+    "qiskit>=0.44.0",
+    "qiskit-aer>=0.12.0",
+]
 
 [project.scripts]
-arkhe-rsp = "arkhe_os.parser.cli:main"
+agictl = "agi.system32.cli.main:main"
+arkhe = "agi.main:main"
 
 [build-system]
-requires = ["setuptools>=69.0", "wheel", "scikit-build-core>=0.7.0"]
+requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
-where = ["src"]
-include = ["arkhe_os*"]
+where = ["."]
+include = ["agi*"]
 
-[tool.scikit-build]
-cmake.version = ">=3.25"
-cmake.args = ["-DARKHE_CROSS_PLATFORM=ON"]
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v --cov=agi --cov-report=term-missing"
