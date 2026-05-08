@@ -13,9 +13,10 @@
 int rcp_transmit_byte(const char* src, const char* dst, unsigned char byte_val,
                       double t_weak, double t_post, int n_shots,
                       unsigned char* decoded, double* fidelity) {
+    (void)src;
+    (void)dst;
     char cmd[512];
     snprintf(cmd, sizeof(cmd),
-        "python3 agi/system32/runtime/quantum/rcp_v2_engine.py transmit %d %d %f %f",
         "python3 -c \"import sys; sys.path.insert(0, 'agi/system32/runtime/quantum'); "
         "from rcp_v2_engine import RetrocausalChannel8Bit; "
         "ch=RetrocausalChannel8Bit(); "
@@ -26,7 +27,6 @@ int rcp_transmit_byte(const char* src, const char* dst, unsigned char byte_val,
     if (!fp) return -1;
     int d;
     double f;
-    fscanf(fp, "%d:%lf", &d, &f);
     if (fscanf(fp, "%d:%lf", &d, &f) != 2) {
         pclose(fp);
         return -1;

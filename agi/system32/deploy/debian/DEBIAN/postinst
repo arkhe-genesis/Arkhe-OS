@@ -1,0 +1,53 @@
+#!/bin/bash
+set -e
+
+case "$1" in
+    configure)
+        echo "🏛️ Configurando ARKHE OS AGI Core (Substrates 315-316)..."
+
+        # Criar diretórios de runtime se não existirem
+        mkdir -p /var/lib/agi/spool/retrocausal_queue
+        mkdir -p /var/log/agi
+        mkdir -p /etc/agi/config
+
+        # Copiar configurações padrão se não existirem
+        if [ ! -f /etc/agi/config/rcp_v2.yml ] && [ -f /usr/share/agi/config/rcp_v2.yml ]; then
+            cp /usr/share/agi/config/rcp_v2.yml /etc/agi/config/
+            echo "✓ Configuração RCP v2.0 instalada"
+        fi
+
+        if [ ! -f /etc/agi/config/omni_core.yml ] && [ -f /usr/share/agi/config/omni_core.yml ]; then
+            cp /usr/share/agi/config/omni_core.yml /etc/agi/config/
+            echo "✓ Configuração Omni Core instalada"
+        fi
+
+        # Registrar módulos do kernel (se disponíveis)
+        if [ -f /usr/lib/modules/agi_rcp.ko ]; then
+            echo "agi_rcp" >> /etc/modules-load.d/arkhe-agi.conf 2>/dev/null || true
+            echo "✓ Driver kernel RCP registrado"
+        fi
+
+        if [ -f /usr/lib/modules/agi_omni.ko ]; then
+            echo "agi_omni" >> /etc/modules-load.d/arkhe-agi.conf 2>/dev/null || true
+            echo "✓ Driver kernel Omni registrado"
+        fi
+
+        # Ativar serviço systemd
+        if command -v systemctl >/dev/null 2>&1; then
+            systemctl daemon-reload
+            systemctl enable arkhe-agi.service 2>/dev/null || true
+            echo "✓ Serviço systemd ativado"
+        fi
+
+        # Testar ponte FFI
+        if /usr/bin/python3 -c "import ctypes; ctypes.CDLL('/usr/lib/libagi_rcp_bridge.so')" 2>/dev/null; then
+            echo "✓ Ponte FFI RCP verificada"
+        else
+            echo "⚠️ Aviso: Ponte FFI RCP não pôde ser verificada"
+        fi
+
+        echo "✅ ARKHE OS AGI Core configurado com sucesso"
+        ;;
+esac
+
+#exit 0
