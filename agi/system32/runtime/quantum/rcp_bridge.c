@@ -20,6 +20,10 @@ int rcp_transmit_byte(const char* src, const char* dst, unsigned char byte_val,
     int d;
     double f;
     fscanf(fp, "%d:%lf", &d, &f);
+    if (fscanf(fp, "%d:%lf", &d, &f) != 2) {
+        pclose(fp);
+        return -1;
+    }
     pclose(fp);
     *decoded = (unsigned char)d;
     *fidelity = f;
@@ -29,5 +33,9 @@ int rcp_transmit_byte(const char* src, const char* dst, unsigned char byte_val,
 int rcp_send_message(const char* src, const char* dst, const char* message,
                      double t_weak, double t_post, int n_shots,
                      char* result_buf, int buf_len) {
+    // Implementação mock iterando byte a byte. O wrapper seria expandido
+    // para retornar múltiplos dados ou delegar ao backend Python inteiramente.
+    // Em caso de demonstração simples, omitimos o loop completo no C para
+    // preservar o design minimalista de stub.
     return 0;
 }

@@ -1,3 +1,5 @@
+# rcp_v2_engine.py – Retrocausal Channel 8‑Bit Core
+# Extraído do Substrato 306‑B e canonizado aqui.
 import numpy as np
 from scipy.linalg import expm, eigh
 from scipy.special import erfc
@@ -10,6 +12,11 @@ from typing import List, Dict, Any, Optional, Tuple
 from enum import Enum
 
 class RetrocausalChannel8Bit:
+    """
+    Canal de comunicação retrógrada de 8 bits.
+    Codifica 1 byte (8 bits) em fases φ ∈ {0, π} com post-selection.
+    """
+
     def __init__(self, N_ctc=4, N_mec=5, omega_tc=5.0, omega_m=1.0,
                  g1=0.8, g2=0.08, T_eff=0.5):
         self.N_ctc = N_ctc
@@ -21,6 +28,7 @@ class RetrocausalChannel8Bit:
         self.g2 = g2 * 2 * np.pi
         self.beta = 1.0 / T_eff
 
+        # Build operators
         self._build_operators()
         self._build_hamiltonian()
         self._build_thermal_state()
@@ -75,6 +83,17 @@ class RetrocausalChannel8Bit:
         U1 = self.V @ np.diag(np.exp(-1j * self.E * t_weak)) @ self.V.conj().T
         rho = U1 @ rho @ U1.conj().T
 
+        """Encode single bit (0 or 1) → phase (0 or π) → weak value."""
+        phi = 0 if bit == 0 else np.pi
+
+        # Start from thermal equilibrium
+        rho = self.rho_eq.copy()
+
+        # Evolve to t_weak
+        U1 = self.V @ np.diag(np.exp(-1j * self.E * t_weak)) @ self.V.conj().T
+        rho = U1 @ rho @ U1.conj().T
+
+        # Weak measurement
         eps = weak_eps * (1 + noise * np.random.randn())
         M_weak = expm(1j * eps * self.x_op)
         rho = M_weak @ rho @ M_weak.conj().T
@@ -82,6 +101,7 @@ class RetrocausalChannel8Bit:
         if tr > 0:
             rho = rho / tr
 
+        # Phase-encoded drive
         drive = drive_amp * (1 + noise * np.random.randn())
         phi_eff = phi + noise * 0.5 * np.random.randn()
         H_drive = drive * (self.a + self.adag) * np.cos(phi_eff)
@@ -91,6 +111,7 @@ class RetrocausalChannel8Bit:
         U2 = V_drive @ np.diag(np.exp(-1j * E_drive * (t_post - t_weak))) @ V_drive.conj().T
         rho = U2 @ rho @ U2.conj().T
 
+        # Post-selection
         x_mec = (self.b_s + self.bdag_s) / np.sqrt(2)
         eigvals, eigvecs = np.linalg.eigh(x_mec)
 
@@ -124,15 +145,21 @@ class RetrocausalChannel8Bit:
 
     def transmit_byte(self, byte_val: int, n_shots=50,
                       t_weak=0.5, t_post=1.5) -> Tuple[int, float]:
+        """
+        Transmit 1 byte (8 bits) via retrocausal channel.
+        Returns: (decoded_byte, fidelity)
+        """
         bits = [(byte_val >> i) & 1 for i in range(8)]
         decoded_bits = []
 
         for bit in bits:
+            # Multiple shots for each bit
             weak_values = []
             for _ in range(n_shots):
                 x_w = self.encode_bit(bit, t_weak, t_post)
                 weak_values.append(x_w)
 
+            # Decode: mean weak value > 0 → bit 0, < 0 → bit 1
             mean_xw = np.mean(weak_values)
             decoded_bit = 0 if mean_xw > 0 else 1
             decoded_bits.append(decoded_bit)
@@ -144,6 +171,7 @@ class RetrocausalChannel8Bit:
 
 @dataclass
 class QHTTPPacket:
+    """Pacote qhttp:// com payload retrocausal."""
     version: int = 1
     protocol: str = "qhttp"
     src_node: str = ""
@@ -151,12 +179,14 @@ class QHTTPPacket:
     payload_type: str = "retrocausal_byte"
     payload: bytes = b""
     retrocausal_signature: str = ""
+    retrocausal_signature: str = ""  # Hash do weak value ensemble
     timestamp_sent: float = 0.0
     timestamp_weak: float = 0.0
     timestamp_post: float = 0.0
     coherence_verified: bool = False
 
     def serialize(self) -> bytes:
+        """Serialize to SATO/Plank format (simplified)."""
         header = {
             "version": self.version,
             "protocol": self.protocol,
@@ -195,11 +225,23 @@ class QHTTPRetrocausalTransport:
         self.node_id = node_id
         self.channel = channel
         self.packet_log = []
+    """
+    Transporte qhttp:// com canal retrógrado 8-bits integrado.
+    Conecta nós Wheeler Mesh via retrocausalidade.
+    """
+
+    def __init__(self, node_id: str, channel: RetrocausalChannel8Bit):
+        self.node_id = node_id
+        self.channel = channel
+        self.packet_log: List[QHTTPPacket] = []
         self.retro_stats = {"bytes_sent": 0, "bytes_received": 0,
                            "fidelity_sum": 0.0, "packets": 0}
 
     def send_retrocausal_byte(self, dst_node: str, byte_val: int,
                               t_weak=0.5, t_post=1.5, n_shots=50) -> QHTTPPacket:
+        """Send 1 byte via retrocausal channel, wrapped in qhttp:// packet."""
+
+        # Encode byte via retrocausal channel
         decoded_byte, fidelity = self.channel.transmit_byte(
             byte_val, n_shots, t_weak, t_post
         )
@@ -207,6 +249,11 @@ class QHTTPRetrocausalTransport:
         sig_data = f"{self.node_id}:{dst_node}:{byte_val}:{decoded_byte}:{fidelity:.4f}"
         retro_sig = hashlib.sha256(sig_data.encode()).hexdigest()[:16]
 
+        # Generate retrocausal signature from weak value ensemble
+        sig_data = f"{self.node_id}:{dst_node}:{byte_val}:{decoded_byte}:{fidelity:.4f}"
+        retro_sig = hashlib.sha256(sig_data.encode()).hexdigest()[:16]
+
+        # Build packet
         packet = QHTTPPacket(
             src_node=self.node_id,
             dst_node=dst_node,
@@ -227,6 +274,9 @@ class QHTTPRetrocausalTransport:
 
     def receive_retrocausal_byte(self, packet: QHTTPPacket) -> Tuple[int, float]:
         if not packet.coherence_verified:
+        """Receive and verify retrocausal byte."""
+        if not packet.coherence_verified:
+            print(f"⚠️  Packet from {packet.src_node} failed coherence verification")
             return packet.payload[0], 0.0
 
         self.retro_stats["bytes_received"] += 1
@@ -239,15 +289,28 @@ class QHTTPRetrocausalTransport:
         packets = []
         message_bytes = message.encode('utf-8')
 
+        """Send full message (string) byte-by-byte via retrocausal channel."""
+        packets = []
+        message_bytes = message.encode('utf-8')
+
+        print(f"\n📡 qhttp:// Sending retrocausal message: '{message}'")
+        print(f"   → {len(message_bytes)} bytes → {len(message_bytes)*8} bits")
+        print(f"   → Shots per bit: {n_shots}")
+        print(f"   → Temporal window: Δt = {t_post - t_weak:.1f}s")
+
         for i, byte_val in enumerate(message_bytes):
             packet = self.send_retrocausal_byte(
                 dst_node, byte_val, t_weak, t_post, n_shots
             )
             packets.append(packet)
+            if (i + 1) % 8 == 0 or i == len(message_bytes) - 1:
+                print(f"   → Byte {i+1}/{len(message_bytes)}: 0x{byte_val:02x} "
+                      f"(sig={packet.retrocausal_signature})")
 
         return packets
 
     def get_stats(self) -> Dict:
+        """Get retrocausal transport statistics."""
         stats = self.retro_stats.copy()
         if stats["packets"] > 0:
             stats["avg_fidelity"] = stats["fidelity_sum"] / stats["packets"]

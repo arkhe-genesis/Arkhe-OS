@@ -16,6 +16,8 @@ struct rcp_transmit_args {
 };
 
 static long rcp_ioctl(struct file *file, unsigned int cmd, unsigned long arg) {
+    // Em produção: encaminhar para o Python bridge ou diretamente para o HWA
+    // Aqui mantemos o stub para o device existente.
     return 0;
 }
 
@@ -41,4 +43,5 @@ static void __exit agi_rcp_driver_exit(void) {
 
 module_init(agi_rcp_driver_init);
 module_exit(agi_rcp_driver_exit);
+module_misc_device(rcp_misc_dev);
 MODULE_LICENSE("GPL");
