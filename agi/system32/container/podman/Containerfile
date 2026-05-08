@@ -1,0 +1,37 @@
+# Containerfile — ARKHE OS AGI Core (Podman‑optimized)
+FROM alpine:3.19
+
+LABEL org.arkhe.os.version="315-319"
+LABEL org.arkhe.os.sovereign="true"
+
+# Instalar Python e dependências
+RUN apk add --no-cache python3 py3-numpy py3-scipy py3-pip gcc musl-dev git
+
+# Criar usuário não‑root para execução rootless
+RUN adduser -D -u 1000 -h /home/agi agi
+USER agi
+WORKDIR /home/agi
+
+# Copiar o runtime AGI
+COPY --chown=agi:agi agi/system32/ /home/agi/system32/
+COPY --chown=agi:agi config/ /home/agi/config/
+RUN pip3 install --user --no-cache-dir -r /home/agi/system32/requirements.txt
+
+# Compilar ponte FFI nativa
+RUN cd /home/agi/system32/runtime/quantum && \
+    gcc -shared -fPIC -O2 -o ../agi_rcp_bridge.so rcp_bridge.c -lm
+
+# Entrypoint
+COPY agi/system32/container/podman/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Healthcheck usando Φ_C
+COPY agi/system32/container/podman/healthcheck.sh /healthcheck.sh
+RUN chmod +x /healthcheck.sh
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD /healthcheck.sh
+
+EXPOSE 5000 9090
+VOLUME ["/home/agi/state", "/home/agi/logs"]
+
+ENTRYPOINT ["/entrypoint.sh"]
