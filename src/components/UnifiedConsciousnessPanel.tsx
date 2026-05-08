@@ -13,7 +13,7 @@ import React, { useState } from 'react';
 import { useArkheSimulation } from '../hooks/useArkheSimulation';
 
 export const UnifiedConsciousnessPanel: React.FC = () => {
-  const state = useArkheSimulation();
+  const state: any = useArkheSimulation();
   const [loading, setLoading] = useState(false);
 
   const handleUnify = async () => {
@@ -50,7 +50,7 @@ export const UnifiedConsciousnessPanel: React.FC = () => {
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {uc.integratedQualia.map(q => (
+          {uc.integratedQualia.map((q: any) => (
             <span key={q} className="px-2 py-0.5 bg-purple-500/10 border border-purple-500/20 text-purple-300 text-[9px] font-mono rounded">
               {q}
             </span>

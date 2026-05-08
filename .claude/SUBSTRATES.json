@@ -14,10 +14,28 @@
       "location": "agi/system32/runtime/quantum/"
     },
     {
+      "id": 324.1,
+      "name": "Advanced GLSL Shader for WORMHOLE.agi",
+      "status": "active",
+      "location": "agi/system32/wormhole/shaders/"
+    },
+    {
       "id": 325,
       "name": "Agent Context & Operational Integrity",
       "status": "active",
       "location": "agi/system32/integrity/"
+    },
+    {
+      "id": 329.1,
+      "name": "Homomorphic Zero-Trust Runtime",
+      "status": "active",
+      "location": "arkhe_os/crypto/fhe/"
+    },
+    {
+      "id": 330.2,
+      "name": "Qiskit Quantum Entanglement Channel",
+      "status": "active",
+      "location": "arkhe_os/federation_protocol/quantum/"
     }
   ]
 }

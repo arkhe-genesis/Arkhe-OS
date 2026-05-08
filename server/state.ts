@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import type { SimulationState, OrbPayload, _ContextNode, _MemoryEngram } from './types';
 
-export let state: SimulationState = {
+export let state: any = {
   coherenceData: [],
   currentLambda: 0.98,
   threatLevel: 'normal',

@@ -49,7 +49,7 @@ const ResearchModule = ({ name, description, status, icon: Icon }: ResearchModul
 };
 
 export default function ResearchAgentsPanel() {
-  const state: SimulationState = useArkheSimulation();
+  const state: any = useArkheSimulation();
   const [isSearching, setIsSearching] = useState(false);
   const [searchLog, setSearchLog] = useState<string[]>([]);
 

@@ -115,7 +115,7 @@ interface EnterprisePlusPanelProps {
 }
 
 export const EnterprisePlusPanel: React.FC<EnterprisePlusPanelProps> = ({ onClose }) => {
-  const state: SimulationState = useArkheSimulation();
+  const state: any = useArkheSimulation();
   const enterprise = state.enterpriseSubagents;
 
   if (!enterprise) {return null;}

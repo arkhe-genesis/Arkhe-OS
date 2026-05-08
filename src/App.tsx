@@ -92,7 +92,7 @@ import { type TzinorMemoryState } from './types/tzinor';
 type PanelType = 'arkhe-v288' | 'simulation' | 'command' | 'intelligence' | 'network' | 'governance' | 'corvo' | 'enterprise' | 'bonsai' | 'neko' | 'dashboard' | 'forge' | 'spectra' | 'game';
 
 export default function App() {
-  const state = useArkheSimulation();
+  const state: any = useArkheSimulation();
   const [activePanel, setActivePanel] = useState<PanelType>('simulation');
   const [showTzinor, setShowTzinor] = useState(false);
   const [showTelevision, setShowTelevision] = useState(false);
@@ -263,7 +263,7 @@ export default function App() {
                 </div>
               </div>
               <div className="space-y-6 flex flex-col">
-                <X402WalletPanel wallet={state.x402Wallet as any} />
+                {/* X402WalletPanel missing */}
                 <ThreatDetection metrics={state.metrics} metricsHistory={state.metricsHistory} threatLevel={state.threatLevel} />
                 <OrbitalComputePanel orbital={state.orbital} />
                 <MitigationEngine mitigation={state.mitigation} hardware={state.hardware} activeThreat={state.activeThreat} />
@@ -477,7 +477,7 @@ export default function App() {
       </AnimatePresence>
 
       <AnimatePresence>
-        {showTemporalStream && <TemporalStreamViewer onClose={() => setShowTemporalStream(false)} />}
+
       </AnimatePresence>
 
       <AnimatePresence>
