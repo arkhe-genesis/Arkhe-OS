@@ -103,9 +103,6 @@ class FloquetStabilizedQubit:
         Helper para retornar fator de melhoria em T_2 diretamente: γ_0 / γ_eff
         """
         gamma_eff = self.effective_decoherence_rate()
-        if gamma_eff == 0:
-        """Retorna o ganho em T_2 (γ_0 / γ_eff)."""
-        gamma_eff = self.effective_decoherence_rate()
         if gamma_eff < 1e-12:
             return float('inf')
         return self.gamma_0 / gamma_eff

@@ -50,7 +50,11 @@ class PingAuditLedger:
             "timestamp": entry["timestamp"]
         }
         # Mock proof for tests where self.prover doesn't exist
-        entry["proof"] = getattr(self, "prover", type('MockProver', (), {'prove': lambda *args, **kwargs: 'mock_proof'})()).prove(witness, public_input)
+        prover = getattr(self, "prover", None)
+        if prover is None:
+            entry["proof"] = "mock_proof"
+        else:
+            entry["proof"] = prover.prove(witness, public_input)
         if self.prover:
             witness = {
                 "entry_hash": hashlib.sha256(json.dumps(entry, sort_keys=True).encode()).hexdigest()
