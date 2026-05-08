@@ -184,3 +184,8 @@ arkhe-ace-step-ui/node_modules
 arkhe-ace-step-ui/server/node_modules
 
 dist
+
+# Arkhe OS System32 Build Artifacts
+agi/system32/*.so
+agi/system32/*.deb
+agi/system32/pkg/

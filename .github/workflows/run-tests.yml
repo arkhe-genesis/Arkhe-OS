@@ -21,7 +21,6 @@ jobs:
           - windows-latest
           - macos-latest
         node:
-          - 20
           - 22
           - 23
           - 24

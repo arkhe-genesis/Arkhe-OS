@@ -1,0 +1,35 @@
+# tor-sidecar/Containerfile — Minimal Tor sidecar for AGI.onion
+FROM alpine:3.19
+
+LABEL org.arkhe.os.component="tor-sidecar"
+LABEL org.arkhe.os.sovereign="true"
+
+# Instalar Tor e dependências
+RUN apk add --no-cache tor openssl socat curl
+
+# Criar usuário não-root para execução segura
+RUN adduser -D -u 1001 -h /home/tor tor
+USER tor
+WORKDIR /home/tor
+
+# Configurar diretórios de dados do Tor
+RUN mkdir -p /home/tor/tor/data /home/tor/tor/keys /home/tor/tor/onion
+
+# Copiar configuração Tor
+COPY --chown=tor:tor torrc.d/ /home/tor/tor/torrc.d/
+COPY --chown=tor:tor entrypoint.sh /entrypoint.sh
+COPY --chown=tor:tor healthcheck.sh /healthcheck.sh
+
+RUN chmod +x /entrypoint.sh /healthcheck.sh
+
+# Expor porta do serviço hidden (localmente)
+EXPOSE 9050 9051 8080
+
+# Volume para persistência de chaves onion e hostname
+VOLUME ["/home/tor/tor/keys", "/home/tor/tor/onion"]
+
+# Healthcheck para verificar se o serviço hidden está ativo
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD /healthcheck.sh
+
+ENTRYPOINT ["/entrypoint.sh"]

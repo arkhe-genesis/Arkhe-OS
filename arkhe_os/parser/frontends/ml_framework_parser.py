@@ -55,7 +55,7 @@ class MLFrameworkParser:
 
         try:
             import torch
-            model = torch.load(io.BytesIO(source), map_location="cpu")
+            model = torch.load(io.BytesIO(source), map_location="cpu", weights_only=True)
             if hasattr(model, "state_dict"):
                 state = model.state_dict()
             else:
