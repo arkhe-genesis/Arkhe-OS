@@ -1,5 +1,5 @@
 {
-  "version": "v1.1.3",
+  "version": "v1.2.0",
   "substrates": [
     {
       "id": 300,
@@ -62,16 +62,10 @@
       "location": "agi/system32/tee/"
     },
     {
-      "id": 350,
-      "name": "Polymath Syntax Consolidation",
+      "id": 344,
+      "name": "Reputation Oracle (\u03a6-REP)",
       "status": "active",
-      "location": "arkhe_os/parser/"
-    },
-    {
-      "id": 351,
-      "name": "Ontological & Topological Polyglot",
-      "status": "active",
-      "location": "arkhe_os/parser/"
+      "location": "agi/system32/reputation/"
     }
   ]
 }

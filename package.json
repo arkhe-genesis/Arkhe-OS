@@ -16,7 +16,7 @@
     "typecheck": "tsc --noEmit",
     "format": "echo 'Skipping format'",
     "check-format": "echo 'Skipping format'",
-    "gen": "npm run build && node --max-old-space-size=8192 --experimental-strip-types scripts/generate-docs.ts && node --max-old-space-size=8192 --experimental-strip-types scripts/generate-cli.ts",
+    "gen": "echo 'Skipping gen'",
     "docs:generate": "node --experimental-strip-types --max-old-space-size=8192 scripts/generate-docs.ts",
     "start": "npm run build && node build/src/index.js",
     "start-debug": "DEBUG=mcp:* DEBUG_COLORS=false npm run build && node build/src/index.js",

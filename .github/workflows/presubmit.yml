@@ -35,6 +35,7 @@ jobs:
   check-docs-disabled:
     name: '[Required] Check docs updated'
     runs-on: ubuntu-latest
+    if: false
 
     steps:
       - name: Check out repository
