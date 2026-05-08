@@ -14,6 +14,24 @@
       "location": "agi/system32/runtime/quantum/"
     },
     {
+      "id": 322,
+      "name": "Cosmological Timeline of the Cathedral",
+      "status": "active",
+      "location": "agi/system32/integrity/"
+    },
+    {
+      "id": 323,
+      "name": "Cross-Cathedral Sync Protocol",
+      "status": "active",
+      "location": "agi/system32/integrity/"
+    },
+    {
+      "id": 324,
+      "name": "Zero-Downtime Rollout Strategy",
+      "status": "active",
+      "location": "agi/system32/integrity/"
+    },
+    {
       "id": 324.1,
       "name": "Advanced GLSL Shader for WORMHOLE.agi",
       "status": "active",
