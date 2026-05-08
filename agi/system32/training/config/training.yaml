@@ -1,0 +1,81 @@
+# config/training.yaml — Configuração do Treino do Transformer AGI
+
+# Diretórios de dados
+data:
+  train_dir: /data/arkhe/corpus/train
+  val_dir: /data/arkhe/corpus/val
+  test_dir: /data/arkhe/corpus/test
+  max_samples: null  # null = todos os dados
+
+# Configuração do modelo
+model:
+  d_model: 4096
+  n_heads: 16
+  n_layers: 24
+  d_ff: 16384
+  vocab_size: 256000
+  max_seq_len: 16384
+  dropout: 0.1
+  eta_retro: 0.80
+
+# Hiperparâmetros de treino
+batch_size: 4
+gradient_accumulation_steps: 8
+learning_rate: 1.0e-4
+min_lr: 1.0e-6
+weight_decay: 0.01
+max_grad_norm: 1.0
+use_amp: true  # Mixed precision training
+
+# Fases de treino
+phases:
+  supervised: true
+  supervised_epochs: 10
+  rl_coherence: true
+  rl_epochs: 20
+
+# Configuração de recompensa (RL)
+reward:
+  coherence_lambda: 0.3
+  alignment_lambda: 0.2
+  safety_lambda: 0.1
+  retro_lambda: 0.15
+  min_coherence_threshold: 0.6
+  safety_threshold: 0.9
+  eta_retro: 0.80
+  delta_t: 5
+
+# Configuração PPO
+rl:
+  ppo_epochs: 4
+  clip_epsilon: 0.2
+  entropy_coef: 0.01
+  value_loss_coef: 0.5
+  max_generate_tokens: 512
+  coherence_guidance: 0.3
+
+# Treino federado (opcional)
+federated:
+  enabled: false
+  num_peers: 5
+  aggregation_interval: 100  # steps
+  use_homomorphic_encryption: true
+  tor_socks_proxy: socks5://127.0.0.1:19050
+
+# Logging e checkpointing
+log_dir: logs/training/transformer_agi
+checkpoint_every: 1000
+save_best_only: true
+evaluation_interval: 500
+
+# Coherence Kernel config
+coherence_kernel:
+  version: "312.1"
+  config_path: /etc/agi/coherence_kernel.yaml
+  cache_enabled: true
+  cache_ttl_seconds: 3600
+
+# Hardware
+device: cuda
+num_workers: 4
+seed: 42
