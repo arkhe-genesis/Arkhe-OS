@@ -1,0 +1,17 @@
+# OmniNet Hybrid Protocol Configuration
+version: "1.0"
+
+network:
+  nodes:
+    - id: "GRU-TC-01"
+      endpoint: "tcp://saopaulo.arkhe.os:5000"
+    - id: "TKY-TC-02"
+      endpoint: "tcp://tokyo.arkhe.os:5000"
+
+  routing:
+    preference: "hybrid" # retrocausal | classical | hybrid
+    fallback_timeout_ms: 200
+
+security:
+  algorithm: "sha256"
+  key_rotation_days: 7

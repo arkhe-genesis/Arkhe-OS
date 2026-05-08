@@ -1,9 +1,18 @@
-# Configuração do Omni Core (Substrato 316)
-omni_core:
-  version: "1.0.0"
-  cosmic_coupling: 0.1
-  components:
-    omninet: true
-    temporal_anchor: true
-    coherence_field: true
-    sovereign_interface: true
+# Omni-Architecture Core Configuration
+version: "316.0"
+
+temporal_anchoring:
+  enabled: true
+  sync_interval_ms: 100
+  anchors:
+    - name: "alpha"
+      frequency: 432.0
+    - name: "beta"
+      frequency: 528.0
+
+coherence:
+  target: 0.95
+  tolerance: 0.05
+  calibration:
+    learning_rate: 0.01
+    max_epochs: 100
