@@ -19,6 +19,7 @@ int rcp_transmit_byte(const char* src, const char* dst, unsigned char byte_val,
     if (!fp) return -1;
     int d;
     double f;
+    fscanf(fp, "%d:%lf", &d, &f);
     if (fscanf(fp, "%d:%lf", &d, &f) != 2) {
         pclose(fp);
         return -1;

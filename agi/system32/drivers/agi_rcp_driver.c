@@ -32,5 +32,16 @@ static struct miscdevice rcp_misc_dev = {
     .fops = &rcp_fops,
 };
 
+static int __init agi_rcp_driver_init(void) {
+    misc_register(&rcp_misc_dev);
+    return 0;
+}
+
+static void __exit agi_rcp_driver_exit(void) {
+    misc_deregister(&rcp_misc_dev);
+}
+
+module_init(agi_rcp_driver_init);
+module_exit(agi_rcp_driver_exit);
 module_misc_device(rcp_misc_dev);
 MODULE_LICENSE("GPL");
