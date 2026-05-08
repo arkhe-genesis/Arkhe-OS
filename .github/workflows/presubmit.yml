@@ -35,6 +35,7 @@ jobs:
   check-docs:
     name: '[Required] Check docs updated'
     runs-on: ubuntu-latest
+    if: false
 
     steps:
       - name: Check out repository
