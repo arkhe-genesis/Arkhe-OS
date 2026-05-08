@@ -968,12 +968,12 @@ export interface SimulationState {
   };
   lucentSessions: UserSession[];
   hydro: {
-    neighborhoods: NeighborhoodCoherence[];
+    neighborhoods: any[];
     globalMassBalance: number;
     zkAlertsCount: number;
   };
   ramsey: RamseyState;
-  civicSubagents: CivicSubagentState[];
+  civicSubagents: any[];
   enterpriseSubagents: {
     governance: EnterpriseSubagentState[];
     devops: EnterpriseSubagentState[];
@@ -984,9 +984,9 @@ export interface SimulationState {
   };
   chshMonitor: CHSHMonitorState;
   scaData: ScaDataState;
-  biometrics?: BiometricState;
-  nare?: NAREStatus;
-  populationFeedback: PopulationFeedbackEntry[];
+  biometrics?: any;
+  nare?: any;
+  populationFeedback: any[];
   networkInfra: NetworkInfraState;
   cellularHealth?: CellularHealthState;
   grossHappiness?: GrossHappinessState;
@@ -1014,7 +1014,6 @@ export interface ThermodynamicTrainingReport {
   efficiency: number;
   loss: number;
   method: string;
-  parameters: unknown;
   status: string;
 }
 

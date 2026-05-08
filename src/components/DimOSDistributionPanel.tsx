@@ -6,4 +6,4 @@
  */
 
 import React from 'react';
-export default function Component() { return <div />; }
+export default function Component(props: any) { return <div />; }

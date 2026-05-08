@@ -7,8 +7,12 @@ import asyncio
 import socks
 import socket
 from typing import Dict, Optional, Tuple
-from stem import Signal
-from stem.control import Controller
+
+try:
+    from stem import Signal
+    from stem.control import Controller
+except ImportError:
+    Controller = None
 
 from ..adapter import BaseTransportAdapter, TransportConfig
 
@@ -19,20 +23,22 @@ class TorAdapter(BaseTransportAdapter):
         super().__init__(config, coherence_monitor)
         self.tor_control_port = config.config.get('control_port', 9051)
         self.tor_socks_port = config.config.get('socks_port', 9050)
-        self._controller: Optional[Controller] = None
+        self._controller = None
 
     async def connect(self) -> bool:
         """Conecta ao Tor via control port."""
+        if not Controller:
+            print("❌ stem module not found, Tor plugin disabled.")
+            return False
         try:
             self._controller = Controller.from_port(port=self.tor_control_port)
             self._controller.authenticate()
 
             # Verificar se Tor está pronto
             status = self._controller.get_status()
-            # In a real environment, this boot check can be more extensive
-            # status could be empty or not return a dict, simplify for test setup
-            # if isinstance(status, dict) and status.get('bootstrapped', '0') != '100':
-            #    await asyncio.sleep(2)
+            if status.get('bootstrapped', '0') != '100':
+                # Aguardar bootstrap (simplificado)
+                await asyncio.sleep(2)
 
             # Testar conexão SOCKS
             test_sock = socks.socksocket()
@@ -45,7 +51,6 @@ class TorAdapter(BaseTransportAdapter):
             return True
         except Exception as e:
             print(f"❌ Falha ao conectar ao Tor: {e}")
-            # Also allow fallback setup for testing without Tor
             return False
 
     async def disconnect(self):
@@ -110,11 +115,12 @@ class TorAdapter(BaseTransportAdapter):
                 'latency_ms': latency,
                 'packet_loss_rate': 0.0,  # Tor não reporta perda diretamente
                 'jitter_ms': 0.0,  # Simplificado
-                'circuit_status': 1.0 if self._controller else 0.0,
+                'circuit_status': self._controller.get_info('status/circuit-established') if self._controller else 'unknown',
             }
         except Exception as e:
             return {
                 'latency_ms': float('inf'),
                 'packet_loss_rate': 1.0,
                 'jitter_ms': float('inf'),
+                'error': str(e),
             }

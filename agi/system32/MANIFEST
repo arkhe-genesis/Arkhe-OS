@@ -1,3 +1,6 @@
+rcp_v2_engine.py | RCP 8‑Bit Core | Substrato 306‑B
+agi_rcp_bridge.so | RCP FFI Bridge | Substrato 306‑B
+agi_rcp_driver.c  | RCP Kernel Driver | Substrato 313
 # ARKHE OS AGI Core MANIFEST
 
 [Substrate 315]

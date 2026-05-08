@@ -20,7 +20,7 @@ export default function ArkheGridSimulator({ onClose }: ArkheGridSimulatorProps)
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const requestRef = useRef<number | undefined>(undefined);
   
-  const requestRef = useRef<number>(0);
+
 
   // Physics state
   const N = 8;

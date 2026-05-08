@@ -21,3 +21,10 @@ agictl transport test check.torproject.org:80
 
 - `ModuleNotFoundError`: Ensure your `PYTHONPATH` includes the repository root.
 - `Tor Control Port Connection Failed`: Verify Tor is running locally.
+# Transport Guide
+## Configuration and Troubleshooting
+
+This guide provides instructions on how to configure and troubleshoot the TransportAdapter (Substrate 326.1).
+
+* To check the status of the transports: `agictl transport status`
+* To test the transport: `agictl transport test <destination>`

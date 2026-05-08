@@ -5,4 +5,4 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export function useArkheSimulation() { return {}; }
+export function useArkheSimulation(): any { return {}; }

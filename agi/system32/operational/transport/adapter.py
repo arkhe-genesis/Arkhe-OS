@@ -19,8 +19,8 @@ logger = logging.getLogger(__name__)
 class TransportType(Enum):
     """Tipos de transporte suportados."""
     TOR = "tor"
-    DNS_VPN = "dnsvpn"
-    STREAM = "stream"
+    MASTER_DNS_VPN = "masterdnsvpn"
+    SLIPSTREAM = "slipstream"
     DIRECT_TCP = "direct_tcp"
     CUSTOM = "custom"
 
@@ -77,8 +77,9 @@ class TransportConfig:
 
     def to_hash(self) -> str:
         """Hash canônico da configuração para cache/verificação."""
-        data = {k: v for k, v in asdict(self).items() if k != 'config' and k != 'transport_type'}
-        data['transport_type'] = self.transport_type.value
+        data = {k: v for k, v in asdict(self).items() if k != 'config'}
+        if 'transport_type' in data and isinstance(data['transport_type'], TransportType):
+            data['transport_type'] = data['transport_type'].value
         data['config'] = json.dumps(self.config, sort_keys=True)
         return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()[:16]
 
@@ -144,7 +145,7 @@ class BaseTransportAdapter(ABC):
             return False
         if self.metrics.packet_loss_rate > self.config.max_packet_loss:
             return False
-        if self.metrics.coherence_avg < self.config.coherence_threshold and self.metrics.coherence_history:
+        if self.metrics.coherence_avg < self.config.coherence_threshold:
             return False
         return True
 
@@ -165,8 +166,8 @@ class BaseTransportAdapter(ABC):
         # Score de segurança baseado no tipo de transporte
         security_scores = {
             TransportType.TOR: 1.0,
-            TransportType.DNS_VPN: 0.95,
-            TransportType.STREAM: 0.9,
+            TransportType.MASTER_DNS_VPN: 0.95,
+            TransportType.SLIPSTREAM: 0.9,
             TransportType.DIRECT_TCP: 0.7,
             TransportType.CUSTOM: 0.8,
         }
@@ -205,10 +206,7 @@ class TransportAdapter:
             config = yaml.safe_load(f)
 
         for t_type, t_config in config.get('transports', {}).items():
-            try:
-                transport_type = TransportType(t_type)
-            except ValueError:
-                continue
+            transport_type = TransportType(t_type)
             self._config[transport_type] = TransportConfig(
                 transport_type=transport_type,
                 enabled=t_config.get('enabled', True),
@@ -222,27 +220,22 @@ class TransportAdapter:
         # Configurar cadeia de fallback
         fallback_order = config.get('fallback_order', [
             TransportType.TOR.value,
-            TransportType.DNS_VPN.value,
-            TransportType.STREAM.value,
+            TransportType.MASTER_DNS_VPN.value,
+            TransportType.SLIPSTREAM.value,
             TransportType.DIRECT_TCP.value,
         ])
-        self._fallback_chain = []
-        for t in fallback_order:
-            try:
-                self._fallback_chain.append(TransportType(t))
-            except ValueError:
-                pass
+        self._fallback_chain = [TransportType(t) for t in fallback_order]
 
     def _register_default_plugins(self):
         """Registra plugins de transporte padrão."""
         from .plugins import (
-            TorAdapter, DnsVPNAdapter,
-            StreamAdapter, DirectTCPAdapter
+            TorAdapter, MasterDnsVPNAdapter,
+            SlipStreamAdapter, DirectTCPAdapter
         )
         self.plugin_registry = {
             TransportType.TOR: TorAdapter,
-            TransportType.DNS_VPN: DnsVPNAdapter,
-            TransportType.STREAM: StreamAdapter,
+            TransportType.MASTER_DNS_VPN: MasterDnsVPNAdapter,
+            TransportType.SLIPSTREAM: SlipStreamAdapter,
             TransportType.DIRECT_TCP: DirectTCPAdapter,
         }
 
@@ -322,7 +315,6 @@ class TransportAdapter:
                 logger.warning(f"❌ Falha no transporte ativo {self._active_transport.value}: {error}")
 
         # Fallback: tentar cadeia de fallback
-        error = None
         for t_type in self._fallback_chain:
             if t_type == self._active_transport:
                 continue  # Já tentamos
@@ -344,7 +336,7 @@ class TransportAdapter:
                 return True, None
 
         # Todas as tentativas falharam
-        return False, f"All transports failed. Last error: {error}"
+        return False, f"All transports failed. Last error: {error if 'error' in locals() else 'None'}"
 
     async def receive(self, source: Optional[str] = None,
                       timeout: float = 30.0) -> Tuple[Optional[bytes], Optional[str]]:
@@ -354,7 +346,7 @@ class TransportAdapter:
             for t_type, adapter in self.transports.items():
                 if adapter.is_healthy():
                     data, error = await adapter.receive(source, timeout)
-                    if data:
+                    if not error:
                         return data, None
             return None, "No healthy transport could receive from source"
         else:
@@ -374,13 +366,10 @@ class TransportAdapter:
                 loss=metrics.get('packet_loss_rate', 0),
                 jitter=metrics.get('jitter_ms', 0)
             )
-            # converter enum
-            metrics_dict = asdict(adapter.metrics)
-            metrics_dict['transport_type'] = metrics_dict['transport_type'].value
             report[t_type.value] = {
                 'healthy': adapter.is_healthy(),
                 'cts': adapter.compute_cts(),
-                'metrics': metrics_dict,
+                'metrics': asdict(adapter.metrics),
                 'config_hash': adapter.config.to_hash(),
             }
         return report
@@ -389,13 +378,11 @@ class TransportAdapter:
         """Retorna informações do transporte ativo."""
         if self._active_transport and self._active_transport in self.transports:
             adapter = self.transports[self._active_transport]
-            metrics_dict = asdict(adapter.metrics)
-            metrics_dict['transport_type'] = metrics_dict['transport_type'].value
             return {
                 'type': self._active_transport.value,
                 'cts': adapter.compute_cts(),
                 'healthy': adapter.is_healthy(),
-                'metrics': metrics_dict,
+                'metrics': asdict(adapter.metrics),
             }
         return None
 

@@ -1,5 +1,5 @@
 {
-  "version": "v1.1.0",
+  "version": "v1.2.0",
   "substrates": [
     {
       "id": 300,
@@ -12,6 +12,24 @@
       "name": "RCP v2.0",
       "status": "active",
       "location": "agi/system32/runtime/quantum/"
+    },
+    {
+      "id": 322,
+      "name": "Cosmological Timeline of the Cathedral",
+      "status": "active",
+      "location": "agi/system32/integrity/"
+    },
+    {
+      "id": 323,
+      "name": "Cross-Cathedral Sync Protocol",
+      "status": "active",
+      "location": "agi/system32/integrity/"
+    },
+    {
+      "id": 324,
+      "name": "Zero-Downtime Rollout Strategy",
+      "status": "active",
+      "location": "agi/system32/integrity/"
     },
     {
       "id": 324.1,
@@ -36,6 +54,18 @@
       "name": "Qiskit Quantum Entanglement Channel",
       "status": "active",
       "location": "arkhe_os/federation_protocol/quantum/"
+    },
+    {
+      "id": 342,
+      "name": "Covert DNS Transport & Coherence-Driven Resilience",
+      "status": "active",
+      "location": "agi/system32/tee/"
+    },
+    {
+      "id": 344,
+      "name": "Reputation Oracle (\u03a6-REP)",
+      "status": "active",
+      "location": "agi/system32/reputation/"
     }
   ]
 }

@@ -1,34 +1,23 @@
 #!/usr/bin/env python3
 """
 transport/plugins/direct_tcp_adapter.py — Plugin Direct TCP
-Fallback simples para ambientes não-censurados
+Fallback simples para conexão TCP direta.
 """
-import asyncio
 import socket
 from typing import Dict, Optional, Tuple
-
 from ..adapter import BaseTransportAdapter, TransportConfig
 
 class DirectTCPAdapter(BaseTransportAdapter):
-    """Adapter para transporte via TCP direto (fallback)."""
-
-    def __init__(self, config: TransportConfig, coherence_monitor):
-        super().__init__(config, coherence_monitor)
-        self.timeout = config.config.get('timeout', 10)
-        self.keepalive = config.config.get('keepalive', True)
+    """Adapter para transporte via TCP direto (Fallback)."""
 
     async def connect(self) -> bool:
-        """Conecta (sempre true para direct tcp, gerencia conexoes por pedido)."""
         self._initialized = True
         return True
 
     async def disconnect(self):
-        """Desconecta (sem operacao persistente neste nivel de teste)."""
         self._initialized = False
 
-    async def send(self, data: bytes, destination: str,
-                   timeout: float = 30.0) -> Tuple[bool, Optional[str]]:
-        """Envia dados via TCP direto."""
+    async def send(self, data: bytes, destination: str, timeout: float = 30.0) -> Tuple[bool, Optional[str]]:
         try:
             if ':' in destination:
                 host, port_str = destination.rsplit(':', 1)
@@ -37,43 +26,27 @@ class DirectTCPAdapter(BaseTransportAdapter):
                 host = destination
                 port = 80
 
-            reader, writer = await asyncio.wait_for(
-                asyncio.open_connection(host, port), timeout=self.timeout
-            )
-            writer.write(data)
-            await writer.drain()
-            writer.close()
-            await writer.wait_closed()
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(timeout)
+            sock.connect((host, port))
+            sock.sendall(data)
+            sock.close()
             return True, None
         except Exception as e:
-            return False, f"Direct TCP send failed: {e}"
+            return False, str(e)
 
-    async def receive(self, source: Optional[str] = None,
-                      timeout: float = 30.0) -> Tuple[Optional[bytes], Optional[str]]:
-        """Recebe dados (nao suportado para cliente simples)."""
-        return None, "Direct TCP adapter supports client mode only"
+    async def receive(self, source: Optional[str] = None, timeout: float = 30.0) -> Tuple[Optional[bytes], Optional[str]]:
+        return None, "Not implemented"
 
     async def health_check(self) -> Dict[str, float]:
-        """Verifica saúde do Direct TCP."""
         import time
-
         start = time.time()
         try:
-            reader, writer = await asyncio.wait_for(
-                asyncio.open_connection('1.1.1.1', 53), timeout=self.timeout
-            )
-            writer.close()
-            await writer.wait_closed()
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(5)
+            sock.connect(("8.8.8.8", 53))
+            sock.close()
             latency = (time.time() - start) * 1000
-
-            return {
-                'latency_ms': latency,
-                'packet_loss_rate': 0.0,
-                'jitter_ms': 0.0,
-            }
-        except Exception as e:
-            return {
-                'latency_ms': float('inf'),
-                'packet_loss_rate': 1.0,
-                'jitter_ms': float('inf'),
-            }
+            return {'latency_ms': latency, 'packet_loss_rate': 0.0, 'jitter_ms': 0.0}
+        except:
+            return {'latency_ms': float('inf'), 'packet_loss_rate': 1.0, 'jitter_ms': float('inf')}

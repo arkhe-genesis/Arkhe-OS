@@ -6,9 +6,9 @@
 
 import { v4 as uuidv4 } from 'uuid';
 
-import type { SimulationState, OrbPayload, _ContextNode, _MemoryEngram } from './types';
+import type { OrbPayload, _ContextNode, _MemoryEngram } from './types';
 
-export let state: SimulationState = {
+export let state: any = {
   coherenceData: [],
   currentLambda: 0.98,
   threatLevel: 'normal',
@@ -289,12 +289,6 @@ export let state: SimulationState = {
     dns: { totalQueries: 0, successfulResolutions: 0, failedResolutions: 0 }
   },
 
-  metaReality: {
-    violatedLawsCount: 0,
-    nonPhysicalManifolds: [],
-    imaginaryTimeActive: false,
-    metaStabilityIndex: 1.0,
-  },
   andromedaProbe: {
     distanceLy: 0,
     missionPhase: 'LAUNCH',
@@ -483,7 +477,7 @@ export let state: SimulationState = {
   }
 };
 
-export const setState = (newState: Partial<SimulationState>) => {
+export const setState = (newState: Partial<any>) => {
   state = { ...state, ...newState };
 };
 

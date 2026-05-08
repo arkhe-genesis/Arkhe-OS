@@ -1,11 +1,11 @@
 from .tor_adapter import TorAdapter
-from .dnsvpn_adapter import DnsVPNAdapter
-from .stream_adapter import StreamAdapter
+from .masterdnsvpn_adapter import MasterDnsVPNAdapter
+from .slipstream_adapter import SlipStreamAdapter
 from .direct_tcp_adapter import DirectTCPAdapter
 
 __all__ = [
-    "TorAdapter",
-    "DnsVPNAdapter",
-    "StreamAdapter",
-    "DirectTCPAdapter",
+    'TorAdapter',
+    'MasterDnsVPNAdapter',
+    'SlipStreamAdapter',
+    'DirectTCPAdapter',
 ]
