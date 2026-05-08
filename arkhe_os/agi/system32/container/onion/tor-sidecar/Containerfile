@@ -1,0 +1,27 @@
+FROM alpine:3.19
+
+LABEL org.arkhe.os.component="tor-sidecar"
+LABEL org.arkhe.os.sovereign="true"
+
+RUN apk add --no-cache tor openssl socat curl
+
+RUN adduser -D -u 1001 -h /home/tor tor
+USER tor
+WORKDIR /home/tor
+
+RUN mkdir -p /home/tor/tor/data /home/tor/tor/keys /home/tor/tor/onion
+
+COPY --chown=tor:tor torrc.d/ /home/tor/tor/torrc.d/
+COPY --chown=tor:tor entrypoint.sh /entrypoint.sh
+COPY --chown=tor:tor healthcheck.sh /healthcheck.sh
+
+RUN chmod +x /entrypoint.sh /healthcheck.sh
+
+EXPOSE 9050 9051 8080
+
+VOLUME ["/home/tor/tor/keys", "/home/tor/tor/onion"]
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD /healthcheck.sh
+
+ENTRYPOINT ["/entrypoint.sh"]

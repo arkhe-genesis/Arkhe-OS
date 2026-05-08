@@ -1,14 +1,12 @@
-# Configuração do Canal Retrógrado 8‑Bit
-rcp:
-  version: "2.0"
-  encoding: "8bit_phase_postselection"
-  shots_per_bit: 50
-  temporal_window:
-    t_weak: 0.5  # segundos
-    t_post: 1.5  # segundos
-  simulation:
-    engine: "python3"
-    script: "agi/system32/runtime/quantum/rcp_v2_engine.py"
-    bridge: "agi/system32/agi_rcp_bridge.so"
+# Retrocausal Channel Protocol v2.0 Configuration
+version: "2.0"
+
+channel:
+  width: 8
+  max_latency_ms: -50 # Retrocausal target
+  error_correction: "reed_solomon"
   fidelity_threshold: 0.8
-  max_retries: 3
+
+transport:
+  protocol: "qhttp"
+  max_packet_size: 1024

@@ -1,4 +1,15 @@
 # rcp_v2_engine.py – Retrocausal Channel 8‑Bit Core
+# Extraído do Substrato 315 e canonizado aqui.
+# ARKHE OS — Substrate 315: 8-Bit Retrocausal Channel + qhttp:// Integration
+
+import numpy as np
+from scipy.linalg import expm, eigh
+import hashlib
+import json
+import time
+from dataclasses import dataclass
+from typing import Tuple, List, Dict
+
 # Extraído do Substrato 306‑B e canonizado aqui.
 import numpy as np
 from scipy.linalg import expm, eigh
@@ -77,6 +88,12 @@ class RetrocausalChannel8Bit:
 
     def encode_bit(self, bit: int, t_weak=0.5, t_post=1.5,
                    weak_eps=0.15, drive_amp=0.4, noise=0.15) -> float:
+        phi = 0 if bit == 0 else np.pi
+        rho = self.rho_eq.copy()
+
+        U1 = self.V @ np.diag(np.exp(-1j * self.E * t_weak)) @ self.V.conj().T
+        rho = U1 @ rho @ U1.conj().T
+
         """Encode single bit (0 or 1) → phase (0 or π) → weak value."""
         phi = 0 if bit == 0 else np.pi
 
@@ -163,6 +180,7 @@ class RetrocausalChannel8Bit:
 
         return decoded_byte, fidelity
 
+
 @dataclass
 class QHTTPPacket:
     """Pacote qhttp:// com payload retrocausal."""
@@ -172,6 +190,7 @@ class QHTTPPacket:
     dst_node: str = ""
     payload_type: str = "retrocausal_byte"
     payload: bytes = b""
+    retrocausal_signature: str = ""
     retrocausal_signature: str = ""  # Hash do weak value ensemble
     timestamp_sent: float = 0.0
     timestamp_weak: float = 0.0
@@ -213,7 +232,12 @@ class QHTTPPacket:
             coherence_verified=header["phi_verified"]
         )
 
+
 class QHTTPRetrocausalTransport:
+    def __init__(self, node_id: str, channel: RetrocausalChannel8Bit):
+        self.node_id = node_id
+        self.channel = channel
+        self.packet_log = []
     """
     Transporte qhttp:// com canal retrógrado 8-bits integrado.
     Conecta nós Wheeler Mesh via retrocausalidade.
@@ -234,6 +258,9 @@ class QHTTPRetrocausalTransport:
         decoded_byte, fidelity = self.channel.transmit_byte(
             byte_val, n_shots, t_weak, t_post
         )
+
+        sig_data = f"{self.node_id}:{dst_node}:{byte_val}:{decoded_byte}:{fidelity:.4f}"
+        retro_sig = hashlib.sha256(sig_data.encode()).hexdigest()[:16]
 
         # Generate retrocausal signature from weak value ensemble
         sig_data = f"{self.node_id}:{dst_node}:{byte_val}:{decoded_byte}:{fidelity:.4f}"
@@ -271,6 +298,9 @@ class QHTTPRetrocausalTransport:
 
     def send_retrocausal_message(self, dst_node: str, message: str,
                                   t_weak=0.5, t_post=1.5, n_shots=50) -> List[QHTTPPacket]:
+        packets = []
+        message_bytes = message.encode('utf-8')
+
         """Send full message (string) byte-by-byte via retrocausal channel."""
         packets = []
         message_bytes = message.encode('utf-8')
@@ -299,3 +329,23 @@ class QHTTPRetrocausalTransport:
         else:
             stats["avg_fidelity"] = 0.0
         return stats
+
+
+# ── CLI / Direct execution ──
+if __name__ == "__main__":
+    import sys
+
+    if len(sys.argv) >= 2 and sys.argv[1] == "transmit":
+        # CLI mode: python3 rcp_v2_engine.py transmit <byte_val> [n_shots] [t_weak] [t_post]
+        byte_val = int(sys.argv[2])
+        n_shots = int(sys.argv[3]) if len(sys.argv) > 3 else 50
+        t_weak = float(sys.argv[4]) if len(sys.argv) > 4 else 0.5
+        t_post = float(sys.argv[5]) if len(sys.argv) > 5 else 1.5
+
+        ch = RetrocausalChannel8Bit()
+        d, f = ch.transmit_byte(byte_val, n_shots, t_weak, t_post)
+        print(f"{d}:{f:.4f}")
+    else:
+        # Default demo
+        print("ARKHE OS — Substrate 315: RCP v2.0 Engine")
+        print("Usage: python3 rcp_v2_engine.py transmit <byte_val> [n_shots] [t_weak] [t_post]")

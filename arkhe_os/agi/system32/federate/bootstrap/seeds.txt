@@ -1,0 +1,3 @@
+arkhe-seed-01.onion
+arkhe-seed-02.onion
+arkhe-seed-03.onion
