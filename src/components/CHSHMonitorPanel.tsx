@@ -17,7 +17,7 @@ interface CHSHMonitorPanelProps {
 }
 
 export default function CHSHMonitorPanel({ onClose }: CHSHMonitorPanelProps) {
-  const state = useArkheSimulation();
+  const state: any = useArkheSimulation();
   const chsh = state.chshMonitor as any;
 
   if (!chsh) {return null;}

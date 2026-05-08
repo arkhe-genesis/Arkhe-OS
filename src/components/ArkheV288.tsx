@@ -1,4 +1,79 @@
 
+declare global {
+  interface GPUBufferUsage {
+    STORAGE: number;
+    COPY_SRC: number;
+    COPY_DST: number;
+    UNIFORM: number;
+  }
+  interface GPUShaderStage {
+    COMPUTE: number;
+    FRAGMENT: number;
+  }
+  var GPUBufferUsage: GPUBufferUsage;
+  var GPUShaderStage: GPUShaderStage;
+}
+
+declare global {
+  interface GPUBufferUsage {
+    STORAGE: number;
+    COPY_SRC: number;
+    COPY_DST: number;
+    UNIFORM: number;
+  }
+  interface GPUShaderStage {
+    COMPUTE: number;
+    FRAGMENT: number;
+  }
+  var GPUBufferUsage: GPUBufferUsage;
+  var GPUShaderStage: GPUShaderStage;
+}
+
+declare global {
+  interface GPUBufferUsage {
+    STORAGE: number;
+    COPY_SRC: number;
+    COPY_DST: number;
+    UNIFORM: number;
+  }
+  interface GPUShaderStage {
+    COMPUTE: number;
+    FRAGMENT: number;
+  }
+  var GPUBufferUsage: GPUBufferUsage;
+  var GPUShaderStage: GPUShaderStage;
+}
+
+declare global {
+  interface GPUBufferUsage {
+    STORAGE: number;
+    COPY_SRC: number;
+    COPY_DST: number;
+    UNIFORM: number;
+  }
+  interface GPUShaderStage {
+    COMPUTE: number;
+    FRAGMENT: number;
+  }
+  var GPUBufferUsage: GPUBufferUsage;
+  var GPUShaderStage: GPUShaderStage;
+}
+
+declare global {
+  interface GPUBufferUsage {
+    STORAGE: number;
+    COPY_SRC: number;
+    COPY_DST: number;
+    UNIFORM: number;
+  }
+  interface GPUShaderStage {
+    COMPUTE: number;
+    FRAGMENT: number;
+  }
+  var GPUBufferUsage: GPUBufferUsage;
+  var GPUShaderStage: GPUShaderStage;
+}
+
 /**
  * @license
  * Copyright 2026 Google LLC
@@ -778,7 +853,7 @@ const ArkheV288: React.FC = () => {
       wg.device = device;
       wg.startTime = performance.now();
 
-      const context = canvas!.getContext('webgpu');
+      const context = canvas!.getContext("webgpu") as any;
       if (!context) { return; }
       if (!context) {return;}
 

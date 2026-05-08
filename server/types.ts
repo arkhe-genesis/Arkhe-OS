@@ -1093,3 +1093,9 @@ export interface OrbPayload {
   embedding: number[];
   industry_convergence?: unknown;
 }
+
+export type NeighborhoodCoherence = any;
+export type CivicSubagentState = any;
+export type BiometricState = any;
+export type NAREStatus = any;
+export type PopulationFeedbackEntry = any;

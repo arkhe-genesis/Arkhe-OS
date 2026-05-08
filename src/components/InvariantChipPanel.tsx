@@ -13,7 +13,7 @@ import React, { useState } from 'react';
 import { useArkheSimulation } from '../hooks/useArkheSimulation';
 
 export const InvariantChipPanel: React.FC = () => {
-  const state = useArkheSimulation();
+  const state: any = useArkheSimulation();
   const [loading, setLoading] = useState(false);
 
   const handleActivate = async () => {
