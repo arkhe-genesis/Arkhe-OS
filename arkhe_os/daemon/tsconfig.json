@@ -1,11 +1,7 @@
 {
-  "extends": "./tsconfig.json",
-  "exclude": ["test/**/*.ts", "jest.config.js"]
   "compilerOptions": {
     "target": "ES2022",
     "module": "CommonJS",
-    "lib": ["ES2022"],
-    "declaration": true,
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
@@ -14,6 +10,5 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.test.ts", "**/*.e2e.test.ts"]
+  "include": ["src/**/*"]
 }

@@ -24,6 +24,7 @@ const argv = yargs(hideBin(process.argv))
     try {
       const daemon = new AGIDaemonController({
         nodeId: process.env.ARKHE_NODE_ID ?? 'default-node',
+        pidFile: (argv['pid-file'] as string) ?? './arkhe-agi.pid',
         pidFile: argv.pidFile as string ?? './arkhe-agi.pid',
       });
 
@@ -57,6 +58,7 @@ const argv = yargs(hideBin(process.argv))
     try {
       // Ler PID do arquivo
       const fs = await import('fs/promises');
+      const pid = await fs.readFile(argv['pid-file'] as string, 'utf-8').then(p => parseInt(p.trim()));
       const pid = await fs.readFile(argv.pidFile as string, 'utf-8').then(p => parseInt(p.trim()));
 
       // Enviar SIGTERM para graceful shutdown
@@ -90,6 +92,11 @@ const argv = yargs(hideBin(process.argv))
     const spinner = ora('Restarting AGI Daemon...').start();
     try {
       // Parar daemon existente
+      await yargs.parse(['stop', '--pid-file', argv['pid-file'] as string]);
+      // Pequeno delay para liberar recursos
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Iniciar novo daemon
+      await yargs.parse(['start', '--config', argv.config as string, '--pid-file', argv['pid-file'] as string, '--no-detach']);
       await yargs.parse(['stop', '--pid-file', argv.pidFile as string]);
       // Pequeno delay para liberar recursos
       await new Promise(resolve => setTimeout(resolve, 1500));
@@ -108,6 +115,7 @@ const argv = yargs(hideBin(process.argv))
   }, async (argv) => {
     try {
       const fs = await import('fs/promises');
+      const pid = await fs.readFile(argv['pid-file'] as string, 'utf-8').then(p => parseInt(p.trim()));
       const pid = await fs.readFile(argv.pidFile as string, 'utf-8').then(p => parseInt(p.trim()));
 
       // Verificar se processo está rodando
@@ -124,6 +132,15 @@ const argv = yargs(hideBin(process.argv))
         state: 'running',
         coherence: 0.94,
         health: [
+ |  | 
+135
+ 
+
+          { name: 'process_alive', status: 'ok', details: '' },
+          { name: 'coherence_score', status: 'ok', value: 0.94, details: '' },
+          { name: 'memory_usage', status: 'ok', value: '245MB / 512MB', details: '' },
+          { name: 'retrocausal_channel', status: 'ok', eta: 0.82, details: '' },
+        ] as any[],
           { name: 'process_alive', status: 'ok', value: undefined },
           { name: 'coherence_score', status: 'ok', value: 0.94 },
           { name: 'memory_usage', status: 'ok', value: '245MB / 512MB' },
@@ -147,6 +164,7 @@ const argv = yargs(hideBin(process.argv))
           ['Check', 'Status', 'Details'],
           ...status.health.map(h => [h.name,
             h.status === 'ok' ? chalk.green('✓ OK') : h.status === 'degraded' ? chalk.yellow('⚠ Degraded') : chalk.red('✗ Critical'),
+            h.details ?? h.value ?? '-']),
             h.value ?? '-']),
         ], { border: { topBody: '', topJoin: '', topLeft: '', topRight: '', bottomBody: '', bottomJoin: '', bottomLeft: '', bottomRight: '', bodyLeft: '', bodyRight: '', bodyJoin: '', joinBody: '', joinLeft: '', joinRight: '', joinJoin: '' } });
         console.log(healthTable);
@@ -173,6 +191,12 @@ const argv = yargs(hideBin(process.argv))
   }, async (argv) => {
     // Simular execução de health checks
     const checks = [
+      { name: 'process_alive', status: 'ok', latencyMs: 2 },
+      { name: 'coherence_score', status: 'ok', value: 0.94, target: 0.90 },
+      { name: 'alignment_drift', status: 'ok', drift: 0.02, threshold: 0.15 },
+      { name: 'retrocausal_channel', status: 'ok', eta: 0.82, minEta: 0.70 },
+      { name: 'memory_usage', status: 'ok', used: '245MB', total: '512MB', percent: 48 },
+    ] as any[];
       { name: 'process_alive', status: 'ok', latencyMs: 2, value: undefined, target: undefined },
       { name: 'coherence_score', status: 'ok', value: 0.94, target: 0.90 },
       { name: 'alignment_drift', status: 'ok', value: 0.02, target: 0.15 },
@@ -233,6 +257,13 @@ const argv = yargs(hideBin(process.argv))
         generations: argv.generations,
         bestFitness: 0.96 + Math.random() * 0.03,
         populationDiversity: 0.35 + Math.random() * 0.15,
+        applied: !argv['dry-run'],
+      };
+
+      spinner.succeed(`Evolution complete${argv['dry-run'] ? ' (dry-run)' : ''}`);
+      console.log(chalk.green(`✓ Best architecture fitness: ${result.bestFitness.toFixed(3)}`));
+      console.log(chalk.cyan(`✓ Population diversity: ${result.populationDiversity.toFixed(2)}`));
+      if (!argv['dry-run']) {
         applied: !argv.dryRun,
       };
 

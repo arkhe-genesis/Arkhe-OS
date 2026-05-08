@@ -20,6 +20,8 @@ export interface HealthCheckResult {
 export class CoherenceHealthChecker {
   private checks: Map<string, HealthCheck> = new Map();
   private lastResults: Map<string, HealthCheckResult> = new Map();
+  private lfirGraph?: any;
+  private retroEngine?: any;
   private lfirGraph?: LFIRGraph;
   private retroEngine?: RetrocausalGradientEngine;
   private thresholds: {
@@ -30,6 +32,8 @@ export class CoherenceHealthChecker {
   };
 
   constructor(options: {
+    lfirGraph?: any;
+    retroEngine?: any;
     lfirGraph?: LFIRGraph;
     retroEngine?: RetrocausalGradientEngine;
     thresholds?: Partial<{
@@ -53,6 +57,11 @@ export class CoherenceHealthChecker {
   /**
    * Registra um health check customizado
    */
+  register(check?: HealthCheck): void {
+    if (check) this.checks.set(check.name, check);
+  }
+
+  unregister() {}
   register(check: HealthCheck): void {
     this.checks.set(check.name, check);
   }
