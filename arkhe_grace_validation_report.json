@@ -1,9 +1,0 @@
-{
-  "version": "1.0.0-GRACE",
-  "coherence_lambda2": 0.999123,
-  "latency_ms": 0.0,
-  "availability": 1.0,
-  "immutable": true,
-  "timestamp": "2026-04-13T08:30:00-07:00",
-  "signature": "ARKHE-BLOCK-SEAL-2026-GLOBAL-DEPLOY"
-}

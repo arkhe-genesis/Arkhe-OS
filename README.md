@@ -721,3 +721,38 @@ This repository is a monorepo that integrates standard browser automation with t
 Modules related to simulation and quantum-biological state modification are subject to the **Ethical Quantum-Biological Engineering (EQBE)** protocol defined in [`AGENTS.md`](./AGENTS.md). This includes mandatory safety audits and adherence to non-disruption "Red Lines."
 
 For more details, consult the [Quick Start Guide](./QUICK_START_GUIDE.md) and the [Implementation Summary](./IMPLEMENTATION_SUMMARY_v3_0_OMEGA.md).
+
+
+## Repository Organization
+
+Files have been organized into the following directory structure for better coherence:
+- **python/scripts/**: Python scripts.
+- **scripts/js/**: JavaScript/TypeScript scripts.
+- **scripts/shell/**: Shell scripts.
+- **config/json/**: JSON configuration files.
+- **config/yaml/**: YAML configuration files.
+- **docs/markdown/**: Markdown documentation files.
+- **docs/reports/**: Text, PDF, and HTML report files.
+- **docs/images/**: Image files (PNG, JPG, SVG).
+- **data/csv/**: CSV data files.
+- **data/excel/**: Excel data files.
+- **data/numpy/**: Numpy data files.
+- **data/pickle/**: Pickle data files.
+- **data/logs/**: Log files.
+- **data/gcode/**: GCode files.
+- **data/bin/**: Binary files.
+- **src/cpp/**: C++ source files.
+- **src/c/**: C source and header files.
+- **src/glsl/**: GLSL shader files.
+- **src/asm/**: Assembly files.
+- **src/circom/**: Circom circuits.
+- **src/fortran/**: Fortran source files.
+- **src/go/**: Go source files.
+- **src/verilog/**: Verilog source files.
+- **src/plank/**: Plank source files.
+- **data/models/**: Model files (.pt).
+- **data/misc/**: Miscellaneous data files (.mtp3).
+- **scripts/misc/**: Miscellaneous scripts (.arkhe, .patch, .tcl).
+- **lib/shared/**: Shared libraries (.so).
+- **tests/**: Test-related files.
+- **misc/**: Uncategorized files.

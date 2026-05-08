@@ -1,9 +1,0 @@
-{
-  "synapse_id": "847.705",
-  "handshakes_established": 24,
-  "total_events": 75,
-  "average_delay_ns": 217.0,
-  "final_lambda2": 0.618,
-  "handshake_state": "a",
-  "status": "SUCCESS"
-}
