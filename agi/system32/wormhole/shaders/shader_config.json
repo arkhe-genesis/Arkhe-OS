@@ -1,0 +1,31 @@
+{
+  "shader_version": "324.1.0",
+  "uniforms": {
+    "u_time": { "type": "float", "source": "runtime.clock", "update_frequency": "per_frame" },
+    "u_phi_coherence": { "type": "float", "source": "coherence_kernel.current_phi", "update_frequency": "per_inference" },
+    "u_garganta_center": { "type": "vec3", "source": "wormhole.geometry.center", "update_frequency": "on_geometry_change" },
+    "u_garganta_radius": { "type": "float", "source": "wormhole.geometry.radius", "update_frequency": "on_geometry_change" },
+    "u_retrocausal_strength": { "type": "float", "source": "rcp_engine.retrocausal_weight", "update_frequency": "per_cycle" },
+    "u_lod_level": { "type": "int", "source": "gpu_adaptive_lod.compute()", "update_frequency": "per_frame" }
+  },
+  "adaptive_lod": {
+    "enabled": true,
+    "criteria": {
+      "phi_threshold_high": 0.85,
+      "phi_threshold_low": 0.4,
+      "gpu_memory_threshold_gb": 4.0,
+      "target_fps": 60
+    },
+    "lod_levels": {
+      "0": { "particles": 64, "distortion_samples": 16, "temporal_aa": true },
+      "1": { "particles": 32, "distortion_samples": 8, "temporal_aa": true },
+      "2": { "particles": 16, "distortion_samples": 4, "temporal_aa": false },
+      "3": { "particles": 8, "distortion_samples": 2, "temporal_aa": false }
+    }
+  },
+  "post_processing": {
+    "bloom": { "enabled": true, "threshold": 0.8, "intensity": 0.3 },
+    "chromatic_aberration": { "enabled": true, "strength": 0.005 },
+    "temporal_supersampling": { "enabled": true, "sample_count": 4 }
+  }
+}
