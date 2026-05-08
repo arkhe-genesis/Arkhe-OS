@@ -1,5 +1,8 @@
+ARKHE OS CANONICAL OMEGA ARTIFACT
+=================================
 {
   "version": "v1.1.3",
+  "timestamp": 1778270169.2519474,
   "substrates": [
     {
       "id": 300,
@@ -73,5 +76,10 @@
       "status": "active",
       "location": "arkhe_os/parser/"
     }
-  ]
+  ],
+  "target_enclave": "TEE_ANY",
+  "phi_c": 1.618033988749895
 }
+=================================
+SEAL: 740c72966682a11da72a2f0e6177b502ca163a45e9265cc6ad5a9133684f38fa
+STATUS: READY FOR TEE INJECTION
