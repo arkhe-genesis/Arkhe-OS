@@ -60,6 +60,12 @@
       "name": "Covert DNS Transport & Coherence-Driven Resilience",
       "status": "active",
       "location": "agi/system32/tee/"
+    },
+    {
+      "id": 327,
+      "name": "Model Context Protocol SDK",
+      "status": "active",
+      "location": "agi/system32/mcp/"
     }
   ]
 }

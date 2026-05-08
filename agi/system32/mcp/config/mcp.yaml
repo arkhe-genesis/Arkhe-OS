@@ -1,0 +1,5 @@
+# mcp.yaml
+server_name: "arkhe-agi-mcp"
+server_version: "1.0.0"
+coherence_threshold: 0.7
+transport: "stdio"
