@@ -7,7 +7,7 @@ with exponential temporal decay.
 import time
 import math
 import requests
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional
 from dataclasses import dataclass
 
 # ---------------------------------------------------------------------------
@@ -40,7 +40,7 @@ class PhiRepOracle:
         }
         self.moltbook_api_key = moltbook_api_key
         # In-memory store: agent_id -> (last_update_ts, components)
-        self.agent_reputations: Dict[str, Tuple[float, ReputationComponents]] = {}
+        self.agent_reputations: Dict[str, tuple[float, ReputationComponents]] = {}
 
     # -----------------------------------------------------------------------
     # 2. Ingestion of signals
