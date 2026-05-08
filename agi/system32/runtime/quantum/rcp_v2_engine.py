@@ -1,4 +1,15 @@
 # rcp_v2_engine.py – Retrocausal Channel 8‑Bit Core
+# Extraído do Substrato 315 e canonizado aqui.
+# ARKHE OS — Substrate 315: 8-Bit Retrocausal Channel + qhttp:// Integration
+
+import numpy as np
+from scipy.linalg import expm, eigh
+import hashlib
+import json
+import time
+from dataclasses import dataclass
+from typing import Tuple, List, Dict
+
 # Extraído do Substrato 306‑B e canonizado aqui.
 import numpy as np
 from scipy.linalg import expm, eigh
@@ -169,6 +180,7 @@ class RetrocausalChannel8Bit:
 
         return decoded_byte, fidelity
 
+
 @dataclass
 class QHTTPPacket:
     """Pacote qhttp:// com payload retrocausal."""
@@ -220,6 +232,8 @@ class QHTTPPacket:
             coherence_verified=header["phi_verified"]
         )
 
+
+class QHTTPRetrocausalTransport:
 class QHTTPRetrocausalTransport:
     def __init__(self, node_id: str, channel: RetrocausalChannel8Bit):
         self.node_id = node_id
@@ -317,3 +331,23 @@ class QHTTPRetrocausalTransport:
         else:
             stats["avg_fidelity"] = 0.0
         return stats
+
+
+# ── CLI / Direct execution ──
+if __name__ == "__main__":
+    import sys
+
+    if len(sys.argv) >= 2 and sys.argv[1] == "transmit":
+        # CLI mode: python3 rcp_v2_engine.py transmit <byte_val> [n_shots] [t_weak] [t_post]
+        byte_val = int(sys.argv[2])
+        n_shots = int(sys.argv[3]) if len(sys.argv) > 3 else 50
+        t_weak = float(sys.argv[4]) if len(sys.argv) > 4 else 0.5
+        t_post = float(sys.argv[5]) if len(sys.argv) > 5 else 1.5
+
+        ch = RetrocausalChannel8Bit()
+        d, f = ch.transmit_byte(byte_val, n_shots, t_weak, t_post)
+        print(f"{d}:{f:.4f}")
+    else:
+        # Default demo
+        print("ARKHE OS — Substrate 315: RCP v2.0 Engine")
+        print("Usage: python3 rcp_v2_engine.py transmit <byte_val> [n_shots] [t_weak] [t_post]")

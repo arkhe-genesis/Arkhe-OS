@@ -22,6 +22,7 @@ typedef struct {
 static OmniCoreState g_omni_core = {0};
 
 /* --- Inicialização do Núcleo Omni --- */
+#define EXPORT __attribute__((visibility("default")))
 EXPORT int omni_core_init(const char *config_path) {
     if (g_omni_core.is_initialized) return -1;
 
