@@ -42,6 +42,13 @@ static void print_usage(void)
     printf("  %s identity sign --input=state.json --output=proof.sig\n", PROG_NAME);
 }
 
+int cmd_infer(int argc, char **argv, int verbose, const char *format, const char *output_file);
+int cmd_coherence(int argc, char **argv, int verbose, const char *format, const char *output_file);
+int cmd_identity(int argc, char **argv, int verbose, const char *format, const char *output_file);
+int cmd_evolve(int argc, char **argv, int verbose, const char *format, const char *output_file);
+int cmd_federate(int argc, char **argv, int verbose, const char *format, const char *output_file);
+int cmd_config(int argc, char **argv, int verbose, const char *format, const char *output_file);
+
 int main(int argc, char **argv)
 {
     int opt, option_index = 0;
