@@ -1,5 +1,6 @@
 # Arkhe OS AGI Daemon
 
+Operational layer for temporal intelligence in Arkhe OS.
 The operational layer for temporal intelligence in Arkhe OS.
 
 ## Overview

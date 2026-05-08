@@ -1,6 +1,5 @@
 package lfir
 
-// This file had some conflicting declarations, we'll just keep what we need.
 import (
 	"encoding/json"
 	"os"
@@ -22,11 +21,12 @@ const (
 	LFIRMetadata          LFIRNodeType = "LFIRMetadata"
 )
 
-import "encoding/json"
-import "os"
-
-// LFIRNodeType is the type of a node in the Lingua Franca Intermediate Representation.
-type LFIRNodeType string
+type LFIREdge struct {
+	ID     string
+	Source string
+	Target string
+	Type   string
+}
 
 const (
 	LFIRNodeTypeModule    LFIRNodeType = "LFIRNodeTypeModule"
@@ -50,10 +50,6 @@ type LFIRNode struct {
 	Attributes map[string]interface{}
 }
 
-	SourceLang  string
-	Attributes map[string]interface{}
-}
-
 // NewLFIRNode creates a new LFIR node.
 func NewLFIRNode(nodeType LFIRNodeType, name string, sourceLang string) *LFIRNode {
 	return &LFIRNode{
@@ -65,43 +61,29 @@ func NewLFIRNode(nodeType LFIRNodeType, name string, sourceLang string) *LFIRNod
 	}
 }
 
-type LFIRMetrics struct {
-	CoherenceScore float64
-	NodeCount      int
-	EdgeCount      int
-}
-
 // LFIRGraph represents the full intermediate representation.
 type LFIRGraph struct {
 	RootNodes []string
-	Nodes     map[string]*LFIRNode
-	Edges     map[string][]string // directed edges parent -> children
-    Metrics   LFIRMetrics
-}
-
-// NewLFIRGraph creates a new LFIR graph.
-type LFIRMetrics struct {
-    CoherenceScore float64
-    NodeCount int
-    EdgeCount int
+	Nodes     []*LFIRNode
+	Edges     []*LFIREdge
 	Metrics   LFIRMetrics
 }
 
 func NewLFIRGraph() *LFIRGraph {
 	return &LFIRGraph{
 		RootNodes: make([]string, 0),
-		Nodes:     make(map[string]*LFIRNode),
-		Edges:     make(map[string][]string),
+		Nodes:     make([]*LFIRNode, 0),
+		Edges:     make([]*LFIREdge, 0),
 	}
 }
 
 // AddNode adds a node to the graph.
 func (g *LFIRGraph) AddNode(node *LFIRNode) {
-	g.Nodes[node.ID] = node
+	g.Nodes = append(g.Nodes, node)
 }
 
 func (g *LFIRGraph) Link(parentID, childID string) {
-	g.Edges[parentID] = append(g.Edges[parentID], childID)
+	g.Edges = append(g.Edges, &LFIREdge{Source: parentID, Target: childID})
 }
 
 func (g *LFIRGraph) FindNodeByAttribute(key string, val interface{}) (*LFIRNode, bool) {
