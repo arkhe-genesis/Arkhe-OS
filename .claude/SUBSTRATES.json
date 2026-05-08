@@ -72,6 +72,12 @@
       "name": "Windows Compatibility for *.agi Extension",
       "status": "active",
       "location": "agi/system32/windows/"
+    },
+    {
+      "id": 5003,
+      "name": "AGI Interface",
+      "status": "active",
+      "location": "agi/system32/nexus/"
     }
   ]
 }
