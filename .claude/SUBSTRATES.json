@@ -1,0 +1,23 @@
+{
+  "version": "v1.0.0",
+  "substrates": [
+    {
+      "id": 300,
+      "name": "LFIR Graph Engine Core",
+      "status": "active",
+      "location": "agi/system32/lfir/"
+    },
+    {
+      "id": 315,
+      "name": "RCP v2.0",
+      "status": "active",
+      "location": "agi/system32/runtime/quantum/"
+    },
+    {
+      "id": 325,
+      "name": "Agent Context & Operational Integrity",
+      "status": "active",
+      "location": "agi/system32/integrity/"
+    }
+  ]
+}
