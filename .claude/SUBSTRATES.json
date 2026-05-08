@@ -66,6 +66,12 @@
       "name": "Reputation Oracle (\u03a6-REP)",
       "status": "active",
       "location": "agi/system32/reputation/"
+    },
+    {
+      "id": 5002,
+      "name": "Windows Compatibility for *.agi Extension",
+      "status": "active",
+      "location": "agi/system32/windows/"
     }
   ]
 }
