@@ -1,47 +1,12 @@
-# Configuração do Canal Retrógrado 8‑Bit
-# ARKHE OS — Substrate 315: RCP v2.0
+# Retrocausal Channel Protocol v2.0 Configuration
+version: "2.0"
 
-rcp:
-  version: "2.0"
-  encoding: "8bit_phase_postselection"
-  shots_per_bit: 50
-  temporal_window:
-    t_weak: 0.5  # segundos
-    t_post: 1.5  # segundos
-  simulation:
-    engine: "python3"
-    script: "agi/system32/runtime/quantum/rcp_v2_engine.py"
-    bridge: "agi/system32/agi_rcp_bridge.so"
+channel:
+  width: 8
+  max_latency_ms: -50 # Retrocausal target
+  error_correction: "reed_solomon"
   fidelity_threshold: 0.8
-  max_retries: 3
 
-  # Parâmetros do modelo físico (time-crystal optomechanics)
-  physical_model:
-    N_ctc: 4          # Estados do time-crystal (magnon BEC)
-    N_mec: 5          # Estados do modo mecânico
-    omega_tc: 5.0     # Frequência do time-crystal (Hz × 2π)
-    omega_m: 1.0      # Frequência mecânica (Hz × 2π)
-    g1: 0.8           # Acoplamento linear (Hz × 2π)
-    g2: 0.08          # Acoplamento quadrático (Hz × 2π)
-    T_eff: 0.5        # Temperatura efetiva (unidades arbitrárias)
-
-  # Parâmetros de weak measurement
-  weak_measurement:
-    epsilon: 0.15     # Força do weak measurement
-    drive_amp: 0.4    # Amplitude do drive codificado em fase
-    noise: 0.15       # Ruído intrínseco
-
-  # Nós Wheeler Mesh
-  mesh_nodes:
-    - id: "GRU-TC-01"
-      location: "São Paulo, Brasil"
-      role: "origin"
-    - id: "TKY-TC-02"
-      location: "Tóquio, Japão"
-      role: "destination"
-    - id: "ZUR-TC-03"
-      location: "Zurique, Suíça"
-      role: "relay"
-    - id: "SVD-TC-04"
-      location: "Sydney, Austrália"
-      role: "relay"
+transport:
+  protocol: "qhttp"
+  max_packet_size: 1024
