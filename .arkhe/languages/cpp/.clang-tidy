@@ -1,0 +1,25 @@
+---
+Checks: >
+  bugprone-*,
+  cert-*,
+  clang-analyzer-*,
+  cppcoreguidelines-*,
+  google-*,
+  hicpp-*,
+  misc-*,
+  modernize-*,
+  performance-*,
+  portability-*,
+  readability-*,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-owning-memory,
+  -readability-magic-numbers
+WarningsAsErrors: '*'
+HeaderFilterRegex: '.*'
+CheckOptions:
+  - key: readability-identifier-naming.ClassConstantCase
+    value: lower_case
+  - key: readability-identifier-naming.EnumConstantCase
+    value: UPPER_CASE
+  - key: cppcoreguidelines-avoid-magic-numbers.ReadableMagicNumbers
+    value: '0, 1, 2, 3, 4, 10, 100'

@@ -1,0 +1,21 @@
+{
+    "recommendations": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.black-formatter",
+        "rust-lang.rust-analyzer",
+        "tamasfe.even-better-toml",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "golang.go",
+        "ms-vscode.cpptools",
+        "vscjava.vscode-java-pack",
+        "vknabel.vscode-swiftlint",
+        "hashicorp.terraform",
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "redhat.ansible",
+        "ms-vscode-remote.remote-ssh",
+        "arkhe-os.cathedral-theme",
+        "arkhe-os.lfir-syntax"
+    ]
+}

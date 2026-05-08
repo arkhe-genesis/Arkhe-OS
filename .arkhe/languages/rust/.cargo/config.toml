@@ -1,0 +1,10 @@
+[build]
+rustflags = ["-C", "target-cpu=native"]
+
+[target.x86_64-unknown-linux-gnu]
+rustflags = ["-C", "link-arg=-Wl,-rpath,$ORIGIN"]
+
+[alias]
+cathedral = "run --release --"
+substrate = "build --release"
+verify = "clippy -- -D warnings"

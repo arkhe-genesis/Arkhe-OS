@@ -1,0 +1,67 @@
+{
+  "substrate_id": 5005,
+  "name": "AGI/ASI Polyglot Dotfiles",
+  "description": "Canonical development environment supporting all major programming languages under ARKHE OS coherence governance.",
+  "version": "1.0.0",
+  "canonical_path": "~/.arkhe/",
+  "languages_supported": [
+    "python", "rust", "typescript", "javascript", "go",
+    "cpp", "c", "java", "kotlin", "swift", "sql", "shell"
+  ],
+  "components": {
+    "shell": {
+      "description": "Polyglot shell configuration with language detection",
+      "files": [".bashrc", ".zshrc", ".profile", ".fishrc"],
+      "features": [
+        "Language-aware prompt",
+        "Φ_C display in RPROMPT",
+        "Universal aliases",
+        "Polyglot completions"
+      ]
+    },
+    "git": {
+      "description": "Multi-language Git configuration",
+      "files": [".gitconfig", ".gitignore_global"],
+      "hooks": ["pre-commit", "pre-push", "commit-msg"],
+      "features": [
+        "GPG signing",
+        "Multi-language linting",
+        "LFIR-formatted commit messages"
+      ]
+    },
+    "editors": {
+      "description": "Editor configs for LFIR and multi-language development",
+      "files": [".vimrc", ".vscode/settings.json", ".emacs.d/init.el"],
+      "features": [
+        "Cathedral theme",
+        "LFIR syntax highlighting",
+        "Coherence-aware linting"
+      ]
+    },
+    "languages": {
+      "description": "Per-language configuration with canonical standards",
+      "configs": {
+        "python": [".pylintrc", ".pyproject.toml", ".mypy.ini"],
+        "rust": [".cargo/config.toml", ".rustfmt.toml", "clippy.toml"],
+        "typescript": [".eslintrc.json", ".prettierrc", "tsconfig.base.json"],
+        "go": [".golangci.yml", "go.work"],
+        "cpp": [".clang-format", ".clang-tidy", "CMakePresets.json"],
+        "java": ["checkstyle.xml", "spotbugs-exclude.xml"],
+        "swift": [".swiftlint.yml", ".swift-format"]
+      }
+    },
+    "devops": {
+      "description": "Infrastructure and deployment tooling",
+      "tools": ["terraform", "ansible", "kubectl", "docker"]
+    }
+  },
+  "makefile_targets": [
+    "install", "build", "test", "verify", "pack", "genesis", "clean",
+    "lint", "format", "docs", "deploy-staging", "deploy-prod"
+  ],
+  "coherence_integration": {
+    "prompt_display": "Φ_C shown in shell prompt",
+    "pre_commit_check": "Coherence threshold validation",
+    "build_verification": "Φ_C check before artifact packaging"
+  }
+}

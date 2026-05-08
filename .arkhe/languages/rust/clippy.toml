@@ -1,0 +1,6 @@
+allow-unwrap-in-tests = true
+check-private-items = true
+disallowed-methods = [
+    { path = "std::panic::panic_any", reason = "Use anyhow::Result instead" },
+    { path = "std::env::set_var", reason = "Use configuration injection" },
+]

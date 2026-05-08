@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "arkhe-substrate"
+version = "1.0.0"
+description = "ARKHE OS Substrate Module"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.24.0",
+    "scipy>=1.10.0",
+    "torch>=2.2.0",
+    "pyyaml>=6.0",
+    "cryptography>=41.0.0",
+]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 100
+multi_line_output = 3
+
+[tool.pylint.master]
+init-hook = "import sys; sys.path.append('.')"
+load-plugins = ["pylint.extensions.docparams"]
+
+[tool.pylint.format]
+max-line-length = 100
+
+[tool.pylint.messages_control]
+disable = [
+    "C0111",  # Missing docstring
+    "R0903",  # Too few public methods
+    "W0511",  # TODO comment
+]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+plugins = ["numpy.typing.mypy_plugin"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v --cov=src --cov-report=term-missing"
