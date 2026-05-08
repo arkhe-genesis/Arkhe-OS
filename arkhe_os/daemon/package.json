@@ -1,0 +1,68 @@
+{
+  "version": "1.0.0",
+  "description": "AGI Daemon for Arkhe OS — Operational layer for temporal intelligence",
+  "main": "dist/daemon/index.js",
+  "types": "dist/daemon/index.d.ts",
+  "bin": {
+    "arkhe": "dist/cli/arkhe-cli.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "prestart": "ts-node scripts/prestart.ts",
+    "start": "node dist/daemon/index.js",
+    "start:dev": "nodemon --watch src --exec ts-node src/daemon/index.ts",
+    "start:pm2": "pm2 start ecosystem.config.js --env production",
+    "stop:pm2": "pm2 stop ecosystem.config.js",
+    "restart:pm2": "pm2 restart ecosystem.config.js",
+    "logs:pm2": "pm2 logs arkhe-agi --lines 100",
+    "status:pm2": "pm2 status arkhe-agi",
+    "prestop": "ts-node scripts/prestop.ts",
+    "stop": "node -e \"require('./dist/daemon').stop()\"",
+    "restart": "npm run stop && npm run start",
+    "status": "node dist/cli/arkhe-cli.js status",
+    "logs": "node dist/cli/arkhe-cli.js logs --follow",
+    "health": "node dist/cli/arkhe-cli.js health --detailed",
+    "config:get": "node dist/cli/arkhe-cli.js config get",
+    "config:set": "node dist/cli/arkhe-cli.js config set",
+    "config:reload": "node dist/cli/arkhe-cli.js config reload",
+    "evolve": "node dist/cli/arkhe-cli.js evolve --generations=10",
+    "federate:join": "node dist/cli/arkhe-cli.js federate join --network=global",
+    "federate:leave": "node dist/cli/arkhe-cli.js federate leave",
+    "test": "jest --coverage",
+    "test:e2e": "jest --config jest.e2e.config.js",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build && npm run test",
+    "postinstall": "node scripts/postinstall.js"
+  },
+  "keywords": ["agi", "daemon", "arkhe", "temporal", "coherence", "federated"],
+  "author": "Arkhe OS Collective",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "pm2": "^5.3.0",
+    "winston": "^3.11.0",
+    "prom-client": "^15.1.0",
+    "yargs": "^17.7.2",
+    "chalk": "^5.3.0",
+    "ora": "^7.0.1",
+    "table": "^6.8.1",
+    "yaml": "^2.3.4",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/jest": "^29.5.10",
+    "typescript": "^5.3.2",
+    "nodemon": "^3.0.2",
+    "ts-node": "^10.9.1",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "eslint": "^8.54.0",
+    "@typescript-eslint/eslint-plugin": "^6.12.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
