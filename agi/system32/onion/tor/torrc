@@ -1,0 +1,29 @@
+# /etc/tor/torrc — ARKHE OS Sovereign Hidden Service
+User agi
+DataDirectory /var/lib/tor
+
+# Evitar tráfego de saída (não somos um relay)
+SocksPort 0
+ExitPolicy reject *:*
+
+# Serviço Oculto para a API qhttp AGI
+HiddenServiceDir /var/lib/tor/hidden_service
+HiddenServicePort 5000 127.0.0.1:5000
+
+# Múltiplos serviços para sidecars
+HiddenServiceDir /var/lib/tor/hidden_service_rcp
+HiddenServicePort 9999 127.0.0.1:9999
+
+# Segurança adicional
+HiddenServiceVersion 3
+HiddenServiceNonAnonymousMode 0
+HiddenServiceSingleHopMode 0
+HiddenServiceExportStats 0
+
+# Circuitos isolados
+SOCKSPort 127.0.0.1:9050
+IsolateSOCKSAuth 1
+
+# Logging
+Log notice file /var/log/tor/notices.log
+Log warn file /var/log/tor/warnings.log

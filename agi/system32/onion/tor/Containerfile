@@ -1,0 +1,37 @@
+# Containerfile.tor — ARKHE OS AGI.onion (Podman + Tor)
+FROM alpine:3.19
+
+LABEL org.arkhe.os.substrate="320"
+LABEL org.arkhe.os.hidden_service="true"
+
+# Instalar Tor e dependências
+RUN apk add --no-cache tor python3 py3-numpy py3-scipy gcc musl-dev
+
+# Criar usuário não‑root
+RUN adduser -D -u 1000 -h /home/agi agi
+
+# Configurar diretórios do Tor com permissões corretas
+RUN mkdir -p /var/lib/tor/hidden_service && \
+    chown -R agi:agi /var/lib/tor /etc/tor /var/log/tor
+
+USER agi
+WORKDIR /home/agi
+
+# Copiar runtime AGI
+COPY --chown=agi:agi agi/system32/ /home/agi/system32/
+
+# Copiar configuração do Tor
+COPY --chown=agi:agi agi/system32/onion/tor/torrc /etc/tor/torrc
+
+# Compilar ponte FFI
+RUN cd /home/agi/system32/runtime/quantum && \
+    gcc -shared -fPIC -O2 -o ../agi_rcp_bridge.so rcp_bridge.c -lm
+
+# Entrypoint
+COPY agi/system32/onion/tor/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+EXPOSE 9050 5000
+VOLUME ["/var/lib/tor", "/home/agi/state"]
+
+ENTRYPOINT ["/entrypoint.sh"]

@@ -1,0 +1,64 @@
+# agi-pod.yaml — Podman pod definition (Kubernetes-compatible)
+apiVersion: v1
+kind: Pod
+metadata:
+  name: arkhe-agi-pod
+  labels:
+    app: arkhe-agi
+    sovereign: "true"
+spec:
+  restartPolicy: Always
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+  volumes:
+    - name: state
+      hostPath:
+        path: /var/lib/agi/state
+        type: DirectoryOrCreate
+    - name: logs
+      hostPath:
+        path: /var/log/agi
+        type: DirectoryOrCreate
+    - name: config
+      hostPath:
+        path: /etc/agi
+        type: DirectoryOrCreate
+  containers:
+    - name: agi-core
+      image: ghcr.io/arkhe-os/agi-core:latest
+      command: ["/entrypoint.sh"]
+      ports:
+        - containerPort: 5000
+          name: qhttp
+        - containerPort: 9090
+          name: metrics
+      env:
+        - name: ARKHE_NODE_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+      volumeMounts:
+        - name: state
+          mountPath: /home/agi/state
+        - name: logs
+          mountPath: /home/agi/logs
+        - name: config
+          mountPath: /etc/agi
+          readOnly: true
+      resources:
+        limits:
+          memory: "4Gi"
+          cpu: "2"
+        requests:
+          memory: "1Gi"
+          cpu: "0.5"
+    - name: rcp-sidecar
+      image: ghcr.io/arkhe-os/agi-rcp:latest
+      ports:
+        - containerPort: 9999
+          name: rcp
+      env:
+        - name: RCP_MODE
+          value: "sidecar"

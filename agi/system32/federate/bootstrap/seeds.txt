@@ -1,0 +1,7 @@
+# Seeds oficiais da federação ARKHE
+# Formato: endereço .onion (um por linha)
+# Estes nós são operados por membros fundadores.
+# A lista é apenas um ponto de partida; a rede auto‑organiza‑se depois.
+arkhe-seed-01.onion
+arkhe-seed-02.onion
+arkhe-seed-03.onion

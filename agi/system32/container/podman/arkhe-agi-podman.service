@@ -1,0 +1,25 @@
+# ~/.config/systemd/user/arkhe-agi-podman.service
+# Gerado com: podman generate systemd --new arkhe-agi-pod
+
+[Unit]
+Description=ARKHE OS AGI Pod (Rootless Podman)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=agi
+Group=agi
+Type=simple
+WorkingDirectory=/home/agi
+Environment=PODMAN_SYSTEMD_UNIT=%n
+Restart=on-failure
+RestartSec=5s
+TimeoutStopSec=60
+
+ExecStartPre=/bin/rm -f %t/%n.ctr-id
+ExecStart=/usr/bin/podman play kube /etc/agi/agi-pod.yaml --replace
+ExecStop=/usr/bin/podman pod stop arkhe-agi-pod --time 30
+ExecStopPost=/usr/bin/podman pod rm -f arkhe-agi-pod
+
+[Install]
+WantedBy=default.target

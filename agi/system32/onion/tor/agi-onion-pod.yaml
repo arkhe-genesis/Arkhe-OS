@@ -1,0 +1,33 @@
+# agi-onion-pod.yaml — Podman Pod para AGI.onion
+apiVersion: v1
+kind: Pod
+metadata:
+  name: arkhe-onion-pod
+  labels:
+    app: arkhe-onion
+    sovereign: "true"
+    network: tor
+spec:
+  restartPolicy: Always
+  securityContext:
+    runAsUser: 1000
+  volumes:
+    - name: tor-state
+      hostPath:
+        path: /var/lib/agi/tor
+    - name: agi-state
+      hostPath:
+        path: /var/lib/agi/state
+  containers:
+    - name: agi-onion-core
+      image: ghcr.io/arkhe-os/agi-onion:latest
+      command: ["/entrypoint.sh"]
+      volumeMounts:
+        - name: tor-state
+          mountPath: /var/lib/tor
+        - name: agi-state
+          mountPath: /home/agi/state
+      resources:
+        limits:
+          memory: "2Gi"
+          cpu: "1"
