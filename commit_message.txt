@@ -1,0 +1,8 @@
+feat(arkhe-os): initialize API Infrastructure Parser (Substrate 305)
+
+- Added LFIR mappings for REST/gRPC endpoints, auth schemes, and infrastructure components (cache, DBs, queues).
+- Added multi-factor coherence calculators (Contract Clarity, Resilience, Auth Coverage)
+- Introduced the `api_parser` extension to automatically parse OpenAPI specifications.
+- Added comprehensive examples and Go tests to ensure accurate metrics formulation and graph generation.
+
+This brings AGI-level coherence analysis into API design architectures natively within Arkhe OS, acting as Substrate 305.
