@@ -234,7 +234,6 @@ class QHTTPPacket:
 
 
 class QHTTPRetrocausalTransport:
-class QHTTPRetrocausalTransport:
     def __init__(self, node_id: str, channel: RetrocausalChannel8Bit):
         self.node_id = node_id
         self.channel = channel
@@ -287,7 +286,6 @@ class QHTTPRetrocausalTransport:
         return packet
 
     def receive_retrocausal_byte(self, packet: QHTTPPacket) -> Tuple[int, float]:
-        if not packet.coherence_verified:
         """Receive and verify retrocausal byte."""
         if not packet.coherence_verified:
             print(f"⚠️  Packet from {packet.src_node} failed coherence verification")
