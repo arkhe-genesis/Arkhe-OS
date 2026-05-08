@@ -1,0 +1,9 @@
+# Configuração do Omni Core (Substrato 316)
+omni_core:
+  version: "1.0.0"
+  cosmic_coupling: 0.1
+  components:
+    omninet: true
+    temporal_anchor: true
+    coherence_field: true
+    sovereign_interface: true
