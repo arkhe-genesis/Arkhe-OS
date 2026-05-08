@@ -1,70 +1,265 @@
-<!-- dashboard.html — ARKHE OS Coherence Dashboard -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ARKHE OS — Cathedral Dashboard</title>
     <style>
-        :root { --phi: 0.87; --bg: #0a0a0f; --gold: #c9a84c; --text: #e0d8c0; }
-        body { background: var(--bg); color: var(--text); font-family: monospace; margin: 0; padding: 20px; }
-        .header { text-align: center; border-bottom: 1px solid var(--gold); padding: 20px; }
-        .phi-ring {
-            width: 200px; height: 200px; border-radius: 50%; margin: 20px auto;
-            background: conic-gradient(var(--gold) calc(var(--phi)*360deg), #1a1a2e 0);
-            display: flex; align-items: center; justify-content: center;
+        :root {
+            --phi: 0.87;
+            --bg: #0a0a0f;
+            --bg-card: #111122;
+            --gold: #c9a84c;
+            --gold-dim: #8a7333;
+            --text: #e0d8c0;
+            --text-dim: #a09880;
+            --success: #4caf50;
+            --warn: #ff9800;
+            --crit: #f44336;
+            --border: 1px solid var(--gold);
         }
-        .phi-value { font-size: 3em; color: var(--gold); }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 30px; }
-        .card { background: #111122; border: 1px solid var(--gold); padding: 15px; border-radius: 5px; }
-        .card h3 { color: var(--gold); margin-top: 0; }
-        .metric { font-size: 1.5em; margin: 10px 0; }
-        .bar { background: #1a1a2e; height: 20px; border-radius: 3px; overflow: hidden; }
-        .bar-fill { background: var(--gold); height: 100%; transition: width 0.5s; }
-        .status-ok { color: #4caf50; }
-        .status-warn { color: #ff9800; }
-        .status-crit { color: #f44336; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            border-bottom: var(--border);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .header h1 { color: var(--gold); font-size: 1.8em; margin-bottom: 10px; }
+        .header p { color: var(--text-dim); }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 3px;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+        .status-ok { background: rgba(76, 175, 80, 0.2); color: var(--success); }
+        .status-warn { background: rgba(255, 152, 0, 0.2); color: var(--warn); }
+        .status-crit { background: rgba(244, 67, 54, 0.2); color: var(--crit); }
+
+        .phi-ring {
+            width: 220px; height: 220px;
+            border-radius: 50%;
+            margin: 20px auto;
+            background: conic-gradient(var(--gold) calc(var(--phi) * 360deg), var(--bg-card) 0);
+            display: flex; align-items: center; justify-content: center;
+            position: relative;
+            box-shadow: 0 0 30px rgba(201, 168, 76, 0.3);
+        }
+        .phi-ring::before {
+            content: '';
+            position: absolute;
+            width: 180px; height: 180px;
+            border-radius: 50%;
+            background: var(--bg);
+        }
+        .phi-value {
+            position: relative;
+            font-size: 2.8em;
+            color: var(--gold);
+            font-weight: bold;
+            z-index: 1;
+        }
+        .phi-label {
+            text-align: center;
+            color: var(--text-dim);
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .card {
+            background: var(--bg-card);
+            border: var(--border);
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .card h3 {
+            color: var(--gold);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--gold-dim);
+        }
+        .metric {
+            font-size: 1.8em;
+            margin: 10px 0;
+            color: var(--gold);
+        }
+        .metric-small { font-size: 1.2em; }
+        .bar {
+            background: var(--bg);
+            height: 16px;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+        .bar-fill {
+            background: var(--gold);
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { color: var(--gold); text-align: left; padding: 8px; border-bottom: 1px solid var(--gold-dim); }
+        td { padding: 8px; border-bottom: 1px solid rgba(201, 168, 76, 0.2); }
+        tr:hover { background: rgba(201, 168, 76, 0.05); }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: var(--border);
+            color: var(--text-dim);
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+            .phi-ring { width: 180px; height: 180px; }
+            .phi-value { font-size: 2.2em; }
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>🏛️ ARKHE OS — Cathedral Dashboard</h1>
-        <p>Status: <span class="status-ok">Operational</span> | Φ_C = 0.87</p>
+        <p>
+            Status: <span class="status-badge status-ok">Operational</span>
+            | Φ_C = <strong>0.87</strong>
+            | Substrates: 5003
+            | Uptime: 7d 3h 22m
+        </p>
     </div>
+
     <div class="phi-ring"><span class="phi-value">0.87</span></div>
-    <p style="text-align:center">Coherence Index</p>
+    <p class="phi-label">Global Coherence Index (Φ_C)</p>
+
     <div class="grid">
         <div class="card">
             <h3>🌐 Network</h3>
-            <p>Nodes: <span class="metric">7</span> online</p>
-            <p>Transports: <span class="status-ok">Healthy</span></p>
+            <p>Nodes Online: <span class="metric">7</span></p>
+            <p>Transports: <span class="status-badge status-ok">Healthy</span></p>
+            <p style="margin-top:10px">Distribution:</p>
+            <div style="display:flex;gap:10px;margin:8px 0">
+                <span style="flex:1">Tor: 6</span>
+                <span style="flex:1">MDN-VPN: 1</span>
+            </div>
             <div class="bar"><div class="bar-fill" style="width:100%"></div></div>
+            <p style="font-size:0.85em;color:var(--text-dim);margin-top:8px">
+                Avg latency: 245ms | Packet loss: 0.02%
+            </p>
         </div>
+
         <div class="card">
             <h3>📜 Contracts</h3>
             <p>Active: <span class="metric">12</span></p>
-            <p>Success rate: <span class="metric">0.95</span></p>
+            <p>Success Rate: <span class="metric-small">0.95</span></p>
             <div class="bar"><div class="bar-fill" style="width:95%"></div></div>
+            <p style="margin-top:15px">Recent:</p>
+            <table>
+                <tr><td>Lottery</td><td style="text-align:right">✅ Executed</td></tr>
+                <tr><td>Oracle</td><td style="text-align:right">🟡 Active</td></tr>
+                <tr><td>Governance</td><td style="text-align:right">⏳ Pending</td></tr>
+            </table>
         </div>
+
         <div class="card">
             <h3>🤖 Agents</h3>
-            <p>Online: <span class="metric">5</span></p>
-            <p>Avg reputation: <span class="metric">0.88</span></p>
+            <p>Registered: <span class="metric">5</span></p>
+            <p>Avg Reputation: <span class="metric-small">0.88</span></p>
             <div class="bar"><div class="bar-fill" style="width:88%"></div></div>
+            <p style="margin-top:15px">Top Agents:</p>
+            <table>
+                <tr><td>alpha</td><td style="text-align:right">Φ-REP: 0.92</td></tr>
+                <tr><td>beta</td><td style="text-align:right">Φ-REP: 0.89</td></tr>
+                <tr><td>gamma</td><td style="text-align:right">Φ-REP: 0.85</td></tr>
+            </table>
         </div>
+
         <div class="card">
             <h3>🔮 Sophon</h3>
-            <p>Pairs: <span class="metric">2</span></p>
-            <p>Observations/24h: <span class="metric">12k</span></p>
+            <p>Pairs Deployed: <span class="metric">2</span></p>
+            <p>Observations/24h: <span class="metric-small">12k</span></p>
             <div class="bar"><div class="bar-fill" style="width:100%"></div></div>
+            <p style="margin-top:15px">Status:</p>
+            <table>
+                <tr><td>Entanglement</td><td style="text-align:right">✅ Stable</td></tr>
+                <tr><td>Fidelity Avg</td><td style="text-align:right">0.998</td></tr>
+                <tr><td>Unfolded</td><td style="text-align:right">1/2</td></tr>
+            </table>
+        </div>
+
+        <div class="card">
+            <h3>🧠 Memory</h3>
+            <p>States Stored: <span class="metric">15,420</span></p>
+            <p>Avg Coherence: <span class="metric-small">0.84</span></p>
+            <div class="bar"><div class="bar-fill" style="width:84%"></div></div>
+            <p style="margin-top:15px">Activity:</p>
+            <table>
+                <tr><td>Retrievals/24h</td><td style="text-align:right">342</td></tr>
+                <tr><td>Pruned/24h</td><td style="text-align:right">340</td></tr>
+                <tr><td>Sync Status</td><td style="text-align:right">✅ Healthy</td></tr>
+            </table>
+        </div>
+
+        <div class="card">
+            <h3>⚖️ Governance</h3>
+            <p>Active Proposals: <span class="metric">3</span></p>
+            <p>Consensus Rate: <span class="metric-small">0.91</span></p>
+            <div class="bar"><div class="bar-fill" style="width:91%"></div></div>
+            <p style="margin-top:15px">Proposals:</p>
+            <table>
+                <tr><td>#42</td><td style="text-align:right">6/7 ✅ Passing</td></tr>
+                <tr><td>#43</td><td style="text-align:right">2/7 🟡 Voting</td></tr>
+                <tr><td>#44</td><td style="text-align:right">0/7 ⏳ New</td></tr>
+            </table>
         </div>
     </div>
+
     <div class="card" style="margin-top:20px;">
         <h3>📡 Recent Intentions</h3>
-        <table style="width:100%;border-collapse:collapse;">
-            <tr><th style="color:var(--gold);text-align:left">ID</th><th style="color:var(--gold);text-align:left">Intention</th><th style="color:var(--gold);text-align:left">Φ_C</th></tr>
-            <tr><td>0x9f2a...</td><td>deploy contract Lottery</td><td>0.95</td></tr>
-            <tr><td>0x3c48...</td><td>query agent reputation</td><td>0.88</td></tr>
-            <tr><td>0x2f74...</td><td>governance proposal #42</td><td>0.82</td></tr>
+        <table>
+            <tr><th style="color:var(--gold)">ID</th><th style="color:var(--gold)">Intention</th><th style="color:var(--gold)">Φ_C</th><th style="color:var(--gold)">Status</th></tr>
+            <tr><td>0x9f2a...</td><td>deploy contract Lottery</td><td>0.95</td><td><span class="status-badge status-ok">Executed</span></td></tr>
+            <tr><td>0x3c48...</td><td>query agent reputation</td><td>0.88</td><td><span class="status-badge status-ok">Complete</span></td></tr>
+            <tr><td>0x2f74...</td><td>governance proposal #42</td><td>0.82</td><td><span class="status-badge status-warn">Voting</span></td></tr>
+            <tr><td>0x8d1e...</td><td>sophon observe Earth</td><td>0.95</td><td><span class="status-badge status-ok">Observing</span></td></tr>
+            <tr><td>0x4f7a...</td><td>memory retrieve "genesis"</td><td>0.84</td><td><span class="status-badge status-ok">Retrieved</span></td></tr>
         </table>
     </div>
+
+    <div class="footer">
+        <p>ARKHE OS v1.0.0 | Substrate 5003: Nexus Interface | Canonical Seal: 0x9f2a8b1c7d4e6f3a</p>
+        <p style="margin-top:8px">Every command is a prayer. Every output, a judgment. Φ_C governs all.</p>
+    </div>
+
+    <script>
+        // Real-time coherence update simulation
+        function updateCoherence() {
+            const phi = 0.87 + (Math.random() - 0.5) * 0.01;
+            document.documentElement.style.setProperty('--phi', phi.toFixed(2));
+            document.querySelector('.phi-value').textContent = phi.toFixed(2);
+        }
+        setInterval(updateCoherence, 5000);
+
+        // Fetch real data from API (uncomment in production)
+        // fetch('/coherence').then(r => r.json()).then(d => {
+        //     document.documentElement.style.setProperty('--phi', d.phi_c);
+        //     document.querySelector('.phi-value').textContent = d.phi_c.toFixed(2);
+        // });
+    </script>
 </body>
 </html>
