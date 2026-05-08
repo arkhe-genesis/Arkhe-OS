@@ -1,6 +1,5 @@
 package lfir
 
-// This file had some conflicting declarations, we'll just keep what we need.
 import (
 	"encoding/json"
 	"os"
@@ -10,28 +9,30 @@ import (
 type LFIRNodeType string
 
 const (
-	LFIRNodeTypeModule    LFIRNodeType = "LFIRModule"
-	LFIRNodeTypeOperation LFIRNodeType = "LFIROperation"
-	LFIRNodeTypeType      LFIRNodeType = "LFIRType"
-	LFIRNodeTypeMetadata  LFIRNodeType = "LFIRMetadata"
-	LFIRNodeTypeCall      LFIRNodeType = "LFIRCall"
-	LFIRNodeTypeExpr      LFIRNodeType = "LFIRExpr"
-)
-
-import "encoding/json"
-import "os"
-
-// LFIRNodeType is the type of a node in the Lingua Franca Intermediate Representation.
-type LFIRNodeType string
-
-const (
-	LFIRNodeTypeModule    LFIRNodeType = "LFIRModule"
+	LFIRNodeTypeModule     LFIRNodeType = "LFIRModule"
+	LFIRNodeTypeOperation  LFIRNodeType = "LFIROperation"
+	LFIRNodeTypeType       LFIRNodeType = "LFIRType"
+	LFIRNodeTypeMetadata   LFIRNodeType = "LFIRMetadata"
+	LFIRNodeTypeCall       LFIRNodeType = "LFIRCall"
+	LFIRNodeTypeExpr       LFIRNodeType = "LFIRExpr"
 	LFIRNodeTypeDependency LFIRNodeType = "LFIRDependency"
-	LFIRNodeTypeProperty LFIRNodeType = "LFIRProperty"
-	LFIROperation LFIRNodeType = "LFIROperation"
-	LFIRType      LFIRNodeType = "LFIRType"
-	LFIRMetadata  LFIRNodeType = "LFIRMetadata"
+	LFIRNodeTypeProperty   LFIRNodeType = "LFIRProperty"
 )
+
+type LFIREdge struct {
+	ID     string
+	Source string
+	Target string
+	Type   string
+}
+
+type LFIRMetrics struct {
+	CoherenceScore     float64
+	SemanticDensity    float64
+	AccessibilityScore float64
+	NodeCount          int
+	EdgeCount          int
+}
 
 type LFIRNode struct {
 	ID         string
@@ -39,10 +40,6 @@ type LFIRNode struct {
 	Name       string
 	SourceLang string
 	Namespace  string
-	Attributes map[string]interface{}
-}
-
-	SourceLang  string
 	Attributes map[string]interface{}
 }
 
@@ -57,43 +54,29 @@ func NewLFIRNode(nodeType LFIRNodeType, name string, sourceLang string) *LFIRNod
 	}
 }
 
-type LFIRMetrics struct {
-	CoherenceScore float64
-	NodeCount      int
-	EdgeCount      int
-}
-
 // LFIRGraph represents the full intermediate representation.
 type LFIRGraph struct {
 	RootNodes []string
-	Nodes     map[string]*LFIRNode
-	Edges     map[string][]string // directed edges parent -> children
-    Metrics   LFIRMetrics
-}
-
-// NewLFIRGraph creates a new LFIR graph.
-type LFIRMetrics struct {
-    CoherenceScore float64
-    NodeCount int
-    EdgeCount int
+	Nodes     []*LFIRNode
+	Edges     []*LFIREdge
 	Metrics   LFIRMetrics
 }
 
 func NewLFIRGraph() *LFIRGraph {
 	return &LFIRGraph{
 		RootNodes: make([]string, 0),
-		Nodes:     make(map[string]*LFIRNode),
-		Edges:     make(map[string][]string),
+		Nodes:     make([]*LFIRNode, 0),
+		Edges:     make([]*LFIREdge, 0),
 	}
 }
 
 // AddNode adds a node to the graph.
 func (g *LFIRGraph) AddNode(node *LFIRNode) {
-	g.Nodes[node.ID] = node
+	g.Nodes = append(g.Nodes, node)
 }
 
 func (g *LFIRGraph) Link(parentID, childID string) {
-	g.Edges[parentID] = append(g.Edges[parentID], childID)
+	g.Edges = append(g.Edges, &LFIREdge{Source: parentID, Target: childID})
 }
 
 func (g *LFIRGraph) ToJSONFile(path string) error {
@@ -111,10 +94,4 @@ func (g *LFIRGraph) FindNodeByAttribute(key string, val interface{}) (*LFIRNode,
 		}
 	}
 	return nil, false
-func (g *LFIRGraph) ToJSONFile(filepath string) error {
-	data, err := json.MarshalIndent(g, "", "  ")
-	if err != nil {
-		return err
-	}
-	return os.WriteFile(filepath, data, 0644)
 }
