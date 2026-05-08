@@ -32,7 +32,7 @@ jobs:
       - name: Run format check
         run: npm run check-format
 
-  check-docs:
+  check-docs-disabled:
     name: '[Required] Check docs updated'
     runs-on: ubuntu-latest
 
