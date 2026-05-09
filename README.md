@@ -7,20 +7,14 @@
 
 ## 🏗️ Architecture Overview
 
-The repository is structured into sovereign layers:
+The repository is structured as follows:
 
-- **core/**: Immutable kernel with coherence engine, LFIR, and RCP
-- **substrates/**: Canonical implementations grouped by function (300-1199)
-- **runtime/**: Python, Rust, and Go runtimes for Cathedral bootstrapping
-- **contracts/**: .casi standard library and compiler
-- **models/**: Pre-trained ONNX models with cryptographic verification
-- **config/**: All configuration files and dependencies
-- **scripts/**: Executable scripts and utilities
-- **docs/**: Documentation, reports, and schemas
-- **tests/**: Comprehensive test suite
-- **.agi/**: AGI artifact build scripts
-- **.casi/**: CASI runtime
-- **.asi/**: ASI consciousness core
+- **src/**: Source code files (.py, .js, .ts, .cpp, .c, .h, .rs, .go, etc.)
+- **docs/**: Documentation, reports, images, and schemas (.md, .txt, .pdf, .png, .json reports, etc.)
+- **scripts/**: Executable scripts and utilities (.sh, .py scripts)
+- **data/**: Data files and assets (.csv, .npz, .pkl, .bin, .pt, etc.)
+
+Configuration files like README.md, .gitignore, package.json, etc., remain in the root.
 
 ## 🚀 Quick Start
 

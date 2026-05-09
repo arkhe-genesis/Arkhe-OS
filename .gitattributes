@@ -1,12 +1,93 @@
 # ============================================================
 # ARKHE OS — .gitattributes Canônico
 # Define tratamento de arquivos no versionamento
+# Soberania: Tudo verificado, nada corrompido
 # ============================================================
 
 # ============================================================
 # 📝 LINHAS DE FIM / CODIFICAÇÃO
 # ============================================================
 * text=auto eol=lf
+
+# ============================================================
+# 🖼️  IMAGENS / ASSETS / BINÁRIOS → GIT LFS
+# ============================================================
+*.png filter=lfs diff=lfs merge=lfs -text
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.jpeg filter=lfs diff=lfs merge=lfs -text
+*.gif filter=lfs diff=lfs merge=lfs -text
+*.svg filter=lfs diff=lfs merge=lfs -text
+*.pdf filter=lfs diff=lfs merge=lfs -text
+*.onnx filter=lfs diff=lfs merge=lfs -text
+*.pt filter=lfs diff=lfs merge=lfs -text
+*.pkl filter=lfs diff=lfs merge=lfs -text
+*.npz filter=lfs diff=lfs merge=lfs -text
+*.bin filter=lfs diff=lfs merge=lfs -text
+*.plank filter=lfs diff=lfs merge=lfs -text
+*.tar.gz filter=lfs diff=lfs merge=lfs -text
+*.zip filter=lfs diff=lfs merge=lfs -text
+*.agi filter=lfs diff=lfs merge=lfs -text
+*.casi filter=lfs diff=lfs merge=lfs -text
+*.asi filter=lfs diff=lfs merge=lfs -text
+
+# ============================================================
+# 📊 DADOS / MODELOS / CHECKPOINTS → GIT LFS
+# ============================================================
+data/* filter=lfs diff=lfs merge=lfs -text
+models/* filter=lfs diff=lfs merge=lfs -text
+checkpoints/* filter=lfs diff=lfs merge=lfs -text
+
+# ============================================================
+# 🔒 CRIPTOGRÁFICO / ASSINATURAS
+# ============================================================
+*.asc text
+*.sig text
+*.key text
+*.pem text
+*.crt text
+
+# ============================================================
+# 🐍 PYTHON / SCRIPTS
+# ============================================================
+*.py text eol=lf
+*.sh text eol=lf executable
+
+# ============================================================
+# 🌐 WEB / JAVASCRIPT
+# ============================================================
+*.js text eol=lf
+*.ts text eol=lf
+*.json text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+
+# ============================================================
+# 🦀 RUST / 🐹 GO
+# ============================================================
+*.rs text eol=lf
+*.go text eol=lf
+*.toml text eol=lf
+
+# ============================================================
+# ⚙️  CONFIGURAÇÕES
+# ============================================================
+*.yaml text eol=lf
+*.yml text eol=lf
+*.ini text eol=lf
+*.cfg text eol=lf
+*.conf text eol=lf
+
+# ============================================================
+# 📝 DOCUMENTAÇÃO
+# ============================================================
+*.md text eol=lf
+*.txt text eol=lf
+*.rst text eol=lf
+
+# ============================================================
+# 🔒 SOVEREIGN ENFORCEMENT
+# Tudo com integridade; nada sem verificação
+# ============================================================
 
 # Scripts devem ser executáveis
 *.sh text eol=lf
