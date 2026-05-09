@@ -1,5 +1,5 @@
 {
-  "version": "v1.3.0",
+  "version": "v1.3.1",
   "substrates": [
     {
       "id": 1,
@@ -30084,6 +30084,12 @@
       "name": "Sovereign Pip Package Integration",
       "status": "Canonized",
       "location": "agi/system32/pip_sovereign/"
+    },
+    {
+      "id": 5026,
+      "name": "Soberania Robótica Autônoma (Robotic Autonomy Framework)",
+      "status": "Canonized",
+      "location": "agi/system32/robotics/"
     }
   ]
 }
