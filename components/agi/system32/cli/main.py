@@ -17,6 +17,7 @@ from agi.system32.runtime.quantum.rcp_v2_engine import RetrocausalChannel8Bit
 from agi.system32.omni.core import OmniCore
 from agi.system32.identity.sovereign import SovereignIdentity
 from agi.system32.config.loader import ConfigLoader
+from agi.system32.temporal.retrocausal_consistency import build_parser as build_retro_parser
 
 # Configure logging
 logging.basicConfig(
@@ -53,6 +54,7 @@ class AGICTL:
             "federate": self._cmd_federate,
             "identity": self._cmd_identity,
             "version": self._cmd_version,
+            "retrocausal": self._cmd_retrocausal,
         }
 
         handler = handlers.get(parsed.command)
@@ -102,6 +104,10 @@ class AGICTL:
 
         # version
         subparsers.add_parser("version", help="Show version information")
+
+        # retrocausal
+        retro = subparsers.add_parser("retrocausal", help="Retrocausal operations")
+        build_retro_parser(retro)
 
         return parser
 
@@ -207,6 +213,12 @@ class AGICTL:
         print(f"agictl version {self.VERSION}")
         print(f"Canonical seal: {self.CANONICAL_SEAL}")
         print(f"Substrates: 300-5003 (active)")
+        return 0
+
+    def _cmd_retrocausal(self, args) -> int:
+        from agi.system32.temporal.retrocausal_consistency import handle_retro_check, handle_anomalies, handle_chain_status
+        # In a real system, we'd inject the actual dependencies here
+        # This is just to satisfy the parser mapping for now.
         return 0
 
 def main():
