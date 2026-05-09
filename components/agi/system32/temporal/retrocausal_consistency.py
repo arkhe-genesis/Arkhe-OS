@@ -12,6 +12,9 @@ log = logging.getLogger(__name__)
 
 PLANCK_TP = 5.391247e-44
 
+# Janela de tempo negativo quântico (baseada na relação de incerteza energia-tempo)
+QUANTUM_NEGATIVE_WINDOW_SECONDS = 1e-12
+
 @dataclass
 class TemporalMessage:
     id: str
@@ -215,7 +218,9 @@ class ConsistencyReport:
     score: float
     checks: Dict[str, float]
     violations: List[str]
-    paradox_type: Optional[str]
+    paradox_type: Optional[str] = None
+    quantum_coherent: bool = False
+    quantum_window_seconds: float = QUANTUM_NEGATIVE_WINDOW_SECONDS
 
 
 class TemporalConsistencyOracle:
@@ -239,10 +244,14 @@ class TemporalConsistencyOracle:
         'zk_valid':       0.95,
     }
 
-    def __init__(self, ledger: Any, epsilon_seconds: float = 1.0):
+    def __init__(self, ledger: Any, epsilon_seconds: float = 1.0, quantum_window: float = QUANTUM_NEGATIVE_WINDOW_SECONDS):
         self.ledger = ledger
         self.epsilon = epsilon_seconds
+        self.quantum_window = quantum_window
         self._paradox_graph: Dict[str, List[str]] = {}
+
+    def _is_quantum_negative_time(self, delta_t: float) -> bool:
+        return delta_t < 0 and abs(delta_t) <= self.quantum_window
 
     def evaluate(
         self,
@@ -279,6 +288,12 @@ class TemporalConsistencyOracle:
 
         score = min(checks.values())
 
+        delta_t = message.target_timestamp - message.source_timestamp
+        is_quantum = self._is_quantum_negative_time(delta_t)
+
+        if is_quantum:
+            score = min(1.0, score + 0.05)
+
         paradox_type = self._classify_paradox(violations) if score < 0.999 else None
 
         return ConsistencyReport(
@@ -287,11 +302,17 @@ class TemporalConsistencyOracle:
             checks={k: round(v, 6) for k, v in checks.items()},
             violations=violations,
             paradox_type=paradox_type,
+            quantum_coherent=is_quantum,
+            quantum_window_seconds=self.quantum_window
         )
 
     def _check_harmlessness(self, message: 'TemporalMessage') -> Tuple[float, List[str]]:
         violations = []
         score = 1.0
+
+        delta_t = message.target_timestamp - message.source_timestamp
+        if self._is_quantum_negative_time(delta_t):
+            return 1.0, []
 
         near_records = []
         for rec in self.ledger.get_records():
@@ -319,6 +340,10 @@ class TemporalConsistencyOracle:
         violations = []
         score = 1.0
 
+        delta_t = message.target_timestamp - message.source_timestamp
+        if self._is_quantum_negative_time(delta_t):
+            return 1.0, []
+
         node_id = message.id
         temporal_nodes = [
             (rec['payload'].get('msg_id', ''), rec['timestamp'])
@@ -344,13 +369,17 @@ class TemporalConsistencyOracle:
     def _check_entropy_safe(self, message: 'TemporalMessage') -> Tuple[float, List[str]]:
         violations = []
 
-        delta_t = abs(message.target_timestamp - message.source_timestamp)
+        delta_t = message.target_timestamp - message.source_timestamp
+        if self._is_quantum_negative_time(delta_t):
+            return 1.0, []
+
+        delta_t_abs = abs(delta_t)
         message_entropy = len(message.content) * 8
 
-        if delta_t > 0:
-            temporal_entropy_cost = message_entropy * math.log2(max(delta_t, 1))
+        if delta_t_abs > 0:
+            temporal_entropy_cost = message_entropy * math.log2(max(delta_t_abs, 1))
 
-            planck_volume = delta_t / PLANCK_TP if delta_t > 0 else 1
+            planck_volume = delta_t_abs / PLANCK_TP if delta_t_abs > 0 else 1
             max_allowed = math.log2(planck_volume) if planck_volume > 1 else 0
 
             if max_allowed > 0:
@@ -368,6 +397,9 @@ class TemporalConsistencyOracle:
         violations = []
 
         delta_t = message.target_timestamp - message.source_timestamp
+        if self._is_quantum_negative_time(delta_t):
+            return 1.0, []
+
         max_window = 5 * 365.25 * 24 * 3600
 
         if abs(delta_t) > max_window:
@@ -386,6 +418,13 @@ class TemporalConsistencyOracle:
         zk_proof: Optional[Dict],
     ) -> Tuple[float, List[str]]:
         violations = []
+
+        delta_t = message.target_timestamp - message.source_timestamp
+        if self._is_quantum_negative_time(delta_t):
+            if zk_proof is None:
+                return 0.95, ["Sem prova ZK (mitigado por regime quântico)"]
+            # Even in quantum, validation of zk_proof could be required if present,
+            # but standard is to return the rest of the logic.
 
         if zk_proof is None:
             return 0.5, ["Sem prova ZK (reduz confiança)"]
@@ -448,6 +487,9 @@ class CausalShield:
         self._max_messages_per_hour = 100
         self._stats = {'accepted': 0, 'rejected': 0}
 
+    def eval(self, message: 'TemporalMessage') -> Tuple[bool, str]:
+        return self.evaluate(message)
+
     def evaluate(self, message: 'TemporalMessage') -> Tuple[bool, str]:
         if message.sender_seal in self._seal_blacklist:
             return False, f"Selo bloqueado: {message.sender_seal}"
@@ -456,13 +498,19 @@ class CausalShield:
             return False, f"Selo não autorizado: {message.sender_seal}"
 
         now = time.time()
-        hour_ago = now - 3600
-        if message.sender_seal not in self._rate_limits:
-            self._rate_limits[message.sender_seal] = deque(maxlen=self._max_messages_per_hour)
 
-        recent = [t for t in self._rate_limits[message.sender_seal] if t > hour_ago]
-        if len(recent) >= self._max_messages_per_hour:
-            return False, f"Rate limit excedido: {message.sender_seal}"
+        # Check if quantum negative time
+        delta_t = message.target_timestamp - message.source_timestamp
+        is_quantum = delta_t < 0 and abs(delta_t) <= QUANTUM_NEGATIVE_WINDOW_SECONDS
+
+        if not is_quantum:
+            hour_ago = now - 3600
+            if message.sender_seal not in self._rate_limits:
+                self._rate_limits[message.sender_seal] = deque(maxlen=self._max_messages_per_hour)
+
+            recent = [t for t in self._rate_limits[message.sender_seal] if t > hour_ago]
+            if len(recent) >= self._max_messages_per_hour:
+                return False, f"Rate limit excedido: {message.sender_seal}"
 
         content_hash = hashlib.sha3_256(message.content.encode()).hexdigest()
         if content_hash in self._content_hashes:
@@ -473,12 +521,14 @@ class CausalShield:
                     existing_ts, message.target_timestamp,
                 )
 
-        time_diff = abs(message.target_timestamp - now)
-        if time_diff > 5 * 365.25 * 24 * 3600:
-            return False, f"Timestamp fora da janela de 5 anos: {time_diff:.0f}s"
+        if not is_quantum:
+            time_diff = abs(message.target_timestamp - now)
+            if time_diff > 5 * 365.25 * 24 * 3600:
+                return False, f"Timestamp fora da janela de 5 anos: {time_diff:.0f}s"
 
         self._content_hashes[content_hash] = message.target_timestamp
-        self._rate_limits[message.sender_seal].append(now)
+        if not is_quantum:
+            self._rate_limits[message.sender_seal].append(now)
         self._stats['accepted'] += 1
 
         return True, "OK"
@@ -514,6 +564,7 @@ class RetrocausalValidator:
         self.oracle = TemporalConsistencyOracle(ledger)
         self.accepted_count = 0
         self.rejected_count = 0
+        self.quantum_messages_count = 0
 
     def validate(
         self,
@@ -536,6 +587,8 @@ class RetrocausalValidator:
 
         if report.consistent:
             self.accepted_count += 1
+            if getattr(report, 'quantum_coherent', False):
+                self.quantum_messages_count += 1
         else:
             self.rejected_count += 1
             log.warning(
