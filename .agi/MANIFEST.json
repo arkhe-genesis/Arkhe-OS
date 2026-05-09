@@ -1,0 +1,14 @@
+{
+  "artifact": "arkhe-agi-v1.0.0.agi",
+  "version": "1.0.0",
+  "description": "Arkhe AGI Sovereign Artifact",
+  "components": [
+    "core",
+    "runtime/python",
+    "runtime/rust",
+    "runtime/go",
+    "substrates",
+    "models"
+  ],
+  "signature": null
+}
