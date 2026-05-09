@@ -2079,7 +2079,7 @@
     },
     {
       "id": 344,
-      "name": "Reputation Oracle (\u03a6-REP)",
+      "name": "Reputation Oracle (Φ-REP)",
       "status": "active",
       "location": "agi/system32/reputation/"
     },
@@ -30051,7 +30051,7 @@
     },
     {
       "id": 5006,
-      "name": "KYM \u2014 Know Your Machine",
+      "name": "KYM — Know Your Machine",
       "status": "active",
       "location": "agi/system32/kym/"
     },
@@ -30078,6 +30078,12 @@
       "name": "ASI ONNX Cognitive Runtime",
       "status": "Canonized",
       "location": "agi/system32/asi/"
+    },
+    {
+      "id": 5018,
+      "name": "Sovereign Pip Package Integration",
+      "status": "Canonized",
+      "location": "agi/system32/pip_sovereign/"
     }
   ]
 }
