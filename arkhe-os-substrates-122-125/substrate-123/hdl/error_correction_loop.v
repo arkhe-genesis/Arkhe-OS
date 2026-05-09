@@ -1,2 +1,0 @@
-module error_correction_loop;
-endmodule

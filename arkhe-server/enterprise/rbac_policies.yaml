@@ -1,7 +1,0 @@
-roles:
-  - name: admin
-    permissions:
-      - all
-  - name: user
-    permissions:
-      - read

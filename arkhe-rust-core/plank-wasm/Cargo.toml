@@ -1,8 +1,0 @@
-[package]
-name = "plank-wasm"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-cranelift-codegen.workspace = true
-cranelift-frontend.workspace = true
