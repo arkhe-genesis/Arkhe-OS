@@ -23,11 +23,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22.x'
-          cache: 'npm'
+          cache: ''
       - name: Install Dependencies
-        run: npm install
+        run: # npm install (no package.json)
       - name: Run Lint
-        run: npm run lint
+        run: # npm run lint
       - name: Security Scan (Trivy)
         uses: aquasecurity/trivy-action@master
         with:
@@ -48,7 +48,7 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '22.x'
-        cache: 'npm'
+        cache: ''
 
     - name: Setup Go
       uses: actions/setup-go@v5

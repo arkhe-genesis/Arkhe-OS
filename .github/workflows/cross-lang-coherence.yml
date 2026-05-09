@@ -19,7 +19,7 @@ jobs:
         run: |
           case "${{ matrix.lang }}" in
             python) pip install -e .[test]; pytest tests/ --arkhe --json > pytest.json ;;
-            typescript) npm ci; npm test -- --json > jest.json ;;
+            typescript) npm install; npm test -- --json > jest.json ;;
             rust) cargo test --message-format=json > cargo.json ;;
             go) go test ./... -json > go.json ;;
           esac
