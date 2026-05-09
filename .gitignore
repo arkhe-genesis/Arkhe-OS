@@ -526,3 +526,6 @@ build/pyinstaller/
 *.temp.*
 *.backup
 *.bak
+app_arkhe/frontend/node_modules
+final_app_arkhe/frontend/node_modules
+arkhe-os/ui/desktop/node_modules
