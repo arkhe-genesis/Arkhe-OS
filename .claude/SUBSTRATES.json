@@ -2079,7 +2079,7 @@
     },
     {
       "id": 344,
-      "name": "Reputation Oracle (Φ-REP)",
+      "name": "Reputation Oracle (\u03a6-REP)",
       "status": "active",
       "location": "agi/system32/reputation/"
     },
@@ -30051,9 +30051,33 @@
     },
     {
       "id": 5006,
-      "name": "KYM — Know Your Machine",
+      "name": "KYM \u2014 Know Your Machine",
       "status": "active",
       "location": "agi/system32/kym/"
+    },
+    {
+      "id": "5015",
+      "name": "ONNX Runtime Polyglot Integration",
+      "status": "Canonized",
+      "location": "agi/system32/onnx/"
+    },
+    {
+      "id": "5016",
+      "name": "ASI ONNX Cognitive Runtime",
+      "status": "Canonized",
+      "location": "agi/system32/asi/"
+    },
+    {
+      "id": 5015,
+      "name": "ONNX Runtime Polyglot Integration",
+      "status": "Canonized",
+      "location": "agi/system32/onnx/"
+    },
+    {
+      "id": 5016,
+      "name": "ASI ONNX Cognitive Runtime",
+      "status": "Canonized",
+      "location": "agi/system32/asi/"
     }
   ]
 }

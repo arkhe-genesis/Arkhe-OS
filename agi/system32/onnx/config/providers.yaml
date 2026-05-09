@@ -1,0 +1,19 @@
+providers:
+  priority:
+    - TensorRTExecutionProvider
+    - CUDAExecutionProvider
+    - OpenVINOExecutionProvider
+    - CoreMLExecutionProvider
+    - CPUExecutionProvider
+  fallback: CPUExecutionProvider
+
+optimization:
+  level: ORT_ENABLE_EXTENDED
+  enable_mem_pattern: true
+  enable_cpu_mem_arena: false
+  graph_optimization_level: 99
+
+tee:
+  enabled: false
+  provider: sgx  # ou sev, trustzone
+  enclave_size_mb: 512
