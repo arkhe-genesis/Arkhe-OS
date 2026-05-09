@@ -109,6 +109,18 @@ class AGICTL:
         retro = subparsers.add_parser("retrocausal", help="Retrocausal operations")
         build_retro_parser(retro)
 
+        net_parser = parser.add_argument_group('RetroNet — Internet Retrocausal')
+        net_parser.add_argument('--retro-net', action='store_true', help='Inicia módulo RetroNet')
+        net_parser.add_argument('--node-id', type=str, default=None, help='ID do nó nesta rede')
+        net_parser.add_argument('--create-net', type=str, default=None, help='Cria nova rede (salva em arquivo)')
+        net_parser.add_argument('--join-net', type=str, default=None, help='Entra numa rede existente')
+        net_parser.add_argument('--peer-with', type=str, default=None, help='Conectar com nó')
+        net_parser.add_argument('--net-send', type=str, default=None, help='Enviar mensagem para nó')
+        net_parser.add_argument('--net-ping', type=str, default=None, help='Ping retrocausal')
+        net_parser.add_argument('--net-traceroute', type=str, default=None, help='Traceroute retrocausal')
+        net_parser.add_argument('--net-broadcast', action='store_true', help='Broadcast na rede')
+        net_parser.add_argument('--net-topology', action='store_true', help='Topologia da rede')
+
         return parser
 
     def _cmd_status(self, args) -> int:
