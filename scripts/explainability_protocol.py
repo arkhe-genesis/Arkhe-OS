@@ -1,85 +1,92 @@
-# explainability_protocol.py — Protocolo de explicabilidade em linguagem natural
+# explainability_protocol.py — Narrador que traduz decisões em palavras humanas
 
-from typing import Dict, Any, List
+from typing import Dict, List, Any
+from audit_logger import AuditRecord, DecisionType
 import logging
 
-class ExplainabilityProtocol:
+class DecisionNarrator:
     """
-    Traduz decisões técnicas e métricas de modelos para stakeholders não-técnicos.
+    Gera explicações em linguagem natural para decisões automatizadas,
+    adaptadas ao público-alvo.
     """
 
-    @staticmethod
-    def translate_decision(
-        decision_type: str,
-        context: Dict[str, Any],
-        model_metrics: Dict[str, float] = None,
-        top_features: List[str] = None
-    ) -> str:
-        """
-        Gera uma explicação em linguagem natural para uma decisão técnica.
-        """
-
-        explanation_templates = {
-            "PROACTIVE_ALERT": (
-                "A Catedral detectou uma tendência de instabilidade no subsistema '{subsystem}'. "
-                "Baseado em padrões históricos, há uma probabilidade de {confidence}% de que o Ω-score caia "
-                "abaixo do limite de segurança ({threshold}) nos próximos {horizon} minutos. "
-                "Os fatores principais que levaram a esta conclusão foram: {features}."
-            ),
-            "RECOVERY_ACTION": (
-                "Para prevenir uma degradação iminente do sistema, a Catedral decidiu aplicar a ação '{action}'. "
-                "Esta medida visa reduzir o risco detectado pelo alerta '{alert_id}'. "
-                "O impacto esperado é uma melhoria de {omega_delta} no Ω-score vital, "
-                "priorizando a continuidade do serviço sobre a carga máxima."
-            ),
-            "MODEL_PROMOTION": (
-                "Um novo modelo de inteligência artificial foi promovido para o subsistema '{metric}'. "
-                "O novo modelo (v{new_version}) demonstrou uma melhoria de {improvement}% na precisão "
-                "em relação ao modelo anterior (v{old_version}) durante a fase de validação (Shadow Mode). "
-                "Esta atualização aumenta a confiabilidade das predições preventivas."
-            ),
-            "COMPLIANCE_MITIGATION": (
-                "Uma ação de correção foi executada automaticamente devido a uma inconformidade regulatória. "
-                "O registro de decisão '{original_id}' foi identificado como violando os requisitos de {violations}. "
-                "Como medida de segurança, o sistema realizou '{mitigation}' para garantir a proteção de dados e a governança."
-            )
+    AUDIENCE_TEMPLATES = {
+        "EXECUTIVE": {
+            "intro": "Uma ação automática foi tomada para {intent}.",
+            "impacto": "O impacto esperado é {beneficio} e o serviço {status}.",
+            "acao_recomendada": "Nenhuma ação manual é necessária neste momento."
+        },
+        "TECHNICAL": {
+            "intro": "O modelo {modelo} previu que '{metrica}' atingiria {valor_previsto}.",
+            "detalhes": "Fatores principais: {fatores}. Confiança: {confianca}%.",
+            "resultado": "Após a ação '{acao}', a métrica foi para {valor_final} (Δ={delta})."
+        },
+        "REGULATORY": {
+            "intro": "Decisão automatizada registrada sob o ID {decision_id}.",
+            "compliance": "Em conformidade com {compliance_tags}. Viés detectado: {bias}%.",
+            "rastreabilidade": "Auditável via hash {hash} no Livro de Bronze."
+        },
+        "CITIZEN": {
+            "intro": "Nossos sistemas identificaram uma situação que precisava de ajuste.",
+            "direitos": "Esta ação foi reversível e seus dados não foram utilizados.",
+            "contato": "Dúvidas podem ser enviadas para nosso DPO em {dpo_email}."
         }
+    }
 
-        template = explanation_templates.get(decision_type, "Decisão técnica executada para manutenção da estabilidade do sistema.")
+    def __init__(self, llm_available=False):
+        self.llm_available = llm_available
 
-        # Preenchimento inteligente baseado no contexto
-        features_str = ", ".join(top_features) if top_features else "múltiplas métricas de latência e erro"
+    def generate_narrative(self, decision: AuditRecord, audience: str, lang: str = "pt") -> str:
+        """
+        Gera uma explicação em linguagem natural para a decisão.
+        """
+        templates = self.AUDIENCE_TEMPLATES.get(audience, self.AUDIENCE_TEMPLATES["TECHNICAL"])
 
-        try:
-            if decision_type == "PROACTIVE_ALERT":
-                return template.format(
-                    subsystem=context.get("metric", "desconhecido"),
-                    confidence=int(context.get("confidence", 0.8) * 100),
-                    threshold=context.get("threshold", 0.85),
-                    horizon=context.get("prediction_horizon", 10),
-                    features=features_str
-                )
-            elif decision_type == "RECOVERY_ACTION":
-                return template.format(
-                    action=context.get("action_name", "redução de carga"),
-                    alert_id=context.get("alert_id", "tendência_negativa"),
-                    omega_delta=context.get("expected_improvement", 0.05)
-                )
-            elif decision_type == "MODEL_PROMOTION":
-                return template.format(
-                    metric=context.get("metric", "Ω-core"),
-                    new_version=context.get("new_version", "2.0"),
-                    old_version=context.get("old_version", "1.9"),
-                    improvement=int(context.get("improvement", 0.05) * 100)
-                )
-            elif decision_type == "COMPLIANCE_MITIGATION":
-                return template.format(
-                    original_id=context.get("original_decision", "N/A"),
-                    violations=context.get("violations_str", "conformidade"),
-                    mitigation=context.get("mitigation_action", "suspensão da atividade")
-                )
-        except Exception as e:
-            logging.error(f"Erro ao gerar explicação: {e}")
-            return "A Catedral executou uma ação técnica baseada em análise de dados para garantir a resiliência."
+        # Preenche os templates com dados do registro
+        narrative = ""
+        if audience == "EXECUTIVE":
+            # outcome simulation
+            omega_before = decision.context.get("omega_before", 0.9)
+            omega_after = decision.context.get("omega_after", 0.95)
+            narrative = templates["intro"].format(
+                intent="manter a estabilidade do serviço" if omega_after > omega_before else "mitigar uma degradação"
+            )
+            narrative += " " + templates["impacto"].format(
+                beneficio="alto" if decision.expected_impact.get("benefit", 0) > 0.7 else "moderado",
+                status="foi estabilizado" if decision.context.get("validation") == "SUCCESS" else "necessita de atenção"
+            )
+        elif audience == "TECHNICAL":
+            narrative = templates["intro"].format(
+                modelo=decision.model_version or "v1.0",
+                metrica=decision.context.get("trigger_metric", "desconhecida"),
+                valor_previsto=decision.context.get("trigger_value", "N/A")
+            )
+            factors = decision.explainability.get("top_features", [])
+            narrative += " " + templates["detalhes"].format(
+                fatores=", ".join([f"{f[0]} ({f[1]})" for f in factors]),
+                confianca=decision.context.get("confidence", 0) * 100
+            )
+        elif audience == "REGULATORY":
+            narrative = templates["intro"].format(decision_id=decision.decision_id)
+            narrative += " " + templates["compliance"].format(
+                compliance_tags=", ".join(decision.compliance_tags),
+                bias=decision.context.get("bias", 0.0) * 100
+            )
+            narrative += " " + templates["rastreabilidade"].format(
+                hash=decision.merkle_root[:16] if decision.merkle_root else "N/A"
+            )
+        elif audience == "CITIZEN":
+            narrative = templates["intro"]
+            narrative += " " + templates["direitos"]
+            narrative += " " + templates["contato"].format(dpo_email="dpo@cathedral.ark")
+        else:
+            narrative = "Explicação para " + audience + " em desenvolvimento."
 
-        return template
+        # (Opcional) Utilizar LLM para polir a narrativa final
+        if self.llm_available:
+            narrative = self._polish_with_llm(narrative, audience, lang)
+
+        return narrative
+
+    def _polish_with_llm(self, draft: str, audience: str, lang: str) -> str:
+        return draft

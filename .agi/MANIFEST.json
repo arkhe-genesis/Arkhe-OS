@@ -1,0 +1,16 @@
+{
+    "name": "arkhe-agi-v1.0.0.agi",
+    "version": "1.0.0",
+    "description": "Arkhe AGI Sovereign Intelligence",
+    "components": [
+        "core",
+        "substrates",
+        "runtime",
+        "models",
+        "contracts"
+    ],
+    "integrity": {
+        "sha256": "placeholder"
+    },
+    "signature": "placeholder"
+}
