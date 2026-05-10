@@ -21,6 +21,9 @@ import json
 import logging
 import math
 import time
+
+from substrate_6041_router import CausalPartialOrderRoutingTable, TemporalEdge, MultiverseRouter
+
 import uuid
 import struct
 import socket
@@ -899,15 +902,52 @@ class TemporalFirewall:
 # RETRO ROUTER
 # ============================================================================
 
+
+class TemporalRoutingTableCompatWrapper:
+    def __init__(self, node_id: str):
+        self._table = CausalPartialOrderRoutingTable(node_id)
+        self._peers: Dict[str, TAddr] = {}
+        self._bh: Set[str] = set()
+
+    def add(self, dest, nh, nh_addr, cost=1.0, via=False, conf=0.8, ttl=3600):
+        edge = TemporalEdge(
+            dest=dest,
+            next_hop=nh,
+            cost=cost,
+            consistency=conf,
+            expires=time.time() + ttl
+        )
+        self._table.add_route(edge)
+
+    def direct_peer(self, pid, addr):
+        self._peers[pid] = addr
+        self.add(pid, pid, str(addr), 0.0, True, 0.99, 3600 * 4)
+
+    def find_best_route(self, dest, oracle_check_fn=None):
+        if dest in self._bh:
+            return None
+        return self._table.find_best_route(dest, oracle_check_fn=oracle_check_fn)
+
 class RetroRouter:
     def __init__(self, node):
         self.node = node
-        self.rt = TemporalRoutingTable(node.nid)
+        self.rt = TemporalRoutingTableCompatWrapper(node.nid)
         self.tdns = TemporalDNS()
         self.fw = TemporalFirewall(node.nid)
         self.pkt_log: List[Dict] = []
         self._upd_t = 0
         self._hb_t = 0
+        self._use_partial_order = True
+
+        # We also need a reference to the oracle to use it in route
+        # RetroRouter is usually instantiated with node, which has ledger/oracle or we get it via global if needed.
+        # But we will rely on a local wrapper.
+
+    def _oracle_check_fn(self, u: int, v: int) -> bool:
+        # Poda arestas usando o Consistency Oracle.
+        # Idealmente acessaríamos o TemporalConsistencyOracle.
+        # Se 'self.node' tiver ledger e oracle...
+        return True
 
     def route(self, pkt, ingress=None):
         if pkt.header.ttl_expired():
@@ -917,14 +957,18 @@ class RetroRouter:
         try:
             da = TAddr.parse(pkt.header.dst)
         except: return None
+
         if da.node_id == self.node.nid: return "__LOCAL__"
-        route = self.rt.lookup(da)
+
+        route = self.rt.find_best_route(da.node_id, oracle_check_fn=self._oracle_check_fn)
         if route:
-            log.debug(f"Route: {pkt.header.dst} via {route.next_hop}")
-            return route.next_hop
+            log.debug(f"Route: {pkt.header.dst} via {route.hops[0] if route.hops else route.destination}")
+            return route.hops[0] if route.hops else route.destination
+
         # Default gateway
-        dr = self.rt.lookup(TAddr.from_parts("DEFAULT-GW", time.time()))
-        if dr: return dr.next_hop
+        dr = self.rt.find_best_route("DEFAULT-GW", oracle_check_fn=self._oracle_check_fn)
+        if dr: return dr.hops[0] if dr.hops else dr.destination
+
         log.warning(f"No route: {pkt.header.dst}")
         self._err(pkt, "NO_ROUTE"); return None
 

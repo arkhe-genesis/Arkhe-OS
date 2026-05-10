@@ -40,15 +40,14 @@ from temporal_network import (
 class IntegrityError(Exception): pass
 class SolarPlasmaModel: pass
 class TimelineBranch: pass
-class MultiverseRouter:
-    def __init__(self, ledger, chain):
-        pass
 
-# Tenta importar as originais caso existam
+from substrate_6041_router import MultiverseRouter
+
 try:
-    from temporal_network import MultiverseRouter, TimelineBranch, SolarPlasmaModel, IntegrityError
+    from temporal_network import TimelineBranch, SolarPlasmaModel, IntegrityError
 except ImportError:
     pass
+
 
 # ============================================================================
 # CONSTANTES
