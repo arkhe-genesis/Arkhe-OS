@@ -1,14 +1,10 @@
-1. **Modify `create_branch` in `temporal_network.py`**:
-   - Update the signature of `create_branch` in the `MultiverseRouter` class to accept an optional `base_timeline: str = "main"` parameter.
-   - Use `base_timeline=base_timeline` when creating the `TimelineBranch` instead of hardcoding it to `"main"`.
-
-2. **Implement Kripke Semantics Validation in `MultiverseRouter`**:
-   - Add a method `is_accessible(self, world_a: str, world_b: str) -> bool` to check if `world_b` is accessible from `world_a` based on the branch hierarchy (base_timeline), ensuring reflexivity by returning `True` if `world_a == world_b`.
-   - Add a method `verify_kripke_semantics(self) -> bool` that iterates through all branches to explicitly check if the accessibility relation satisfies the reflexive and transitive properties required by Kripke semantics for intuitionistic logic.
-
-3. **Pre-commit Steps**:
-   - Ensure proper testing, verification, review, and reflection are done by calling `pre_commit_instructions`.
-
-4. **Submit Change**:
-   - Run a test script to ensure `temporal_network.py` parses correctly and the new methods work as expected.
-   - Commit and submit.
+1. **Understand the problem**: The goal is to implement the ARKHE Ω-TEMP protocol using x86-64 assembly language (NASM syntax) based on the provided project structure and source files. The structure comprises multiple modules (`arkhe.asm`, `temporal.asm`, `keccak.asm`, `oracle.asm`, `heap.asm`, `dijkstra.asm`, `merkle.asm`, `bn128.asm`, `falcon.asm`, `routing.asm`, `shield.asm`, `syscall.asm`, `trie.asm`) and a main `Makefile`.
+2. **Current state**: I have already created the initial directory structure, copied the provided code into their respective `.asm` files, created the `arkhe.inc` header file with required constants and macros, and created the `Makefile`. I have also fixed various syntax and compilation errors across multiple files (like undefined symbols, unaligned jumps/calls, fixing FPU instruction mismatches with SIMD in `heap.asm`, fixing the Makefile for proper object linking). Currently, the codebase successfully compiles and runs the `run_tests` binary.
+3. **Completing Pre-Commit Steps**:
+   - I need to run `pre_commit_instructions` to fetch validation/review instructions.
+   - I will review the final codebase to ensure there are no lingering compilation warnings or errors that signify broken logic, although the `run_tests` binary works.
+   - The user requested that we shouldn't use high-level abstraction and strictly rely on the hardware.
+   - Ensure the structure strictly matches `arkhe-asm/src`, `arkhe-asm/include`, `arkhe-asm/test` etc.
+4. **Finalizing**:
+   - Execute the code, prove that `make verify` and `make` both pass without critical errors and produce the expected binaries.
+   - Submit the changes under the requested format.
