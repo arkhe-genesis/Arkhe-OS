@@ -480,6 +480,35 @@ class MultiverseRouter:
             raise TimelineNotFoundError(f"Branch '{branch_id}' não encontrada")
         return self.branches[branch_id]
 
+    def is_accessible(self, world_a: str, world_b: str) -> bool:
+        if world_a == world_b:
+            return True
+        current = world_b
+        visited = set([current])
+        while current in self.branches and current != "main":
+            parent = self.branches[current].base_timeline
+            if parent == world_a:
+                return True
+            if parent in visited:
+                break
+            visited.add(parent)
+            current = parent
+        return False
+
+    def verify_kripke_semantics(self) -> bool:
+        branches = list(self.branches.keys())
+        for w in branches:
+            if not self.is_accessible(w, w):
+                return False
+        for w1 in branches:
+            for w2 in branches:
+                if self.is_accessible(w1, w2):
+                    for w3 in branches:
+                        if self.is_accessible(w2, w3):
+                            if not self.is_accessible(w1, w3):
+                                return False
+        return True
+
     def inter_branch_message(self, src_branch: str, dst_branch: str,
                               content: str, priority: int = 2) -> Tuple[bool, str, float]:
         if src_branch not in self.branches: return False, f"Branch origem '{src_branch}' não existe", 0.0
