@@ -1,0 +1,8 @@
+[package]
+name = "arkhe-polyglot"
+version = "5.0.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }
+parser-core = { path = "../../parser-core" }
