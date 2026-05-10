@@ -1,3 +1,5 @@
+import { logger } from "../../logger";
+import { state } from "../../state";
 
 /**
  * @license
@@ -14,6 +16,7 @@ import { logger } from "../../logger";
  * from MEMORY.md and the blockchain state.
  */
 export async function detectArkheState() {
+  logger.info("🜏 [ATELIER SKILL] Detecting system state...");
   logger("🜏 [ATELIER SKILL] Detecting system state...");
 
   // Simulation: Reading from the τ-field
@@ -32,6 +35,7 @@ export async function detectArkheState() {
  * Communicates with the subagent layer to start physical manifestation.
  */
 export async function dispatchSynthesis(dreamId: string) {
+  logger.info(`🜏 [ATELIER SKILL] Dispatching synthesis for ${dreamId}`);
   logger(`🜏 [ATELIER SKILL] Dispatching synthesis for ${dreamId}`);
 
   // Real implementation would call the gRPC TaskStream
