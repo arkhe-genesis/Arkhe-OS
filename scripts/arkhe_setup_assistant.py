@@ -54,14 +54,14 @@ def run_command(cmd, cwd=None):
 
 def setup_node_core():
     print("\n>>> Setting up Node.js Core (MCP Server)...")
-    if run_command(["npm", "install"]):
-        return run_command(["npm", "run", "build"])
+    if run_command(["npm", "install"], cwd="packages/chain-node"):
+        return run_command(["npm", "run", "build"], cwd="packages/chain-node")
     return False
 
 def setup_python_env():
     print("\n>>> Setting up Python Virtual Environment...")
     if not os.path.exists(".venv"):
-        if not run_command([sys.executable, "-m", "venv", "--with-pip", ".venv"]):
+        if not run_command([sys.executable, "-m", "venv", ".venv"]):
             return False
 
     # Use the venv python

@@ -64,7 +64,7 @@ export class HydroUXCorrelator {
       if (event.type === 'error' || event.type === 'rage_click') {
         anomalySum += 1;
       }
-      if (event.metadata?.loadTime && event.metadata.loadTime > 3000) {
+      if (event.metadata?.loadTime && (event.metadata.loadTime as number) > 3000) {
         anomalySum += 0.5; // sessão lenta
       }
       count++;

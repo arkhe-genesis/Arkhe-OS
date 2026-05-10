@@ -19,7 +19,7 @@ export class PostHogConnector extends BaseConnector {
       loaded: () => {
         // Override do capture original para interceptar
         const originalCapture = (posthog.capture as (eventName: string, properties?: unknown) => void).bind(posthog);
-        posthog.capture = (eventName: string, properties?: unknown) => {
+        posthog.capture = (eventName: string, properties?: unknown): any => {
           // Envia para PostHog (comportamento normal)
           const result = originalCapture(eventName, properties);
 
@@ -42,7 +42,7 @@ export class PostHogConnector extends BaseConnector {
     return {
       type: this.mapEventType(phEvent.eventName),
       timestamp: Date.now(),
-      target: phEvent.properties?.$current_url,
+      target: phEvent.properties?.$current_url as string | undefined,
       metadata: {
         posthogEvent: phEvent.eventName,
         distinctId: phEvent.properties?.distinct_id,
