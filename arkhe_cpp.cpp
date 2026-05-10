@@ -127,6 +127,11 @@ public:
         return h;
     }
 
+    void recordMitoticEvent(const std::string &daughterA_id, const std::string &daughterB_id) {
+        std::string payload = "{\"type\": \"MITOSIS\", \"daughterA\": \"" + daughterA_id + "\", \"daughterB\": \"" + daughterB_id + "\"}";
+        record("MITOSIS", payload);
+    }
+
     std::vector<Entry> get_records(int limit = 500, int offset = 0) const {
         std::lock_guard lock(mtx_);
         int start = std::max(0, (int)entries_.size() - offset - limit);
@@ -182,10 +187,14 @@ struct ConsistencyReport {
 // ============================================================================
 // SUBSTRATE 5034 — TEMPORAL CONSISTENCY ORACLE
 // ============================================================================
+class TemporalHashChain;
+
 class TemporalConsistencyOracle {
 public:
     explicit TemporalConsistencyOracle(AuditLedger &ledger, double epsilon = 1.0)
         : ledger_(ledger), epsilon_(epsilon) {}
+
+    void validateG2Checkpoint(const TemporalHashChain &chain);
 
     ConsistencyReport evaluate(const TemporalMessage &msg,
                                const std::optional<std::map<std::string, std::string>> &zk_proof = {}) {
@@ -319,6 +328,8 @@ public:
         return {report.consistent, report.score, report, true, reason};
     }
 
+    TemporalConsistencyOracle& oracle() { return oracle_; }
+
 private:
     CausalShield shield_;
     TemporalConsistencyOracle oracle_;
@@ -370,9 +381,25 @@ public:
     size_t length() const { return chain_.size(); }
     std::string head_hash() const { return chain_.back().block_hash(); }
 
+    TemporalHashChain deepCopy() const {
+        TemporalHashChain copy;
+        copy.chain_ = this->chain_; // std::vector's copy assignment does a deep copy
+        return copy;
+    }
+
 private:
     std::vector<TemporalBlock> chain_;
 };
+
+void TemporalConsistencyOracle::validateG2Checkpoint(const TemporalHashChain &chain) {
+    // Simple G2 verification: evaluate genome (ledger & chain lengths / integrity)
+    if (!ledger_.verify_integrity()) {
+        throw std::runtime_error("G2 Checkpoint failed: Ledger integrity compromised.");
+    }
+    if (chain.length() == 0) {
+        throw std::runtime_error("G2 Checkpoint failed: Hash chain is empty.");
+    }
+}
 
 // ============================================================================
 // SUBSTRATE 6041 — PARTIAL‑ORDER ROUTING (Fibonacci Heap + Batch)
@@ -473,12 +500,59 @@ public:
 
     TemporalHashChain &chain() { return chain_; }
 
+    std::string node_id() const { return node_id_; }
+
+protected:
+    RetrocausalValidator validator_;
+    TemporalHashChain chain_;
+    AuditLedger &ledger_;
 private:
     std::string node_id_;
     TemporalRoutingTable routing_table_;
-    RetrocausalValidator validator_;
-    AuditLedger &ledger_;
-    TemporalHashChain chain_;
+};
+
+// ============================================================================
+// SUBSTRATO 6060 — MITOTIC ROUTER
+// ============================================================================
+class MitoticRouter : public RetroRouter {
+public:
+    MitoticRouter(const std::string &node_id, AuditLedger &ledger)
+        : RetroRouter(node_id, ledger) {}
+
+    MitoticRouter(const std::string &node_id, AuditLedger &ledger, const TemporalHashChain &inherited_chain)
+        : RetroRouter(node_id, ledger) {
+        chain_ = inherited_chain;
+    }
+
+    void synthesisPhase() {
+        // Duplicate the temporal chain into two identical copies.
+        chain_sister_ = chain_.deepCopy();
+        validator_.oracle().validateG2Checkpoint(chain_sister_);
+    }
+
+    void anaphaseDispatch(const TemporalMessage &msg) {
+        // The packet is sent to both sister branches.
+        if (daughterA_) daughterA_->send_message(msg);
+        if (daughterB_) daughterB_->send_message(msg);
+    }
+
+    void cytokinesis() {
+        // Split the node into two independent RetroRouters,
+        // each with its own ledger, routing table, and certificate.
+        // We reuse the same ledger for demonstration, though theoretically they'd be separate or namespaced.
+        daughterA_ = std::make_shared<MitoticRouter>(node_id() + "_A", ledger_, chain_);
+        daughterB_ = std::make_shared<MitoticRouter>(node_id() + "_B", ledger_, chain_sister_);
+        // Register the split in the galactic ledger.
+        ledger_.recordMitoticEvent(daughterA_->node_id(), daughterB_->node_id());
+    }
+
+    std::shared_ptr<MitoticRouter> getDaughterA() { return daughterA_; }
+    std::shared_ptr<MitoticRouter> getDaughterB() { return daughterB_; }
+
+private:
+    TemporalHashChain chain_sister_;
+    std::shared_ptr<MitoticRouter> daughterA_;
+    std::shared_ptr<MitoticRouter> daughterB_;
 };
 
 // ============================================================================
