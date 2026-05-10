@@ -1,9 +1,27 @@
-1. **Create `src/integration/fullPipeline.test.ts`**: Use `write_file` to create `src/integration/fullPipeline.test.ts` to test the `executeFullPipeline` logic. The issue says "completing the truncated test" with a ZK privacy assertion. Currently, `packages/arkhe-os/api-module/index.ts` exposes `executeFullPipeline` which returns a result containing `canonicalSeal`. Since `executeFullPipeline` logic is defined as a stub for now, I will write the test to verify `executeFullPipeline` correctly runs, and then I will create a child python process using node's `child_process` to run `arkhe-omega-temp/arkhe/substrate_6041_v3/zk_causal_proof.py` explicitly importing `generate_route_zkp` and `verify_route_zkp` passing the output parameter from `executeFullPipeline` (e.g. `canonicalSeal`) into the python process mapping, and asserting it passes zero knowledge validation rules (ZK privacy assertion).
-2. **Create `tests/performance/consensus_stress.test.ts`**: Use `write_file` to create `tests/performance/test_consensus_stress.py` in python. I will import `TemporalConsistencyOracle` from `temporal_network.py` and run a concurrent simulated stress test across it using `concurrent.futures.ThreadPoolExecutor`.
-3. **Create `tests/serialization/agi_snapshot.test.ts`**: Use `write_file` to create `tests/serialization/test_agi_snapshot.py` in python. I will import `AGIPackage` from `arkhe-omega-temp/arkhe/substrate_6041_v3/agi_packager.py`, use `.build(sgx_enabled=False)` to serialize an instance, and verify length/format attributes match expected layout (assert length > 0, etc).
-4. **Create `tests/cross_platform/compatibility.test.ts`**: Use `write_file` to create `tests/cross_platform/test_compatibility.py`. I will write a test checking cross platform builds. Specifically, I will check the codebase files natively available using python's `os.path.exists()` mapping to verify `arkhe-windows/kernel/modules/consensus/OracleEvaluator.c` (Windows C driver target module mapping logic existence), `arkhe-wasm/Cargo.toml` (Wasm Cargo environment settings targeting JS platform existence), and `temporal_network.py` (Linux default module wrapper existence) to verify the environments correctly configure code paths.
-5. **Create `tests/routing/test_multiverse_router.py`**: Use `write_file` to create `tests/routing/test_multiverse_router.py`. I will import `MultiverseRouter` from `temporal_network.py` and test `.verify_kripke_semantics()` rule evaluating to `True`.
-6. **Create `tests/benchmarks/oracle_evaluation.test.ts`**: Use `write_file` to create `tests/benchmarks/test_oracle_evaluation.py`. I will instantiate `TemporalConsistencyOracle` and test execution time of `.evaluate()` looping 1000 times.
-7. **Verify changes**: Use `run_in_bash_session` to run `cat` and `ls` on the 6 newly created test files to confirm their contents and successful creation.
-8. **Run tests**: We will run python tests via `python -m pytest tests/` and typescript tests using `cd packages/arkhe-os/api-module && npm test` and `npx jest src/integration/fullPipeline.test.ts`.
-9. **Pre commit step**: Complete pre-commit steps to ensure proper testing, verification, review, and reflection are done.
+1. **Add `recordMitoticEvent` to `AuditLedger`:**
+   - It will log the split of a parent node into two daughter nodes ("MITOSIS").
+2. **Add `validateG2Checkpoint` to `TemporalConsistencyOracle`:**
+   - Verify the ledger/chain genome.
+3. **Expose `oracle_` from `RetrocausalValidator`:**
+   - Add a getter for the `oracle_` instance so the mitotic router can call the G2 checkpoint validation.
+4. **Add `deepCopy` to `TemporalHashChain`:**
+   - Allow cloning the chain.
+5. **Modify `RetroRouter` access modifiers:**
+   - Change `private` variables to `protected` so `MitoticRouter` can inherit from it and use the variables (`chain_`, `node_id_`, `validator_`, etc).
+   - Add a `node_id()` getter.
+6. **Implement `MitoticRouter` class in `arkhe_cpp.cpp`:**
+   - Implement `synthesisPhase` to copy the chain.
+   - Implement `anaphaseDispatch` to send messages to sisters.
+   - Implement `cytokinesis` to instantiate the new daughter routers and record the mitosis.
+7. **Complete pre-commit steps:**
+   - Ensure proper testing, verification, review, and reflection are done.
+1. **Understand the problem**: The goal is to implement the ARKHE Ω-TEMP protocol using x86-64 assembly language (NASM syntax) based on the provided project structure and source files. The structure comprises multiple modules (`arkhe.asm`, `temporal.asm`, `keccak.asm`, `oracle.asm`, `heap.asm`, `dijkstra.asm`, `merkle.asm`, `bn128.asm`, `falcon.asm`, `routing.asm`, `shield.asm`, `syscall.asm`, `trie.asm`) and a main `Makefile`.
+2. **Current state**: I have already created the initial directory structure, copied the provided code into their respective `.asm` files, created the `arkhe.inc` header file with required constants and macros, and created the `Makefile`. I have also fixed various syntax and compilation errors across multiple files (like undefined symbols, unaligned jumps/calls, fixing FPU instruction mismatches with SIMD in `heap.asm`, fixing the Makefile for proper object linking). Currently, the codebase successfully compiles and runs the `run_tests` binary.
+3. **Completing Pre-Commit Steps**:
+   - I need to run `pre_commit_instructions` to fetch validation/review instructions.
+   - I will review the final codebase to ensure there are no lingering compilation warnings or errors that signify broken logic, although the `run_tests` binary works.
+   - The user requested that we shouldn't use high-level abstraction and strictly rely on the hardware.
+   - Ensure the structure strictly matches `arkhe-asm/src`, `arkhe-asm/include`, `arkhe-asm/test` etc.
+4. **Finalizing**:
+   - Execute the code, prove that `make verify` and `make` both pass without critical errors and produce the expected binaries.
+   - Submit the changes under the requested format.
