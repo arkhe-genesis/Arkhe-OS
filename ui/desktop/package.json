@@ -1,0 +1,23 @@
+{
+  "name": "arkhe-os-desktop",
+  "version": "1.0.0",
+  "description": "Arkhe OS Nexus Dashboard - Desktop",
+  "main": "src/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "tauri": "tauri"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "axios": "^1.4.0",
+    "@tauri-apps/api": "^1.4.0"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^1.4.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "vite": "^4.3.0"
+  }
+}

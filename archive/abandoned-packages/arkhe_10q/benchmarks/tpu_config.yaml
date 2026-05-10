@@ -1,0 +1,26 @@
+# Configuração para benchmark em TPU v6
+tpu:
+  version: "v6"
+  topology: "v6e-256"  # 256 chips, ~2.5 EFLOPs FP8
+  mesh_shape: [8, 8, 4]  # 3D mesh para comunicação eficiente
+
+xla_flags:
+  - "--xla_disable_hlo_passes=custom-kernel-fusion"
+  - "--xla_tpu_enable_data_parallel_all_reduce_opt=true"
+  - "--xla_tpu_data_parallel_opt_different_sized_ops=true"
+  - "--xla_tpu_enable_latency_hiding_scheduler=true"
+
+benchmark:
+  warmup_iterations: 20
+  measure_iterations: 100
+  batch_sizes: [1, 4, 16, 64, 256]
+  form_degrees: [0, 1, 2, 3, 4, 5]
+
+memory:
+  enable_xla_memory_profiler: true
+  log_memory_usage: true
+
+output:
+  format: "json"
+  path: "benchmarks/results/"
+  include_raw_traces: false

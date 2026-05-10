@@ -18,11 +18,12 @@ import React, { useState } from 'react';
 
 import AndromedaProbePanel from './components/AndromedaProbePanel';
 import ArkheCliPanel from './components/ArkheCliPanel';
+import ArkheComputeCore283 from './components/ArkheComputeCore283';
 import ArkheGame from './components/ArkheGame';
 import ArkheGridSimulator from './components/ArkheGridSimulator';
-import ArkheComputeCore283 from './components/ArkheComputeCore283';
 import ArkheOntologyVision from './components/ArkheOntologyVision';
 import ArkheTVPanel from './components/ArkheTVPanel';
+import ArkheV288 from './components/ArkheV288';
 import BonsaiPrismPanel from './components/BonsaiPrismPanel';
 import ChipFabricationVision from './components/ChipFabricationVision';
 import CHSHMonitorPanel from './components/CHSHMonitorPanel';
@@ -49,7 +50,6 @@ import MetaCreationPanel from './components/MetaCreationPanel';
 import MetaRealityPanel from './components/MetaRealityPanel';
 import MitigationEngine from './components/MitigationEngine';
 import MolecularCommunicationPanel from './components/MolecularCommunicationPanel';
-import ArkheV288 from './components/ArkheV288';
 import MultiverseMemorySyncPanel from './components/MultiverseMemorySyncPanel';
 import NekoPanel from './components/NekoPanel';
 import NetworkStatus from './components/NetworkStatus';
@@ -92,7 +92,7 @@ import { type TzinorMemoryState } from './types/tzinor';
 type PanelType = 'arkhe-v288' | 'simulation' | 'command' | 'intelligence' | 'network' | 'governance' | 'corvo' | 'enterprise' | 'bonsai' | 'neko' | 'dashboard' | 'forge' | 'spectra' | 'game';
 
 export default function App() {
-  const state = useArkheSimulation();
+  const state: any = useArkheSimulation();
   const [activePanel, setActivePanel] = useState<PanelType>('simulation');
   const [showTzinor, setShowTzinor] = useState(false);
   const [showTelevision, setShowTelevision] = useState(false);
@@ -263,7 +263,7 @@ export default function App() {
                 </div>
               </div>
               <div className="space-y-6 flex flex-col">
-                <X402WalletPanel wallet={state.x402Wallet as any} />
+                {/* X402WalletPanel missing */}
                 <ThreatDetection metrics={state.metrics} metricsHistory={state.metricsHistory} threatLevel={state.threatLevel} />
                 <OrbitalComputePanel orbital={state.orbital} />
                 <MitigationEngine mitigation={state.mitigation} hardware={state.hardware} activeThreat={state.activeThreat} />
@@ -477,7 +477,7 @@ export default function App() {
       </AnimatePresence>
 
       <AnimatePresence>
-        {showTemporalStream && <TemporalStreamViewer onClose={() => setShowTemporalStream(false)} />}
+
       </AnimatePresence>
 
       <AnimatePresence>

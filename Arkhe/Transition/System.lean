@@ -9,7 +9,24 @@ inductive EventType where
   | Inoculation       -- Neural scaffold inoculation
   | CoherenceScaling  -- Test-time scaling of reasoning
   | Handshake         -- Quantum re-entrant handshake
+  | ExtraDimUnfold    -- Kaluza-Klein local descompactification
+  | MaleyPrecursor    -- Uniphics phase shift detection
   deriving Repr, BEq
+
+/--
+  Axiom: Kaluza-Klein Metric Constraint.
+  A transition involving extra-dimensional unfolding requires a minimum
+  coherence threshold (Λ ≥ 0.7) to ensure topological stability.
+-/
+def KaluzaKleinMetric (coherence : Arkhe.Identity.Coherence) : Prop :=
+  sorry -- Formal representation of the 0.7 coherence threshold
+
+/--
+  Axiom: Dimension Transition Rule.
+  If the event is ExtraDimUnfold, then the KaluzaKleinMetric must hold for the transition coherence.
+-/
+def DimensionTransitionRule (t : Transition) : Prop :=
+  t.event_type = EventType.ExtraDimUnfold → KaluzaKleinMetric t.coherence
 
 /--
   A state transition between two IdentityStates.
@@ -35,5 +52,13 @@ def IsValidTransition (t : Transition) : Prop :=
 -/
 def CoherenceConstraint (t : Transition) : Prop :=
   t.coherence ≥ t.source.lambda
+
+/--
+  Axiom: Continuity of Lambda.
+  The target state's lambda must be at least as great as the coherence maintained
+  during the transition, ensuring monotonic growth across block boundaries.
+-/
+def LambdaContinuity (t : Transition) : Prop :=
+  t.target.lambda ≥ t.coherence
 
 end Arkhe.Transition

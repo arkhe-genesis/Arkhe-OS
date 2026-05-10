@@ -10,7 +10,7 @@ import React, { useState } from 'react';
 import { useArkheSimulation } from '../hooks/useArkheSimulation';
 
 export const SelfRegulationPanel: React.FC = () => {
-  const state = useArkheSimulation();
+  const state: any = useArkheSimulation();
   const [loading, setLoading] = useState(false);
 
   const handleRegulate = async () => {

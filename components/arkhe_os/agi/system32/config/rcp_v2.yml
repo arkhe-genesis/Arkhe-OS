@@ -1,0 +1,14 @@
+# Configuração do Canal Retrógrado 8‑Bit
+rcp:
+  version: "2.0"
+  encoding: "8bit_phase_postselection"
+  shots_per_bit: 50
+  temporal_window:
+    t_weak: 0.5  # segundos
+    t_post: 1.5  # segundos
+  simulation:
+    engine: "python3"
+    script: "agi/system32/runtime/quantum/rcp_v2_engine.py"
+    bridge: "agi/system32/agi_rcp_bridge.so"
+  fidelity_threshold: 0.8
+  max_retries: 3

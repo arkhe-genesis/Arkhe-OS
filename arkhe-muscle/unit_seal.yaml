@@ -1,8 +1,0 @@
-# unit_seal.yaml — Selo de Unidade
-unit_seal:
-  format: "SHA3-256 + ML-KEM"
-  metadata:
-    - wafer_origin
-    - ebl_params
-    - calib_rms_error
-    - witness_signature

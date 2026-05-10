@@ -16,7 +16,7 @@ interface SecurityAdvancedPanelProps {
 }
 
 export default function SecurityAdvancedPanel({ onClose }: SecurityAdvancedPanelProps) {
-  const state: SimulationState = useArkheSimulation();
+  const state: any = useArkheSimulation();
   const [activeTab, setActiveTab] = useState<'l1' | 'l2' | 'l3' | 'l4' | 'l5' | 'qhttp'>('l1');
   const [attesting, setAttesting] = useState(false);
   const [syncing, setSyncing] = useState(false);

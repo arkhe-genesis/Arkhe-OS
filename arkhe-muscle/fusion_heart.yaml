@@ -1,7 +1,0 @@
-# fusion_heart.yaml — Reator CFC-1
-fusion_reactor:
-  name: "CFC-1"
-  fuel: "D-He3"
-  cycle_hz: 10
-  power_mw: 1.0
-  ignition: "Petawatt Laser"

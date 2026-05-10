@@ -1,0 +1,185 @@
+name: Cross-Platform Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 3 * * *'  # Daily at 3 AM UTC
+
+jobs:
+  test-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12']
+        torch-version: ['cpu', 'cu121']  # Test both CPU and CUDA builds
+    steps:
+      - uses: actions/checkout@v4.1.6
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5.1.0
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        env:
+          PYTHONPATH: src
+          ARKHE_SKIP_INTEGRITY: "1"
+        run: |
+          pip install -e ".[dev]"
+          # Install CUDA version if requested and available
+          if [ "${{ matrix.torch-version }}" = "cu121" ] && command -v nvidia-smi &> /dev/null; then
+            pip install torch --index-url https://download.pytorch.org/whl/cu121
+          fi
+
+      - name: Run tests
+        env:
+          PYTHONPATH: src
+          ARKHE_SKIP_INTEGRITY: "1"
+        run: |
+          pytest tests/unit/ tests/integration/ -v \
+            --cov=arkhe_os.parser \
+            --cov-report=xml \
+            -k "not gpu"  # Skip GPU tests unless CUDA available
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4.4.1
+        with:
+          file: ./coverage.xml
+          flags: linux-${{ matrix.torch-version }}
+
+  test-macos:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12']
+    steps:
+      - uses: actions/checkout@v4.1.6
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5.1.0
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        env:
+          PYTHONPATH: src
+          ARKHE_SKIP_INTEGRITY: "1"
+        run: |
+          pip install -e ".[dev]"
+          # MPS is auto-detected by PyTorch on Apple Silicon
+
+      - name: Run tests
+        env:
+          PYTHONPATH: src
+          ARKHE_SKIP_INTEGRITY: "1"
+        run: |
+          pytest tests/unit/ tests/integration/ -v \
+            --cov=arkhe_os.parser \
+            --cov-report=xml \
+            -k "not gpu"  # MPS tests are flaky in CI
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4.4.1
+        with:
+          file: ./coverage.xml
+          flags: macos
+
+  test-windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12']
+    steps:
+      - uses: actions/checkout@v4.1.6
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5.1.0
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        env:
+          PYTHONPATH: src
+          ARKHE_SKIP_INTEGRITY: "1"
+        run: |
+          pip install -e ".[dev]"
+          # Windows uses CPU-only PyTorch by default
+
+      - name: Run tests
+        env:
+          PYTHONPATH: src
+          ARKHE_SKIP_INTEGRITY: "1"
+        run: |
+          pytest tests/unit/ tests/integration/ -v `
+            --cov=arkhe_os.parser `
+            --cov-report=xml `
+            -k "not gpu and not linux and not macos"
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4.4.1
+        with:
+          file: ./coverage.xml
+          flags: windows
+
+  test-wsl2:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.6
+
+      - name: Set up WSL2
+        uses: Vampire/setup-wsl@v3.1.2
+        with:
+          distribution: Ubuntu-22.04
+
+      - name: Install in WSL2
+        env:
+          PYTHONPATH: src
+          ARKHE_SKIP_INTEGRITY: "1"
+        run: |
+          wsl bash -c "sudo apt update && sudo apt install -y python3.11 python3-pip"
+          wsl bash -c "pip3 install -e '.[dev]'"
+
+      - name: Run tests in WSL2
+        env:
+          PYTHONPATH: src
+          ARKHE_SKIP_INTEGRITY: "1"
+        run: |
+          wsl bash -c "pytest tests/unit/ -v -k 'not gpu'"
+
+  build-artifacts:
+    runs-on: ubuntu-latest
+    needs: [test-linux, test-macos, test-windows]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4.1.6
+
+      - name: Build wheel
+        env:
+          PYTHONPATH: src
+          ARKHE_SKIP_INTEGRITY: "1"
+        run: |
+          pip install build
+          python -m build --wheel
+
+      - name: Upload wheel
+        uses: actions/upload-artifact@v4.3.3
+        with:
+          name: wheels
+          path: dist/*.whl
+
+      - name: Build conda package
+        env:
+          PYTHONPATH: src
+          ARKHE_SKIP_INTEGRITY: "1"
+        run: |
+          conda install -c conda-forge conda-build anaconda-client
+          conda-build conda.recipe --output-folder conda-dist
+
+      - name: Upload conda package
+        uses: actions/upload-artifact@v4.3.3
+        with:
+          name: conda-packages
+          path: conda-dist/noarch/*.tar.bz2

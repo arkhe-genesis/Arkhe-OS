@@ -1,0 +1,25 @@
+[Unit]
+Description=ARKHE Ω-TEMP Node %i
+After=network.target bluetooth.target
+Wants=bluetooth.target
+
+[Service]
+Type=simple
+User=arkhe
+WorkingDirectory=/opt/arkhe
+ExecStart=/opt/arkhe/arkhe_node_startup.sh %i
+Restart=on-failure
+RestartSec=10
+Environment="MODEL_ENDPOINT=http://localhost:11434"
+Environment="MODEL_NAME=llama3.1:8b"
+Environment="LEDGER_WINDOW=157788000"
+
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/tmp /var/log/arkhe /opt/arkhe
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,4 @@
+include pyproject.toml
+include README.md
+include config/sovereign_pip.yaml
+recursive-include src *

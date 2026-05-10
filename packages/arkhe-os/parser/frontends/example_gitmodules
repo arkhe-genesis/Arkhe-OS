@@ -1,0 +1,7 @@
+[submodule "arkhe_os/blackbox_node"]
+	path = arkhe_os/blackbox_node
+	url = https://github.com/arkhe-os/blackbox_node.git
+[submodule "other"]
+	path = other
+	url = ../other.git
+	ignore = all

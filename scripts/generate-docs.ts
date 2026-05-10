@@ -11,10 +11,10 @@ import {StdioClientTransport} from '@modelcontextprotocol/sdk/client/stdio.js';
 import type {Tool} from '@modelcontextprotocol/sdk/types.js';
 import {get_encoding} from 'tiktoken';
 
-import {cliOptions} from '../build/src/bin/chrome-devtools-mcp-cli-options.js';
-import type {ParsedArguments} from '../build/src/bin/chrome-devtools-mcp-cli-options.js';
-import {ToolCategory, labels} from '../build/src/tools/categories.js';
-import {createTools} from '../build/src/tools/tools.js';
+import {cliOptions} from '../src/bin/chrome-devtools-mcp-cli-options.ts';
+import type {ParsedArguments} from '../src/bin/chrome-devtools-mcp-cli-options.ts';
+import {ToolCategory, labels} from '../src/tools/categories.ts';
+import {createTools} from '../src/tools/tools.ts';
 
 const OUTPUT_PATH = './docs/tool-reference.md';
 const SLIM_OUTPUT_PATH = './docs/slim-tool-reference.md';

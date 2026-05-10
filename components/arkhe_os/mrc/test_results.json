@@ -1,0 +1,31 @@
+{
+  "version": "v\u221e.\u03a9.\u2207+++.257-260",
+  "substrates": [
+    257,
+    258,
+    259,
+    260
+  ],
+  "name": "Quadrumvirato: qhttp// + RoCE Gateway + Load Balancer + ZK Privacy",
+  "timestamp": "2026-05-07T04:45:07.997361",
+  "test_results": {
+    "total": 15,
+    "passed": 15,
+    "pass_rate": "100%"
+  },
+  "simulation": {
+    "scenario": "Stargate Cluster na Hyper-Mesh",
+    "workers": 4,
+    "steps": 20,
+    "avg_coherence": 1.0,
+    "total_gradients": 40,
+    "total_zk_proofs": 40,
+    "rebalance_events": 0
+  },
+  "files": {
+    "src/quadrumvirato_257_260.py": "cbfacd2d67c9eb89",
+    "tests/test_quadrumvirato_257_260.py": "dfb56608176dd326",
+    "simulations/sim_stargate_hypermesh.py": "f602e763dd06ac34"
+  },
+  "canonical_seal": "1d49199ac4cab7a3"
+}

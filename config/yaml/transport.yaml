@@ -1,0 +1,74 @@
+# config/yaml/transport.yaml — Configuração do TransportAdapter
+# Substrate 326.1: Coherence-Aware Transport Routing
+
+# Pesos para cálculo de CTS (Coherence Transport Score)
+cts_weights:
+  coherence: 0.5    # α: importância da coerência histórica
+  latency: 0.2      # β: importância da latência
+  packet_loss: 0.2  # γ: importância da taxa de perda
+  security: 0.1     # δ: importância do score de segurança
+
+# Limiares para decisões
+thresholds:
+  coherence_min: 0.7        # Φ_C mínimo para considerar transporte
+  drift_alert: 0.15         # Drift que aciona alerta
+  drift_fallback: 0.25      # Drift que aciona fallback automático
+  max_retries: 3            # Tentativas máximas por mensagem
+
+# Ordem de fallback (primeiro é preferido)
+fallback_order:
+  - tor
+  - dnsvpn
+  - stream
+  - direct_tcp
+
+# Configurações por transporte
+transports:
+  tor:
+    enabled: true
+    priority: 1.2           # Prioridade ligeiramente maior para Tor
+    coherence_threshold: 0.75
+    max_latency_ms: 3000
+    max_packet_loss: 0.05
+    config:
+      control_port: 9051
+      socks_port: 9050
+      prefer_ipv6: false
+
+  dnsvpn:
+    enabled: true
+    priority: 1.0
+    coherence_threshold: 0.7
+    max_latency_ms: 5000
+    max_packet_loss: 0.1
+    config:
+      config_path: /etc/agi/dnsvpn/client_config.toml
+      binary_path: /usr/local/bin/dnsvpn-client
+      local_socks_port: 18000
+
+  stream:
+    enabled: false          # Desabilitado por padrão (requer build custom)
+    priority: 0.9
+    coherence_threshold: 0.7
+    max_latency_ms: 2000
+    max_packet_loss: 0.08
+    config:
+      quic_port: 443
+      domain: "tunnel.arkhe.os"
+
+  direct_tcp:
+    enabled: true
+    priority: 0.5           # Prioridade baixa: último recurso
+    coherence_threshold: 0.6
+    max_latency_ms: 1000
+    max_packet_loss: 0.02
+    config:
+      timeout: 10
+      keepalive: true
+
+# Logging e métricas
+monitoring:
+  window_size: 1000         # Número de transmissões para histórico
+  report_interval: 60       # Segundos entre relatórios
+  alert_on_drift: true
+  log_level: INFO

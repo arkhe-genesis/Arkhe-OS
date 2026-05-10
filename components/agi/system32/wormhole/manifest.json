@@ -1,0 +1,13 @@
+{
+  "artifact_version": "v2.0.0",
+  "engine_version": "exact_formulas_v2",
+  "paper_reference": "Maldacena, Milekhin & Popov (arXiv:1807.04726)",
+  "formulas": "exact_from_paper",
+  "components": {
+    "runtime/wormhole/engine.py": { "version": "2.0.0" },
+    "runtime/wormhole/configs/canonical.yml": { "seal": "2f741811a66762a4" },
+    "runtime/wormhole/configs/artigo.yml": { "seal": "3c48b4048ab6d70c" },
+    "runtime/wormhole/configs/sm.yml": { "seal": "d6e438f11378f19c" }
+  },
+  "coherence_seed": 0.82
+}

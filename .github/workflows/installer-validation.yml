@@ -1,0 +1,70 @@
+name: Installer Coherence Validation
+on:
+  push:
+    paths:
+      - 'packages/**/dist/*.{msi,exe,deb,rpm,apk,aab,ipa,pkg,dmg}'
+  workflow_dispatch:
+    inputs:
+      artifact_path:
+        description: 'Caminho do instalável a validar'
+        required: true
+        type: string
+
+jobs:
+  validate-installer:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        format: [msi, exe, deb, rpm, apk, aab, ipa, pkg, dmg]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install ARKHE CLI + Installer Parser
+        run: |
+          curl -fsSL https://arkhe.os/install-installer-parser.sh | bash
+          arkhe installer version
+
+      - name: Parse and Audit Installer
+        id: audit
+        run: |
+          result=$(arkhe installer audit \
+            --file "${{ inputs.artifact_path || matrix.format }}" \
+            --format ${{ matrix.format }} \
+            --sign-with-cosnark \
+            --submit-to-hyper-mesh \
+            --arkhe-node ${{ secrets.ARKHE_NODE_ID }} \
+            --format json)
+
+          coherence=$(echo $result | jq -r '.coherence.score')
+          echo "coherence=$coherence" >> $GITHUB_OUTPUT
+
+          # Fail se coerência abaixo do threshold
+          if (( $(echo "$coherence < 0.85" | bc -l) )); then
+            echo "❌ Coherence score $coherence below threshold 0.85"
+            exit 1
+          fi
+
+          # Fail se houver findings críticos não correlacionados
+          critical=$(echo $result | jq '[.coherence.findings[] | select(.severity=="critical" and .correlated==false)] | length')
+          if [ "$critical" -gt 0 ]; then
+            echo "❌ $critical critical findings without code correlation"
+            exit 1
+          fi
+
+      - name: Upload Signed Audit Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: installer-audit-${{ matrix.format }}
+          path: |
+            ./audit/*.json
+            ./audit/*.proof
+
+      - name: Update Release Badge
+        if: success()
+        run: |
+          # Atualizar badge de coerência no README
+          arkhe badge update \
+            --repo ${{ github.repository }} \
+            --artifact "${{ inputs.artifact_path }}" \
+            --coherence ${{ steps.audit.outputs.coherence }} \
+            --proof ${{ steps.audit.outputs.proof_hash }}

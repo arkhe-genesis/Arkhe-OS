@@ -1,0 +1,52 @@
+# config/cosign-policy.yaml
+# ARKHE OS — Política de Verificação para Sigstore/Cosign
+
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: arkhe-agi-core-policy
+spec:
+  images:
+  - glob: "ghcr.io/arkhe-os/arkhe-agi-core:*"
+  - glob: "ghcr.io/arkhe-os/arkhe-agi-*:*"
+
+  authorities:
+  # Autoridade 1: Chave pública ARKHE OS
+  - key:
+      hashAlgorithm: sha256
+      # Chave pública ARKHE OS (substituir pelo valor real)
+      data: |
+        -----BEGIN PUBLIC KEY-----
+        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE...
+        -----END PUBLIC KEY-----
+
+    # Autoridade 2: Rekor transparency log (Sigstore)
+  - keyless:
+      url: https://rekor.sigstore.dev
+      identities:
+      - issuer: https://github.com/arkhe-os
+        subjectRegExp: ".*arkhe-agi-core.*"
+
+    # Autoridade 3: Certificado de build CI/CD
+  - ctlog:
+      url: https://ctfe.sigstore.dev/logs/ctfe
+
+  # Política de fallback
+  policy:
+    type:cue
+    data: |
+      // Requer pelo menos 2 autoridades válidas
+      package policy
+
+      import "struct"
+
+      verify := {
+        // Verificar se artefato foi assinado por chave ARKHE
+        arkheSigned: authorities[0].key != null,
+
+        // Verificar se está no transparency log
+        inRekor: authorities[1].keyless != null,
+
+        // Decisão final: requer ambos ou chave + ctlog
+        decision: (arkheSigned && inRekor) || (arkheSigned && authorities[2].ctlog != null)
+      }

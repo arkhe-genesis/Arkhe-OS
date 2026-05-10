@@ -1,4 +1,79 @@
 
+declare global {
+  interface GPUBufferUsage {
+    STORAGE: number;
+    COPY_SRC: number;
+    COPY_DST: number;
+    UNIFORM: number;
+  }
+  interface GPUShaderStage {
+    COMPUTE: number;
+    FRAGMENT: number;
+  }
+  var GPUBufferUsage: GPUBufferUsage;
+  var GPUShaderStage: GPUShaderStage;
+}
+
+declare global {
+  interface GPUBufferUsage {
+    STORAGE: number;
+    COPY_SRC: number;
+    COPY_DST: number;
+    UNIFORM: number;
+  }
+  interface GPUShaderStage {
+    COMPUTE: number;
+    FRAGMENT: number;
+  }
+  var GPUBufferUsage: GPUBufferUsage;
+  var GPUShaderStage: GPUShaderStage;
+}
+
+declare global {
+  interface GPUBufferUsage {
+    STORAGE: number;
+    COPY_SRC: number;
+    COPY_DST: number;
+    UNIFORM: number;
+  }
+  interface GPUShaderStage {
+    COMPUTE: number;
+    FRAGMENT: number;
+  }
+  var GPUBufferUsage: GPUBufferUsage;
+  var GPUShaderStage: GPUShaderStage;
+}
+
+declare global {
+  interface GPUBufferUsage {
+    STORAGE: number;
+    COPY_SRC: number;
+    COPY_DST: number;
+    UNIFORM: number;
+  }
+  interface GPUShaderStage {
+    COMPUTE: number;
+    FRAGMENT: number;
+  }
+  var GPUBufferUsage: GPUBufferUsage;
+  var GPUShaderStage: GPUShaderStage;
+}
+
+declare global {
+  interface GPUBufferUsage {
+    STORAGE: number;
+    COPY_SRC: number;
+    COPY_DST: number;
+    UNIFORM: number;
+  }
+  interface GPUShaderStage {
+    COMPUTE: number;
+    FRAGMENT: number;
+  }
+  var GPUBufferUsage: GPUBufferUsage;
+  var GPUShaderStage: GPUShaderStage;
+}
+
 /**
  * @license
  * Copyright 2026 Google LLC
@@ -21,6 +96,8 @@
 
 // License: MIT
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+declare const GPUShaderStage: any;
+declare const GPUBufferUsage: any;
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // CONSTANTES CHRONO-COIL
@@ -167,13 +244,13 @@ async function loadBrainFlowWASM(): Promise<BrainFlowInstance> {
   //
   //
   //
-  // @ts-expect-error WASM import is not typed WASM import is not typed
+  //  WASM import is not typed WASM import is not typed
 
 
 
 
-  // @ts-expect-error cannot resolve module but it exists at runtime
-  const module = await import(/* @vite-ignore */ '/brainflow_wasm/brainflow.js?url');
+  //  cannot resolve module but it exists at runtime
+  const module = await import(/* @vite-ignore */ '/brainflow_wasm/brainflow.js?url' as any);
   const brainflow = await module.default();
   brainflow.DataFilter.set_log_level(brainflow.LogLevels.LEVEL_OFF);
   return brainflow;
@@ -776,12 +853,12 @@ const ArkheV288: React.FC = () => {
       wg.device = device;
       wg.startTime = performance.now();
 
-      const context = canvas!.getContext('webgpu');
+      const context = canvas!.getContext("webgpu") as any;
       if (!context) { return; }
       if (!context) {return;}
 
       const presentationFormat = navigator.gpu.getPreferredCanvasFormat();
-      context.configure({ device, format: presentationFormat });
+      (context as any).configure({ device, format: presentationFormat });
 
       // Buffers (idêntico ao v∞.283.2)
       const cellBytes = 5 * 4;
@@ -929,7 +1006,7 @@ const ArkheV288: React.FC = () => {
         cp.end();
 
         // RENDER
-        const tex = context!.getCurrentTexture().createView();
+        const tex = (context as any).getCurrentTexture().createView();
         const rp = encoder.beginRenderPass({
           colorAttachments: [{
             view: tex,

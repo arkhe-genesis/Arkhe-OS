@@ -1,0 +1,62 @@
+# .github/workflows/fuzzing-coherence.yml
+name: Coherence-Guided Fuzzing
+on:
+  schedule:
+    - cron: '0 3 * * 0'  # Domingo às 3am
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Target binary to fuzz'
+        required: true
+        default: './build/arkhe_parser'
+      duration:
+        description: 'Fuzzing duration in seconds'
+        required: true
+        default: '3600'
+
+jobs:
+  fuzz:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install AFL++
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y afl++ llvm
+
+      - name: Build target with AFL instrumentation
+        run: |
+          CC=afl-clang-fast CXX=afl-clang-fast++ \
+          CFLAGS="-fsanitize=address -g" \
+          make -C ./src fuzz-target
+
+      - name: Prepare corpus
+        run: |
+          mkdir -p .arkhe/fuzz_corpus
+          # Gerar seeds mínimos válidos para o parser
+          echo '{"openapi": "3.0.0"}' > .arkhe/fuzz_corpus/seed1.json
+          echo 'invalid{' > .arkhe/fuzz_corpus/seed2.json
+
+      - name: Run coherence-guided fuzzing
+        run: |
+          python -m arkhe_os.fuzzing.coherence_fuzz_harness \
+            --target ./build/arkhe_parser \
+            --mode afl++ \
+            --duration ${{ github.event.inputs.duration || 3600 }} \
+            --corpus .arkhe/fuzz_corpus \
+            --output .arkhe/fuzz_results/
+
+      - name: Upload findings
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuzz-findings
+          path: .arkhe/fuzz_results/*.json
+
+      - name: Fail on critical findings
+        run: |
+          critical=$(jq '[.findings[] | select(.severity=="critical")] | length' .arkhe/fuzz_results/*.json 2>/dev/null | tail -1)
+          if [ "$critical" != "0" ] && [ -n "$critical" ]; then
+            echo "❌ $critical critical fuzzing findings detected"
+            exit 1
+          fi

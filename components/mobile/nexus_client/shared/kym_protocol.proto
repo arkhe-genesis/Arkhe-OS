@@ -1,0 +1,113 @@
+// shared/kym_protocol.proto
+// Definição do protocolo KYM para comunicação cliente-servidor
+
+syntax = "proto3";
+package arkhe.kym;
+
+option java_package = "os.arkhe.nexus.proto";
+option swift_prefix = "";
+
+// Mensagem de solicitação de verificação KYM
+message KYMVerificationRequest {
+  string viewer_seal = 1;           // Identificador público do viewer
+  bytes challenge = 2;              // Desafio criptográfico a ser assinado
+  DeviceIntegrityProof integrity_proof = 3;  // Prova de integridade do dispositivo
+  BiometricAuthProof biometric_proof = 4;    // Prova de autenticação biométrica
+}
+
+// Prova de integridade do dispositivo
+message DeviceIntegrityProof {
+  bool is_secure_enclave = 1;       // iOS: Secure Enclave disponível
+  bool is_strongbox = 2;            // Android: StrongBox disponível
+  bool jailbreak_detected = 3;      // iOS: Jailbreak detectado
+  bool root_detected = 4;           // Android: Root detectado
+  string device_model = 5;          // Modelo do dispositivo
+  string os_version = 6;            // Versão do SO
+  uint64 timestamp = 7;             // Timestamp da verificação
+  bytes device_signature = 8;       // Assinatura da prova pelo dispositivo
+}
+
+// Prova de autenticação biométrica
+message BiometricAuthProof {
+  AuthType auth_type = 1;           // Tipo de autenticação usada
+  uint64 auth_timestamp = 2;        // Timestamp da autenticação
+  bytes auth_signature = 3;         // Assinatura da autenticação
+
+  enum AuthType {
+    AUTH_TYPE_UNSPECIFIED = 0;
+    AUTH_TYPE_FACE_ID = 1;          // iOS Face ID
+    AUTH_TYPE_TOUCH_ID = 2;         // iOS Touch ID
+    AUTH_TYPE_FINGERPRINT = 3;      // Android Fingerprint
+    AUTH_TYPE_FACE_UNLOCK = 4;      // Android Face Unlock
+    AUTH_TYPE_DEVICE_CREDENTIAL = 5; // PIN/Pattern/Password
+  }
+}
+
+// Resposta de verificação KYM
+message KYMVerificationResponse {
+  bool verified = 1;                // Verificação bem-sucedida
+  float phi_risk = 2;               // Score de risco calculado
+  float viewer_weight = 3;          // Peso do viewer para royalties
+  string error_message = 4;         // Mensagem de erro se falhou
+  uint64 valid_until = 5;           // Timestamp de expiração da verificação
+}
+
+// Mensagem de início de sessão de visualização
+message StartViewingSessionRequest {
+  string viewer_seal = 1;
+  string stream_id = 2;
+  KYMVerificationResponse kym_response = 3;
+  map<string, string> metadata = 4;  // Metadata adicional da sessão
+}
+
+// Mensagem de fim de sessão com cálculo de royalties
+message EndViewingSessionRequest {
+  string viewer_seal = 1;
+  string stream_id = 2;
+  uint64 watch_duration_seconds = 3;  // Duração assistida em segundos
+  CoherenceMetrics coherence_metrics = 4;  // Métricas de coerência da sessão
+}
+
+// Métricas de coerência da sessão
+message CoherenceMetrics {
+  float visual_coherence = 1;       // Φ_visual da sessão
+  float audio_coherence = 2;        // Φ_audio da sessão
+  float semantic_coherence = 3;     // Φ_semantic da sessão
+  float anomaly_score = 4;          // Score de anomalias detectadas
+  float overall_phi_c = 5;          // Φ_C combinado da sessão
+}
+
+// Resposta de distribuição de royalties
+message RoyaltyDistributionResponse {
+  float royalty_amount = 1;         // Quantidade de tokens distribuídos
+  string transaction_id = 2;        // ID da transação no ledger
+  float coherence_bonus = 3;        // Bônus aplicado por alta coerência
+  uint64 timestamp = 4;             // Timestamp da distribuição
+}
+
+// Serviço gRPC para operações KYM
+service KYMService {
+  // Verificar identidade do viewer
+  rpc VerifyViewer(KYMVerificationRequest) returns (KYMVerificationResponse);
+
+  // Iniciar sessão de visualização
+  rpc StartViewingSession(StartViewingSessionRequest) returns (ViewingSessionResponse);
+
+  // Encerrar sessão e calcular royalties
+  rpc EndViewingSession(EndViewingSessionRequest) returns (RoyaltyDistributionResponse);
+
+  // Consultar balance de royalties do viewer
+  rpc QueryRoyaltyBalance(QueryBalanceRequest) returns (RoyaltyBalanceResponse);
+}
+
+// Serviço gRPC para streaming
+service StreamingService {
+  // Descobrir canais disponíveis
+  rpc DiscoverChannels(DiscoverChannelsRequest) returns (ChannelListResponse);
+
+  // Unir-se a stream WebRTC
+  rpc JoinStream(JoinStreamRequest) returns (StreamConnectionResponse);
+
+  // Reportar métricas de qualidade de stream
+  rpc ReportStreamQuality(StreamQualityReport) returns (QualityReportResponse);
+}

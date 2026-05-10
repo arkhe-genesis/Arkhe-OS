@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<apiSpecification version="2.0">
+    <info>
+        <title>Enterprise Payment Gateway API</title>
+        <version>2.1.0</version>
+        <description>XML-specified REST API for payment processing and merchant management</description>
+    </info>
+
+    <servers>
+        <server url="https://api.payments.example.com/v2" description="Production"/>
+    </servers>
+
+    <components>
+        <securitySchemes>
+            <securityScheme name="bearerAuth" type="http" scheme="bearer" bearerFormat="JWT"/>
+            <securityScheme name="apiKey" type="apiKey"/>
+        </securitySchemes>
+    </components>
+
+    <paths>
+        <path path="/payments/process">
+            <post>
+                <summary>Process payment transaction</summary>
+                <operationId>processPayment</operationId>
+                <tags>
+                    <tag>payments</tag>
+                </tags>
+                <security>
+                    <securityRef schemeName="bearerAuth"/>
+                </security>
+                <parameters>
+                    <parameter name="idempotency_key" in="header" required="true" type="string" description="Idempotency key for safe retries"/>
+                </parameters>
+                <requestBody required="true"/>
+                <responses>
+                    <response statusCode="200" description="Payment processed successfully"/>
+                    <response statusCode="400" description="Validation failed"/>
+                    <response statusCode="401" description="Unauthorized"/>
+                    <response statusCode="409" description="Idempotency key already used"/>
+                </responses>
+                <x-resilience>
+                    <retry maxAttempts="3" backoff="exponential"/>
+                    <circuitBreaker failureThreshold="5" timeout="30s"/>
+                </x-resilience>
+                <x-timeout>45s</x-timeout>
+                <x-idempotency enabled="true" keyLocation="header" keyName="Idempotency-Key" ttl="24h"/>
+            </post>
+        </path>
+
+        <path path="/payments/{payment_id}">
+            <get>
+                <summary>Get payment status</summary>
+                <operationId>getPaymentStatus</operationId>
+                <tags>
+                    <tag>payments</tag>
+                </tags>
+                <security>
+                    <securityRef schemeName="bearerAuth"/>
+                </security>
+                <parameters>
+                    <parameter name="payment_id" in="path" required="true" type="string" description="Payment ID (UUID)"/>
+                </parameters>
+                <responses>
+                    <response statusCode="200" description="Payment status retrieved"/>
+                    <response statusCode="404" description="Payment not found"/>
+                </responses>
+                <x-cache enabled="true" ttl="30s"/>
+            </get>
+        </path>
+    </paths>
+</apiSpecification>

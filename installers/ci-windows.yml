@@ -1,0 +1,48 @@
+# GitHub Actions CI for Windows MSI
+name: Build Windows MSI
+
+on:
+  push:
+    branches: [ deployment ]
+  pull_request:
+    branches: [ deployment ]
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        cd ui/desktop
+        npm install
+
+    - name: Run Genesis
+      run: ./scripts/genesis.sh
+
+    - name: Build MSI
+      run: |
+        cd ui/desktop
+        npm run tauri build
+
+    - name: Verify Artifact
+      run: powershell ./scripts/verify-agi.ps1
+
+    - name: Upload MSI
+      uses: actions/upload-artifact@v3
+      with:
+        name: arkhe-os-windows
+        path: ui/desktop/src-tauri/target/release/bundle/msi/*.msi

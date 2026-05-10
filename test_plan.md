@@ -1,21 +1,18 @@
-# Implementation Plan
+1. **Criar a abstração matemática e lógica da Álgebra de Heyting no Oracle:**
+   - Criar arquivo `components/agi/system32/temporal/heyting_oracle.py`.
+   - Implementar uma classe `HeytingConsistencyOracle` (podendo herdar de `TemporalConsistencyOracle`) que defina as operações lógicas sobre mensagens temporais.
+   - **Forcing ($\Rightarrow$):** Implementar $p \Rightarrow q$ de forma eficiente. Em vez de avaliar "todos os futuros" enumerando-os exaustivamente, usar uma busca em profundidade limitada (`max_depth`) no grafo causal (`self._has_causal_path`) ou uma abordagem baseada em ancestrais conhecidos no `ledger`.
+   - **Pseudocomplemento ($\neg p$):** Implementar $\neg p = p \Rightarrow \bot$. Para evitar loops infinitos com mensagens complexas, adicionar verificações de dependência circular e um limite estrito de recursão. Definir o que é "$\bot$" no contexto do Oracle (ex: uma mensagem que sempre falha nos checks de consistência).
 
-1. **Create Coherence Ledger Protocol module:**
-   Create a new file `core/ledger/coherence_ledger.py` that implements the classes `CoherenceLedgerEntry` and related logic as outlined in the issue description. It needs to support creating a FaceRecord, validating bounds (`0.04 <= excess_tolerance <= 0.10`, `stability_metric <= 0.10`, etc), hashing, and adding witness signatures. Also add `FaceBuffer` and `LatticeMetrics`.
+2. **Criar o arquivo de prova em Coq (`heyting_consistency.v`):**
+   - Criar `components/layer_4_meta/proofs/heyting_consistency.v`.
+   - Axiomatizar o contexto temporal (mensagens, futuros).
+   - Axiomatizar o `Estimator` como um functor (mapeando a categoria de estados temporais/mensagens).
+   - Definir de maneira rigorosa a relação de *forcing* ($p \Vdash q$).
+   - Provar propriedades básicas (ex: preservação da consistência) de forma a satisfazer as exigências de verificação mecanizada.
 
-2. **Implement the Theta-Gamma PAC Neuromapping module:**
-   Create a new file `core/neuro/pac_neuromapping.py` that implements the calibration protocol: `calibrate_neurodynamic_pac()` and `validate_excess_margin()`.
+3. **Pre-commit checks**
+   - Executar os pre-commit checks para garantir que não haja regressões, validando a integridade das modificações.
 
-3. **Implement Unified Operational Flow:**
-   Create a new file `core/protocol/triangular_lattice_protocol.py` that ties the ledger buffer and the neurodynamic readings together:
-   - Initialize Ledger Buffer.
-   - Read Neural Phase Space (simulate `θ_self`, `θ_A`, `θ_B` or provide a function).
-   - Apply Calibration Loop.
-   - Seal & Record.
-
-4. **Add Tests:**
-   Create tests in `tests/test_coherence_ledger.py` to test the validity of the protocol.
-
-5. **Pre-commit and Submit:**
-   - Execute pre-commit instructions to make sure proper testing, verifications, reviews and reflections are done.
-   - Submit the change with a descriptive commit message.
+4. **Submissão:**
+   - Efetuar o `submit` das mudanças.

@@ -1,0 +1,7 @@
+--- src/components/ArkheV288.tsx
++++ src/components/ArkheV288.tsx
+@@ -21,2 +21,4 @@
+ import React, { useEffect, useRef, useState, useCallback } from 'react';
++
++declare const GPUShaderStage: any;
++declare const GPUBufferUsage: any;

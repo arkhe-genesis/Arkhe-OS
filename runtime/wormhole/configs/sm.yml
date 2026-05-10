@@ -1,0 +1,5 @@
+parameters:
+  q: 100
+  g: 1.0
+  lp: 1.0
+  Nf: 54
