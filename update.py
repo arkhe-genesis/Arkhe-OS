@@ -1,4 +1,7 @@
-#!/usr/bin/env python3
+import sys
+
+# The raw prompt string exactly as given in the system prompt
+prompt_text = r'''#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 arkhe_recovery_email_v4.py — Substrato 6046: Recovery Email Transport
@@ -164,8 +167,6 @@ class TemporalHashChain:
         self._genesis = hashlib.sha3_256(b"ARKHE_GENESIS_6046").hexdigest()
         self._chain.append({"hash": self._genesis, "prev": "0"*64, "data": "genesis"})
 
-
-
     @property
     def head_hash(self) -> str:
         return self._chain[-1]["hash"]
@@ -178,7 +179,6 @@ class TemporalHashChain:
             "target_ts": target_timestamp, "proof": proof, "depth": causal_depth,
         })
         return block_hash
-
 
     @property
     def length(self) -> int:
@@ -853,3 +853,12 @@ def main():
 
 if __name__ == "__main__":
     main()
+'''
+
+prompt_text = prompt_text.replace("def head_hash(self) -> str:", "@property\n    def head_hash(self) -> str:")
+prompt_text = prompt_text.replace("chain.head_hash()", "chain.head_hash")
+# also fix any `router.chain.head_hash()` just in case
+prompt_text = prompt_text.replace("router.chain.head_hash()", "router.chain.head_hash")
+
+with open("recovery_email_gateway.py", "w", encoding="utf-8") as f:
+    f.write(prompt_text)
