@@ -1,0 +1,39 @@
+FROM epicgames/ue5:5.5-slim AS builder
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    python3-pip \
+    rustup \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Rust toolchain
+RUN rustup default stable && \
+    rustup target add wasm32-wasi
+
+# Copy project
+COPY . /arkhe-unreal
+WORKDIR /arkhe-unreal
+
+# Build Rust Wasm
+RUN cd Native/rust && \
+    cargo build --target wasm32-wasi --release
+
+# Build UE plugin
+RUN Engine/Build/BatchFiles/RunUAT.bat BuildPlugin \
+    -Plugin="ArkheUnreal.uplugin" \
+    -Package="/arkhe/Plugins" \
+    -TargetPlatforms="Linux"
+
+FROM epicgames/ue5:5.5-runtime
+
+# Install Wasmtime
+RUN apt-get update && apt-get install -y libwasmtime-dev
+
+# Copy built artifacts
+COPY --from=builder /arkhe/Plugins /arkhe/Plugins
+COPY deploy/docker/entrypoint.sh /entrypoint.sh
+
+EXPOSE 7777/udp
+ENTRYPOINT ["/entrypoint.sh"]

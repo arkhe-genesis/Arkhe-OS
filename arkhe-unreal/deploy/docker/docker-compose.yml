@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  arkhe-unreal-server:
+    build:
+      context: .
+      dockerfile: deploy/docker/Dockerfile.shard
+    ports:
+      - "7777:7777/udp"
+      - "7778:7778/tcp"
+    environment:
+      - ARKHE_TEMPORAL_ENABLED=1
+      - ARKHE_SPATIAL_ENABLED=1
+      - ARKHE_CONSCIOUSNESS_ENABLED=1
+      - ARKHE_WASM_SANDBOX=strict
+      - ARKHE_MAX_PLAYERS=32
+    volumes:
+      - arkhe-data:/arkhe/data
+      - arkhe-wasm:/arkhe/wasm
+    deploy:
+      resources:
+        limits:
+          memory: 16G
+          cpus: '8'
+      reservations:
+        devices:
+          - driver: nvidia
+            count: 1
+            capabilities: [gpu]
+    networks:
+      - arkhe-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7778/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  arkhe-temporal-ledger:
+    image: arkhe/ledger-node:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ledger-data:/ledger
+    environment:
+      - LEDGER_MODE=full
+      - CONSENSUS=arkhe
+    networks:
+      - arkhe-net
+
+  arkhe-ml-inference:
+    image: arkhe/onnx-inference:latest
+    ports:
+      - "9090:9090"
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+    volumes:
+      - ml-models:/models
+    networks:
+      - arkhe-net
+
+volumes:
+  arkhe-data:
+  arkhe-wasm:
+  ledger-data:
+  ml-models:
+
+networks:
+  arkhe-net:
+    driver: bridge
