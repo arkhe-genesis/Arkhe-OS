@@ -1,0 +1,10 @@
+[package]
+name = "arkhe-bounty-hunter-wasm"
+version = "5.6.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+arkhe-bounty-hunter = { path = "../../" }
