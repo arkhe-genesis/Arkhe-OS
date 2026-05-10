@@ -136,6 +136,9 @@ debug/
 # 🌌 ARKHE SPECIFIC
 # ============================================================
 .arkhe/
+!arkhe-go/
+!arkhe-android/
+arkhe-*/
 $# arkhe-*/
 !arkhe-core/
 !arkhe-os/
