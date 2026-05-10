@@ -448,11 +448,11 @@ class MultiverseRouter:
         self.ledger.record("timeline_branch", {'action': 'create', 'branch_id': 'main', 'divergence_event': 'big_bang'})
         return main
 
-    def create_branch(self, divergence_event: str, from_timestamp: float, branch_id: str = None) -> TimelineBranch:
+    def create_branch(self, divergence_event: str, from_timestamp: float, branch_id: str = None, base_timeline: str = "main") -> TimelineBranch:
         bid = branch_id or f"branch-{uuid.uuid4().hex[:8]}"
         epoch = from_timestamp + MULTIVERSE_BASE_OFFSET * len(self.branches)
         branch = TimelineBranch(branch_id=bid, divergence_timestamp=from_timestamp,
-                                divergence_event=divergence_event, base_timeline="main",
+                                divergence_event=divergence_event, base_timeline=base_timeline,
                                 taddr_base=TAddr.from_parts(bid, epoch, 0.01))
         self.branches[bid] = branch
         self.chain.insert_retrocausal(target_ts=epoch, data={'action': 'branch_create', 'branch_id': bid,
@@ -541,6 +541,40 @@ class MultiverseRouter:
                 removed += 1
                 log.info(f"🌀 Branch podada: {bid} (coerência={self.branches[bid].coherence_score:.4f})")
         return removed
+
+    def is_accessible(self, world_a: str, world_b: str) -> bool:
+        if world_a == world_b:
+            return True
+
+        current = world_b
+        visited = {current}
+        while current in self.branches and current != "main":
+            parent = self.branches[current].base_timeline
+            if parent == world_a:
+                return True
+            if parent in visited:
+                break
+            visited.add(parent)
+            current = parent
+
+        return False
+
+    def verify_kripke_semantics(self) -> bool:
+        branches = list(self.branches.keys())
+
+        for w in branches:
+            if not self.is_accessible(w, w):
+                return False
+
+        for w1 in branches:
+            for w2 in branches:
+                if self.is_accessible(w1, w2):
+                    for w3 in branches:
+                        if self.is_accessible(w2, w3):
+                            if not self.is_accessible(w1, w3):
+                                return False
+
+        return True
 
 
 # ============================================================================
