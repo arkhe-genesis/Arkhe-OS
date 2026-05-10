@@ -1,6 +1,5 @@
 import { ethers } from 'ethers'
 import Safe, { SafeFactory, SafeAccountConfig } from '@safe-global/protocol-kit'
-import { EthersAdapter } from '@safe-global/protocol-kit'
 import SafeApiKit from '@safe-global/api-kit'
 
 export interface SafeConfig {
@@ -17,8 +16,10 @@ export class SafeAccountManager {
   private provider: ethers.JsonRpcProvider
   private signer: ethers.Wallet
   private safeApiKit: SafeApiKit
+  private config: SafeConfig
 
   constructor(config: SafeConfig) {
+    this.config = config
     this.provider = new ethers.JsonRpcProvider(config.rpcUrl)
     this.signer = new ethers.Wallet(config.ownerKey, this.provider)
     this.safeApiKit = new SafeApiKit({
@@ -31,8 +32,8 @@ export class SafeAccountManager {
    * Deploys a new Safe with the specified owners and threshold.
    */
   async deploySafe(owners: string[], threshold: number): Promise<string> {
-    const safeFactory = await SafeFactory.create({
-      ethAdapter: this._getEthAdapter()
+    const safeFactory = await SafeFactory.init({
+      provider: this.config.rpcUrl, signer: this.config.ownerKey
     })
     const safeAccountConfig: SafeAccountConfig = {
       owners,
@@ -47,7 +48,7 @@ export class SafeAccountManager {
    */
   async signCoherenceProof(safeAddress: string, lambda: number, block: number): Promise<string> {
     const safe = await Safe.init({
-      ethAdapter: this._getEthAdapter(),
+      provider: this.config.rpcUrl, signer: this.config.ownerKey,
       safeAddress
     })
 
@@ -66,12 +67,5 @@ export class SafeAccountManager {
     const signature = await safe.signHash(safeTxHash)
 
     return signature.data
-  }
-
-  private _getEthAdapter() {
-    return new EthersAdapter({
-      ethers,
-      signerOrProvider: this.signer
-    })
   }
 }

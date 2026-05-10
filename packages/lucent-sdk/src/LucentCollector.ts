@@ -77,7 +77,7 @@ export class LucentCollector {
 
   private subscribeHydroContext(nodeId: string) {
     // Conecta ao nó HYDRO-Ω para receber métricas em tempo real
-    const hydroWs = new (globalThis as unknown as { WebSocket: new (url: string) => WebSocket }).WebSocket(`quantum://${apiUrl}/hydro.arkhe/node/${nodeId}`);
+    const hydroWs = new (globalThis as unknown as { WebSocket: new (url: string) => WebSocket }).WebSocket(`quantum://api/hydro.arkhe/node/${nodeId}`);
     hydroWs.onmessage = (event: MessageEvent) => {
       const data = JSON.parse(event.data);
       this.hydroContext = {
