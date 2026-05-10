@@ -87,7 +87,8 @@ class NodeKind(Enum):
     ExprLiteral = auto(); ExprIdentifier = auto(); ExprUnary = auto(); ExprBinary = auto()
     ExprTernary = auto(); ExprCall = auto(); ExprMethodCall = auto(); ExprIndex = auto()
     ExprField = auto(); ExprArrow = auto(); ExprLambda = auto(); ExprAwait = auto()
-    ExprReturn = auto(); ExprThrow = auto(); ExprCast = auto(); ExprAssignment = auto()
+    ExprReturn = auto(); ExprThrow = auto(); ExprCast = auto(); ExprAssignment = auto();
+    DeclTypeAlias = auto(); DeclTrait = auto()
     ExprMatch = auto()
     StmtExpression = auto(); StmtIf = auto(); StmtWhile = auto(); StmtFor = auto()
     StmtSwitch = auto(); StmtBreak = auto(); StmtContinue = auto(); StmtTry = auto()

@@ -29,11 +29,13 @@ pub struct UASTNode {
     pub kind: NodeKind,
     pub children: Vec<NodeId>,
     pub attributes: HashMap<String, AttributeValue>,
+    pub semantic_info: Option<crate::semantic::SemanticInfo>,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum NodeKind {
     Program, DeclFunction, DeclVariable, ExprCall, ExprBinary, ExprLiteral, ExprIdentifier, StmtIf, ExprReturn,
+    DeclTypeAlias, DeclTrait,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -61,6 +63,8 @@ impl UAST {
     }
 }
 
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct TypeRef {
     pub name: String,
+    pub generics: Vec<TypeRef>,
 }

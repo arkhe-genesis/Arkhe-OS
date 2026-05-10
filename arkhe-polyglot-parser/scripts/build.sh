@@ -11,6 +11,9 @@ echo ""
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$PROJECT_DIR"
 
+echo "[0/5] Gerando gramáticas Lark..."
+./scripts/build_grammar.sh
+
 echo "[1/5] Construindo core Rust..."
 cargo build --release 2>&1 | tail -20
 

@@ -37,6 +37,7 @@ pub mod temporal;
 pub mod runtime;
 pub mod languages;
 pub mod plugins;
+pub mod docs;
 
 // ============================================================================
 // PolyglotParser — API Principal
