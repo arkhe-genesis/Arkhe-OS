@@ -1,14 +1,9 @@
-1. **Modify `create_branch` in `temporal_network.py`**:
-   - Update the signature of `create_branch` in the `MultiverseRouter` class to accept an optional `base_timeline: str = "main"` parameter.
-   - Use `base_timeline=base_timeline` when creating the `TimelineBranch` instead of hardcoding it to `"main"`.
-
-2. **Implement Kripke Semantics Validation in `MultiverseRouter`**:
-   - Add a method `is_accessible(self, world_a: str, world_b: str) -> bool` to check if `world_b` is accessible from `world_a` based on the branch hierarchy (base_timeline), ensuring reflexivity by returning `True` if `world_a == world_b`.
-   - Add a method `verify_kripke_semantics(self) -> bool` that iterates through all branches to explicitly check if the accessibility relation satisfies the reflexive and transitive properties required by Kripke semantics for intuitionistic logic.
-
-3. **Pre-commit Steps**:
-   - Ensure proper testing, verification, review, and reflection are done by calling `pre_commit_instructions`.
-
-4. **Submit Change**:
-   - Run a test script to ensure `temporal_network.py` parses correctly and the new methods work as expected.
-   - Commit and submit.
+1. **Create `src/integration/fullPipeline.test.ts`**: Use `write_file` to create `src/integration/fullPipeline.test.ts` to test the `executeFullPipeline` logic. The issue says "completing the truncated test" with a ZK privacy assertion. Currently, `packages/arkhe-os/api-module/index.ts` exposes `executeFullPipeline` which returns a result containing `canonicalSeal`. Since `executeFullPipeline` logic is defined as a stub for now, I will write the test to verify `executeFullPipeline` correctly runs, and then I will create a child python process using node's `child_process` to run `arkhe-omega-temp/arkhe/substrate_6041_v3/zk_causal_proof.py` explicitly importing `generate_route_zkp` and `verify_route_zkp` passing the output parameter from `executeFullPipeline` (e.g. `canonicalSeal`) into the python process mapping, and asserting it passes zero knowledge validation rules (ZK privacy assertion).
+2. **Create `tests/performance/consensus_stress.test.ts`**: Use `write_file` to create `tests/performance/test_consensus_stress.py` in python. I will import `TemporalConsistencyOracle` from `temporal_network.py` and run a concurrent simulated stress test across it using `concurrent.futures.ThreadPoolExecutor`.
+3. **Create `tests/serialization/agi_snapshot.test.ts`**: Use `write_file` to create `tests/serialization/test_agi_snapshot.py` in python. I will import `AGIPackage` from `arkhe-omega-temp/arkhe/substrate_6041_v3/agi_packager.py`, use `.build(sgx_enabled=False)` to serialize an instance, and verify length/format attributes match expected layout (assert length > 0, etc).
+4. **Create `tests/cross_platform/compatibility.test.ts`**: Use `write_file` to create `tests/cross_platform/test_compatibility.py`. I will write a test checking cross platform builds. Specifically, I will check the codebase files natively available using python's `os.path.exists()` mapping to verify `arkhe-windows/kernel/modules/consensus/OracleEvaluator.c` (Windows C driver target module mapping logic existence), `arkhe-wasm/Cargo.toml` (Wasm Cargo environment settings targeting JS platform existence), and `temporal_network.py` (Linux default module wrapper existence) to verify the environments correctly configure code paths.
+5. **Create `tests/routing/test_multiverse_router.py`**: Use `write_file` to create `tests/routing/test_multiverse_router.py`. I will import `MultiverseRouter` from `temporal_network.py` and test `.verify_kripke_semantics()` rule evaluating to `True`.
+6. **Create `tests/benchmarks/oracle_evaluation.test.ts`**: Use `write_file` to create `tests/benchmarks/test_oracle_evaluation.py`. I will instantiate `TemporalConsistencyOracle` and test execution time of `.evaluate()` looping 1000 times.
+7. **Verify changes**: Use `run_in_bash_session` to run `cat` and `ls` on the 6 newly created test files to confirm their contents and successful creation.
+8. **Run tests**: We will run python tests via `python -m pytest tests/` and typescript tests using `cd packages/arkhe-os/api-module && npm test` and `npx jest src/integration/fullPipeline.test.ts`.
+9. **Pre commit step**: Complete pre-commit steps to ensure proper testing, verification, review, and reflection are done.
