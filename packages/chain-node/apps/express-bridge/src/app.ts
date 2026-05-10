@@ -61,7 +61,7 @@ app.post('/login', async (req, res) => {
 });
 
 app.get('/protected', passport.authenticate('jwt', { session: false }), (req, res) => {
-  res.json({ message: 'Secure access to Arkhe-Chain Bridge granted.', user: req.user });
+  res.json({ message: 'Secure access to Arkhe-Chain Bridge granted.', user: (req as any).user });
 });
 
 const start = async () => {
@@ -76,3 +76,4 @@ const start = async () => {
 };
 
 void start();
+import '@types/express';

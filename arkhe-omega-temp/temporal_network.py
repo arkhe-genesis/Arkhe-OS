@@ -1716,7 +1716,7 @@ class TemporalRoutingTableCompatWrapper:
     def find_best_route(self, dest, oracle_check_fn=None):
         if dest in self._bh:
             return None
-        return self._table.find_best_route(dest, oracle_check_fn=oracle_check_fn)
+        return self._table.find_best_route(dest)
 class FibonacciNode:
     __slots__ = ('vertex', 'key', 'degree', 'parent', 'child', 'left', 'right', 'marked')
 

@@ -1088,6 +1088,50 @@ class RetroRouter:
         self.node = node; self.rt = TemporalRoutingTable(node.nid); self.tdns = TemporalDNS()
         self.fw = TemporalFirewall(node.nid); self.pkt_log: List[Dict] = []
         self._upd_t = 0; self._hb_t = 0
+        self.recovery_gateway = None
+
+    @property
+    def ledger(self):
+        return self.node._channel.ledger
+
+    def chain(self):
+        return self.node._channel.temporal_hash_chain
+
+    @property
+    def validator(self):
+        if not hasattr(self, "_validator"):
+            self._validator = RetrocausalValidator(self.ledger)
+        return self._validator
+
+    def enable_recovery_email(self, config):
+        # Local import to avoid circular dependency
+        from recovery_email_gateway import RecoveryEmailGateway
+        self.recovery_gateway = RecoveryEmailGateway(self, config)
+        def recovery_worker():
+            while True:
+                if self.recovery_gateway:
+                    self.recovery_gateway.send_retry_queue()
+                    received = self.recovery_gateway.poll_inbox()
+                    if received:
+                        self.recovery_gateway.reconcile(received)
+                time.sleep(30)
+        threading.Thread(target=recovery_worker, daemon=True).start()
+
+    def _send_via_primary(self, msg, primary_route: str) -> bool:
+        # Dummy implementation of primary route sending to avoid error
+        return False
+
+    def send_message_with_fallback(self, msg, primary_route: str) -> bool:
+        if self._send_via_primary(msg, primary_route):
+            return True
+        if self.recovery_gateway:
+            score = self.validator.validate(msg).score
+            chain_hash = self.chain().head_hash
+            self.recovery_gateway.enqueue(msg, score, chain_hash)
+            log.info(f"Message {msg.id} enqueued for email recovery")
+            return True
+        return False
+
     def route(self, pkt, ingress=None):
         if pkt.header.ttl_expired(): self._err(pkt, "TTL_ERR"); return None
         if pkt.header.hops_bad(): self._err(pkt, "HOP_ERR"); return None
