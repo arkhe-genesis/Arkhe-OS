@@ -1,14 +1,19 @@
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 name: Publish Archimedes-Ω Polyglot Packages
 
 on:
   push:
     tags: ['v*']
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Build and push Docker image
         run: |
           docker build -t arkhe/archimedes-agent:${{ github.ref_name }} skills/archimedes-omega/
@@ -17,7 +22,7 @@ jobs:
   maven:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK 11
         uses: actions/setup-java@v3
         with: { java-version: '11', distribution: 'temurin' }
@@ -31,8 +36,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with: { node-version: '18', registry-url: 'https://registry.npmjs.org' }
+      - uses: actions/setup-node@v4
+        with: { node-version: '24', registry-url: 'https://registry.npmjs.org' }
       - name: Publish to npm
         run: cd skills/archimedes-omega/clients/js && npm publish --access public
         env:
@@ -41,7 +46,7 @@ jobs:
   nuget:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v3
         with: { dotnet-version: '6.0.x' }
       - name: Build and Publish to NuGet
@@ -54,7 +59,7 @@ jobs:
   rubygems:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-ruby@v1
         with: { ruby-version: '3.0' }
       - name: Publish to RubyGems

@@ -1,3 +1,5 @@
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 name: Installer Coherence Validation
 on:
   push:
@@ -9,6 +11,9 @@ on:
         description: 'Caminho do instalável a validar'
         required: true
         type: string
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   validate-installer:

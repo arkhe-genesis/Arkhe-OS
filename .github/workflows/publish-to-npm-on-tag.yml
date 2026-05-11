@@ -1,3 +1,5 @@
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 name: publish-on-tag
 
 on:
@@ -19,18 +21,21 @@ permissions:
   id-token: write # Required for OIDC
   contents: read
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   publish-to-npm:
     runs-on: ubuntu-latest
     if: ${{ (github.event_name != 'workflow_dispatch') || (inputs.npm-publish && always()) }}
     steps:
       - name: Check out repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
       - name: Set up Node.js
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        uses: actions/setup-node@v4
         with:
           cache: ""
           node-version-file: '.nvmrc'
@@ -38,13 +43,13 @@ jobs:
 
       # Ensure npm 11.5.1 or later is installed
       - name: Update npm
-        run: # npm install (no package.json) -g npm@latest
+        run: echo "No npm package.json, skipping"
 
       - name: Install dependencies
-        run: # npm install (no package.json)
+        run: echo "No npm package.json, skipping"
 
       - name: Build and bundle
-        run: # npm run bundle
+        run: echo "No npm package.json, skipping"
         env:
           NODE_ENV: 'production'
 
@@ -58,12 +63,12 @@ jobs:
     if: ${{ (github.event_name != 'workflow_dispatch' && needs.publish-to-npm.result == 'success') || (inputs.mcp-publish && always()) }}
     steps:
       - name: Check out repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
       - name: Set up Node.js
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        uses: actions/setup-node@v4
         with:
           cache: ""
           node-version-file: '.nvmrc'
@@ -71,13 +76,13 @@ jobs:
 
       # Ensure npm 11.5.1 or later is installed
       - name: Update npm
-        run: # npm install (no package.json) -g npm@latest
+        run: echo "No npm package.json, skipping"
 
       - name: Install dependencies
-        run: # npm install (no package.json)
+        run: echo "No npm package.json, skipping"
 
       - name: Build and bundle
-        run: # npm run bundle
+        run: echo "No npm package.json, skipping"
         env:
           NODE_ENV: 'production'
 

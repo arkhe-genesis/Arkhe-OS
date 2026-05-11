@@ -30,7 +30,7 @@ image = { version = "0.25", optional = true }
 plonky2 = { git = "https://github.com/mir-protocol/plonky2", optional = true }
 
 # tch-rs (Torch bindings) para CLIP
-tch = { version = "0.14.0", optional = true }
+# tch = { version = "0.14.0", optional = true }
 
 # ndarray para manipulação de tensores
 ndarray = { version = "0.15.6", optional = true }
@@ -50,7 +50,7 @@ sha2 = "0.10"
 [features]
 default = ["full-zk", "x402-payments"]
 full-zk = ["dep:plonky2"]
-style-models = ["dep:tch", "dep:ndarray", "dep:image"]
+style-models = ["dep:ndarray", "dep:image"]
 x402-payments = ["dep:reqwest", "dep:tokio"]
 sim-test = []
 

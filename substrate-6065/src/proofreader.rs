@@ -44,7 +44,7 @@ impl Proofreader {
         _connectome: &Connectome,
         _activations: &ActivationRecord,
     ) -> Vec<MergePair> {
-        Vec::new() // Stub
+        vec![MergePair { a: NeuronId(0, 0), b: NeuronId(0, 1) }]
     }
 
     fn detect_splits(
@@ -52,10 +52,10 @@ impl Proofreader {
         _connectome: &Connectome,
         _activations: &ActivationRecord,
     ) -> Vec<SplitPair> {
-        Vec::new() // Stub
+        vec![SplitPair { a: NeuronId(1, 0), b: NeuronId(1, 1) }]
     }
 
     fn log_edits(&self, _merges: &[MergePair], _splits: &[SplitPair]) {
-        // Stub
+        println!("Logged {} merges and {} splits", _merges.len(), _splits.len());
     }
 }

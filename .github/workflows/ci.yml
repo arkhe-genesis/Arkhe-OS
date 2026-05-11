@@ -1,3 +1,5 @@
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 # .github/workflows/ci.yml
 name: ARKHE Crystal Brain Continuous Homeostasis
 on:
@@ -6,6 +8,9 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   run-pipeline:

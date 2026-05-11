@@ -1,3 +1,5 @@
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 name: 'Conventional Commit'
 
 on:
@@ -12,6 +14,9 @@ on:
       # Tracks editing PR title or description, or base branch changes
       # https://docs.github.com/en/webhooks/webhook-events-and-payloads?actionType=edited#pull_request
       - edited
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   main:

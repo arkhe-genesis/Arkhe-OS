@@ -7,7 +7,7 @@ pub struct ShardId(pub String);
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct PortalType(pub String);
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct VisualNode {
     pub id: NodeIndex,
     pub position: Point3<f64>,
