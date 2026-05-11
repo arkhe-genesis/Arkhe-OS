@@ -1,16 +1,16 @@
 use clap::Parser;
-use tokio;
+use anyhow::Result;
 
 mod commands;
 
-use commands::shard::{ShardArgs, handle_shard_create};
-use commands::self_complete::{SelfCompleteArgs, handle_self_complete};
-
 #[derive(Parser)]
 enum Commands {
-    Shard(ShardArgs),
-    /// Fecha o ciclo: analisa, gera, prova e implanta novos módulos
-    SelfComplete(SelfCompleteArgs),
+    Shard(commands::shard::ShardCreateArgs),
+    SelfComplete(commands::self_complete::SelfCompleteArgs),
+    // Connect(ConnectArgs),
+    // Block(BlockArgs),
+    // Portal(PortalArgs),
+    // Substrate(SubstrateArgs),
 }
 
 #[derive(Parser)]
@@ -20,10 +20,10 @@ struct Cli {
 }
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> Result<()> {
     let cli = Cli::parse();
     match cli.command {
-        Commands::Shard(args) => handle_shard_create(args).await,
-        Commands::SelfComplete(args) => handle_self_complete(args).await,
+        Commands::Shard(args) => commands::shard::handle_shard_create(args).await,
+        Commands::SelfComplete(args) => commands::self_complete::handle_self_complete(args).await,
     }
 }
