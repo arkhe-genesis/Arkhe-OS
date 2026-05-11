@@ -5,8 +5,3 @@ edition = "2021"
 
 [dependencies]
 rand = "0.8"
-azure-quantum-sdk = { path = "../azure-quantum-sdk", optional = true }
-
-[features]
-default = []
-azure-quantum = ["dep:azure-quantum-sdk"]

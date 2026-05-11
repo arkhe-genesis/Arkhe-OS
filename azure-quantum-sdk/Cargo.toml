@@ -1,5 +1,0 @@
-[package]
-name = "azure-quantum-sdk"
-version = "0.1.0"
-edition = "2021"
-description = "Mock Azure Quantum SDK – replace with real implementation later"
