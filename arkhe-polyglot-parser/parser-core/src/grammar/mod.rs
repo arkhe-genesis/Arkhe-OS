@@ -1,20 +1,10 @@
+pub mod lark_to_rust;
+
 use std::collections::HashMap;
-use std::sync::{Arc, RwLock};
-use petgraph::graph::DiGraph;
 use bitflags::bitflags;
 
-/// Representação de uma gramática formal
-#[derive(Clone, Debug)]
-pub struct Grammar {
-    pub name: String,
-    pub version: String,
-    pub language_type: LanguageType,
-    pub start_symbol: String,
-    pub rules: HashMap<String, Vec<ProductionRule>>,
-    pub terminals: Vec<TerminalDefinition>,
-    pub precedence_table: PrecedenceTable,
-    pub semantic_actions: HashMap<String, SemanticAction>,
-}
+
+
 
 /// Tipo de linguagem (para seleção de parser)
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -103,7 +93,16 @@ pub struct LanguageSpec {
     pub file_extensions: Vec<String>,
     pub shebangs: Vec<String>,
     pub grammar_version: String,
+    pub start_symbol: String,
+    pub rules: HashMap<String, Vec<ProductionRule>>,
+    pub terminals: Vec<TerminalDefinition>,
+    pub precedence_table: PrecedenceTable,
+    pub semantic_actions: HashMap<String, SemanticAction>,
 }
+
+
+
+pub type Grammar = LanguageSpec;
 
 pub struct GrammarPool {
     languages: HashMap<String, LanguageSpec>,
@@ -122,12 +121,15 @@ impl GrammarPool {
         let specs = vec![
             LanguageSpec {
                 name: "rust".to_string(), display_name: "Rust".to_string(), version: "2024".to_string(), language_type: LanguageType::FreeForm, author: "Rust Team".to_string(), description: "Systems".to_string(), file_extensions: vec![".rs".into()], shebangs: vec![], grammar_version: "1.0".to_string(),
+                start_symbol: "start".to_string(), rules: HashMap::new(), terminals: Vec::new(), precedence_table: PrecedenceTable::default(), semantic_actions: HashMap::new(),
             },
             LanguageSpec {
                 name: "python".to_string(), display_name: "Python".to_string(), version: "3.12".to_string(), language_type: LanguageType::IndentationSensitive, author: "PSF".to_string(), description: "Scripting".to_string(), file_extensions: vec![".py".into()], shebangs: vec![], grammar_version: "3.12".to_string(),
+                start_symbol: "start".to_string(), rules: HashMap::new(), terminals: Vec::new(), precedence_table: PrecedenceTable::default(), semantic_actions: HashMap::new(),
             },
             LanguageSpec {
                 name: "javascript".to_string(), display_name: "JavaScript".to_string(), version: "ES2024".to_string(), language_type: LanguageType::FreeForm, author: "ECMA".to_string(), description: "Web".to_string(), file_extensions: vec![".js".into()], shebangs: vec![], grammar_version: "ES2024".to_string(),
+                start_symbol: "start".to_string(), rules: HashMap::new(), terminals: Vec::new(), precedence_table: PrecedenceTable::default(), semantic_actions: HashMap::new(),
             },
         ];
 
@@ -142,7 +144,7 @@ impl GrammarPool {
         self.languages.values().find(|spec| spec.file_extensions.iter().any(|e| e.to_lowercase() == ext_lower || e.to_lowercase() == format!(".{}", ext_lower)))
     }
 
-    pub fn detect(&self, filename: Option<&str>, content: &str) -> Option<(&LanguageSpec, f64)> {
+    pub fn detect(&self, filename: Option<&str>, content: &str) -> Option<(Grammar, f64)> {
         let mut candidates = Vec::new();
 
         if let Some(name) = filename {
@@ -160,7 +162,7 @@ impl GrammarPool {
             }
         }
 
-        candidates.into_iter().max_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal))
+        candidates.into_iter().max_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal)).map(|(spec, score)| (spec.clone(), score))
     }
 
     fn score_content_match(&self, content: &str, spec: &LanguageSpec) -> f64 {

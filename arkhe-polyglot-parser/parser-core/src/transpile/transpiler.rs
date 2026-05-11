@@ -1,4 +1,4 @@
-use crate::ast::uast::{UAST, NodeKind, AttributeValue};
+use crate::ast::uast::UAST;
 
 pub struct Transpiler {
     target_language: String,
@@ -9,12 +9,12 @@ impl Transpiler {
         Self { target_language: target_language.to_string() }
     }
 
-    pub fn transpile(&mut self, uast: &UAST) -> Result<crate::TranspileResult, String> {
-        Ok(crate::TranspileResult {
+    pub fn transpile(&mut self, _uast: &UAST) -> Result<crate::transpile::TranspileResult, String> {
+        Ok(crate::transpile::TranspileResult {
             code: "transpiled code".to_string(),
             target_language: self.target_language.clone(),
             line_map: vec![],
-            metrics: crate::TranspileMetrics::default(),
+            metrics: crate::transpile::TranspileMetrics::default(),
             ast_delta: None,
         })
     }

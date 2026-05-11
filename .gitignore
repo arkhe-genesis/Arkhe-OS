@@ -142,6 +142,7 @@ arkhe-*/
 $# arkhe-*/
 !arkhe-core/
 !arkhe-os/
+!arkhe-qart/
 substrates/legacy/
 archive/
 *.mtp3
