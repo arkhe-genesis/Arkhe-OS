@@ -10,9 +10,10 @@ import {describe, it} from 'node:test';
 
 import {Client} from '@modelcontextprotocol/sdk/client/index.js';
 import {StdioClientTransport} from '@modelcontextprotocol/sdk/client/stdio.js';
-import {executablePath} from 'puppeteer';
 
 import type {ToolDefinition} from '../src/tools/ToolDefinition';
+
+import {getExecutablePath} from './utils.js';
 
 describe('e2e', () => {
   async function withClient(
@@ -26,7 +27,7 @@ describe('e2e', () => {
         '--headless',
         '--isolated',
         '--executable-path',
-        executablePath(),
+        getExecutablePath(),
         ...extraArgs,
       ],
     });

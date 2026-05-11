@@ -1,8 +1,18 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import {  TrendingDown, Bell, ShieldAlert } from 'lucide-react';
 import React from 'react';
-import { Card } from './ui/Card';
-import { SimulationState } from '../../server/types';
-import { AlertTriangle, TrendingDown, Bell, ShieldAlert } from 'lucide-react';
+
+import type { SimulationState } from '../../server/types';
 import { cn } from '../lib/utils';
+
+import { Card } from './ui/Card';
+
 
 interface ForecasterPanelProps {
   state: SimulationState;
@@ -11,7 +21,7 @@ interface ForecasterPanelProps {
 const ForecasterPanel: React.FC<ForecasterPanelProps> = ({ state }) => {
   const forecaster = state.forecaster;
 
-  if (!forecaster) return null;
+  if (!forecaster) {return null;}
 
   return (
     <Card

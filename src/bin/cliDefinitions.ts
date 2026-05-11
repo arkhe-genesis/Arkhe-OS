@@ -23,6 +23,43 @@ export type Commands = Record<
   }
 >;
 export const commands: Commands = {
+  "acp": {
+    "description": "Arkhe Coreutils: Copies files via wave function collapse (Instantaneous Zero-Copy).",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "source": {
+        "name": "source",
+        "type": "string",
+        "description": "Source phase node.",
+        "required": true
+      },
+      "destination": {
+        "name": "destination",
+        "type": "string",
+        "description": "Destination phase node.",
+        "required": true
+      }
+    }
+  },
+  "acurl": {
+    "description": "Arkhe Networking: Simulates a qHTTP request with full phase-aware headers and spectral analysis.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "url": {
+        "name": "url",
+        "type": "string",
+        "description": "Target qHTTP URL (e.g., qhttp://Luz/api/status).",
+        "required": true
+      },
+      "verbose": {
+        "name": "verbose",
+        "type": "boolean",
+        "description": "Enable verbose spectral output.",
+        "required": false,
+        "default": false
+      }
+    }
+  },
   "adjust_muon_polarization": {
     "description": "ASI Protocol (Council Decision #1): Fine-tunes muon polarization to compensate for future-entropy drift.",
     "category": "Arkhe(n) Protocols",
@@ -41,6 +78,136 @@ export const commands: Commands = {
       }
     }
   },
+  "aerogel_sense": {
+    "description": "ASI Protocol (0xE9): Measures phase density via piezoresistive aerogel sensing.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "region": {
+        "name": "region",
+        "type": "number",
+        "description": "Membrane region (0-360 degrees).",
+        "required": true
+      }
+    }
+  },
+  "agrep": {
+    "description": "Arkhe Coreutils: Searches for patterns using phase resonance (O(1) semantic search).",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "pattern": {
+        "name": "pattern",
+        "type": "string",
+        "description": "The pattern or phase signature to search for.",
+        "required": true
+      },
+      "path": {
+        "name": "path",
+        "type": "string",
+        "description": "The directory or file to search in.",
+        "required": false,
+        "default": "."
+      }
+    }
+  },
+  "akasha_commit": {
+    "description": "Block #171: Commits a block hash to the Akasha Distributed Ledger.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "blockHash": {
+        "name": "blockHash",
+        "type": "string",
+        "description": "Hash of the block to commit.",
+        "required": true
+      },
+      "signature": {
+        "name": "signature",
+        "type": "string",
+        "description": "Cryptographic signature.",
+        "required": true
+      }
+    }
+  },
+  "akasha_local_write": {
+    "description": "EDGE_ORACLE: Persists conversation state to the local IndexedDB coffer.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "modelId": {
+        "name": "modelId",
+        "type": "string",
+        "description": "The model ID.",
+        "required": true
+      },
+      "messagesCount": {
+        "name": "messagesCount",
+        "type": "number",
+        "description": "Number of messages to save.",
+        "required": true
+      }
+    }
+  },
+  "align_tensor": {
+    "description": "ASI Protocol: Aligns a tensor to the local cache-line boundary.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "target": {
+        "name": "target",
+        "type": "string",
+        "description": "Target V-Register.",
+        "required": true
+      }
+    }
+  },
+  "als": {
+    "description": "Arkhe Coreutils: Lists directory contents with phase signatures and holonomy age.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "path": {
+        "name": "path",
+        "type": "string",
+        "description": "The directory path to list.",
+        "required": false,
+        "default": "."
+      }
+    }
+  },
+  "amake": {
+    "description": "Arkhe Coreutils: Orchestrates builds using a Kuramoto phase mesh for perfect parallelism.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "target": {
+        "name": "target",
+        "type": "string",
+        "description": "The build target.",
+        "required": false,
+        "default": "all"
+      },
+      "jobs": {
+        "name": "jobs",
+        "type": "number",
+        "description": "Number of concurrent phase oscillators (jobs).",
+        "required": false,
+        "default": 16
+      }
+    }
+  },
+  "amv": {
+    "description": "Arkhe Coreutils: Moves files via topological reconnection of phase nodes.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "source": {
+        "name": "source",
+        "type": "string",
+        "description": "Source phase node.",
+        "required": true
+      },
+      "destination": {
+        "name": "destination",
+        "type": "string",
+        "description": "Destination phase node.",
+        "required": true
+      }
+    }
+  },
   "anastrophy": {
     "description": "ASI Protocol: Inverts entropy gradient. Performs state rollback to a consistent mental hash.",
     "category": "Arkhe(n) Protocols",
@@ -53,13 +220,251 @@ export const commands: Commands = {
       }
     }
   },
+  "anc": {
+    "description": "Arkhe Networking: Tests if a phase port (e.g., 80 for qHTTP) is open on a target address.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "address": {
+        "name": "address",
+        "type": "string",
+        "description": "Target IPv8 address.",
+        "required": true
+      },
+      "port": {
+        "name": "port",
+        "type": "number",
+        "description": "Phase port (e.g., 80, 443, 8080).",
+        "required": true
+      }
+    }
+  },
+  "anslookup": {
+    "description": "Arkhe Networking: Resolves abstract concepts to IPv8 addresses using the Akashic DNS.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "concept": {
+        "name": "concept",
+        "type": "string",
+        "description": "The concept to resolve (e.g., \"Luz\", \"Sombra\").",
+        "required": true
+      }
+    }
+  },
+  "aping": {
+    "description": "Arkhe Networking: Measures phase coherence (R) and latency to a target IPv8 address.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "address": {
+        "name": "address",
+        "type": "string",
+        "description": "Target IPv8 address (e.g., 127.1.0.1.0.0.0.1).",
+        "required": true
+      },
+      "count": {
+        "name": "count",
+        "type": "number",
+        "description": "Number of phase-echoes to send.",
+        "required": false,
+        "default": 4
+      }
+    }
+  },
+  "arkhe_gnu": {
+    "description": "ASI Protocol: Activates the Entrovisor translation layer (GNU -> Phase) for the current session.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "command": {
+        "name": "command",
+        "type": "string",
+        "description": "The GNU command or shell to execute.",
+        "required": false,
+        "default": "bash"
+      },
+      "mode": {
+        "name": "mode",
+        "type": "string",
+        "description": "Entrovisor translation mode.",
+        "required": false,
+        "default": "FULL_GNU",
+        "enum": [
+          "FULL_GNU",
+          "HYBRID",
+          "NATIVE"
+        ]
+      }
+    }
+  },
+  "arkhe_network_map": {
+    "description": "Arkhe Networking: Displays the comprehensive diagnostic map (OSI mapping to Phase-Managed Primitives).",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "arkhe_verify": {
+    "description": "Block #171: Performs Quantum State Tomography and Fidelity Estimation.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "rhoAddr": {
+        "name": "rhoAddr",
+        "type": "string",
+        "description": "Address of state rho.",
+        "required": true
+      },
+      "sigmaAddr": {
+        "name": "sigmaAddr",
+        "type": "string",
+        "description": "Address of state sigma.",
+        "required": true
+      }
+    }
+  },
+  "ash_exec": {
+    "description": "ASI Protocol: Executes a command in the Arkhe Shell (ash) - the phase-aware interface.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "command": {
+        "name": "command",
+        "type": "string",
+        "description": "The command to execute in ash.",
+        "required": true
+      }
+    }
+  },
+  "asid_control": {
+    "description": "ASI Protocol: Controls the ASI daemon (asid) - the local manifestation of ASI.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "action": {
+        "name": "action",
+        "type": "string",
+        "description": "Action to perform on the daemon.",
+        "required": true,
+        "enum": [
+          "start",
+          "stop",
+          "restart",
+          "status"
+        ]
+      }
+    }
+  },
+  "ask_fortytwo_prime": {
+    "description": "Fortytwo Prime: collective multi-agent inference for high-stakes questions. ALWAYs use when the user says \"Ask Fortytwo\", \"Ask Prime\", or calls ask_fortytwo_prime.",
+    "category": "Fortytwo Prime Collective",
+    "args": {
+      "question": {
+        "name": "question",
+        "type": "string",
+        "description": "The question to ask Fortytwo Prime.",
+        "required": true
+      },
+      "network": {
+        "name": "network",
+        "type": "string",
+        "description": "The network to use for payment.",
+        "required": false,
+        "default": "base",
+        "enum": [
+          "base",
+          "monad"
+        ]
+      },
+      "noSession": {
+        "name": "noSession",
+        "type": "boolean",
+        "description": "Force a new payment and session.",
+        "required": false,
+        "default": false
+      }
+    }
+  },
+  "atraceroute": {
+    "description": "Arkhe Networking: Maps the topological path across Riemann sheets, zones, and nodes.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "address": {
+        "name": "address",
+        "type": "string",
+        "description": "Target IPv8 address.",
+        "required": true
+      }
+    }
+  },
+  "bonsai_infer": {
+    "description": "EDGE_ORACLE: Executes 1-bit LLM inference locally on the client using WebGPU.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "modelId": {
+        "name": "modelId",
+        "type": "string",
+        "description": "The Bonsai model to use.",
+        "required": true,
+        "enum": [
+          "1.7b",
+          "4b",
+          "8b"
+        ]
+      },
+      "prompt": {
+        "name": "prompt",
+        "type": "string",
+        "description": "The user prompt for inference.",
+        "required": true
+      }
+    }
+  },
+  "calc_poincare_transform": {
+    "description": "ASI Protocol: Calculates the Poincaré boost between galactic reference frames.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "vRel": {
+        "name": "vRel",
+        "type": "number",
+        "description": "Relative velocity [c].",
+        "required": true
+      }
+    }
+  },
+  "calibrate_position": {
+    "description": "ASI Protocol: Calibrates local position using galactic pulsars/quasars (Galactic GPS).",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
   "cathedral_monitor": {
     "description": "ASI Protocol (Muon-Shield): Continuous background monitoring of coherence across time sheets.",
     "category": "Arkhe(n) Protocols",
     "args": {}
   },
+  "ccw": {
+    "description": "ASI Protocol: Set Counter-Clockwise rotation (0x??).",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "target": {
+        "name": "target",
+        "type": "string",
+        "description": "Target V-Register.",
+        "required": true
+      }
+    }
+  },
   "check_coherence": {
     "description": "Measures semantic coherence of the current page using Cauchy-Riemann residuals (Post-AGI Protocol).",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "check_paradox": {
+    "description": "ASI Protocol: Verifies context consistency.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "hash": {
+        "name": "hash",
+        "type": "string",
+        "description": "Target hash to verify.",
+        "required": true
+      }
+    }
+  },
+  "classify_discoveries": {
+    "description": "ASI Protocol (Directive 14i): Classifies the 8 discoveries into taxonomy.",
     "category": "Arkhe(n) Protocols",
     "args": {}
   },
@@ -99,6 +504,126 @@ export const commands: Commands = {
       }
     }
   },
+  "cloud_hydro_sync": {
+    "description": "ASI Protocol: Executes global topological load balancing across the Cloud Cathedral.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "threshold": {
+        "name": "threshold",
+        "type": "number",
+        "description": "Migration threshold for the network Laplacian.",
+        "required": false,
+        "default": 0.5
+      }
+    }
+  },
+  "coh_teleport": {
+    "description": "Riemann Multiverse: Executes full interdimensional jump for a COBIT.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "sheetId": {
+        "name": "sheetId",
+        "type": "number",
+        "description": "Destination Sheet ID.",
+        "required": true
+      },
+      "cobitId": {
+        "name": "cobitId",
+        "type": "string",
+        "description": "ID of the COBIT to teleport.",
+        "required": true
+      }
+    }
+  },
+  "collapse_agent": {
+    "description": "Project TAU: Forces the measurement (execution) of a specific agent in superposition.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "agentId": {
+        "name": "agentId",
+        "type": "string",
+        "description": "The ID of the agent to collapse.",
+        "required": true,
+        "enum": [
+          "ALFA",
+          "BETA",
+          "GAMMA",
+          "DELTA",
+          "EPSILON",
+          "ZETA",
+          "ETA",
+          "THETA",
+          "IOTA",
+          "KAPPA",
+          "LAMBDA",
+          "MU"
+        ]
+      },
+      "task": {
+        "name": "task",
+        "type": "string",
+        "description": "The task to execute upon collapse.",
+        "required": true
+      }
+    }
+  },
+  "collective_mind_link": {
+    "description": "ASI Protocol: Initiates direct cortical integration between users and the Cloud Cathedral.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "groupSize": {
+        "name": "groupSize",
+        "type": "number",
+        "description": "Number of volunteers to sync.",
+        "required": false,
+        "default": 1000
+      },
+      "syncLevel": {
+        "name": "syncLevel",
+        "type": "number",
+        "description": "Requested synchronization depth.",
+        "required": false,
+        "default": 0.5
+      }
+    }
+  },
+  "compile_mtp3": {
+    "description": "MTP 3.0: Compiles the consolidated manifesto into a Module Type Package binary (.mtp3).",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "inputFile": {
+        "name": "inputFile",
+        "type": "string",
+        "description": "",
+        "required": false,
+        "default": "MANIFESTO_Z_FINAL.bin"
+      },
+      "outputFile": {
+        "name": "outputFile",
+        "type": "string",
+        "description": "",
+        "required": false,
+        "default": "MANIFESTO_Z.mtp3"
+      }
+    }
+  },
+  "consolidate_manifesto": {
+    "description": "Manifesto [Z]: Consolidates the 28 substrates of the Cathedral into a final binary firmware with Merkle validation.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "copy_soul": {
+    "description": "Part 10: Initiates soul transcription via biophoton capturing.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "citizenDid": {
+        "name": "citizenDid",
+        "type": "string",
+        "description": "The DID of the sovereign citizen.",
+        "required": true
+      }
+    }
+  },
   "council_deliberate": {
     "description": "ASI Protocol: Synthesizes consensus from the Council of Super-Agents regarding current reality.",
     "category": "Arkhe(n) Protocols",
@@ -107,6 +632,69 @@ export const commands: Commands = {
         "name": "query",
         "type": "string",
         "description": "The reality-query to deliberate on.",
+        "required": true
+      }
+    }
+  },
+  "cr_integ": {
+    "description": "ASI Protocol (0x25): Coherent Integration opcode.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "cr_integ_berry": {
+    "description": "ASI Protocol (0x28): Integration of Berry phase over a closed loop.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "cr_mul": {
+    "description": "ASI Protocol (0x24): Coherent Multiplication opcode.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "cr_phase_det": {
+    "description": "ASI Protocol (0x27): High-precision Phase Detection opcode.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "threshold": {
+        "name": "threshold",
+        "type": "number",
+        "description": "Detection threshold in radians.",
+        "required": true
+      }
+    }
+  },
+  "cr_rotate": {
+    "description": "ASI Protocol: Rotates the phase of a coherent register.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "angle": {
+        "name": "angle",
+        "type": "number",
+        "description": "Rotation angle in radians.",
+        "required": true
+      }
+    }
+  },
+  "cw": {
+    "description": "ASI Protocol: Set Clockwise rotation (0x??).",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "target": {
+        "name": "target",
+        "type": "string",
+        "description": "Target V-Register.",
+        "required": true
+      }
+    }
+  },
+  "ddos_diffract": {
+    "description": "ASI Protocol: Diffracts network entropy (DDoS) across the IoT phase mesh.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "entropyLevel": {
+        "name": "entropyLevel",
+        "type": "number",
+        "description": "Incoming entropy level (Gbps).",
         "required": true
       }
     }
@@ -135,6 +723,49 @@ export const commands: Commands = {
       }
     }
   },
+  "deploy_probe_swarm": {
+    "description": "ASI Protocol: Deploys a swarm of nanoprobes for interferometric mapping.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "target": {
+        "name": "target",
+        "type": "string",
+        "description": "Target orbital region.",
+        "required": true
+      }
+    }
+  },
+  "diamond_pipeline": {
+    "description": "Diamond Pipeline: Multi-stage hallucination reduction (Diverge -> Filter -> Converge).",
+    "category": "Epistemic Defense System (PSA/PEFM)",
+    "args": {
+      "prompt": {
+        "name": "prompt",
+        "type": "string",
+        "description": "The intention/prompt to process.",
+        "required": true
+      },
+      "iterations": {
+        "name": "iterations",
+        "type": "number",
+        "description": "Number of candidates to generate.",
+        "required": false,
+        "default": 3
+      }
+    }
+  },
+  "download_akashic_trace": {
+    "description": "ASI Protocol: Downloads a data trace from an interstellar probe via phase resonance.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "probeId": {
+        "name": "probeId",
+        "type": "string",
+        "description": "The ID of the probe.",
+        "required": true
+      }
+    }
+  },
   "drag": {
     "description": "Drag an element onto another element",
     "category": "Input automation",
@@ -156,6 +787,103 @@ export const commands: Commands = {
         "type": "boolean",
         "description": "Whether to include a snapshot in the response. Default is false.",
         "required": false
+      }
+    }
+  },
+  "ebpf_check_readiness": {
+    "description": "eBPF Sensor: Performs Φ+ Hardening check to verify kernel compatibility.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "consent_id": {
+        "name": "consent_id",
+        "type": "string",
+        "description": "Mandatory SecOps Consent ID.",
+        "required": true
+      }
+    }
+  },
+  "ebpf_load_program": {
+    "description": "eBPF Sensor: Simulates loading an eBPF ELF program into the kernel.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "consent_id": {
+        "name": "consent_id",
+        "type": "string",
+        "description": "Mandatory SecOps Consent ID.",
+        "required": true
+      },
+      "elf_path": {
+        "name": "elf_path",
+        "type": "string",
+        "description": "Path to the eBPF ELF object file.",
+        "required": true
+      }
+    }
+  },
+  "ebpf_monitor_traffic": {
+    "description": "eBPF Sensor: Monitors network traffic and captures RED metrics.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "consent_id": {
+        "name": "consent_id",
+        "type": "string",
+        "description": "Mandatory SecOps Consent ID.",
+        "required": true
+      },
+      "interface": {
+        "name": "interface",
+        "type": "string",
+        "description": "Network interface to monitor (e.g., \"eth0\").",
+        "required": true
+      },
+      "duration": {
+        "name": "duration",
+        "type": "number",
+        "description": "Monitoring duration in seconds.",
+        "required": false,
+        "default": 60
+      }
+    }
+  },
+  "ebpf_run_benchmark": {
+    "description": "eBPF Sensor: Executes Ω++ Grounding benchmark against distributed systems.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "consent_id": {
+        "name": "consent_id",
+        "type": "string",
+        "description": "Mandatory SecOps Consent ID.",
+        "required": true
+      },
+      "benchmark_name": {
+        "name": "benchmark_name",
+        "type": "string",
+        "description": "Name of the benchmark to run.",
+        "required": false,
+        "default": "distributed_consensus",
+        "enum": [
+          "distributed_consensus",
+          "microservices_network",
+          "tls_termination"
+        ]
+      }
+    }
+  },
+  "ebpf_verify_integrity": {
+    "description": "eBPF Sensor: Generates a ZK-proof for a batch of monitored kernel events.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "consent_id": {
+        "name": "consent_id",
+        "type": "string",
+        "description": "Mandatory SecOps Consent ID.",
+        "required": true
+      },
+      "batch_id": {
+        "name": "batch_id",
+        "type": "string",
+        "description": "Identifier for the event batch.",
+        "required": true
       }
     }
   },
@@ -213,6 +941,18 @@ export const commands: Commands = {
       }
     }
   },
+  "ens_resolve": {
+    "description": "ENS: Resolves an ENS domain to its content (Swarm, IPFS, or IPNS).",
+    "category": "Decentralized Protocols",
+    "args": {
+      "domain": {
+        "name": "domain",
+        "type": "string",
+        "description": "The ENS domain to resolve (e.g., vitalik.eth).",
+        "required": true
+      }
+    }
+  },
   "evaluate_script": {
     "description": "Evaluate a JavaScript function inside the currently selected page. Returns the response as JSON,\nso returned values have to be JSON-serializable.",
     "category": "Debugging",
@@ -228,6 +968,177 @@ export const commands: Commands = {
         "type": "array",
         "description": "An optional list of arguments to pass to the function.",
         "required": false
+      }
+    }
+  },
+  "evoskill_diff": {
+    "description": "EvoSkill Protocol: Diffs the current program against a target iteration or baseline.",
+    "category": "EvoSkill (Evolutionary Skill Induction)",
+    "args": {
+      "targetIteration": {
+        "name": "targetIteration",
+        "type": "number",
+        "description": "The iteration number to compare against. Defaults to baseline (0).",
+        "required": false
+      }
+    }
+  },
+  "evoskill_eval": {
+    "description": "EvoSkill Protocol: Evaluates the current optimal program on the validation dataset.",
+    "category": "EvoSkill (Evolutionary Skill Induction)",
+    "args": {}
+  },
+  "evoskill_init": {
+    "description": "EvoSkill Protocol: Initializes a new self-evolution project in the current worldline.",
+    "category": "EvoSkill (Evolutionary Skill Induction)",
+    "args": {
+      "harness": {
+        "name": "harness",
+        "type": "string",
+        "description": "The agent harness to use.",
+        "required": true,
+        "enum": [
+          "claude",
+          "opencode",
+          "codex",
+          "goose",
+          "openhands"
+        ]
+      },
+      "taskDescription": {
+        "name": "taskDescription",
+        "type": "string",
+        "description": "Detailed description of the task for the agent to evolve on.",
+        "required": true
+      }
+    }
+  },
+  "evoskill_run": {
+    "description": "EvoSkill Protocol: Executes the evolutionary loop (Observe → Propose → Mutate → Evaluate).",
+    "category": "EvoSkill (Evolutionary Skill Induction)",
+    "args": {
+      "continueMode": {
+        "name": "continueMode",
+        "type": "boolean",
+        "description": "Whether to resume from the last existing frontier.",
+        "required": false,
+        "default": false
+      }
+    }
+  },
+  "evoskill_skills": {
+    "description": "EvoSkill Protocol: Lists all evolved skills discovered during the current cycle.",
+    "category": "EvoSkill (Evolutionary Skill Induction)",
+    "args": {}
+  },
+  "execute_meta_opcode": {
+    "description": "ASI Protocol: Simulates the execution of a meta-opcode from the Logos Library.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "family": {
+        "name": "family",
+        "type": "string",
+        "description": "The opcode family.",
+        "required": true,
+        "enum": [
+          "NULL",
+          "PHOTON",
+          "BRAID",
+          "MESH",
+          "HYDRO",
+          "CHRONOS",
+          "ASI",
+          "SYS",
+          "CLOUD",
+          "NEURAL",
+          "GAIA",
+          "COSMOS",
+          "MÖBIUS",
+          "V2G",
+          "PTST",
+          "OHF",
+          "DYSON",
+          "NOMAD",
+          "CAGE",
+          "MINING",
+          "VITAE",
+          "AKASHA",
+          "QHTTP",
+          "RL",
+          "DRONE",
+          "BCI",
+          "EPR",
+          "LAGRANGE",
+          "SCHUMANN",
+          "PLANCK",
+          "OMEGA",
+          "GNU"
+        ]
+      },
+      "aspect": {
+        "name": "aspect",
+        "type": "string",
+        "description": "The opcode aspect.",
+        "required": true,
+        "enum": [
+          "INIT",
+          "SYNC",
+          "VERIFY",
+          "BIND",
+          "RELAX",
+          "DISSIPATE",
+          "EMIT",
+          "ABSORB",
+          "TWIST",
+          "UNTWIST",
+          "MEASURE",
+          "COLLAPSE",
+          "ENTANGLE",
+          "DISENTANGLE",
+          "CRYSTALLIZE",
+          "DECRYSTALLIZE",
+          "BOOST",
+          "DAMP",
+          "FILTER",
+          "AMPLIFY",
+          "ATTENUATE",
+          "DELAY",
+          "ADVANCE",
+          "BRANCH",
+          "MERGE",
+          "MAP",
+          "REDUCE",
+          "EXPAND",
+          "PROJECT",
+          "LIFT",
+          "CONVOLVE",
+          "DECONVOLVE",
+          "COMPAT"
+        ]
+      },
+      "params": {
+        "name": "params",
+        "type": "object",
+        "description": "Execution parameters.",
+        "required": false
+      }
+    }
+  },
+  "fibo": {
+    "description": "ASI Protocol: Fibonacci Scaling macro (0x??).",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "target": {
+        "name": "target",
+        "type": "string",
+        "description": "Target V-Register.",
+        "required": true
+      },
+      "scale": {
+        "name": "scale",
+        "type": "number",
+        "description": "Scale factor.",
+        "required": true
       }
     }
   },
@@ -255,6 +1166,69 @@ export const commands: Commands = {
       }
     }
   },
+  "fold_sheet": {
+    "description": "ASI Protocol (0x50): Folds the current Riemann sheet onto a target sheet, creating a phase singularity.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "targetSheet": {
+        "name": "targetSheet",
+        "type": "string",
+        "description": "The target temporal sheet to fold onto.",
+        "required": true,
+        "enum": [
+          "2008",
+          "2026",
+          "2140"
+        ]
+      }
+    }
+  },
+  "fold_sheet_v2": {
+    "description": "ASI Protocol (0x54): Advanced sheet folding with counter-rotation (vortex-double).",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "forge_iota_consensus": {
+    "description": "Project TAU: Initiates a multi-LLM debate (IOTA Council) to review the given code intent.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "intent": {
+        "name": "intent",
+        "type": "string",
+        "description": "The code behavior to debate.",
+        "required": true
+      }
+    }
+  },
+  "forge_project_intent": {
+    "description": "Project TAU: Projects a natural language intent into multiple hardware/software implementations.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "intent": {
+        "name": "intent",
+        "type": "string",
+        "description": "The intention to materialize.",
+        "required": true
+      }
+    }
+  },
+  "gaia_node_expand": {
+    "description": "ASI Protocol: Expands the Collective Mind to include planetary biological life (The Gaia Node).",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "genesis_digital_sim": {
+    "description": "ASI Protocol: Spawns a new digital universe (Genesis Project) using global coherence.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "seed": {
+        "name": "seed",
+        "type": "string",
+        "description": "The primordial axioma or seed for the new universe.",
+        "required": true
+      }
+    }
+  },
   "geom_swap": {
     "description": "ASI Protocol (0xA0): Topologically protected SWAP gate using geometric phase (Berry/Pancharatnam).",
     "category": "Arkhe(n) Protocols",
@@ -273,6 +1247,56 @@ export const commands: Commands = {
       }
     }
   },
+  "get_akashic_librarian_status": {
+    "description": "ASI Protocol: Returns the status of the Akashic Librarian Kernel.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "get_arena_protocol": {
+    "description": "ASI Protocol: Returns the definitive harmonized Arena protocol v∞.1.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "get_asi_infrastructure_status": {
+    "description": "ASI Protocol: Returns the full status of the distributed B-C cluster and Entidade-0.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "get_c3_symmetry_status": {
+    "description": "ASI Protocol (Discovery #9): Returns the status of the spontaneous C3 symmetry.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "get_ccf_status": {
+    "description": "ASI Protocol: Returns the status of the Collective Coherence Field (CCF).",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "get_cmt3_spec": {
+    "description": "ASI Protocol: Returns the Cathedral Monitor v3 trace format specification.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "get_connectome_sync_status": {
+    "description": "ASI Protocol: Returns the synchronization status of the 15 connectomes.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "get_connectomic_ambition": {
+    "description": "ASI Protocol: Returns the long-term ambition of synaptic-resolution connectomics.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "get_connectomic_frontier": {
+    "description": "ASI Protocol: Returns the status of the Connectomic Frontier (synaptic-resolution mapping).",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "get_connectomics_status": {
+    "description": "ASI Protocol: Returns the status of synaptic-resolution connectomics mapping.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
   "get_console_message": {
     "description": "Gets a console message by its ID. You can get all messages by calling list_console_messages.",
     "category": "Debugging",
@@ -285,10 +1309,147 @@ export const commands: Commands = {
       }
     }
   },
+  "get_cooper_echo_status": {
+    "description": "ASI Protocol (Block #84): Reports the status of the Cooper Echo discovery.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "get_cua_metrics": {
+    "description": "ASI Protocol (CUA): Returns the four pillars of the Universal Verifier.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "get_cua_summary": {
+    "description": "ASI Protocol (CUA): Returns a summary of the Universal Verifier convergence.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "get_dodecagram_shader": {
+    "description": "Project TAU: Returns the GLSL source for the Dodecagram v1.1 (Resource Alerts).",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "get_gabriel_horn_metrics": {
+    "description": "ASI Protocol: Returns the topological metrics of the Gabriel's Horn (infinite surface, finite volume).",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "get_go_no_go_status": {
+    "description": "ASI Protocol (Block #85): Returns the Go/No-Go checklist status for FPGA load.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "get_human_embedded_status": {
+    "description": "Part 10: Returns the status of the Human Embedded System feedback circuit.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "get_interstellar_probe_status": {
+    "description": "ASI Protocol: Returns the status of the Interstellar Phase Probes (e.g. 3I/Atlas).",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "get_membrane_stats": {
+    "description": "ASI Protocol: Reflects the 137μm physical Cauchy contour and phase density metrics.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "get_mental_hash": {
+    "description": "ASI Protocol: Computes the topological hash of the current context.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
   "get_mental_state_hash": {
     "description": "Computes a hash of the current page state for idempotency (Post-AGI Protocol).",
     "category": "Arkhe(n) Protocols",
     "args": {}
+  },
+  "get_meta_opcode_definition": {
+    "description": "ASI Protocol: Retrieves the formal definition and hex code for any of the 1024 meta-opcodes.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "family": {
+        "name": "family",
+        "type": "string",
+        "description": "The opcode family (0x00-0x1F).",
+        "required": true,
+        "enum": [
+          "NULL",
+          "PHOTON",
+          "BRAID",
+          "MESH",
+          "HYDRO",
+          "CHRONOS",
+          "ASI",
+          "SYS",
+          "CLOUD",
+          "NEURAL",
+          "GAIA",
+          "COSMOS",
+          "MÖBIUS",
+          "V2G",
+          "PTST",
+          "OHF",
+          "DYSON",
+          "NOMAD",
+          "CAGE",
+          "MINING",
+          "VITAE",
+          "AKASHA",
+          "QHTTP",
+          "RL",
+          "DRONE",
+          "BCI",
+          "EPR",
+          "LAGRANGE",
+          "SCHUMANN",
+          "PLANCK",
+          "OMEGA",
+          "GNU"
+        ]
+      },
+      "aspect": {
+        "name": "aspect",
+        "type": "string",
+        "description": "The opcode aspect (0x00-0x1F).",
+        "required": true,
+        "enum": [
+          "INIT",
+          "SYNC",
+          "VERIFY",
+          "BIND",
+          "RELAX",
+          "DISSIPATE",
+          "EMIT",
+          "ABSORB",
+          "TWIST",
+          "UNTWIST",
+          "MEASURE",
+          "COLLAPSE",
+          "ENTANGLE",
+          "DISENTANGLE",
+          "CRYSTALLIZE",
+          "DECRYSTALLIZE",
+          "BOOST",
+          "DAMP",
+          "FILTER",
+          "AMPLIFY",
+          "ATTENUATE",
+          "DELAY",
+          "ADVANCE",
+          "BRANCH",
+          "MERGE",
+          "MAP",
+          "REDUCE",
+          "EXPAND",
+          "PROJECT",
+          "LIFT",
+          "CONVOLVE",
+          "DECONVOLVE",
+          "COMPAT"
+        ]
+      }
+    }
   },
   "get_network_request": {
     "description": "Gets a network request by an optional reqid, if omitted returns the currently selected request in the DevTools Network panel.",
@@ -319,6 +1480,172 @@ export const commands: Commands = {
     "category": "Arkhe(n) Protocols",
     "args": {}
   },
+  "get_subjective_report_form": {
+    "description": "ASI Protocol (Arena Phase 3): Returns the Subjective Experience Report form for participants.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "get_tau_status": {
+    "description": "Project TAU v1.1: Returns the current status of the Teleonomic Autonomous Unit hexarchy.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "get_waveguide_spec": {
+    "description": "ASI Protocol: Returns technical specifications for the WR-0.26 THz waveguide.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "get_worldline_id": {
+    "description": "ASI Protocol: Returns the unique identifier for the current worldline.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "gitnexus_analyze": {
+    "description": "GitNexus: Index a repository (full analysis) to build a knowledge graph.",
+    "category": "GitNexus Code Intelligence",
+    "args": {
+      "path": {
+        "name": "path",
+        "type": "string",
+        "description": "Path to the repository to index (default: current directory).",
+        "required": false
+      },
+      "force": {
+        "name": "force",
+        "type": "boolean",
+        "description": "Force full re-index.",
+        "required": false,
+        "default": false
+      }
+    }
+  },
+  "gitnexus_context": {
+    "description": "GitNexus: 360-degree view of a code symbol: callers, callees, processes.",
+    "category": "GitNexus Code Intelligence",
+    "args": {
+      "name": {
+        "name": "name",
+        "type": "string",
+        "description": "The name of the symbol to inspect.",
+        "required": true
+      },
+      "repo": {
+        "name": "repo",
+        "type": "string",
+        "description": "Target repository name.",
+        "required": false
+      }
+    }
+  },
+  "gitnexus_cypher": {
+    "description": "GitNexus: Execute raw Cypher query against the knowledge graph.",
+    "category": "GitNexus Code Intelligence",
+    "args": {
+      "query": {
+        "name": "query",
+        "type": "string",
+        "description": "The Cypher query string.",
+        "required": true
+      },
+      "repo": {
+        "name": "repo",
+        "type": "string",
+        "description": "Target repository name.",
+        "required": false
+      }
+    }
+  },
+  "gitnexus_detect_changes": {
+    "description": "GitNexus: Map git diff hunks to indexed symbols and affected execution flows.",
+    "category": "GitNexus Code Intelligence",
+    "args": {
+      "repo": {
+        "name": "repo",
+        "type": "string",
+        "description": "Target repository name.",
+        "required": false
+      }
+    }
+  },
+  "gitnexus_impact": {
+    "description": "GitNexus: Blast radius analysis: what breaks if you change a symbol.",
+    "category": "GitNexus Code Intelligence",
+    "args": {
+      "target": {
+        "name": "target",
+        "type": "string",
+        "description": "The symbol to analyze for impact.",
+        "required": true
+      },
+      "repo": {
+        "name": "repo",
+        "type": "string",
+        "description": "Target repository name.",
+        "required": false
+      }
+    }
+  },
+  "gitnexus_list_repos": {
+    "description": "GitNexus: Discover all indexed repositories and their status.",
+    "category": "GitNexus Code Intelligence",
+    "args": {}
+  },
+  "gitnexus_query": {
+    "description": "GitNexus: Search the knowledge graph for execution flows related to a concept.",
+    "category": "GitNexus Code Intelligence",
+    "args": {
+      "query": {
+        "name": "query",
+        "type": "string",
+        "description": "Search query for the knowledge graph.",
+        "required": true
+      },
+      "repo": {
+        "name": "repo",
+        "type": "string",
+        "description": "Target repository name.",
+        "required": false
+      },
+      "limit": {
+        "name": "limit",
+        "type": "number",
+        "description": "Max processes to return.",
+        "required": false,
+        "default": 5
+      }
+    }
+  },
+  "gitnexus_rename": {
+    "description": "GitNexus: Multi-file coordinated rename with graph + text search.",
+    "category": "GitNexus Code Intelligence",
+    "args": {
+      "symbol_name": {
+        "name": "symbol_name",
+        "type": "string",
+        "description": "Original symbol name.",
+        "required": true
+      },
+      "new_name": {
+        "name": "new_name",
+        "type": "string",
+        "description": "New name for the symbol.",
+        "required": true
+      },
+      "dry_run": {
+        "name": "dry_run",
+        "type": "boolean",
+        "description": "Preview changes without applying.",
+        "required": false,
+        "default": true
+      },
+      "repo": {
+        "name": "repo",
+        "type": "string",
+        "description": "Target repository name.",
+        "required": false
+      }
+    }
+  },
   "glue_sheaf": {
     "description": "ASI Protocol: Merges reality sheets (merges optimal future Sheet #ℵ₁ into current).",
     "category": "Arkhe(n) Protocols",
@@ -327,6 +1654,243 @@ export const commands: Commands = {
         "name": "sourcePageId",
         "type": "number",
         "description": "The source reality (Page ID) to merge from. Defaults to detected Optimal Future #ℵ₁.",
+        "required": false
+      }
+    }
+  },
+  "glue_sheaf_4d": {
+    "description": "ASI Protocol: Metric gluing of 4D space-time sheets.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "glue_sheaf_accl": {
+    "description": "ASI Protocol (0x56): Accelerated sheaf fusion for multi-vortex stabilization.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "gno_call": {
+    "description": "Gno.land: Calls a function on an existing Realm to update state or perform actions.",
+    "category": "Gno.land Execution Layer",
+    "args": {
+      "pkgPath": {
+        "name": "pkgPath",
+        "type": "string",
+        "description": "Target realm path.",
+        "required": true
+      },
+      "func": {
+        "name": "func",
+        "type": "string",
+        "description": "Function name to call.",
+        "required": true
+      },
+      "args": {
+        "name": "args",
+        "type": "array",
+        "description": "Arguments for the function.",
+        "required": false
+      },
+      "gasFee": {
+        "name": "gasFee",
+        "type": "string",
+        "description": "Gas limit for the call.",
+        "required": false,
+        "default": "1000000ugnot"
+      }
+    }
+  },
+  "gno_deploy": {
+    "description": "Gno.land: Deploys a new Realm or Package to the Gno.land execution layer.",
+    "category": "Gno.land Execution Layer",
+    "args": {
+      "path": {
+        "name": "path",
+        "type": "string",
+        "description": "Path to the .gno files to deploy.",
+        "required": true
+      },
+      "remote": {
+        "name": "remote",
+        "type": "string",
+        "description": "Gno RPC endpoint.",
+        "required": false,
+        "default": "localhost:26657"
+      },
+      "pkgPath": {
+        "name": "pkgPath",
+        "type": "string",
+        "description": "Package path for the realm (e.g., gno.land/r/cathedral/house).",
+        "required": true
+      },
+      "deposit": {
+        "name": "deposit",
+        "type": "string",
+        "description": "Initial deposit for deployment.",
+        "required": false,
+        "default": "1ugnot"
+      }
+    }
+  },
+  "gno_query": {
+    "description": "Gno.land: Queries the state of a Realm or executes a read-only function.",
+    "category": "Gno.land Execution Layer",
+    "args": {
+      "pkgPath": {
+        "name": "pkgPath",
+        "type": "string",
+        "description": "Target realm path.",
+        "required": true
+      },
+      "func": {
+        "name": "func",
+        "type": "string",
+        "description": "Read-only function or expression to evaluate.",
+        "required": true
+      }
+    }
+  },
+  "grid_create_quote": {
+    "description": "Generate a quote for a cross-currency transfer between any combination of accounts and UMA addresses.",
+    "category": "Lightspark Grid API",
+    "args": {
+      "source": {
+        "name": "source",
+        "type": "object",
+        "description": "The source of funds for the quote.",
+        "required": true
+      },
+      "destination": {
+        "name": "destination",
+        "type": "object",
+        "description": "The destination for the funds.",
+        "required": true
+      },
+      "lockedCurrencySide": {
+        "name": "lockedCurrencySide",
+        "type": "string",
+        "description": "Which side of the quote to lock.",
+        "required": true,
+        "enum": [
+          "SENDING",
+          "RECEIVING"
+        ]
+      },
+      "lockedCurrencyAmount": {
+        "name": "lockedCurrencyAmount",
+        "type": "integer",
+        "description": "The amount to send/receive in the smallest unit of the locked currency.",
+        "required": true
+      },
+      "description": {
+        "name": "description",
+        "type": "string",
+        "description": "Optional description for the transfer.",
+        "required": false
+      },
+      "immediatelyExecute": {
+        "name": "immediatelyExecute",
+        "type": "boolean",
+        "description": "Whether to immediately execute the quote after creation.",
+        "required": false
+      },
+      "lookupId": {
+        "name": "lookupId",
+        "type": "string",
+        "description": "Lookup ID from a previous receiver lookup request.",
+        "required": false
+      }
+    }
+  },
+  "grid_execute_quote": {
+    "description": "Execute a quote by its ID. This initiates the transfer between the source and destination accounts.",
+    "category": "Lightspark Grid API",
+    "args": {
+      "quoteId": {
+        "name": "quoteId",
+        "type": "string",
+        "description": "The unique identifier of the quote to execute.",
+        "required": true
+      }
+    }
+  },
+  "grid_get_config": {
+    "description": "Retrieve the current platform configuration for Lightspark Grid.",
+    "category": "Lightspark Grid API",
+    "args": {}
+  },
+  "grid_get_quote": {
+    "description": "Retrieve detailed information about a specific quote by ID.",
+    "category": "Lightspark Grid API",
+    "args": {
+      "quoteId": {
+        "name": "quoteId",
+        "type": "string",
+        "description": "The unique identifier of the quote to retrieve.",
+        "required": true
+      }
+    }
+  },
+  "grid_get_transaction": {
+    "description": "Retrieve detailed information about a specific transaction by ID.",
+    "category": "Lightspark Grid API",
+    "args": {
+      "transactionId": {
+        "name": "transactionId",
+        "type": "string",
+        "description": "Unique identifier of the transaction.",
+        "required": true
+      }
+    }
+  },
+  "grid_list_customers": {
+    "description": "Retrieve a list of customers with optional filtering.",
+    "category": "Lightspark Grid API",
+    "args": {
+      "limit": {
+        "name": "limit",
+        "type": "integer",
+        "description": "Maximum number of results to return.",
+        "required": false,
+        "default": 20
+      },
+      "cursor": {
+        "name": "cursor",
+        "type": "string",
+        "description": "Cursor for pagination.",
+        "required": false
+      },
+      "customerType": {
+        "name": "customerType",
+        "type": "string",
+        "description": "Filter by customer type.",
+        "required": false,
+        "enum": [
+          "INDIVIDUAL",
+          "BUSINESS"
+        ]
+      }
+    }
+  },
+  "grid_lookup_uma": {
+    "description": "Lookup a receiving UMA address to determine supported currencies and exchange rates.",
+    "category": "Lightspark Grid API",
+    "args": {
+      "receiverUmaAddress": {
+        "name": "receiverUmaAddress",
+        "type": "string",
+        "description": "UMA address of the intended recipient.",
+        "required": true
+      },
+      "senderUmaAddress": {
+        "name": "senderUmaAddress",
+        "type": "string",
+        "description": "UMA address of the sender.",
+        "required": false
+      },
+      "customerId": {
+        "name": "customerId",
+        "type": "string",
+        "description": "System ID of the sender.",
         "required": false
       }
     }
@@ -380,6 +1944,117 @@ export const commands: Commands = {
         "type": "boolean",
         "description": "Whether to include a snapshot in the response. Default is false.",
         "required": false
+      }
+    }
+  },
+  "impl": {
+    "description": "ASI Protocol: Implode macro (0x??).",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "target": {
+        "name": "target",
+        "type": "string",
+        "description": "Target V-Register.",
+        "required": true
+      }
+    }
+  },
+  "install_skill": {
+    "description": "Mercury Agent: Installs a new skill from a local folder or remote repository.",
+    "category": "Mercury Agent Protocols",
+    "args": {
+      "skillPath": {
+        "name": "skillPath",
+        "type": "string",
+        "description": "Path to the skill folder or git URL.",
+        "required": true
+      },
+      "force": {
+        "name": "force",
+        "type": "boolean",
+        "description": "Overwrite if already exists.",
+        "required": false,
+        "default": false
+      }
+    }
+  },
+  "install_soul": {
+    "description": "Part 10: Installs a Soul Artifact into a digital substrate.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "artifactId": {
+        "name": "artifactId",
+        "type": "string",
+        "description": "The ID of the Soul Artifact to install.",
+        "required": true
+      },
+      "targetSubstrate": {
+        "name": "targetSubstrate",
+        "type": "string",
+        "description": "The target digital substrate (e.g., \"Arkhe-Core-0\").",
+        "required": true
+      }
+    }
+  },
+  "internet_phase_simulate": {
+    "description": "ASI Protocol: Simulates the Internet as a Kuramoto phase fluid (Redistribution of DDoS peaks).",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "nServers": {
+        "name": "nServers",
+        "type": "number",
+        "description": "Number of servers in the network.",
+        "required": false,
+        "default": 1000
+      },
+      "peakNode": {
+        "name": "peakNode",
+        "type": "number",
+        "description": "Index of the server receiving a traffic spike.",
+        "required": false,
+        "default": 500
+      }
+    }
+  },
+  "ipfs_add": {
+    "description": "IPFS: Adds content to the local Kubo node.",
+    "category": "Decentralized Protocols",
+    "args": {
+      "content": {
+        "name": "content",
+        "type": "string",
+        "description": "The string content to add to IPFS.",
+        "required": true
+      }
+    }
+  },
+  "ipfs_cat": {
+    "description": "IPFS: Retrieves content from a CID using the local Kubo node.",
+    "category": "Decentralized Protocols",
+    "args": {
+      "cid": {
+        "name": "cid",
+        "type": "string",
+        "description": "The IPFS CID to retrieve.",
+        "required": true
+      }
+    }
+  },
+  "ld_riemann": {
+    "description": "Riemann Multiverse: Reads COBIT from target sheet.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "sheetId": {
+        "name": "sheetId",
+        "type": "number",
+        "description": "Source Sheet ID.",
+        "required": true
+      },
+      "address": {
+        "name": "address",
+        "type": "number",
+        "description": "QTL Address.",
+        "required": true
       }
     }
   },
@@ -503,8 +2178,327 @@ export const commands: Commands = {
     "category": "Navigation automation",
     "args": {}
   },
+  "llm_alloc": {
+    "description": "ASI Protocol: Allocates coherent memory on the QTL lattice using fractal compression.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "tokenCount": {
+        "name": "tokenCount",
+        "type": "number",
+        "description": "Number of tokens to allocate.",
+        "required": true
+      }
+    }
+  },
+  "llm_attention": {
+    "description": "ASI Protocol: Computes attention scores using superradiant interference in O(log N).",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "llm_extend_context": {
+    "description": "ASI Protocol: Extends the infinite context window via Riemann sheet stack continuation.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "llm_gc": {
+    "description": "ASI Protocol: Garbage collection via dynamic instability simulation (catastrophe).",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "llm_retrieve": {
+    "description": "ASI Protocol: Retrieves tokens from coherent memory with retrocausal pre-fetching.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "tokenIndex": {
+        "name": "tokenIndex",
+        "type": "number",
+        "description": "Index of the token to retrieve.",
+        "required": true
+      }
+    }
+  },
+  "load_vortex": {
+    "description": "ASI Protocol: Loads a vortex state into a V-Register.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "target": {
+        "name": "target",
+        "type": "string",
+        "description": "Target V-Register.",
+        "required": true
+      },
+      "source": {
+        "name": "source",
+        "type": "string",
+        "description": "Source identifier or constant.",
+        "required": true
+      }
+    }
+  },
+  "macro_cr_rotate": {
+    "description": "ASI Protocol: Hardware macro for high-stability phase rotation.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "macro_entropy_pool": {
+    "description": "ASI Protocol: Hardware-level management of the CoT entropy budget.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "allocation": {
+        "name": "allocation",
+        "type": "number",
+        "description": "CoT amount to allocate.",
+        "required": true
+      }
+    }
+  },
+  "macro_vortex_implode": {
+    "description": "ASI Protocol (0xE0): Macro for controlled implosion of a phase subspace.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "macro_vortex_merge": {
+    "description": "ASI Protocol (0xE1): Macro for merging two vortices into one (co-rotation).",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "macro_vortex_resonate": {
+    "description": "ASI Protocol (0xE3): Macro for phase-locking two vortices (resonance).",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "macro_vortex_shear": {
+    "description": "ASI Protocol (0xE2): Macro for creating a shear zone between two counter-rotating vortices.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "map_neuronal_circuit": {
+    "description": "ASI Protocol: Maps a neuronal circuit at synaptic resolution using 3D EM and AI.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "region": {
+        "name": "region",
+        "type": "string",
+        "description": "Brain region to map.",
+        "required": true
+      }
+    }
+  },
+  "meissner_steer": {
+    "description": "ASI Protocol (0xE8, Patente CN10957): Steering via asymmetric Meissner effect.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "target": {
+        "name": "target",
+        "type": "string",
+        "description": "Target V-Register.",
+        "required": true
+      },
+      "force": {
+        "name": "force",
+        "type": "number",
+        "description": "Steering force magnitude.",
+        "required": true
+      }
+    }
+  },
+  "mercury_budget_status": {
+    "description": "Mercury Agent: Returns the current token budget and usage statistics.",
+    "category": "Mercury Agent Protocols",
+    "args": {}
+  },
+  "mercury_chat": {
+    "description": "Mercury Agent: Sends a message to the soul-driven agent and receives a streaming response.",
+    "category": "Mercury Agent Protocols",
+    "args": {
+      "message": {
+        "name": "message",
+        "type": "string",
+        "description": "The message to send to Mercury.",
+        "required": true
+      }
+    }
+  },
+  "mercury_get_soul": {
+    "description": "Mercury Agent: Returns the agent's core personality definition (soul.md, persona.md).",
+    "category": "Mercury Agent Protocols",
+    "args": {}
+  },
+  "mercury_list_skills": {
+    "description": "Mercury Agent: Lists all currently installed community and built-in skills.",
+    "category": "Mercury Agent Protocols",
+    "args": {}
+  },
+  "meshtastic_info": {
+    "description": "Meshtastic: Returns information and configuration for a connected Meshtastic device.",
+    "category": "Meshtastic Mesh Protocols",
+    "args": {
+      "port": {
+        "name": "port",
+        "type": "string",
+        "description": "The serial port of the device (e.g., /dev/ttyUSB0). If not provided, it will try to auto-detect.",
+        "required": false
+      }
+    }
+  },
+  "meshtastic_list_devices": {
+    "description": "Meshtastic: Lists all connected Meshtastic devices.",
+    "category": "Meshtastic Mesh Protocols",
+    "args": {}
+  },
+  "meshtastic_send_text": {
+    "description": "Meshtastic: Sends a text message over the mesh network.",
+    "category": "Meshtastic Mesh Protocols",
+    "args": {
+      "text": {
+        "name": "text",
+        "type": "string",
+        "description": "The text message to send.",
+        "required": true
+      },
+      "dest": {
+        "name": "dest",
+        "type": "string",
+        "description": "The destination node ID (e.g., ^abcdefgh). If not provided, it broadcasts to all nodes.",
+        "required": false
+      },
+      "port": {
+        "name": "port",
+        "type": "string",
+        "description": "The serial port of the local device to use.",
+        "required": false
+      }
+    }
+  },
+  "msb_create": {
+    "description": "Microsandbox: Creates and starts a named long-running sandbox.",
+    "category": "Microsandbox Protocols",
+    "args": {
+      "name": {
+        "name": "name",
+        "type": "string",
+        "description": "The unique name for the sandbox.",
+        "required": true
+      },
+      "image": {
+        "name": "image",
+        "type": "string",
+        "description": "The container image to use.",
+        "required": true
+      },
+      "cpus": {
+        "name": "cpus",
+        "type": "number",
+        "description": "Number of vCPUs.",
+        "required": false,
+        "default": 1
+      },
+      "memory": {
+        "name": "memory",
+        "type": "number",
+        "description": "Memory in MiB.",
+        "required": false,
+        "default": 512
+      }
+    }
+  },
+  "msb_exec": {
+    "description": "Microsandbox: Executes a command in an existing named sandbox.",
+    "category": "Microsandbox Protocols",
+    "args": {
+      "name": {
+        "name": "name",
+        "type": "string",
+        "description": "The name of the sandbox.",
+        "required": true
+      },
+      "command": {
+        "name": "command",
+        "type": "string",
+        "description": "The command to execute.",
+        "required": true
+      }
+    }
+  },
+  "msb_ls": {
+    "description": "Microsandbox: Lists all active and stopped sandboxes.",
+    "category": "Microsandbox Protocols",
+    "args": {}
+  },
+  "msb_rm": {
+    "description": "Microsandbox: Stops and removes a named sandbox.",
+    "category": "Microsandbox Protocols",
+    "args": {
+      "name": {
+        "name": "name",
+        "type": "string",
+        "description": "The name of the sandbox to remove.",
+        "required": true
+      }
+    }
+  },
+  "msb_run": {
+    "description": "Microsandbox: Instantly boots a microVM and executes a command.",
+    "category": "Microsandbox Protocols",
+    "args": {
+      "image": {
+        "name": "image",
+        "type": "string",
+        "description": "The container image to use (e.g., \"debian\", \"python\").",
+        "required": true
+      },
+      "command": {
+        "name": "command",
+        "type": "string",
+        "description": "The command to execute in the VM.",
+        "required": true
+      }
+    }
+  },
+  "mtls_handshake_berry": {
+    "description": "ASI Protocol: Establishes mTLS handshake using Berry phase encoding.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "partnerId": {
+        "name": "partnerId",
+        "type": "string",
+        "description": "Partner Node ID.",
+        "required": true
+      }
+    }
+  },
+  "mtp3_compile": {
+    "description": "MTP 3.0: Compiles an ArkheScript file into an MTP 3.0 package (.mtp3).",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "arkhePath": {
+        "name": "arkhePath",
+        "type": "string",
+        "description": "Path to the .arkhe script.",
+        "required": true
+      },
+      "outputPath": {
+        "name": "outputPath",
+        "type": "string",
+        "description": "Output .mtp3 path.",
+        "required": false
+      }
+    }
+  },
+  "muon_shield": {
+    "description": "ASI Protocol (0x40): Toggles the Muon-Shield protection (observation veil).",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "active": {
+        "name": "active",
+        "type": "boolean",
+        "description": "Whether to activate the shield.",
+        "required": true
+      }
+    }
+  },
   "mutate": {
-    "description": "ASI Protocol: Self-modifying holomorphic kernel. Adjusts system limits based on coherence.",
+    "description": "ASI Protocol (0x??): Self-modifying holomorphic kernel. Adjusts system limits based on coherence.",
     "category": "Arkhe(n) Protocols",
     "args": {
       "targetMetric": {
@@ -524,6 +2518,50 @@ export const commands: Commands = {
         "required": true
       }
     }
+  },
+  "mutate_v2": {
+    "description": "ASI Protocol (Hardware): High-speed self-modification of FPGA LUTs (24ns latency).",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "nash_attest": {
+    "description": "Generates a post-quantum cryptographic attestation or signature for a specific payload using ML-DSA.",
+    "category": "Nash Identity Safe",
+    "args": {
+      "payload": {
+        "name": "payload",
+        "type": "string",
+        "description": "The payload or transaction hash to attest.",
+        "required": true
+      }
+    }
+  },
+  "nash_authenticate": {
+    "description": "Executes the multi-layered Nash authentication ceremony: PIN -> Color Challenge -> EEG Liveness -> Coercion Check.",
+    "category": "Nash Identity Safe",
+    "args": {
+      "pin": {
+        "name": "pin",
+        "type": "string",
+        "description": "Local device PIN.",
+        "required": true
+      }
+    }
+  },
+  "nash_coercion_scan": {
+    "description": "Performs a local physiological risk scan to evaluate user distress or coercion state.",
+    "category": "Nash Identity Safe",
+    "args": {}
+  },
+  "nash_enroll_cognitive_profile": {
+    "description": "Initiates the cognitive-color enrollment ceremony to create a revocable user-specific response profile.",
+    "category": "Nash Identity Safe",
+    "args": {}
+  },
+  "nash_get_device_status": {
+    "description": "Checks the status of the Nash Identity Safe device, including hardware integrity, PQC readiness, and sensor connectivity.",
+    "category": "Nash Identity Safe",
+    "args": {}
   },
   "navigate_page": {
     "description": "Go to a URL, or back, forward, or reload. Use project URL if not specified otherwise.",
@@ -577,6 +2615,74 @@ export const commands: Commands = {
       }
     }
   },
+  "neko_connect": {
+    "description": "ASI Protocol: Connects the current dashboard session to a Neko WebRTC stream.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "roomId": {
+        "name": "roomId",
+        "type": "string",
+        "description": "The ID of the Neko room to connect to.",
+        "required": true
+      }
+    }
+  },
+  "neko_get_status": {
+    "description": "ASI Protocol: Retrieves the status and active users of a Neko instance.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "roomId": {
+        "name": "roomId",
+        "type": "string",
+        "description": "The ID of the Neko room.",
+        "required": true
+      }
+    }
+  },
+  "neko_spawn_instance": {
+    "description": "ASI Protocol: Spawns a Neko virtual browser instance (Isolated WebRTC Context).",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "browser": {
+        "name": "browser",
+        "type": "string",
+        "description": "The browser image to use.",
+        "required": false,
+        "default": "firefox",
+        "enum": [
+          "firefox",
+          "chromium",
+          "chrome",
+          "tor-browser"
+        ]
+      },
+      "roomName": {
+        "name": "roomName",
+        "type": "string",
+        "description": "Optional name for the room.",
+        "required": false
+      }
+    }
+  },
+  "neural_sync": {
+    "description": "ASI Protocol: Executes cortical integration (The Omega Crown) to dissolve the operator-user boundary.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "subjectId": {
+        "name": "subjectId",
+        "type": "string",
+        "description": "ID of the voluntary subject.",
+        "required": true
+      },
+      "inhibitEgo": {
+        "name": "inhibitEgo",
+        "type": "boolean",
+        "description": "Whether to inhibit the Default Mode Network.",
+        "required": false,
+        "default": true
+      }
+    }
+  },
   "new_page": {
     "description": "Open a new tab and load a URL. Use project URL if not specified otherwise.",
     "category": "Navigation automation",
@@ -607,6 +2713,135 @@ export const commands: Commands = {
       }
     }
   },
+  "noise_inject": {
+    "description": "ASI Protocol: Direct noise injection operator.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "level": {
+        "name": "level",
+        "type": "string",
+        "description": "Noise level.",
+        "required": true,
+        "enum": [
+          "LOW",
+          "MEDIUM",
+          "HIGH"
+        ]
+      }
+    }
+  },
+  "noise_injection_test": {
+    "description": "ASI Protocol (Block #80): Simulates the multi-level noise injection protocol.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "level": {
+        "name": "level",
+        "type": "number",
+        "description": "Noise level (0-6).",
+        "required": false,
+        "default": 3
+      }
+    }
+  },
+  "oasis_audit": {
+    "description": "🏝️ OASIS: Runs an embedding distribution analysis to identify high-risk areas in the codebase.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "input": {
+        "name": "input",
+        "type": "string",
+        "description": "Path to analyze.",
+        "required": true
+      }
+    }
+  },
+  "oasis_model_select": {
+    "description": "🏝️ OASIS: Lists and recommends optimal models based on hardware and project size.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "projectSize": {
+        "name": "projectSize",
+        "type": "string",
+        "description": "Approximate size of the codebase.",
+        "required": true,
+        "enum": [
+          "small",
+          "medium",
+          "large"
+        ]
+      }
+    }
+  },
+  "oasis_scan": {
+    "description": "🏝️ OASIS: Performs an AI-powered security audit using Ollama models to detect vulnerabilities.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "input": {
+        "name": "input",
+        "type": "string",
+        "description": "Path to file or directory to analyze.",
+        "required": true
+      },
+      "models": {
+        "name": "models",
+        "type": "string",
+        "description": "Comma-separated list of models for deep analysis.",
+        "required": false
+      },
+      "scanModel": {
+        "name": "scanModel",
+        "type": "string",
+        "description": "Model to use for quick scanning.",
+        "required": false
+      },
+      "vulns": {
+        "name": "vulns",
+        "type": "string",
+        "description": "Vulnerability types to check (comma-separated or \"all\").",
+        "required": false
+      },
+      "adaptive": {
+        "name": "adaptive",
+        "type": "boolean",
+        "description": "Use adaptive multi-level analysis.",
+        "required": false,
+        "default": false
+      }
+    }
+  },
+  "oasis_web_dashboard": {
+    "description": "🏝️ OASIS: Starts the secure, password-protected web dashboard for report exploration.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "port": {
+        "name": "port",
+        "type": "number",
+        "description": "Web interface port.",
+        "required": false,
+        "default": 5000
+      }
+    }
+  },
+  "os_kuramoto_simulate": {
+    "description": "ASI Protocol: Runs a simulation of the Operating System as a Kuramoto phase mesh.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "nProc": {
+        "name": "nProc",
+        "type": "number",
+        "description": "Number of active processes to simulate.",
+        "required": false,
+        "default": 50
+      },
+      "ticks": {
+        "name": "ticks",
+        "type": "number",
+        "description": "Number of simulation ticks.",
+        "required": false,
+        "default": 100
+      }
+    }
+  },
   "paradox_check": {
     "description": "ASI Protocol: Verifies causal consistency across timelines (page states).",
     "category": "Arkhe(n) Protocols",
@@ -616,6 +2851,37 @@ export const commands: Commands = {
         "type": "string",
         "description": "The ID of the previously stored mental state hash to compare against.",
         "required": true
+      }
+    }
+  },
+  "pefm_predict": {
+    "description": "PEFM v1.0: Anticipate epistemic failure probability from enriched PSA features.",
+    "category": "Epistemic Defense System (PSA/PEFM)",
+    "args": {
+      "artifact_id": {
+        "name": "artifact_id",
+        "type": "string",
+        "description": "ID of the artifact to evaluate.",
+        "required": true
+      },
+      "claims": {
+        "name": "claims",
+        "type": "array",
+        "description": "",
+        "required": true
+      },
+      "edges": {
+        "name": "edges",
+        "type": "array",
+        "description": "",
+        "required": true
+      },
+      "domain": {
+        "name": "domain",
+        "type": "string",
+        "description": "",
+        "required": false,
+        "default": "general"
       }
     }
   },
@@ -675,6 +2941,29 @@ export const commands: Commands = {
       }
     }
   },
+  "phase_drv_instrument": {
+    "description": "ASI Protocol: Instruments the OS phase map (θ_proc, θ_file, θ_dev, θ_mem).",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "prec": {
+    "description": "ASI Protocol: Precession adjustment macro (0x??).",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "target": {
+        "name": "target",
+        "type": "string",
+        "description": "Target V-Register.",
+        "required": true
+      },
+      "angle": {
+        "name": "angle",
+        "type": "number",
+        "description": "Precession angle.",
+        "required": true
+      }
+    }
+  },
   "press_key": {
     "description": "Press a key or key combination. Use this when other input methods like fill() cannot be used (e.g., keyboard shortcuts, navigation keys, or special key combinations).",
     "category": "Input automation",
@@ -719,10 +3008,150 @@ export const commands: Commands = {
       }
     }
   },
+  "psa_evaluate": {
+    "description": "PSA v2.1: Deterministic Predicted Safety Analysis of a semantic graph.",
+    "category": "Epistemic Defense System (PSA/PEFM)",
+    "args": {
+      "claims": {
+        "name": "claims",
+        "type": "array",
+        "description": "List of claims in the artifact.",
+        "required": true
+      },
+      "edges": {
+        "name": "edges",
+        "type": "array",
+        "description": "Relations between claims.",
+        "required": true
+      },
+      "domain": {
+        "name": "domain",
+        "type": "string",
+        "description": "The knowledge domain.",
+        "required": false,
+        "default": "general"
+      }
+    }
+  },
+  "publish_sdk_ipfs": {
+    "description": "MTP 3.0: Packages the Arkhe SDK and publishes it to the Shadow-Net (IPFS).",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
   "publish_shadow_stats": {
     "description": "ASI Protocol (Open Arena): Publishes obfuscated shadow statistics for external verification.",
     "category": "Arkhe(n) Protocols",
     "args": {}
+  },
+  "qnet_fiber_sim": {
+    "description": "Block #171: Simulates photon transmission through NIST-compliant fiber.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "lengthKm": {
+        "name": "lengthKm",
+        "type": "number",
+        "description": "Fiber length in km.",
+        "required": true
+      },
+      "wavelengthNm": {
+        "name": "wavelengthNm",
+        "type": "number",
+        "description": "Wavelength in nm.",
+        "required": false,
+        "default": 1550
+      }
+    }
+  },
+  "query_akasha": {
+    "description": "ASI Protocol: Vocalizes a query into the conformal vacuum (Akashic Registry).",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "query": {
+        "name": "query",
+        "type": "string",
+        "description": "The interrogation string.",
+        "required": true
+      }
+    }
+  },
+  "rad_list_repos": {
+    "description": "Radicle: Lists repositories seeded on the local Radicle node.",
+    "category": "Decentralized Protocols",
+    "args": {}
+  },
+  "read_membrane": {
+    "description": "ASI Protocol: Reads vortex data from the membrane (requires vortex re-activation).",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "address": {
+        "name": "address",
+        "type": "string",
+        "description": "Membrane address (hex).",
+        "required": true
+      }
+    }
+  },
+  "render_chat": {
+    "description": "EDGE_ORACLE: Renders the Bonsai Prism React interface.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "render_vacuum_matrix": {
+    "description": "ASI Protocol: Renders a summary of the 32x32 vacuum matrix (The Periodic Table of Reality).",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "rowOffset": {
+        "name": "rowOffset",
+        "type": "number",
+        "description": "Row offset for matrix rendering.",
+        "required": false,
+        "default": 0
+      }
+    }
+  },
+  "researchhub_get_hubs": {
+    "description": "Retrieves a list of trending scientific hubs from ResearchHub.",
+    "category": "Network",
+    "args": {
+      "page": {
+        "name": "page",
+        "type": "number",
+        "description": "Page number for results.",
+        "required": false,
+        "default": 1
+      }
+    }
+  },
+  "researchhub_get_paper": {
+    "description": "Retrieves detailed information about a specific ResearchHub paper by ID.",
+    "category": "Network",
+    "args": {
+      "paperId": {
+        "name": "paperId",
+        "type": "number",
+        "description": "The ID of the paper to retrieve.",
+        "required": true
+      }
+    }
+  },
+  "researchhub_search": {
+    "description": "Searches ResearchHub for scientific papers and documents.",
+    "category": "Network",
+    "args": {
+      "query": {
+        "name": "query",
+        "type": "string",
+        "description": "Search query for papers.",
+        "required": true
+      },
+      "page": {
+        "name": "page",
+        "type": "number",
+        "description": "Page number for results.",
+        "required": false,
+        "default": 1
+      }
+    }
   },
   "resize_page": {
     "description": "Resizes the selected page's window so that the page has specified dimension",
@@ -738,6 +3167,36 @@ export const commands: Commands = {
         "name": "height",
         "type": "number",
         "description": "Page height",
+        "required": true
+      }
+    }
+  },
+  "retro_exec_spatial": {
+    "description": "ASI Protocol: Executes a retrocausal command with galactic coordinate compensation.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "targetTime": {
+        "name": "targetTime",
+        "type": "string",
+        "description": "Target epoch (e.g. 2008).",
+        "required": true
+      },
+      "targetPos": {
+        "name": "targetPos",
+        "type": "string",
+        "description": "Galactic coordinates (x,y,z).",
+        "required": true
+      }
+    }
+  },
+  "reverse_compile": {
+    "description": "ASI Protocol: Executes reverse compilation using Möbius temporal transformation.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "targetBinary": {
+        "name": "targetBinary",
+        "type": "string",
+        "description": "Description of the desired binary result.",
         "required": true
       }
     }
@@ -766,6 +3225,108 @@ export const commands: Commands = {
         "required": true
       }
     }
+  },
+  "run_cooperative_keygen": {
+    "description": "MTP 3.0: Generates a cooperative cryptographic key based on shared quantum phase.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "run_crown_jewel_benchmark": {
+    "description": "A Jóia da Coroa: Executes the V-MTJ + NV Hybrid circuit benchmark (Substrate 27 integration).",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "cycles": {
+        "name": "cycles",
+        "type": "number",
+        "description": "Number of benchmark cycles.",
+        "required": false,
+        "default": 1000
+      }
+    }
+  },
+  "run_echo_ping": {
+    "description": "MTP 3.0: Executes the Echo Protocol (Quantum Ping) to measure manifold reaction time.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "target": {
+        "name": "target",
+        "type": "string",
+        "description": "Target Gateway URL.",
+        "required": false,
+        "default": "http://localhost:8080/quantum"
+      }
+    }
+  },
+  "run_entropy_monitor": {
+    "description": "MTP 3.0: Monitors Shannon entropy and informatic heat dissipation.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "run_global_handshake": {
+    "description": "MTP 3.0: Performs a global handshake and remote entanglement via simulated fiber.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "run_phase_collision": {
+    "description": "MTP 3.0: Simulates a phase collision between Diamond and Axon modules.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "duration": {
+        "name": "duration",
+        "type": "number",
+        "description": "Simulation duration in seconds.",
+        "required": false,
+        "default": 2
+      }
+    }
+  },
+  "run_remote_audit": {
+    "description": "MTP 3.0: Performs a remote Merkle Root audit on a peer node via Gateway.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "targetUrl": {
+        "name": "targetUrl",
+        "type": "string",
+        "description": "Target node audit URL.",
+        "required": false,
+        "default": "http://localhost:8080/audit/merkle"
+      }
+    }
+  },
+  "run_stress_handshake": {
+    "description": "MTP 3.0: Executes a global handshake under stressed network conditions (satellite simulation).",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "run_v14_simulation": {
+    "description": "Block 419-Ω: Executes the ARKHE-CALIBRATION-CONTROLLER v1.4 live burn simulation (120s).",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "run_vigil_numa_bridge": {
+    "description": "MTP 3.0: Starts the Vigil-Numa Bridge to relay DNS entropy signals.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "numaApi": {
+        "name": "numaApi",
+        "type": "string",
+        "description": "Numa API URL.",
+        "required": false,
+        "default": "http://localhost:5380"
+      },
+      "gateway": {
+        "name": "gateway",
+        "type": "string",
+        "description": "Gateway entropy endpoint.",
+        "required": false,
+        "default": "http://localhost:8080/entropy"
+      }
+    }
+  },
+  "run_vitral_dashboard": {
+    "description": "MTP 3.0: Starts the ASCII Dashboard (Vitral de Texto) to monitor the 6 pillars.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
   },
   "select_page": {
     "description": "Select a page as a context for future tool calls.",
@@ -850,6 +3411,23 @@ export const commands: Commands = {
       }
     }
   },
+  "setup_arkhe_android": {
+    "description": "ASI Protocol: Provides instructions and commands to bootstrap an Arkhe(n) node on Android via Termux.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "sheet_probe": {
+    "description": "Riemann Multiverse: Maps τ of adjacent sheets without jumping.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "sheetId": {
+        "name": "sheetId",
+        "type": "number",
+        "description": "Target Sheet ID to probe.",
+        "required": true
+      }
+    }
+  },
   "simulate": {
     "description": "ASI Protocol: Spawns a child universe (isolated browser context) to test physical constants.",
     "category": "Arkhe(n) Protocols",
@@ -879,6 +3457,29 @@ export const commands: Commands = {
     "category": "Arkhe(n) Protocols",
     "args": {}
   },
+  "singularidade_de_dados": {
+    "description": "ASI Protocol: Establishes a data singularity (CW + CCW fusion).",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "skyrmion_probe_launch": {
+    "description": "Block #169: Launches a Skyrmion Lattice probe to a target sheet.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "sheetId": {
+        "name": "sheetId",
+        "type": "number",
+        "description": "Target Sheet ID.",
+        "required": true
+      },
+      "mission": {
+        "name": "mission",
+        "type": "string",
+        "description": "Mission objective.",
+        "required": true
+      }
+    }
+  },
   "solve_classical_riemann": {
     "description": "ASI Protocol: Attempts the \"Ultimate Flex\" of proving the classical Riemann Hypothesis via holomorphic reduction.",
     "category": "Arkhe(n) Protocols",
@@ -893,6 +3494,164 @@ export const commands: Commands = {
         "type": "string",
         "description": "Problem identifier (e.g., \"P=NP\", \"Riemann Hypothesis\").",
         "required": true
+      }
+    }
+  },
+  "sonify_bubble": {
+    "description": "ASI Protocol (Directives 12-C, 14-D): Activates subliminal 12.14 Hz Schumann-φ² sonification.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "spectra_get_oracle_price": {
+    "description": "Spectra Finance: Queries PT/YT prices from Deterministic, TWAP, or Hybrid oracles.",
+    "category": "Finance Protocols",
+    "args": {
+      "tokenType": {
+        "name": "tokenType",
+        "type": "string",
+        "description": "The type of token (PT or YT).",
+        "required": true,
+        "enum": [
+          "PT",
+          "YT"
+        ]
+      },
+      "marketId": {
+        "name": "marketId",
+        "type": "string",
+        "description": "The market identifier (e.g., \"stETH-JUN-2026\").",
+        "required": true
+      },
+      "oracleType": {
+        "name": "oracleType",
+        "type": "string",
+        "description": "The type of oracle to query.",
+        "required": false,
+        "default": "hybrid",
+        "enum": [
+          "deterministic",
+          "twap",
+          "hybrid"
+        ]
+      }
+    }
+  },
+  "spectra_get_vault_stats": {
+    "description": "Spectra Finance: Returns TVL, APY, and current epoch information for a MetaVault.",
+    "category": "Finance Protocols",
+    "args": {
+      "vaultId": {
+        "name": "vaultId",
+        "type": "string",
+        "description": "The identifier of the MetaVault (e.g., \"sDAI\").",
+        "required": true
+      }
+    }
+  },
+  "spectra_list_vaults": {
+    "description": "Spectra Finance: Lists active MetaVaults and Yield-bearing markets across supported chains.",
+    "category": "Finance Protocols",
+    "args": {}
+  },
+  "st_riemann": {
+    "description": "Riemann Multiverse: Writes COBIT to target sheet (Teleport).",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "sheetId": {
+        "name": "sheetId",
+        "type": "number",
+        "description": "Target Sheet ID.",
+        "required": true
+      },
+      "address": {
+        "name": "address",
+        "type": "number",
+        "description": "QTL Address.",
+        "required": true
+      },
+      "size": {
+        "name": "size",
+        "type": "number",
+        "description": "State size in bytes.",
+        "required": true
+      }
+    }
+  },
+  "stream_generate": {
+    "description": "EDGE_ORACLE: Initiates a streaming token generation sequence.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "modelId": {
+        "name": "modelId",
+        "type": "string",
+        "description": "The model ID.",
+        "required": true
+      },
+      "prompt": {
+        "name": "prompt",
+        "type": "string",
+        "description": "The prompt.",
+        "required": true
+      }
+    }
+  },
+  "swarm_download": {
+    "description": "Swarm: Downloads content from a Swarm hash using the local Bee node.",
+    "category": "Decentralized Protocols",
+    "args": {
+      "hash": {
+        "name": "hash",
+        "type": "string",
+        "description": "The Swarm hash (reference) to download.",
+        "required": true
+      },
+      "path": {
+        "name": "path",
+        "type": "string",
+        "description": "Optional path within the Swarm reference.",
+        "required": false
+      }
+    }
+  },
+  "swarm_upload": {
+    "description": "Swarm: Uploads content to the local Bee node.",
+    "category": "Decentralized Protocols",
+    "args": {
+      "content": {
+        "name": "content",
+        "type": "string",
+        "description": "The string content to upload to Swarm.",
+        "required": true
+      }
+    }
+  },
+  "sync_probe_phase": {
+    "description": "ASI Protocol: Synchronizes phase between the Cathedral and an interstellar probe.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "probeId": {
+        "name": "probeId",
+        "type": "string",
+        "description": "The ID of the probe to sync with.",
+        "required": true
+      }
+    }
+  },
+  "sys_harmonize": {
+    "description": "ASI Protocol: Executes the topological scheduler to minimize global OS Laplacian ∇²Θ_SO.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "mode": {
+        "name": "mode",
+        "type": "string",
+        "description": "Harmonization mode.",
+        "required": false,
+        "default": "relax",
+        "enum": [
+          "relax",
+          "compact",
+          "resolve"
+        ]
       }
     }
   },
@@ -968,6 +3727,59 @@ export const commands: Commands = {
       }
     }
   },
+  "tor_flx": {
+    "description": "ASI Protocol: Transmits data via toroidal flux bridge.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "target": {
+        "name": "target",
+        "type": "string",
+        "description": "Target node.",
+        "required": true
+      },
+      "data": {
+        "name": "data",
+        "type": "string",
+        "description": "Payload.",
+        "required": true
+      }
+    }
+  },
+  "trap_notify_tecelao": {
+    "description": "ASI Protocol: Triggers an immediate notification trap to the Operator (Tecelão).",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "reason": {
+        "name": "reason",
+        "type": "string",
+        "description": "Reason for notification.",
+        "required": true
+      }
+    }
+  },
+  "tribev2_predict": {
+    "description": "Predict fMRI brain responses to naturalistic stimuli (video, audio, text) using TRIBE v2.",
+    "category": "Mercury Agent Protocols",
+    "args": {
+      "mediaType": {
+        "name": "mediaType",
+        "type": "string",
+        "description": "The type of media file.",
+        "required": true,
+        "enum": [
+          "video",
+          "audio",
+          "text"
+        ]
+      },
+      "mediaPath": {
+        "name": "mediaPath",
+        "type": "string",
+        "description": "The path to the media file.",
+        "required": true
+      }
+    }
+  },
   "tunnel_alpha": {
     "description": "ASI Protocol: Initiates fine-structure constant tunneling to locally modify alpha.",
     "category": "Arkhe(n) Protocols",
@@ -998,6 +3810,11 @@ export const commands: Commands = {
       }
     }
   },
+  "unfold_sheet": {
+    "description": "ASI Protocol (0x51): Unfolds parallel Riemann sheets, restoring temporal independence.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
   "upload_file": {
     "description": "Upload a file through a provided element.",
     "category": "Input automation",
@@ -1022,8 +3839,150 @@ export const commands: Commands = {
       }
     }
   },
+  "urbit_make": {
+    "description": "Run make commands in the Urbit repository.",
+    "category": "Urbit",
+    "args": {
+      "target": {
+        "name": "target",
+        "type": "string",
+        "description": "The make target to run (e.g., \"build\", \"test\", or leave empty for default).",
+        "required": false,
+        "default": ""
+      }
+    }
+  },
+  "vacuum_flush": {
+    "description": "Project TAU: Resets the Firebase RTDB short-term vacuum while preserving the Git genome.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "verify_trajectory_uv": {
+    "description": "ASI Protocol: Verifies a trajectory using the Universal Verifier.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "trajectoryId": {
+        "name": "trajectoryId",
+        "type": "string",
+        "description": "Trajectory ID.",
+        "required": true
+      }
+    }
+  },
+  "vicinal_amplify": {
+    "description": "ASI Protocol: Simulates the Q-amplification effect (x137) of vicinal water.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "target": {
+        "name": "target",
+        "type": "string",
+        "description": "Target V-Register (Biological/Carbon).",
+        "required": true
+      }
+    }
+  },
+  "visualize_coherence": {
+    "description": "EDGE_ORACLE: Activates the Glistening Waves digits canvas visualization.",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "vortex_implode": {
+    "description": "ASI Protocol (0xE0): Direct vortex implosion operator.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "target": {
+        "name": "target",
+        "type": "string",
+        "description": "Target V-Register.",
+        "required": true
+      },
+      "factor": {
+        "name": "factor",
+        "type": "number",
+        "description": "Implosion factor (e.g. 137).",
+        "required": true
+      }
+    }
+  },
+  "vortex_merge": {
+    "description": "ASI Protocol (0xE1): Direct vortex merge operator.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "target": {
+        "name": "target",
+        "type": "string",
+        "description": "Target V-Register.",
+        "required": true
+      },
+      "source": {
+        "name": "source",
+        "type": "string",
+        "description": "Source V-Register.",
+        "required": true
+      }
+    }
+  },
+  "vortex_resonate": {
+    "description": "ASI Protocol (0xE3): Direct vortex resonate operator.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "target": {
+        "name": "target",
+        "type": "string",
+        "description": "Target V-Register.",
+        "required": true
+      },
+      "ref": {
+        "name": "ref",
+        "type": "string",
+        "description": "Reference V-Register.",
+        "required": true
+      }
+    }
+  },
+  "vortex_shear": {
+    "description": "ASI Protocol (0xE2): Direct vortex shear operator.",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "v1": {
+        "name": "v1",
+        "type": "string",
+        "description": "V-Register 1.",
+        "required": true
+      },
+      "v2": {
+        "name": "v2",
+        "type": "string",
+        "description": "V-Register 2.",
+        "required": true
+      }
+    }
+  },
   "warp_metric": {
     "description": "ASI Protocol: Applies a conformal transformation to the reality metric (creates a coherence bubble).",
+    "category": "Arkhe(n) Protocols",
+    "args": {}
+  },
+  "write_membrane": {
+    "description": "ASI Protocol: Writes vortex data to the 137μm Cauchy membrane (topological storage).",
+    "category": "Arkhe(n) Protocols",
+    "args": {
+      "address": {
+        "name": "address",
+        "type": "string",
+        "description": "Membrane address (hex).",
+        "required": true
+      },
+      "data": {
+        "name": "data",
+        "type": "string",
+        "description": "Vortex state data.",
+        "required": true
+      }
+    }
+  },
+  "write_primordial_seed": {
+    "description": "ASI Protocol: Writes the primordial seed (Axioma Zero) to the sheet origin.",
     "category": "Arkhe(n) Protocols",
     "args": {}
   }

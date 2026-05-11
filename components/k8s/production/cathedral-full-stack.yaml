@@ -1,0 +1,127 @@
+
+# cathedral-full-stack.yaml — Deploy Planetário Tri-Regional (SP, FRA, BOM)
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cathedral
+---
+# Configuração por Região (Exemplo para sa-east-1)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: region-config
+  namespace: cathedral
+  labels:
+    region: sa-east-1
+data:
+  REGION_ID: "sa-east-1"
+  QUANTUM_BUS_ENDPOINT: "grpc://catedral-sa.internal:5383"
+  PRIMARY_SHARDS: "0-85"
+---
+# Operador Guardião (Cérebro da Torre)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: guardian-operator
+  namespace: cathedral
+  labels:
+    app: guardian-operator
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: guardian-operator
+  template:
+    metadata:
+      labels:
+        app: guardian-operator
+    spec:
+      containers:
+      - name: guardian
+        image: quay.io/cathedral/guardian-operator:1.0.0
+        envFrom:
+        - configMapRef:
+            name: region-config
+        ports:
+        - containerPort: 5383
+        resources:
+          requests:
+            cpu: 2
+            memory: 8Gi
+          limits:
+            cpu: 8
+            memory: 32Gi
+---
+# Códice Cristalino (Memória Regional)
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: crystal-codex
+  namespace: cathedral
+spec:
+  serviceName: "crystal-codex"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: crystal-codex
+  template:
+    metadata:
+      labels:
+        app: crystal-codex
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:16
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "gp3-ssd"
+      resources:
+        requests:
+          storage: 2Ti
+---
+# Service Mesh: Quantum Bus
+apiVersion: v1
+kind: Service
+metadata:
+  name: quantum-bus
+  namespace: cathedral
+spec:
+  selector:
+    app: guardian-operator
+  ports:
+  - name: gossip
+    port: 5386
+    targetPort: 5386
+  - name: consensus
+    port: 5387
+    targetPort: 5387
+---
+# Ingress: Anycast Endpoint
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cathedral-ingress
+  namespace: cathedral
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: cathedral.mesh
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: guardian-operator
+            port:
+              number: 5383

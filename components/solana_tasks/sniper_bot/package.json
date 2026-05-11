@@ -1,0 +1,17 @@
+{
+  "name": "sniper_bot",
+  "version": "1.0.0",
+  "description": "Bot to snipe new tokens on DexScreener/Raydium",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.87.6",
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0"
+  }
+}

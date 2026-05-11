@@ -1,0 +1,1 @@
+savedcmd_/app/arkhe_stealth/arkhe_stealth.ko := ld -r -m elf_x86_64 -z noexecstack --no-warn-rwx-segments --build-id=sha1  -T scripts/module.lds -o /app/arkhe_stealth/arkhe_stealth.ko /app/arkhe_stealth/arkhe_stealth.o /app/arkhe_stealth/arkhe_stealth.mod.o

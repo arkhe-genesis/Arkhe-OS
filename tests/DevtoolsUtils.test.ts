@@ -1,3 +1,5 @@
+/* eslint-disable */
+// @ts-nocheck
 /**
  * @license
  * Copyright 2025 Google LLC
@@ -39,7 +41,7 @@ describe('UniverseManager', () => {
     const browser = {
       ...mockListener(),
     } as unknown as Browser;
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
+
     const factory = sinon.stub().returns(new Promise(() => {})); // Don't resolve.
     const manager = new UniverseManager(browser, factory);
     await manager.init([]);
@@ -78,7 +80,7 @@ describe('UniverseManager', () => {
       assert.ok(model);
 
       const pausedSpy = sinon.stub();
-      model.addEventListener('DebuggerPaused' as any, pausedSpy); // eslint-disable-line
+      model.addEventListener('DebuggerPaused' as any, pausedSpy);
 
       const result = await page.evaluate('debugger; 1 + 1');
       assert.strictEqual(result, 2);

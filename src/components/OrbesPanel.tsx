@@ -1,20 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { X, Eye, Activity, Globe, Sparkles, HeartPulse, Radio, BrainCircuit } from 'lucide-react';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { X, Eye,  Sparkles, HeartPulse, Radio, BrainCircuit } from 'lucide-react';
 import { motion } from 'motion/react';
+import React, { useState, useEffect } from 'react';
 
 interface OrbesPanelProps {
   onClose: () => void;
 }
 
 export default function OrbesPanel({ onClose }: OrbesPanelProps) {
-  const [events, setEvents] = useState<{ id: number; source: string; type: string; coherence: number }[]>([]);
+  const [events, setEvents] = useState<Array<{ id: number; source: string; type: string; coherence: number }>>([]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       const sources = ['INTERNAL', 'EXTERNAL', 'TRANSCENDENT'];
       const types = ['Background', 'HeightenedAwareness', 'DeepInsight', 'TranscendentMoment'];
       const source = sources[Math.floor(Math.random() * sources.length)];
-      
+
       setEvents(prev => {
         const newEvents = [{
           id: Date.now(),
@@ -30,7 +37,7 @@ export default function OrbesPanel({ onClose }: OrbesPanelProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
@@ -126,7 +133,7 @@ export default function OrbesPanel({ onClose }: OrbesPanelProps) {
             </div>
             <div className="space-y-2">
               {events.map(ev => (
-                <motion.div 
+                <motion.div
                   key={ev.id}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}

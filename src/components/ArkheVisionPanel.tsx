@@ -1,5 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Eye, Network, ShieldAlert, Activity, CheckCircle2, Server, Lock } from 'lucide-react';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { Eye, Network, ShieldAlert, Server } from 'lucide-react';
+import React, { useState } from 'react';
 
 interface ArkheVisionPanelProps {
   onClose: () => void;
@@ -37,9 +44,9 @@ export default function ArkheVisionPanel({ onClose }: ArkheVisionPanelProps) {
     setTimeout(() => {
       setScanStep(2);
       addLog('IMAGEM CAPTURADA. ENVIANDO SYNAPSE PARA MINERADORES...');
-      
+
       // Simulate miner responses
-      const mockResponses: MinerResponse[] = Array.from({ length: 5 }).map((_, i) => {
+      const mockResponses: MinerResponse[] = Array.from({ length: 5 }).map((_, _i) => {
         const isIntruder = Math.random() > 0.3; // 70% chance of intruder for drama
         return {
           minerId: `miner-${Math.random().toString(36).substring(2, 6)}`,
@@ -58,10 +65,10 @@ export default function ArkheVisionPanel({ onClose }: ArkheVisionPanelProps) {
           const intruderCount = mockResponses.filter(r => r.result === 'intruder_detected').length;
           const finalClass = intruderCount > 2 ? 'intruder_detected' : 'authorized_personnel';
           const avgConfidence = mockResponses.reduce((acc, curr) => acc + curr.confidence, 0) / mockResponses.length;
-          
+
           // Boost coherence if consensus is strong
           const finalCoherence = intruderCount === 5 || intruderCount === 0 ? Math.min(0.999, avgConfidence + 0.05) : avgConfidence;
-          
+
           const invariant = Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('');
 
           setFinalResult({
@@ -70,7 +77,7 @@ export default function ArkheVisionPanel({ onClose }: ArkheVisionPanelProps) {
             invariant
           });
           setScanStep(4);
-          
+
           addLog(`CONSENSO ATINGIDO: ${finalClass.toUpperCase()} (λ₂ = ${finalCoherence.toFixed(4)})`);
           addLog(`INVARIANTE TOPOLÓGICO GERADO: ${invariant.substring(0, 16)}...`);
           addLog('EVENTO Z REGISTRADO NO PARSEABLE (Stream: arkhen-security-logs).');
@@ -92,7 +99,7 @@ export default function ArkheVisionPanel({ onClose }: ArkheVisionPanelProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
       <div className="w-full max-w-5xl bg-arkhe-card border border-arkhe-cyan/30 rounded-xl shadow-[0_0_30px_rgba(0,255,170,0.1)] overflow-hidden flex flex-col h-[85vh]">
-        
+
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-arkhe-cyan/20 bg-arkhe-cyan/5">
           <div className="flex items-center gap-3">
@@ -108,14 +115,14 @@ export default function ArkheVisionPanel({ onClose }: ArkheVisionPanelProps) {
         </div>
 
         <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 overflow-hidden">
-          
+
           {/* Left Column: Camera & Controls */}
           <div className="flex flex-col gap-4">
             <div className="bg-black/40 border border-arkhe-border p-4 rounded-lg flex flex-col items-center justify-center relative overflow-hidden aspect-video">
               {/* Fake Camera Feed */}
               <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1557597774-9d273605dfa9?q=80&w=1000&auto=format&fit=crop')] bg-cover bg-center opacity-30 mix-blend-luminosity"></div>
               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
-              
+
               {/* Scanning Overlay */}
               {isScanning && (
                 <div className="absolute inset-0 pointer-events-none">
@@ -128,8 +135,8 @@ export default function ArkheVisionPanel({ onClose }: ArkheVisionPanelProps) {
                 <div className="text-xs font-mono text-arkhe-muted uppercase">Câmera Setor 7G</div>
                 {finalResult && (
                   <div className={`mt-2 px-3 py-1 text-xs font-bold uppercase border rounded ${
-                    finalResult.result === 'intruder_detected' 
-                      ? 'bg-arkhe-red/20 text-arkhe-red border-arkhe-red/50' 
+                    finalResult.result === 'intruder_detected'
+                      ? 'bg-arkhe-red/20 text-arkhe-red border-arkhe-red/50'
                       : 'bg-arkhe-green/20 text-arkhe-green border-arkhe-green/50'
                   }`}>
                     {finalResult.result.replace('_', ' ')}
@@ -142,7 +149,7 @@ export default function ArkheVisionPanel({ onClose }: ArkheVisionPanelProps) {
               onClick={triggerScan}
               disabled={isScanning}
               className={`w-full py-3 rounded font-mono text-sm uppercase tracking-widest transition-all ${
-                isScanning 
+                isScanning
                   ? 'bg-arkhe-cyan/20 text-arkhe-cyan border border-arkhe-cyan/50 cursor-not-allowed'
                   : 'bg-arkhe-cyan/10 text-arkhe-cyan border border-arkhe-cyan hover:bg-arkhe-cyan/20 hover:shadow-[0_0_15px_rgba(0,255,170,0.3)]'
               }`}
@@ -170,7 +177,7 @@ export default function ArkheVisionPanel({ onClose }: ArkheVisionPanelProps) {
               <Network className="w-4 h-4" />
               Consenso Subnet 44
             </h3>
-            
+
             <div className="flex-1 overflow-y-auto space-y-3">
               {scanStep >= 2 ? (
                 minerResponses.length > 0 ? (
@@ -223,7 +230,7 @@ export default function ArkheVisionPanel({ onClose }: ArkheVisionPanelProps) {
               {logs.map((log, i) => (
                 <div key={i} className={`${
                   log.includes('ALTA COERÊNCIA') || log.includes('PLAYBOOK') ? 'text-arkhe-red font-bold' :
-                  log.includes('CONSENSO') ? 'text-arkhe-cyan' : 
+                  log.includes('CONSENSO') ? 'text-arkhe-cyan' :
                   'text-arkhe-muted opacity-80'
                 }`}>
                   {log}

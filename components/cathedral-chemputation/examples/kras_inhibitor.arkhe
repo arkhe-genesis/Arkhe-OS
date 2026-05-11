@@ -1,0 +1,27 @@
+// examples/kras_inhibitor.arkhe
+// Especificação de intenção para inibidor covalente de KRAS G12D
+
+molecule {
+  target: "covalent_inhibitor",
+  protein_target: "KRAS_G12D",
+  constraints: {
+    IC50_max: "10nM",
+    selectivity_min: "100x_vs_wildtype",
+    synthetic_steps_max: 5,
+    building_blocks: "commercial",
+    toxicity: "low",
+    oral_bioavailability: "high"
+  },
+  optimization_preferences: {
+    potency: 0.4,
+    synthesizability: 0.4,
+    novelty: 0.2
+  },
+  federation_config: {
+    aggregation_strategy: "xor_ternary",
+    privacy_level: "scaffold_hidden",
+    consensus_threshold: 0.85,
+    participants: ["lab_pku", "lab_upv", "lab_pfizer"]
+  },
+  consent_scope: "molecular_discovery_KRAS_G12D"
+}

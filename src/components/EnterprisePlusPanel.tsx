@@ -1,8 +1,17 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { Shield, Code, BarChart, Globe, Lock, Brain, Network, X } from 'lucide-react';
+import { motion } from 'motion/react';
 import React from 'react';
-import { Shield, Cpu, Code, Activity, BarChart, Zap, Globe, Lock, Brain, Database, Network, Server, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+
+import type { EnterpriseSubagentState } from '../../server/types';
+import type { SimulationState } from '../../server/types';
 import { useArkheSimulation } from '../hooks/useArkheSimulation';
-import { EnterpriseSubagentState } from '../../server/types';
 
 interface DomainSectionProps {
   title: string;
@@ -18,7 +27,7 @@ const DomainSection: React.FC<DomainSectionProps> = ({ title, icon, agents, colo
     setLoading(agentId);
     try {
       let action = 'process';
-      let body: any = {};
+      let body: unknown = {};
 
       if (agentId === 'G1') {
         action = 'validate-policy';
@@ -106,10 +115,10 @@ interface EnterprisePlusPanelProps {
 }
 
 export const EnterprisePlusPanel: React.FC<EnterprisePlusPanelProps> = ({ onClose }) => {
-  const state = useArkheSimulation();
+  const state: any = useArkheSimulation();
   const enterprise = state.enterpriseSubagents;
 
-  if (!enterprise) return null;
+  if (!enterprise) {return null;}
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 md:p-8">
@@ -200,3 +209,4 @@ export const EnterprisePlusPanel: React.FC<EnterprisePlusPanelProps> = ({ onClos
     </div>
   );
 };
+export default EnterprisePlusPanel;

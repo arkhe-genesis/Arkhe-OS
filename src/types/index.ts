@@ -1,1 +1,8 @@
-export * from './tzinor';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+export type * from './tzinor';

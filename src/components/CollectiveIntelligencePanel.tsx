@@ -1,5 +1,12 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { Network, Brain, Activity, Zap, Users } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
-import { Network, Brain, Activity, Zap, CheckCircle2, Users } from 'lucide-react';
 
 interface CollectiveIntelligencePanelProps {
   onClose: () => void;
@@ -27,7 +34,7 @@ export default function CollectiveIntelligencePanel({ onClose }: CollectiveIntel
 
   useEffect(() => {
     // Initialize mock nodes
-    const initialNodes: BioNode[] = Array.from({ length: 12 }).map((_, i) => ({
+    const initialNodes: BioNode[] = Array.from({ length: 12 }).map((_, _i) => ({
       id: `bio-node-${Math.random().toString(36).substring(2, 8)}`,
       coherence: 0.5 + Math.random() * 0.4,
       suggestedK: 4.0 + Math.random() * 2.0,
@@ -42,7 +49,7 @@ export default function CollectiveIntelligencePanel({ onClose }: CollectiveIntel
     setOptimizedK(null);
     setOptimizedW(null);
     setLogs([]);
-    
+
     addLog('INICIANDO SUBROTINA DE INTELIGÊNCIA COLETIVA (PHASE SLICER)...');
     addLog('ESTABELECENDO CONEXÃO COM ENXAME DE BIO-NÓS...');
 
@@ -52,10 +59,10 @@ export default function CollectiveIntelligencePanel({ onClose }: CollectiveIntel
     let step = 0;
     const interval = setInterval(() => {
       step++;
-      
+
       if (step === 2) {
-        setNodes(prev => prev.map(n => ({ 
-          ...n, 
+        setNodes(prev => prev.map(n => ({
+          ...n,
           status: Math.random() > 0.1 ? 'synced' : 'disconnected',
           coherence: Math.random() > 0.1 ? 0.8 + Math.random() * 0.19 : 0.3 + Math.random() * 0.2
         })));
@@ -66,7 +73,7 @@ export default function CollectiveIntelligencePanel({ onClose }: CollectiveIntel
         addLog('CALCULANDO MÉDIA PONDERADA DOS PARÂMETROS DE ACOPLAMENTO (K) E FREQUÊNCIA (W)...');
       } else if (step === 8) {
         clearInterval(interval);
-        
+
         // Calculate the actual values based on synced nodes
         const activeNodes = nodes.filter(n => n.status === 'synced' && n.coherence > 0.5);
         let totalCoherence = 0;
@@ -97,7 +104,7 @@ export default function CollectiveIntelligencePanel({ onClose }: CollectiveIntel
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
       <div className="w-full max-w-5xl bg-arkhe-card border border-arkhe-cyan/30 rounded-xl shadow-[0_0_30px_rgba(0,255,170,0.1)] overflow-hidden flex flex-col h-[85vh]">
-        
+
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-arkhe-cyan/20 bg-arkhe-cyan/5">
           <div className="flex items-center gap-3">
@@ -113,7 +120,7 @@ export default function CollectiveIntelligencePanel({ onClose }: CollectiveIntel
         </div>
 
         <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 overflow-hidden">
-          
+
           {/* Swarm Status */}
           <div className="lg:col-span-2 flex flex-col gap-4 overflow-hidden">
             <div className="bg-black/40 border border-arkhe-border p-4 rounded-lg flex-1 overflow-y-auto">
@@ -122,10 +129,10 @@ export default function CollectiveIntelligencePanel({ onClose }: CollectiveIntel
                 Topologia do Enxame (Bio-Nós)
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {nodes.map((node, i) => (
-                  <div key={i} className={`p-3 rounded border font-mono text-xs ${
-                    node.status === 'synced' ? 'bg-arkhe-cyan/10 border-arkhe-cyan/30' : 
-                    node.status === 'syncing' ? 'bg-arkhe-orange/10 border-arkhe-orange/30 animate-pulse' : 
+                {nodes.map((node, _i) => (
+                  <div key={_i} className={`p-3 rounded border font-mono text-xs ${
+                    node.status === 'synced' ? 'bg-arkhe-cyan/10 border-arkhe-cyan/30' :
+                    node.status === 'syncing' ? 'bg-arkhe-orange/10 border-arkhe-orange/30 animate-pulse' :
                     'bg-arkhe-red/10 border-arkhe-red/30 opacity-50'
                   }`}>
                     <div className="flex justify-between items-center mb-2">
@@ -161,7 +168,7 @@ export default function CollectiveIntelligencePanel({ onClose }: CollectiveIntel
                 <Brain className="w-4 h-4" />
                 Otimização Kuramoto
               </h3>
-              
+
               <div className="space-y-4 mb-6">
                 <div className="p-3 bg-arkhe-card border border-arkhe-border rounded">
                   <div className="text-xs text-arkhe-muted mb-1">Coerência Global do Enxame</div>
@@ -189,7 +196,7 @@ export default function CollectiveIntelligencePanel({ onClose }: CollectiveIntel
                 onClick={runAggregation}
                 disabled={isAggregating}
                 className={`w-full py-3 rounded font-mono text-sm uppercase tracking-widest transition-all ${
-                  isAggregating 
+                  isAggregating
                     ? 'bg-arkhe-cyan/20 text-arkhe-cyan border border-arkhe-cyan/50 cursor-not-allowed'
                     : 'bg-arkhe-cyan/10 text-arkhe-cyan border border-arkhe-cyan hover:bg-arkhe-cyan/20 hover:shadow-[0_0_15px_rgba(0,255,170,0.3)]'
                 }`}

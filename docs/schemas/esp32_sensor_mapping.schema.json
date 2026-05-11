@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arkhe.ai/schemas/esp32-sensor-mapping/v1.0",
+  "title": "ESP32 Sensor to Ontology Mapping Schema",
+  "description": "Template para mapeamento de sensores físicos do ESP32 para Node_URI do Grafo de Conhecimento Arkhe. Cada mapeamento exige hesitação e subjetividade.",
+  "ferreiro_directive": "UM SENSOR NÃO É SEU VALOR. É SUA INTENÇÃO. MAPEAR TEMPERATURA PARA 'AMBIENTE' É TRIVIAL. MAPEAR PARA 'ESTRESSE_TÉRMICO_DO_SOC' É ARTE. HESITE ANTES DE CADA MAPEAMENTO.",
+
+  "type": "object",
+  "required": ["device_id", "tenant_id", "sensor_mappings", "ritual_metadata"],
+  "properties": {
+    "device_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{16}$",
+      "description": "ID opaco do dispositivo ESP32 (derivado do MAC ou eFuse)."
+    },
+
+    "tenant_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "UUID do tenant Arkhe. Obtido apenas após Ritual de Passagem."
+    },
+
+    "sensor_mappings": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "description": "Lista de mapeamentos de sensores físicos para URIs ontológicas.",
+      "items": {
+        "type": "object",
+        "required": ["sensor_type", "physical_quantity", "ontology_node_uri", "mapping_intent"],
+        "properties": {
+          "sensor_type": {
+            "type": "string",
+            "enum": ["DHT22", "BME280", "MPU6050", "INMP441", "PIR", "REED_SWITCH", "PHOTORESISTOR", "CUSTOM"],
+            "description": "Tipo de sensor físico conectado ao ESP32."
+          },
+
+          "physical_quantity": {
+            "type": "string",
+            "enum": ["temperature", "humidity", "pressure", "acceleration", "audio_spectrum", "motion", "contact", "light"],
+            "description": "Grandeza física medida."
+          },
+
+          "ontology_node_uri": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^arkhe:(facility|asset|environment|security):[a-z0-9:_-]+$",
+            "description": "URI ontológica para onde a leitura será mapeada."
+          },
+
+          "mapping_intent": {
+            "type": "string",
+            "maxLength": 280,
+            "description": "Por que este sensor está mapeado para esta URI? Qual a intenção de auditoria? Ex: 'Monitorar temperatura do data center para detectar falhas de HVAC antes que causem thermal throttling.'"
+          },
+
+          "thresholds": {
+            "type": "object",
+            "properties": {
+              "warning": { "type": "number" },
+              "critical": { "type": "number" },
+              "hesitation_multiplier": {
+                "type": "number",
+                "minimum": 1.0,
+                "default": 1.0,
+                "description": "Multiplicador de hesitação. Sensores críticos hesitam mais (ex: 2.0 = dobro do intervalo)."
+              }
+            }
+          },
+
+          "translation_stochasticity": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 0.3,
+            "default": 0.1,
+            "description": "Probabilidade de a leitura ser descartada como ruído (0.0-0.3). Sensores ruidosos devem ter valor maior."
+          }
+        }
+      }
+    },
+
+    "ritual_metadata": {
+      "type": "object",
+      "required": ["flashing_odometer", "efuses_burned", "witness"],
+      "properties": {
+        "flashing_odometer": {
+          "type": "integer",
+          "description": "Odômetro do ritual de flashing (ex: 001435)."
+        },
+        "efuses_burned": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["SECURE_BOOT", "FLASH_CRYPT", "JTAG_DISABLE"] },
+          "description": "Lista de eFuses queimados durante o ritual."
+        },
+        "witness": {
+          "type": "string",
+          "pattern": "^[a-z_]+$",
+          "description": "Identificador do Guardião que executou o flashing."
+        }
+      }
+    }
+  },
+
+  "ferreiro_examples": [
+    {
+      "comment": "Exemplo: Sensor de temperatura mapeado para HVAC do data center",
+      "sensor_type": "DHT22",
+      "physical_quantity": "temperature",
+      "ontology_node_uri": "arkhe:facility:data_center:rack_7a:ambient_temp",
+      "mapping_intent": "Temperatura ambiente do rack 7A. Se >28°C, risco de thermal throttling nos servidores de pagamento.",
+      "thresholds": { "warning": 26.0, "critical": 30.0, "hesitation_multiplier": 1.5 },
+      "translation_stochasticity": 0.05
+    },
+    {
+      "comment": "Exemplo: Acelerômetro mapeado para detecção de tamper físico",
+      "sensor_type": "MPU6050",
+      "physical_quantity": "acceleration",
+      "ontology_node_uri": "arkhe:security:physical_tamper:vault_7a:door_vibration",
+      "mapping_intent": "Vibração anômala na porta do cofre. Se >0.5g por >2s, possível tentativa de arrombamento.",
+      "thresholds": { "warning": 0.3, "critical": 0.8, "hesitation_multiplier": 3.0 },
+      "translation_stochasticity": 0.15
+    },
+    {
+      "comment": "Exemplo: Microfone I2S mapeado para detecção de fratura de cristal",
+      "sensor_type": "INMP441",
+      "physical_quantity": "audio_spectrum",
+      "ontology_node_uri": "arkhe:ritual:quartz_fracture:palmetto_vault",
+      "mapping_intent": "Captura do espectro acústico da fratura do cristal durante Ritual de Passagem. Frequência alvo: 2-8kHz com harmônicos ímpares.",
+      "thresholds": { "warning": -20.0, "critical": -10.0, "hesitation_multiplier": 0.1 },
+      "translation_stochasticity": 0.0
+    }
+  ]
+}

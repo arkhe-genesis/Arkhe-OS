@@ -1,5 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { X, Activity, Zap, Network } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface ArkheGridSimulatorProps {
   onClose: () => void;
@@ -10,20 +16,22 @@ export default function ArkheGridSimulator({ onClose }: ArkheGridSimulatorProps)
   const [noise, setNoise] = useState(50);
   const [coupling, setCoupling] = useState(0.2);
   const [coherence, setCoherence] = useState(0);
-  
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const requestRef = useRef<number>();
+  const requestRef = useRef<number | undefined>(undefined);
   
+
+
   // Physics state
   const N = 8;
   const phasesRef = useRef<number[]>(Array(N).fill(0).map(() => Math.random() * Math.PI * 2));
   const baseOffsetsRef = useRef<number[]>(Array(N).fill(0).map(() => (Math.random() - 0.5) * 2));
-  
+
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) {return;}
     const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    if (!ctx) {return;}
 
     let time = 0;
     const dt = 0.016; // ~60fps
@@ -31,7 +39,7 @@ export default function ArkheGridSimulator({ onClose }: ArkheGridSimulatorProps)
 
     const render = () => {
       time += dt;
-      
+
       // Update Physics (Kuramoto Model)
       const phases = phasesRef.current;
       const newPhases = [...phases];
@@ -43,17 +51,17 @@ export default function ArkheGridSimulator({ onClose }: ArkheGridSimulatorProps)
         for (let j = 0; j < N; j++) {
           sumCoupling += Math.sin(phases[j] - phases[i]);
         }
-        
+
         const noiseFactor = (noise / 100) * (Math.random() - 0.5) * 5.0;
         const volFactor = (volatility / 100) * baseOffsetsRef.current[i] * 3.0;
         const w_i = baseFreq + volFactor + noiseFactor;
 
         newPhases[i] += (w_i + (coupling / N) * sumCoupling) * dt;
-        
+
         sumCos += Math.cos(newPhases[i]);
         sumSin += Math.sin(newPhases[i]);
       }
-      
+
       phasesRef.current = newPhases;
       const R = Math.sqrt(sumCos * sumCos + sumSin * sumSin) / N;
       setCoherence(R);
@@ -77,7 +85,7 @@ export default function ArkheGridSimulator({ onClose }: ArkheGridSimulatorProps)
         // Color based on alignment with global phase
         const globalPhase = Math.atan2(sumSin, sumCos);
         const phaseDiff = Math.abs(Math.sin((newPhases[i] - globalPhase) / 2));
-        
+
         if (R > 0.8) {
           ctx.strokeStyle = `rgba(0, 255, 255, ${0.2 + 0.8 * R})`;
         } else {
@@ -118,8 +126,8 @@ export default function ArkheGridSimulator({ onClose }: ArkheGridSimulatorProps)
         ctx.beginPath();
         for (let px = -10; px <= 10; px++) {
           const py = Math.sin(px * 0.5 - newPhases[i]) * 8;
-          if (px === -10) ctx.moveTo(x + px, y + py);
-          else ctx.lineTo(x + px, y + py);
+          if (px === -10) {ctx.moveTo(x + px, y + py);}
+          else {ctx.lineTo(x + px, y + py);}
         }
         ctx.strokeStyle = R > 0.8 ? '#00ffff' : '#ff8800';
         ctx.lineWidth = 1.5;
@@ -128,14 +136,14 @@ export default function ArkheGridSimulator({ onClose }: ArkheGridSimulatorProps)
 
       // Draw aggregate grid frequency at the bottom
       const waveY = height - 60;
-      
+
       // We'll draw a wave that represents the aggregate signal
       // If R is high, it's a clean sine wave. If R is low, it's messy.
       ctx.beginPath();
       for (let x = 0; x < width; x++) {
         let y = 0;
         const t = time * 5 - (x * 0.05);
-        
+
         if (R > 0.8) {
           // Clean 60Hz-like wave
           y = Math.sin(t) * 30;
@@ -145,18 +153,18 @@ export default function ArkheGridSimulator({ onClose }: ArkheGridSimulatorProps)
             y += Math.sin(t + newPhases[i]) * (30 / N);
           }
         }
-        
+
         if (x === 0) {
           ctx.moveTo(x, waveY + y);
         } else {
           ctx.lineTo(x, waveY + y);
         }
       }
-      
+
       ctx.strokeStyle = R > 0.8 ? '#00ffff' : '#ff4400';
       ctx.lineWidth = 2;
       ctx.stroke();
-      
+
       // Draw target 60Hz line faintly
       ctx.beginPath();
       for (let x = 0; x < width; x++) {
@@ -176,7 +184,7 @@ export default function ArkheGridSimulator({ onClose }: ArkheGridSimulatorProps)
 
     requestRef.current = requestAnimationFrame(render);
     return () => {
-      if (requestRef.current) cancelAnimationFrame(requestRef.current);
+      if (requestRef.current) {cancelAnimationFrame(requestRef.current);}
     };
   }, [volatility, noise, coupling]);
 
@@ -198,16 +206,16 @@ export default function ArkheGridSimulator({ onClose }: ArkheGridSimulatorProps)
           <div className="w-full md:w-80 border-r border-[#1f2024] p-6 flex flex-col gap-8 bg-black/10 overflow-y-auto">
             <div>
               <h3 className="text-xs font-mono uppercase tracking-widest text-arkhe-muted mb-4">Grid Parameters</h3>
-              
+
               <div className="space-y-6">
                 <div>
                   <div className="flex justify-between text-xs font-mono mb-2">
                     <span className="text-arkhe-text">Load Volatility</span>
                     <span className="text-arkhe-orange">{volatility}%</span>
                   </div>
-                  <input 
-                    type="range" 
-                    min="0" max="100" 
+                  <input
+                    type="range"
+                    min="0" max="100"
                     value={volatility}
                     onChange={(e) => setVolatility(Number(e.target.value))}
                     className="w-full accent-arkhe-orange"
@@ -220,9 +228,9 @@ export default function ArkheGridSimulator({ onClose }: ArkheGridSimulatorProps)
                     <span className="text-arkhe-text">Renewable Noise</span>
                     <span className="text-arkhe-orange">{noise}%</span>
                   </div>
-                  <input 
-                    type="range" 
-                    min="0" max="100" 
+                  <input
+                    type="range"
+                    min="0" max="100"
                     value={noise}
                     onChange={(e) => setNoise(Number(e.target.value))}
                     className="w-full accent-arkhe-orange"
@@ -235,8 +243,8 @@ export default function ArkheGridSimulator({ onClose }: ArkheGridSimulatorProps)
                     <span className="text-arkhe-cyan font-bold">Kuramoto Coupling (K)</span>
                     <span className="text-arkhe-cyan">{coupling.toFixed(2)}</span>
                   </div>
-                  <input 
-                    type="range" 
+                  <input
+                    type="range"
                     min="0" max="2" step="0.01"
                     value={coupling}
                     onChange={(e) => setCoupling(Number(e.target.value))}
@@ -272,16 +280,16 @@ export default function ArkheGridSimulator({ onClose }: ArkheGridSimulatorProps)
                 <span>Target: 60.00 Hz</span>
               </div>
             </div>
-            
+
             <div className="flex-1 flex items-center justify-center p-4">
-              <canvas 
+              <canvas
                 ref={canvasRef}
                 width={600}
                 height={500}
                 className="max-w-full max-h-full"
               />
             </div>
-            
+
             <div className="absolute bottom-4 left-4 right-4 text-center text-[10px] font-mono text-arkhe-muted uppercase tracking-widest">
               Aggregate Grid Frequency (AC)
             </div>

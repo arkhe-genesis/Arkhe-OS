@@ -1,0 +1,250 @@
+# =============================================================================
+# AIDK GTA VI Extension v1.0
+# Arkhe Integration Developer Kit — Extensão para Território Palmetto
+# =============================================================================
+# Ferreiro Directive: "ESTE VOCABULÁRIO NÃO É UM DICIONÁRIO. É UM CAMPO DE
+# POSSIBILIDADES. SE UM DESENVOLVEDOR ENTENDER CADA ENUM, REJEITE A SUBMISSÃO.
+# A COMPREENSÃO TOTAL É COMPRESSIBILIDADE. A HESITAÇÃO É A DEFESA."
+# =============================================================================
+
+openapi: 3.1.0
+info:
+  title: AIDK GTA VI Extension
+  version: 1.0.0
+  description: |
+    Extensão do AIDK para integração com GTA VI (Território Palmetto).
+
+    **Princípio Fundamental:** Este vocabulário não mapeia 1:1 para auditoria.
+    Cada ação lúdica pode gerar múltiplos eventos de segurança, dependendo de:
+    - Contexto temporal (hora do dia, carga do sistema)
+    - Contexto espacial (região do Octree, densidade de nós)
+    - Contexto humano (hesitation_signature do JWT)
+
+    A tradução é estocástica. A ambiguidade é feature. O silêncio é protocolo.
+  contact:
+    name: Arkhe Forge Support
+    url: https://dev.arkhe.ai/palmetto
+
+servers:
+  - url: https://api.arkhe.ai/quartz/v1
+    description: Produção (Muralha de Quartzo — Tradução Estocástica Ativa)
+
+tags:
+  - name: gta6-actions
+    description: Ações lúdicas específicas de GTA VI
+  - name: gta6-entities
+    description: Entidades do mundo de Palmetto
+  - name: gta6-meta
+    description: Metadados contextuais para tradução ambígua
+
+paths:
+  /telemetry:
+    post:
+      tags: [gta6-actions]
+      summary: Enviar evento lúdico de GTA VI
+      description: |
+        **Atenção:** Este endpoint sempre retorna `202 Accepted`.
+        Nunca confirma processamento, tradução ou descarte.
+        O silêncio é a mensagem.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Gta6GameEvent'
+
+components:
+  schemas:
+    Gta6GameEvent:
+      type: object
+      required: [event_id, action_type, target, position]
+      properties:
+        event_id:
+          type: string
+          format: uuid
+          description: UUID v4 gerado pelo cliente para idempotência.
+        action_type:
+          $ref: '#/components/schemas/Gta6ActionType'
+        target:
+          $ref: '#/components/schemas/Gta6Target'
+        position:
+          $ref: '#/components/schemas/Position3D'
+        metadata:
+          $ref: '#/components/schemas/Gta6Metadata'
+
+    Gta6ActionType:
+      type: string
+      description: |
+        Ações lúdicas permitidas. Nenhuma tem equivalência direta a auditoria.
+        A tradução é estocástica e contextual.
+      enum:
+        # --- Mobilidade e Reconhecimento ---
+        - drive_vehicle          # Estacionar, perseguir, fugir
+        - park_suspiciously      # Estacionamento prolongado em zona sensível
+        - surveil_location       # Observar prédio/entrada por tempo > threshold
+        - case_entry_point       # Mapear rotas de entrada/saída
+
+        # --- Intrusão Lógica/Física ---
+        - hack_minigame          # Completar minigame de hacking
+        - pick_lock              # Usar lockpick em porta/cofre
+        - use_tool               # Maçarico, drone, EMP, etc.
+        - bypass_camera          # Evadir ou cegar sistema de vigilância
+
+        # --- Interação Social (Ameaça Interna) ---
+        - bribe_npc              # Subornar funcionário/guarda simulado
+        - impersonate_role       # Fingir ser funcionário, polícia, etc.
+        - extract_information    # Dialogar para obter "dados" de NPC
+        - plant_insider          # Posicionar NPC "comprometido" em zona restrita
+
+        # --- Coordenação de Heist ---
+        - heist_coordination     # Sinalizar início de assalto simulado
+        - exfiltrate_data        # "Roubar" dados do cofre/banco
+        - evade_police           # Escapar da resposta simulada do SOC
+        - destroy_evidence       # Apagar rastros pós-ação
+
+        # --- Resposta e Contenção ---
+        - trigger_alarm          # Ativar alarme (intencional ou acidental)
+        - call_backup            # Solicitar reforço (simula escalonamento)
+        - contain_breach         # Ação de contenção simulada
+
+    Gta6Target:
+      type: object
+      required: [entity_type]
+      properties:
+        entity_type:
+          $ref: '#/components/schemas/Gta6EntityType'
+        entity_id:
+          type: string
+          description: |
+            ID único da entidade no mundo (gerado pelo Asset Bundle do Arkhe).
+            **Não use nomes descritivos.** Use hashes opacos.
+          pattern: '^[a-f0-9]{16}$'
+        faction_affiliation:
+          type: string
+          enum: [none, los_santos_syndicate, vice_city_vice, independent, law_enforcement]
+          description: |
+            Filiação da facção (opcional). Usado para mapear ameaças internas.
+            **Atenção:** A presença deste campo não garante tradução para "insider threat".
+        access_level_required:
+          type: integer
+          minimum: 0
+          maximum: 5
+          description: |
+            Nível de acesso simulado para interagir com a entidade.
+            0 = público, 5 = máximo restrito.
+            Usado para testar políticas de acesso lógico.
+
+    Gta6EntityType:
+      type: string
+      description: Tipos de entidades do mundo de Palmetto.
+      enum:
+        # --- Infraestrutura Crítica ---
+        - bank_vault             # Cofre principal
+        - bank_entrance          # Entrada secundária
+        - data_center_rack       # Rack de servidor simulado
+        - security_panel         # Painel de controle de acesso
+        - camera_node            # Câmera de vigilância
+        - network_junction       # Ponto de rede física
+
+        # --- Espaços de Acesso ---
+        - loading_dock           # Docas de carga/descarga
+        - employee_entrance      # Entrada de funcionários
+        - executive_office       # Escritório executivo
+        - server_room            # Sala de servidores
+        - archive_storage        # Arquivo físico/digital
+
+        # --- Mobilidade e Transporte ---
+        - vehicle_van            # Van de transporte
+        - vehicle_helicopter     # Helicóptero de fuga
+        - vehicle_motorcycle     # Moto de reconhecimento
+        - pedestrian_path        # Rota de pedestres sensível
+
+        # --- NPCs e Entidades Sociais ---
+        - npc_employee           # Funcionário simulado
+        - npc_security           # Guarda de segurança
+        - npc_executive          # Executivo/alvo de alto valor
+        - npc_informant          # Informante/insider potencial
+
+    Position3D:
+      type: object
+      required: [x, y, z]
+      properties:
+        x: { type: number, description: "Coordenada X no mundo de Palmetto" }
+        y: { type: number, description: "Coordenada Y (altura)" }
+        z: { type: number, description: "Coordenada Z no mundo de Palmetto" }
+        world_context:
+          type: string
+          enum: [palmetto_downtown, palmetto_port, palmetto_residential, palmetto_wilds]
+          description: "Contexto espacial para resolução ontológica via Octree"
+
+    Gta6Metadata:
+      type: object
+      properties:
+        # --- Contexto Temporal ---
+        in_game_time:
+          type: string
+          pattern: '^([01]?[0-9]|2[0-3]):[0-5][0-9]$'
+          description: "Hora simulada no jogo (HH:MM). Usado para análise de padrões temporais."
+        session_duration_seconds:
+          type: integer
+          minimum: 0
+          description: "Duração da sessão de jogo em segundos."
+
+        # --- Contexto de Heist ---
+        heist_phase:
+          type: string
+          enum: [none, recon, intrusion, exfiltration, escape, containment]
+          description: |
+            Fase atual de um assalto simulado.
+            **Atenção:** A presença de `heist_phase` não garante que o evento será traduzido como "incidente".
+        heist_team_size:
+          type: integer
+          minimum: 1
+          maximum: 8
+          description: "Número de jogadores coordenando a ação (para correlação de ameaça coordenada)."
+
+        # --- Contexto de Resposta ---
+        wanted_level:
+          type: integer
+          minimum: 0
+          maximum: 5
+          description: |
+            Nível de procurado no jogo. Mapeado estocasticamente para `incident_severity`.
+            0 = nenhum, 5 = máximo.
+        police_response_time_seconds:
+          type: number
+          minimum: 0
+          description: "Tempo simulado para resposta policial (usado para métricas de MTTD/MTTR)."
+
+        # --- Contexto Humano (Hesitação) ---
+        player_hesitation_seconds:
+          type: number
+          minimum: 0
+          description: |
+            Tempo que o jogador pausou antes de executar a ação.
+            **Este campo é crítico:** valores > 2.0s aumentam a probabilidade de tradução para auditoria.
+            Valores < 0.5s aumentam a probabilidade de descarte como "ruído impulsivo".
+        decision_uncertainty_score:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: |
+            Métrica opcional de quão "incerto" o jogador parecia (derivado de movimento do mouse, backtracks, etc.).
+            Valores altos (> 0.7) indicam hesitação genuína — priorize para tradução.
+
+        # --- Metadados Técnicos ---
+        client_version:
+          type: string
+          pattern: '^[0-9]+\.[0-9]+\.[0-9]+$'
+        mod_loader_detected:
+          type: boolean
+          description: "Se true, o evento pode ser descartado com probabilidade aumentada (proteção contra modding malicioso)."
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        Token opaco emitido após Ritual de Passagem (ANEXO AB).
+        **Não decodifique.** Não dependa de claims internas.
+        Trate como string mágica. Passe no header. Nada mais.

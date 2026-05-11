@@ -1,0 +1,32 @@
+// Template para novo PEA MTP 3.0
+// Substitua os placeholders e customize os serviços
+
+let substrate_id = 0 ~                          // ID único do seu substrato
+let substrate_name = "MeuNovoSubstrato" ~       // Nome descritivo
+let coherence_class = "medium" ~                // low, medium, high, supreme
+let harmonics = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] ~  // 8 harmônicos
+
+// Condições de contorno
+let T_max = 300.0 ~
+let Phi_min = 0.5 ~
+let J_coupling = 1.0 ~
+let h_field = 0.0 ~
+
+// Estado inicial
+let initial_state = ∅ ⏳ ~
+initial_state.coherence = 0.9 ~
+
+// Serviços exportados (Portas Quânticas)
+service generate_entropy(n: int) -> array[float] ~
+service apply_custom_gate(data: dict) -> dict ~
+
+// Alarmes
+alarm coherence_drop when coherence < Phi_min ~
+alarm thermal_runaway when temperature > T_max ~
+
+// Invariância
+⊢ initial_state.coherence >= Phi_min ~
+⊢ temperature <= T_max ~
+
+// Selar
+persist initial_state ~

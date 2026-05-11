@@ -1,5 +1,13 @@
-import React, { useState } from 'react';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { X, Cpu, Search, Database, Loader2, KeyRound, ArrowRight } from 'lucide-react';
+import React, { useState } from 'react';
+
 import { Card } from './ui/Card';
 
 interface MemoryFragmentScannerProps {
@@ -26,15 +34,15 @@ export default function MemoryFragmentScanner({ onClose }: MemoryFragmentScanner
         method: 'POST',
       });
       const data = await response.json();
-      
+
       // Simulate streaming logs
-      for (let i = 0; i < data.logs.length; i++) {
+      for (const log of (data.logs as string[])) {
         await new Promise(resolve => setTimeout(resolve, 600));
-        setLogs(prev => [...prev, data.logs[i]]);
+        setLogs(prev => [...prev, log]);
       }
-      
-      setRecoveredKey(data.recoveredKey);
-    } catch (error) {
+
+      setRecoveredKey(data.recoveredKey as string);
+    } catch (_error) {
       setLogs(prev => [...prev, "🜏 [ERRO] Falha na sincronização do cluster de Nós."]);
     } finally {
       setIsScanning(false);
@@ -42,7 +50,7 @@ export default function MemoryFragmentScanner({ onClose }: MemoryFragmentScanner
   };
 
   const handleSignTransaction = async () => {
-    if (!recoveredKey) return;
+    if (!recoveredKey) {return;}
     setIsSigning(true);
     setLogs(prev => [...prev, "", "🜏 --- INICIANDO PROTOCOLO DE TRANSFERÊNCIA MAINNET ---"]);
 
@@ -53,14 +61,14 @@ export default function MemoryFragmentScanner({ onClose }: MemoryFragmentScanner
         body: JSON.stringify({ privateKey: recoveredKey, destination, amount })
       });
       const data = await response.json();
-      
-      for (let i = 0; i < data.logs.length; i++) {
+
+      for (const log of (data.logs as string[])) {
         await new Promise(resolve => setTimeout(resolve, 600));
-        setLogs(prev => [...prev, data.logs[i]]);
+        setLogs(prev => [...prev, log]);
       }
-      
-      setTxDetails({ txid: data.txid, destination: data.destination, amount: data.amount, hex: data.hex, source: data.source });
-    } catch (error) {
+
+      setTxDetails({ txid: data.txid as string, destination: data.destination as string, amount: data.amount as string, hex: data.hex as string, source: data.source as string });
+    } catch (_error) {
       setLogs(prev => [...prev, "🜏 [ERRO] Falha ao assinar transação na Mainnet."]);
     } finally {
       setIsSigning(false);
@@ -122,13 +130,13 @@ export default function MemoryFragmentScanner({ onClose }: MemoryFragmentScanner
                 <div className="mt-2 text-xs text-arkhe-muted opacity-70">
                   * Formato WIF (Wallet Import Format). Saldo não verificado.
                 </div>
-                
+
                 {!txDetails ? (
                   <div className="mt-4 space-y-3">
                     <div className="space-y-1">
                       <label className="text-xs text-arkhe-muted uppercase tracking-widest">Endereço de Destino</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={destination}
                         onChange={(e) => setDestination(e.target.value)}
                         className="w-full bg-black/50 border border-arkhe-cyan/30 rounded p-2 text-sm text-arkhe-cyan focus:outline-none focus:border-arkhe-cyan transition-colors font-mono"
@@ -137,8 +145,8 @@ export default function MemoryFragmentScanner({ onClose }: MemoryFragmentScanner
                     </div>
                     <div className="space-y-1">
                       <label className="text-xs text-arkhe-muted uppercase tracking-widest">Quantidade (BTC)</label>
-                      <input 
-                        type="number" 
+                      <input
+                        type="number"
                         step="0.00000001"
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
@@ -166,7 +174,7 @@ export default function MemoryFragmentScanner({ onClose }: MemoryFragmentScanner
                     </div>
                     {txDetails.hex && (
                       <div className="pt-2 border-t border-[#1f2024]">
-                        <span className="text-arkhe-muted">Raw Hex:</span> 
+                        <span className="text-arkhe-muted">Raw Hex:</span>
                         <div className="text-arkhe-cyan/70 break-all text-[10px] mt-1 max-h-20 overflow-y-auto">{txDetails.hex}</div>
                       </div>
                     )}

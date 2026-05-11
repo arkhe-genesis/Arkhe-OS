@@ -1,0 +1,299 @@
+{
+  "dashboard": {
+    "uid": "cathedral-learning-mirror",
+    "title": "Espelho da Evolução — Aprendizado da Catedral Arkhe",
+    "tags": ["learning", "evolution", "audit", "cathedral"],
+    "timezone": "browser",
+    "schemaVersion": 38,
+    "version": 1,
+    "refresh": "30s",
+
+    "templating": {
+      "list": [
+        {
+          "name": "model_type",
+          "type": "query",
+          "datasource": "Prometheus",
+          "query": "label_values(cathedral_model_f1_score, model_type)",
+          "multi": true,
+          "includeAll": true,
+          "label": "Tipo de Modelo"
+        },
+        {
+          "name": "alert_severity",
+          "type": "query",
+          "datasource": "Prometheus",
+          "query": "label_values(cathedral_recovery_action_success, alert_severity)",
+          "multi": true,
+          "includeAll": true,
+          "label": "Severidade do Alerta"
+        },
+        {
+          "name": "time_window",
+          "type": "interval",
+          "query": "1h,6h,24h,7d,30d",
+          "refresh": 2,
+          "label": "Janela Temporal"
+        }
+      ]
+    },
+
+    "annotations": {
+      "list": [
+        {
+          "name": "Model Promotions",
+          "datasource": "Prometheus",
+          "enable": true,
+          "iconColor": "green",
+          "expr": "cathedral_model_promotion_event",
+          "titleFormat": "Modelo Promovido: {{model_id}}",
+          "textFormat": "MAE: {{mae}} → {{new_mae}} | Dados: {{data_points}}",
+          "tags": ["model", "promotion"]
+        },
+        {
+          "name": "Retraining Events",
+          "datasource": "Prometheus",
+          "enable": true,
+          "iconColor": "blue",
+          "expr": "cathedral_retrain_cycle_started",
+          "titleFormat": "Retreinamento Iniciado",
+          "textFormat": "Métrica: {{metric}} | Motivo: {{trigger_reason}}",
+          "tags": ["retrain", "learning"]
+        },
+        {
+          "name": "Audit Events",
+          "datasource": "Prometheus",
+          "enable": true,
+          "iconColor": "purple",
+          "expr": "cathedral_audit_decision_logged",
+          "titleFormat": "Decisão Auditada: {{decision_type}}",
+          "textFormat": "Hash: {{decision_hash}} | Explicabilidade: {{explainability_score}}",
+          "tags": ["audit", "compliance"]
+        }
+      ]
+    },
+
+    "panels": [
+      {
+        "id": 1,
+        "title": "F1-Score por Modelo (Evolução)",
+        "type": "timeseries",
+        "gridPos": {"x": 0, "y": 0, "w": 12, "h": 8},
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "cathedral_model_f1_score{model_type=~\"$model_type\"}",
+            "legendFormat": "{{model_id}} ({{metric}})",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "palette-classic"},
+            "custom": {"lineWidth": 2, "fillOpacity": 10},
+            "unit": "percentunit",
+            "min": 0,
+            "max": 1
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "MAE (Erro Absoluto Médio) por Métrica",
+        "type": "timeseries",
+        "gridPos": {"x": 12, "y": 0, "w": 12, "h": 8},
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "cathedral_model_mae{metric=~\"$model_type\"}",
+            "legendFormat": "{{metric}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "palette-classic"},
+            "custom": {"lineWidth": 2, "fillOpacity": 10},
+            "unit": "short"
+          }
+        }
+      },
+      {
+        "id": 3,
+        "title": "Taxa de Sucesso por Ação de Recuperação",
+        "type": "bargauge",
+        "gridPos": {"x": 0, "y": 8, "w": 8, "h": 8},
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "sum(rate(cathedral_recovery_action_success{action_type=~\\\\\".+\\\\\\\"}[$time_window])) by (action_type) / sum(rate(cathedral_recovery_action_executed[$time_window])) by (action_type)",
+            "legendFormat": "{{action_type}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "palette-classic"},
+            "unit": "percentunit",
+            "min": 0,
+            "max": 1
+          }
+        }
+      },
+      {
+        "id": 4,
+        "title": "ΔΩ Médio por Ação Executada",
+        "type": "table",
+        "gridPos": {"x": 8, "y": 8, "w": 8, "h": 8},
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "avg(cathedral_recovery_action_omega_delta{action_type=~\\\\\".+\\\\\\\"}) by (action_type)",
+            "format": "table",
+            "refId": "A"
+          }
+        ],
+        "transformations": [
+          {"id": "organize", "options": {"indexByName": {"Value #A": 1, "action_type": 0}}}
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Eficácia por Severidade de Alerta",
+        "type": "heatmap",
+        "gridPos": {"x": 16, "y": 8, "w": 8, "h": 8},
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "sum(rate(cathedral_recovery_action_success{alert_severity=~\"$alert_severity\"}[$time_window])) by (alert_severity, action_type)",
+            "format": "heatmap",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Timeline de Ciclos de Aprendizado",
+        "type": "state-timeline",
+        "gridPos": {"x": 0, "y": 16, "w": 12, "h": 6},
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "cathedral_learning_cycle_status",
+            "legendFormat": "Ciclo {{cycle_id}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              {"options": {"0": {"text": "Coleta", "color": "gray"}, "1": {"text": "Treino", "color": "blue"}, "2": {"text": "Validação", "color": "yellow"}, "3": {"text": "Promoção", "color": "green"}}, "type": "value"}
+            ]
+          }
+        }
+      },
+      {
+        "id": 7,
+        "title": "Shadow vs Production Accuracy",
+        "type": "stat",
+        "gridPos": {"x": 12, "y": 16, "w": 6, "h": 3},
+        "datasource": "Prometheus",
+        "targets": [
+          {"expr": "cathedral_shadow_model_accuracy", "refId": "A"},
+          {"expr": "cathedral_production_model_accuracy", "refId": "B"}
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "thresholds"},
+            "thresholds": {"steps": [{"color": "red", "value": 0}, {"color": "yellow", "value": 0.8}, {"color": "green", "value": 0.95}]},
+            "unit": "percentunit"
+          }
+        }
+      },
+      {
+        "id": 8,
+        "title": "Drift Score (Mudança de Distribuição)",
+        "type": "gauge",
+        "gridPos": {"x": 18, "y": 16, "w": 6, "h": 3},
+        "datasource": "Prometheus",
+        "targets": [
+          {"expr": "cathedral_data_drift_score", "refId": "A"}
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "thresholds"},
+            "thresholds": {"steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 0.3}, {"color": "red", "value": 0.6}]},
+            "unit": "percentunit",
+            "min": 0,
+            "max": 1
+          }
+        }
+      },
+      {
+        "id": 9,
+        "title": "Decisões Automatizadas com Explicabilidade",
+        "type": "table",
+        "gridPos": {"x": 0, "y": 22, "w": 24, "h": 6},
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "cathedral_audit_decision_logged",
+            "format": "table",
+            "refId": "A"
+          }
+        ],
+        "transformations": [
+          {"id": "organize", "options": {
+            "indexByName": {
+              "decision_id": 0,
+              "decision_type": 1,
+              "explainability_score": 2,
+              "audit_hash": 3,
+              "timestamp": 4
+            },
+            "excludeByName": {"Time": true}
+          }},
+          {"id": "thresholds", "options": {"mode": "per-field", "fieldConfigOverrides": [
+            {"matcher": {"id": "byName", "options": "explainability_score"}, "properties": [
+              {"id": "thresholds", "value": {"mode": "absolute", "steps": [
+                {"color": "red", "value": 0},
+                {"color": "yellow", "value": 0.7},
+                {"color": "green", "value": 0.9}
+              ]}}
+            ]}
+          ]}}
+        ],
+        "fieldConfig": {
+          "defaults": {"custom": {"align": "center", "filterable": true}},
+          "overrides": [
+            {"matcher": {"id": "byName", "options": "audit_hash"}, "properties": [{"id": "custom.width", "value": 120}]},
+            {"matcher": {"id": "byName", "options": "explainability_score"}, "properties": [{"id": "unit", "value": "percentunit"}]}
+          ]
+        }
+      },
+      {
+        "id": 10,
+        "title": "Barra de Status do Aprendizado",
+        "type": "stat",
+        "gridPos": {"x": 0, "y": 28, "w": 24, "h": 3},
+        "datasource": "Prometheus",
+        "targets": [
+          {"expr": "cathedral_learning_cycle_last_completed", "legendFormat": "Último Ciclo", "refId": "A"},
+          {"expr": "cathedral_models_active_count", "legendFormat": "Modelos Ativos", "refId": "B"},
+          {"expr": "cathedral_next_retrain_scheduled", "legendFormat": "Próximo Retreino", "refId": "C"}
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "thresholds"},
+            "unit": "dateTimeAsIso"
+          },
+          "overrides": [
+            {"matcher": {"id": "byName", "options": "Modelos Ativos"}, "properties": [{"id": "unit", "value": "short"}]},
+            {"matcher": {"id": "byName", "options": "Próximo Retreino"}, "properties": [{"id": "unit", "value": "dateTimeAsIso"}]}
+          ]
+        },
+        "options": {"colorMode": "background", "graphMode": "area", "justifyMode": "center", "orientation": "horizontal", "reduceOptions": {"values": false, "calcs": ["lastNotNull"]}, "textMode": "value_and_name"}
+      }
+    ]
+  }
+}

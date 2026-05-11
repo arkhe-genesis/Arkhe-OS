@@ -1,5 +1,14 @@
-import { Card } from './ui/Card';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { Cpu, Zap, Activity } from 'lucide-react';
+
+import { Card } from './ui/Card';
+
 
 interface HardwareTelemetryProps {
   hardware: {
@@ -12,8 +21,8 @@ interface HardwareTelemetryProps {
 
 export default function HardwareTelemetry({ hardware }: HardwareTelemetryProps) {
   return (
-    <Card 
-      title="Hardware Telemetry" 
+    <Card
+      title="Hardware Telemetry"
       icon={<Cpu className="w-4 h-4" />}
       status={hardware.fpgaUtilization > 80 ? 'warning' : 'normal'}
     >
@@ -30,7 +39,7 @@ export default function HardwareTelemetry({ hardware }: HardwareTelemetryProps) 
             </span>
           </div>
           <div className="h-1.5 w-full bg-black/40 rounded-full overflow-hidden">
-            <div 
+            <div
               className={`h-full transition-all duration-300 ${hardware.fpgaUtilization > 80 ? 'bg-arkhe-orange' : 'bg-arkhe-cyan'}`}
               style={{ width: `${Math.min(100, hardware.fpgaUtilization)}%` }}
             />
@@ -49,7 +58,7 @@ export default function HardwareTelemetry({ hardware }: HardwareTelemetryProps) 
             </span>
           </div>
           <div className="h-1.5 w-full bg-black/40 rounded-full overflow-hidden">
-            <div 
+            <div
               className="h-full bg-arkhe-text transition-all duration-300"
               style={{ width: `${Math.min(100, (hardware.segPower / 350) * 100)}%` }}
             />

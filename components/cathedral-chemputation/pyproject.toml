@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cathedral-chemputation"
+version = "0.1.0"
+description = "Módulo de Chemputation Soberana para a Catedral Arkhe"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
+authors = [
+    {name = "Cathedral Contributors", email = "dev@cathedral.ark"}
+]
+dependencies = [
+    "numpy>=1.24.0",
+    "pennylane>=0.34.0",
+    "qiskit>=0.45.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

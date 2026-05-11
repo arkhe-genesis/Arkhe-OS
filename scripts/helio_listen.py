@@ -1,6 +1,6 @@
 import numpy as np
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 
 # ============================================================================
 # HELIO-LISTEN: PIPELINE DE DADOS SOLARES (Fase D-0)

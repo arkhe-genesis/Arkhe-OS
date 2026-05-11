@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: neat-optical-lambda
+  namespace: arkhe
+  labels:
+    app: neat-optical-lambda
+spec:
+  replicas: 2  # Pode escalar para processar múltiplos experimentos
+  selector:
+    matchLabels:
+      app: neat-optical-lambda
+  template:
+    metadata:
+      labels:
+        app: neat-optical-lambda
+    spec:
+      containers:
+      - name: neat-engine
+        image: cathedral/neat-lambda:v1.0.0
+        resources:
+          limits:
+            nvidia.com/gpu: 1  # Requer GPU para treinamento do campo neural
+            memory: "16Gi"
+          requests:
+            memory: "8Gi"
+        env:
+        - name: SPLITTER_ENDPOINT
+          value: "splitter.arkhe.svc.cluster.local:50051"
+        - name: OUTPUT_SHARD
+          value: "microscopy_corrected"
+        - name: LEASE_TTL
+          value: "600"  # Processamento pode levar minutos
+        - name: ALLOWED_OPCODES
+          value: "0x217"

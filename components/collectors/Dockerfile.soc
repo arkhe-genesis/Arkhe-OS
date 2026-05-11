@@ -1,0 +1,5 @@
+FROM python:3.11-slim
+WORKDIR /app
+RUN pip install --no-cache-dir requests redis pandas
+COPY collectors/soc_collector.py .
+CMD ["python3", "soc_collector.py"]

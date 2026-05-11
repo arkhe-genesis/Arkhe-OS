@@ -5,9 +5,17 @@ namespace Arkhe.Identity
   Using an opaque type to ensure formal properties without Float issues.
 -/
 opaque Coherence : Type
-instance : LE Coherence := ⟨sorry⟩
-instance : LT Coherence := ⟨sorry⟩
 
+/-- Define ordering on Coherence as opaque instances. -/
+instance : LE Coherence where
+  le _ _ := sorry
+
+instance : LT Coherence where
+  lt _ _ := sorry
+
+/--
+  State of the Arkhe-Chain identity at a specific block.
+-/
 structure IdentityState where
   lambda : Coherence       -- Coherence metric λ₂
   block_height : Nat       -- Current block height in the Arkhe-Chain

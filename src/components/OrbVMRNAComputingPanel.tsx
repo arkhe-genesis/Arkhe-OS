@@ -1,6 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'motion/react';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { X, Dna, Cpu, ShieldCheck, GitMerge, Zap } from 'lucide-react';
+import { motion } from 'motion/react';
+import React, { useState, useEffect } from 'react';
 
 interface OrbVMRNAComputingPanelProps {
   onClose: () => void;
@@ -18,7 +25,7 @@ export default function OrbVMRNAComputingPanel({ onClose }: OrbVMRNAComputingPan
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
@@ -49,9 +56,9 @@ export default function OrbVMRNAComputingPanel({ onClose }: OrbVMRNAComputingPan
                 <span>OrbVM Wetware Mode</span>
               </div>
             </div>
-            
+
             <div className="flex-1 bg-[#111214] border border-[#1f2024] rounded-xl p-6 relative overflow-hidden flex flex-col">
-              
+
               {/* RNA Codon Tape (Bytecode) */}
               <div className="mb-8">
                 <div className="text-[10px] font-mono text-arkhe-muted uppercase mb-2 flex items-center gap-2">
@@ -60,11 +67,11 @@ export default function OrbVMRNAComputingPanel({ onClose }: OrbVMRNAComputingPan
                 </div>
                 <div className="flex gap-1 overflow-hidden">
                   {['AUG', 'CGC', 'UAC', 'GGA', 'UAA'].map((codon, i) => (
-                    <motion.div 
+                    <motion.div
                       key={i}
                       className={`px-3 py-2 font-mono text-sm rounded border ${
-                        executionStep === i 
-                          ? 'bg-fuchsia-500/20 border-fuchsia-400 text-fuchsia-400 shadow-[0_0_10px_rgba(217,70,239,0.5)]' 
+                        executionStep === i
+                          ? 'bg-fuchsia-500/20 border-fuchsia-400 text-fuchsia-400 shadow-[0_0_10px_rgba(217,70,239,0.5)]'
                           : 'bg-black/40 border-white/5 text-arkhe-muted'
                       }`}
                       animate={{ y: executionStep === i ? -5 : 0 }}
@@ -84,18 +91,18 @@ export default function OrbVMRNAComputingPanel({ onClose }: OrbVMRNAComputingPan
 
                 <div className="relative w-64 h-32 flex items-center justify-center">
                   {/* Substrate RNA */}
-                  <motion.div 
+                  <motion.div
                     className="absolute w-full h-2 bg-cyan-500/50 rounded-full"
-                    animate={{ 
+                    animate={{
                       opacity: executionStep === 2 ? 0.2 : 1,
                       scaleX: executionStep === 2 ? 1.1 : 1
                     }}
                   />
-                  
+
                   {/* Ribozyme Catalyst */}
-                  <motion.div 
+                  <motion.div
                     className="absolute w-16 h-16 border-4 border-fuchsia-500 rounded-full flex items-center justify-center bg-[#111214]"
-                    animate={{ 
+                    animate={{
                       y: executionStep === 1 ? 0 : -40,
                       scale: executionStep === 1 ? 1.2 : 1,
                       borderColor: executionStep === 2 ? '#eab308' : '#d946ef'
@@ -106,7 +113,7 @@ export default function OrbVMRNAComputingPanel({ onClose }: OrbVMRNAComputingPan
 
                   {/* Cleavage Effect */}
                   {executionStep === 2 && (
-                    <motion.div 
+                    <motion.div
                       initial={{ scale: 0, opacity: 1 }}
                       animate={{ scale: 3, opacity: 0 }}
                       className="absolute w-8 h-8 bg-yellow-400 rounded-full blur-md"
@@ -138,7 +145,7 @@ export default function OrbVMRNAComputingPanel({ onClose }: OrbVMRNAComputingPan
               <h3 className="text-xs font-mono uppercase tracking-widest text-fuchsia-400 mb-4 border-b border-[#1f2024] pb-2">
                 Molecular Logic Gates
               </h3>
-              
+
               <div className="space-y-4">
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
@@ -149,7 +156,7 @@ export default function OrbVMRNAComputingPanel({ onClose }: OrbVMRNAComputingPan
                     Ativação baseada em concentração. O limiar de clivagem atua como um gatilho de estado.
                   </div>
                 </div>
-                
+
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-mono text-arkhe-muted uppercase">Aptamer (Binding Prob)</span>

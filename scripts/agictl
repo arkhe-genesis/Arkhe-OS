@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# agictl - Arkhe AGI Control Tool
+
+COMMAND=$1
+shift
+
+case $COMMAND in
+    genesis)
+        echo "Running genesis..."
+        make genesis
+        ;;
+    verify)
+        echo "Verifying..."
+        make verify
+        ;;
+    audit)
+        echo "Auditing..."
+        make audit --full
+        ;;
+    *)
+        echo "Usage: agictl {genesis|verify|audit}"
+        exit 1
+        ;;
+esac

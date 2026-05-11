@@ -1,6 +1,16 @@
-import { Card } from './ui/Card';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+
 import { Link } from 'lucide-react';
-import type { OrbLog } from '../hooks/useArkheSimulation';
+
+import type { OrbLog } from '../../server/types';
+
+import { Card } from './ui/Card';
 
 interface TimechainVisualizerProps {
   logs: OrbLog[];
@@ -11,8 +21,8 @@ export default function TimechainVisualizer({ logs }: TimechainVisualizerProps) 
   const blocks = logs.slice(0, 10).reverse();
 
   return (
-    <Card 
-      title="Timechain Topology" 
+    <Card
+      title="Timechain Topology"
       icon={<Link className="w-4 h-4" />}
     >
       <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-arkhe-border scrollbar-track-transparent">
@@ -24,7 +34,7 @@ export default function TimechainVisualizer({ logs }: TimechainVisualizerProps) 
           return (
             <div key={block.id} className="flex items-center shrink-0">
               {/* Block */}
-              <div 
+              <div
                 className={`w-24 p-2 rounded border flex flex-col gap-1 relative ${
                   isRejected ? 'bg-arkhe-red/10 border-arkhe-red/50' :
                   isMitigated ? 'bg-arkhe-orange/10 border-arkhe-orange/50' :
@@ -42,7 +52,7 @@ export default function TimechainVisualizer({ logs }: TimechainVisualizerProps) 
                   λ₂: {block.coherence.toFixed(3)}
                 </div>
                 <div className="text-[8px] font-mono text-arkhe-muted truncate">
-                  {new Date(block.targetTime).toLocaleTimeString('en-US', { hour12: false, second: '2-digit', minute: '2-digit' })}
+                  {new Date(block.targetTime || 0).toLocaleTimeString('en-US', { hour12: false, second: '2-digit', minute: '2-digit' })}
                 </div>
                 {block.threatType && (
                   <div className="absolute -top-2 -right-2 bg-arkhe-red text-black text-[8px] font-bold px-1 rounded animate-pulse">

@@ -1,4 +1,5 @@
 asyncio
+numpy
 asyncpg
 motor
 aioredis
@@ -13,3 +14,11 @@ graphql-core
 websockets
 jwt
 cryptography
+fastapi
+uvicorn
+pydantic
+jax
+jaxlib
+scipy
+langgraph
+rdflib

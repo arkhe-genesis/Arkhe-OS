@@ -1,7 +1,15 @@
-import React from 'react';
-import { Card } from './ui/Card';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { Activity, Gauge, ShieldCheck, Zap, Info, Binary } from 'lucide-react';
+import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+
+import type { SimulationState } from '../../server/types';
 import { useArkheSimulation } from '../hooks/useArkheSimulation';
 
 interface CHSHMonitorPanelProps {
@@ -9,10 +17,10 @@ interface CHSHMonitorPanelProps {
 }
 
 export default function CHSHMonitorPanel({ onClose }: CHSHMonitorPanelProps) {
-  const state = useArkheSimulation();
-  const chsh = state.chshMonitor;
+  const state: any = useArkheSimulation();
+  const chsh = state.chshMonitor as any;
 
-  if (!chsh) return null;
+  if (!chsh) {return null;}
 
   return (
     <div className="bg-black/90 border border-arkhe-cyan/30 rounded-xl overflow-hidden flex flex-col max-h-[90vh] w-full max-w-5xl shadow-[0_0_30px_rgba(0,255,170,0.1)] backdrop-blur-md">
@@ -125,7 +133,7 @@ export default function CHSHMonitorPanel({ onClose }: CHSHMonitorPanelProps) {
                 {Object.entries(chsh.preFlightChecks).map(([key, value]) => (
                   <div key={key} className="flex justify-between items-center text-[10px] font-mono">
                     <span className="text-arkhe-muted uppercase">{key.replace(/([A-Z])/g, ' $1')}</span>
-                    <span className="text-arkhe-green font-bold">{value}</span>
+                    <span className="text-arkhe-green font-bold">{(value as any)}</span>
                   </div>
                 ))}
               </div>
@@ -177,7 +185,9 @@ export default function CHSHMonitorPanel({ onClose }: CHSHMonitorPanelProps) {
             </div>
             <div className="text-right">
               <div className="text-[10px] font-mono text-arkhe-muted uppercase tracking-tighter">ETA (T-FIELD)</div>
-              <div className="text-xs font-bold font-mono text-arkhe-cyan">{chsh.nextMilestone.time.split('T')[1].replace('Z', '')}</div>
+              <div className="text-xs font-bold font-mono text-arkhe-cyan">
+                {chsh.nextMilestone.time ? chsh.nextMilestone.time.split('T')[1].replace('Z', '') : '--:--:--'}
+              </div>
             </div>
           </div>
         </div>

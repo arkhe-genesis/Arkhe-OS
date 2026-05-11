@@ -1,0 +1,28 @@
+{
+  "community_1": {
+    "proof_type": "subspace_capture",
+    "community_id": "community_1",
+    "public_inputs": {
+      "epsilon_sq": 0.0001,
+      "manifold_dimension": 1,
+      "n_crystals": 16,
+      "crystal_indices_hash": 208398447
+    },
+    "private_witness_commitments": {
+      "manifold_points_commitment": "sha256:12754346995392858934",
+      "decoder_matrix_commitment": "sha256:placeholder_for_D_matrix"
+    },
+    "constraint_summary": {
+      "reconstruction_error_bound": "||x_m - D @ z_filtered||\u00b2 \u2264 \u03b5\u00b2",
+      "sparsity_constraint": "z_i = 0 for i \u2209 S_star",
+      "field": "F_{2^61-1}",
+      "security_bits": 40
+    },
+    "proof_metadata": {
+      "estimated_proof_size_bytes": 550,
+      "estimated_verification_time_ms": 0.66,
+      "post_quantum": true,
+      "actual_proof_data": "mock_proof_data_10"
+    }
+  }
+}

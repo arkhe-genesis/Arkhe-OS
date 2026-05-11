@@ -1,0 +1,6 @@
+{
+  "extremal_transition": {
+    "final_coherence": 0.85,
+    "finite_time": true
+  }
+}

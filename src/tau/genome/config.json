@@ -1,0 +1,62 @@
+{
+  "project": "TAU (Teleonomic Autonomous Unit)",
+  "version": "1.1.0",
+  "primary_provider": "BayOfAssets",
+  "customProviders": [
+    {
+      "name": "BayOfAssets",
+      "baseUrl": "https://api.bayofassets.com/v1",
+      "apiKey": "${BOA_API_KEY}",
+      "model": "claude-haiku-4-5",
+      "tier": 1
+    }
+  ],
+  "infrastructure": {
+    "provider": "Oracle Cloud Always Free",
+    "specs": {
+      "ocpu": 4,
+      "ram_gb": 24,
+      "storage_gb": 200
+    },
+    "hosts": {
+      "primary": "127.0.0.1",
+      "standby_1": "127.0.0.2",
+      "standby_2": "127.0.0.3"
+    }
+  },
+  "model_hierarchy": {
+    "local_fast": {
+      "name": "qwen2.5:14b",
+      "quantization": "Q4_K_M",
+      "size_gb": 9,
+      "role": "Cortex Evolutivo, análise de logs"
+    },
+    "local_deep": {
+      "name": "qwen2.5:32b",
+      "quantization": "Q4_K_M",
+      "size_gb": 22,
+      "role": "Análise complexa, meta-aprendizado (uso sequencial apenas)"
+    },
+    "remote_backup": {
+      "name": "qwen2.5:72b",
+      "provider": "Groq/Gemini",
+      "role": "Tarefas críticas, máxima capacidade"
+    }
+  },
+  "thresholds": {
+    "lambda_mesh_healthy": 0.65,
+    "lambda_mesh_critical": 0.4,
+    "hysteresis_window": 4,
+    "ram_max_model_concurrent_gb": 14,
+    "github_actions_budget_pct": 80,
+    "firebase_rtdb_size_mb": 800,
+    "lora_training_max_hours": 4
+  },
+  "vacuum": {
+    "firebase_rtdb_url": "",
+    "vector_store": "ChromaDB",
+    "embedding_model": "nomic-embed-text",
+    "rtdb_retention_days": 1,
+    "firestore_retention_days": 30
+  }
+}

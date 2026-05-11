@@ -1,6 +1,13 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { X, Network, ArrowRight, Zap, Code, Layers, Activity } from 'lucide-react';
+import { motion } from 'motion/react';
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { X, Cpu, Network, Database, ArrowRight, Zap, Code, Layers, Activity } from 'lucide-react';
 
 interface HybridArchitecturePanelProps {
   onClose: () => void;
@@ -18,15 +25,15 @@ export default function HybridArchitecturePanel({ onClose }: HybridArchitectureP
   }, []);
 
   useEffect(() => {
-    if (simulationStep === 0) setActiveStage('C');
-    if (simulationStep === 1) setActiveStage('TZINOR');
-    if (simulationStep === 2) setActiveStage('Z');
-    if (simulationStep === 3) setActiveStage('R4');
+    if (simulationStep === 0) {setActiveStage('C');}
+    if (simulationStep === 1) {setActiveStage('TZINOR');}
+    if (simulationStep === 2) {setActiveStage('Z');}
+    if (simulationStep === 3) {setActiveStage('R4');}
   }, [simulationStep]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
@@ -51,7 +58,7 @@ export default function HybridArchitecturePanel({ onClose }: HybridArchitectureP
           {/* Left: Visualization */}
           <div className="flex-1 flex flex-col gap-4">
             <div className="text-xs font-mono uppercase tracking-widest text-arkhe-muted mb-2">Data Flow Topology</div>
-            
+
             <div className="flex-1 grid grid-rows-4 gap-4">
               {/* ℂ Stage */}
               <div className={`relative p-4 rounded-xl border transition-all duration-500 flex items-center gap-4 ${activeStage === 'C' ? 'bg-blue-500/10 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.2)]' : 'bg-[#111214] border-[#1f2024]'}`}>
@@ -139,13 +146,13 @@ export default function HybridArchitecturePanel({ onClose }: HybridArchitectureP
           <div className="w-full md:w-96 flex flex-col gap-4">
             <div className="bg-[#111214] border border-[#1f2024] rounded-xl p-4 flex-1 overflow-y-auto">
               <h3 className="text-xs font-mono uppercase tracking-widest text-arkhe-purple mb-4 border-b border-[#1f2024] pb-2">Parametrização WASM</h3>
-              
+
               <div className="space-y-4">
                 <div className="space-y-1">
                   <div className="text-[10px] font-mono text-arkhe-muted uppercase">Instruções (opcode)</div>
                   <div className="text-xs font-mono text-arkhe-text bg-black/40 p-2 rounded border border-white/5">Embeddings one-hot fixos, não treináveis. Semântica opcode imutável.</div>
                 </div>
-                
+
                 <div className="space-y-1">
                   <div className="text-[10px] font-mono text-arkhe-muted uppercase">Registradores</div>
                   <div className="text-xs font-mono text-arkhe-text bg-black/40 p-2 rounded border border-white/5">Estados discretos com ativação step-function. Representação binária exata.</div>

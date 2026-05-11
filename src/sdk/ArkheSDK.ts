@@ -1,3 +1,10 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 export class ArkheSDK {
   private providerUrl: string;
   private coherenceThreshold: number;
@@ -28,7 +35,7 @@ export class ArkheSDK {
     };
   }
 
-  async preserveThukdamState(stateData: any) {
+  async preserveThukdamState(_stateData: unknown) {
     // Simulate state hashing and preservation
     const stateHash = '0x' + Math.random().toString(16).slice(2, 64);
     return {

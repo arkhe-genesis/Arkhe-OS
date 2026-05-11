@@ -1,0 +1,5 @@
+FROM python:3.11-slim
+WORKDIR /app
+RUN pip install --no-cache-dir redis numpy
+COPY collectors/condensed_intelligence.py .
+CMD ["python3", "condensed_intelligence.py"]

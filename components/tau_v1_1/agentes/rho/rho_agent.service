@@ -1,0 +1,14 @@
+[Unit]
+Description=Agente de Percepção TAU (RHO)
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/rho_agent
+Restart=always
+RestartSec=5
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=rho_agent
+
+[Install]
+WantedBy=multi-user.target

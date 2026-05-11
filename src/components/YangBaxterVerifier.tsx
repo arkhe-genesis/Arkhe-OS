@@ -1,5 +1,14 @@
-import { Card } from './ui/Card';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { GitMerge, Lock } from 'lucide-react';
+
+import { Card } from './ui/Card';
+
 
 interface YangBaxterVerifierProps {
   topology: {
@@ -15,8 +24,8 @@ interface YangBaxterVerifierProps {
 
 export default function YangBaxterVerifier({ topology, security }: YangBaxterVerifierProps) {
   return (
-    <Card 
-      title="Topological Consensus" 
+    <Card
+      title="Topological Consensus"
       icon={<GitMerge className="w-4 h-4" />}
       status={!topology.yangBaxterValid || !security.zkProofValid ? 'critical' : 'normal'}
     >

@@ -1,6 +1,15 @@
-import React from 'react';
-import { X, Database, Activity, AlertCircle, RefreshCcw, Layout, Shield, Network, Server } from 'lucide-react';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { X, Database, Activity, AlertCircle, RefreshCcw,  Shield, Network, Server } from 'lucide-react';
 import { motion } from 'motion/react';
+import React from 'react';
+
+import type { SimulationState } from '../../server/types';
 import { useArkheSimulation } from '../hooks/useArkheSimulation';
 
 interface DataCoherenceDashboardProps {
@@ -8,7 +17,7 @@ interface DataCoherenceDashboardProps {
 }
 
 export default function DataCoherenceDashboard({ onClose }: DataCoherenceDashboardProps) {
-  const state = useArkheSimulation();
+  const state: any = useArkheSimulation();
   const { domains, overallHealth } = state.scaData;
 
   return (
@@ -81,7 +90,7 @@ export default function DataCoherenceDashboard({ onClose }: DataCoherenceDashboa
             </div>
 
             <div className="grid grid-cols-1 gap-4">
-              {domains.map((domain) => (
+              {domains.map((domain: any) => (
                 <div key={domain.name} className="bg-white/5 border border-white/10 rounded-lg p-4 flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className={`p-2 rounded bg-black/40 ${domain.health === 'CRITICAL' ? 'text-arkhe-red' : 'text-blue-400'}`}>
@@ -114,7 +123,7 @@ export default function DataCoherenceDashboard({ onClose }: DataCoherenceDashboa
               </div>
               <div className="space-y-2">
                 <div className="text-[9px] font-mono text-arkhe-red border-l-2 border-arkhe-red pl-2 py-1 bg-arkhe-red/5">
-                  Marketing: Freshness > 5min on campaign_metrics
+                  Marketing: Freshness &gt; 5min on campaign_metrics
                 </div>
               </div>
             </div>
@@ -215,7 +224,7 @@ export default function DataCoherenceDashboard({ onClose }: DataCoherenceDashboa
               <div className="p-2 bg-black/40 rounded border border-white/5">
                 <h4 className="text-[8px] font-mono uppercase text-blue-400 mb-2">Protocol Output: {state.scaData.activeProtocol}</h4>
                 <div className="space-y-1 max-h-32 overflow-y-auto custom-scrollbar">
-                  {state.scaData.protocolLogs.map((log, i) => (
+                  {state.scaData.protocolLogs.map((log: any, i: any) => (
                     <div key={i} className="text-[7px] font-mono text-arkhe-muted border-l border-white/10 pl-2 leading-tight">
                       {log}
                     </div>

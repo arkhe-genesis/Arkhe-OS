@@ -1,0 +1,9 @@
+[package]
+name = "integration"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+quantum_cell = { path = "../quantum_cell" }
+zk_therapeutic = { path = "../zk_therapeutic" }
+cell_royalty = { path = "../cell_royalty" }

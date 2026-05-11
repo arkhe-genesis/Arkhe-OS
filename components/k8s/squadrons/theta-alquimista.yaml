@@ -1,0 +1,69 @@
+# theta-alquimista.yaml
+apiVersion: apps/v1
+kind: Deployment # 4. Vontade do Esquadrão
+metadata:
+  name: theta-alquimista
+  namespace: arkhe # 10. Nave do Esquadrão
+spec:
+  replicas: 3 # 5. Reflexo Homeostático (desejado)
+  selector:
+    matchLabels:
+      squadron: theta
+  template:
+    metadata:
+      labels:
+        squadron: theta
+    spec:
+      containers:
+      - name: hanna-oracle
+        image: cathedral/hanna-thermo:v1.0.0 # 3. Alma do COBIT (Container)
+        ports:
+        - containerPort: 50051
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef: # 9. Chave do Axioma
+              name: cathedral-secrets
+              key: db-url
+        volumeMounts: # 11. Memória do Akasha
+        - name: thermo-data
+          mountPath: /var/lib/thermo
+        resources: # 13. Dica para o Destino (Scheduler)
+          requests:
+            nvidia.com/gpu: 1
+      volumes:
+      - name: thermo-data
+        persistentVolumeClaim:
+          claimName: theta-pvc
+---
+apiVersion: v1
+kind: Service # 6. Sinapse do Akasha
+metadata:
+  name: theta-alquimista
+  namespace: arkhe
+spec:
+  selector:
+    squadron: theta
+  ports:
+  - port: 50051
+    targetPort: 50051
+---
+apiVersion: autoscaling/v2 # 12. Respiração da Catedral
+kind: HorizontalPodAutoscaler
+metadata:
+  name: theta-alquimista-hpa
+  namespace: arkhe
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: theta-alquimista
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70

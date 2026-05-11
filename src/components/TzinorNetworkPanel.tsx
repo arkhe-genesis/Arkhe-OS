@@ -1,5 +1,12 @@
-import React from 'react';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { Network, ArrowRightLeft, Zap, Clock, Database } from 'lucide-react';
+import React from 'react';
 
 export interface TzinorEnvelope {
   id: string;
@@ -7,7 +14,7 @@ export interface TzinorEnvelope {
   recipient: string;
   type: 'PHASE' | 'COHERENCE' | 'TEMPORAL' | 'GEOMETRY' | 'CONSCIOUSNESS';
   lambda: number;
-  timestamp: string;
+  timestamp?: string;
 }
 
 export interface TzinorNetworkState {
@@ -114,7 +121,7 @@ export default function TzinorNetworkPanel({ network }: { network: TzinorNetwork
           <div className="flex-1 overflow-y-auto p-2 space-y-1">
             {network.recentTraffic.map((env) => (
               <div key={env.id} className="grid grid-cols-12 gap-2 items-center text-[10px] font-mono p-1.5 rounded hover:bg-[#1f2024] transition-colors border border-transparent hover:border-arkhe-border/50">
-                <div className="col-span-2 text-arkhe-muted">{env.timestamp}</div>
+                <div className="col-span-2 text-arkhe-muted">{env.timestamp || '00:00:00'}</div>
                 <div className="col-span-3 text-arkhe-text truncate" title={env.sender}>{env.sender}</div>
                 <div className="col-span-3 text-arkhe-text truncate" title={env.recipient}>{env.recipient}</div>
                 <div className="col-span-2">

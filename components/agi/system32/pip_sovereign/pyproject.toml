@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pip-sovereign"
+version = "1.0.0"
+description = "Sovereign Python Package Management"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "requests",
+    "pyyaml"
+]
+
+[project.scripts]
+pip-sovereign = "pip_sovereign.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -1,0 +1,11 @@
+[Unit]
+Description=TAU Mythos Core RHO Agent
+After=network.target
+
+[Service]
+ExecStart=/opt/tau/bin/rho_mythos_exec
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target

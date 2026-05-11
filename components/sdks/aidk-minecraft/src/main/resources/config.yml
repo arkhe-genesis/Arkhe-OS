@@ -1,0 +1,8 @@
+arkhe:
+  api:
+    url: "https://api.arkhe-enterprise.com"
+    jwt_secret: "${ARKHE_JWT_SECRET}"
+gameplay:
+  audit_block_material: COMMAND_BLOCK
+  success_particle: PORTAL
+  success_sound: BLOCK_BEACON_POWER_SELECT

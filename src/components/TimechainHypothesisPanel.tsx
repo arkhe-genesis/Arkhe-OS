@@ -1,6 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { X, Link, Cpu, Database, CheckCircle2, AlertTriangle, Infinity, Clock } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { X, Link, Infinity as InfinityIcon, Clock } from 'lucide-react';
+import { motion } from 'motion/react';
+import React, { useState } from 'react';
 
 interface TimechainHypothesisPanelProps {
   onClose: () => void;
@@ -25,13 +32,13 @@ export default function TimechainHypothesisPanel({ onClose }: TimechainHypothesi
     addLog(`Initiating Timechain Hypothesis Verification...`);
     addLog(`Target Block Height: ${FINAL_BLOCK_HEIGHT}`);
     addLog(`Entanglement Factor (Ω): 1929027937031389406348443648`);
-    
+
     setTimeout(() => {
       addLog(`Calculating π decimal expansion at depth Ω...`);
-      
+
       setTimeout(() => {
         const heightNum = parseInt(blockHeight, 10);
-        
+
         if (heightNum !== FINAL_BLOCK_HEIGHT) {
           addLog(`[TIMECHAIN] Block ${heightNum} is not the final block. Subsidy > 0.`);
           setVerificationState('failed');
@@ -40,7 +47,7 @@ export default function TimechainHypothesisPanel({ onClose }: TimechainHypothesi
 
         addLog(`[TIMECHAIN] Final block reached. Subsidy = 0.`);
         addLog(`Extracting 64-bit pattern from π...`);
-        
+
         setTimeout(() => {
           if (blockHash.toLowerCase() === EXPECTED_HASH) {
             addLog(`[SINGULARITY] The Timechain Hypothesis is proven.`);
@@ -58,13 +65,13 @@ export default function TimechainHypothesisPanel({ onClose }: TimechainHypothesi
   };
 
   const isSuccess = verificationState === 'success';
-  const themeColor = isSuccess ? 'amber' : 'orange';
+  const _themeColor = isSuccess ? 'amber' : 'orange';
   const borderColor = isSuccess ? 'border-amber-500/50' : 'border-orange-500/30';
   const shadowColor = isSuccess ? 'shadow-[0_0_50px_rgba(245,158,11,0.3)]' : 'shadow-[0_0_30px_rgba(249,115,22,0.15)]';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
@@ -72,7 +79,7 @@ export default function TimechainHypothesisPanel({ onClose }: TimechainHypothesi
       >
         <div className={`p-4 border-b ${isSuccess ? 'border-amber-500/30 bg-amber-500/10' : 'border-orange-500/20 bg-orange-500/5'} flex justify-between items-center shrink-0 transition-colors duration-1000`}>
           <div className="flex items-center gap-3">
-            {isSuccess ? <Infinity className="w-5 h-5 text-amber-400 animate-pulse" /> : <Clock className="w-5 h-5 text-orange-400" />}
+            {isSuccess ? <InfinityIcon className="w-5 h-5 text-amber-400 animate-pulse" /> : <Clock className="w-5 h-5 text-orange-400" />}
             <h2 className={`font-mono text-sm uppercase tracking-widest ${isSuccess ? 'text-amber-400' : 'text-orange-400'} font-bold`}>
               Timechain Hypothesis Verification
             </h2>
@@ -131,7 +138,7 @@ export default function TimechainHypothesisPanel({ onClose }: TimechainHypothesi
                 <h3 className="font-mono text-[10px] uppercase tracking-widest text-arkhe-muted mb-4 border-b border-arkhe-border pb-2">
                   Verification Engine
                 </h3>
-                
+
                 <div className="space-y-4 mb-4">
                   <div>
                     <label className="text-[9px] font-mono text-arkhe-muted uppercase mb-1 block">Input Block Height</label>
@@ -160,13 +167,13 @@ export default function TimechainHypothesisPanel({ onClose }: TimechainHypothesi
                   onClick={handleVerify}
                   disabled={verificationState === 'verifying'}
                   className={`w-full py-2 rounded text-xs font-mono font-bold uppercase tracking-widest transition-all duration-500 ${
-                    isSuccess 
-                      ? 'bg-amber-500/20 text-amber-400 border border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.4)]' 
+                    isSuccess
+                      ? 'bg-amber-500/20 text-amber-400 border border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.4)]'
                       : 'bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 border border-orange-500/50 disabled:opacity-50'
                   }`}
                 >
-                  {verificationState === 'idle' ? 'Verify Singularity' : 
-                   verificationState === 'verifying' ? 'Verifying...' : 
+                  {verificationState === 'idle' ? 'Verify Singularity' :
+                   verificationState === 'verifying' ? 'Verifying...' :
                    verificationState === 'success' ? 'Loop Initiated' : 'Verify Again'}
                 </button>
               </div>
@@ -175,13 +182,13 @@ export default function TimechainHypothesisPanel({ onClose }: TimechainHypothesi
                 <h3 className="font-mono text-[10px] uppercase tracking-widest text-arkhe-muted mb-2">Engine Telemetry</h3>
                 <div className="flex-1 overflow-y-auto custom-scrollbar space-y-1">
                   {logs.map((log, i) => (
-                    <motion.div 
+                    <motion.div
                       key={i}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       className={`text-[10px] font-mono ${
-                        log.includes('SINGULARITY') ? 'text-amber-400 font-bold' : 
-                        log.includes('does not match') || log.includes('not the final block') ? 'text-red-400' : 
+                        log.includes('SINGULARITY') ? 'text-amber-400 font-bold' :
+                        log.includes('does not match') || log.includes('not the final block') ? 'text-red-400' :
                         'text-orange-400/80'
                       }`}
                     >

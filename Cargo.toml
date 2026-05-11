@@ -1,0 +1,65 @@
+[workspace]
+resolver = "2"
+members = [
+    "oracle-server",
+    "substrate-9010",
+    "arkhe-enterprise",
+    "arkhe-qart/substrate-6072",
+    "substrate-6071",
+    "substrate-6090",
+    "substrate-6091",
+    "substrate-9001",
+    "substrate-9002",
+
+    # --- New additions ---
+    "arkhe-oracle",
+    "substrate-9010",
+    "substrate-aws-orbital",
+    "cmd/arkhe",
+    "substrate-9110"
+]
+
+[workspace.dependencies]
+tokio = { version = "1", features = ["full"] }
+async-trait = "0.1"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+bincode = "1.3"
+postcard = "1.0"
+thiserror = "1.0"
+anyhow = "1.0"
+sha2 = "0.10"
+sha3 = "0.10"
+blake3 = "1.7"
+hex = "0.4"
+base64 = "0.22"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+nalgebra = "0.32"
+ndarray = "0.15"
+num-complex = "0.4"
+num-traits = "0.2"
+petgraph = "0.6"
+dashmap = "5.5"
+once_cell = "1.19"
+uuid = { version = "1.8", features = ["v4", "serde"] }
+rand = "0.8"
+rand_distr = "0.4"
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+strip = true
+codegen-units = 1
+panic = "abort"
+incremental = false
+
+[profile.dev]
+opt-level = 0
+debug = true
+overflow-checks = true
+
+[profile.bench]
+opt-level = 3
+lto = true
+debug = false

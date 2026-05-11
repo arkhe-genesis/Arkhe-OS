@@ -1,0 +1,288 @@
+{
+  "timestamp": 1777700388.8883514,
+  "raw_results": [
+    {
+      "scenario": "sim_base",
+      "track": "track2",
+      "total_time_ms": 45.2,
+      "proof_time_ms": 45.21005799995237,
+      "verify_time_ms": 0.01401999998051906,
+      "proof_size_bytes": 312,
+      "effective_khz": 22123.893805309734,
+      "optimizations": {},
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "sim_base",
+      "track": "track2",
+      "total_time_ms": 45.2,
+      "proof_time_ms": 45.192287999952896,
+      "verify_time_ms": 0.012526000091384049,
+      "proof_size_bytes": 312,
+      "effective_khz": 22123.893805309734,
+      "optimizations": {},
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "sim_base",
+      "track": "track2",
+      "total_time_ms": 45.2,
+      "proof_time_ms": 45.21566600010374,
+      "verify_time_ms": 0.012309999988247,
+      "proof_size_bytes": 312,
+      "effective_khz": 22123.893805309734,
+      "optimizations": {},
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "sim_opt",
+      "track": "track2",
+      "total_time_ms": 23.3,
+      "proof_time_ms": 23.195354999984374,
+      "verify_time_ms": 0.010089999932461069,
+      "proof_size_bytes": 312,
+      "effective_khz": 42918.454935622314,
+      "optimizations": {
+        "mi_bins": 20
+      },
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "sim_opt",
+      "track": "track2",
+      "total_time_ms": 23.3,
+      "proof_time_ms": 23.216421000029186,
+      "verify_time_ms": 0.010248000080537167,
+      "proof_size_bytes": 312,
+      "effective_khz": 42918.454935622314,
+      "optimizations": {
+        "mi_bins": 20
+      },
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "sim_opt",
+      "track": "track2",
+      "total_time_ms": 23.3,
+      "proof_time_ms": 23.275613999999223,
+      "verify_time_ms": 0.010263000035592995,
+      "proof_size_bytes": 312,
+      "effective_khz": 42918.454935622314,
+      "optimizations": {
+        "mi_bins": 20
+      },
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "real_opt",
+      "track": "track2",
+      "total_time_ms": 18.2,
+      "proof_time_ms": 23.280118000002403,
+      "verify_time_ms": 0.01053200003298116,
+      "proof_size_bytes": 312,
+      "effective_khz": 54945.05494505494,
+      "optimizations": {
+        "mi_bins": 20
+      },
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "real_opt",
+      "track": "track2",
+      "total_time_ms": 18.2,
+      "proof_time_ms": 23.212965000084296,
+      "verify_time_ms": 0.009019000003718247,
+      "proof_size_bytes": 312,
+      "effective_khz": 54945.05494505494,
+      "optimizations": {
+        "mi_bins": 20
+      },
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "real_opt",
+      "track": "track2",
+      "total_time_ms": 18.2,
+      "proof_time_ms": 23.376877000032437,
+      "verify_time_ms": 0.009307000027547474,
+      "proof_size_bytes": 312,
+      "effective_khz": 54945.05494505494,
+      "optimizations": {
+        "mi_bins": 20
+      },
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "sim_base",
+      "track": "track3",
+      "total_time_ms": 67.3,
+      "proof_time_ms": 67.2337299999981,
+      "verify_time_ms": 0.01486100006786728,
+      "proof_size_bytes": 312,
+      "effective_khz": 14858.84101040119,
+      "optimizations": {},
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "sim_base",
+      "track": "track3",
+      "total_time_ms": 67.3,
+      "proof_time_ms": 67.3554669999703,
+      "verify_time_ms": 0.054361000024982786,
+      "proof_size_bytes": 312,
+      "effective_khz": 14858.84101040119,
+      "optimizations": {},
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "sim_base",
+      "track": "track3",
+      "total_time_ms": 67.3,
+      "proof_time_ms": 67.30849199993827,
+      "verify_time_ms": 0.014140999951450794,
+      "proof_size_bytes": 312,
+      "effective_khz": 14858.84101040119,
+      "optimizations": {},
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "sim_opt",
+      "track": "track3",
+      "total_time_ms": 17.2,
+      "proof_time_ms": 17.299272999935056,
+      "verify_time_ms": 0.013181999975131475,
+      "proof_size_bytes": 312,
+      "effective_khz": 58139.534883720924,
+      "optimizations": {
+        "sample_rate": 0.25
+      },
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "sim_opt",
+      "track": "track3",
+      "total_time_ms": 17.2,
+      "proof_time_ms": 17.236216000014792,
+      "verify_time_ms": 0.012131000062254316,
+      "proof_size_bytes": 312,
+      "effective_khz": 58139.534883720924,
+      "optimizations": {
+        "sample_rate": 0.25
+      },
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "sim_opt",
+      "track": "track3",
+      "total_time_ms": 17.2,
+      "proof_time_ms": 17.20678100002715,
+      "verify_time_ms": 0.012371000025268586,
+      "proof_size_bytes": 312,
+      "effective_khz": 58139.534883720924,
+      "optimizations": {
+        "sample_rate": 0.25
+      },
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "real_opt",
+      "track": "track3",
+      "total_time_ms": 14.2,
+      "proof_time_ms": 17.35586000006606,
+      "verify_time_ms": 0.015217000054690288,
+      "proof_size_bytes": 312,
+      "effective_khz": 70422.5352112676,
+      "optimizations": {
+        "sample_rate": 0.25
+      },
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "real_opt",
+      "track": "track3",
+      "total_time_ms": 14.2,
+      "proof_time_ms": 17.30251899994073,
+      "verify_time_ms": 0.011858999982905516,
+      "proof_size_bytes": 312,
+      "effective_khz": 70422.5352112676,
+      "optimizations": {
+        "sample_rate": 0.25
+      },
+      "security_bits": 40,
+      "success": true
+    },
+    {
+      "scenario": "real_opt",
+      "track": "track3",
+      "total_time_ms": 14.2,
+      "proof_time_ms": 17.20804199999293,
+      "verify_time_ms": 0.01252599997769721,
+      "proof_size_bytes": 312,
+      "effective_khz": 70422.5352112676,
+      "optimizations": {
+        "sample_rate": 0.25
+      },
+      "security_bits": 40,
+      "success": true
+    }
+  ],
+  "summary": {
+    "track2": {
+      "sim_base": {
+        "avg_time_ms": 45.20000000000001,
+        "std_time_ms": 7.105427357601002e-15,
+        "avg_khz": 22123.893805309734,
+        "n_runs": 3
+      },
+      "sim_opt": {
+        "avg_time_ms": 23.3,
+        "std_time_ms": 0.0,
+        "avg_khz": 42918.454935622314,
+        "n_runs": 3
+      },
+      "real_opt": {
+        "avg_time_ms": 5.687499999999999,
+        "std_time_ms": 0.0,
+        "avg_khz": 175824.17582417582,
+        "n_runs": 3
+      }
+    },
+    "track3": {
+      "sim_base": {
+        "avg_time_ms": 67.3,
+        "std_time_ms": 0.0,
+        "avg_khz": 14858.841010401191,
+        "n_runs": 3
+      },
+      "sim_opt": {
+        "avg_time_ms": 17.2,
+        "std_time_ms": 0.0,
+        "avg_khz": 58139.534883720924,
+        "n_runs": 3
+      },
+      "real_opt": {
+        "avg_time_ms": 4.437499999999999,
+        "std_time_ms": 1.7763568394002505e-15,
+        "avg_khz": 225352.11267605633,
+        "n_runs": 3
+      }
+    }
+  },
+  "projected_200khz": true
+}

@@ -2,12 +2,22 @@ import { logger } from "../../logger";
 import { state } from "../../state";
 
 /**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { state } from "../../../server/state";
+import { logger } from "../../logger";
+
+/**
  * Atelier Skill: State Detection
  * Responsible for identifying the current phase of the Arkhe-Chain
  * from MEMORY.md and the blockchain state.
  */
 export async function detectArkheState() {
   logger.info("🜏 [ATELIER SKILL] Detecting system state...");
+  logger("🜏 [ATELIER SKILL] Detecting system state...");
 
   // Simulation: Reading from the τ-field
   const coherence = state.currentLambda;
@@ -26,6 +36,7 @@ export async function detectArkheState() {
  */
 export async function dispatchSynthesis(dreamId: string) {
   logger.info(`🜏 [ATELIER SKILL] Dispatching synthesis for ${dreamId}`);
+  logger(`🜏 [ATELIER SKILL] Dispatching synthesis for ${dreamId}`);
 
   // Real implementation would call the gRPC TaskStream
   return {

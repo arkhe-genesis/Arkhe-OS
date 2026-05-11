@@ -1,7 +1,16 @@
-import React from 'react';
-import { Card } from './ui/Card';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { Zap, Activity, Play } from 'lucide-react';
-import { ThermodynamicTrainingReport } from '../../server/types';
+import React from 'react';
+
+import type { ThermodynamicTrainingReport } from '../../server/types';
+
+import { Card } from './ui/Card';
 
 interface ThermodynamicTrainingPanelProps {
   report?: ThermodynamicTrainingReport;
@@ -9,7 +18,7 @@ interface ThermodynamicTrainingPanelProps {
 }
 
 const ThermodynamicTrainingPanel: React.FC<ThermodynamicTrainingPanelProps> = ({ report, onRunTraining }) => {
-  if (!report) return null;
+  if (!report) {return null;}
 
   return (
     <Card
@@ -25,7 +34,7 @@ const ThermodynamicTrainingPanel: React.FC<ThermodynamicTrainingPanelProps> = ({
           </div>
           <div className="space-y-1 text-right">
             <p className="text-arkhe-muted uppercase">Oscillators</p>
-            <p className="text-arkhe-cyan">{report.parameters.n_oscillators}</p>
+            <p className="text-arkhe-cyan">{(report.parameters as { n_oscillators?: number }).n_oscillators}</p>
           </div>
         </div>
 
@@ -36,13 +45,13 @@ const ThermodynamicTrainingPanel: React.FC<ThermodynamicTrainingPanelProps> = ({
               Action Loss (Onsager-Machlup)
             </span>
             <span className="text-[10px] text-yellow-400 font-bold">
-              {report.parameters.final_loss.toFixed(6)}
+              {(report.parameters as { final_loss?: number }).final_loss?.toFixed(6)}
             </span>
           </div>
           <div className="h-1.5 w-full bg-yellow-500/10 rounded-full overflow-hidden">
              <div
                className="h-full bg-yellow-500 transition-all duration-1000"
-               style={{ width: `${Math.max(10, 100 - report.parameters.final_loss * 20)}%` }}
+               style={{ width: `${Math.max(10, 100 - ((report.parameters as { final_loss?: number }).final_loss || 0) * 20)}%` }}
              />
           </div>
         </div>

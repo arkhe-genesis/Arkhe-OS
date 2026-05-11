@@ -1,0 +1,21 @@
+name: Ontological Self-Completion
+on:
+  schedule:
+    - cron: '0 2 * * *'  # 2 AM UTC daily
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+jobs:
+  self-heal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: cargo run --bin arkhe-self-complete -- --dry-run
+      - name: If changes, open PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: 'ARKHE self-completion patch'
+          branch: 'self-complete/auto'
+          title: 'Automated ontological patch'

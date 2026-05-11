@@ -1,0 +1,18 @@
+// examples/multitarget_inhibitor.arkhe
+molecule "KRAS‑MultiTarget" {
+  objectives: {
+    potency: maximize weight=0.4 min=8.0 priority=10,
+    synthesizability: maximize weight=0.3 min=0.7 priority=8,
+    solubility: target=50uM weight=0.2 priority=6,
+    toxicity: minimize weight=0.1 max=moderate priority=9
+  },
+  constraints: {
+    synthetic_steps_max: 5,
+    building_blocks: "commercial",
+    molecular_weight_max: 500,
+    logP_range: "1-4"
+  },
+  aggregation: "weighted_sum",
+  budget: $50000,
+  timeline: 90 days
+}

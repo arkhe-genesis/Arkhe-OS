@@ -1,6 +1,17 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { X, Video, Play, Loader2, Download, ShieldCheck, Cpu } from 'lucide-react';
 import React, { useState, useRef } from 'react';
 import { X, Video, Play, Loader2, Download, ShieldCheck, Cpu } from 'lucide-react';
+
 import { Card } from '../components/ui/Card';
+import AtelierLog from './AtelierLog';
+
 import AtelierLog from './AtelierLog';
 
 interface VideoGenerationPanelProps {
@@ -17,7 +28,7 @@ export default function VideoGenerationPanel({ onClose }: VideoGenerationPanelPr
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleGenerate = async () => {
-    if (!prompt.trim()) return;
+    if (!prompt.trim()) {return;}
 
     setError(null);
     setVideoUrl(null);
@@ -51,11 +62,14 @@ export default function VideoGenerationPanel({ onClose }: VideoGenerationPanelPr
         throw new Error(errorData.error || 'Failed to generate video');
       }
 
-      const data = await response.json();
+      const data = await response.json() as { videoUrl: string };
       setVideoUrl(data.videoUrl);
       setStage('IDLE');
     } catch (err: any) {
       setError(err.message || 'An unexpected error occurred.');
+    } catch (err: unknown) {
+      setError((err as any).message || 'An unexpected error occurred.');
+      setError((err as Error).message || 'An unexpected error occurred.');
       setStage('IDLE');
     }
   };
@@ -150,12 +164,16 @@ export default function VideoGenerationPanel({ onClose }: VideoGenerationPanelPr
                 </div>
               </div>
             ) : videoUrl ? (
-              <video 
+              <video
                 ref={videoRef}
                 src={videoUrl} 
                 controls 
                 autoPlay 
                 loop 
+                src={videoUrl}
+                controls
+                autoPlay
+                loop
                 className="w-full h-full object-contain shadow-[0_0_50px_rgba(0,255,170,0.1)]"
               />
             ) : (
@@ -165,6 +183,7 @@ export default function VideoGenerationPanel({ onClose }: VideoGenerationPanelPr
               </div>
             )}
             
+
             {videoUrl && stage === 'IDLE' && (
               <button
                 className="absolute top-4 right-4 p-2 rounded-md bg-black/50 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/20 transition-colors"

@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zeta-hexa-config
+  namespace: arkhe
+data:
+  SQUADRON_ROLE: "fractal-geometry-master"
+  PRIMARY_MODEL: "llama-3.2"
+  MODEL_RATIO: "0.6,0.3,0.1"
+  LEASE_TTL: "600"
+  ALLOWED_OPCODES: "0x234,0x235,0x236,0x237"
+  METRICS_PORT: "9090"
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: zeta-hexa
+  namespace: arkhe
+  labels:
+    squadron: zeta-hexa
+    role: geometry
+spec:
+  serviceName: zeta-hexa
+  replicas: 3
+  selector:
+    matchLabels:
+      squadron: zeta-hexa
+  template:
+    metadata:
+      labels:
+        squadron: zeta-hexa
+    spec:
+      nodeSelector:
+        nvidia.com/gpu.product: "NVIDIA-A100-SXM4-80GB"
+      tolerations:
+      - key: "nvidia.com/gpu"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      containers:
+      - name: squadron
+        image: cathedral/squadron-base:v1.0.0
+        imagePullPolicy: IfNotPresent
+        command: ["python", "-m", "squadron.main"]
+        env:
+        - name: SQUADRON_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: SPLITTER_ENDPOINT
+          value: "splitter.arkhe.svc.cluster.local:50051"
+        envFrom:
+        - configMapRef:
+            name: zeta-hexa-config
+        ports:
+        - containerPort: 50052
+          name: grpc
+        - containerPort: 9090
+          name: metrics
+        resources:
+          requests:
+            memory: "16Gi"
+            cpu: "4000m"
+            nvidia.com/gpu: 1
+          limits:
+            memory: "32Gi"
+            cpu: "8000m"
+            nvidia.com/gpu: 1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zeta-hexa
+  namespace: arkhe
+spec:
+  selector:
+    squadron: zeta-hexa
+  ports:
+  - port: 50052
+    targetPort: 50052
+    name: grpc
+  - port: 9090
+    targetPort: 9090
+    name: metrics

@@ -1,0 +1,56 @@
+{
+  "synapse_id": "847.740",
+  "summary": {
+    "final_coherence": 0.99,
+    "projected_longevity": 194.4,
+    "is_safe": true
+  },
+  "events": [
+    {
+      "timestamp": "2026-04-27T02:41:49.089497",
+      "stage": "STAGE_1",
+      "message": "Chegada e QC do Pept\u00eddeo Arkhe-v1",
+      "data": {
+        "peptide": "Arkhe-v1",
+        "purity": "99.2%",
+        "mw": 2841,
+        "status": "APPROVED"
+      }
+    },
+    {
+      "timestamp": "2026-04-27T02:41:49.091355",
+      "stage": "STAGE_2",
+      "message": "Ativa\u00e7\u00e3o do Domo de Coer\u00eancia",
+      "data": {
+        "vcsel_status": "ACTIVE",
+        "initial_lambda2": 0.999999593688779
+      }
+    },
+    {
+      "timestamp": "2026-04-27T02:41:49.091375",
+      "stage": "STAGE_3",
+      "message": "Fus\u00e3o Neural: Pept\u00eddeo + VCSEL",
+      "data": {
+        "final_lambda2": 0.99
+      }
+    },
+    {
+      "timestamp": "2026-04-27T02:41:49.091396",
+      "stage": "STAGE_4",
+      "message": "Monitoramento Cont\u00ednuo e Proje\u00e7\u00e3o de Longevidade",
+      "data": {
+        "current_lambda2": 0.99,
+        "health_score": 0.85,
+        "projected_longevity_years": 194.4
+      }
+    },
+    {
+      "timestamp": "2026-04-27T02:41:49.091406",
+      "stage": "SAFETY_AUDIT",
+      "message": "Conformidade EQBE Verificada",
+      "data": {
+        "is_safe": true
+      }
+    }
+  ]
+}

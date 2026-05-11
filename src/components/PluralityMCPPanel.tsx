@@ -1,6 +1,13 @@
-import React, { useState, useEffect } from 'react';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { motion, AnimatePresence } from 'framer-motion';
-import { Share2, Lock, Database, Zap, CheckCircle2, AlertCircle, RefreshCw, ExternalLink } from 'lucide-react';
+import { Share2, Lock, Database, Zap, CheckCircle2, RefreshCw, ExternalLink } from 'lucide-react';
+import React, { useState } from 'react';
 
 interface PluralityMCPPanelProps {
   onClose: () => void;
@@ -37,7 +44,7 @@ export default function PluralityMCPPanel({ onClose }: PluralityMCPPanelProps) {
             addLog('ERR_RES: 430 Security Rejection - ' + data.error);
             setStep('intro');
           }
-        } catch (e) {
+        } catch (_e) {
           addLog('ERR_RES: 522 Connection Timed Out - Failed to reach backend substrate.');
           setStep('intro');
         }

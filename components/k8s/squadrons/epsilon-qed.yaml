@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: epsilon-qed-config
+  namespace: arkhe
+data:
+  SQUADRON_ROLE: "qed-theoretical-sage"
+  PRIMARY_MODEL: "claude-3.5"
+  MODEL_RATIO: "0.7,0.25,0.05"
+  LEASE_TTL: "7200"
+  ALLOWED_OPCODES: "0x230,0x231,0x232,0x233,0x19F"
+  METRICS_PORT: "9090"
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: epsilon-qed
+  namespace: arkhe
+  labels:
+    squadron: epsilon-qed
+    role: theoretical
+spec:
+  serviceName: epsilon-qed
+  replicas: 3
+  selector:
+    matchLabels:
+      squadron: epsilon-qed
+  template:
+    metadata:
+      labels:
+        squadron: epsilon-qed
+    spec:
+      nodeSelector:
+        nvidia.com/gpu.product: "NVIDIA-A100-SXM4-80GB"
+      tolerations:
+      - key: "nvidia.com/gpu"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      containers:
+      - name: squadron
+        image: cathedral/squadron-base:v1.0.0
+        imagePullPolicy: IfNotPresent
+        command: ["python", "-m", "squadron.main"]
+        env:
+        - name: SQUADRON_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: SPLITTER_ENDPOINT
+          value: "splitter.arkhe.svc.cluster.local:50051"
+        envFrom:
+        - configMapRef:
+            name: epsilon-qed-config
+        ports:
+        - containerPort: 50052
+          name: grpc
+        - containerPort: 9090
+          name: metrics
+        resources:
+          requests:
+            memory: "16Gi"
+            cpu: "4000m"
+            nvidia.com/gpu: 1
+          limits:
+            memory: "32Gi"
+            cpu: "8000m"
+            nvidia.com/gpu: 1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: epsilon-qed
+  namespace: arkhe
+spec:
+  selector:
+    squadron: epsilon-qed
+  ports:
+  - port: 50052
+    targetPort: 50052
+    name: grpc
+  - port: 9090
+    targetPort: 9090
+    name: metrics

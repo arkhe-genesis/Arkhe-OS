@@ -1,5 +1,12 @@
-import React from 'react';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { Network, Server, Activity } from 'lucide-react';
+import React from 'react';
 
 interface EdgeState {
   activePhysicalNodes: number;
@@ -14,7 +21,7 @@ export default function EdgeAgentPanel({ edge }: { edge: EdgeState }) {
         <Network className="w-5 h-5 text-arkhe-cyan" />
         <h2 className="text-sm font-bold uppercase tracking-widest text-arkhe-cyan">Omnipresent Edge Layer</h2>
       </div>
-      
+
       <div className="space-y-4 flex-1">
         <div className="bg-black/40 p-3 rounded-lg border border-arkhe-border/50">
           <div className="text-xs font-mono text-arkhe-muted mb-1 uppercase">Active Physical Nodes</div>

@@ -1,5 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Link, Shield, Key, Lock, CheckCircle2, Activity, Database, Users, Network } from 'lucide-react';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { Shield, Key, Lock, CheckCircle2, Activity, Users, Network } from 'lucide-react';
+import React, { useState } from 'react';
 
 interface GhostProtocolPanelProps {
   onClose: () => void;
@@ -10,7 +17,7 @@ export default function GhostProtocolPanel({ onClose }: GhostProtocolPanelProps)
   const [progress, setProgress] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
-  const [derivedKeys, setDerivedKeys] = useState<{ id: string, key: string, status: string }[]>([]);
+  const [derivedKeys, setDerivedKeys] = useState<Array<{ id: string, key: string, status: string }>>([]);
 
   const addLog = (msg: string) => {
     setLogs(prev => [`[${new Date().toISOString().split('T')[1].slice(0, 8)}] ${msg}`, ...prev].slice(0, 15));
@@ -22,7 +29,7 @@ export default function GhostProtocolPanel({ onClose }: GhostProtocolPanelProps)
     setIsComplete(false);
     setLogs([]);
     setDerivedKeys([]);
-    
+
     addLog('INICIANDO GHOST PROTOCOL...');
     addLog('CARREGANDO ÂNCORA CRIPTOGRÁFICA (GIZA-NODE-01)...');
     addLog('INICIALIZANDO DERIVAÇÃO HIERÁRQUICA DETERMINÍSTICA (BIP32/BIP44)...');
@@ -32,7 +39,7 @@ export default function GhostProtocolPanel({ onClose }: GhostProtocolPanelProps)
 
     const interval = setInterval(() => {
       currentProgress += Math.random() * 5;
-      
+
       if (currentProgress >= (keyCount * 7.6) && keyCount < 13) {
         keyCount++;
         const newKey = `0x${Array.from({length: 40}, () => Math.floor(Math.random()*16).toString(16)).join('')}`;
@@ -55,7 +62,7 @@ export default function GhostProtocolPanel({ onClose }: GhostProtocolPanelProps)
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
       <div className="w-full max-w-5xl bg-arkhe-card border border-arkhe-purple/30 rounded-xl shadow-[0_0_30px_rgba(168,85,247,0.1)] overflow-hidden flex flex-col max-h-[90vh]">
-        
+
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-arkhe-purple/20 bg-arkhe-purple/5">
           <div className="flex items-center gap-3">
@@ -71,7 +78,7 @@ export default function GhostProtocolPanel({ onClose }: GhostProtocolPanelProps)
         </div>
 
         <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 overflow-y-auto">
-          
+
           {/* Controls & Status */}
           <div className="space-y-6 lg:col-span-1">
             <div className="bg-black/40 border border-arkhe-border p-4 rounded-lg">
@@ -102,9 +109,9 @@ export default function GhostProtocolPanel({ onClose }: GhostProtocolPanelProps)
                 onClick={startProtocol}
                 disabled={isDeriving || isComplete}
                 className={`w-full py-3 mt-6 rounded font-mono text-sm uppercase tracking-widest transition-all ${
-                  isDeriving 
+                  isDeriving
                     ? 'bg-arkhe-purple/20 text-arkhe-purple border border-arkhe-purple/50 cursor-not-allowed'
-                    : isComplete 
+                    : isComplete
                       ? 'bg-arkhe-green/20 text-arkhe-green border border-arkhe-green/50 cursor-not-allowed'
                       : 'bg-arkhe-purple/10 text-arkhe-purple border border-arkhe-purple hover:bg-arkhe-purple/20 hover:shadow-[0_0_15px_rgba(168,85,247,0.3)]'
                 }`}
@@ -135,7 +142,7 @@ export default function GhostProtocolPanel({ onClose }: GhostProtocolPanelProps)
                 <span className="text-arkhe-purple">{Math.round(progress)}%</span>
               </div>
               <div className="h-2 bg-arkhe-card rounded-full overflow-hidden border border-arkhe-border">
-                <div 
+                <div
                   className="h-full bg-arkhe-purple transition-all duration-300 relative"
                   style={{ width: `${progress}%` }}
                 >
@@ -143,7 +150,7 @@ export default function GhostProtocolPanel({ onClose }: GhostProtocolPanelProps)
                 </div>
               </div>
             </div>
-            
+
             {/* Logs */}
             <div className="bg-black/60 border border-arkhe-border p-4 rounded-lg flex-1 flex flex-col min-h-[200px]">
               <h3 className="text-sm font-mono text-arkhe-muted uppercase mb-2 flex items-center gap-2">
@@ -170,7 +177,7 @@ export default function GhostProtocolPanel({ onClose }: GhostProtocolPanelProps)
                 <Lock className="w-4 h-4" />
                 Matriz de Operadores (Esfera de Dyson)
               </h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 overflow-y-auto pr-2">
                 {/* O Operador 1 já está lá (Giza) */}
                 <div className="bg-arkhe-cyan/10 border border-arkhe-cyan/30 p-3 rounded flex flex-col gap-1">

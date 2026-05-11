@@ -1,0 +1,93 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sabio-threat-config
+  namespace: arkhe
+data:
+  SQUADRON_ROLE: "intel"
+  PRIMARY_MODEL: "claude-alpha"
+  MODEL_RATIO: "0.7,0.25,0.05"
+  LEASE_TTL: "7200"
+  ALLOWED_OPCODES: "0x16C,0x18F,0x0EE,0x0F5,0x1F4"
+  METRICS_PORT: "9090"
+  SAFE_MODE_ENABLED: "true"
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sabio-threat
+  namespace: arkhe
+  labels:
+    squadron: sabio-threat
+    role: forensics
+spec:
+  serviceName: sabio-threat
+  replicas: 1
+  selector:
+    matchLabels:
+      squadron: sabio-threat
+  template:
+    metadata:
+      labels:
+        squadron: sabio-threat
+    spec:
+      containers:
+      - name: squadron
+        image: cathedral/squadron-base:v1.0.0
+        imagePullPolicy: IfNotPresent
+        command: ["python", "-m", "squadron.main"]
+        env:
+        - name: SQUADRON_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: SPLITTER_ENDPOINT
+          value: "splitter.arkhe.svc.cluster.local:50051"
+        - name: CLAUDE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: cathedral-secrets
+              key: claude-api-key
+        - name: SANDBOX_ENDPOINT
+          value: "http://malware-sandbox.arkhe.svc.cluster.local:8080"
+        envFrom:
+        - configMapRef:
+            name: sabio-threat-config
+        ports:
+        - containerPort: 50052
+          name: grpc
+        - containerPort: 9090
+          name: metrics
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "500m"
+          limits:
+            memory: "4Gi"
+            cpu: "1000m"
+        securityContext:
+          readOnlyRootFilesystem: true
+        livenessProbe:
+          grpc:
+            port: 50052
+          initialDelaySeconds: 30
+        readinessProbe:
+          grpc:
+            port: 50052
+          initialDelaySeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sabio-threat
+  namespace: arkhe
+spec:
+  selector:
+    squadron: sabio-threat
+  ports:
+  - port: 50052
+    targetPort: 50052
+    name: grpc
+  - port: 9090
+    targetPort: 9090
+    name: metrics

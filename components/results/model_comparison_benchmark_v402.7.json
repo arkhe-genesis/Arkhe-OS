@@ -1,0 +1,62 @@
+{
+  "PARAXIAL_FFT": {
+    "description": "Scalar FFT propagation; paraxial approximation; constant n; air\u2192air interface",
+    "execution_time_ms": 12.1,
+    "memory_usage_mb": 45.1,
+    "chi2_dof": 1.84,
+    "p_value": 0.41,
+    "residual_sigma": 0.055,
+    "material_bias": 0.021,
+    "spectral_bias": 0.034,
+    "accuracy_score": 0.62,
+    "n_test_cases": 3
+  },
+  "DEBYE_SCALAR": {
+    "description": "Vectorial Debye integral; high-NA capable; constant n; air\u2192air interface",
+    "execution_time_ms": 187.7,
+    "memory_usage_mb": 312.5,
+    "chi2_dof": 0.92,
+    "p_value": 0.73,
+    "residual_sigma": 0.021,
+    "material_bias": 0.021,
+    "spectral_bias": 0.034,
+    "accuracy_score": 0.81,
+    "n_test_cases": 3
+  },
+  "DEBYE_FRESNEL": {
+    "description": "+ Fresnel transmission coefficients; constant n per material",
+    "execution_time_ms": 203.9,
+    "memory_usage_mb": 318.7,
+    "chi2_dof": 0.48,
+    "p_value": 0.92,
+    "residual_sigma": 0.012,
+    "material_bias": 0.021,
+    "spectral_bias": 0.034,
+    "accuracy_score": 0.91,
+    "n_test_cases": 3
+  },
+  "DEBYE_FRESNEL_SELLMEIER": {
+    "description": "+ Sellmeier dispersion n(\u03bb) for each material",
+    "execution_time_ms": 218.8,
+    "memory_usage_mb": 325.3,
+    "chi2_dof": 0.12,
+    "p_value": 0.99,
+    "residual_sigma": 0.005,
+    "material_bias": 0.003,
+    "spectral_bias": 0.004,
+    "accuracy_score": 0.97,
+    "n_test_cases": 3
+  },
+  "DEBYE_FRESNEL_SELLMEIER_TRANSFER": {
+    "description": "+ Transfer matrix for multilayer dielectric stacks",
+    "execution_time_ms": 343.3,
+    "memory_usage_mb": 412.6,
+    "chi2_dof": 0.11,
+    "p_value": 0.99,
+    "residual_sigma": 0.004,
+    "material_bias": 0.003,
+    "spectral_bias": 0.004,
+    "accuracy_score": 0.98,
+    "n_test_cases": 3
+  }
+}

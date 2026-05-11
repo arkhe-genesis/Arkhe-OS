@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alpha-ludwig-config
+  namespace: arkhe
+data:
+  SQUADRON_ROLE: "experimental-gratings"
+  PRIMARY_MODEL: "claude-3.5"
+  MODEL_RATIO: "0.5,0.3,0.2"
+  LEASE_TTL: "300"
+  ALLOWED_OPCODES: "0x220,0x221,0x222,0x223"
+  METRICS_PORT: "9090"
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: alpha-ludwig
+  namespace: arkhe
+  labels:
+    squadron: alpha-ludwig
+    role: experimental
+spec:
+  serviceName: alpha-ludwig
+  replicas: 3
+  selector:
+    matchLabels:
+      squadron: alpha-ludwig
+  template:
+    metadata:
+      labels:
+        squadron: alpha-ludwig
+    spec:
+      nodeSelector:
+        nvidia.com/gpu.product: "NVIDIA-A100-SXM4-80GB"
+      tolerations:
+      - key: "nvidia.com/gpu"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      containers:
+      - name: squadron
+        image: cathedral/squadron-base:v1.0.0
+        imagePullPolicy: IfNotPresent
+        command: ["python", "-m", "squadron.main"]
+        env:
+        - name: SQUADRON_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: SPLITTER_ENDPOINT
+          value: "splitter.arkhe.svc.cluster.local:50051"
+        envFrom:
+        - configMapRef:
+            name: alpha-ludwig-config
+        ports:
+        - containerPort: 50052
+          name: grpc
+        - containerPort: 9090
+          name: metrics
+        resources:
+          requests:
+            memory: "16Gi"
+            cpu: "4000m"
+            nvidia.com/gpu: 1
+          limits:
+            memory: "32Gi"
+            cpu: "8000m"
+            nvidia.com/gpu: 1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alpha-ludwig
+  namespace: arkhe
+spec:
+  selector:
+    squadron: alpha-ludwig
+  ports:
+  - port: 50052
+    targetPort: 50052
+    name: grpc
+  - port: 9090
+    targetPort: 9090
+    name: metrics

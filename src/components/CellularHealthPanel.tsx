@@ -1,8 +1,17 @@
-import React from 'react';
-import { Card } from './ui/Card';
-import { SimulationState } from '../../server/types';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { Heart, Activity, Timer, Zap } from 'lucide-react';
-import { cn } from '../lib/utils';
+import React from 'react';
+
+import type { SimulationState } from '../../server/types';
+
+import { Card } from './ui/Card';
+
 
 interface CellularHealthPanelProps {
   state: SimulationState;
@@ -11,7 +20,7 @@ interface CellularHealthPanelProps {
 const CellularHealthPanel: React.FC<CellularHealthPanelProps> = ({ state }) => {
   const health = state.cellularHealth;
 
-  if (!health) return null;
+  if (!health) {return null;}
 
   const metrics = [
     { label: 'Telômeros', value: `${(health.telomere_length * 100).toFixed(1)}%`, sub: 'Baseline Jovem' },

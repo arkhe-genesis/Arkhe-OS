@@ -1,6 +1,6 @@
 import hashlib
 import secrets
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from typing import Optional, Dict, Set, Any
 import time
 
@@ -45,10 +45,16 @@ class PhaseIdentityProvider:
         return token
 
     def _token_ttl(self, coherence: float) -> int:
-        """TTL proporcional à coerência."""
+        """
+        TTL proporcional à coerência, mas com limite rígido de segurança (APTS-AR-005).
+        Evita que atacantes mantenham persistência longa via spoofing de coerência.
+        """
+        MAX_SAFE_TTL = 3600 * 4 # Limite de 4 horas
         base_seconds = 3600
-        stability_bonus = (coherence - 0.7) / 0.3 * 86400 * 30  # Até 30 dias
-        return int(base_seconds + max(0, stability_bonus))
+        stability_bonus = (coherence - 0.7) / 0.3 * 3600 * 3 # Bônus de até 3 horas adicionais
+
+        ttl = int(base_seconds + max(0, stability_bonus))
+        return min(ttl, MAX_SAFE_TTL)
 
     async def authorize(self, token: PhaseToken, resource: str, action: str) -> bool:
         """Autorização baseada em coerência."""

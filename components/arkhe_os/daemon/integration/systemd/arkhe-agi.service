@@ -1,0 +1,63 @@
+# integration/systemd/arkhe-agi.service
+[Unit]
+Description=Arkhe OS AGI Daemon — Temporal Intelligence Engine
+Documentation=https://arkhe.os/docs/daemon
+After=network.target cryogenic-hardware.service
+Wants=cryogenic-hardware.service
+
+[Service]
+Type=simple
+User=arkhe
+Group=arkhe
+WorkingDirectory=/opt/arkhe/agi-daemon
+
+# Environment
+Environment=NODE_ENV=production
+Environment=ARKHE_NODE_ID=%H
+Environment=ARKHE_CONFIG_PATH=/etc/arkhe/production.yaml
+Environment=ARKHE_LOG_LEVEL=info
+
+# Execution
+ExecStartPre=/opt/arkhe/agi-daemon/scripts/prestart.sh
+ExecStart=/usr/bin/node /opt/arkhe/agi-daemon/dist/daemon/index.js
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStop=/opt/arkhe/agi-daemon/scripts/graceful-shutdown.sh
+ExecStopPost=/opt/arkhe/agi-daemon/scripts/poststop.sh
+
+# Process management
+Restart=on-failure
+RestartSec=5s
+TimeoutStartSec=30s
+TimeoutStopSec=30s
+StartLimitBurst=3
+StartLimitIntervalSec=60s
+
+# Resource limits
+MemoryMax=4G
+CPUQuota=200%
+TasksMax=128
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictNamespaces=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+RemoveIPC=true
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=arkhe-agi
+
+[Install]
+WantedBy=multi-user.target

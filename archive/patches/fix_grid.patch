@@ -1,0 +1,6 @@
+--- src/components/ArkheGridSimulator.tsx
++++ src/components/ArkheGridSimulator.tsx
+@@ -21,3 +21,2 @@
+   const requestRef = useRef<number | undefined>(undefined);
+-
+-  const requestRef = useRef<number>(0);

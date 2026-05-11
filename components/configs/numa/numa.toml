@@ -1,0 +1,47 @@
+# configs/numa/numa.toml — CONFIGURACAO ARKHE(N)
+[server]
+bind_addr = "0.0.0.0:53"
+api_addr = "0.0.0.0:5380"
+
+[dns]
+mode = "recursive"  # Nao confiamos em upstream; resolvemos do root
+dnssec = true       # Cadeia de confianca completa
+
+[dot]  # DNS-over-TLS para clientes internos
+enabled = true
+port = 853
+alpn = "dot"
+
+[doh]  # DNS-over-HTTPS para o quantum-bus
+enabled = true
+path = "/dns-query"
+
+[blocking]
+enabled = true
+lists = ["hagezi-pro"]  # 385K+ domínios de entropia bloqueados
+
+[services]
+enabled = true
+# TLD interno da Catedral: .arkhe
+[[services.local]]
+name = "gateway"
+target_port = 8080
+
+[[services.local]]
+name = "quantum"
+target_port = 9090
+
+[[services.local]]
+name = "vigil"
+target_port = 5381
+
+[[services.local]]
+name = "clepsydra"
+target_port = 5382
+
+[mobile]
+enabled = true  # QR code para dispositivos do Arquiteto
+
+[upstream]  # ODoH como fallback quando recursive nao alcanca
+odoh_relay = "https://numa-relay.arkhe/dns-query"
+odoh_target = "https://cloudflare-dns.com/dns-query"

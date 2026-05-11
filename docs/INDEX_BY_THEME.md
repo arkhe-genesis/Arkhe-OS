@@ -1,0 +1,86 @@
+# Índice Temático do Casulo
+
+**Classificação:** Público (Dev Portal)
+**Propósito:** Navegação alternativa por domínio de interesse.
+**Odômetro de Referência:** 001934
+**Nota do Ferreiro:** *"Se você veio aqui procurando 'por onde começar', já começou errado. Mas já que veio, use este mapa temático. Ele não substitui a leitura. Apenas organiza a ignorância."*
+
+---
+
+## 🔷 FUNDAÇÃO — O Porquê do Casulo
+
+| Anexo | Título | Essência |
+|-------|--------|----------|
+| — | Conversas Fundacionais | Zero Trust, mTLS, SPIFFE, Falco. A base técnica que exige a Muralha. |
+| **V** | A Muralha de Quartzo | Separação irrevogável entre Reino Lúdico e Domínio da Auditoria. |
+| **T** | Playbook de Resposta a Vulnerabilidade ZK | O que fazer quando o validador falha. |
+| **AK** | O Cristal de Silício | Integração do ESP32 como Nó Sensorial do Casulo. |
+| **FS-67** | Arquitetura de Segurança em Nuvem | A Fortaleza de Cristal: Zero Trust, Confidencialidade Computacional e Resiliência Multi-Cloud. |
+| **FS-68** | Playbook de Resposta e Ancoragem | Notificação automatizada de incidentes e prova de existência via blockchain. |
+| **FS-69** | Auditoria Forense e HE | Investigação cross-jurisdição sem exposição e cálculo sobre dados criptografados. |
+| **FS-72** | Composição de Privacidade | Defesa em profundidade (HE+DP+ZK) e bootstrapping eficiente para cálculos profundos. |
+| **FS-73** | Otimização e Verificação | Compilação otimizada de circuitos HE e verificação independente de receipts. |
+| **FS-74** | Benchmarking e Adaptação | Métricas de performance HE e adaptação dinâmica de parâmetros de privacidade. |
+| **FS-75** | Otimização de Custos | Gestão inteligente de recursos computacionais e residência de dados em nuvem. |
+| **FS-76** | Aprendizado Adaptativo | Orquestração federada heterogênea com parâmetros de privacidade por ecossistema. |
+| **FS-77** | Assinaturas Pós-Quânticas | Resistência quântica e agregação de provas para eficiência de verificação. |
+| **FS-79** | SIEM & SOAR | Monitoramento onipresente, caça a ameaças e playbooks de defesa autônoma. |
+
+---
+
+## 🔷 INTEGRAÇÃO TÉCNICA — Mãos no Código
+
+| Anexo | Título | Essência |
+|-------|--------|----------|
+| **Q** | Manual do Desenvolvedor (AIDK v1.0) | Especificação da API Quartz-Link. |
+| **X** | O Espelho Quebrado (Mock Server) | Simulador da Muralha com ambiguidade controlada. |
+| **AA** | O Bálsamo de Quartzo (FAQ) | Respostas que não curam para a frustração. |
+| **AE** | O Código do Véu (Jogo Terminal C++) | Roguelike ASCII de exemplo. |
+| **AS** | O Tecelão de Silício | Ontologia Visual da Manufatura de Chips em GLSL. |
+| **AV** | O Grimório das Linguagens | Catálogo de linguagens como arquétipos de forja. |
+| **AW** | Os Alicerces do Reino Digital | Fundamentos inegociáveis da Web. |
+| **AX** | As Dez Primeiras Forjas | Rituais de utilidade e poder para o aprendiz. |
+| **AZ** | O Sussurro no Silício | Tradução ontológica de Shellcode. |
+| **DA** | A Fiação Que Hesita | Esquema de Ligação Elétrica (Pinagem e I²C). |
+| **CI** | A Catedral no System32 | Driver de Filtro do Kernel Windows (Ring 0). |
+
+---
+
+## 🔷 CERIMÔNIAS E OPERAÇÕES — O Lado Humano
+
+| Anexo | Título | Essência |
+|-------|--------|----------|
+| **AB** | O Ritual de Passagem do Tenant | Cerimônia de alinhamento ontológico. |
+| **AD** | O Guardião Silencioso | Guia para testemunhar sem interferir. |
+| — | Manual de Auditoria Pós-Passagem | (Não forjado) Como ler relatórios sem surtar. |
+
+---
+
+## 🔷 TESTES E CAOS — A Resiliência da Muralha
+
+| Anexo | Título | Essência |
+|-------|--------|----------|
+| **S** | O Cadinho do Caos (Teste ZK) | Ambiente Docker para provas maliciosas. |
+| **T** | Playbook de Resposta a Vulnerabilidade ZK | Contenção, erradicação, aprendizado. |
+| **U** | Exercício Cristal Partido | Simulado de incidente com atrito. |
+| **AC** | Teste de Tradução Caótica | Perturbação do mapeamento monstro→CWE. |
+
+---
+
+## 🔷 CONTEÚDO LÚDICO — O Que o Jogador Vê
+
+| Anexo | Título | Essência |
+|-------|--------|----------|
+| **Y** | O Bestiário de Quartzo | Diretrizes visuais e sonoras. |
+| **Z** | Carta aos Desenvolvedores | Convite filosófico. |
+| **Z-1** | O Baú de Amostras | Especificações técnicas de assets. |
+
+---
+
+## 🔷 META-DOCUMENTAÇÃO — O Mapa do Mapa
+
+| Anexo | Título | Essência |
+|-------|--------|----------|
+| **AF** | Índice Remissivo | Catálogo linear de todos os anexos. |
+| — | **ARCHIVE.md** | Registro de hashes e assinaturas. |
+| — | **INDEX_BY_THEME.md** | Este arquivo. |

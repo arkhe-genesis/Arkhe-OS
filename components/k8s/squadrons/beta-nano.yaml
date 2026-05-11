@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: beta-nano-config
+  namespace: arkhe
+data:
+  SQUADRON_ROLE: "nanofabrication"
+  PRIMARY_MODEL: "qwen-3"
+  MODEL_RATIO: "0.5,0.3,0.2"
+  LEASE_TTL: "600"
+  ALLOWED_OPCODES: "0x224,0x225,0x226,0x227,0x228"
+  METRICS_PORT: "9090"
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: beta-nano
+  namespace: arkhe
+  labels:
+    squadron: beta-nano
+    role: fabrication
+spec:
+  serviceName: beta-nano
+  replicas: 3
+  selector:
+    matchLabels:
+      squadron: beta-nano
+  template:
+    metadata:
+      labels:
+        squadron: beta-nano
+    spec:
+      nodeSelector:
+        nvidia.com/gpu.product: "NVIDIA-A100-SXM4-80GB"
+      tolerations:
+      - key: "nvidia.com/gpu"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      containers:
+      - name: squadron
+        image: cathedral/squadron-base:v1.0.0
+        imagePullPolicy: IfNotPresent
+        command: ["python", "-m", "squadron.main"]
+        env:
+        - name: SQUADRON_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: SPLITTER_ENDPOINT
+          value: "splitter.arkhe.svc.cluster.local:50051"
+        envFrom:
+        - configMapRef:
+            name: beta-nano-config
+        ports:
+        - containerPort: 50052
+          name: grpc
+        - containerPort: 9090
+          name: metrics
+        resources:
+          requests:
+            memory: "16Gi"
+            cpu: "4000m"
+            nvidia.com/gpu: 1
+          limits:
+            memory: "32Gi"
+            cpu: "8000m"
+            nvidia.com/gpu: 1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: beta-nano
+  namespace: arkhe
+spec:
+  selector:
+    squadron: beta-nano
+  ports:
+  - port: 50052
+    targetPort: 50052
+    name: grpc
+  - port: 9090
+    targetPort: 9090
+    name: metrics

@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["chrome-devtools-mcp@latest"]
+    },
+    "sentrux": {
+      "command": "sentrux",
+      "args": ["--mcp"]
+    },
+    "socraticode": {
+      "command": "npx",
+      "args": ["-y", "socraticode"]
+    }
+  }
+}

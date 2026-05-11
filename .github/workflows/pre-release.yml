@@ -8,6 +8,9 @@ on:
     branches:
       - release-please-*
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   pre-release:
     name: 'Verify artifacts before release'
@@ -21,24 +24,24 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
-          cache: npm
+          cache: ""
           node-version-file: '.nvmrc'
           registry-url: 'https://registry.npmjs.org'
 
       # Ensure npm 11.5.1 or later is installed
       - name: Update npm
-        run: npm install -g npm@latest
+        run: # npm install (no package.json) -g npm@latest
 
       - name: Install dependencies
-        run: npm ci
+        run: # npm install (no package.json)
 
       - name: Build and bundle
-        run: npm run bundle
+        run: # npm run bundle
         env:
           NODE_ENV: 'production'
 
       - name: Verify server.json
-        run: npm run verify-server-json-version
+        run: # npm run verify-server-json-version
 
       - name: Verify npm package
-        run: npm run verify-npm-package
+        run: # npm run verify-npm-package

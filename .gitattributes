@@ -1,1 +1,174 @@
+# ============================================================
+# ARKHE OS — .gitattributes Canônico
+# Define tratamento de arquivos no versionamento
+# Soberania: Tudo verificado, nada corrompido
+# ============================================================
+
+# ============================================================
+# 📝 LINHAS DE FIM / CODIFICAÇÃO
+# ============================================================
 * text=auto eol=lf
+
+# ============================================================
+# 🖼️  IMAGENS / ASSETS / BINÁRIOS → GIT LFS
+# ============================================================
+*.png filter=lfs diff=lfs merge=lfs -text
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.jpeg filter=lfs diff=lfs merge=lfs -text
+*.gif filter=lfs diff=lfs merge=lfs -text
+*.svg filter=lfs diff=lfs merge=lfs -text
+*.pdf filter=lfs diff=lfs merge=lfs -text
+*.onnx filter=lfs diff=lfs merge=lfs -text
+*.pt filter=lfs diff=lfs merge=lfs -text
+*.pkl filter=lfs diff=lfs merge=lfs -text
+*.npz filter=lfs diff=lfs merge=lfs -text
+*.bin filter=lfs diff=lfs merge=lfs -text
+*.plank filter=lfs diff=lfs merge=lfs -text
+*.tar.gz filter=lfs diff=lfs merge=lfs -text
+*.zip filter=lfs diff=lfs merge=lfs -text
+*.agi filter=lfs diff=lfs merge=lfs -text
+*.casi filter=lfs diff=lfs merge=lfs -text
+*.asi filter=lfs diff=lfs merge=lfs -text
+
+# ============================================================
+# 📊 DADOS / MODELOS / CHECKPOINTS → GIT LFS
+# ============================================================
+data/* filter=lfs diff=lfs merge=lfs -text
+models/* filter=lfs diff=lfs merge=lfs -text
+checkpoints/* filter=lfs diff=lfs merge=lfs -text
+
+# ============================================================
+# 🔒 CRIPTOGRÁFICO / ASSINATURAS
+# ============================================================
+*.asc text
+*.sig text
+*.key text
+*.pem text
+*.crt text
+
+# ============================================================
+# 🐍 PYTHON / SCRIPTS
+# ============================================================
+*.py text eol=lf
+*.sh text eol=lf executable
+
+# ============================================================
+# 🌐 WEB / JAVASCRIPT
+# ============================================================
+*.js text eol=lf
+*.ts text eol=lf
+*.json text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+
+# ============================================================
+# 🦀 RUST / 🐹 GO
+# ============================================================
+*.rs text eol=lf
+*.go text eol=lf
+*.toml text eol=lf
+
+# ============================================================
+# ⚙️  CONFIGURAÇÕES
+# ============================================================
+*.yaml text eol=lf
+*.yml text eol=lf
+*.ini text eol=lf
+*.cfg text eol=lf
+*.conf text eol=lf
+
+# ============================================================
+# 📝 DOCUMENTAÇÃO
+# ============================================================
+*.md text eol=lf
+*.txt text eol=lf
+*.rst text eol=lf
+
+# ============================================================
+# 🔒 SOVEREIGN ENFORCEMENT
+# Tudo com integridade; nada sem verificação
+# ============================================================
+
+# Scripts devem ser executáveis
+*.sh text eol=lf
+agictl text eol=lf
+entrypoint.sh text eol=lf
+healthcheck.sh text eol=lf
+
+# Python source
+*.py text eol=lf
+
+# YAML/JSON configs
+*.yaml text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
+
+# ============================================================
+# 🔐 ARQUIVOS SENSÍVEIS (nunca mesclar, sempre tratar como binário)
+# ============================================================
+**/*key* binary
+**/*secret* binary
+**/*private* binary
+**/*.pem binary
+**/*.key binary
+**/*.asc binary
+
+# ============================================================
+# 🧠 MODELOS / BINÁRIOS GRANDES (LFS recomendado)
+# ============================================================
+*.pt filter=lfs diff=lfs merge=lfs -text
+*.bin filter=lfs diff=lfs merge=lfs -text
+*.safetensors filter=lfs diff=lfs merge=lfs -text
+*.onnx filter=lfs diff=lfs merge=lfs -text
+*.ckpt filter=lfs diff=lfs merge=lfs -text
+*.pth filter=lfs diff=lfs merge=lfs -text
+models/* filter=lfs diff=lfs merge=lfs -text
+
+# Imagens de container grandes
+*.tar filter=lfs diff=lfs merge=lfs -text
+*.oci filter=lfs diff=lfs merge=lfs -text
+
+# ============================================================
+# 📊 DADOS DE TESTE / FIXTURES
+# ============================================================
+tests/fixtures/*.json text
+tests/fixtures/*.yaml text
+tests/mocks/* text
+
+# ============================================================
+# 📚 DOCUMENTAÇÃO
+# ============================================================
+*.md text eol=lf
+docs/**/*.md text eol=lf
+README.md text eol=lf
+
+# ============================================================
+# 🐍 PYTHON SPECIFIC
+# ============================================================
+*.pyc binary
+*.pyo binary
+*.pyd binary
+__pycache__/ binary
+
+# ============================================================
+# 🐳 CONTAINER DEFINITIONS
+# ============================================================
+Containerfile text eol=lf
+Dockerfile* text eol=lf
+*.containerfile text eol=lf
+
+# ============================================================
+# 📦 PACKAGE DEFINITIONS
+# ============================================================
+*.deb binary
+*.rpm binary
+*.tar.gz binary
+*.zip binary
+
+# ============================================================
+# 🔧 BUILD ARTIFACTS (nunca versionar, mas definir se aparecerem)
+# ============================================================
+build/ export-ignore
+dist/ export-ignore
+*.egg-info/ export-ignore
+__pycache__/ export-ignore

@@ -1,5 +1,14 @@
-import { Card } from './ui/Card';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { Cpu, Shield, Zap, RefreshCw, HardDrive } from 'lucide-react';
+
+import { Card } from './ui/Card';
+
 
 interface MitigationEngineProps {
   mitigation: {
@@ -15,8 +24,8 @@ interface MitigationEngineProps {
 
 export default function MitigationEngine({ mitigation, hardware, activeThreat }: MitigationEngineProps) {
   return (
-    <Card 
-      title="Aegis-MT (Mitigation)" 
+    <Card
+      title="Aegis-MT (Mitigation)"
       icon={<Cpu className="w-4 h-4" />}
       status={activeThreat ? 'warning' : 'normal'}
     >
@@ -50,10 +59,10 @@ export default function MitigationEngine({ mitigation, hardware, activeThreat }:
               φ = {mitigation.kuramotoSyncPhase.toFixed(2)} rad
             </div>
             {/* Sync visualization background */}
-            <div 
+            <div
               className="absolute bottom-0 left-0 h-1 bg-arkhe-orange/30 w-full"
             >
-              <div 
+              <div
                 className="h-full bg-arkhe-orange transition-all duration-100"
                 style={{ width: `${(mitigation.kuramotoSyncPhase / (2 * Math.PI)) * 100}%` }}
               />
@@ -91,8 +100,8 @@ export default function MitigationEngine({ mitigation, hardware, activeThreat }:
               // Generate a pseudo-random pattern based on the sync phase
               const isActive = Math.sin(mitigation.kuramotoSyncPhase * (i + 1)) > 0;
               return (
-                <div 
-                  key={i} 
+                <div
+                  key={i}
                   className={`flex-1 rounded-sm transition-colors duration-200 ${isActive ? 'bg-arkhe-cyan' : 'bg-[#1f2024]'}`}
                 />
               );

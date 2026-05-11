@@ -1,0 +1,113 @@
+# agi-onion-pod.yaml — Pod definition for AGI.onion (Podman + Tor)
+apiVersion: v1
+kind: Pod
+metadata:
+  name: arkhe-agi-onion
+  labels:
+    app: arkhe-agi
+    access: onion
+    sovereign: "true"
+spec:
+  restartPolicy: Always
+  # Execução rootless: usuário agi (UID 1000)
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+  # Rede isolada para o pod (slirp4netns por padrão no rootless)
+  hostNetwork: false
+  volumes:
+    # Volume compartilhado para estado AGI
+    - name: agi-state
+      hostPath:
+        path: /var/lib/agi/state
+        type: DirectoryOrCreate
+    # Volume para logs (anonimizados)
+    - name: agi-logs
+      hostPath:
+        path: /var/log/agi
+        type: DirectoryOrCreate
+    # Volume para configuração
+    - name: agi-config
+      hostPath:
+        path: /etc/agi
+        type: DirectoryOrCreate
+    # Volume compartilhado para chaves onion (somente leitura para AGI)
+    - name: onion-keys
+      emptyDir: {}
+  containers:
+    # Container principal: AGI Core
+    - name: agi-core
+      image: ghcr.io/arkhe-os/agi-core:latest
+      command: ["/entrypoint.sh"]
+      ports:
+        # Expor apenas localmente para o sidecar Tor
+        - containerPort: 5000
+          hostPort: 0  # 0 = apenas localhost
+          protocol: TCP
+        - containerPort: 9090
+          hostPort: 0
+          protocol: TCP
+      env:
+        - name: ARKHE_NODE_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: ARKHE_ACCESS_MODE
+          value: "onion"
+      volumeMounts:
+        - name: agi-state
+          mountPath: /home/agi/state
+        - name: agi-logs
+          mountPath: /home/agi/logs
+        - name: agi-config
+          mountPath: /etc/agi
+          readOnly: true
+        # Montar chaves onion como readonly (para healthcheck)
+        - name: onion-keys
+          mountPath: /home/agi/onion
+          readOnly: true
+      resources:
+        limits:
+          memory: "4Gi"
+          cpu: "2"
+        requests:
+          memory: "1Gi"
+          cpu: "0.5"
+      # Healthcheck via coerência (Φ_C)
+      livenessProbe:
+        exec:
+          command:
+            - /healthcheck.sh
+        initialDelaySeconds: 60
+        periodSeconds: 30
+        timeoutSeconds: 10
+
+    # Sidecar: Tor hidden service
+    - name: tor-sidecar
+      image: ghcr.io/arkhe-os/tor-sidecar:latest
+      ports:
+        # Porta do SOCKS proxy (apenas localhost)
+        - containerPort: 9050
+          hostPort: 0
+          protocol: TCP
+        # Porta do controle Tor (apenas localhost)
+        - containerPort: 9051
+          hostPort: 0
+          protocol: TCP
+      env:
+        - name: AGI_SERVICE_HOST
+          value: "127.0.0.1"
+        - name: AGI_SERVICE_PORT
+          value: "5000"
+      volumeMounts:
+        # Compartilhar volume de chaves onion com AGI (para coordenação)
+        - name: onion-keys
+          mountPath: /home/tor/tor/onion
+      securityContext:
+        # Isolar ainda mais o sidecar Tor
+        capabilities:
+          drop:
+            - ALL
+        readOnlyRootFilesystem: true
+        allowPrivilegeEscalation: false

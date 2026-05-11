@@ -1,8 +1,16 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // packages/lucent-sdk/src/connectors/ConnectorFactory.ts
-import { LucentCollector } from '../LucentCollector';
-import { BaseConnector, ConnectorConfig } from './BaseConnector';
-import { PostHogConnector } from './PostHogConnector';
+import type { LucentCollector } from '../LucentCollector';
+
+import type { BaseConnector, ConnectorConfig } from './BaseConnector';
 import { FullStoryConnector } from './FullStoryConnector';
+import { PostHogConnector } from './PostHogConnector';
 
 // Factory para instanciar conectores
 export class ConnectorFactory {

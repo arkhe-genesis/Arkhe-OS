@@ -1,0 +1,27 @@
+# .github/workflows/fuzz-and-report.yml
+name: Fuzzing + Coherence Report
+on:
+  schedule: [cron: '0 4 * * *']
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  fuzz:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run AFL++ with coherence bridge
+        run: |
+          python -m arkhe_os.fuzzing.afl_coherence_harness \
+            --target ./build/parser \
+            --timeout 7200 \
+            --submit-via-pytest-arkhe \
+            --output fuzz_results.json
+      - name: Submit fuzzing findings to coherence channel
+        run: |
+          # O próprio harness já submeteu via pytest-arkhe
+          # Mas podemos também gerar um relatório consolidado
+          arkhe coherence report \
+            --source fuzzing \
+            --file fuzz_results.json \
+            --format markdown >> $GITHUB_STEP_SUMMARY

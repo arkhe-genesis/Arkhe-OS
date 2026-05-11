@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  cathedral-core:
+    build: .
+    environment:
+      - REGION=sa-east-1
+    networks:
+      - cathedral-mesh
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - cathedral-mesh
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - cathedral-mesh
+
+networks:
+  cathedral-mesh:
+    driver: bridge

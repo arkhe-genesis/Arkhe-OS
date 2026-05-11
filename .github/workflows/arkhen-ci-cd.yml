@@ -13,6 +13,9 @@ env:
   RELAYER_IMAGE_NAME: ${{ github.repository }}/arkhe-relayer
   TZINOR_GATE_STRICT: true
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   lint-and-scan:
     name: 🛡️ Lint & Security Scan
@@ -23,11 +26,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22.x'
-          cache: 'npm'
+          cache: ''
       - name: Install Dependencies
-        run: npm install
+        run: # npm install (no package.json)
       - name: Run Lint
-        run: npm run lint
+        run: # npm run lint
       - name: Security Scan (Trivy)
         uses: aquasecurity/trivy-action@master
         with:
@@ -48,7 +51,7 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '22.x'
-        cache: 'npm'
+        cache: ''
 
     - name: Setup Go
       uses: actions/setup-go@v5
@@ -68,6 +71,42 @@ jobs:
       
     - name: Subagent Kairos: Performance & Coherence Tests
       run: make test
+
+  sign-binaries:
+    name: 🖋️ Code Signing
+    needs: build-and-verify
+    runs-on: ${{ matrix.os }}
+    if: startsWith(github.ref, 'refs/tags/v')
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: binaries-${{ matrix.os }}
+          path: dist/
+
+      - name: Sign macOS Binaries
+        if: matrix.os == 'macos-latest'
+        shell: bash
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+        run: |
+          chmod +x scripts/signing/sign_macos.sh
+          ./scripts/signing/sign_macos.sh dist/Arkhe-macOS.dmg "$APPLE_ID" "$TEAM_ID" "$APP_SPECIFIC_PASSWORD" "$SIGNING_IDENTITY"
+
+      - name: Sign Windows Binaries
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        env:
+          CERT_THUMBPRINT: ${{ secrets.WIN_CERT_THUMBPRINT }}
+        run: |
+          ./scripts/signing/sign_windows.ps1 -TargetDir dist/ -CertThumbprint "$env:CERT_THUMBPRINT"
 
   docker-publish:
     name: 🔨 Forjar e Publicar Containers

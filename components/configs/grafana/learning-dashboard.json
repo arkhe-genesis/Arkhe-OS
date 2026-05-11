@@ -1,0 +1,48 @@
+{
+  "dashboard": {
+    "uid": "cathedral-learning-dashboard",
+    "title": "Catedral — Dashboard de Aprendizado Contínuo",
+    "tags": ["learning", "models", "accuracy"],
+    "timezone": "browser",
+    "schemaVersion": 38,
+    "version": 1,
+    "panels": [
+      {
+        "id": 1,
+        "title": "Acurácia de Predição de Modelos (MAE)",
+        "type": "timeseries",
+        "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+        "targets": [
+          { "expr": "cathedral_model_mae", "legendFormat": "{{model_name}}", "refId": "A" }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Eficácia de Ações de Recuperação (ΔΩ)",
+        "type": "bargauge",
+        "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+        "targets": [
+          { "expr": "avg(cathedral_recovery_omega_delta) by (action_id)", "legendFormat": "{{action_id}}", "refId": "A" }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Taxa de Falsos Positivos por Modelo",
+        "type": "gauge",
+        "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 },
+        "targets": [
+          { "expr": "cathedral_model_false_positive_rate", "legendFormat": "{{model_name}}", "refId": "A" }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Histórico de Promoção de Modelos",
+        "type": "table",
+        "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 },
+        "targets": [
+          { "expr": "cathedral_model_version_info", "format": "table", "refId": "A" }
+        ]
+      }
+    ]
+  }
+}

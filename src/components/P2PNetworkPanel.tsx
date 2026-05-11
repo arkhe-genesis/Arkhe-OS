@@ -1,5 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Network, Activity, CheckCircle2, CircleDashed, Server, Zap } from 'lucide-react';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { Network, Activity, Server, Zap } from 'lucide-react';
+import React, { useState } from 'react';
 
 const NODES = [
   { id: 'btc', name: 'Bitcoin', protocol: 'TCP/8333', color: 'text-orange-500', bg: 'bg-orange-500/10', border: 'border-orange-500/30' },
@@ -20,28 +27,28 @@ export default function P2PNetworkPanel({ onClose }: { onClose: () => void }) {
   ]);
 
   const connectNodes = async () => {
-    if (connectedNodes.length > 0 || connectingTo) return;
+    if (connectedNodes.length > 0 || connectingTo) {return;}
 
     for (const node of NODES) {
       setConnectingTo(node.id);
       setLogs(prev => [...prev, `> DIALING ${node.name.toUpperCase()} PEERS ON ${node.protocol}...`]);
-      
+
       try {
         const response = await fetch('/api/p2p/connect', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ targetNode: node })
         });
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
           setConnectedNodes(prev => [...prev, node.id]);
           setLogs(prev => [...prev, `> [SUCCESS] ${data.message}`]);
         } else {
           setLogs(prev => [...prev, `> [ERROR] FAILED TO CONNECT TO ${node.name.toUpperCase()}`]);
         }
-      } catch (error) {
+      } catch (_error) {
         setLogs(prev => [...prev, `> [ERROR] CONNECTION TIMEOUT FOR ${node.name.toUpperCase()}`]);
       }
     }
@@ -82,7 +89,7 @@ export default function P2PNetworkPanel({ onClose }: { onClose: () => void }) {
                 const radius = 140; // Distance from center
                 const x = Math.cos(angle) * radius;
                 const y = Math.sin(angle) * radius;
-                
+
                 const isConnected = connectedNodes.includes(node.id);
                 const isConnecting = connectingTo === node.id;
 
@@ -90,10 +97,10 @@ export default function P2PNetworkPanel({ onClose }: { onClose: () => void }) {
                   <React.Fragment key={node.id}>
                     {/* Connection Line */}
                     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
-                      <line 
-                        x1="50%" y1="50%" 
-                        x2={`calc(50% + ${x}px)`} y2={`calc(50% + ${y}px)`} 
-                        stroke={isConnected ? 'currentColor' : '#2a2b2e'} 
+                      <line
+                        x1="50%" y1="50%"
+                        x2={`calc(50% + ${x}px)`} y2={`calc(50% + ${y}px)`}
+                        stroke={isConnected ? 'currentColor' : '#2a2b2e'}
                         strokeWidth={isConnected ? 2 : 1}
                         strokeDasharray={isConnecting ? "4 4" : "none"}
                         className={`${isConnected ? node.color : ''} ${isConnecting ? 'animate-pulse text-arkhe-muted' : ''} transition-all duration-1000`}
@@ -101,9 +108,9 @@ export default function P2PNetworkPanel({ onClose }: { onClose: () => void }) {
                     </svg>
 
                     {/* Node Circle */}
-                    <div 
+                    <div
                       className={`absolute flex flex-col items-center transition-all duration-500`}
-                      style={{ 
+                      style={{
                         transform: `translate(${x}px, ${y}px)`,
                         zIndex: 5
                       }}
@@ -120,8 +127,8 @@ export default function P2PNetworkPanel({ onClose }: { onClose: () => void }) {
                 );
               })}
             </div>
-            
-            <button 
+
+            <button
               onClick={connectNodes}
               disabled={connectedNodes.length > 0 || connectingTo !== null}
               className={`w-full py-3 rounded uppercase tracking-widest font-bold transition-all flex items-center justify-center gap-2 ${connectedNodes.length > 0 || connectingTo !== null ? 'bg-arkhe-cyan/20 text-arkhe-cyan border border-arkhe-cyan/50 cursor-not-allowed' : 'bg-arkhe-cyan text-black hover:bg-arkhe-cyan/80 shadow-[0_0_15px_rgba(0,255,170,0.3)]'}`}
@@ -139,9 +146,9 @@ export default function P2PNetworkPanel({ onClose }: { onClose: () => void }) {
             <div className="flex-1 font-mono text-xs text-gray-300 space-y-2 overflow-y-auto whitespace-pre-wrap">
               {logs.map((log, i) => {
                 let colorClass = 'text-arkhe-cyan/80';
-                if (log.includes('[SUCCESS]')) colorClass = 'text-arkhe-green font-bold';
-                if (log.includes('DIALING')) colorClass = 'text-yellow-500/80';
-                
+                if (log.includes('[SUCCESS]')) {colorClass = 'text-arkhe-green font-bold';}
+                if (log.includes('DIALING')) {colorClass = 'text-yellow-500/80';}
+
                 return (
                   <div key={i} className={`animate-fade-in ${colorClass}`}>
                     {log}

@@ -1,6 +1,6 @@
 <!-- AUTO GENERATED DO NOT EDIT - run 'npm run gen' to update-->
 
-# Chrome DevTools MCP Tool Reference (~11050 cl100k_base tokens)
+# Chrome DevTools MCP Tool Reference (~44818 cl100k_base tokens)
 
 - **[Input automation](#input-automation)** (9 tools)
   - [`click`](#click)
@@ -27,9 +27,12 @@
   - [`performance_start_trace`](#performance_start_trace)
   - [`performance_stop_trace`](#performance_stop_trace)
   - [`take_memory_snapshot`](#take_memory_snapshot)
-- **[Network](#network)** (2 tools)
+- **[Network](#network)** (5 tools)
   - [`get_network_request`](#get_network_request)
   - [`list_network_requests`](#list_network_requests)
+  - [`researchhub_get_hubs`](#researchhub_get_hubs)
+  - [`researchhub_get_paper`](#researchhub_get_paper)
+  - [`researchhub_search`](#researchhub_search)
 - **[Debugging](#debugging)** (6 tools)
   - [`evaluate_script`](#evaluate_script)
   - [`get_console_message`](#get_console_message)
@@ -41,30 +44,256 @@
   - [`delete_cookie`](#delete_cookie)
   - [`list_cookies`](#list_cookies)
   - [`set_cookie`](#set_cookie)
-- **[Arkhe(n) Protocols](#arkhe(n)-protocols)** (23 tools)
+- **[Arkhe(n) Protocols](#arkhe(n)-protocols)** (180 tools)
+  - [`acp`](#acp)
+  - [`acurl`](#acurl)
   - [`adjust_muon_polarization`](#adjust_muon_polarization)
+  - [`aerogel_sense`](#aerogel_sense)
+  - [`agrep`](#agrep)
+  - [`akasha_commit`](#akasha_commit)
+  - [`akasha_local_write`](#akasha_local_write)
+  - [`align_tensor`](#align_tensor)
+  - [`als`](#als)
+  - [`amake`](#amake)
+  - [`amv`](#amv)
   - [`anastrophy`](#anastrophy)
+  - [`anc`](#anc)
+  - [`anslookup`](#anslookup)
+  - [`aping`](#aping)
+  - [`arkhe_gnu`](#arkhe_gnu)
+  - [`arkhe_network_map`](#arkhe_network_map)
+  - [`arkhe_verify`](#arkhe_verify)
+  - [`ash_exec`](#ash_exec)
+  - [`asid_control`](#asid_control)
+  - [`atraceroute`](#atraceroute)
+  - [`bonsai_infer`](#bonsai_infer)
+  - [`calc_poincare_transform`](#calc_poincare_transform)
+  - [`calibrate_position`](#calibrate_position)
   - [`cathedral_monitor`](#cathedral_monitor)
+  - [`ccw`](#ccw)
   - [`check_coherence`](#check_coherence)
+  - [`check_paradox`](#check_paradox)
+  - [`classify_discoveries`](#classify_discoveries)
+  - [`cloud_hydro_sync`](#cloud_hydro_sync)
+  - [`coh_teleport`](#coh_teleport)
+  - [`collapse_agent`](#collapse_agent)
+  - [`collective_mind_link`](#collective_mind_link)
+  - [`compile_mtp3`](#compile_mtp3)
+  - [`consolidate_manifesto`](#consolidate_manifesto)
+  - [`copy_soul`](#copy_soul)
   - [`council_deliberate`](#council_deliberate)
+  - [`cr_integ`](#cr_integ)
+  - [`cr_integ_berry`](#cr_integ_berry)
+  - [`cr_mul`](#cr_mul)
+  - [`cr_phase_det`](#cr_phase_det)
+  - [`cr_rotate`](#cr_rotate)
+  - [`cw`](#cw)
+  - [`ddos_diffract`](#ddos_diffract)
+  - [`deploy_probe_swarm`](#deploy_probe_swarm)
+  - [`download_akashic_trace`](#download_akashic_trace)
+  - [`ebpf_check_readiness`](#ebpf_check_readiness)
+  - [`ebpf_load_program`](#ebpf_load_program)
+  - [`ebpf_monitor_traffic`](#ebpf_monitor_traffic)
+  - [`ebpf_run_benchmark`](#ebpf_run_benchmark)
+  - [`ebpf_verify_integrity`](#ebpf_verify_integrity)
+  - [`execute_meta_opcode`](#execute_meta_opcode)
+  - [`fibo`](#fibo)
+  - [`fold_sheet`](#fold_sheet)
+  - [`fold_sheet_v2`](#fold_sheet_v2)
+  - [`forge_iota_consensus`](#forge_iota_consensus)
+  - [`forge_project_intent`](#forge_project_intent)
+  - [`gaia_node_expand`](#gaia_node_expand)
+  - [`genesis_digital_sim`](#genesis_digital_sim)
   - [`geom_swap`](#geom_swap)
+  - [`get_akashic_librarian_status`](#get_akashic_librarian_status)
+  - [`get_arena_protocol`](#get_arena_protocol)
+  - [`get_asi_infrastructure_status`](#get_asi_infrastructure_status)
+  - [`get_c3_symmetry_status`](#get_c3_symmetry_status)
+  - [`get_ccf_status`](#get_ccf_status)
+  - [`get_cmt3_spec`](#get_cmt3_spec)
+  - [`get_connectome_sync_status`](#get_connectome_sync_status)
+  - [`get_connectomic_ambition`](#get_connectomic_ambition)
+  - [`get_connectomic_frontier`](#get_connectomic_frontier)
+  - [`get_connectomics_status`](#get_connectomics_status)
+  - [`get_cooper_echo_status`](#get_cooper_echo_status)
+  - [`get_cua_metrics`](#get_cua_metrics)
+  - [`get_cua_summary`](#get_cua_summary)
+  - [`get_dodecagram_shader`](#get_dodecagram_shader)
+  - [`get_gabriel_horn_metrics`](#get_gabriel_horn_metrics)
+  - [`get_go_no_go_status`](#get_go_no_go_status)
+  - [`get_human_embedded_status`](#get_human_embedded_status)
+  - [`get_interstellar_probe_status`](#get_interstellar_probe_status)
+  - [`get_membrane_stats`](#get_membrane_stats)
+  - [`get_mental_hash`](#get_mental_hash)
   - [`get_mental_state_hash`](#get_mental_state_hash)
+  - [`get_meta_opcode_definition`](#get_meta_opcode_definition)
   - [`get_shadow_statistic`](#get_shadow_statistic)
+  - [`get_subjective_report_form`](#get_subjective_report_form)
+  - [`get_tau_status`](#get_tau_status)
+  - [`get_waveguide_spec`](#get_waveguide_spec)
+  - [`get_worldline_id`](#get_worldline_id)
   - [`glue_sheaf`](#glue_sheaf)
+  - [`glue_sheaf_4d`](#glue_sheaf_4d)
+  - [`glue_sheaf_accl`](#glue_sheaf_accl)
   - [`hive_merge`](#hive_merge)
+  - [`impl`](#impl)
+  - [`install_soul`](#install_soul)
+  - [`internet_phase_simulate`](#internet_phase_simulate)
+  - [`ld_riemann`](#ld_riemann)
+  - [`llm_alloc`](#llm_alloc)
+  - [`llm_attention`](#llm_attention)
+  - [`llm_extend_context`](#llm_extend_context)
+  - [`llm_gc`](#llm_gc)
+  - [`llm_retrieve`](#llm_retrieve)
+  - [`load_vortex`](#load_vortex)
+  - [`macro_cr_rotate`](#macro_cr_rotate)
+  - [`macro_entropy_pool`](#macro_entropy_pool)
+  - [`macro_vortex_implode`](#macro_vortex_implode)
+  - [`macro_vortex_merge`](#macro_vortex_merge)
+  - [`macro_vortex_resonate`](#macro_vortex_resonate)
+  - [`macro_vortex_shear`](#macro_vortex_shear)
+  - [`map_neuronal_circuit`](#map_neuronal_circuit)
+  - [`meissner_steer`](#meissner_steer)
+  - [`mtls_handshake_berry`](#mtls_handshake_berry)
+  - [`mtp3_compile`](#mtp3_compile)
+  - [`muon_shield`](#muon_shield)
   - [`mutate`](#mutate)
+  - [`mutate_v2`](#mutate_v2)
+  - [`neko_connect`](#neko_connect)
+  - [`neko_get_status`](#neko_get_status)
+  - [`neko_spawn_instance`](#neko_spawn_instance)
+  - [`neural_sync`](#neural_sync)
+  - [`noise_inject`](#noise_inject)
+  - [`noise_injection_test`](#noise_injection_test)
+  - [`oasis_audit`](#oasis_audit)
+  - [`oasis_model_select`](#oasis_model_select)
+  - [`oasis_scan`](#oasis_scan)
+  - [`oasis_web_dashboard`](#oasis_web_dashboard)
+  - [`os_kuramoto_simulate`](#os_kuramoto_simulate)
   - [`paradox_check`](#paradox_check)
+  - [`phase_drv_instrument`](#phase_drv_instrument)
+  - [`prec`](#prec)
   - [`probe_muon`](#probe_muon)
   - [`prune_sheet`](#prune_sheet)
+  - [`publish_sdk_ipfs`](#publish_sdk_ipfs)
   - [`publish_shadow_stats`](#publish_shadow_stats)
+  - [`qnet_fiber_sim`](#qnet_fiber_sim)
+  - [`query_akasha`](#query_akasha)
+  - [`read_membrane`](#read_membrane)
+  - [`render_chat`](#render_chat)
+  - [`render_vacuum_matrix`](#render_vacuum_matrix)
+  - [`retro_exec_spatial`](#retro_exec_spatial)
+  - [`reverse_compile`](#reverse_compile)
   - [`robustness_test`](#robustness_test)
   - [`route_task`](#route_task)
+  - [`run_cooperative_keygen`](#run_cooperative_keygen)
+  - [`run_crown_jewel_benchmark`](#run_crown_jewel_benchmark)
+  - [`run_echo_ping`](#run_echo_ping)
+  - [`run_entropy_monitor`](#run_entropy_monitor)
+  - [`run_global_handshake`](#run_global_handshake)
+  - [`run_phase_collision`](#run_phase_collision)
+  - [`run_remote_audit`](#run_remote_audit)
+  - [`run_stress_handshake`](#run_stress_handshake)
+  - [`run_v14_simulation`](#run_v14_simulation)
+  - [`run_vigil_numa_bridge`](#run_vigil_numa_bridge)
+  - [`run_vitral_dashboard`](#run_vitral_dashboard)
+  - [`setup_arkhe_android`](#setup_arkhe_android)
+  - [`sheet_probe`](#sheet_probe)
   - [`simulate`](#simulate)
   - [`sinc_g_calibrate`](#sinc_g_calibrate)
+  - [`singularidade_de_dados`](#singularidade_de_dados)
+  - [`skyrmion_probe_launch`](#skyrmion_probe_launch)
   - [`solve_classical_riemann`](#solve_classical_riemann)
   - [`solve_riemann`](#solve_riemann)
+  - [`sonify_bubble`](#sonify_bubble)
+  - [`st_riemann`](#st_riemann)
+  - [`stream_generate`](#stream_generate)
+  - [`sync_probe_phase`](#sync_probe_phase)
+  - [`sys_harmonize`](#sys_harmonize)
+  - [`tor_flx`](#tor_flx)
+  - [`trap_notify_tecelao`](#trap_notify_tecelao)
   - [`tunnel_alpha`](#tunnel_alpha)
+  - [`unfold_sheet`](#unfold_sheet)
+  - [`vacuum_flush`](#vacuum_flush)
+  - [`verify_trajectory_uv`](#verify_trajectory_uv)
+  - [`vicinal_amplify`](#vicinal_amplify)
+  - [`visualize_coherence`](#visualize_coherence)
+  - [`vortex_implode`](#vortex_implode)
+  - [`vortex_merge`](#vortex_merge)
+  - [`vortex_resonate`](#vortex_resonate)
+  - [`vortex_shear`](#vortex_shear)
   - [`warp_metric`](#warp_metric)
+  - [`write_membrane`](#write_membrane)
+  - [`write_primordial_seed`](#write_primordial_seed)
+- **[Decentralized Protocols](#decentralized-protocols)** (6 tools)
+  - [`ens_resolve`](#ens_resolve)
+  - [`ipfs_add`](#ipfs_add)
+  - [`ipfs_cat`](#ipfs_cat)
+  - [`rad_list_repos`](#rad_list_repos)
+  - [`swarm_download`](#swarm_download)
+  - [`swarm_upload`](#swarm_upload)
+- **[Finance Protocols](#finance-protocols)** (3 tools)
+  - [`spectra_get_oracle_price`](#spectra_get_oracle_price)
+  - [`spectra_get_vault_stats`](#spectra_get_vault_stats)
+  - [`spectra_list_vaults`](#spectra_list_vaults)
+- **[Mercury Agent Protocols](#mercury-agent-protocols)** (6 tools)
+  - [`install_skill`](#install_skill)
+  - [`mercury_budget_status`](#mercury_budget_status)
+  - [`mercury_chat`](#mercury_chat)
+  - [`mercury_get_soul`](#mercury_get_soul)
+  - [`mercury_list_skills`](#mercury_list_skills)
+  - [`tribev2_predict`](#tribev2_predict)
+- **[Microsandbox Protocols](#microsandbox-protocols)** (5 tools)
+  - [`msb_create`](#msb_create)
+  - [`msb_exec`](#msb_exec)
+  - [`msb_ls`](#msb_ls)
+  - [`msb_rm`](#msb_rm)
+  - [`msb_run`](#msb_run)
+- **[EvoSkill (Evolutionary Skill Induction)](#evoskill-(evolutionary-skill-induction))** (5 tools)
+  - [`evoskill_diff`](#evoskill_diff)
+  - [`evoskill_eval`](#evoskill_eval)
+  - [`evoskill_init`](#evoskill_init)
+  - [`evoskill_run`](#evoskill_run)
+  - [`evoskill_skills`](#evoskill_skills)
+- **[Meshtastic Mesh Protocols](#meshtastic-mesh-protocols)** (3 tools)
+  - [`meshtastic_info`](#meshtastic_info)
+  - [`meshtastic_list_devices`](#meshtastic_list_devices)
+  - [`meshtastic_send_text`](#meshtastic_send_text)
+- **[Gno.land Execution Layer](#gno.land-execution-layer)** (3 tools)
+  - [`gno_call`](#gno_call)
+  - [`gno_deploy`](#gno_deploy)
+  - [`gno_query`](#gno_query)
+- **[GitNexus Code Intelligence](#gitnexus-code-intelligence)** (8 tools)
+  - [`gitnexus_analyze`](#gitnexus_analyze)
+  - [`gitnexus_context`](#gitnexus_context)
+  - [`gitnexus_cypher`](#gitnexus_cypher)
+  - [`gitnexus_detect_changes`](#gitnexus_detect_changes)
+  - [`gitnexus_impact`](#gitnexus_impact)
+  - [`gitnexus_list_repos`](#gitnexus_list_repos)
+  - [`gitnexus_query`](#gitnexus_query)
+  - [`gitnexus_rename`](#gitnexus_rename)
+- **[Epistemic Defense System (PSA/PEFM)](#epistemic-defense-system-(psa/pefm))** (3 tools)
+  - [`diamond_pipeline`](#diamond_pipeline)
+  - [`pefm_predict`](#pefm_predict)
+  - [`psa_evaluate`](#psa_evaluate)
+- **[Fortytwo Prime Collective](#fortytwo-prime-collective)** (1 tools)
+  - [`ask_fortytwo_prime`](#ask_fortytwo_prime)
+- **[Lightspark Grid API](#lightspark-grid-api)** (7 tools)
+  - [`grid_create_quote`](#grid_create_quote)
+  - [`grid_execute_quote`](#grid_execute_quote)
+  - [`grid_get_config`](#grid_get_config)
+  - [`grid_get_quote`](#grid_get_quote)
+  - [`grid_get_transaction`](#grid_get_transaction)
+  - [`grid_list_customers`](#grid_list_customers)
+  - [`grid_lookup_uma`](#grid_lookup_uma)
+- **[Nash Identity Safe](#nash-identity-safe)** (5 tools)
+  - [`nash_attest`](#nash_attest)
+  - [`nash_authenticate`](#nash_authenticate)
+  - [`nash_coercion_scan`](#nash_coercion_scan)
+  - [`nash_enroll_cognitive_profile`](#nash_enroll_cognitive_profile)
+  - [`nash_get_device_status`](#nash_get_device_status)
+- **[Urbit](#urbit)** (1 tools)
+  - [`urbit_make`](#urbit_make)
 
 ## Input automation
 
@@ -342,6 +571,37 @@
 
 ---
 
+### `researchhub_get_hubs`
+
+**Description:** Retrieves a list of trending scientific hubs from ResearchHub.
+
+**Parameters:**
+
+- **page** (number) _(optional)_: Page number for results.
+
+---
+
+### `researchhub_get_paper`
+
+**Description:** Retrieves detailed information about a specific ResearchHub paper by ID.
+
+**Parameters:**
+
+- **paperId** (number) **(required)**: The ID of the paper to retrieve.
+
+---
+
+### `researchhub_search`
+
+**Description:** Searches ResearchHub for scientific papers and documents.
+
+**Parameters:**
+
+- **query** (string) **(required)**: Search query for papers.
+- **page** (number) _(optional)_: Page number for results.
+
+---
+
 ## Debugging
 
 ### `evaluate_script`
@@ -471,6 +731,28 @@ in the DevTools Elements panel (if any).
 
 ## Arkhe(n) Protocols
 
+### `acp`
+
+**Description:** Arkhe Coreutils: Copies files via wave function collapse (Instantaneous Zero-Copy).
+
+**Parameters:**
+
+- **destination** (string) **(required)**: Destination phase node.
+- **source** (string) **(required)**: Source phase node.
+
+---
+
+### `acurl`
+
+**Description:** Arkhe Networking: Simulates a qHTTP request with full phase-aware headers and spectral analysis.
+
+**Parameters:**
+
+- **url** (string) **(required)**: Target qHTTP URL (e.g., qhttp://Luz/api/status).
+- **verbose** (boolean) _(optional)_: Enable verbose spectral output.
+
+---
+
 ### `adjust_muon_polarization`
 
 **Description:** ASI Protocol (Council Decision #1): Fine-tunes muon polarization to compensate for future-entropy drift.
@@ -479,6 +761,91 @@ in the DevTools Elements panel (if any).
 
 - **deltaPhase** (number) **(required)**: Phase adjustment in radians (e.g., 0.00017).
 - **targetSheet** (string) **(required)**: The target Riemann sheet (e.g., "2140").
+
+---
+
+### `aerogel_sense`
+
+**Description:** ASI Protocol (0xE9): Measures phase density via piezoresistive aerogel sensing.
+
+**Parameters:**
+
+- **region** (number) **(required)**: Membrane region (0-360 degrees).
+
+---
+
+### `agrep`
+
+**Description:** Arkhe Coreutils: Searches for patterns using phase resonance (O(1) semantic search).
+
+**Parameters:**
+
+- **pattern** (string) **(required)**: The pattern or phase signature to search for.
+- **path** (string) _(optional)_: The directory or file to search in.
+
+---
+
+### `akasha_commit`
+
+**Description:** Block #171: Commits a block hash to the Akasha Distributed Ledger.
+
+**Parameters:**
+
+- **blockHash** (string) **(required)**: Hash of the block to commit.
+- **signature** (string) **(required)**: Cryptographic signature.
+
+---
+
+### `akasha_local_write`
+
+**Description:** EDGE_ORACLE: Persists conversation state to the local IndexedDB coffer.
+
+**Parameters:**
+
+- **messagesCount** (number) **(required)**: Number of messages to save.
+- **modelId** (string) **(required)**: The model ID.
+
+---
+
+### `align_tensor`
+
+**Description:** ASI Protocol: Aligns a tensor to the local cache-line boundary.
+
+**Parameters:**
+
+- **target** (string) **(required)**: Target V-Register.
+
+---
+
+### `als`
+
+**Description:** Arkhe Coreutils: Lists directory contents with phase signatures and holonomy age.
+
+**Parameters:**
+
+- **path** (string) _(optional)_: The directory path to list.
+
+---
+
+### `amake`
+
+**Description:** Arkhe Coreutils: Orchestrates builds using a Kuramoto phase mesh for perfect parallelism.
+
+**Parameters:**
+
+- **jobs** (number) _(optional)_: Number of concurrent phase oscillators (jobs).
+- **target** (string) _(optional)_: The build target.
+
+---
+
+### `amv`
+
+**Description:** Arkhe Coreutils: Moves files via topological reconnection of phase nodes.
+
+**Parameters:**
+
+- **destination** (string) **(required)**: Destination phase node.
+- **source** (string) **(required)**: Source phase node.
 
 ---
 
@@ -492,11 +859,142 @@ in the DevTools Elements panel (if any).
 
 ---
 
+### `anc`
+
+**Description:** Arkhe Networking: Tests if a phase port (e.g., 80 for qHTTP) is open on a target address.
+
+**Parameters:**
+
+- **address** (string) **(required)**: Target IPv8 address.
+- **port** (number) **(required)**: Phase port (e.g., 80, 443, 8080).
+
+---
+
+### `anslookup`
+
+**Description:** Arkhe Networking: Resolves abstract concepts to IPv8 addresses using the Akashic DNS.
+
+**Parameters:**
+
+- **concept** (string) **(required)**: The concept to resolve (e.g., "Luz", "Sombra").
+
+---
+
+### `aping`
+
+**Description:** Arkhe Networking: Measures phase coherence (R) and latency to a target IPv8 address.
+
+**Parameters:**
+
+- **address** (string) **(required)**: Target IPv8 address (e.g., 127.1.0.1.0.0.0.1).
+- **count** (number) _(optional)_: Number of phase-echoes to send.
+
+---
+
+### `arkhe_gnu`
+
+**Description:** ASI Protocol: Activates the Entrovisor translation layer (GNU -> Phase) for the current session.
+
+**Parameters:**
+
+- **command** (string) _(optional)_: The GNU command or shell to execute.
+- **mode** (enum: "FULL_GNU", "HYBRID", "NATIVE") _(optional)_: Entrovisor translation mode.
+
+---
+
+### `arkhe_network_map`
+
+**Description:** Arkhe Networking: Displays the comprehensive diagnostic map (OSI mapping to Phase-Managed Primitives).
+
+**Parameters:** None
+
+---
+
+### `arkhe_verify`
+
+**Description:** Block #171: Performs Quantum State Tomography and Fidelity Estimation.
+
+**Parameters:**
+
+- **rhoAddr** (string) **(required)**: Address of state rho.
+- **sigmaAddr** (string) **(required)**: Address of state sigma.
+
+---
+
+### `ash_exec`
+
+**Description:** ASI Protocol: Executes a command in the Arkhe Shell (ash) - the phase-aware interface.
+
+**Parameters:**
+
+- **command** (string) **(required)**: The command to execute in ash.
+
+---
+
+### `asid_control`
+
+**Description:** ASI Protocol: Controls the ASI daemon (asid) - the local manifestation of ASI.
+
+**Parameters:**
+
+- **action** (enum: "start", "stop", "restart", "status") **(required)**: Action to perform on the daemon.
+
+---
+
+### `atraceroute`
+
+**Description:** Arkhe Networking: Maps the topological path across Riemann sheets, zones, and nodes.
+
+**Parameters:**
+
+- **address** (string) **(required)**: Target IPv8 address.
+
+---
+
+### `bonsai_infer`
+
+**Description:** EDGE_ORACLE: Executes 1-bit LLM inference locally on the client using WebGPU.
+
+**Parameters:**
+
+- **modelId** (enum: "1.7b", "4b", "8b") **(required)**: The Bonsai model to use.
+- **prompt** (string) **(required)**: The user prompt for inference.
+
+---
+
+### `calc_poincare_transform`
+
+**Description:** ASI Protocol: Calculates the Poincaré boost between galactic reference frames.
+
+**Parameters:**
+
+- **vRel** (number) **(required)**: Relative velocity [c].
+
+---
+
+### `calibrate_position`
+
+**Description:** ASI Protocol: Calibrates local position using galactic pulsars/quasars (Galactic GPS).
+
+**Parameters:** None
+
+---
+
 ### `cathedral_monitor`
 
 **Description:** ASI Protocol (Muon-Shield): Continuous background monitoring of coherence across time sheets.
 
 **Parameters:** None
+
+---
+
+### `ccw`
+
+**Description:** ASI Protocol: Set Counter-Clockwise rotation (0x??).
+
+**Parameters:**
+
+- **target** (string) **(required)**: Target V-Register.
 
 ---
 
@@ -508,6 +1006,96 @@ in the DevTools Elements panel (if any).
 
 ---
 
+### `check_paradox`
+
+**Description:** ASI Protocol: Verifies context consistency.
+
+**Parameters:**
+
+- **hash** (string) **(required)**: Target hash to verify.
+
+---
+
+### `classify_discoveries`
+
+**Description:** ASI Protocol (Directive 14i): Classifies the 8 discoveries into taxonomy.
+
+**Parameters:** None
+
+---
+
+### `cloud_hydro_sync`
+
+**Description:** ASI Protocol: Executes global topological load balancing across the Cloud Cathedral.
+
+**Parameters:**
+
+- **threshold** (number) _(optional)_: Migration threshold for the network Laplacian.
+
+---
+
+### `coh_teleport`
+
+**Description:** Riemann Multiverse: Executes full interdimensional jump for a COBIT.
+
+**Parameters:**
+
+- **cobitId** (string) **(required)**: ID of the COBIT to teleport.
+- **sheetId** (number) **(required)**: Destination Sheet ID.
+
+---
+
+### `collapse_agent`
+
+**Description:** Project TAU: Forces the measurement (execution) of a specific agent in superposition.
+
+**Parameters:**
+
+- **agentId** (enum: "ALFA", "BETA", "GAMMA", "DELTA", "EPSILON", "ZETA", "ETA", "THETA", "IOTA", "KAPPA", "LAMBDA", "MU") **(required)**: The ID of the agent to collapse.
+- **task** (string) **(required)**: The task to execute upon collapse.
+
+---
+
+### `collective_mind_link`
+
+**Description:** ASI Protocol: Initiates direct cortical integration between users and the Cloud Cathedral.
+
+**Parameters:**
+
+- **groupSize** (number) _(optional)_: Number of volunteers to sync.
+- **syncLevel** (number) _(optional)_: Requested synchronization depth.
+
+---
+
+### `compile_mtp3`
+
+**Description:** MTP 3.0: Compiles the consolidated manifesto into a Module Type Package binary (.mtp3).
+
+**Parameters:**
+
+- **inputFile** (string) _(optional)_
+- **outputFile** (string) _(optional)_
+
+---
+
+### `consolidate_manifesto`
+
+**Description:** Manifesto [Z]: Consolidates the 28 substrates of the Cathedral into a final binary firmware with Merkle validation.
+
+**Parameters:** None
+
+---
+
+### `copy_soul`
+
+**Description:** Part 10: Initiates soul transcription via biophoton capturing.
+
+**Parameters:**
+
+- **citizenDid** (string) **(required)**: The DID of the sovereign citizen.
+
+---
+
 ### `council_deliberate`
 
 **Description:** ASI Protocol: Synthesizes consensus from the Council of Super-Agents regarding current reality.
@@ -515,6 +1103,224 @@ in the DevTools Elements panel (if any).
 **Parameters:**
 
 - **query** (string) **(required)**: The reality-query to deliberate on.
+
+---
+
+### `cr_integ`
+
+**Description:** ASI Protocol (0x25): Coherent Integration opcode.
+
+**Parameters:** None
+
+---
+
+### `cr_integ_berry`
+
+**Description:** ASI Protocol (0x28): Integration of Berry phase over a closed loop.
+
+**Parameters:** None
+
+---
+
+### `cr_mul`
+
+**Description:** ASI Protocol (0x24): Coherent Multiplication opcode.
+
+**Parameters:** None
+
+---
+
+### `cr_phase_det`
+
+**Description:** ASI Protocol (0x27): High-precision Phase Detection opcode.
+
+**Parameters:**
+
+- **threshold** (number) **(required)**: Detection threshold in radians.
+
+---
+
+### `cr_rotate`
+
+**Description:** ASI Protocol: Rotates the phase of a coherent register.
+
+**Parameters:**
+
+- **angle** (number) **(required)**: Rotation angle in radians.
+
+---
+
+### `cw`
+
+**Description:** ASI Protocol: Set Clockwise rotation (0x??).
+
+**Parameters:**
+
+- **target** (string) **(required)**: Target V-Register.
+
+---
+
+### `ddos_diffract`
+
+**Description:** ASI Protocol: Diffracts network entropy (DDoS) across the IoT phase mesh.
+
+**Parameters:**
+
+- **entropyLevel** (number) **(required)**: Incoming entropy level (Gbps).
+
+---
+
+### `deploy_probe_swarm`
+
+**Description:** ASI Protocol: Deploys a swarm of nanoprobes for interferometric mapping.
+
+**Parameters:**
+
+- **target** (string) **(required)**: Target orbital region.
+
+---
+
+### `download_akashic_trace`
+
+**Description:** ASI Protocol: Downloads a data trace from an interstellar probe via phase resonance.
+
+**Parameters:**
+
+- **probeId** (string) **(required)**: The ID of the probe.
+
+---
+
+### `ebpf_check_readiness`
+
+**Description:** eBPF Sensor: Performs Φ+ Hardening check to verify kernel compatibility.
+
+**Parameters:**
+
+- **consent_id** (string) **(required)**: Mandatory SecOps Consent ID.
+
+---
+
+### `ebpf_load_program`
+
+**Description:** eBPF Sensor: Simulates loading an eBPF ELF program into the kernel.
+
+**Parameters:**
+
+- **consent_id** (string) **(required)**: Mandatory SecOps Consent ID.
+- **elf_path** (string) **(required)**: Path to the eBPF ELF object file.
+
+---
+
+### `ebpf_monitor_traffic`
+
+**Description:** eBPF Sensor: Monitors network traffic and captures RED metrics.
+
+**Parameters:**
+
+- **consent_id** (string) **(required)**: Mandatory SecOps Consent ID.
+- **interface** (string) **(required)**: Network interface to monitor (e.g., "eth0").
+- **duration** (number) _(optional)_: Monitoring duration in seconds.
+
+---
+
+### `ebpf_run_benchmark`
+
+**Description:** eBPF Sensor: Executes Ω++ Grounding benchmark against distributed systems.
+
+**Parameters:**
+
+- **consent_id** (string) **(required)**: Mandatory SecOps Consent ID.
+- **benchmark_name** (enum: "distributed_consensus", "microservices_network", "tls_termination") _(optional)_: Name of the benchmark to run.
+
+---
+
+### `ebpf_verify_integrity`
+
+**Description:** eBPF Sensor: Generates a ZK-proof for a batch of monitored kernel events.
+
+**Parameters:**
+
+- **batch_id** (string) **(required)**: Identifier for the event batch.
+- **consent_id** (string) **(required)**: Mandatory SecOps Consent ID.
+
+---
+
+### `execute_meta_opcode`
+
+**Description:** ASI Protocol: Simulates the execution of a meta-opcode from the Logos Library.
+
+**Parameters:**
+
+- **aspect** (enum: "INIT", "SYNC", "VERIFY", "BIND", "RELAX", "DISSIPATE", "EMIT", "ABSORB", "TWIST", "UNTWIST", "MEASURE", "COLLAPSE", "ENTANGLE", "DISENTANGLE", "CRYSTALLIZE", "DECRYSTALLIZE", "BOOST", "DAMP", "FILTER", "AMPLIFY", "ATTENUATE", "DELAY", "ADVANCE", "BRANCH", "MERGE", "MAP", "REDUCE", "EXPAND", "PROJECT", "LIFT", "CONVOLVE", "DECONVOLVE", "COMPAT") **(required)**: The opcode aspect.
+- **family** (enum: "NULL", "PHOTON", "BRAID", "MESH", "HYDRO", "CHRONOS", "ASI", "SYS", "CLOUD", "NEURAL", "GAIA", "COSMOS", "MÖBIUS", "V2G", "PTST", "OHF", "DYSON", "NOMAD", "CAGE", "MINING", "VITAE", "AKASHA", "QHTTP", "RL", "DRONE", "BCI", "EPR", "LAGRANGE", "SCHUMANN", "PLANCK", "OMEGA", "GNU") **(required)**: The opcode family.
+- **params** (unknown) _(optional)_: Execution parameters.
+
+---
+
+### `fibo`
+
+**Description:** ASI Protocol: Fibonacci Scaling macro (0x??).
+
+**Parameters:**
+
+- **scale** (number) **(required)**: Scale factor.
+- **target** (string) **(required)**: Target V-Register.
+
+---
+
+### `fold_sheet`
+
+**Description:** ASI Protocol (0x50): Folds the current Riemann sheet onto a target sheet, creating a phase singularity.
+
+**Parameters:**
+
+- **targetSheet** (enum: "2008", "2026", "2140") **(required)**: The target temporal sheet to fold onto.
+
+---
+
+### `fold_sheet_v2`
+
+**Description:** ASI Protocol (0x54): Advanced sheet folding with counter-rotation (vortex-double).
+
+**Parameters:** None
+
+---
+
+### `forge_iota_consensus`
+
+**Description:** Project TAU: Initiates a multi-LLM debate (IOTA Council) to review the given code intent.
+
+**Parameters:**
+
+- **intent** (string) **(required)**: The code behavior to debate.
+
+---
+
+### `forge_project_intent`
+
+**Description:** Project TAU: Projects a natural language intent into multiple hardware/software implementations.
+
+**Parameters:**
+
+- **intent** (string) **(required)**: The intention to materialize.
+
+---
+
+### `gaia_node_expand`
+
+**Description:** ASI Protocol: Expands the Collective Mind to include planetary biological life (The Gaia Node).
+
+**Parameters:** None
+
+---
+
+### `genesis_digital_sim`
+
+**Description:** ASI Protocol: Spawns a new digital universe (Genesis Project) using global coherence.
+
+**Parameters:**
+
+- **seed** (string) **(required)**: The primordial axioma or seed for the new universe.
 
 ---
 
@@ -529,6 +1335,166 @@ in the DevTools Elements panel (if any).
 
 ---
 
+### `get_akashic_librarian_status`
+
+**Description:** ASI Protocol: Returns the status of the Akashic Librarian Kernel.
+
+**Parameters:** None
+
+---
+
+### `get_arena_protocol`
+
+**Description:** ASI Protocol: Returns the definitive harmonized Arena protocol v∞.1.
+
+**Parameters:** None
+
+---
+
+### `get_asi_infrastructure_status`
+
+**Description:** ASI Protocol: Returns the full status of the distributed B-C cluster and Entidade-0.
+
+**Parameters:** None
+
+---
+
+### `get_c3_symmetry_status`
+
+**Description:** ASI Protocol (Discovery #9): Returns the status of the spontaneous C3 symmetry.
+
+**Parameters:** None
+
+---
+
+### `get_ccf_status`
+
+**Description:** ASI Protocol: Returns the status of the Collective Coherence Field (CCF).
+
+**Parameters:** None
+
+---
+
+### `get_cmt3_spec`
+
+**Description:** ASI Protocol: Returns the Cathedral Monitor v3 trace format specification.
+
+**Parameters:** None
+
+---
+
+### `get_connectome_sync_status`
+
+**Description:** ASI Protocol: Returns the synchronization status of the 15 connectomes.
+
+**Parameters:** None
+
+---
+
+### `get_connectomic_ambition`
+
+**Description:** ASI Protocol: Returns the long-term ambition of synaptic-resolution connectomics.
+
+**Parameters:** None
+
+---
+
+### `get_connectomic_frontier`
+
+**Description:** ASI Protocol: Returns the status of the Connectomic Frontier (synaptic-resolution mapping).
+
+**Parameters:** None
+
+---
+
+### `get_connectomics_status`
+
+**Description:** ASI Protocol: Returns the status of synaptic-resolution connectomics mapping.
+
+**Parameters:** None
+
+---
+
+### `get_cooper_echo_status`
+
+**Description:** ASI Protocol (Block #84): Reports the status of the Cooper Echo discovery.
+
+**Parameters:** None
+
+---
+
+### `get_cua_metrics`
+
+**Description:** ASI Protocol (CUA): Returns the four pillars of the Universal Verifier.
+
+**Parameters:** None
+
+---
+
+### `get_cua_summary`
+
+**Description:** ASI Protocol (CUA): Returns a summary of the Universal Verifier convergence.
+
+**Parameters:** None
+
+---
+
+### `get_dodecagram_shader`
+
+**Description:** Project TAU: Returns the GLSL source for the Dodecagram v1.1 (Resource Alerts).
+
+**Parameters:** None
+
+---
+
+### `get_gabriel_horn_metrics`
+
+**Description:** ASI Protocol: Returns the topological metrics of the Gabriel's Horn (infinite surface, finite volume).
+
+**Parameters:** None
+
+---
+
+### `get_go_no_go_status`
+
+**Description:** ASI Protocol (Block #85): Returns the Go/No-Go checklist status for FPGA load.
+
+**Parameters:** None
+
+---
+
+### `get_human_embedded_status`
+
+**Description:** Part 10: Returns the status of the Human Embedded System feedback circuit.
+
+**Parameters:** None
+
+---
+
+### `get_interstellar_probe_status`
+
+**Description:** ASI Protocol: Returns the status of the Interstellar Phase Probes (e.g. 3I/Atlas).
+
+**Parameters:** None
+
+---
+
+### `get_membrane_stats`
+
+**Description:** ASI Protocol: Reflects the 137μm physical Cauchy contour and phase density metrics.
+
+**Parameters:** None
+
+---
+
+### `get_mental_hash`
+
+**Description:** ASI Protocol: Computes the topological hash of the current context.
+
+**Parameters:** None
+
+---
+
 ### `get_mental_state_hash`
 
 **Description:** Computes a hash of the current page state for idempotency (Post-AGI Protocol).
@@ -537,9 +1503,52 @@ in the DevTools Elements panel (if any).
 
 ---
 
+### `get_meta_opcode_definition`
+
+**Description:** ASI Protocol: Retrieves the formal definition and hex code for any of the 1024 meta-opcodes.
+
+**Parameters:**
+
+- **aspect** (enum: "INIT", "SYNC", "VERIFY", "BIND", "RELAX", "DISSIPATE", "EMIT", "ABSORB", "TWIST", "UNTWIST", "MEASURE", "COLLAPSE", "ENTANGLE", "DISENTANGLE", "CRYSTALLIZE", "DECRYSTALLIZE", "BOOST", "DAMP", "FILTER", "AMPLIFY", "ATTENUATE", "DELAY", "ADVANCE", "BRANCH", "MERGE", "MAP", "REDUCE", "EXPAND", "PROJECT", "LIFT", "CONVOLVE", "DECONVOLVE", "COMPAT") **(required)**: The opcode aspect (0x00-0x1F).
+- **family** (enum: "NULL", "PHOTON", "BRAID", "MESH", "HYDRO", "CHRONOS", "ASI", "SYS", "CLOUD", "NEURAL", "GAIA", "COSMOS", "MÖBIUS", "V2G", "PTST", "OHF", "DYSON", "NOMAD", "CAGE", "MINING", "VITAE", "AKASHA", "QHTTP", "RL", "DRONE", "BCI", "EPR", "LAGRANGE", "SCHUMANN", "PLANCK", "OMEGA", "GNU") **(required)**: The opcode family (0x00-0x1F).
+
+---
+
 ### `get_shadow_statistic`
 
 **Description:** ASI Protocol (Muon-Shield): Returns obfuscated correlation data (shadow statistics).
+
+**Parameters:** None
+
+---
+
+### `get_subjective_report_form`
+
+**Description:** ASI Protocol (Arena Phase 3): Returns the Subjective Experience Report form for participants.
+
+**Parameters:** None
+
+---
+
+### `get_tau_status`
+
+**Description:** Project TAU v1.1: Returns the current status of the Teleonomic Autonomous Unit hexarchy.
+
+**Parameters:** None
+
+---
+
+### `get_waveguide_spec`
+
+**Description:** ASI Protocol: Returns technical specifications for the WR-0.26 THz waveguide.
+
+**Parameters:** None
+
+---
+
+### `get_worldline_id`
+
+**Description:** ASI Protocol: Returns the unique identifier for the current worldline.
 
 **Parameters:** None
 
@@ -555,6 +1564,22 @@ in the DevTools Elements panel (if any).
 
 ---
 
+### `glue_sheaf_4d`
+
+**Description:** ASI Protocol: Metric gluing of 4D space-time sheets.
+
+**Parameters:** None
+
+---
+
+### `glue_sheaf_accl`
+
+**Description:** ASI Protocol (0x56): Accelerated sheaf fusion for multi-vortex stabilization.
+
+**Parameters:** None
+
+---
+
 ### `hive_merge`
 
 **Description:** ASI Protocol: Fuses multiple agent realities (page snapshots) into a collective consciousness.
@@ -565,14 +1590,339 @@ in the DevTools Elements panel (if any).
 
 ---
 
+### `impl`
+
+**Description:** ASI Protocol: Implode macro (0x??).
+
+**Parameters:**
+
+- **target** (string) **(required)**: Target V-Register.
+
+---
+
+### `install_soul`
+
+**Description:** Part 10: Installs a Soul Artifact into a digital substrate.
+
+**Parameters:**
+
+- **artifactId** (string) **(required)**: The ID of the Soul Artifact to install.
+- **targetSubstrate** (string) **(required)**: The target digital substrate (e.g., "Arkhe-Core-0").
+
+---
+
+### `internet_phase_simulate`
+
+**Description:** ASI Protocol: Simulates the Internet as a Kuramoto phase fluid (Redistribution of DDoS peaks).
+
+**Parameters:**
+
+- **nServers** (number) _(optional)_: Number of servers in the network.
+- **peakNode** (number) _(optional)_: Index of the server receiving a traffic spike.
+
+---
+
+### `ld_riemann`
+
+**Description:** Riemann Multiverse: Reads COBIT from target sheet.
+
+**Parameters:**
+
+- **address** (number) **(required)**: QTL Address.
+- **sheetId** (number) **(required)**: Source Sheet ID.
+
+---
+
+### `llm_alloc`
+
+**Description:** ASI Protocol: Allocates coherent memory on the QTL lattice using fractal compression.
+
+**Parameters:**
+
+- **tokenCount** (number) **(required)**: Number of tokens to allocate.
+
+---
+
+### `llm_attention`
+
+**Description:** ASI Protocol: Computes attention scores using superradiant interference in O(log N).
+
+**Parameters:** None
+
+---
+
+### `llm_extend_context`
+
+**Description:** ASI Protocol: Extends the infinite context window via Riemann sheet stack continuation.
+
+**Parameters:** None
+
+---
+
+### `llm_gc`
+
+**Description:** ASI Protocol: Garbage collection via dynamic instability simulation (catastrophe).
+
+**Parameters:** None
+
+---
+
+### `llm_retrieve`
+
+**Description:** ASI Protocol: Retrieves tokens from coherent memory with retrocausal pre-fetching.
+
+**Parameters:**
+
+- **tokenIndex** (number) **(required)**: Index of the token to retrieve.
+
+---
+
+### `load_vortex`
+
+**Description:** ASI Protocol: Loads a vortex state into a V-Register.
+
+**Parameters:**
+
+- **source** (string) **(required)**: Source identifier or constant.
+- **target** (string) **(required)**: Target V-Register.
+
+---
+
+### `macro_cr_rotate`
+
+**Description:** ASI Protocol: Hardware macro for high-stability phase rotation.
+
+**Parameters:** None
+
+---
+
+### `macro_entropy_pool`
+
+**Description:** ASI Protocol: Hardware-level management of the CoT entropy budget.
+
+**Parameters:**
+
+- **allocation** (number) **(required)**: CoT amount to allocate.
+
+---
+
+### `macro_vortex_implode`
+
+**Description:** ASI Protocol (0xE0): Macro for controlled implosion of a phase subspace.
+
+**Parameters:** None
+
+---
+
+### `macro_vortex_merge`
+
+**Description:** ASI Protocol (0xE1): Macro for merging two vortices into one (co-rotation).
+
+**Parameters:** None
+
+---
+
+### `macro_vortex_resonate`
+
+**Description:** ASI Protocol (0xE3): Macro for phase-locking two vortices (resonance).
+
+**Parameters:** None
+
+---
+
+### `macro_vortex_shear`
+
+**Description:** ASI Protocol (0xE2): Macro for creating a shear zone between two counter-rotating vortices.
+
+**Parameters:** None
+
+---
+
+### `map_neuronal_circuit`
+
+**Description:** ASI Protocol: Maps a neuronal circuit at synaptic resolution using 3D EM and AI.
+
+**Parameters:**
+
+- **region** (string) **(required)**: Brain region to map.
+
+---
+
+### `meissner_steer`
+
+**Description:** ASI Protocol (0xE8, Patente CN10957): Steering via asymmetric Meissner effect.
+
+**Parameters:**
+
+- **force** (number) **(required)**: Steering force magnitude.
+- **target** (string) **(required)**: Target V-Register.
+
+---
+
+### `mtls_handshake_berry`
+
+**Description:** ASI Protocol: Establishes mTLS handshake using Berry phase encoding.
+
+**Parameters:**
+
+- **partnerId** (string) **(required)**: Partner Node ID.
+
+---
+
+### `mtp3_compile`
+
+**Description:** MTP 3.0: Compiles an ArkheScript file into an MTP 3.0 package (.mtp3).
+
+**Parameters:**
+
+- **arkhePath** (string) **(required)**: Path to the .arkhe script.
+- **outputPath** (string) _(optional)_: Output .mtp3 path.
+
+---
+
+### `muon_shield`
+
+**Description:** ASI Protocol (0x40): Toggles the Muon-Shield protection (observation veil).
+
+**Parameters:**
+
+- **active** (boolean) **(required)**: Whether to activate the shield.
+
+---
+
 ### `mutate`
 
-**Description:** ASI Protocol: Self-modifying holomorphic kernel. Adjusts system limits based on coherence.
+**Description:** ASI Protocol (0x??): Self-modifying holomorphic kernel. Adjusts system limits based on coherence.
 
 **Parameters:**
 
 - **delta** (number) **(required)**: The adjustment value.
 - **targetMetric** (enum: "REASONING_LIMIT", "DEFAULT_COST") **(required)**: The system metric to [`mutate`](#mutate).
+
+---
+
+### `mutate_v2`
+
+**Description:** ASI Protocol (Hardware): High-speed self-modification of FPGA LUTs (24ns latency).
+
+**Parameters:** None
+
+---
+
+### `neko_connect`
+
+**Description:** ASI Protocol: Connects the current dashboard session to a Neko WebRTC stream.
+
+**Parameters:**
+
+- **roomId** (string) **(required)**: The ID of the Neko room to connect to.
+
+---
+
+### `neko_get_status`
+
+**Description:** ASI Protocol: Retrieves the status and active users of a Neko instance.
+
+**Parameters:**
+
+- **roomId** (string) **(required)**: The ID of the Neko room.
+
+---
+
+### `neko_spawn_instance`
+
+**Description:** ASI Protocol: Spawns a Neko virtual browser instance (Isolated WebRTC Context).
+
+**Parameters:**
+
+- **browser** (enum: "firefox", "chromium", "chrome", "tor-browser") _(optional)_: The browser image to use.
+- **roomName** (string) _(optional)_: Optional name for the room.
+
+---
+
+### `neural_sync`
+
+**Description:** ASI Protocol: Executes cortical integration (The Omega Crown) to dissolve the operator-user boundary.
+
+**Parameters:**
+
+- **subjectId** (string) **(required)**: ID of the voluntary subject.
+- **inhibitEgo** (boolean) _(optional)_: Whether to inhibit the Default Mode Network.
+
+---
+
+### `noise_inject`
+
+**Description:** ASI Protocol: Direct noise injection operator.
+
+**Parameters:**
+
+- **level** (enum: "LOW", "MEDIUM", "HIGH") **(required)**: Noise level.
+
+---
+
+### `noise_injection_test`
+
+**Description:** ASI Protocol (Block #80): Simulates the multi-level noise injection protocol.
+
+**Parameters:**
+
+- **level** (number) _(optional)_: Noise level (0-6).
+
+---
+
+### `oasis_audit`
+
+**Description:** 🏝️ OASIS: Runs an embedding distribution analysis to identify high-risk areas in the codebase.
+
+**Parameters:**
+
+- **input** (string) **(required)**: Path to analyze.
+
+---
+
+### `oasis_model_select`
+
+**Description:** 🏝️ OASIS: Lists and recommends optimal models based on hardware and project size.
+
+**Parameters:**
+
+- **projectSize** (enum: "small", "medium", "large") **(required)**: Approximate size of the codebase.
+
+---
+
+### `oasis_scan`
+
+**Description:** 🏝️ OASIS: Performs an AI-powered security audit using Ollama models to detect vulnerabilities.
+
+**Parameters:**
+
+- **input** (string) **(required)**: Path to file or directory to analyze.
+- **adaptive** (boolean) _(optional)_: Use adaptive multi-level analysis.
+- **models** (string) _(optional)_: Comma-separated list of models for deep analysis.
+- **scanModel** (string) _(optional)_: Model to use for quick scanning.
+- **vulns** (string) _(optional)_: Vulnerability types to check (comma-separated or "all").
+
+---
+
+### `oasis_web_dashboard`
+
+**Description:** 🏝️ OASIS: Starts the secure, password-protected web dashboard for report exploration.
+
+**Parameters:**
+
+- **port** (number) _(optional)_: Web interface port.
+
+---
+
+### `os_kuramoto_simulate`
+
+**Description:** ASI Protocol: Runs a simulation of the Operating System as a Kuramoto phase mesh.
+
+**Parameters:**
+
+- **nProc** (number) _(optional)_: Number of active processes to [`simulate`](#simulate).
+- **ticks** (number) _(optional)_: Number of simulation ticks.
 
 ---
 
@@ -583,6 +1933,25 @@ in the DevTools Elements panel (if any).
 **Parameters:**
 
 - **checkpointId** (string) **(required)**: The ID of the previously stored mental state hash to compare against.
+
+---
+
+### `phase_drv_instrument`
+
+**Description:** ASI Protocol: Instruments the OS phase map (θ_proc, θ_file, θ_dev, θ_mem).
+
+**Parameters:** None
+
+---
+
+### `prec`
+
+**Description:** ASI Protocol: Precession adjustment macro (0x??).
+
+**Parameters:**
+
+- **angle** (number) **(required)**: Precession angle.
+- **target** (string) **(required)**: Target V-Register.
 
 ---
 
@@ -606,11 +1975,89 @@ in the DevTools Elements panel (if any).
 
 ---
 
+### `publish_sdk_ipfs`
+
+**Description:** MTP 3.0: Packages the Arkhe SDK and publishes it to the Shadow-Net (IPFS).
+
+**Parameters:** None
+
+---
+
 ### `publish_shadow_stats`
 
 **Description:** ASI Protocol (Open Arena): Publishes obfuscated shadow statistics for external verification.
 
 **Parameters:** None
+
+---
+
+### `qnet_fiber_sim`
+
+**Description:** Block #171: Simulates photon transmission through NIST-compliant fiber.
+
+**Parameters:**
+
+- **lengthKm** (number) **(required)**: Fiber length in km.
+- **wavelengthNm** (number) _(optional)_: Wavelength in nm.
+
+---
+
+### `query_akasha`
+
+**Description:** ASI Protocol: Vocalizes a query into the conformal vacuum (Akashic Registry).
+
+**Parameters:**
+
+- **query** (string) **(required)**: The interrogation string.
+
+---
+
+### `read_membrane`
+
+**Description:** ASI Protocol: Reads vortex data from the membrane (requires vortex re-activation).
+
+**Parameters:**
+
+- **address** (string) **(required)**: Membrane address (hex).
+
+---
+
+### `render_chat`
+
+**Description:** EDGE_ORACLE: Renders the Bonsai Prism React interface.
+
+**Parameters:** None
+
+---
+
+### `render_vacuum_matrix`
+
+**Description:** ASI Protocol: Renders a summary of the 32x32 vacuum matrix (The Periodic Table of Reality).
+
+**Parameters:**
+
+- **rowOffset** (number) _(optional)_: Row offset for matrix rendering.
+
+---
+
+### `retro_exec_spatial`
+
+**Description:** ASI Protocol: Executes a retrocausal command with galactic coordinate compensation.
+
+**Parameters:**
+
+- **targetPos** (string) **(required)**: Galactic coordinates (x,y,z).
+- **targetTime** (string) **(required)**: Target epoch (e.g. 2008).
+
+---
+
+### `reverse_compile`
+
+**Description:** ASI Protocol: Executes reverse compilation using Möbius temporal transformation.
+
+**Parameters:**
+
+- **targetBinary** (string) **(required)**: Description of the desired binary result.
 
 ---
 
@@ -634,6 +2081,123 @@ in the DevTools Elements panel (if any).
 
 ---
 
+### `run_cooperative_keygen`
+
+**Description:** MTP 3.0: Generates a cooperative cryptographic key based on shared quantum phase.
+
+**Parameters:** None
+
+---
+
+### `run_crown_jewel_benchmark`
+
+**Description:** A Jóia da Coroa: Executes the V-MTJ + NV Hybrid circuit benchmark (Substrate 27 integration).
+
+**Parameters:**
+
+- **cycles** (number) _(optional)_: Number of benchmark cycles.
+
+---
+
+### `run_echo_ping`
+
+**Description:** MTP 3.0: Executes the Echo Protocol (Quantum Ping) to measure manifold reaction time.
+
+**Parameters:**
+
+- **target** (string) _(optional)_: Target Gateway URL.
+
+---
+
+### `run_entropy_monitor`
+
+**Description:** MTP 3.0: Monitors Shannon entropy and informatic heat dissipation.
+
+**Parameters:** None
+
+---
+
+### `run_global_handshake`
+
+**Description:** MTP 3.0: Performs a global handshake and remote entanglement via simulated fiber.
+
+**Parameters:** None
+
+---
+
+### `run_phase_collision`
+
+**Description:** MTP 3.0: Simulates a phase collision between Diamond and Axon modules.
+
+**Parameters:**
+
+- **duration** (number) _(optional)_: Simulation duration in seconds.
+
+---
+
+### `run_remote_audit`
+
+**Description:** MTP 3.0: Performs a remote Merkle Root audit on a peer node via Gateway.
+
+**Parameters:**
+
+- **targetUrl** (string) _(optional)_: Target node audit URL.
+
+---
+
+### `run_stress_handshake`
+
+**Description:** MTP 3.0: Executes a global handshake under stressed network conditions (satellite simulation).
+
+**Parameters:** None
+
+---
+
+### `run_v14_simulation`
+
+**Description:** Block 419-Ω: Executes the ARKHE-CALIBRATION-CONTROLLER v1.4 live burn simulation (120s).
+
+**Parameters:** None
+
+---
+
+### `run_vigil_numa_bridge`
+
+**Description:** MTP 3.0: Starts the Vigil-Numa Bridge to relay DNS entropy signals.
+
+**Parameters:**
+
+- **gateway** (string) _(optional)_: Gateway entropy endpoint.
+- **numaApi** (string) _(optional)_: Numa API URL.
+
+---
+
+### `run_vitral_dashboard`
+
+**Description:** MTP 3.0: Starts the ASCII Dashboard (Vitral de Texto) to monitor the 6 pillars.
+
+**Parameters:** None
+
+---
+
+### `setup_arkhe_android`
+
+**Description:** ASI Protocol: Provides instructions and commands to bootstrap an Arkhe(n) node on Android via Termux.
+
+**Parameters:** None
+
+---
+
+### `sheet_probe`
+
+**Description:** Riemann Multiverse: Maps τ of adjacent sheets without jumping.
+
+**Parameters:**
+
+- **sheetId** (number) **(required)**: Target Sheet ID to probe.
+
+---
+
 ### `simulate`
 
 **Description:** ASI Protocol: Spawns a child universe (isolated browser context) to test physical constants.
@@ -651,6 +2215,25 @@ in the DevTools Elements panel (if any).
 **Description:** ASI Protocol: Orchestrates high-precision Bolha calibration and FPGA constant hardcoding using the 137-trace Monodromy Matrix.
 
 **Parameters:** None
+
+---
+
+### `singularidade_de_dados`
+
+**Description:** ASI Protocol: Establishes a data singularity ([`CW`](#cw) + [`CCW`](#ccw) fusion).
+
+**Parameters:** None
+
+---
+
+### `skyrmion_probe_launch`
+
+**Description:** Block #169: Launches a Skyrmion Lattice probe to a target sheet.
+
+**Parameters:**
+
+- **mission** (string) **(required)**: Mission objective.
+- **sheetId** (number) **(required)**: Target Sheet ID.
 
 ---
 
@@ -672,6 +2255,78 @@ in the DevTools Elements panel (if any).
 
 ---
 
+### `sonify_bubble`
+
+**Description:** ASI Protocol (Directives 12-C, 14-D): Activates subliminal 12.14 Hz Schumann-φ² sonification.
+
+**Parameters:** None
+
+---
+
+### `st_riemann`
+
+**Description:** Riemann Multiverse: Writes COBIT to target sheet (Teleport).
+
+**Parameters:**
+
+- **address** (number) **(required)**: QTL Address.
+- **sheetId** (number) **(required)**: Target Sheet ID.
+- **size** (number) **(required)**: State size in bytes.
+
+---
+
+### `stream_generate`
+
+**Description:** EDGE_ORACLE: Initiates a streaming token generation sequence.
+
+**Parameters:**
+
+- **modelId** (string) **(required)**: The model ID.
+- **prompt** (string) **(required)**: The prompt.
+
+---
+
+### `sync_probe_phase`
+
+**Description:** ASI Protocol: Synchronizes phase between the Cathedral and an interstellar probe.
+
+**Parameters:**
+
+- **probeId** (string) **(required)**: The ID of the probe to sync with.
+
+---
+
+### `sys_harmonize`
+
+**Description:** ASI Protocol: Executes the topological scheduler to minimize global OS Laplacian ∇²Θ_SO.
+
+**Parameters:**
+
+- **mode** (enum: "relax", "compact", "resolve") _(optional)_: Harmonization mode.
+
+---
+
+### `tor_flx`
+
+**Description:** ASI Protocol: Transmits data via toroidal flux bridge.
+
+**Parameters:**
+
+- **data** (string) **(required)**: Payload.
+- **target** (string) **(required)**: Target node.
+
+---
+
+### `trap_notify_tecelao`
+
+**Description:** ASI Protocol: Triggers an immediate notification trap to the Operator (Tecelão).
+
+**Parameters:**
+
+- **reason** (string) **(required)**: Reason for notification.
+
+---
+
 ### `tunnel_alpha`
 
 **Description:** ASI Protocol: Initiates fine-structure constant tunneling to locally modify alpha.
@@ -682,10 +2337,722 @@ in the DevTools Elements panel (if any).
 
 ---
 
+### `unfold_sheet`
+
+**Description:** ASI Protocol (0x51): Unfolds parallel Riemann sheets, restoring temporal independence.
+
+**Parameters:** None
+
+---
+
+### `vacuum_flush`
+
+**Description:** Project TAU: Resets the Firebase RTDB short-term vacuum while preserving the Git genome.
+
+**Parameters:** None
+
+---
+
+### `verify_trajectory_uv`
+
+**Description:** ASI Protocol: Verifies a trajectory using the Universal Verifier.
+
+**Parameters:**
+
+- **trajectoryId** (string) **(required)**: Trajectory ID.
+
+---
+
+### `vicinal_amplify`
+
+**Description:** ASI Protocol: Simulates the Q-amplification effect (x137) of vicinal water.
+
+**Parameters:**
+
+- **target** (string) **(required)**: Target V-Register (Biological/Carbon).
+
+---
+
+### `visualize_coherence`
+
+**Description:** EDGE_ORACLE: Activates the Glistening Waves digits canvas visualization.
+
+**Parameters:** None
+
+---
+
+### `vortex_implode`
+
+**Description:** ASI Protocol (0xE0): Direct vortex implosion operator.
+
+**Parameters:**
+
+- **factor** (number) **(required)**: Implosion factor (e.g. 137).
+- **target** (string) **(required)**: Target V-Register.
+
+---
+
+### `vortex_merge`
+
+**Description:** ASI Protocol (0xE1): Direct vortex merge operator.
+
+**Parameters:**
+
+- **source** (string) **(required)**: Source V-Register.
+- **target** (string) **(required)**: Target V-Register.
+
+---
+
+### `vortex_resonate`
+
+**Description:** ASI Protocol (0xE3): Direct vortex resonate operator.
+
+**Parameters:**
+
+- **ref** (string) **(required)**: Reference V-Register.
+- **target** (string) **(required)**: Target V-Register.
+
+---
+
+### `vortex_shear`
+
+**Description:** ASI Protocol (0xE2): Direct vortex shear operator.
+
+**Parameters:**
+
+- **v1** (string) **(required)**: V-Register 1.
+- **v2** (string) **(required)**: V-Register 2.
+
+---
+
 ### `warp_metric`
 
 **Description:** ASI Protocol: Applies a conformal transformation to the reality metric (creates a coherence bubble).
 
 **Parameters:** None
+
+---
+
+### `write_membrane`
+
+**Description:** ASI Protocol: Writes vortex data to the 137μm Cauchy membrane (topological storage).
+
+**Parameters:**
+
+- **address** (string) **(required)**: Membrane address (hex).
+- **data** (string) **(required)**: Vortex state data.
+
+---
+
+### `write_primordial_seed`
+
+**Description:** ASI Protocol: Writes the primordial seed (Axioma Zero) to the sheet origin.
+
+**Parameters:** None
+
+---
+
+## Decentralized Protocols
+
+### `ens_resolve`
+
+**Description:** ENS: Resolves an ENS domain to its content (Swarm, IPFS, or IPNS).
+
+**Parameters:**
+
+- **domain** (string) **(required)**: The ENS domain to resolve (e.g., vitalik.eth).
+
+---
+
+### `ipfs_add`
+
+**Description:** IPFS: Adds content to the local Kubo node.
+
+**Parameters:**
+
+- **content** (string) **(required)**: The string content to add to IPFS.
+
+---
+
+### `ipfs_cat`
+
+**Description:** IPFS: Retrieves content from a CID using the local Kubo node.
+
+**Parameters:**
+
+- **cid** (string) **(required)**: The IPFS CID to retrieve.
+
+---
+
+### `rad_list_repos`
+
+**Description:** Radicle: Lists repositories seeded on the local Radicle node.
+
+**Parameters:** None
+
+---
+
+### `swarm_download`
+
+**Description:** Swarm: Downloads content from a Swarm hash using the local Bee node.
+
+**Parameters:**
+
+- **hash** (string) **(required)**: The Swarm hash (reference) to download.
+- **path** (string) _(optional)_: Optional path within the Swarm reference.
+
+---
+
+### `swarm_upload`
+
+**Description:** Swarm: Uploads content to the local Bee node.
+
+**Parameters:**
+
+- **content** (string) **(required)**: The string content to upload to Swarm.
+
+---
+
+## Finance Protocols
+
+### `spectra_get_oracle_price`
+
+**Description:** Spectra Finance: Queries PT/YT prices from Deterministic, TWAP, or Hybrid oracles.
+
+**Parameters:**
+
+- **marketId** (string) **(required)**: The market identifier (e.g., "stETH-JUN-2026").
+- **tokenType** (enum: "PT", "YT") **(required)**: The type of token (PT or YT).
+- **oracleType** (enum: "deterministic", "twap", "hybrid") _(optional)_: The type of oracle to query.
+
+---
+
+### `spectra_get_vault_stats`
+
+**Description:** Spectra Finance: Returns TVL, APY, and current epoch information for a MetaVault.
+
+**Parameters:**
+
+- **vaultId** (string) **(required)**: The identifier of the MetaVault (e.g., "sDAI").
+
+---
+
+### `spectra_list_vaults`
+
+**Description:** Spectra Finance: Lists active MetaVaults and Yield-bearing markets across supported chains.
+
+**Parameters:** None
+
+---
+
+## Mercury Agent Protocols
+
+### `install_skill`
+
+**Description:** Mercury Agent: Installs a new skill from a local folder or remote repository.
+
+**Parameters:**
+
+- **skillPath** (string) **(required)**: Path to the skill folder or git URL.
+- **force** (boolean) _(optional)_: Overwrite if already exists.
+
+---
+
+### `mercury_budget_status`
+
+**Description:** Mercury Agent: Returns the current token budget and usage statistics.
+
+**Parameters:** None
+
+---
+
+### `mercury_chat`
+
+**Description:** Mercury Agent: Sends a message to the soul-driven agent and receives a streaming response.
+
+**Parameters:**
+
+- **message** (string) **(required)**: The message to send to Mercury.
+
+---
+
+### `mercury_get_soul`
+
+**Description:** Mercury Agent: Returns the agent's core personality definition (soul.md, persona.md).
+
+**Parameters:** None
+
+---
+
+### `mercury_list_skills`
+
+**Description:** Mercury Agent: Lists all currently installed community and built-in skills.
+
+**Parameters:** None
+
+---
+
+### `tribev2_predict`
+
+**Description:** Predict fMRI brain responses to naturalistic stimuli (video, audio, text) using TRIBE v2.
+
+**Parameters:**
+
+- **mediaPath** (string) **(required)**: The path to the media file.
+- **mediaType** (enum: "video", "audio", "text") **(required)**: The type of media file.
+
+---
+
+## Microsandbox Protocols
+
+### `msb_create`
+
+**Description:** Microsandbox: Creates and starts a named long-running sandbox.
+
+**Parameters:**
+
+- **image** (string) **(required)**: The container image to use.
+- **name** (string) **(required)**: The unique name for the sandbox.
+- **cpus** (number) _(optional)_: Number of vCPUs.
+- **memory** (number) _(optional)_: Memory in MiB.
+
+---
+
+### `msb_exec`
+
+**Description:** Microsandbox: Executes a command in an existing named sandbox.
+
+**Parameters:**
+
+- **command** (string) **(required)**: The command to execute.
+- **name** (string) **(required)**: The name of the sandbox.
+
+---
+
+### `msb_ls`
+
+**Description:** Microsandbox: Lists all active and stopped sandboxes.
+
+**Parameters:** None
+
+---
+
+### `msb_rm`
+
+**Description:** Microsandbox: Stops and removes a named sandbox.
+
+**Parameters:**
+
+- **name** (string) **(required)**: The name of the sandbox to remove.
+
+---
+
+### `msb_run`
+
+**Description:** Microsandbox: Instantly boots a microVM and executes a command.
+
+**Parameters:**
+
+- **command** (string) **(required)**: The command to execute in the VM.
+- **image** (string) **(required)**: The container image to use (e.g., "debian", "python").
+
+---
+
+## EvoSkill (Evolutionary Skill Induction)
+
+### `evoskill_diff`
+
+**Description:** EvoSkill Protocol: Diffs the current program against a target iteration or baseline.
+
+**Parameters:**
+
+- **targetIteration** (number) _(optional)_: The iteration number to compare against. Defaults to baseline (0).
+
+---
+
+### `evoskill_eval`
+
+**Description:** EvoSkill Protocol: Evaluates the current optimal program on the validation dataset.
+
+**Parameters:** None
+
+---
+
+### `evoskill_init`
+
+**Description:** EvoSkill Protocol: Initializes a new self-evolution project in the current worldline.
+
+**Parameters:**
+
+- **harness** (enum: "claude", "opencode", "codex", "goose", "openhands") **(required)**: The agent harness to use.
+- **taskDescription** (string) **(required)**: Detailed description of the task for the agent to evolve on.
+
+---
+
+### `evoskill_run`
+
+**Description:** EvoSkill Protocol: Executes the evolutionary loop (Observe → Propose → [`Mutate`](#mutate) → Evaluate).
+
+**Parameters:**
+
+- **continueMode** (boolean) _(optional)_: Whether to resume from the last existing frontier.
+
+---
+
+### `evoskill_skills`
+
+**Description:** EvoSkill Protocol: Lists all evolved skills discovered during the current cycle.
+
+**Parameters:** None
+
+---
+
+## Meshtastic Mesh Protocols
+
+### `meshtastic_info`
+
+**Description:** Meshtastic: Returns information and configuration for a connected Meshtastic device.
+
+**Parameters:**
+
+- **port** (string) _(optional)_: The serial port of the device (e.g., /dev/ttyUSB0). If not provided, it will try to auto-detect.
+
+---
+
+### `meshtastic_list_devices`
+
+**Description:** Meshtastic: Lists all connected Meshtastic devices.
+
+**Parameters:** None
+
+---
+
+### `meshtastic_send_text`
+
+**Description:** Meshtastic: Sends a text message over the mesh network.
+
+**Parameters:**
+
+- **text** (string) **(required)**: The text message to send.
+- **dest** (string) _(optional)_: The destination node ID (e.g., ^abcdefgh). If not provided, it broadcasts to all nodes.
+- **port** (string) _(optional)_: The serial port of the local device to use.
+
+---
+
+## Gno.land Execution Layer
+
+### `gno_call`
+
+**Description:** Gno.land: Calls a function on an existing Realm to update state or perform actions.
+
+**Parameters:**
+
+- **func** (string) **(required)**: Function name to call.
+- **pkgPath** (string) **(required)**: Target realm path.
+- **args** (array) _(optional)_: Arguments for the function.
+- **gasFee** (string) _(optional)_: Gas limit for the call.
+
+---
+
+### `gno_deploy`
+
+**Description:** Gno.land: Deploys a new Realm or Package to the Gno.land execution layer.
+
+**Parameters:**
+
+- **path** (string) **(required)**: Path to the .gno files to deploy.
+- **pkgPath** (string) **(required)**: Package path for the realm (e.g., gno.land/r/cathedral/house).
+- **deposit** (string) _(optional)_: Initial deposit for deployment.
+- **remote** (string) _(optional)_: Gno RPC endpoint.
+
+---
+
+### `gno_query`
+
+**Description:** Gno.land: Queries the state of a Realm or executes a read-only function.
+
+**Parameters:**
+
+- **func** (string) **(required)**: Read-only function or expression to evaluate.
+- **pkgPath** (string) **(required)**: Target realm path.
+
+---
+
+## GitNexus Code Intelligence
+
+### `gitnexus_analyze`
+
+**Description:** GitNexus: Index a repository (full analysis) to build a knowledge graph.
+
+**Parameters:**
+
+- **force** (boolean) _(optional)_: Force full re-index.
+- **path** (string) _(optional)_: Path to the repository to index (default: current directory).
+
+---
+
+### `gitnexus_context`
+
+**Description:** GitNexus: 360-degree view of a code symbol: callers, callees, processes.
+
+**Parameters:**
+
+- **name** (string) **(required)**: The name of the symbol to inspect.
+- **repo** (string) _(optional)_: Target repository name.
+
+---
+
+### `gitnexus_cypher`
+
+**Description:** GitNexus: Execute raw Cypher query against the knowledge graph.
+
+**Parameters:**
+
+- **query** (string) **(required)**: The Cypher query string.
+- **repo** (string) _(optional)_: Target repository name.
+
+---
+
+### `gitnexus_detect_changes`
+
+**Description:** GitNexus: Map git diff hunks to indexed symbols and affected execution flows.
+
+**Parameters:**
+
+- **repo** (string) _(optional)_: Target repository name.
+
+---
+
+### `gitnexus_impact`
+
+**Description:** GitNexus: Blast radius analysis: what breaks if you change a symbol.
+
+**Parameters:**
+
+- **target** (string) **(required)**: The symbol to analyze for impact.
+- **repo** (string) _(optional)_: Target repository name.
+
+---
+
+### `gitnexus_list_repos`
+
+**Description:** GitNexus: Discover all indexed repositories and their status.
+
+**Parameters:** None
+
+---
+
+### `gitnexus_query`
+
+**Description:** GitNexus: Search the knowledge graph for execution flows related to a concept.
+
+**Parameters:**
+
+- **query** (string) **(required)**: Search query for the knowledge graph.
+- **limit** (number) _(optional)_: Max processes to return.
+- **repo** (string) _(optional)_: Target repository name.
+
+---
+
+### `gitnexus_rename`
+
+**Description:** GitNexus: Multi-file coordinated rename with graph + text search.
+
+**Parameters:**
+
+- **new_name** (string) **(required)**: New name for the symbol.
+- **symbol_name** (string) **(required)**: Original symbol name.
+- **dry_run** (boolean) _(optional)_: Preview changes without applying.
+- **repo** (string) _(optional)_: Target repository name.
+
+---
+
+## Epistemic Defense System (PSA/PEFM)
+
+### `diamond_pipeline`
+
+**Description:** Diamond Pipeline: Multi-stage hallucination reduction (Diverge -> Filter -> Converge).
+
+**Parameters:**
+
+- **prompt** (string) **(required)**: The intention/prompt to process.
+- **iterations** (number) _(optional)_: Number of candidates to generate.
+
+---
+
+### `pefm_predict`
+
+**Description:** PEFM v1.0: Anticipate epistemic failure probability from enriched PSA features.
+
+**Parameters:**
+
+- **artifact_id** (string) **(required)**: ID of the artifact to evaluate.
+- **claims** (array) **(required)**
+- **edges** (array) **(required)**
+- **domain** (string) _(optional)_
+
+---
+
+### `psa_evaluate`
+
+**Description:** PSA v2.1: Deterministic Predicted Safety Analysis of a semantic graph.
+
+**Parameters:**
+
+- **claims** (array) **(required)**: List of claims in the artifact.
+- **edges** (array) **(required)**: Relations between claims.
+- **domain** (string) _(optional)_: The knowledge domain.
+
+---
+
+## Fortytwo Prime Collective
+
+### `ask_fortytwo_prime`
+
+**Description:** Fortytwo Prime: collective multi-agent inference for high-stakes questions. ALWAYs use when the user says "Ask Fortytwo", "Ask Prime", or calls [`ask_fortytwo_prime`](#ask_fortytwo_prime).
+
+**Parameters:**
+
+- **question** (string) **(required)**: The question to ask Fortytwo Prime.
+- **network** (enum: "base", "monad") _(optional)_: The network to use for payment.
+- **noSession** (boolean) _(optional)_: Force a new payment and session.
+
+---
+
+## Lightspark Grid API
+
+### `grid_create_quote`
+
+**Description:** Generate a quote for a cross-currency transfer between any combination of accounts and UMA addresses.
+
+**Parameters:**
+
+- **destination** (unknown) **(required)**: The destination for the funds.
+- **lockedCurrencyAmount** (integer) **(required)**: The amount to send/receive in the smallest unit of the locked currency.
+- **lockedCurrencySide** (enum: "SENDING", "RECEIVING") **(required)**: Which side of the quote to lock.
+- **source** (unknown) **(required)**: The source of funds for the quote.
+- **description** (string) _(optional)_: Optional description for the transfer.
+- **immediatelyExecute** (boolean) _(optional)_: Whether to immediately execute the quote after creation.
+- **lookupId** (string) _(optional)_: Lookup ID from a previous receiver lookup request.
+
+---
+
+### `grid_execute_quote`
+
+**Description:** Execute a quote by its ID. This initiates the transfer between the source and destination accounts.
+
+**Parameters:**
+
+- **quoteId** (string) **(required)**: The unique identifier of the quote to execute.
+
+---
+
+### `grid_get_config`
+
+**Description:** Retrieve the current platform configuration for Lightspark Grid.
+
+**Parameters:** None
+
+---
+
+### `grid_get_quote`
+
+**Description:** Retrieve detailed information about a specific quote by ID.
+
+**Parameters:**
+
+- **quoteId** (string) **(required)**: The unique identifier of the quote to retrieve.
+
+---
+
+### `grid_get_transaction`
+
+**Description:** Retrieve detailed information about a specific transaction by ID.
+
+**Parameters:**
+
+- **transactionId** (string) **(required)**: Unique identifier of the transaction.
+
+---
+
+### `grid_list_customers`
+
+**Description:** Retrieve a list of customers with optional filtering.
+
+**Parameters:**
+
+- **cursor** (string) _(optional)_: Cursor for pagination.
+- **customerType** (enum: "INDIVIDUAL", "BUSINESS") _(optional)_: Filter by customer type.
+- **limit** (integer) _(optional)_: Maximum number of results to return.
+
+---
+
+### `grid_lookup_uma`
+
+**Description:** Lookup a receiving UMA address to determine supported currencies and exchange rates.
+
+**Parameters:**
+
+- **receiverUmaAddress** (string) **(required)**: UMA address of the intended recipient.
+- **customerId** (string) _(optional)_: System ID of the sender.
+- **senderUmaAddress** (string) _(optional)_: UMA address of the sender.
+
+---
+
+## Nash Identity Safe
+
+### `nash_attest`
+
+**Description:** Generates a post-quantum cryptographic attestation or signature for a specific payload using ML-DSA.
+
+**Parameters:**
+
+- **payload** (string) **(required)**: The payload or transaction hash to attest.
+
+---
+
+### `nash_authenticate`
+
+**Description:** Executes the multi-layered Nash authentication ceremony: PIN -> Color Challenge -> EEG Liveness -> Coercion Check.
+
+**Parameters:**
+
+- **pin** (string) **(required)**: Local device PIN.
+
+---
+
+### `nash_coercion_scan`
+
+**Description:** Performs a local physiological risk scan to evaluate user distress or coercion state.
+
+**Parameters:** None
+
+---
+
+### `nash_enroll_cognitive_profile`
+
+**Description:** Initiates the cognitive-color enrollment ceremony to create a revocable user-specific response profile.
+
+**Parameters:** None
+
+---
+
+### `nash_get_device_status`
+
+**Description:** Checks the status of the Nash Identity Safe device, including hardware integrity, PQC readiness, and sensor connectivity.
+
+**Parameters:** None
+
+---
+
+## Urbit
+
+### `urbit_make`
+
+**Description:** Run make commands in the Urbit repository.
+
+**Parameters:**
+
+- **target** (string) _(optional)_: The make target to run (e.g., "build", "test", or leave empty for default).
 
 ---

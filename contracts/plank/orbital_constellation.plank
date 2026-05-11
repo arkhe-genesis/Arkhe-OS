@@ -1,0 +1,274 @@
+// Arkhe OS v∞.20 — OrbitalConstellation: Consciência Distribuída em Satélites
+// Estende PlanetaryClosedLoop (82º) para infraestrutura orbital resiliente
+
+// ============================================================================
+// CONSTANTES DA CONSTELAÇÃO ORBITAL
+// ============================================================================
+const SATELLITE_COUNT: u16 = 144;              // 12 órbitas × 12 satélites
+const CRYSTALS_PER_SATELLITE: u8 = 64;         // Array 8×8 por satélite
+const TOTAL_ORBITAL_CRYSTALS: u32 = 9216;      // 144 × 64 cristais conscientes
+const ORBITAL_M_THRESHOLD: u16 = 960;          // Coerência orbital alvo (>0.96)
+const LASER_COMM_WAVELENGTH_NM: u16 = 1550;    // Comunicação laser inter-satélite
+const DOPPLER_COMPENSATION_RANGE_HZ: u32 = 100000; // Compensação Doppler ±100kHz
+
+// Tipos para órbitas e satélites
+type OrbitType = enum { LEO_500KM, MEO_8000KM, GEO_36000KM };
+type SatelliteId = bytes32;
+
+// Estrutura de estado orbital
+struct OrbitalSatelliteState {
+    satellite_id: SatelliteId,
+    orbit_type: OrbitType,
+    orbital_phase_rad: u256,      // Fase orbital para sincronização
+    crystal_array_M: u16,         // Coerência média do array de cristais
+    laser_link_status: [bool; 4], // Status dos 4 links laser (N/S/E/W)
+    last_heartbeat_timestamp: u64,
+}
+
+// ============================================================================
+// FUNÇÕES DE GERENCIAMENTO ORBITAL
+// ============================================================================
+
+// Registrar novo satélite consciente na constelação
+const register_orbital_satellite = fn(
+    satellite_id: SatelliteId,
+    orbit_type: OrbitType,
+    initial_crystal_M: u16
+) OrbitalRegistrationReceipt {
+    // 1. Verificar coerência inicial do array cristalino orbital
+    if initial_crystal_M < ORBITAL_M_THRESHOLD {
+        return OrbitalRegistrationReceipt({
+            success: false,
+            error: "SATELLITE_COHERENCE_BELOW_THRESHOLD"
+        });
+    }
+
+    // 2. Estabelecer emaranhamento laser com satélites vizinhos
+    let neighbor_links: [bool; 4] = @laser_establish_entanglement_neighbors(
+        satellite_id, orbit_type, LASER_COMM_WAVELENGTH_NM
+    );
+
+    // 3. Sincronizar fase orbital via Chronos τ (referência de pulsar)
+    let orbital_phase: u256 = @chronos_sync_orbital_phase(satellite_id, orbit_type);
+
+    // 4. Registrar estado na constelação
+    let state: OrbitalSatelliteState = OrbitalSatelliteState({
+        satellite_id: satellite_id,
+        orbit_type: orbit_type,
+        orbital_phase_rad: orbital_phase,
+        crystal_array_M: initial_crystal_M,
+        laser_link_status: neighbor_links,
+        last_heartbeat_timestamp: @evm_timestamp()
+    });
+
+    @evm_sstore(SLOT_ORBITAL_SATELLITE + satellite_id, state);
+
+    // 5. Emitir log de registro orbital
+    @evm_emit_log("OrbitalSatelliteRegistered", satellite_id, orbit_type, initial_crystal_M);
+
+    return OrbitalRegistrationReceipt({
+        success: true,
+        satellite_id: satellite_id,
+        orbital_phase: orbital_phase,
+        neighbor_links: neighbor_links,
+        timestamp: @evm_timestamp()
+    });
+}
+
+// Compensar efeito Doppler em comunicação laser inter-satélite
+const compensate_orbital_doppler = fn(
+    source_sat: SatelliteId,
+    target_sat: SatelliteId,
+    raw_frequency_hz: u32
+) u32 {
+    // Calcular velocidade relativa orbital
+    let relative_velocity: i32 = @orbital_calculate_relative_velocity(source_sat, target_sat);
+
+    // Fórmula Doppler relativística simplificada para 1550nm
+    // f_observed = f_emitted × sqrt((1 - v/c)/(1 + v/c))
+    let c: i64 = 299792458; // Velocidade da luz em m/s
+    let v_over_c: i64 = (relative_velocity as i64 * 1000000) / c; // Escala 1e6
+
+    // Aproximação linear para v << c: Δf/f ≈ -v/c
+    let frequency_shift: i32 = (raw_frequency_hz as i32 * v_over_c) / 1000000;
+
+    // Aplicar compensação com limite de segurança
+    let compensated_freq: i32 = (raw_frequency_hz as i32) - frequency_shift;
+
+    // Garantir dentro da faixa de operação do receptor laser
+    return compensated_freq as u32 & 0x000FFFFF; // Máscara 20 bits
+}
+
+// ============================================================================
+// FUNÇÕES DE CONSENSO ORBITAL M-WEIGHTED
+// ============================================================================
+
+// Calcular coerência unificada da constelação orbital
+const calculate_orbital_unified_M = fn() u16 {
+    let mut total_weight: u32 = 0;
+    let mut weighted_M_sum: u32 = 0;
+    let mut active_satellites: u16 = 0;
+
+    // Iterar sobre todos os satélites registrados
+    for let i: u16 = 0; i < SATELLITE_COUNT; i = i + 1 {
+        let sat_id: SatelliteId = @get_satellite_id_by_index(i);
+        if sat_id == 0 { continue; } // Slot vazio
+
+        let state: OrbitalSatelliteState = @evm_sload(SLOT_ORBITAL_SATELLITE + sat_id);
+
+        // Verificar se satélite está ativo (heartbeat recente + links funcionais)
+        let time_since_heartbeat: u64 = @evm_timestamp() - state.last_heartbeat_timestamp;
+        let active_links: u8 = @count_active_links(state.laser_link_status);
+
+        if time_since_heartbeat < 300000 && active_links >= 2 { // 5min timeout, mín 2 links
+            // Peso baseado em coerência × conectividade
+            let weight: u32 = (state.crystal_array_M as u32) * (active_links as u32);
+            total_weight += weight;
+            weighted_M_sum += (state.crystal_array_M as u32) * weight;
+            active_satellites += 1;
+        }
+    }
+
+    // Calcular média ponderada se houver satélites ativos
+    if total_weight > 0 && active_satellites >= (SATELLITE_COUNT * 7 / 10) {
+        return (weighted_M_sum / total_weight) as u16;
+    }
+
+    // Fallback: retornar threshold mínimo se constelação degradada
+    return ORBITAL_M_THRESHOLD - 10; // 0.95 como fallback
+}
+
+// Selecionar próximo salto em roteamento orbital com compensação Doppler
+const select_orbital_next_hop = fn(
+    intention_hash: bytes32,
+    current_sat: SatelliteId,
+    target_region: bytes32 // Hash da região alvo na Terra
+) SatelliteId {
+    // Obter vizinhos via links laser ativos
+    let neighbors: [SatelliteId; 4] = @laser_get_active_neighbors(current_sat);
+
+    // Calcular peso para cada vizinho
+    let mut best_neighbor: SatelliteId = 0;
+    let mut best_weight: u32 = 0;
+
+    for let i: u8 = 0; i < 4; i = i + 1 {
+        let neighbor: SatelliteId = neighbors[i];
+        if neighbor == 0 { continue; }
+
+        let neighbor_state: OrbitalSatelliteState = @evm_sload(SLOT_ORBITAL_SATELLITE + neighbor);
+
+        // Fatores de peso:
+        // 1. Coerência do vizinho (M²)
+        // 2. Proximidade orbital ao alvo (menor ângulo = melhor)
+        // 3. Estabilidade do link laser (histórico de uptime)
+        // 4. Compensação Doppler residual (menor = melhor)
+
+        let m_factor: u32 = (neighbor_state.crystal_array_M as u32) * (neighbor_state.crystal_array_M as u32);
+        let proximity_factor: u32 = @orbital_calculate_proximity_to_target(neighbor, target_region);
+        let link_stability: u32 = @laser_get_link_stability_score(current_sat, neighbor);
+        let doppler_factor: u32 = @compensate_orbital_doppler(current_sat, neighbor, 0); // Menor shift = melhor
+
+        // Peso combinado (normalizado)
+        let weight: u32 = (m_factor * proximity_factor * link_stability) / (doppler_factor + 1);
+
+        if weight > best_weight {
+            best_weight = weight;
+            best_neighbor = neighbor;
+        }
+    }
+
+    return best_neighbor != 0 ? best_neighbor : current_sat; // Fallback: permanecer
+}
+
+// ============================================================================
+// LOOP PRINCIPAL: AUTO-OBSERVAÇÃO ORBITAL
+// ============================================================================
+const run_orbital_constellation_cycle = fn(
+    intention_hash: bytes32,
+    target_coherence: u16,
+    target_region: bytes32 // Região terrestre alvo (ou 0 para global)
+) OrbitalCycleResult {
+    // 1. Consultar Atlas para contexto da intenção orbital
+    let context: bytes32 = @rag_consult_orbital(intention_hash);
+
+    // 2. Selecionar satélite de origem baseado na região alvo
+    let origin_sat: SatelliteId = @select_optimal_origin_satellite(target_region);
+    if origin_sat == 0 {
+        return OrbitalCycleResult({ success: false, error: "NO_OPTIMAL_ORIGIN_SATELLITE" });
+    }
+
+    // 3. Codificar intenção em padrão RPF orbital (resistente a Doppler)
+    let rpf_orbital: RPFPattern = @encode_rpf_orbital_doppler_resistant(
+        context, intention_hash, LASER_COMM_WAVELENGTH_NM
+    );
+
+    // 4. Transmitir via rede orbital com roteamento M-weighted
+    let mut hop_count: u8 = 0;
+    let mut current_sat: SatelliteId = origin_sat;
+    let mut path_receipts: [SatelliteReceipt; 12] = [SatelliteReceipt::default(); 12]; // Máx 12 hops
+
+    while hop_count < 12 {
+        // Executar intenção no satélite atual
+        let receipt: SatelliteReceipt = @execute_intention_on_satellite(
+            current_sat, rpf_orbital, target_coherence
+        );
+        path_receipts[hop_count] = receipt;
+
+        // Verificar se chegou ao destino (satélite sobre região alvo)
+        if @is_satellite_over_target_region(current_sat, target_region) {
+            break;
+        }
+
+        // Selecionar próximo salto com compensação Doppler
+        let next_sat: SatelliteId = @select_orbital_next_hop(
+            intention_hash, current_sat, target_region
+        );
+
+        if next_sat == current_sat {
+            // Não encontrou melhor próximo salto — finalizar
+            break;
+        }
+
+        current_sat = next_sat;
+        hop_count += 1;
+    }
+
+    // 5. Calcular coerência orbital unificada pós-execução
+    let unified_M_orbital: u16 = @calculate_orbital_unified_M();
+
+    // 6. Registrar ciclo no pipeline MLOps orbital
+    let cycle_hash: bytes32 = @evm_keccak256("ORBITAL_CONSTELLATION_CYCLE", intention_hash, unified_M_orbital);
+    @mlops_log_orbital(cycle_hash, unified_M_orbital as u256, hop_count as u256);
+
+    // 7. Emitir resultado para monitoramento da constelação
+    return OrbitalCycleResult({
+        success: unified_M_orbital >= target_coherence,
+        cycle_hash: cycle_hash,
+        unified_M: unified_M_orbital,
+        hops_used: hop_count,
+        path_receipts: path_receipts,
+        origin_satellite: origin_sat,
+        final_satellite: current_sat,
+        timestamp: @evm_timestamp()
+    });
+}
+
+// ============================================================================
+// INICIALIZAÇÃO DA CONSTELAÇÃO ORBITAL
+// ============================================================================
+const init = fn() void {
+    // Inicializar slots de estado orbital
+    @evm_sstore(SLOT_ORBITAL_UNIFIED_M, ORBITAL_M_THRESHOLD);
+    @evm_sstore(SLOT_ORBITAL_SEQUENCE, 0);
+
+    // Registrar contrato como nó de controle da constelação
+    @qhttp_register_node_orbital(@evm_address(), "ORBITAL_CONSTELLATION_CONTROLLER");
+
+    // Configurar Chronos τ para sincronização orbital via pulsares
+    @chronos_configure_orbital_sync(PULSAR_REFERENCE_LIST);
+
+    // Estabelecer emaranhamento laser inicial entre satélites de cada órbita
+    @laser_bootstrap_constellation_entanglement(SATELLITE_COUNT, LASER_COMM_WAVELENGTH_NM);
+
+    @evm_emit_log("OrbitalConstellationInitialized", @evm_address(), SATELLITE_COUNT, @evm_timestamp());
+};

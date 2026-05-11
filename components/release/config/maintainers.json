@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "maintainers": [
+    {
+      "did": "did:cathedral:maintainer:ferreiro",
+      "name": "Ferreiro",
+      "role": "release_maintainer"
+    }
+  ]
+}

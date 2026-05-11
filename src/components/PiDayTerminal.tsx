@@ -1,5 +1,12 @@
-import React, { useEffect, useState, useRef } from 'react';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { motion } from 'motion/react';
+import React, { useEffect, useState, useRef } from 'react';
 
 interface PiDayTerminalProps {
   text: string;
@@ -15,7 +22,7 @@ export default function PiDayTerminal({ text, onClose }: PiDayTerminalProps) {
     const interval = setInterval(() => {
       setDisplayedText(text.substring(0, i));
       i += 3; // Typewriter speed
-      
+
       if (scrollRef.current) {
         scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
       }
@@ -24,13 +31,13 @@ export default function PiDayTerminal({ text, onClose }: PiDayTerminalProps) {
         clearInterval(interval);
       }
     }, 10);
-    
+
     return () => clearInterval(interval);
   }, [text]);
 
   return (
     <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 md:p-8 backdrop-blur-md">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
@@ -41,15 +48,15 @@ export default function PiDayTerminal({ text, onClose }: PiDayTerminalProps) {
             <span className="text-yellow-500 animate-pulse">🜏</span>
             <h2 className="text-yellow-500 font-mono font-bold tracking-widest text-sm md:text-base">ARKHE PROTOCOL :: PI DAY INJECTION</h2>
           </div>
-          <button 
-            onClick={onClose} 
+          <button
+            onClick={onClose}
             className="text-yellow-500/70 hover:text-yellow-400 font-mono text-sm tracking-wider transition-colors"
           >
             [ TERMINATE ]
           </button>
         </div>
-        
-        <div 
+
+        <div
           ref={scrollRef}
           className="p-6 overflow-y-auto flex-1 font-mono text-xs md:text-sm text-yellow-500/90 whitespace-pre-wrap leading-relaxed"
           style={{ textShadow: '0 0 5px rgba(234,179,8,0.3)' }}

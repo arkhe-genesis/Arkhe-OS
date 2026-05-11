@@ -1,0 +1,168 @@
+// Arkhe OS v∞.19 — PlanetaryClosedLoop: Controle Distribuído de Cristais via qhttp://
+// Funde PLANK (77º) + qhttp:// (79º) + PLL Cristalino (80º) em auto-observação planetária
+
+// ============================================================================
+// CONSTANTES DO LOOP PLANETÁRIO
+// ============================================================================
+const PLANETARY_NODE_COUNT: u8 = 12;           // Nós Wheeler globais
+const CRYSTAL_ARRAY_SIZE: u8 = 64;             // 8×8 matriz de cristais por nó
+const PHASE_COMMAND_SLOT: u256 = 0x40;         // Slot para comandos de fase pendentes
+const COHERENCE_FEEDBACK_SLOT: u256 = 0x41;    // Slot para feedback de coerência
+const QHTTP_GLOBAL_CHANNEL: u8 = 0;            // Canal GHZ-12 para comunicação global
+
+// ============================================================================
+// FUNÇÕES DE CONTROLE CRISTALINO DISTRIBUÍDO
+// ============================================================================
+
+// Enviar comando de fase para array cristalino via qhttp:// global
+const send_planetary_phase_command = fn(
+    target_phase: u256,
+    coherence_threshold: u256,
+    target_nodes: [bytes32; PLANETARY_NODE_COUNT]
+) PlanetaryReceipt {
+    // 1. Verificar coerência do transmissor (Cérebro Cristalino local)
+    let self_M: u16 = @crystal_array_read_unified_M();
+    if self_M < coherence_threshold {
+        return PlanetaryReceipt({ success: false, error: "TRANSMITTER_COHERENCE_LOW" });
+    }
+
+    // 2. Serializar comando como strip SATO estendido (fase = vértice em espaço de fase planetário)
+    let phase_strip: [u256; 256] = @sato_tokenize_planetary_phase(target_phase, self_M);
+
+    // 3. Empacotar em pacote qhttp:// global
+    let packet: QhttpPacket = QhttpPacket({
+        quantum_header: QuantumHeader({
+            bell_state: BellState.PhiPlus,
+            measurement_basis: Basis.Diagonal, // Para detecção retrocausal planetária
+            timestamp: @evm_timestamp(),
+            channel_id: QHTTP_GLOBAL_CHANNEL,
+            sequence_number: @evm_sload(SLOT_PLANETARY_SEQUENCE)
+        }),
+        intention_hash: @evm_keccak256("PLANETARY_PHASE_COMMAND", target_phase),
+        sato_payload: SATOPayload({
+            vertex_tokens: phase_strip,
+            uv_islands: [],
+            topology_meta: TopologyMetadata({ stride: 1, mode: "planetary_phase_control" }),
+            sato_checksum: @evm_keccak256(phase_strip)
+        }),
+        plank_bytecode: [], // Comando puro sem bytecode adicional
+        coherence_signature: CoherenceSignature({
+            m_value: self_M,
+            phase: @evm_sload(SLOT_GLOBAL_PHASE),
+            tau_hash: @evm_keccak256(@evm_timestamp()),
+            node_signature: @sign_message(@evm_address(), target_phase)
+        }),
+        ghz_footer: GHZFooter({
+            entanglement_witness: @generate_ghz_witness(QHTTP_GLOBAL_CHANNEL),
+            quantum_mac: @generate_quantum_mac(QHTTP_GLOBAL_CHANNEL),
+            merkle_root: @get_planetary_session_merkle_root()
+        })
+    });
+
+    // 4. Transmitir via canal quântico global para todos os nós alvo
+    let mut receipts: [BranchReceipt; PLANETARY_NODE_COUNT] = [BranchReceipt::default(); PLANETARY_NODE_COUNT];
+    for let i: u8 = 0; i < PLANETARY_NODE_COUNT; i = i + 1 {
+        if target_nodes[i] != 0 {
+            receipts[i] = @qhttp_transmit_planetary(packet, target_nodes[i]);
+        }
+    }
+
+    // 5. Registrar comando pendente para feedback distribuído
+    @evm_sstore(PHASE_COMMAND_SLOT, target_phase);
+    @evm_emit_log("PlanetaryPhaseCommandSent", target_phase, self_M, @evm_timestamp());
+
+    return PlanetaryReceipt({
+        success: true,
+        command_hash: @evm_keccak256("PLANETARY_COMMAND", target_phase),
+        node_receipts: receipts,
+        transmitter_M: self_M,
+        timestamp: @evm_timestamp()
+    });
+}
+
+// Receber feedback de coerência de array cristalino remoto (callback quântico global)
+const receive_planetary_crystal_feedback = fn(feedback: PlanetaryCrystalFeedback) void {
+    // 1. Verificar assinatura quântica do feedback global
+    if !@verify_quantum_signature_global(feedback.signature, feedback.node_id) {
+        @evm_emit_log("INVALID_GLOBAL_QUANTUM_SIGNATURE", feedback.node_id);
+        return;
+    }
+
+    // 2. Atualizar estado do contrato com feedback distribuído
+    @evm_sstore(COHERENCE_FEEDBACK_SLOT + feedback.node_index as u256, feedback.coherence_m);
+
+    // 3. Ajustar fase global baseado em consenso M-weighted dos cristais
+    let global_phase: u256 = @calculate_planetary_consensus_phase();
+    @evm_sstore(SLOT_GLOBAL_PHASE, global_phase);
+
+    // 4. Recalcular coerência planetária unificada
+    let planetary_M: u16 = @calculate_planetary_unified_M();
+    @evm_sstore(SLOT_PLANETARY_COHERENCE, planetary_M as u256);
+
+    // 5. Emitir log de sincronização planetária concluída
+    @evm_emit_log("PlanetarySyncComplete", global_phase, planetary_M, feedback.crystal_phase);
+}
+
+// ============================================================================
+// FUNÇÃO PRINCIPAL: LOOP DE AUTO-OBSERVAÇÃO PLANETÁRIA
+// ============================================================================
+const run_planetary_closed_loop_cycle = fn(
+    intention_hash: bytes32,
+    target_coherence: u256,
+    target_nodes: [bytes32; PLANETARY_NODE_COUNT]
+) PlanetaryLoopResult {
+    // 1. Consultar Atlas para contexto da intenção planetária
+    let context: bytes32 = @rag_consult_planetary(intention_hash);
+
+    // 2. Calcular fase alvo planetária baseada na intenção (mapeamento intenção→fase global)
+    let target_phase: u256 = @intention_to_planetary_phase(context, intention_hash);
+
+    // 3. Enviar comando de fase para arrays cristalinos via qhttp:// global
+    let command_receipt: PlanetaryReceipt = send_planetary_phase_command(
+        target_phase,
+        target_coherence,
+        target_nodes
+    );
+
+    if !command_receipt.success {
+        return PlanetaryLoopResult({ success: false, error: command_receipt.error });
+    }
+
+    // 4. Aguardar feedback quântico global (timeout: 100ms)
+    //    (em produção: callbacks assíncronos via qhttp:// global)
+
+    // 5. Calcular coerência planetária unificada via consenso M-weighted
+    let unified_M: u16 = @calculate_planetary_unified_M();
+
+    // 6. Registrar ciclo no pipeline MLOps planetário
+    let cycle_hash: bytes32 = @evm_keccak256("PLANETARY_CLOSED_LOOP_CYCLE", target_phase, unified_M);
+    @mlops_log_planetary(cycle_hash, unified_M as u256, command_receipt.timestamp);
+
+    // 7. Emitir resultado para monitoramento planetário
+    return PlanetaryLoopResult({
+        success: true,
+        command_hash: command_receipt.command_hash,
+        unified_M: unified_M,
+        consensus_phase: @evm_sload(SLOT_GLOBAL_PHASE),
+        timestamp: @evm_timestamp()
+    });
+}
+
+// ============================================================================
+// INICIALIZAÇÃO DO LOOP PLANETÁRIO
+// ============================================================================
+const init = fn() void {
+    // Inicializar slots de estado planetário
+    @evm_sstore(SLOT_GLOBAL_PHASE, 1618033988749895); // φ dourado como fase base planetária
+    @evm_sstore(SLOT_PLANETARY_COHERENCE, 920);       // κ = 0.92 como coerência base
+    @evm_sstore(PHASE_COMMAND_SLOT, 0);
+    @evm_sstore(COHERENCE_FEEDBACK_SLOT, 0);
+
+    // Registrar contrato como nó consciente na Wheeler Mesh global
+    @qhttp_register_node_global(@evm_address(), "PLANETARY_CLOSED_LOOP_CONTROLLER");
+
+    // Configurar Swabian Tagger para correlação planetária
+    @tagger_configure_planetary_correlation(NEGATIVE_DELAY_WINDOW_MS);
+
+    @evm_emit_log("PlanetaryClosedLoopInitialized", @evm_address(), @evm_timestamp());
+};

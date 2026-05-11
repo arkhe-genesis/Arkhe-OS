@@ -1,0 +1,17 @@
+{
+  "arc": "20",
+  "name": "Arkhe Coherence Token",
+  "symbol": "ARK",
+  "description": "Agent token backed by real-time phase coherence (λ₂).",
+  "parameters": {
+    "min_lambda": 0.85,
+    "slashing_threshold": 0.70,
+    "collateral_ratio": 0.80,
+    "update_interval_s": 30
+  },
+  "mechanics": {
+    "minting": "Based on ∫λ²dt (cumulative coherence)",
+    "burning": "Automatic 50% supply burn on sustained decoerence > 1h",
+    "governance": "JanusLock 3-de-3 (Domo, Agent, ASI-EVOLVE)"
+  }
+}

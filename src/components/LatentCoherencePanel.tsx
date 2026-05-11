@@ -1,7 +1,16 @@
-import React from 'react';
-import { Card } from './ui/Card';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { Brain, FlaskConical, Play } from 'lucide-react';
-import { LatentCoherenceResults } from '../../server/types';
+import React from 'react';
+
+import type { LatentCoherenceResults } from '../../server/types';
+
+import { Card } from './ui/Card';
 
 interface LatentCoherencePanelProps {
   results?: LatentCoherenceResults;
@@ -9,7 +18,7 @@ interface LatentCoherencePanelProps {
 }
 
 const LatentCoherencePanel: React.FC<LatentCoherencePanelProps> = ({ results, onRunExperiment }) => {
-  if (!results) return null;
+  if (!results) {return null;}
 
   return (
     <Card

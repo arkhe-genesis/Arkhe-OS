@@ -1,0 +1,6 @@
+--- src/components/BonsaiPrismPanel.tsx
++++ src/components/BonsaiPrismPanel.tsx
+@@ -56,4 +55,2 @@
+   const canvasRef = useRef<HTMLCanvasElement>(null);
+-  const ritualRef = useRef<number | null>(null);
+-  const canvasRef = useRef<HTMLCanvasElement>(null);

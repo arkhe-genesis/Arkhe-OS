@@ -1,0 +1,2 @@
+.DEFINE_QUASI PROJECT_ID = TEST_PROJECT
+PHASE_add /custom/bin

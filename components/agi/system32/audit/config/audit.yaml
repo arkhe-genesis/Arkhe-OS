@@ -1,0 +1,16 @@
+# agi/system32/audit/config/audit.yaml
+canonical_seals:
+  "2f741811a66762a4": "wormhole_canonical_v2"
+  "f7498495fd496bca": "federation_protocol_v1"
+
+thresholds:
+  min_coherence: 0.7
+  deviation_alert: 0.1
+  overall_trust: 0.8
+
+policies:
+  enable_zk_audit: true
+  auto_mitigate_coherence_drop: true
+
+rekor:
+  url: "https://rekor.sigstore.dev"

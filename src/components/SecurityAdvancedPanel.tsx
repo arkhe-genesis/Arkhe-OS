@@ -1,5 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Shield, Lock, Zap, Eye, Database, Activity, RefreshCw, AlertTriangle, CheckCircle2, Flame } from 'lucide-react';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { Shield, Lock, Zap, Eye, Database, RefreshCw, AlertTriangle, CheckCircle2, Flame } from 'lucide-react';
+import React, { useState } from 'react';
+
+import type { SimulationState } from '../../server/types';
 import { useArkheSimulation } from '../hooks/useArkheSimulation';
 
 interface SecurityAdvancedPanelProps {
@@ -7,7 +16,7 @@ interface SecurityAdvancedPanelProps {
 }
 
 export default function SecurityAdvancedPanel({ onClose }: SecurityAdvancedPanelProps) {
-  const state = useArkheSimulation();
+  const state: any = useArkheSimulation();
   const [activeTab, setActiveTab] = useState<'l1' | 'l2' | 'l3' | 'l4' | 'l5' | 'qhttp'>('l1');
   const [attesting, setAttesting] = useState(false);
   const [syncing, setSyncing] = useState(false);

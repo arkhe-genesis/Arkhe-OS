@@ -1,0 +1,6 @@
+// Arkhe OS v∞.11 — Sample Plank Contract
+const KAPPA: u256 = 920;
+
+fn init() void {
+    @evm_sstore(1, KAPPA);
+}

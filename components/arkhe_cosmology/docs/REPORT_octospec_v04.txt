@@ -1,0 +1,179 @@
+================================================================================
+RELATORIO FINAL — OCTOSPEC v0.4
+Atlas Octonionico de Nucleidos com Dados Realistas (AME2020/NUBASE2020)
+================================================================================
+
+DATA: 2026-05-02
+AUTOR: Rafael Oliveira (ORCID: 0009-0005-2697-4668)
+SUBSTRATO: ARKHE OS v324.4
+VERSAO: v0.4 (dados realistas)
+
+================================================================================
+1. RESUMO EXECUTIVO
+================================================================================
+
+O OctoSpec v0.4 integra dados nucleares realistas da AME2020/NUBASE2020
+(50 nucleidos com energias de ligacao e meias-vidas experimentais) ao atlas
+octonionico. A analise estatistica confirma a correlacao entre IAO e energia
+de ligacao (r = -0.54, p < 0.001) mesmo com dados reais.
+
+================================================================================
+2. BANCO DE DADOS
+================================================================================
+
+DIMENSOES:
+  • Total de nucleidos: 50
+  • Estaveis: 30 (60.0%)
+  • Radioativos: 20 (40.0%)
+  • Z range: 1 (H) a 118 (Og)
+
+FONTES DE DADOS:
+  • AME2020: Energias de ligacao e excessos de massa
+  • NUBASE2020: Meias-vidas e modos de decaimento
+
+================================================================================
+3. ESTATISTICAS DO IAO
+================================================================================
+
+DISTRIBUICAO:
+  • Media: 0.0250 +/- 0.0407
+  • Mediana: 0.0182
+  • Minimo: 0.0000
+  • Maximo: 0.2861 (H-1)
+
+POR GRUPO:
+  • Estaveis:    0.0280 +/- 0.0513 (n=30)
+  • Radioativos: 0.0205 +/- 0.0144 (n=20)
+  • Teste t: t = 0.756, p = 0.455 (nao significativo)
+
+================================================================================
+4. CORRELACOES ESTATISTICAS (dados realistas, n=50)
+================================================================================
+
+  +-------------------------------+---------+----------+
+  | Propriedade                   | r       | p-value  |
+  +-------------------------------+---------+----------+
+  | Energia de ligacao / A        | -0.5434 | < 0.0001 |
+  | log10(Meia-vida)              | +0.2011 | 0.1614   |
+  | Assimetria (N-Z)              | -0.0448 | 0.7571   |
+  | Numero atomico (Z)            | -0.0729 | 0.6148   |
+  | Numero de massa (A)           | -0.0667 | 0.6455   |
+  | Excesso de massa (keV)        | -0.0217 | 0.8813   |
+  +-------------------------------+---------+----------+
+
+ANALISE:
+  • Apenas IAO vs B/A e significativa (p < 0.001)
+  • Correlacao moderada negativa (r = -0.54)
+  • Outras correlacoes nao significativas nesta amostra
+
+================================================================================
+5. COMPARACAO v0.3 vs v0.4
+================================================================================
+
+  +-------------------------------+-------------+-------------+
+  | Propriedade                   | v0.3 (sim)  | v0.4 (real) |
+  +-------------------------------+-------------+-------------+
+  | IAO vs B/A                    | r = -0.78   | r = -0.54   |
+  | IAO vs log(T_1/2)             | r = -0.38   | r = +0.20   |
+  | Estaveis vs Radioativos       | p = 0.496   | p = 0.455   |
+  +-------------------------------+-------------+-------------+
+
+OBSERVACOES:
+  • Correlacao IAO vs B/A persiste mas e mais fraca com dados reais
+  • Correlacao com meia-vida inverteu sinal (vies na simulacao)
+  • Amostra realista e pequena (n=50)
+
+================================================================================
+6. LIMITACOES
+================================================================================
+
+  1. AMOSTRA PEQUENA: 50 nucleidos sao insuficientes.
+  2. SELECAO DE AMOSTRA: Escolha manual, pode nao ser representativa.
+  3. EMBEDDING AD-HOC: Sem fundamentacao fisica.
+  4. CORRELACAO != CAUSACAO: Pode ser artefato matematico.
+
+================================================================================
+7. RECOMENDACOES
+================================================================================
+
+  PRIORITARIO:
+  A. Expandir para ~3500 nucleidos (AME2020 completo)
+  B. Testar embeddings alternativos (v3, v4)
+  C. Analise de sensibilidade completa
+
+  SECUNDARIO:
+  D. Regressao multivariada
+  E. Teoria fisica (OctoGrav) se correlacoes persistirem
+
+================================================================================
+8. ESTADO DO SUBSTRATO
+================================================================================
+
+arkhe > OCTOSPEC_v0_4_COMPLETE
+arkhe > BANCO: 50 nucleidos com dados realistas
+arkhe > EMBEDDING: v2.1 validado
+arkhe > ASSOCIATOR: funcional e robusto
+arkhe > ESTATISTICA: correlacao IAO vs B/A confirmada
+arkhe > PROXIMO: expansao para AME2020 completo (~3500 nucleidos)
+arkhe > ODOMETRO: 324.4 -> 324.5
+
+ESTADO: ATLAS MATEMATICO COM DADOS REALISTAS — PRONTO PARA EXPANSAO.
+=================================================
+
+================================================================================
+PRE-REGISTRO OSF — OCTOSPEC v0.4
+================================================================================
+
+TITULO: OctoSpec v0.4: Atlas Octonionico de Nucleidos com Dados Realistas
+
+AUTOR: Rafael Oliveira (ORCID: 0009-0005-2697-4668)
+DATA: 2026-05-02
+
+================================================================================
+1. HIPOTESES
+================================================================================
+
+H1: O IAO correlaciona-se negativamente com a energia de ligacao por nucleon.
+H2: O IAO difere entre nucleidos estaveis e radioativos.
+H3: O IAO varia com o modo de decaimento.
+
+================================================================================
+2. DESENHO
+================================================================================
+
+TIPO: Observacional correlacional
+AMOSTRA: 50 nucleidos (AME2020/NUBASE2020)
+VARIAVEIS: IAO vs propriedades nucleares
+
+================================================================================
+3. PLANO DE ANALISE
+================================================================================
+
+  1. Correlacoes de Pearson e Spearman
+  2. Teste t de Welch (estaveis vs radioativos)
+  3. ANOVA por modo de decaimento
+  4. Alpha = 0.05
+
+================================================================================
+4. CRITERIOS DE EXCLUSAO
+================================================================================
+
+  • Dados incompletos
+  • B/A < 0
+
+================================================================================
+5. LIMITACOES
+================================================================================
+
+  • Amostra pequena (n=50)
+  • Embedding ad-hoc
+  • Dados de fontes secundarias
+
+================================================================================
+6. REPOSITORIO
+================================================================================
+
+  • Dados: octospec_v04_atlas_realistic.csv
+  • Relatorio: REPORT_octospec_v04.txt
+
+===========================================================

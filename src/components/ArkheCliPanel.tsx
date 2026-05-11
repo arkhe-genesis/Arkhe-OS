@@ -1,5 +1,12 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { Terminal, Shield, Zap, CheckCircle2, Smartphone } from 'lucide-react';
 import React, { useState, useEffect, useRef } from 'react';
-import { Terminal, Shield, Zap, CheckCircle2 } from 'lucide-react';
 
 export default function ArkheCliPanel({ onClose }: { onClose: () => void }) {
   const [logs, setLogs] = useState<string[]>([]);
@@ -13,19 +20,19 @@ export default function ArkheCliPanel({ onClose }: { onClose: () => void }) {
     }
   }, [logs]);
 
+  const addLog = (msg: string, delay: number) => {
+    return new Promise<void>(resolve => {
+      setTimeout(() => {
+        setLogs(prev => [...prev, msg]);
+        resolve();
+      }, delay);
+    });
+  };
+
   const executeSequence = async () => {
-    if (isExecuting || step > 0) return;
+    if (isExecuting || step > 0) {return;}
     setIsExecuting(true);
     setStep(1);
-
-    const addLog = (msg: string, delay: number) => {
-      return new Promise<void>(resolve => {
-        setTimeout(() => {
-          setLogs(prev => [...prev, msg]);
-          resolve();
-        }, delay);
-      });
-    };
 
     // Step 1: make build-go
     await addLog("$ make build-go", 500);
@@ -74,7 +81,7 @@ export default function ArkheCliPanel({ onClose }: { onClose: () => void }) {
     "VotingPower": "10000"
   }
 }`, 800);
-    
+
     await addLog("\n[SUCCESS] Arkhe CLI configured for testnet (arkhe-asi-1).", 1000);
     setIsExecuting(false);
     setStep(4);
@@ -97,7 +104,7 @@ export default function ArkheCliPanel({ onClose }: { onClose: () => void }) {
           <div className="space-y-6 md:col-span-1">
             <div className="bg-black/40 border border-[#1f2024] rounded-lg p-4">
               <h3 className="font-mono text-xs uppercase tracking-widest text-arkhe-muted mb-4">Initialization Sequence</h3>
-              
+
               <div className="space-y-4">
                 <div className={`flex items-center gap-3 p-3 rounded border ${step >= 2 ? 'bg-arkhe-green/10 border-arkhe-green/30 text-arkhe-green' : step === 1 ? 'bg-arkhe-cyan/10 border-arkhe-cyan/30 text-arkhe-cyan' : 'bg-[#1a1b1e] border-[#2a2b2e] text-arkhe-muted'}`}>
                   {step >= 2 ? <CheckCircle2 className="w-5 h-5" /> : step === 1 ? <Zap className="w-5 h-5 animate-pulse" /> : <Shield className="w-5 h-5" />}
@@ -124,8 +131,25 @@ export default function ArkheCliPanel({ onClose }: { onClose: () => void }) {
                 </div>
               </div>
             </div>
-            
-            <button 
+
+            <div className="bg-arkhe-cyan/5 border border-arkhe-cyan/20 rounded-lg p-4">
+              <h3 className="font-mono text-[10px] uppercase tracking-widest text-arkhe-cyan mb-2">Android Node Bootstrap</h3>
+              <p className="text-[10px] text-arkhe-muted mb-3 font-mono">Run Arkhe(n) on your mobile device via Termux.</p>
+              <button
+                onClick={async () => {
+                  await addLog("\n$ # INSTRUÇÕES PARA ANDROID", 200);
+                  await addLog("1. Instale o Termux (F-Droid)", 200);
+                  await addLog("2. Execute o comando abaixo no Termux:", 200);
+                  await addLog("curl -O https://raw.githubusercontent.com/Arkhe-Network/Arkhe-PNT/main/scripts/arkhe-android-bootstrap.sh && bash arkhe-android-bootstrap.sh", 400);
+                }}
+                className="w-full py-2 border border-arkhe-cyan/30 text-arkhe-cyan hover:bg-arkhe-cyan/10 rounded text-[10px] uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
+              >
+                <Smartphone className="w-3 h-3" />
+                Get Bootstrap Command
+              </button>
+            </div>
+
+            <button
               onClick={executeSequence}
               disabled={step > 0}
               className={`w-full py-3 rounded uppercase tracking-widest font-bold transition-all flex items-center justify-center gap-2 ${step > 0 ? 'bg-arkhe-cyan/20 text-arkhe-cyan border border-arkhe-cyan/50 cursor-not-allowed' : 'bg-arkhe-cyan text-black hover:bg-arkhe-cyan/80 shadow-[0_0_15px_rgba(0,255,170,0.3)]'}`}

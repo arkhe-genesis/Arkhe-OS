@@ -1,6 +1,7 @@
+
 /**
  * @license
- * Copyright 2025 Google LLC
+ * Copyright 2026 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -9,12 +10,11 @@ import * as path from 'node:path';
 
 const BUILD_DIR = path.join(process.cwd(), 'build');
 
-/**
- * Writes content to a file.
- * @param filePath The path to the file.
- * @param content The content to write.
- */
 function writeFile(filePath: string, content: string): void {
+  const dirPath = path.dirname(filePath);
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
+  }
   fs.writeFileSync(filePath, content, 'utf-8');
 }
 
@@ -26,6 +26,7 @@ function main(): void {
 
   // Create i18n mock
   const i18nDir = path.join(BUILD_DIR, devtoolsFrontEndCorePath, 'i18n');
+  fs.mkdirSync(i18nDir, {recursive: true});
   const localesFile = path.join(i18nDir, 'locales.js');
   const localesContent = `
 export const LOCALES = [
@@ -51,8 +52,50 @@ export const LOCAL_FETCH_PATTERN = './locales/@LOCALE@.json';`;
   );
   fs.mkdirSync(codeMirrorDir, {recursive: true});
   const codeMirrorFile = path.join(codeMirrorDir, 'codemirror.next.js');
-  const codeMirrorContent = `export default {}`;
+  const codeMirrorContent = `
+export const cssStreamParser = async () => ({
+    startState: () => ({})
+});
+export class StringStream {
+    constructor() { this.pos = 0; }
+}
+export const css = {
+    cssLanguage: {
+        parser: {
+            parse: () => ({ topNode: { getChild: () => null } })
+        }
+    }
+};
+`;
   writeFile(codeMirrorFile, codeMirrorContent);
+
+  // Create codemirror mode mocks
+  const codeMirrorModesDir = path.join(
+    BUILD_DIR,
+    devtoolsThirdPartyPath,
+    'codemirror',
+    'package',
+    'mode'
+  );
+  fs.mkdirSync(path.join(codeMirrorModesDir, 'xml'), {recursive: true});
+  writeFile(path.join(codeMirrorModesDir, 'xml', 'xml.mjs'), 'export default {}');
+
+  fs.mkdirSync(path.join(codeMirrorModesDir, 'css'), {recursive: true});
+  writeFile(path.join(codeMirrorModesDir, 'css', 'css.mjs'), 'export default {}');
+
+  fs.mkdirSync(path.join(codeMirrorModesDir, 'javascript'), {recursive: true});
+  writeFile(path.join(codeMirrorModesDir, 'javascript', 'javascript.mjs'), 'export default {}');
+
+  const codeMirrorAddonDir = path.join(
+    BUILD_DIR,
+    devtoolsThirdPartyPath,
+    'codemirror',
+    'package',
+    'addon',
+    'runmode'
+  );
+  fs.mkdirSync(codeMirrorAddonDir, {recursive: true});
+  writeFile(path.join(codeMirrorAddonDir, 'runmode-standalone.mjs'), 'export default {}');
 
   // Create root mock
   const rootDir = path.join(BUILD_DIR, devtoolsFrontEndCorePath, 'root');
@@ -62,8 +105,14 @@ export const LOCAL_FETCH_PATTERN = './locales/@LOCALE@.json';`;
 export function getChromeVersion() { return ''; };
 export const hostConfig = {};
 export const Runtime = {
+  experiments: { isEnabled: () => false },
   isDescriptorEnabled: () => true,
   queryParam: () => null,
+  getRemoteBase: () => null,
+  GdpProfilesEnterprisePolicyValue: {
+      DISABLED: 0,
+      ENABLED: 1
+  }
 }
 export const experiments = {
   isEnabled: () => false,
@@ -90,10 +139,13 @@ export const ExperimentName = {
   TIMELINE_SHOW_POST_MESSAGE_EVENTS: 'timeline-show-postmessage-events',
   TIMELINE_DEBUG_MODE: 'timeline-debug-mode',
 }
-  `;
+export const getRemoteBase = () => null;
+`;
   writeFile(runtimeFile, runtimeContent);
 
   copyDevToolsDescriptionFiles();
+
+  fs.mkdirSync(path.join(BUILD_DIR, 'src', 'bin'), {recursive: true});
 }
 
 function copyDevToolsDescriptionFiles() {
@@ -106,7 +158,22 @@ function copyDevToolsDescriptionFiles() {
     'third_party',
     'issue-descriptions',
   );
-  fs.cpSync(sourceDir, destDir, {recursive: true});
+  if (fs.existsSync(sourceDir)) { fs.cpSync(sourceDir, destDir, {recursive: true}); }
 }
+
+
+  const thirdPartySrcDir = path.join(BUILD_DIR, 'src', 'third_party');
+  fs.mkdirSync(thirdPartySrcDir, {recursive: true});
+
+  // Re-export the bundle logic from original index.ts
+  const originalThirdPartySrc = path.join(process.cwd(), 'src', 'third_party', 'index.ts');
+  const originalThirdPartyContent = fs.readFileSync(originalThirdPartySrc, 'utf8');
+  let compiledContent = originalThirdPartyContent.replace(/import 'core-js\/[^']+'\n/g, '');
+  // Let rollup resolve the real path instead of relative to the generated index.ts
+  compiledContent = compiledContent.replace(/export \* as DevTools from '\.\.\/\.\.\/node_modules\/chrome-devtools-frontend\/mcp\/mcp\.ts';/, "export * as DevTools from '../../../node_modules/chrome-devtools-frontend/mcp/mcp.js';");
+  writeFile(path.join(thirdPartySrcDir, 'index.ts'), compiledContent);
+
+  const devtoolsFormatterWorkerFile = path.join(thirdPartySrcDir, 'devtools-formatter-worker.js');
+  writeFile(devtoolsFormatterWorkerFile, "export {};\n");
 
 main();

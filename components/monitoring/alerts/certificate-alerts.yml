@@ -1,0 +1,84 @@
+groups:
+- name: arkhe-certificate-alerts
+  rules:
+  # Critical: Certificate expiring in < 3 days
+  - alert: ArkheCertificateExpiringCritical
+    expr: arkhe_certificate_expiry_seconds / 86400 < 3
+    for: 5m
+    labels:
+      severity: critical
+      team: platform-security
+    annotations:
+      summary: "Certificate for {{ $labels.service }} expiring in {{ $value | printf \"%.1f\" }} days"
+      description: |
+        The TLS certificate for service {{ $labels.service }} in namespace {{ $labels.namespace }}
+        will expire in less than 3 days. Immediate action required to avoid service disruption.
+
+        • Service: {{ $labels.service }}
+        • Namespace: {{ $labels.namespace }}
+        • Days until expiry: {{ $value | printf \"%.1f\" }}
+        • ArkheCertificate: {{ $labels.arkhecertificate }}
+
+        Runbook: https://arkhe.os/runbooks/certificate-expiry-critical
+      runbook_url: "https://arkhe.os/runbooks/certificate-expiry-critical"
+      dashboard_url: "https://grafana.arkhe.os/d/arkhe-certificates"
+
+  # Warning: Certificate expiring in < 7 days
+  - alert: ArkheCertificateExpiringWarning
+    expr: arkhe_certificate_expiry_seconds / 86400 < 7 and arkhe_certificate_expiry_seconds / 86400 >= 3
+    for: 15m
+    labels:
+      severity: warning
+      team: platform-operations
+    annotations:
+      summary: "Certificate for {{ $labels.service }} expiring in {{ $value | printf \"%.1f\" }} days"
+      description: |
+        The TLS certificate for service {{ $labels.service }} in namespace {{ $labels.namespace }}
+        will expire in {{ $value | printf \"%.1f\" }} days. Certificate rotation should be verified.
+
+        • Service: {{ $labels.service }}
+        • Namespace: {{ $labels.namespace }}
+        • Days until expiry: {{ $value | printf \"%.1f\" }}
+        • Last rotation: {{ $labels.last_rotation }}
+
+        Runbook: https://arkhe.os/runbooks/certificate-expiry-warning
+      runbook_url: "https://arkhe.os/runbooks/certificate-expiry-warning"
+      dashboard_url: "https://grafana.arkhe.os/d/arkhe-certificates"
+
+  # Info: Certificate rotation completed
+  - alert: ArkheCertificateRotationCompleted
+    expr: increase(arkhe_certificate_rotations_total[1h]) > 0
+    for: 0m
+    labels:
+      severity: info
+      team: platform-operations
+    annotations:
+      summary: "Certificate rotated for {{ $labels.service }}"
+      description: |
+        The Arkhe Certificate Operator successfully rotated the TLS certificate for
+        service {{ $labels.service }} in namespace {{ $labels.namespace }}.
+
+        • Service: {{ $labels.service }}
+        • Namespace: {{ $labels.namespace }}
+        • New validity: 90 days
+        • Rotation timestamp: {{ $value | humanizeTimestamp }}
+
+        No action required; this is an informational alert.
+
+  # Error: Operator reconciliation failures
+  - alert: ArkheCertOperatorReconcileErrors
+    expr: increase(arkhe_cert_operator_reconcile_errors_total[5m]) > 0
+    for: 5m
+    labels:
+      severity: error
+      team: platform-engineering
+    annotations:
+      summary: "Arkhe Certificate Operator reconciliation errors detected"
+      description: |
+        The Arkhe Certificate Operator encountered errors while reconciling ArkheCertificate resources.
+
+        • Error count (5m): {{ $value }}
+        • Error type: {{ $labels.error_type }}
+
+        Investigate operator logs: kubectl logs -n arkhe-system -l app.kubernetes.io/name=arkhe-cert-operator
+      runbook_url: "https://arkhe.os/runbooks/operator-reconcile-errors"

@@ -1,0 +1,21 @@
+{
+  "substrate": 89,
+  "description": "Irrotational antennas in Ku band experimental data",
+  "band": "rf",
+  "measurements": [
+    {
+      "numerical_aperture": 0.5,
+      "incident_angle_rad": 0.01,
+      "measured_peak_position": 0.010,
+      "measured_spectral_width": 0.1025,
+      "measured_coherence": 0.955
+    },
+    {
+      "numerical_aperture": 0.7,
+      "incident_angle_rad": 0.02,
+      "measured_peak_position": 0.020,
+      "measured_spectral_width": 0.0749,
+      "measured_coherence": 0.920
+    }
+  ]
+}

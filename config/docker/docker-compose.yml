@@ -1,0 +1,55 @@
+# Arkhe PoC SaaS — Docker Compose
+version: '3.9'
+
+services:
+  # FastAPI backend (PoC Core)
+  arkhe-api:
+    build:
+      context: .
+      dockerfile: arkhe-saas-backend/Dockerfile
+    container_name: arkhe-api
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://arkhe:arkhe_secret@db:5432/arkhe_poc
+      - CORS_ORIGINS=http://localhost:3000
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Next.js dashboard
+  arkhe-dashboard:
+    build:
+      context: .
+      dockerfile: arkhe-dashboard/Dockerfile
+    container_name: arkhe-dashboard
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_ARKHE_API_URL=http://arkhe-api:8000
+      - NODE_ENV=production
+    depends_on:
+      arkhe-api:
+        condition: service_started
+    restart: unless-stopped
+
+  # PostgreSQL with RLS
+  db:
+    image: postgres:16-alpine
+    container_name: arkhe-db
+    environment:
+      - POSTGRES_USER=arkhe
+      - POSTGRES_PASSWORD=arkhe_secret
+      - POSTGRES_DB=arkhe_poc
+    volumes:
+      - arkhe_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U arkhe -d arkhe_poc"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  arkhe_pgdata:

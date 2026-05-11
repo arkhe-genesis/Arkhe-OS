@@ -1,0 +1,391 @@
+# examples/api/openapi.yaml
+openapi: 3.0.3
+info:
+  title: E-Commerce Platform API
+  version: 2.1.0
+  description: |
+    Comprehensive API for e-commerce platform with microservices architecture.
+    Includes user management, product catalog, order processing, and payment integration.
+  contact:
+    name: API Support
+    email: api-support@example.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+
+servers:
+  - url: https://api.example.com/v2
+    description: Production
+  - url: https://staging-api.example.com/v2
+    description: Staging
+
+security:
+  - bearerAuth: []
+  - apiKey: []
+
+tags:
+  - name: users
+    description: User management operations
+  - name: products
+    description: Product catalog operations
+  - name: orders
+    description: Order processing operations
+  - name: payments
+    description: Payment processing operations
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from /auth/login
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key for service-to-service communication
+
+  schemas:
+    User:
+      type: object
+      required: [id, email]
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+
+    Order:
+      type: object
+      required: [user_id, items]
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        user_id:
+          type: string
+          format: uuid
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+        total_amount:
+          type: number
+          format: decimal
+          readOnly: true
+        status:
+          type: string
+          enum: [pending, confirmed, shipped, delivered, cancelled]
+          readOnly: true
+
+  parameters:
+    PaginationParams:
+      in: query
+      name: page
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    LimitParam:
+      in: query
+      name: limit
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+
+  responses:
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource not found
+    ValidationError:
+      description: Request validation failed
+    RateLimited:
+      description: Rate limit exceeded
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+            description: Seconds to wait before retrying
+
+  x-infrastructure:
+    services:
+      user-service:
+        replicas: 3
+        resources:
+          cpu: "500m"
+          memory: "512Mi"
+        health_check: /health
+        cache:
+          enabled: true
+          pattern: cache-aside
+          ttl: 300s
+
+      order-service:
+        replicas: 5
+        circuit_breaker:
+          failure_threshold: 5
+          timeout: 30s
+        retry:
+          max_attempts: 3
+          backoff: exponential
+
+    infrastructure:
+      redis:
+        type: cache
+        cluster_mode: true
+        replication_factor: 3
+
+      kafka:
+        type: event_stream
+        topics:
+          - name: order.created
+            partitions: 12
+            retention: 7d
+          - name: payment.processed
+            partitions: 8
+            retention: 30d
+
+      postgres:
+        type: database
+        consistency_model: strong
+        sharding:
+          strategy: hash
+          key: user_id
+          num_shards: 8
+        replication:
+          strategy: leader-follower
+          replication_factor: 3
+
+paths:
+  /users:
+    get:
+      summary: List users
+      operationId: listUsers
+      tags: [users]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PaginationParams'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: email
+          in: query
+          schema:
+            type: string
+            format: email
+          description: Filter by email address
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+      x-retry:
+        max_attempts: 3
+        backoff: exponential
+      x-timeout: 10s
+
+    post:
+      summary: Create new user
+      operationId: createUser
+      tags: [users]
+      security:
+        - apiKey: []  # Service-to-service only
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, name]
+              properties:
+                email:
+                  type: string
+                  format: email
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '409':
+          description: Email already exists
+      x-idempotency:
+        enabled: true
+        key_location: header
+        key_name: Idempotency-Key
+        ttl: 24h
+
+  /users/{user_id}:
+    get:
+      summary: Get user by ID
+      operationId: getUser
+      tags: [users]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-cache:
+        enabled: true
+        ttl: 300s
+        key_pattern: "user:{user_id}"
+
+    put:
+      summary: Update user
+      operationId: updateUser
+      tags: [users]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+      responses:
+        '200':
+          description: User updated
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-cache:
+        invalidate: true
+        pattern: "user:{user_id}"
+
+  /orders:
+    post:
+      summary: Create new order
+      operationId: createOrder
+      tags: [orders]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '201':
+          description: Order created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '503':
+          description: Payment service unavailable
+      x-retry:
+        max_attempts: 3
+        backoff: exponential
+      x-circuit-breaker:
+        failure_threshold: 5
+        timeout: 30s
+      x-timeout: 45s
+      x-idempotency:
+        enabled: true
+        key_location: header
+        key_name: Idempotency-Key
+        ttl: 1h
+      x-event:
+        publish:
+          topic: order.created
+          schema_ref: '#/components/schemas/Order'
+
+  /webhooks/payment-callback:
+    post:
+      summary: Payment provider webhook callback
+      operationId: paymentCallback
+      tags: [payments]
+      security: []  # Webhooks use signature verification, not bearer auth
+      x-webhook:
+        signature_header: X-Payment-Signature
+        signature_algorithm: hmac-sha256
+        allowed_ips:
+          - 203.0.113.0/24  # Payment provider IP range
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payment_id:
+                  type: string
+                status:
+                  type: string
+                  enum: [succeeded, failed, pending]
+                amount:
+                  type: number
+      responses:
+        '200':
+          description: Webhook received
+        '400':
+          description: Invalid signature or payload
+      x-retry:
+        # Webhook callers should implement retry, not this endpoint
+        caller_should_retry: true

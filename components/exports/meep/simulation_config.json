@@ -1,0 +1,30 @@
+{
+  "cell_size": [
+    14.0,
+    14.0,
+    4.5
+  ],
+  "resolution": 50,
+  "source": {
+    "fcen": 1.5725806451612903,
+    "df": 0.9274193548387097
+  },
+  "vortex_params": {
+    "array_size": [
+      10,
+      10
+    ],
+    "pitch": 1.0,
+    "wavelength_range": [
+      4e-07,
+      1.55e-06
+    ],
+    "n_pixels": 1151,
+    "depth": 1.5,
+    "core_diameter": 0.3,
+    "dn_range": [
+      0.02,
+      0.08
+    ]
+  }
+}

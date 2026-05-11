@@ -1,0 +1,17 @@
+{
+  "name": "tx_parser",
+  "version": "1.0.0",
+  "description": "Decodes Borsh structs from transactions",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.87.6",
+    "borsh": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0"
+  }
+}

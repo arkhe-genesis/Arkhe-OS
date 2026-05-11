@@ -1,5 +1,14 @@
-import { Card } from './ui/Card';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { Activity } from 'lucide-react';
+
+import { Card } from './ui/Card';
+
 
 interface ThermodynamicsPanelProps {
   thermo: {
@@ -15,8 +24,8 @@ export default function ThermodynamicsPanel({ thermo }: ThermodynamicsPanelProps
   const fPercent = Math.min(100, Math.max(0, thermo.dissipationF * 100));
 
   return (
-    <Card 
-      title="Non-Extensive Thermodynamics" 
+    <Card
+      title="Non-Extensive Thermodynamics"
       icon={<Activity className="w-4 h-4" />}
       status="normal"
     >
@@ -27,22 +36,22 @@ export default function ThermodynamicsPanel({ thermo }: ThermodynamicsPanelProps
             <span className="text-xs font-mono text-arkhe-muted uppercase">Conservation Law</span>
             <span className="text-xs font-mono font-bold text-arkhe-text">C + F = 1</span>
           </div>
-          
+
           <div className="h-4 w-full flex rounded-sm overflow-hidden border border-black/20">
-            <div 
+            <div
               className="bg-arkhe-cyan transition-all duration-300 flex items-center justify-center"
               style={{ width: `${cPercent}%` }}
             >
               {cPercent > 15 && <span className="text-[8px] font-mono font-bold text-black">C</span>}
             </div>
-            <div 
+            <div
               className="bg-arkhe-red transition-all duration-300 flex items-center justify-center"
               style={{ width: `${fPercent}%` }}
             >
               {fPercent > 15 && <span className="text-[8px] font-mono font-bold text-black">F</span>}
             </div>
           </div>
-          
+
           <div className="flex justify-between mt-1 text-[10px] font-mono">
             <span className="text-arkhe-cyan">Coherence: {thermo.coherenceC.toFixed(3)}</span>
             <span className="text-arkhe-red">Dissipation: {thermo.dissipationF.toFixed(3)}</span>

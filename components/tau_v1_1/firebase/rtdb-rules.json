@@ -1,0 +1,49 @@
+{
+  "rules": {
+    "vacuum": {
+      "mesh": {
+        ".read": "auth != null",
+        ".write": "auth != null && root.child('agents/'+auth.uid+'/role').val() == 'ALFA'"
+      },
+      "roi": {
+        ".read": "auth != null",
+        ".write": "auth != null && (root.child('agents/'+auth.uid+'/role').val() == 'RHO' || root.child('agents/'+auth.uid+'/role').val() == 'ALFA')",
+        "$roi_id": {
+          ".validate": "newData.hasChildren(['x', 'y', 'z', 'momentum'])"
+        }
+      },
+      "tasks": {
+        ".indexOn": ["priority", "timestamp"],
+        "pending": {
+          ".read": "auth != null",
+          ".write": "auth != null"
+        }
+      }
+    },
+    "environment": {
+      "phantoms": {
+        ".read": "auth != null",
+        ".write": "auth != null && root.child('agents/'+auth.uid+'/role').val() == 'RHO'",
+        "$phantom_id": {
+          ".validate": "newData.hasChildren(['x', 'y', 'z', 'momentum'])"
+        }
+      }
+    },
+    "genome": {
+      ".read": "auth != null",
+      ".write": "auth != null && root.child('agents/'+auth.uid+'/role').val() == 'IOTA'"
+    },
+    "agents": {
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "$uid === auth.uid"
+      }
+    },
+    "system": {
+      "handoff": {
+        ".read": "auth != null && root.child('agents').child(auth.uid).exists()",
+        ".write": "auth != null && (root.child('agents').child(auth.uid).child('container_id').val().matches(/^GAMMA/) || root.child('agents').child(auth.uid).child('container_id').val().matches(/^ALFA/))"
+      }
+    }
+  }
+}

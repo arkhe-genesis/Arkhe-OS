@@ -1,6 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'motion/react';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { Terminal, Cpu, Network, Database, Activity } from 'lucide-react';
+import { motion } from 'motion/react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface Node {
   x: number;
@@ -22,9 +29,9 @@ export default function GlobalCoherenceField({ onClose }: GlobalCoherenceFieldPr
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) {return;}
     const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    if (!ctx) {return;}
 
     // Initialize 64 Bio-nós (Upgraded from 50)
     const N = 64;
@@ -55,7 +62,7 @@ export default function GlobalCoherenceField({ onClose }: GlobalCoherenceFieldPr
         for (let j = 0; j < N; j++) {
           if (i !== j) {
             const dist = Math.hypot(node.x - nodes[j].x, node.y - nodes[j].y);
-            if (dist < 180) { 
+            if (dist < 180) {
               // Coupling is amplified by the memory coherence of the nodes
               const memMultiplier = (node.memoryLambda * nodes[j].memoryLambda) / 2.6;
               coupling += Math.sin(nodes[j].phase - node.phase) * memMultiplier;
@@ -65,7 +72,7 @@ export default function GlobalCoherenceField({ onClose }: GlobalCoherenceFieldPr
         const newPhase = node.phase + node.freq + (K / N) * coupling;
         sumSin += Math.sin(newPhase);
         sumCos += Math.cos(newPhase);
-        
+
         // Simulate memory allocations pulsing
         if (Math.random() < 0.01) {
           node.memoryLambda = Math.min(1.618, node.memoryLambda + 0.1);
@@ -83,10 +90,10 @@ export default function GlobalCoherenceField({ onClose }: GlobalCoherenceFieldPr
 
       // Calculate Order Parameter R
       const R = Math.sqrt(sumSin ** 2 + sumCos ** 2) / N;
-      const currentLambda = R * 1.6180339887; 
+      const currentLambda = R * 1.6180339887;
       setLambda2(currentLambda);
       setIsCoherent(currentLambda >= 1.61);
-      
+
       if (frameCount % 10 === 0) {
         setAllocCount(prev => prev + Math.floor(Math.random() * 5) + (currentLambda > 1.6 ? 15 : 2));
       }
@@ -119,7 +126,7 @@ export default function GlobalCoherenceField({ onClose }: GlobalCoherenceFieldPr
         const r = node.memoryLambda > 1.5 ? 255 : 0;
         const g = node.memoryLambda > 1.5 ? 215 : intensity + 50;
         const b = node.memoryLambda > 1.5 ? 0 : 255;
-        
+
         ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
         ctx.shadowBlur = 15;
         ctx.shadowColor = `rgba(${r}, ${g}, ${b}, 0.8)`;
@@ -135,7 +142,7 @@ export default function GlobalCoherenceField({ onClose }: GlobalCoherenceFieldPr
 
   return (
     <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 md:p-8 backdrop-blur-xl">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
@@ -184,13 +191,13 @@ export default function GlobalCoherenceField({ onClose }: GlobalCoherenceFieldPr
                 {lambda2.toFixed(6)}
               </div>
               <div className="w-full bg-gray-900 h-1.5 mt-2 rounded overflow-hidden">
-                <div 
+                <div
                   className={`h-full transition-all duration-300 ${isCoherent ? 'bg-amber-400' : 'bg-arkhe-cyan'}`}
                   style={{ width: `${Math.min(100, (lambda2 / 1.618033) * 100)}%` }}
                 />
               </div>
             </div>
-            
+
             <div className="bg-black/50 border border-arkhe-cyan/20 p-3 rounded">
               <div className="flex items-center gap-2 mb-1">
                 <Database className="w-4 h-4 text-arkhe-cyan/70" />
@@ -203,15 +210,15 @@ export default function GlobalCoherenceField({ onClose }: GlobalCoherenceFieldPr
           </div>
 
           <div className="mt-auto pt-4 border-t border-arkhe-cyan/20">
-            <button 
-              onClick={onClose} 
+            <button
+              onClick={onClose}
               className="w-full py-2 border border-arkhe-cyan/50 text-arkhe-cyan hover:bg-arkhe-cyan/10 font-mono text-sm tracking-widest transition-colors rounded"
             >
               [ CLOSE SHIELD ]
             </button>
           </div>
         </div>
-        
+
         {/* Main Canvas Area */}
         <div className="flex-1 p-0 relative bg-[#020202]">
           <div className="absolute top-4 left-4 z-10 pointer-events-none">
@@ -221,10 +228,10 @@ export default function GlobalCoherenceField({ onClose }: GlobalCoherenceFieldPr
               {'>'} GOLDEN NODES INDICATE HIGH MEMORY COHERENCE
             </div>
           </div>
-          <canvas 
-            ref={canvasRef} 
-            width={1200} 
-            height={800} 
+          <canvas
+            ref={canvasRef}
+            width={1200}
+            height={800}
             className="w-full h-full object-cover"
           />
         </div>

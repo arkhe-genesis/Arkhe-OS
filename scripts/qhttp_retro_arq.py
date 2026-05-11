@@ -4,7 +4,7 @@ Descrição: Handshake Temporal e Sincronização Bizantina (112/168)
 """
 
 import numpy as np
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 
 class RetrocausalARQ:
     def __init__(self, nodes=["Urca", "Flamengo"]):

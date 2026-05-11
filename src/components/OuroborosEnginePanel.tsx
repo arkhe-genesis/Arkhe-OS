@@ -1,6 +1,13 @@
-import React, { useState, useEffect } from 'react';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { X, Shield, Code, Terminal, Lock, Layers, Eye, Activity } from 'lucide-react';
 import { motion } from 'motion/react';
-import { X, Shield, Cpu, Code, Terminal, Lock, GitBranch, Layers, Eye, Activity } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 
 interface OuroborosEnginePanelProps {
   onClose: () => void;
@@ -21,7 +28,7 @@ if (typeof window !== 'undefined') {
     const customEvent = e as CustomEvent;
     const newFrame = customEvent.detail;
     globalCapturedFrames = [newFrame, ...globalCapturedFrames].slice(0, 4);
-    
+
     // Notify component if it's mounted
     window.dispatchEvent(new CustomEvent('ouroboros-frames-updated'));
   });
@@ -36,7 +43,7 @@ export default function OuroborosEnginePanel({ onClose }: OuroborosEnginePanelPr
     const handleFramesUpdated = () => {
       setCapturedFrames(globalCapturedFrames);
       setProcessingState('ANALYZING');
-      
+
       // Simulate processing
       setTimeout(() => setProcessingState('EXTRACTING_FEATURES'), 1000);
       setTimeout(() => setProcessingState('UPDATING_WEIGHTS'), 2000);
@@ -86,7 +93,7 @@ export default function OuroborosEnginePanel({ onClose }: OuroborosEnginePanelPr
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
@@ -116,10 +123,10 @@ export default function OuroborosEnginePanel({ onClose }: OuroborosEnginePanelPr
                 Polyglot Architecture
               </div>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {stack.map((tech, i) => (
-                <motion.div 
+                <motion.div
                   key={tech.lang}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -141,7 +148,7 @@ export default function OuroborosEnginePanel({ onClose }: OuroborosEnginePanelPr
                 <Lock className="w-4 h-4" />
                 Security Posture: Gödel Governor
               </h3>
-              
+
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-[10px] font-mono border-b border-white/5 pb-2">
                   <span className="text-arkhe-muted">Binary Stripping</span>
@@ -188,7 +195,7 @@ export default function OuroborosEnginePanel({ onClose }: OuroborosEnginePanelPr
               ) : (
                 <div className="grid grid-cols-2 gap-3 overflow-y-auto pr-2">
                   {capturedFrames.map((frame, idx) => (
-                    <motion.div 
+                    <motion.div
                       key={frame.timestamp}
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
@@ -201,13 +208,13 @@ export default function OuroborosEnginePanel({ onClose }: OuroborosEnginePanelPr
                       </div>
                       {idx === 0 && processingState !== 'IDLE' && (
                         <div className="absolute inset-0 bg-cyan-500/20 flex flex-col items-center justify-center p-2">
-                          <motion.div 
+                          <motion.div
                             initial={{ top: '0%' }}
                             animate={{ top: '100%' }}
                             transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
                             className="w-full h-0.5 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)] absolute left-0"
                           ></motion.div>
-                          
+
                           <div className="absolute top-2 left-2 right-2 flex flex-col gap-1">
                             {processingState === 'ANALYZING' && (
                               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[8px] font-mono text-cyan-300 bg-black/50 px-1 rounded">
@@ -258,17 +265,17 @@ export default function OuroborosEnginePanel({ onClose }: OuroborosEnginePanelPr
                   <div className="w-2.5 h-2.5 rounded-full bg-green-500/50"></div>
                 </div>
               </div>
-              
+
               <div className="flex-1 overflow-y-auto font-mono text-[10px] leading-relaxed space-y-1">
                 <div className="text-amber-400/50 mb-2">$ ./scripts/build_all.sh && ./scripts/strip_binaries.sh</div>
                 {buildLog.map((log, i) => (
-                  <motion.div 
+                  <motion.div
                     key={i}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     className={
-                      log?.includes('✅') ? 'text-emerald-400' : 
-                      log?.includes('strip') ? 'text-rose-400' : 
+                      log?.includes('✅') ? 'text-emerald-400' :
+                      log?.includes('strip') ? 'text-rose-400' :
                       'text-arkhe-muted'
                     }
                   >
@@ -276,7 +283,7 @@ export default function OuroborosEnginePanel({ onClose }: OuroborosEnginePanelPr
                   </motion.div>
                 ))}
                 {buildLog.length === 11 && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.5, repeat: Infinity, repeatType: "reverse", duration: 1 }}

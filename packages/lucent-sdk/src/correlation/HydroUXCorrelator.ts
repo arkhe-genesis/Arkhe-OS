@@ -1,4 +1,11 @@
-import { LucentCollector } from '../LucentCollector';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import type { SessionEvent } from '../LucentCollector';
 
 export interface HydroState {
   nodeId: string;
@@ -18,9 +25,7 @@ export interface CorrelationResult {
 export class HydroUXCorrelator {
   private history: CorrelationResult[] = [];
 
-  constructor() {}
-
-  async correlate(uxEvents: any[], hydroState: HydroState): Promise<CorrelationResult> {
+  async correlate(uxEvents: SessionEvent[], hydroState: HydroState): Promise<CorrelationResult> {
     // Calcula score de anomalia de UX (baseado em rage clicks, erros, etc.)
     const userAnomalyScore = this.calculateUserAnomaly(uxEvents);
 
@@ -52,14 +57,14 @@ export class HydroUXCorrelator {
     return result;
   }
 
-  private calculateUserAnomaly(events: any[]): number {
+  private calculateUserAnomaly(events: SessionEvent[]): number {
     let anomalySum = 0;
     let count = 0;
     for (const event of events) {
       if (event.type === 'error' || event.type === 'rage_click') {
         anomalySum += 1;
       }
-      if (event.metadata?.loadTime && event.metadata.loadTime > 3000) {
+      if (event.metadata?.loadTime && (event.metadata.loadTime as number) > 3000) {
         anomalySum += 0.5; // sessão lenta
       }
       count++;
@@ -67,10 +72,10 @@ export class HydroUXCorrelator {
     return count === 0 ? 0 : Math.min(1, anomalySum / count);
   }
 
-  private pearsonCorrelation(uxEvents: any[], hydroHistory: any[]): number {
+  private pearsonCorrelation(uxEvents: SessionEvent[], hydroHistory: HydroState['history']): number {
     // Simplificação para o motor LucentEngine
     // Implementação real exigiria alinhamento temporal fino
-    if (uxEvents.length === 0 || hydroHistory.length === 0) return 0;
+    if (uxEvents.length === 0 || hydroHistory.length === 0) {return 0;}
 
     // Simula cálculo de correlação baseado em tendências
     const uxTrend = uxEvents.filter(e => e.type === 'rage_click').length / uxEvents.length;

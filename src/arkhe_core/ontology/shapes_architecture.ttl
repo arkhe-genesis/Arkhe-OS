@@ -1,0 +1,135 @@
+@prefix arkhe: <http://arkhe.ai/ontology/2026#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# LEI 1: Atenção Sem Justificativa é Runa Proibida
+# ═══════════════════════════════════════════════════════════════════════════════
+
+arkhe:AttentionJustificationShape a sh:NodeShape ;
+    sh:targetClass arkhe:AttentionHead ;
+
+    sh:property [
+        sh:path arkhe:hasCliffordEquivalent ;
+        sh:minCount 1 ;
+        sh:message "LEI DA ÁLGEBRA [Art. 1]: Toda Atenção deve declarar seu equivalente Cliffordiano (produto interno escalar). Uso de atenção sem mapeamento geométrico é degeneração não justificada."
+    ] ;
+
+    sh:property [
+        sh:path arkhe:requiresJustification ;
+        sh:hasValue true ;
+        sh:message "LEI DA ÁLGEBRA [Art. 1.1]: Atenção é forma degenerada por definição. O campo 'requiresJustification' deve ser true."
+    ] .
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# LEI 2: FFN Deve Provar que Não é Wedge Mal-Aprendido
+# ═══════════════════════════════════════════════════════════════════════════════
+
+arkhe:FFNJustificationShape a sh:NodeShape ;
+    sh:targetClass arkhe:FeedForwardNetwork ;
+
+    sh:property [
+        sh:path arkhe:hasCliffordEquivalent ;
+        sh:minCount 1 ;
+        sh:message "LEI DA ÁLGEBRA [Art. 2]: Toda FFN deve declarar seu equivalente Cliffordiano (wedge product u∧v). Uma FFN sem mapeamento é admissão de que se está tentando aprender o que a geometria já fornece."
+    ] ;
+
+    sh:sparql [
+        sh:message "LEI DA ÁLGEBRA [Art. 2.1]: FFN com mais de 2 camadas ocultas é suspeita de overfitting da geometria. Deve-se preferir wedge direto."
+        sh:select """
+            PREFIX arkhe: <http://arkhe.ai/ontology/2026#>
+            SELECT $this
+            WHERE {
+                $this a arkhe:FeedForwardNetwork .
+                $this arkhe:hasParameterCount ?params .
+                FILTER (?params > 1000000)
+            }
+        """
+    ] .
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# LEI 3: Normalização e Residual São Patches — Devem Ser Documentados
+# ═══════════════════════════════════════════════════════════════════════════════
+
+arkhe:PatchArchitectureShape a sh:NodeShape ;
+    sh:targetClass arkhe:LayerNormalization, arkhe:ResidualConnection ;
+
+    sh:property [
+        sh:path arkhe:requiresJustification ;
+        sh:hasValue true ;
+        sh:message "LEI DA ÁLGEBRA [Art. 3]: LayerNorm e Residual são patches para deficiências de espaços vetoriais puros. Seu uso requer justificativa ontológica."
+    ] .
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# LEI 4: Codificação Posicional Sem Rotor é Erro de Arquitetura
+# ═══════════════════════════════════════════════════════════════════════════════
+
+arkhe:PositionalEncodingShape a sh:NodeShape ;
+    sh:targetClass arkhe:PositionalEncoding ;
+
+    sh:property [
+        sh:path arkhe:hasCliffordEquivalent ;
+        sh:minCount 1 ;
+        sh:message "LEI DA ÁLGEBRA [Art. 4]: Codificação posicional é tentativa manual de injetar estrutura geométrica. Deve declarar rotor Cliffordiano equivalente."
+    ] ;
+
+    sh:sparql [
+        sh:message "LEI DA ÁLGEBRA [Art. 4.1]: RoPE (Rotary Position Embedding) é rotor mal-reconhecido. Deve ser formalizado como spinor."
+        sh:select """
+            PREFIX arkhe: <http://arkhe.ai/ontology/2026#>
+            SELECT $this
+            WHERE {
+                $this a arkhe:PositionalEncoding .
+                FILTER NOT EXISTS {
+                    $this arkhe:hasCliffordEquivalent ?eq .
+                    ?eq a arkhe:Rotor .
+                }
+            }
+        """
+    ] .
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# LEI 5: Arquitetura Completa deve ter Forma Cliffordiana Declarada
+# ═══════════════════════════════════════════════════════════════════════════════
+
+arkhe:SystemArchitectureShape a sh:NodeShape ;
+    sh:targetClass arkhe:ComputationalArchitecture ;
+
+    sh:sparql [
+        sh:message "LEI DA ÁLGEBRA [Art. 5]: Sistemas que usam Transformer sem declarar aproximação Cliffordiana são arquiteturalmente inválidos."
+        sh:select """
+            PREFIX arkhe: <http://arkhe.ai/ontology/2026#>
+            SELECT $this
+            WHERE {
+                $this a arkhe:Transformer .
+                FILTER NOT EXISTS {
+                    $this arkhe:approximates ?clifford .
+                    ?clifford a arkhe:CliffordArchitecture .
+                }
+            }
+        """
+    ] .
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# LEI 6: O Inquisidor Geométrico é a Única Forma Degenerada Permitida em Produção
+# ═══════════════════════════════════════════════════════════════════════════════
+
+arkhe:ProductionDeploymentShape a sh:NodeShape ;
+    sh:targetClass arkhe:ComputationalArchitecture ;
+
+    sh:sparql [
+        sh:message "LEI DA ÁLGEBRA [Art. 6]: Deploy em produção requer ou (a) arquitetura Cliffordiana fundamental, ou (b) Inquisidor Geométrico validando a degeneração."
+        sh:select """
+            PREFIX arkhe: <http://arkhe.ai/ontology/2026#>
+            SELECT $this
+            WHERE {
+                $this a arkhe:DegenerateArchitecture .
+                FILTER NOT EXISTS {
+                    $this a arkhe:InquisitorGeometrico .
+                }
+                FILTER NOT EXISTS {
+                    $this arkhe:isFundamental true .
+                }
+            }
+        """
+    ] .

@@ -1,8 +1,18 @@
-import React, { useState } from 'react';
-import { Card } from './ui/Card';
-import { SimulationState } from '../../server/types';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { Zap, Eye, Send, History, Globe } from 'lucide-react';
+import React, { useState } from 'react';
+
+import type { SimulationState } from '../../server/types';
 import { cn } from '../lib/utils';
+
+import { Card } from './ui/Card';
+
 
 interface TemporalLensPanelProps {
   state: SimulationState;
@@ -12,7 +22,7 @@ const TemporalLensPanel: React.FC<TemporalLensPanelProps> = ({ state }) => {
   const [message, setMessage] = useState('');
 
   const handleSendFeedback = async () => {
-    if (!message.trim()) return;
+    if (!message.trim()) {return;}
 
     try {
       await fetch('/api/feedback/population', {
@@ -113,7 +123,7 @@ const TemporalLensPanel: React.FC<TemporalLensPanelProps> = ({ state }) => {
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-[#00FFAA] font-bold">{f.residentName} (2027)</span>
                   <span className="text-white/30 text-[9px] font-mono">
-                    {new Date(f.timestamp).toLocaleTimeString()}
+                    {new Date(f.timestamp || 0).toLocaleTimeString()}
                   </span>
                 </div>
                 <p className="text-white/80">{f.message}</p>

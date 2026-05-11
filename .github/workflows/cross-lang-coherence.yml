@@ -1,0 +1,62 @@
+# .github/workflows/cross-lang-coherence.yml
+name: Cross-Language Coherence Aggregation
+on: [push, pull_request]
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  aggregate:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        lang: [python, typescript, rust, go]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup ${{ matrix.lang }}
+        uses: actions/setup-${{ matrix.lang }}@v4
+        with: { version: 'latest' }
+
+      - name: Run tests and collect metrics
+        run: |
+          case "${{ matrix.lang }}" in
+            python) pip install -e .[test]; pytest tests/ --arkhe --json > pytest.json ;;
+            typescript) npm install; npm test -- --json > jest.json ;;
+            rust) cargo test --message-format=json > cargo.json ;;
+            go) go test ./... -json > go.json ;;
+          esac
+
+      - name: Upload raw metrics
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.lang }}-metrics
+          path: "*.json"
+
+  aggregate-final:
+    needs: aggregate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download all metrics
+        uses: actions/download-artifact@v4
+        with: { path: ./metrics }
+
+      - name: Aggregate cross-lang coherence
+        run: |
+          python -m arkhe_os.coherence.cross_lang_aggregator \
+            --node-id ${{ github.run_id }} \
+            --hypermesh-endpoint ${{ secrets.ARKHE_HYPERMESH }} \
+            --ingest python ./metrics/python-metrics/pytest.json \
+            --ingest typescript ./metrics/typescript-metrics/jest.json \
+            --ingest rust ./metrics/rust-metrics/cargo.json \
+            --ingest go ./metrics/go-metrics/go.json \
+            --submit
+
+      - name: Fail if global coherence below threshold
+        run: |
+          phi=$(jq -r '.global_phi_c' .arkhe/cross_lang_reports/*.json | tail -1)
+          if (( $(echo "$phi < 0.85" | bc -l) )); then
+            echo "❌ Global Φ_C=$phi below threshold 0.85"
+            exit 1
+          fi

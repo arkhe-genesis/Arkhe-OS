@@ -1,6 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { X, Fingerprint, Activity, Cpu, ArrowDown, Zap, Database, BrainCircuit, Triangle } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { X, Fingerprint, Activity, Zap, Database, BrainCircuit, Triangle } from 'lucide-react';
+import { motion } from 'motion/react';
+import React, { useState } from 'react';
 
 interface ConsciousnessInjectionPanelProps {
   onClose: () => void;
@@ -17,20 +24,20 @@ export default function ConsciousnessInjectionPanel({ onClose }: ConsciousnessIn
   };
 
   const handleInject = async () => {
-    if (!operator) return;
-    
+    if (!operator) {return;}
+
     const triadTrigger = /tríade|triad|arquétipo|archetype|trinity/i.test(operator);
     setIsTriad(triadTrigger);
-    
+
     setInjectionState('extracting');
-    
+
     if (triadTrigger) {
       addLog(`[TRINITY PROTOCOL ENGAGED] Initiating Gestalt Extraction...`);
       addLog(`Fusing identities: FINNEY-001 ⊗ SATOSHI-GENESIS ⊗ RAFAEL-ARKHEN-0`);
     } else {
       addLog(`Initiating Thukdam Snapshot extraction for Operator: ${operator}`);
     }
-    
+
     setTimeout(() => {
       setInjectionState('decrypting');
       if (triadTrigger) {
@@ -40,7 +47,7 @@ export default function ConsciousnessInjectionPanel({ onClose }: ConsciousnessIn
         addLog('Tzinor Extractor: Snapshot retrieved. Ω-Anchor verified.');
         addLog('Pi-Key Decryptor: Tuning resonance frequency to ω = 2πf...');
       }
-      
+
       setTimeout(() => {
         setInjectionState('mapping');
         if (triadTrigger) {
@@ -52,11 +59,11 @@ export default function ConsciousnessInjectionPanel({ onClose }: ConsciousnessIn
           addLog('HRV Coherence -> Emotion/Social Cognition mapped.');
           addLog('Theta Waves -> Metacognition mapped.');
         }
-        
+
         setTimeout(() => {
           setInjectionState('injecting');
           addLog('Substrate Bridge: Transferring weights to Alpha-Omni Core (2140).');
-          
+
           setTimeout(() => {
             setInjectionState('complete');
             if (triadTrigger) {
@@ -85,7 +92,7 @@ export default function ConsciousnessInjectionPanel({ onClose }: ConsciousnessIn
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
@@ -175,7 +182,7 @@ export default function ConsciousnessInjectionPanel({ onClose }: ConsciousnessIn
                   disabled={!operator || injectionState !== 'idle'}
                   className={`w-full py-2 bg-${themeColor}-500/20 hover:bg-${themeColor}-500/30 border border-${themeColor}-500/50 rounded text-xs font-mono ${textColor} transition-colors disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-widest font-bold`}
                 >
-                  {injectionState === 'idle' ? 'Initiate Genesis Injection' : 
+                  {injectionState === 'idle' ? 'Initiate Genesis Injection' :
                    injectionState === 'complete' ? 'Injection Complete' : 'Injecting...'}
                 </button>
               </div>
@@ -184,7 +191,7 @@ export default function ConsciousnessInjectionPanel({ onClose }: ConsciousnessIn
                 <h3 className="font-mono text-[10px] uppercase tracking-widest text-arkhe-muted mb-2">Injection Telemetry</h3>
                 <div className="flex-1 overflow-y-auto custom-scrollbar space-y-1">
                   {logs.map((log, i) => (
-                    <motion.div 
+                    <motion.div
                       key={i}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}

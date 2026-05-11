@@ -1,0 +1,263 @@
+;; royalty_distribution.casi — Contrato .casi para distribuição de royalties
+;; Substrate 5010: ASI-IPTV Advanced Modules
+
+(contract
+  (name "RoyaltyDistributionEngine")
+  (version "1.0.0")
+  (author "ARKHE OS Collective")
+
+  ;; ─── ESTADO DO CONTRATO ─────────────────────────────
+  (state
+    ;; Pool de royalties disponível para distribuição
+    (royalty_pool: float = 0.0)
+
+    ;; Mapeamento: stream_id → metadata do conteúdo
+    (streams: map<string, StreamMetadata>)
+
+    ;; Mapeamento: viewer_seal → sessão de visualização
+    (sessions: map<string, ViewSession>)
+
+    ;; Mapeamento: creator_id → royalties acumulados
+    (creator_balances: map<string, float>)
+
+    ;; Parâmetros de distribuição
+    (params: DistributionParams)
+  )
+
+  ;; ─── TIPOS DE DADOS ─────────────────────────────────
+  (type StreamMetadata
+    (creator_id: string)
+    (coherence_score: float)      ;; Φ_C do conteúdo
+    (risk_score: float)           ;; Φ_RISK do conteúdo
+    (duration_seconds: int)
+    (start_timestamp: float)
+    (category: string)
+  )
+
+  (type ViewSession
+    (viewer_seal: string)
+    (stream_id: string)
+    (start_time: float)
+    (end_time: float)
+    (kym_verified: bool)
+    (viewer_weight: float)        ;; Peso baseado em KYM
+    (coherence_contribution: float)
+  )
+
+  (type DistributionParams
+    (base_rate: float = 0.01)     ;; Tokens por segundo de visualização
+    (kym_weight: float = 0.3)     ;; Peso da verificação KYM
+    (coherence_bonus: float = 0.2) ;; Bônus por alta coerência
+    (risk_penalty: float = 0.15)   ;; Penalidade por alto risco
+    (min_watch_time: int = 30)     ;; Tempo mínimo para contar como view
+  )
+
+  ;; ─── FUNÇÕES PRINCIPAIS ────────────────────────────
+
+  ;; Registrar novo stream para distribuição de royalties
+  (func register_stream
+    (stream_id: string)
+    (metadata: StreamMetadata)
+    (creator_signature: string)
+
+    ;; Verificar assinatura do criador
+    (require (verify_signature creator_signature metadata.creator_id))
+
+    ;; Verificar coerência mínima do conteúdo
+    (require (>= metadata.coherence_score 0.7)
+      :error "Coerência do conteúdo abaixo do mínimo")
+
+    ;; Armazenar metadata do stream
+    (set (streams stream_id) metadata)
+
+    ;; Emitir evento para auditoria
+    (emit :event StreamRegistered
+      :data {:stream_id stream_id :creator metadata.creator_id})
+
+    :result {:status "registered" :stream_id stream_id}
+  )
+
+  ;; Iniciar sessão de visualização
+  (func start_viewing_session
+    (viewer_seal: string)
+    (stream_id: string)
+    (kym_proof: KYMProof)
+
+    ;; Verificar stream existe
+    (require (contains streams stream_id)
+      :error "Stream não encontrado")
+
+    ;; Verificar viewer via KYM
+    (let ((kym_result (verify_kym_proof viewer_seal kym_proof)))
+      (require kym_result.verified
+        :error "Verificação KYM falhou")
+
+      ;; Calcular peso do viewer
+      (let ((viewer_weight (calculate_viewer_weight kym_result)))
+
+        ;; Criar nova sessão
+        (let ((session (ViewSession
+          :viewer_seal viewer_seal
+          :stream_id stream_id
+          :start_time (current_timestamp)
+          :end_time null
+          :kym_verified true
+          :viewer_weight viewer_weight
+          :coherence_contribution 0.0)))
+
+          ;; Armazenar sessão
+          (set (sessions (session_key viewer_seal stream_id)) session)
+
+          :result {:session_id (session_key viewer_seal stream_id)
+                   :viewer_weight viewer_weight})))
+  )
+
+  ;; Encerrar sessão e calcular royalties
+  (func end_viewing_session
+    (viewer_seal: string)
+    (stream_id: string)
+    (watch_duration: int)  ;; em segundos
+
+    (let ((session_key (session_key viewer_seal stream_id)))
+      (require (contains sessions session_key)
+        :error "Sessão não encontrada")
+
+      (let ((session (get sessions session_key))
+            (stream (get streams stream_id)))
+
+        ;; Verificar tempo mínimo de visualização
+        (require (>= watch_duration params.min_watch_time)
+          :error "Tempo de visualização insuficiente")
+
+        ;; Calcular contribuição de coerência
+        (let ((coh_contrib (* stream.coherence_score
+                            (- 1.0 (* params.risk_penalty stream.risk_score)))))
+
+          ;; Calcular royalty para esta sessão
+          (let ((royalty (* params.base_rate
+                          (/ watch_duration stream.duration_seconds)
+                          session.viewer_weight
+                          (+ 1.0 (* params.coherence_bonus coh_contrib)))))
+
+            ;; Atualizar sessão
+            (set session.end_time (current_timestamp))
+            (set session.coherence_contribution coh_contrib)
+            (set (sessions session_key) session)
+
+            ;; Adicionar ao balance do criador
+            (let ((current_balance (get creator_balances stream.creator_id 0.0)))
+              (set (creator_balances stream.creator_id)
+                   (+ current_balance royalty)))
+
+            ;; Emitir evento de distribuição
+            (emit :event RoyaltyDistributed
+              :data {:viewer viewer_seal
+                     :creator stream.creator_id
+                     :amount royalty
+                     :coherence coh_contrib
+                     :timestamp (current_timestamp)})
+
+            :result {:royalty royalty
+                     :new_balance (get creator_balances stream.creator_id)})))))
+
+  ;; Função auxiliar: calcular peso do viewer baseado em KYM
+  (func calculate_viewer_weight
+    (kym_result: KYMResult)
+
+    ;; Peso base: 1.0 - phi_risk (menor risco = maior peso)
+    (let ((base_weight (- 1.0 kym_result.phi_risk)))
+
+      ;; Bônus por verificação humana
+      (let ((human_bonus (if kym_result.is_human 0.2 0.0)))
+
+        ;; Bônus por reputação do viewer
+        (let ((rep_bonus (* 0.1 kym_result.phi_rep)))
+
+          ;; Peso final com limites
+          (min 2.0 (max 0.1 (+ base_weight human_bonus rep_bonus)))))))
+
+  ;; Função auxiliar: chave única para sessão
+  (func session_key
+    (viewer: string)
+    (stream: string)
+    :result (hash (concat viewer ":" stream)))
+
+  ;; ─── FUNÇÕES DE CONSULTA ───────────────────────────
+
+  ;; Consultar balance de um criador
+  (func query_creator_balance
+    (creator_id: string)
+    :result (get creator_balances creator_id 0.0))
+
+  ;; Consultar estatísticas de um stream
+  (func query_stream_stats
+    (stream_id: string)
+
+    (let ((stream (get streams stream_id))
+          (sessions_data (filter sessions
+                          (fn (s) (= (val s).stream_id stream_id)))))
+
+      :result {:metadata stream
+               :total_views (length sessions_data)
+               :avg_watch_time (avg (map sessions_data (fn (s)
+                                    (- (val s).end_time (val s).start_time))))
+               :total_royalties (sum (map sessions_data
+                                    (fn (s) (* (val s).viewer_weight
+                                              (val s).coherence_contribution))))}))
+
+  ;; ─── FUNÇÕES ADMINISTRATIVAS ───────────────────────
+
+  ;; Adicionar fundos ao pool de royalties
+  (func fund_royalty_pool
+    (amount: float)
+    (funder_signature: string)
+
+    (require (verify_signature funder_signature "treasury"))
+    (set royalty_pool (+ royalty_pool amount))
+
+    :result {:new_pool royalty_pool})
+
+  ;; Distribuir royalties do pool para criadores
+  (func distribute_pool
+    ()
+
+    ;; Calcular total de royalties pendentes
+    (let ((total_pending (sum (vals creator_balances))))
+
+      (if (> total_pending 0)
+        ;; Distribuir proporcionalmente
+        (for-each creator_balances
+          (fn (entry)
+            (let ((creator (key entry))
+                  (balance (val entry))
+                  ;; Proporção do pool para este criador
+                  (share (* royalty_pool (/ balance total_pending))))
+
+              ;; Transferir tokens (simulado)
+              (transfer_tokens creator share)
+
+              ;; Zerar balance após distribuição
+              (set (creator_balances creator) 0.0))))
+
+        :result {:distributed total_pending
+                 :remaining_pool royalty_pool})))
+
+  ;; ─── REGRAS DE VALIDAÇÃO (invariantes) ─────────────
+
+  (invariant
+    ;; Coerência do stream deve estar em [0, 1]
+    (for-each (vals streams)
+      (fn (s) (and (>= s.coherence_score 0.0)
+                   (<= s.coherence_score 1.0)))))
+
+  (invariant
+    ;; Peso do viewer deve estar em [0.1, 2.0]
+    (for-each (vals sessions)
+      (fn (s) (and (>= s.viewer_weight 0.1)
+                   (<= s.viewer_weight 2.0)))))
+
+  (invariant
+    ;; Royalties não podem ser negativos
+    (for-each (vals creator_balances)
+      (fn (b) (>= b 0.0))))
+)

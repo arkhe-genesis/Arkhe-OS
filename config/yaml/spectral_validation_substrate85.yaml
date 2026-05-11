@@ -1,0 +1,19 @@
+spectral_validation:
+  substrate: '85'  # PMMA vortex spectrometer
+  material_stack: ['air', 'PMMA']  # Interface sequence
+  wavelength_range: [0.45, 0.65]  # μm: visible range for Substrate 85
+  wavelength_samples: 11  # 450, 470, ..., 650 nm
+
+  fixed_parameters:
+    numerical_aperture: 0.35
+    focal_length: 2.5e-3  # 2.5 mm
+    incident_angle: [0.01, 0.0]
+
+  observables:
+    - peak_position
+    - spectral_width_fwhm
+    - spatial_coherence
+
+  comparison:
+    experimental_data: 'config/experimental_data_substrate85_spectral.json'
+    metrics: ['chi2_dof', 'p_value', 'residual_sigma', 'wavelength_dependence_slope']

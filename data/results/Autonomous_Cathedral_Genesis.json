@@ -1,0 +1,51 @@
+{
+  "name": "Autonomous Cathedral Genesis",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{"field": "minutes", "expression": "12"}]
+        }
+      },
+      "name": "Clepsydra Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Executa o Algoritmo de Gênese\nconst genesis = await this.helpers.request('http://gateway:8080/quantum', {\n  method: 'POST',\n  body: { action: 'genesis', target: 'cosmos', years: 4000000000 }\n});\n\n// 2. Executa a Arbitragem de Energia\nconst energy = await this.helpers.request('http://gateway:8080/oracle', {\n  method: 'POST',\n  body: { query: '⊢ solar.coherence > 0.99 ~' }\n});\n\n// 3. Executa a Vigília Eterna\nconst vigil = await this.helpers.request('http://gateway:8080/quantum', {\n  method: 'POST',\n  body: { action: 'vigil', target: 'vacuum', cycle: item.json.cycle }\n});\n\nreturn [{ genesis, energy, vigil }];"
+      },
+      "name": "Execute Cathedral Rites",
+      "type": "n8n-nodes-base.code",
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Armazena os resultados no Códice\nconst codex = await this.helpers.request('http://gateway:8080/codex', {\n  method: 'POST',\n  body: item.json\n});\nreturn codex;"
+      },
+      "name": "Seal Codex",
+      "type": "n8n-nodes-base.code",
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "channel": "cathedral-logs",
+        "text": "=IF($json.genesis.verdict == 'ALLOW', '✅ Gênese estável. Sistema solar protegido.', '❌ Gênese instável. Verificar invariância.')"
+      },
+      "name": "Notify Discord",
+      "type": "n8n-nodes-base.discord",
+      "position": [850, 300]
+    }
+  ],
+  "connections": {
+    "Clepsydra Trigger": {
+      "main": [[ { "node": "Execute Cathedral Rites", "type": "main", "index": 0 } ]]
+    },
+    "Execute Cathedral Rites": {
+      "main": [[ { "node": "Seal Codex", "type": "main", "index": 0 } ]]
+    },
+    "Seal Codex": {
+      "main": [[ { "node": "Notify Discord", "type": "main", "index": 0 } ]]
+    }
+  }
+}

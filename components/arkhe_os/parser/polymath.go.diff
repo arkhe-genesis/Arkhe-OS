@@ -1,0 +1,9 @@
+<<<<<<< SEARCH
+package arkhe
+
+import (
+=======
+package parser
+
+import (
+>>>>>>> REPLACE

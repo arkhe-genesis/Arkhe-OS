@@ -1,0 +1,7 @@
+{
+  "throughput_bps": 20000,
+  "informational_entropy": 0.001,
+  "accuracy": 0.9999,
+  "lambda2": 0.998,
+  "thermal_heat_joules": 5.0
+}

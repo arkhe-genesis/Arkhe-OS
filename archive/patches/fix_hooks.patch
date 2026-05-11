@@ -1,0 +1,6 @@
+--- src/hooks/useArkheSimulation.ts
++++ src/hooks/useArkheSimulation.ts
+@@ -6,2 +6,2 @@
+
+-export function useArkheSimulation() { return {}; }
++export function useArkheSimulation(): any { return {}; }

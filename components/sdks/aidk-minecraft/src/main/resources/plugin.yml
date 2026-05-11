@@ -1,0 +1,11 @@
+name: ArkheMinecraftPlugin
+version: 1.0
+main: com.arkhe.aidk.ArkheMinecraftPlugin
+api-version: 1.20
+commands:
+  arkhe:
+    description: Arkhe Management Command
+permissions:
+  arkhe.admin:
+    description: Allows administrative access to Arkhe features
+    default: op

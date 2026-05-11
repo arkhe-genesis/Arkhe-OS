@@ -1,6 +1,13 @@
-import React from 'react';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { X, Layers, GitBranch, Box, Cpu, Scale, Lightbulb } from 'lucide-react';
 import { motion } from 'motion/react';
+import React from 'react';
 
 interface MultiversalExpansionPanelProps {
   onClose: () => void;
@@ -9,7 +16,7 @@ interface MultiversalExpansionPanelProps {
 export default function MultiversalExpansionPanel({ onClose }: MultiversalExpansionPanelProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.arkhe.cathedral">
+
+    <!-- Permissões essenciais -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <!-- Permissões para comunicação interestelar simulada -->
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.NEARBY_WIFI_DEVICES" />
+
+    <!-- TEE / StrongBox requer Android 9+ -->
+    <uses-sdk android:minSdkVersion="28" android:targetSdkVersion="34" />
+
+    <application
+        android:name=".ArkheApplication"
+        android:allowBackup="false"
+        android:usesCleartextTraffic="false"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:hardwareAccelerated="true"
+        android:label="@string/app_name"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round">
+        android:hardwareAccelerated="true"
+        android:label="Arkhe OS">
+
+        <!-- Configuração de segurança -->
+        <meta-data
+            android:name="arkhe.tee.enabled"
+            android:value="true" />
+        <meta-data
+            android:name="arkhe.offline.mode"
+            android:value="lazy_sync" />
+
+        <!-- Service para sincronização em background -->
+        <service
+            android:name=".service.InterstellarSyncService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
+        <!-- Receiver para boot completion (inicialização automática) -->
+        <receiver
+            android:name=".receiver.BootReceiver"
+            android:exported="true"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Provider para compartilhamento seguro de arquivos -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+</manifest>
+        </provider>
+    </application>
+</manifest>

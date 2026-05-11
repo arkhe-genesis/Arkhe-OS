@@ -1,9 +1,16 @@
-import React, { useState, useEffect } from 'react';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { Cpu, Zap, Activity, BarChart3, Binary, Shield, X, Microscope } from 'lucide-react';
 import { motion } from 'motion/react';
+import React, { useState, useEffect } from 'react';
 
 export default function QubitPipelinePanel({ onClose }: { onClose: () => void }) {
-  const [step, setStep] = useState(1);
+  const step = 3;
   const [metrics, setMetrics] = useState({
     t2_star: 45.2,
     t2: 120.5,

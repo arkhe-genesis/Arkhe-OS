@@ -1,5 +1,12 @@
-import React, { useState, useEffect } from 'react';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { Network, Cpu, Database, Activity, GitBranch, Terminal } from 'lucide-react';
+import React, { useState } from 'react';
 
 interface EcosystemNode {
   id: string;
@@ -25,10 +32,10 @@ export default function OrchestrationLayerPanel({ onClose }: { onClose: () => vo
   const activateOrchestration = () => {
     setIsOrchestrating(true);
     setLogs(prev => [...prev, '> Initiating Orchestration Layer...']);
-    
+
     setTimeout(() => {
       setLogs(prev => [...prev, '> Broadcasting connection protocol to awesome-opensource-ai ecosystem...']);
-      
+
       const newNodes = [...nodes];
       newNodes.forEach(node => {
         if (node.status !== 'active') {
@@ -98,8 +105,8 @@ export default function OrchestrationLayerPanel({ onClose }: { onClose: () => vo
                 ))}
               </div>
             </div>
-            
-            <button 
+
+            <button
               onClick={activateOrchestration}
               disabled={isOrchestrating}
               className={`w-full py-3 rounded uppercase tracking-widest font-bold transition-all ${isOrchestrating ? 'bg-arkhe-cyan/20 text-arkhe-cyan border border-arkhe-cyan/50 cursor-not-allowed' : 'bg-arkhe-cyan text-black hover:bg-arkhe-cyan/80 shadow-[0_0_15px_rgba(0,255,170,0.3)]'}`}

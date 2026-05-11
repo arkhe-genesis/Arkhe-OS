@@ -1,0 +1,7 @@
+FROM python:3.11-slim
+WORKDIR /app
+RUN pip install --no-cache-dir redis
+COPY sensorium/sensorium_core.py ./sensorium/
+COPY collectors/covm_fuse_engine.py .
+ENV PYTHONPATH=/app
+CMD ["python3", "covm_fuse_engine.py"]

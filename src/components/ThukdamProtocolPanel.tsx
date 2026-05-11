@@ -1,6 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { X, Activity, Heart, Brain, Fingerprint, Lock, RadioReceiver } from 'lucide-react';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { X, Activity, Heart, Brain,  Lock, RadioReceiver } from 'lucide-react';
 import { motion } from 'motion/react';
+import React, { useState, useEffect } from 'react';
 
 interface ThukdamProtocolPanelProps {
   onClose: () => void;
@@ -18,7 +25,7 @@ export default function ThukdamProtocolPanel({ onClose }: ThukdamProtocolPanelPr
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}

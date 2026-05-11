@@ -1,0 +1,5 @@
+parameters:
+  q: 2
+  g: 5.0
+  lp: 1.0
+  Nf: 2

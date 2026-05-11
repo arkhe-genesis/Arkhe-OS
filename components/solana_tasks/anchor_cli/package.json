@@ -1,0 +1,14 @@
+{
+  "name": "anchor_cli",
+  "version": "1.0.0",
+  "description": "Scaffolds new Anchor programs",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0"
+  }
+}

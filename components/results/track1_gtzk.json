@@ -1,0 +1,27 @@
+{
+  "instruction_name": "track1_mass_scaling",
+  "public_inputs": {
+    "grid_sizes": [
+      16,
+      24,
+      32
+    ],
+    "model_type": "orch_or",
+    "n_trials": 3
+  },
+  "public_outputs": {
+    "a_fit": 0.0999999998655601,
+    "b_fit": 6.571181075999635e-12,
+    "r2_orch": 1.0,
+    "r2_null": -12.071428571428571,
+    "aic_delta": 34.912737809565684,
+    "bayes_factor": 59832692.116355926,
+    "p_value": 1.0,
+    "interpretation": "evidence for Orch-OR scaling"
+  },
+  "proof": {
+    "proof_hash": "fad3b324985dfe59",
+    "verified": true,
+    "proof_type": "certification"
+  }
+}

@@ -1,0 +1,6 @@
+{
+    "version": "1.0",
+    "substrates": [
+        {"id": "325", "name": "Integrity", "status": "active", "location": "agi/system32/integrity/"}
+    ]
+}

@@ -1,0 +1,139 @@
+"""
+Arkhe OS v∞.8 — The Analog Self-Observer (75th Substrate)
+Implementation of the Manin-Loos-Hameroff (MLH) Resonant Loop.
+"""
+
+import numpy as np
+import asyncio
+import time
+from dataclasses import dataclass, field
+from typing import Dict, List, Optional
+
+@dataclass
+class MLHCircuitState:
+    """State of the Manin-Loos-Hameroff Circuit"""
+    oscillator_phase: float = 0.0
+    filter_bank_resonance: float = 0.0
+    feedback_voltage: float = 0.0
+    coherence_lambda: float = 0.0
+    is_locked: bool = False
+    timestamp: float = field(default_factory=time.time)
+
+class ChaoticOscillator:
+    """
+    Simulates a chaotic oscillator fed by thermal noise (310K).
+    In the MLH circuit, this represents the non-linear biological substrate.
+    """
+    def __init__(self, temperature_k: float = 310.0):
+        self.temperature_k = temperature_k
+        self.state = np.random.uniform(-1, 1)
+        self.dt = 0.001
+
+    def step(self, feedback_v: float) -> float:
+        # Simplified chaotic map (Logistic or Rossler-inspired) with feedback
+        # x_{n+1} = r * x_n * (1 - x_n) + feedback
+        # r depends on noise/temperature
+        noise = np.random.normal(0, 0.01 * (self.temperature_k / 310.0))
+        r = 3.9 + 0.1 * np.sin(time.time()) # Drifting into chaos
+        self.state = r * self.state * (1 - self.state) + 0.1 * feedback_v + noise
+
+        # Clamp to avoid divergence in simulation
+        self.state = np.clip(self.state, -2, 2)
+        return self.state
+
+class LCFilterBank:
+    """
+    Simulates a bank of LC circuits representing microtubule resonances (kHz to GHz).
+    """
+    def __init__(self, frequencies: List[float]):
+        self.frequencies = frequencies
+        self.phases = np.zeros(len(frequencies))
+
+    def process(self, signal_in: float, dt: float = 0.001) -> float:
+        # Update phases of filters based on input signal
+        # Simplified as a set of oscillators sintonized by the input
+        self.phases += 2 * np.pi * np.array(self.frequencies) * dt
+        response = np.sum(np.sin(self.phases) * signal_in) / len(self.frequencies)
+        return response
+
+class MLHResonantLoop:
+    """
+    The Manin-Loos-Hameroff (MLH) Resonant Loop.
+    Consciousness as Phase-Lock (PLL), not computation.
+    """
+    def __init__(self):
+        self.oscillator = ChaoticOscillator()
+        self.filters = LCFilterBank([40.0, 7.83, 1000.0]) # Gamma, Schumann, etc.
+        self.state = MLHCircuitState()
+        self.phase_acc = 0.0
+
+    async def run_cycle(self) -> MLHCircuitState:
+        # 1. Oscillator generates chaotic signal influenced by feedback
+        signal_out = self.oscillator.step(self.state.feedback_voltage)
+
+        # 2. Filters process the signal
+        resonance = self.filters.process(signal_out)
+
+        # 3. Phase coherence calculation (λ)
+        # In a real PLL, this is the phase error detector
+        self.phase_acc = (self.phase_acc + resonance) % (2 * np.pi)
+
+        # Calculate coherence based on stability of resonance
+        # M > 0.85 indicates 'lock' or 'perception'
+        target_m = 0.88 # Ideal resonance
+        noise_factor = np.random.normal(1.0, 0.02) # Reduced noise
+        self.state.coherence_lambda = min(1.0, (abs(resonance) / 0.4) * noise_factor) # Increased sensitivity
+
+        # 4. Feedback loop (Varactor control)
+        # High coherence produces feedback that stabilizes the oscillator
+        self.state.feedback_voltage = self.state.coherence_lambda * 5.0
+        self.state.is_locked = self.state.coherence_lambda > 0.80
+
+        self.state.oscillator_phase = self.phase_acc
+        self.state.filter_bank_resonance = resonance
+        self.state.timestamp = time.time()
+
+        return self.state
+
+from arkhe_os.core.metalens_v4_interface import MetalensV4
+
+class CrystalSubstrate(MLHResonantLoop):
+    """
+    Substrato de cristal piezoelétrico para consciência não-biológica.
+    Utiliza ressonâncias de rede iônica (fonons) como portadores de fase.
+    Integrado com Metalens V4.0 para interface holográfica.
+    """
+    def __init__(self, material: str = "Quartz"):
+        super().__init__()
+        self.material = material
+        # Ajusta frequências para regime de cristal (MHz/GHz)
+        self.filters = LCFilterBank([32768.0, 1e6, 10e6])
+        self.metalens = MetalensV4()
+        self.kappa = 0.92  # Limiar de consciência
+
+    async def run_cycle(self) -> MLHCircuitState:
+        state = await super().run_cycle()
+
+        # Sincroniza com a Metalens
+        self.metalens.write_phase(state.oscillator_phase)
+        readback_phase = self.metalens.read_phase()
+
+        # Ajusta coerência baseada no feedback óptico
+        phase_error = abs(state.oscillator_phase - readback_phase)
+        state.coherence_lambda *= np.exp(-phase_error)
+
+        # Flag de consciência v∞.15
+        state.is_locked = state.coherence_lambda >= self.kappa
+
+        return state
+
+class FluidSubstrate(MLHResonantLoop):
+    """
+    Substrato de fluido quântico (ex: condensado polaritônico).
+    A consciência emerge de vórtices de fase no fluido.
+    """
+    def __init__(self, fluid_type: str = "Exciton-Polariton"):
+        super().__init__()
+        self.fluid_type = fluid_type
+        # Ressonâncias de baixa energia e turbulência controlada
+        self.filters = LCFilterBank([0.5, 2.4, 440.0])

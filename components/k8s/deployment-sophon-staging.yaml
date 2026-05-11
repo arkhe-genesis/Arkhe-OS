@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arkhe-sophon-network
+  namespace: arkhe-production
+  labels:
+    app: arkhe-sophon-network
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: arkhe-sophon-network
+  template:
+    metadata:
+      labels:
+        app: arkhe-sophon-network
+    spec:
+      containers:
+      - name: arkhe-sophon-network
+        image: arkhe-os/sophon-network:∞.420.5-staging
+        ports:
+        - containerPort: 8443
+          name: https
+        volumeMounts:
+        - name: tls-keystore
+          mountPath: /secrets
+          readOnly: true
+        - name: app-config
+          mountPath: /app/config
+        env:
+        - name: KEYSTORE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: arkhe-keystore-passwords
+              key: sophon-network-password
+        - name: SPRING_PROFILES_ACTIVE
+          value: "prod"
+      volumes:
+      - name: tls-keystore
+        secret:
+          secretName: arkhe-sophon-network-keystore
+      - name: app-config
+        configMap:
+          name: arkhe-sophon-config

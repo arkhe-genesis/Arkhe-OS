@@ -1,0 +1,6 @@
+# Sophon Network Configuration v406
+network:
+  nodes: 12
+  topology: toroidal
+  coherence_threshold: 0.9
+  seed: 105

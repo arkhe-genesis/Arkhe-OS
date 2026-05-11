@@ -1,5 +1,12 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { Network, Terminal, CheckCircle2, CircleDashed, Activity, Zap } from 'lucide-react';
 import React, { useState } from 'react';
-import { Network, PenTool, Link, Terminal, CheckCircle2, CircleDashed, Activity, Zap } from 'lucide-react';
 
 export default function AIP005SynapticBridgePanel({ onClose }: { onClose: () => void }) {
   const [step, setStep] = useState(0);
@@ -9,9 +16,9 @@ export default function AIP005SynapticBridgePanel({ onClose }: { onClose: () => 
   ]);
 
   const executeSequence = () => {
-    if (step > 0) return;
+    if (step > 0) {return;}
     setStep(1);
-    
+
     // Step 1: Sign AIP-005
     setTimeout(() => {
       setLogs(prev => [...prev, "> [1/3] SIGNING AIP-005..."]);
@@ -69,7 +76,7 @@ export default function AIP005SynapticBridgePanel({ onClose }: { onClose: () => 
           <div className="space-y-6">
             <div className="bg-black/40 border border-[#1f2024] rounded-lg p-4">
               <h3 className="font-mono text-xs uppercase tracking-widest text-arkhe-muted mb-4">Execution Sequence</h3>
-              
+
               <div className="space-y-4">
                 {/* Step 1 */}
                 <div className={`flex items-center gap-3 p-3 rounded border ${step >= 2 ? 'bg-arkhe-green/10 border-arkhe-green/30 text-arkhe-green' : step === 1 ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-500' : 'bg-[#1a1b1e] border-[#2a2b2e] text-arkhe-muted'}`}>
@@ -99,8 +106,8 @@ export default function AIP005SynapticBridgePanel({ onClose }: { onClose: () => 
                 </div>
               </div>
             </div>
-            
-            <button 
+
+            <button
               onClick={executeSequence}
               disabled={step > 0}
               className={`w-full py-3 rounded uppercase tracking-widest font-bold transition-all flex items-center justify-center gap-2 ${step > 0 ? 'bg-arkhe-cyan/20 text-arkhe-cyan border border-arkhe-cyan/50 cursor-not-allowed' : 'bg-arkhe-cyan text-black hover:bg-arkhe-cyan/80 shadow-[0_0_15px_rgba(0,255,170,0.3)]'}`}

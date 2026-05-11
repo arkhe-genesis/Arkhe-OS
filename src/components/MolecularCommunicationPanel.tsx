@@ -1,6 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'motion/react';
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { X, Radio, Atom, Share2, Activity, Waves } from 'lucide-react';
+import { motion } from 'motion/react';
+import React, { useState, useEffect } from 'react';
 
 interface MolecularCommunicationPanelProps {
   onClose: () => void;
@@ -30,7 +37,7 @@ export default function MolecularCommunicationPanel({ onClose }: MolecularCommun
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
@@ -61,10 +68,10 @@ export default function MolecularCommunicationPanel({ onClose }: MolecularCommun
                 <span>Transmissão 6G Wave-Denied Ativa</span>
               </div>
             </div>
-            
+
             <div className="flex-1 bg-[#111214] border border-[#1f2024] rounded-xl p-6 relative overflow-hidden flex flex-col justify-center">
               <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,182,212,0.05)_0%,transparent_100%)]" />
-              
+
               <div className="relative w-full h-64 flex items-center justify-between px-8">
                 {/* Transmitter (Tx) */}
                 <div className="relative z-10 flex flex-col items-center gap-2">
@@ -81,15 +88,15 @@ export default function MolecularCommunicationPanel({ onClose }: MolecularCommun
                       key={p.id}
                       className="absolute left-0 top-1/2 w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.8)]"
                       initial={{ x: 0, y: 0, opacity: 0, scale: 0 }}
-                      animate={{ 
-                        x: ['0%', '100%'], 
+                      animate={{
+                        x: ['0%', '100%'],
                         y: [0, p.yOffset, p.yOffset * 1.5, p.yOffset * 0.5],
                         opacity: [0, 1, 1, 0],
                         scale: [0, 1, 1.5, 0.5]
                       }}
-                      transition={{ 
-                        duration: p.duration, 
-                        repeat: Infinity, 
+                      transition={{
+                        duration: p.duration,
+                        repeat: Infinity,
                         delay: p.delay,
                         ease: "linear"
                       }}
@@ -150,7 +157,7 @@ export default function MolecularCommunicationPanel({ onClose }: MolecularCommun
                 <Share2 className="w-4 h-4" />
                 Escala Fractal de Informação
               </h3>
-              
+
               <div className="space-y-2">
                 <div className="grid grid-cols-4 gap-2 text-[9px] font-mono text-arkhe-muted uppercase border-b border-white/5 pb-1">
                   <div>Escala</div>

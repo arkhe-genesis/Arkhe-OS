@@ -1,0 +1,26 @@
+// ARKHE Temporal Visualization Shader
+// Renders temporal coherence as color overlay
+
+float4 MainPS(
+    float4 Position : SV_POSITION,
+    float2 UV : TEXCOORD0) : SV_Target
+{
+    // Sample frame hash to generate unique pattern per frame
+    float frameHash = FrameBlock.CurrentHash;
+
+    // Create temporal interference pattern
+    float temporalPattern = sin(UV.x * 100.0 + frameHash.x) *
+                            cos(UV.y * 100.0 + frameHash.y);
+
+    // Encode temporal depth as color
+    float3 color = float3(
+        abs(sin(frameHash.x * 3.14159)),
+        abs(sin(frameHash.y * 3.14159)),
+        abs(sin(frameHash.z * 3.14159))
+    );
+
+    // Alpha based on temporal stability
+    float alpha = saturate(1.0 - temporalPattern * 0.3);
+
+    return float4(color, alpha);
+}

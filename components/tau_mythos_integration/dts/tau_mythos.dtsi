@@ -1,0 +1,11 @@
+/dts-v1/;
+/plugin/;
+
+&amba {
+    mythos_core: mythos_core@a0000000 {
+        compatible = "generic-uio";
+        reg = <0x0 0xa0000000 0x0 0x1000>;
+        interrupt-parent = <&gic>;
+        interrupts = <0 90 4>; // SPI 90
+    };
+};

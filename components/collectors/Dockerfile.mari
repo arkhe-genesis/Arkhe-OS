@@ -1,0 +1,5 @@
+FROM python:3.11-slim
+WORKDIR /app
+RUN pip install redis websockets
+COPY collectors/mari_collector.py .
+CMD ["python", "mari_collector.py"]

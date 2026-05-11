@@ -63,6 +63,7 @@ export interface ToolDefinition<
 }
 
 export interface Request<Schema extends zod.ZodRawShape> {
+//  - required for type inference
   params: zod.objectOutputType<Schema, zod.ZodTypeAny>;
 }
 

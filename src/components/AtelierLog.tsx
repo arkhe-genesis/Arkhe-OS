@@ -2,6 +2,18 @@ import React, { useState } from 'react';
 import { Card } from './ui/Card';
 import { Terminal, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { Terminal, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import React, { useState } from 'react';
+
+import { Card } from './ui/Card';
+
+
 interface LogEntry {
   agent: string;
   message: string;

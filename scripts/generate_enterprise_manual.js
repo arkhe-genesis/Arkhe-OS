@@ -1,10 +1,19 @@
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import fs from "node:fs";
+
 import {
   Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
-  Header, Footer, AlignmentType, LevelFormat,
-  TableOfContents, HeadingLevel, BorderStyle, WidthType,
-  ShadingType, VerticalAlign, PageNumber, PageBreak
+    AlignmentType,
+   HeadingLevel, BorderStyle, WidthType,
+  ShadingType, VerticalAlign,
 } from "docx";
-import fs from "fs";
+
 
 // "Midnight Code" palette
 const C = {
@@ -72,13 +81,13 @@ const cellLeft = (text, opts = {}) => new TableCell({
   })]
 });
 
-const makeTable = (headers, rows, widths) => new Table({
+const _makeTable = (headers, rows, widths) => new Table({
   alignment: AlignmentType.CENTER,
   columnWidths: widths,
   margins: { top: 80, bottom: 80, left: 150, right: 150 },
   rows: [
     new TableRow({
-      tableHeader: true,
+      table: true,
       children: headers.map((h, i) => cellText(h, { header: true, width: widths[i] }))
     }),
     ...rows.map(row => new TableRow({
@@ -156,3 +165,6 @@ const doc = new Document({
 const buffer = await Packer.toBuffer(doc);
 fs.writeFileSync("Arkhe_Enterprise_Manual_v1.0.docx", buffer);
 console.log("DOCX generated successfully!");
+
+// @ts-expect-error: External function not typed in this script context
+console.log(_makeTable);

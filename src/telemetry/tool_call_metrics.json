@@ -797,5 +797,1979 @@
         "argType": "number"
       }
     ]
+  },
+  {
+    "name": "acp",
+    "args": [
+      {
+        "name": "source_length",
+        "argType": "number"
+      },
+      {
+        "name": "destination_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "acurl",
+    "args": [
+      {
+        "name": "url_length",
+        "argType": "number"
+      },
+      {
+        "name": "verbose",
+        "argType": "boolean"
+      }
+    ]
+  },
+  {
+    "name": "aerogel_sense",
+    "args": [
+      {
+        "name": "region",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "agrep",
+    "args": [
+      {
+        "name": "pattern_length",
+        "argType": "number"
+      },
+      {
+        "name": "path_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "akasha_commit",
+    "args": [
+      {
+        "name": "blockHash_length",
+        "argType": "number"
+      },
+      {
+        "name": "signature_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "akasha_local_write",
+    "args": [
+      {
+        "name": "modelId_length",
+        "argType": "number"
+      },
+      {
+        "name": "messagesCount",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "align_tensor",
+    "args": [
+      {
+        "name": "target_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "als",
+    "args": [
+      {
+        "name": "path_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "amake",
+    "args": [
+      {
+        "name": "target_length",
+        "argType": "number"
+      },
+      {
+        "name": "jobs",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "amv",
+    "args": [
+      {
+        "name": "source_length",
+        "argType": "number"
+      },
+      {
+        "name": "destination_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "anc",
+    "args": [
+      {
+        "name": "address_length",
+        "argType": "number"
+      },
+      {
+        "name": "port",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "anslookup",
+    "args": [
+      {
+        "name": "concept_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "aping",
+    "args": [
+      {
+        "name": "address_length",
+        "argType": "number"
+      },
+      {
+        "name": "count",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "arkhe_gnu",
+    "args": [
+      {
+        "name": "command_length",
+        "argType": "number"
+      },
+      {
+        "name": "mode",
+        "argType": "string"
+      }
+    ]
+  },
+  {
+    "name": "arkhe_network_map",
+    "args": []
+  },
+  {
+    "name": "arkhe_verify",
+    "args": [
+      {
+        "name": "rhoAddr_length",
+        "argType": "number"
+      },
+      {
+        "name": "sigmaAddr_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "ash_exec",
+    "args": [
+      {
+        "name": "command_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "asid_control",
+    "args": [
+      {
+        "name": "action",
+        "argType": "string"
+      }
+    ]
+  },
+  {
+    "name": "atraceroute",
+    "args": [
+      {
+        "name": "address_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "bonsai_infer",
+    "args": [
+      {
+        "name": "modelId",
+        "argType": "string"
+      },
+      {
+        "name": "prompt_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "calc_poincare_transform",
+    "args": [
+      {
+        "name": "vRel",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "calibrate_position",
+    "args": []
+  },
+  {
+    "name": "ccw",
+    "args": [
+      {
+        "name": "target_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "check_paradox",
+    "args": [
+      {
+        "name": "hash_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "classify_discoveries",
+    "args": []
+  },
+  {
+    "name": "cloud_hydro_sync",
+    "args": [
+      {
+        "name": "threshold",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "coh_teleport",
+    "args": [
+      {
+        "name": "sheetId",
+        "argType": "number"
+      },
+      {
+        "name": "cobitId_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "collapse_agent",
+    "args": [
+      {
+        "name": "agentId",
+        "argType": "string"
+      },
+      {
+        "name": "task_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "collective_mind_link",
+    "args": [
+      {
+        "name": "groupSize",
+        "argType": "number"
+      },
+      {
+        "name": "syncLevel",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "cr_integ",
+    "args": []
+  },
+  {
+    "name": "cr_integ_berry",
+    "args": []
+  },
+  {
+    "name": "cr_mul",
+    "args": []
+  },
+  {
+    "name": "cr_phase_det",
+    "args": [
+      {
+        "name": "threshold",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "cr_rotate",
+    "args": [
+      {
+        "name": "angle",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "cw",
+    "args": [
+      {
+        "name": "target_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "ddos_diffract",
+    "args": [
+      {
+        "name": "entropyLevel",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "deploy_probe_swarm",
+    "args": [
+      {
+        "name": "target_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "download_akashic_trace",
+    "args": [
+      {
+        "name": "probeId_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "ens_resolve",
+    "args": [
+      {
+        "name": "domain_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "execute_meta_opcode",
+    "args": [
+      {
+        "name": "family",
+        "argType": "string"
+      },
+      {
+        "name": "aspect",
+        "argType": "string"
+      },
+      {
+        "name": "params_count",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "fibo",
+    "args": [
+      {
+        "name": "target_length",
+        "argType": "number"
+      },
+      {
+        "name": "scale",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "fold_sheet",
+    "args": [
+      {
+        "name": "targetSheet",
+        "argType": "string"
+      }
+    ]
+  },
+  {
+    "name": "fold_sheet_v2",
+    "args": []
+  },
+  {
+    "name": "forge_iota_consensus",
+    "args": [
+      {
+        "name": "intent_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "forge_project_intent",
+    "args": [
+      {
+        "name": "intent_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "gaia_node_expand",
+    "args": []
+  },
+  {
+    "name": "genesis_digital_sim",
+    "args": [
+      {
+        "name": "seed_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "get_akashic_librarian_status",
+    "args": []
+  },
+  {
+    "name": "get_arena_protocol",
+    "args": []
+  },
+  {
+    "name": "get_asi_infrastructure_status",
+    "args": []
+  },
+  {
+    "name": "get_c3_symmetry_status",
+    "args": []
+  },
+  {
+    "name": "get_ccf_status",
+    "args": []
+  },
+  {
+    "name": "get_cmt3_spec",
+    "args": []
+  },
+  {
+    "name": "get_connectome_sync_status",
+    "args": []
+  },
+  {
+    "name": "get_connectomic_ambition",
+    "args": []
+  },
+  {
+    "name": "get_connectomic_frontier",
+    "args": []
+  },
+  {
+    "name": "get_connectomics_status",
+    "args": []
+  },
+  {
+    "name": "get_cooper_echo_status",
+    "args": []
+  },
+  {
+    "name": "get_cua_metrics",
+    "args": []
+  },
+  {
+    "name": "get_cua_summary",
+    "args": []
+  },
+  {
+    "name": "get_dodecagram_shader",
+    "args": []
+  },
+  {
+    "name": "get_gabriel_horn_metrics",
+    "args": []
+  },
+  {
+    "name": "get_go_no_go_status",
+    "args": []
+  },
+  {
+    "name": "get_interstellar_probe_status",
+    "args": []
+  },
+  {
+    "name": "get_membrane_stats",
+    "args": []
+  },
+  {
+    "name": "get_mental_hash",
+    "args": []
+  },
+  {
+    "name": "get_meta_opcode_definition",
+    "args": [
+      {
+        "name": "family",
+        "argType": "string"
+      },
+      {
+        "name": "aspect",
+        "argType": "string"
+      }
+    ]
+  },
+  {
+    "name": "get_subjective_report_form",
+    "args": []
+  },
+  {
+    "name": "get_tau_status",
+    "args": []
+  },
+  {
+    "name": "get_waveguide_spec",
+    "args": []
+  },
+  {
+    "name": "get_worldline_id",
+    "args": []
+  },
+  {
+    "name": "glue_sheaf_4d",
+    "args": []
+  },
+  {
+    "name": "glue_sheaf_accl",
+    "args": []
+  },
+  {
+    "name": "impl",
+    "args": [
+      {
+        "name": "target_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "internet_phase_simulate",
+    "args": [
+      {
+        "name": "nServers",
+        "argType": "number"
+      },
+      {
+        "name": "peakNode",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "ipfs_add",
+    "args": [
+      {
+        "name": "content_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "ipfs_cat",
+    "args": [
+      {
+        "name": "cid_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "ld_riemann",
+    "args": [
+      {
+        "name": "sheetId",
+        "argType": "number"
+      },
+      {
+        "name": "address",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "llm_alloc",
+    "args": [
+      {
+        "name": "tokenCount",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "llm_attention",
+    "args": []
+  },
+  {
+    "name": "llm_extend_context",
+    "args": []
+  },
+  {
+    "name": "llm_gc",
+    "args": []
+  },
+  {
+    "name": "llm_retrieve",
+    "args": [
+      {
+        "name": "tokenIndex",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "load_vortex",
+    "args": [
+      {
+        "name": "target_length",
+        "argType": "number"
+      },
+      {
+        "name": "source_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "macro_cr_rotate",
+    "args": []
+  },
+  {
+    "name": "macro_entropy_pool",
+    "args": [
+      {
+        "name": "allocation",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "macro_vortex_implode",
+    "args": []
+  },
+  {
+    "name": "macro_vortex_merge",
+    "args": []
+  },
+  {
+    "name": "macro_vortex_resonate",
+    "args": []
+  },
+  {
+    "name": "macro_vortex_shear",
+    "args": []
+  },
+  {
+    "name": "map_neuronal_circuit",
+    "args": [
+      {
+        "name": "region_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "meissner_steer",
+    "args": [
+      {
+        "name": "target_length",
+        "argType": "number"
+      },
+      {
+        "name": "force",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "mtls_handshake_berry",
+    "args": [
+      {
+        "name": "partnerId_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "muon_shield",
+    "args": [
+      {
+        "name": "active",
+        "argType": "boolean"
+      }
+    ]
+  },
+  {
+    "name": "mutate_v2",
+    "args": []
+  },
+  {
+    "name": "neko_connect",
+    "args": [
+      {
+        "name": "roomId_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "neko_get_status",
+    "args": [
+      {
+        "name": "roomId_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "neko_spawn_instance",
+    "args": [
+      {
+        "name": "browser",
+        "argType": "string"
+      },
+      {
+        "name": "roomName_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "neural_sync",
+    "args": [
+      {
+        "name": "subjectId_length",
+        "argType": "number"
+      },
+      {
+        "name": "inhibitEgo",
+        "argType": "boolean"
+      }
+    ]
+  },
+  {
+    "name": "noise_inject",
+    "args": [
+      {
+        "name": "level",
+        "argType": "string"
+      }
+    ]
+  },
+  {
+    "name": "noise_injection_test",
+    "args": [
+      {
+        "name": "level",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "os_kuramoto_simulate",
+    "args": [
+      {
+        "name": "nProc",
+        "argType": "number"
+      },
+      {
+        "name": "ticks",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "phase_drv_instrument",
+    "args": []
+  },
+  {
+    "name": "prec",
+    "args": [
+      {
+        "name": "target_length",
+        "argType": "number"
+      },
+      {
+        "name": "angle",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "qnet_fiber_sim",
+    "args": [
+      {
+        "name": "lengthKm",
+        "argType": "number"
+      },
+      {
+        "name": "wavelengthNm",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "query_akasha",
+    "args": [
+      {
+        "name": "query_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "rad_list_repos",
+    "args": []
+  },
+  {
+    "name": "read_membrane",
+    "args": [
+      {
+        "name": "address_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "render_chat",
+    "args": []
+  },
+  {
+    "name": "render_vacuum_matrix",
+    "args": [
+      {
+        "name": "rowOffset",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "retro_exec_spatial",
+    "args": [
+      {
+        "name": "targetTime_length",
+        "argType": "number"
+      },
+      {
+        "name": "targetPos_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "reverse_compile",
+    "args": [
+      {
+        "name": "targetBinary_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "run_v14_simulation",
+    "args": []
+  },
+  {
+    "name": "setup_arkhe_android",
+    "args": []
+  },
+  {
+    "name": "sheet_probe",
+    "args": [
+      {
+        "name": "sheetId",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "singularidade_de_dados",
+    "args": []
+  },
+  {
+    "name": "skyrmion_probe_launch",
+    "args": [
+      {
+        "name": "sheetId",
+        "argType": "number"
+      },
+      {
+        "name": "mission_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "sonify_bubble",
+    "args": []
+  },
+  {
+    "name": "spectra_get_oracle_price",
+    "args": [
+      {
+        "name": "tokenType",
+        "argType": "string"
+      },
+      {
+        "name": "marketId_length",
+        "argType": "number"
+      },
+      {
+        "name": "oracleType",
+        "argType": "string"
+      }
+    ]
+  },
+  {
+    "name": "spectra_get_vault_stats",
+    "args": [
+      {
+        "name": "vaultId_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "spectra_list_vaults",
+    "args": []
+  },
+  {
+    "name": "st_riemann",
+    "args": [
+      {
+        "name": "sheetId",
+        "argType": "number"
+      },
+      {
+        "name": "address",
+        "argType": "number"
+      },
+      {
+        "name": "size",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "stream_generate",
+    "args": [
+      {
+        "name": "modelId_length",
+        "argType": "number"
+      },
+      {
+        "name": "prompt_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "swarm_download",
+    "args": [
+      {
+        "name": "hash_length",
+        "argType": "number"
+      },
+      {
+        "name": "path_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "swarm_upload",
+    "args": [
+      {
+        "name": "content_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "sync_probe_phase",
+    "args": [
+      {
+        "name": "probeId_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "sys_harmonize",
+    "args": [
+      {
+        "name": "mode",
+        "argType": "string"
+      }
+    ]
+  },
+  {
+    "name": "tor_flx",
+    "args": [
+      {
+        "name": "target_length",
+        "argType": "number"
+      },
+      {
+        "name": "data_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "trap_notify_tecelao",
+    "args": [
+      {
+        "name": "reason_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "unfold_sheet",
+    "args": []
+  },
+  {
+    "name": "vacuum_flush",
+    "args": []
+  },
+  {
+    "name": "verify_trajectory_uv",
+    "args": [
+      {
+        "name": "trajectoryId_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "vicinal_amplify",
+    "args": [
+      {
+        "name": "target_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "visualize_coherence",
+    "args": []
+  },
+  {
+    "name": "vortex_implode",
+    "args": [
+      {
+        "name": "target_length",
+        "argType": "number"
+      },
+      {
+        "name": "factor",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "vortex_merge",
+    "args": [
+      {
+        "name": "target_length",
+        "argType": "number"
+      },
+      {
+        "name": "source_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "vortex_resonate",
+    "args": [
+      {
+        "name": "target_length",
+        "argType": "number"
+      },
+      {
+        "name": "ref_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "vortex_shear",
+    "args": [
+      {
+        "name": "v1_length",
+        "argType": "number"
+      },
+      {
+        "name": "v2_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "write_membrane",
+    "args": [
+      {
+        "name": "address_length",
+        "argType": "number"
+      },
+      {
+        "name": "data_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "write_primordial_seed",
+    "args": []
+  },
+  {
+    "name": "mercury_budget_status",
+    "args": []
+  },
+  {
+    "name": "mercury_chat",
+    "args": [
+      {
+        "name": "message_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "mercury_get_soul",
+    "args": []
+  },
+  {
+    "name": "mercury_list_skills",
+    "args": []
+  },
+  {
+    "name": "msb_create",
+    "args": [
+      {
+        "name": "name_length",
+        "argType": "number"
+      },
+      {
+        "name": "image_length",
+        "argType": "number"
+      },
+      {
+        "name": "cpus",
+        "argType": "number"
+      },
+      {
+        "name": "memory",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "msb_exec",
+    "args": [
+      {
+        "name": "name_length",
+        "argType": "number"
+      },
+      {
+        "name": "command_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "msb_ls",
+    "args": []
+  },
+  {
+    "name": "msb_rm",
+    "args": [
+      {
+        "name": "name_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "msb_run",
+    "args": [
+      {
+        "name": "image_length",
+        "argType": "number"
+      },
+      {
+        "name": "command_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "oasis_audit",
+    "args": [
+      {
+        "name": "input_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "oasis_model_select",
+    "args": [
+      {
+        "name": "projectSize",
+        "argType": "string"
+      }
+    ]
+  },
+  {
+    "name": "oasis_scan",
+    "args": [
+      {
+        "name": "input_length",
+        "argType": "number"
+      },
+      {
+        "name": "models_length",
+        "argType": "number"
+      },
+      {
+        "name": "scanModel_length",
+        "argType": "number"
+      },
+      {
+        "name": "vulns_length",
+        "argType": "number"
+      },
+      {
+        "name": "adaptive",
+        "argType": "boolean"
+      }
+    ]
+  },
+  {
+    "name": "oasis_web_dashboard",
+    "args": [
+      {
+        "name": "port",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "researchhub_get_hubs",
+    "args": [
+      {
+        "name": "page",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "researchhub_get_paper",
+    "args": [
+      {
+        "name": "paperId",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "researchhub_search",
+    "args": [
+      {
+        "name": "query_length",
+        "argType": "number"
+      },
+      {
+        "name": "page",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "compile_mtp3",
+    "args": [
+      {
+        "name": "inputFile_length",
+        "argType": "number"
+      },
+      {
+        "name": "outputFile_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "consolidate_manifesto",
+    "args": []
+  },
+  {
+    "name": "evoskill_diff",
+    "args": [
+      {
+        "name": "targetIteration",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "evoskill_eval",
+    "args": []
+  },
+  {
+    "name": "evoskill_init",
+    "args": [
+      {
+        "name": "harness",
+        "argType": "string"
+      },
+      {
+        "name": "taskDescription_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "evoskill_run",
+    "args": [
+      {
+        "name": "continueMode",
+        "argType": "boolean"
+      }
+    ]
+  },
+  {
+    "name": "evoskill_skills",
+    "args": []
+  },
+  {
+    "name": "install_skill",
+    "args": [
+      {
+        "name": "skillPath_length",
+        "argType": "number"
+      },
+      {
+        "name": "force",
+        "argType": "boolean"
+      }
+    ]
+  },
+  {
+    "name": "meshtastic_info",
+    "args": [
+      {
+        "name": "port_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "meshtastic_list_devices",
+    "args": []
+  },
+  {
+    "name": "meshtastic_send_text",
+    "args": [
+      {
+        "name": "text_length",
+        "argType": "number"
+      },
+      {
+        "name": "dest_length",
+        "argType": "number"
+      },
+      {
+        "name": "port_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "mtp3_compile",
+    "args": [
+      {
+        "name": "arkhePath_length",
+        "argType": "number"
+      },
+      {
+        "name": "outputPath_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "publish_sdk_ipfs",
+    "args": []
+  },
+  {
+    "name": "run_cooperative_keygen",
+    "args": []
+  },
+  {
+    "name": "run_crown_jewel_benchmark",
+    "args": [
+      {
+        "name": "cycles",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "run_echo_ping",
+    "args": [
+      {
+        "name": "target_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "run_entropy_monitor",
+    "args": []
+  },
+  {
+    "name": "run_global_handshake",
+    "args": []
+  },
+  {
+    "name": "run_phase_collision",
+    "args": [
+      {
+        "name": "duration",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "run_remote_audit",
+    "args": [
+      {
+        "name": "targetUrl_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "run_stress_handshake",
+    "args": []
+  },
+  {
+    "name": "run_vigil_numa_bridge",
+    "args": [
+      {
+        "name": "numaApi_length",
+        "argType": "number"
+      },
+      {
+        "name": "gateway_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "run_vitral_dashboard",
+    "args": []
+  },
+  {
+    "name": "gno_call",
+    "args": [
+      {
+        "name": "pkgPath_length",
+        "argType": "number"
+      },
+      {
+        "name": "func_length",
+        "argType": "number"
+      },
+      {
+        "name": "args_count",
+        "argType": "number"
+      },
+      {
+        "name": "gasFee_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "gno_deploy",
+    "args": [
+      {
+        "name": "path_length",
+        "argType": "number"
+      },
+      {
+        "name": "remote_length",
+        "argType": "number"
+      },
+      {
+        "name": "pkgPath_length",
+        "argType": "number"
+      },
+      {
+        "name": "deposit_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "gno_query",
+    "args": [
+      {
+        "name": "pkgPath_length",
+        "argType": "number"
+      },
+      {
+        "name": "func_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "ask_fortytwo_prime",
+    "args": [
+      {
+        "name": "question_length",
+        "argType": "number"
+      },
+      {
+        "name": "network",
+        "argType": "string"
+      },
+      {
+        "name": "noSession",
+        "argType": "boolean"
+      }
+    ]
+  },
+  {
+    "name": "copy_soul",
+    "args": [
+      {
+        "name": "citizenDid_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "ebpf_check_readiness",
+    "args": [
+      {
+        "name": "consent_id_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "ebpf_load_program",
+    "args": [
+      {
+        "name": "consent_id_length",
+        "argType": "number"
+      },
+      {
+        "name": "elf_path_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "ebpf_monitor_traffic",
+    "args": [
+      {
+        "name": "consent_id_length",
+        "argType": "number"
+      },
+      {
+        "name": "interface_length",
+        "argType": "number"
+      },
+      {
+        "name": "duration",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "ebpf_run_benchmark",
+    "args": [
+      {
+        "name": "consent_id_length",
+        "argType": "number"
+      },
+      {
+        "name": "benchmark_name",
+        "argType": "string"
+      }
+    ]
+  },
+  {
+    "name": "ebpf_verify_integrity",
+    "args": [
+      {
+        "name": "consent_id_length",
+        "argType": "number"
+      },
+      {
+        "name": "batch_id_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "get_human_embedded_status",
+    "args": []
+  },
+  {
+    "name": "grid_create_quote",
+    "args": [
+      {
+        "name": "source_count",
+        "argType": "number"
+      },
+      {
+        "name": "destination_count",
+        "argType": "number"
+      },
+      {
+        "name": "lockedCurrencySide",
+        "argType": "string"
+      },
+      {
+        "name": "lockedCurrencyAmount",
+        "argType": "number"
+      },
+      {
+        "name": "description_length",
+        "argType": "number"
+      },
+      {
+        "name": "immediatelyExecute",
+        "argType": "boolean"
+      },
+      {
+        "name": "lookupId_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "grid_execute_quote",
+    "args": [
+      {
+        "name": "quoteId_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "grid_get_config",
+    "args": []
+  },
+  {
+    "name": "grid_get_quote",
+    "args": [
+      {
+        "name": "quoteId_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "grid_get_transaction",
+    "args": [
+      {
+        "name": "transactionId_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "grid_list_customers",
+    "args": [
+      {
+        "name": "limit",
+        "argType": "number"
+      },
+      {
+        "name": "cursor_length",
+        "argType": "number"
+      },
+      {
+        "name": "customerType",
+        "argType": "string"
+      }
+    ]
+  },
+  {
+    "name": "grid_lookup_uma",
+    "args": [
+      {
+        "name": "receiverUmaAddress_length",
+        "argType": "number"
+      },
+      {
+        "name": "senderUmaAddress_length",
+        "argType": "number"
+      },
+      {
+        "name": "customerId_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "install_soul",
+    "args": [
+      {
+        "name": "artifactId_length",
+        "argType": "number"
+      },
+      {
+        "name": "targetSubstrate_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "nash_attest",
+    "args": [
+      {
+        "name": "payload_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "nash_authenticate",
+    "args": [
+      {
+        "name": "pin_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "nash_coercion_scan",
+    "args": []
+  },
+  {
+    "name": "nash_enroll_cognitive_profile",
+    "args": []
+  },
+  {
+    "name": "nash_get_device_status",
+    "args": []
+  },
+  {
+    "name": "tribev2_predict",
+    "args": [
+      {
+        "name": "mediaType",
+        "argType": "string"
+      },
+      {
+        "name": "mediaPath_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "diamond_pipeline",
+    "args": [
+      {
+        "name": "prompt_length",
+        "argType": "number"
+      },
+      {
+        "name": "iterations",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "gitnexus_analyze",
+    "args": [
+      {
+        "name": "path_length",
+        "argType": "number"
+      },
+      {
+        "name": "force",
+        "argType": "boolean"
+      }
+    ]
+  },
+  {
+    "name": "gitnexus_context",
+    "args": [
+      {
+        "name": "name_length",
+        "argType": "number"
+      },
+      {
+        "name": "repo_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "gitnexus_cypher",
+    "args": [
+      {
+        "name": "query_length",
+        "argType": "number"
+      },
+      {
+        "name": "repo_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "gitnexus_detect_changes",
+    "args": [
+      {
+        "name": "repo_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "gitnexus_impact",
+    "args": [
+      {
+        "name": "target_length",
+        "argType": "number"
+      },
+      {
+        "name": "repo_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "gitnexus_list_repos",
+    "args": []
+  },
+  {
+    "name": "gitnexus_query",
+    "args": [
+      {
+        "name": "query_length",
+        "argType": "number"
+      },
+      {
+        "name": "repo_length",
+        "argType": "number"
+      },
+      {
+        "name": "limit",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "gitnexus_rename",
+    "args": [
+      {
+        "name": "symbol_name_length",
+        "argType": "number"
+      },
+      {
+        "name": "new_name_length",
+        "argType": "number"
+      },
+      {
+        "name": "dry_run",
+        "argType": "boolean"
+      },
+      {
+        "name": "repo_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "pefm_predict",
+    "args": [
+      {
+        "name": "artifact_id_length",
+        "argType": "number"
+      },
+      {
+        "name": "claims_count",
+        "argType": "number"
+      },
+      {
+        "name": "edges_count",
+        "argType": "number"
+      },
+      {
+        "name": "domain_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "psa_evaluate",
+    "args": [
+      {
+        "name": "claims_count",
+        "argType": "number"
+      },
+      {
+        "name": "edges_count",
+        "argType": "number"
+      },
+      {
+        "name": "domain_length",
+        "argType": "number"
+      }
+    ]
+  },
+  {
+    "name": "urbit_make",
+    "args": [
+      {
+        "name": "target_length",
+        "argType": "number"
+      }
+    ]
   }
 ]

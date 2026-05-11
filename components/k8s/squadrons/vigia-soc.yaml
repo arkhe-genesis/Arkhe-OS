@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vigia-soc-config
+  namespace: arkhe
+data:
+  SQUADRON_ROLE: "soc"
+  PRIMARY_MODEL: "qwen-beta"
+  MODEL_RATIO: "0.3,0.6,0.1"
+  LEASE_TTL: "5"
+  ALLOWED_OPCODES: "0x0CC,0x0A5,0x119,0x176,0x1B0"
+  METRICS_PORT: "9090"
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: vigia-soc
+  namespace: arkhe
+  labels:
+    squadron: vigia-soc
+    role: monitoring
+spec:
+  serviceName: vigia-soc
+  replicas: 2
+  selector:
+    matchLabels:
+      squadron: vigia-soc
+  template:
+    metadata:
+      labels:
+        squadron: vigia-soc
+    spec:
+      containers:
+      - name: squadron
+        image: cathedral/squadron-base:v1.0.0
+        imagePullPolicy: IfNotPresent
+        command: ["python", "-m", "squadron.main"]
+        env:
+        - name: SQUADRON_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: SPLITTER_ENDPOINT
+          value: "splitter.arkhe.svc.cluster.local:50051"
+        - name: SIEM_ENDPOINT
+          value: "http://elasticsearch.arkhe.svc.cluster.local:9200"
+        envFrom:
+        - configMapRef:
+            name: vigia-soc-config
+        ports:
+        - containerPort: 50052
+          name: grpc
+        - containerPort: 9090
+          name: metrics
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        livenessProbe:
+          grpc:
+            port: 50052
+          initialDelaySeconds: 30
+        readinessProbe:
+          grpc:
+            port: 50052
+          initialDelaySeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vigia-soc
+  namespace: arkhe
+spec:
+  selector:
+    squadron: vigia-soc
+  ports:
+  - port: 50052
+    targetPort: 50052
+    name: grpc
+  - port: 9090
+    targetPort: 9090
+    name: metrics
