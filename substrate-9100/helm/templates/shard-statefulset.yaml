@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: arkhe-shard
+spec:
+  replicas: {{ .Values.shardCount }}
+  selector:
+    matchLabels:
+      app: arkhe-shard
+  template:
+    spec:
+      containers:
+      - name: continental-mind
+        image: arkhe/continental-mind:{{ .Values.image.tag }}
+        resources:
+          limits:
+            nvidia.com/gpu: {{ .Values.gpuPerShard }}
+            memory: {{ .Values.memoryPerShard }}
+        env:
+        - name: SHARD_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        volumeMounts:
+        - name: model-weights
+          mountPath: /data/weights
+  volumeClaimTemplates:
+  - metadata:
+      name: model-weights
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: fast-ssd
+      resources:
+        requests:
+          storage: 10Ti

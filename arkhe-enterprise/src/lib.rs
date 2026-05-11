@@ -59,17 +59,6 @@ mod compliance;
 mod financial_bridge;
 pub mod stubs;
 
-
-
-
-
-
-
-
-
-
-
-
 // ============================================================================
 // RE‑EXPORTS PÚBLICOS
 // ============================================================================
@@ -135,6 +124,7 @@ pub use financial_bridge::{
 
 use std::sync::Arc;
 
+
 use tracing::info;
 
 pub struct EnterpriseOrchestrator {
@@ -149,10 +139,10 @@ pub struct EnterpriseOrchestrator {
     compliance: Arc<ComplianceEngine>,
     financial_hub: Arc<FinancialHub>,
     // Sub‑sistemas centrais
-    continental_mind: Option<Arc<stubs::substrate_6064::ContinentalMind>>,
-    qip_engine: Option<Arc<stubs::substrate_6071::QIPEngine>>,
-    qart_engine: Option<Arc<stubs::substrate_6072::QArtEngine>>,
-    financial_validator: Option<Arc<stubs::substrate_6073::FinancialValidator>>,
+    continental_mind: Option<Arc<crate::stubs::substrate_6064::ContinentalMind>>,
+    qip_engine: Option<Arc<crate::stubs::substrate_6071::QIPEngine>>,
+    qart_engine: Option<Arc<crate::stubs::substrate_6072::QArtEngine>>,
+    financial_validator: Option<Arc<crate::stubs::substrate_6073::FinancialValidator>>,
     // Servidores
     grpc_server: Option<GrpcServer>,
     rest_server: Option<RestServer>,
@@ -177,6 +167,7 @@ impl EnterpriseOrchestrator {
             qip_engine: None,
             qart_engine: None,
             financial_validator: None,
+            _nanophotonic_engine: None,
             grpc_server: None,
             rest_server: None,
             launched: false,
@@ -184,25 +175,25 @@ impl EnterpriseOrchestrator {
     }
 
     /// Adiciona a Mente Continental ao suite
-    pub async fn with_continental_mind(mut self, mind: Arc<stubs::substrate_6064::ContinentalMind>) -> Self {
+    pub async fn with_continental_mind(mut self, mind: Arc<crate::stubs::substrate_6064::ContinentalMind>) -> Self {
         self.continental_mind = Some(mind);
         self
     }
 
     /// Adiciona o motor QIP
-    pub async fn with_qip(mut self, qip: Arc<stubs::substrate_6071::QIPEngine>) -> Self {
+    pub async fn with_qip(mut self, qip: Arc<crate::stubs::substrate_6071::QIPEngine>) -> Self {
         self.qip_engine = Some(qip);
         self
     }
 
     /// Adiciona o motor Q‑Art
-    pub async fn with_qart(mut self, qart: Arc<stubs::substrate_6072::QArtEngine>) -> Self {
+    pub async fn with_qart(mut self, qart: Arc<crate::stubs::substrate_6072::QArtEngine>) -> Self {
         self.qart_engine = Some(qart);
         self
     }
 
     /// Adiciona o validador financeiro
-    pub async fn with_financial_validator(mut self, validator: Arc<stubs::substrate_6073::FinancialValidator>) -> Self {
+    pub async fn with_financial_validator(mut self, validator: Arc<crate::stubs::substrate_6073::FinancialValidator>) -> Self {
         self.financial_validator = Some(validator);
         self
     }

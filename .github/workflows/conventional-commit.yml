@@ -13,6 +13,9 @@ on:
       # https://docs.github.com/en/webhooks/webhook-events-and-payloads?actionType=edited#pull_request
       - edited
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   main:
     name: '[Required] Validate PR title'
