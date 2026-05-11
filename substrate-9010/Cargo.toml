@@ -1,0 +1,9 @@
+[package]
+name = "substrate-9010"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+aws-sdk-braket = "1.65.0"
+aws-config = "1.5.15"
+tokio = { version = "1", features = ["full"] }

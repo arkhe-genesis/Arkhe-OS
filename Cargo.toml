@@ -1,6 +1,8 @@
 [workspace]
 resolver = "2"
 members = [
+    "oracle-server",
+    "substrate-9010",
     "arkhe-enterprise",
     "arkhe-qart/substrate-6072",
     "substrate-6071",
