@@ -535,6 +535,10 @@ build/pyinstaller/
 app_arkhe/frontend/node_modules
 final_app_arkhe/frontend/node_modules
 arkhe-os/ui/desktop/node_modules
+arkhe-webrtc/node_modules/
+arkhe-polyglot-parser/target/
+!arkhe-polyglot-parser/
+arkhe-polyglot-parser/target/
 target/
 arkhe-webrtc/node_modules/
 !arkhe-enterprise/
