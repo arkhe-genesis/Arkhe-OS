@@ -1,3 +1,6 @@
+import React, { useState } from 'react';
+import { Card } from './ui/Card';
+import { Terminal, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 
 /**
  * @license

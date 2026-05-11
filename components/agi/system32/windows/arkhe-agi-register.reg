@@ -1,0 +1,65 @@
+Windows Registry Editor Version 5.00
+
+; ──────────────────────────────────────────────
+; 1. Registrar a extensão .agi
+; ──────────────────────────────────────────────
+[HKEY_CLASSES_ROOT\.agi]
+@="ARKHE.agi"
+
+; ──────────────────────────────────────────────
+; 2. Definir o ProgID e o ícone canônico
+; ──────────────────────────────────────────────
+[HKEY_CLASSES_ROOT\ARKHE.agi]
+@="ARKHE OS Artifact"
+"FriendlyTypeName"="ARKHE OS Artifact"
+
+[HKEY_CLASSES_ROOT\ARKHE.agi\DefaultIcon]
+@="C:\\Program Files\\ARKHE OS\\arkhe-icon.ico,0"
+
+; ──────────────────────────────────────────────
+; 3. Ação principal: "Open" (duplo-clique)
+; ──────────────────────────────────────────────
+[HKEY_CLASSES_ROOT\ARKHE.agi\shell]
+@="open"
+
+[HKEY_CLASSES_ROOT\ARKHE.agi\shell\open]
+@="&Open ARKHE Artifact"
+
+[HKEY_CLASSES_ROOT\ARKHE.agi\shell\open\command]
+@="\"C:\\Program Files\\ARKHE OS\\agictl.exe\" open \"%1\""
+
+; ──────────────────────────────────────────────
+; 4. Ação: "Verify" (verificar integridade)
+; ──────────────────────────────────────────────
+[HKEY_CLASSES_ROOT\ARKHE.agi\shell\verify]
+@="&Verify Integrity"
+
+[HKEY_CLASSES_ROOT\ARKHE.agi\shell\verify\command]
+@="\"C:\\Program Files\\ARKHE OS\\agictl.exe\" verify --strict \"%1\""
+
+; ──────────────────────────────────────────────
+; 5. Ação: "Extract" (extrair sem executar)
+; ──────────────────────────────────────────────
+[HKEY_CLASSES_ROOT\ARKHE.agi\shell\extract]
+@="E&xtract to Folder"
+
+[HKEY_CLASSES_ROOT\ARKHE.agi\shell\extract\command]
+@="\"C:\\Program Files\\ARKHE OS\\agictl.exe\" extract \"%1\" --output \"%1_extracted\""
+
+; ──────────────────────────────────────────────
+; 6. Ação: "Instantiate TEE" (WSL2 ou Docker)
+; ──────────────────────────────────────────────
+[HKEY_CLASSES_ROOT\ARKHE.agi\shell\instantiate]
+@="&Instantiate in TEE"
+
+[HKEY_CLASSES_ROOT\ARKHE.agi\shell\instantiate\command]
+@="powershell.exe -NoProfile -Command \"& 'C:\\Program Files\\ARKHE OS\\instantiate-tee.ps1' -Artifact '%1'\""
+
+; ──────────────────────────────────────────────
+; 7. Ação: "View Manifest" (abrir MANIFEST.json)
+; ──────────────────────────────────────────────
+[HKEY_CLASSES_ROOT\ARKHE.agi\shell\manifest]
+@="&View Manifest"
+
+[HKEY_CLASSES_ROOT\ARKHE.agi\shell\manifest\command]
+@="powershell.exe -NoProfile -Command \"& { tar -xf '%1' MANIFEST.json -O | Out-File -Encoding utf8 '%1_manifest.json'; Invoke-Item '%1_manifest.json' }\""

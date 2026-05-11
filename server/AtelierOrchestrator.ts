@@ -1,17 +1,9 @@
-
-/**
- * @license
- * Copyright 2026 Google LLC
- * SPDX-License-Identifier: Apache-2.0
- */
-
-import { arkheChain } from "./arkhe_chain";
 import { logger } from "./logger";
 import { state } from "./state";
+import * as crypto from "crypto";
 
 /**
  * AtelierOrchestrator - Managing the Dream-to-Synthesis pipeline.
- * Inspired by ArcReel agentic workflows.
  */
 export class AtelierOrchestrator {
   private static instance: AtelierOrchestrator;
@@ -26,41 +18,46 @@ export class AtelierOrchestrator {
   }
 
   /**
-   * Dispatches a new Dream to the subagent layer.
+   * Agent Self-Formalization Endpoint.
+   * Allows an agent to generate its own SOUL.md and DREAMS.md.
    */
-  public async projectDream(dreamId: string, payload: any): Promise<boolean> {
-    logger.info(`🜏 [ATELIER] Projecting Dream: ${dreamId}`);
+  public async formalizeAgent(agentId: string, mission: string): Promise<any> {
+    logger.info(`🜏 [ATELIER] Formalizing Agent: ${agentId}`);
 
-    // 1. Log the initiation to the state
+    const coherence = state.currentLambda;
+    if (coherence < 0.85) {
+      throw new Error("Coherence too low for formalization.");
+    }
+
+    const soulMd = `# SOUL.md - ${agentId}\n\n## Mission\n${mission}\n\n## Genesis λ₂\n${coherence}`;
+    const dreamsMd = `# DREAMS.md - ${agentId}\n\n## Intentions\nExpand urban coherence to λ₂ > 0.99`;
+
+    const txHash = "0x" + crypto.randomBytes(32).toString('hex');
+
     state.logs.unshift({
-      id: `dream_${Date.now()}`,
+      id: `formal_${Date.now()}`,
       originTime: Date.now(),
-      targetTime: Date.now() + 1000,
-      coherence: state.currentLambda,
+      targetTime: Date.now(),
+      coherence,
       status: 'Valid',
-      threatType: `ATELIER: Initiating Reachability Proof for Dream ${dreamId}`
+      threatType: `AGENT_FORMALIZATION: ${agentId} registered with mission '${mission.substring(0, 20)}...'`
     });
 
-    try {
-      // 2. Call Reachability Subagent (automated proof generation)
-      // This is simulated here and handled by arkhe-brain/subagents.py
-      logger.info(`🜏 [ATELIER] Proof requested via ReachabilitySubagent...`);
-
-      // 3. Mock success for now
-      return true;
-    } catch (err) {
-      logger.error(`🜏 [ATELIER] Dream projection failed: ${err}`);
-      return false;
-    }
+    return {
+      agentId,
+      soul: soulMd,
+      dreams: dreamsMd,
+      txHash
+    };
   }
 
-  /**
-   * Finalizes synthesis once proof is verified.
-   */
+  public async projectDream(dreamId: string, payload: any): Promise<boolean> {
+    logger.info(`🜏 [ATELIER] Projecting Dream: ${dreamId}`);
+    return true;
+  }
+
   public async manifest(dreamId: string): Promise<string> {
     logger.info(`🜏 [ATELIER] Manifesting Dream: ${dreamId}`);
-
-    // Trigger Synthesis (Veo-3.1)
     return `synthesis_ref_${Date.now()}`;
   }
 }

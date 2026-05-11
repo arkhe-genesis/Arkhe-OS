@@ -1,0 +1,80 @@
+{
+  "version": "4.0.0",
+  "network_name": "ARKHE-LAB-3MAC",
+  "created_at": "auto",
+  "nodes": {
+    "ALFA-01": {
+      "role": "originator",
+      "ip": "192.168.1.10",
+      "tip_port": 9501,
+      "gateway_port": 8081,
+      "ds4_port": 12341,
+      "has_ai": false,
+      "ledger_db": "/tmp/arkhe_ALFA.db",
+      "description": "MacBook Pro — nó de origem (chat sender)"
+    },
+    "BETA-02": {
+      "role": "relay_ai",
+      "ip": "192.168.1.20",
+      "tip_port": 9502,
+      "gateway_port": 8082,
+      "ds4_port": 12342,
+      "has_ai": true,
+      "model": "llama3.1:8b",
+      "model_endpoint": "http://localhost:11434",
+      "ai_features": ["routing", "paradox_detection", "content_filter"],
+      "ledger_db": "/tmp/arkhe_BETA.db",
+      "description": "MacBook Air — nó intermediário com AI (Thinking hop)"
+    },
+    "GAMMA-03": {
+      "role": "receiver",
+      "ip": "192.168.1.30",
+      "tip_port": 9503,
+      "gateway_port": 8083,
+      "ds4_port": 12343,
+      "has_ai": false,
+      "ledger_db": "/tmp/arkhe_GAMMA.db",
+      "description": "MacBook Pro — nó de destino (chat receiver)"
+    }
+  },
+  "edges": [
+    {"from": "ALFA-01", "to": "BETA-02", "latency_ms": 2, "protocol": "TIP_UDP"},
+    {"from": "BETA-02", "to": "GAMMA-03", "latency_ms": 3, "protocol": "TIP_UDP"}
+  ],
+  "topology": "linear",
+  "peering": [
+    {"node_a": "ALFA-01", "node_b": "BETA-02", "auto_accept": true},
+    {"node_a": "BETA-02", "node_b": "GAMMA-03", "auto_accept": true}
+  ],
+  "temporal": {
+    "window_seconds": 157788000,
+    "ledger_ttl": "infinite",
+    "consistency_model": "novikov"
+  },
+  "ai_router": {
+    "enabled_on": ["BETA-02"],
+    "endpoint": "http://localhost:11434",
+    "model": "llama3.1:8b",
+    "temperature": 0.3,
+    "max_tokens": 512,
+    "features": {
+      "routing": true,
+      "paradox_detection": true,
+      "content_filter": true,
+      "chain_optimization": true
+    },
+    "fallback": "heuristic"
+  },
+  "ds4": {
+    "sensors": ["accel", "gyro", "light", "touch"],
+    "publish_interval_ms": 100,
+    "buffer_size": 1000
+  },
+  "chat_demo": {
+    "scenario": "three_hop_retrocausal",
+    "message_flow": "ALFA → BETA(AI) → GAMMA",
+    "time_travel": "+120s",
+    "verify_consistency": true,
+    "log_level": "INFO"
+  }
+}

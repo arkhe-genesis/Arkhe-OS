@@ -1,0 +1,17 @@
+apiVersion: v2
+name: arkhe-unreal
+description: ARKHE Ω-TEMP Unreal Engine Integration
+type: application
+version: 6.0.0
+appVersion: "5.5"
+home: https://arkhe-os.org
+icon: https://arkhe-os.org/icon.png
+keywords:
+  - unreal-engine
+  - temporal-chain
+  - spatial-computing
+  - metaverse
+  - arkhe
+maintainers:
+  - name: ARKHE Collective
+    url: https://arkhe-os.org

@@ -1,8 +1,0 @@
-[package]
-name = "qhttp-node"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-qhttp-protocol = { path = "../qhttp-protocol" }
-tokio.workspace = true

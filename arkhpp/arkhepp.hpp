@@ -4,7 +4,6 @@
 #include <array>
 #include <string>
 #include <span>
-#include <algorithm>
 
 namespace arkhe {
     struct CragRequest {

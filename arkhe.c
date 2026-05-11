@@ -46,7 +46,6 @@ void crag_unpack_request(const uint8_t data[CRAG_REQUEST_SIZE], CragRequest *req
 double kolmogorov_estimate(const char *text, size_t len) {
     if (len == 0) return 0.0;
     uint64_t compressed_bits = deflate_compressed_size(text, len) * 8;
-    /* proxy: tamanho comprimido mais custo do modelo (constante ~512 bits) */
     return (double)compressed_bits + 512.0;
 }
 

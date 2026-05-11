@@ -1,0 +1,26 @@
+--- server/types.ts
++++ server/types.ts
+@@ -970,3 +970,3 @@
+   logs: string[];
+-  neighborhoodCoherence: NeighborhoodCoherence[];
++  neighborhoodCoherence: any[];
+   populationFeedback: any[];
+@@ -975,3 +975,3 @@
+   energyDemand: number[];
+-  civicAgents: CivicSubagentState[];
++  civicAgents: any[];
+   policyAdoption: {
+@@ -986,5 +986,5 @@
+   citizenConsent: {
+-    biometrics: BiometricState;
+-    nare: NAREStatus;
+-    feedback: PopulationFeedbackEntry[];
++    biometrics: any;
++    nare: any;
++    feedback: any[];
+   };
+@@ -1016,3 +1016,3 @@
+   status: string;
+-  parameters: unknown;
++  parameters: any;
+ }

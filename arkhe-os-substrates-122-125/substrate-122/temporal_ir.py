@@ -1,2 +1,0 @@
-class TemporalIR:
-    pass

@@ -1,0 +1,8 @@
+[workspace]
+members = [
+    "substrate-6072",
+    "bindings/python",
+    "bindings/wasm",
+    "bindings/cli",
+]
+resolver = "2"

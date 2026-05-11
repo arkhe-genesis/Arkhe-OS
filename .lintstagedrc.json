@@ -1,0 +1,10 @@
+{
+  "src/**/*.ts": [
+    "jest --bail --findRelatedTests --passWithNoTests",
+    "git add"
+  ],
+  "tests/**/*.test.ts": [
+    "jest --bail --passWithNoTests",
+    "git add"
+  ]
+}

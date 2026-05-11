@@ -1,2 +1,0 @@
-class SuperfluidRouter:
-    pass

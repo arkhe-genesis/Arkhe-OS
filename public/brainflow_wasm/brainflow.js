@@ -1,1 +1,0 @@
-export default async function() { return { LogLevels: { LEVEL_OFF: 0 }, DataFilter: { set_log_level: () => {}, perform_bandpass: () => new Float32Array(), get_psd_welch: () => ({psd: new Float32Array(), freqs: new Float32Array()}) } } }

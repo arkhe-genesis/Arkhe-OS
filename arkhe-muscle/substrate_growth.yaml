@@ -1,6 +1,0 @@
-# substrate_growth.yaml — Crescimento automatizado de diamante
-substrate_production:
-  material: "Diamante (Substrate 27)"
-  reactors: 10
-  target_thickness_um: 500
-  quality_control: "Raman Spectroscopy"

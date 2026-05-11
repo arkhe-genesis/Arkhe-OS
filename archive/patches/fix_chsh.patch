@@ -1,0 +1,5 @@
+--- src/components/CHSHMonitorPanel.tsx
++++ src/components/CHSHMonitorPanel.tsx
+@@ -21,2 +21,0 @@
+-  const state: SimulationState = useArkheSimulation();
+-  const chsh = state.chshMonitor;

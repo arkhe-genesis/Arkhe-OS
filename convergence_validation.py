@@ -2,7 +2,6 @@ import numpy as np
 from scipy import stats
 
 def dickey_fuller_test(series: np.ndarray, max_lag: int = None) -> dict:
-    """Teste de raiz unitária para verificar estacionariedade do gap médio."""
     from statsmodels.tsa.stattools import adfuller
     result = adfuller(series, maxlag=max_lag, autolag='AIC')
     return {
@@ -18,14 +17,10 @@ def verify_convergence(
     kolmogorov_limit: float,
     confidence: float = 0.95
 ) -> dict:
-    """Verifica empiricamente as condições dos teoremas."""
     results = {}
-
-    # 1. Teste de estacionariedade do gap (Dickey-Fuller)
-    df_result = dickey_fuller_test(step_gaps[-200:])  # últimos 200 passos
+    df_result = dickey_fuller_test(step_gaps[-200:])
     results['gap_stationarity'] = df_result
 
-    # 2. Teste de tendência decrescente no gap
     t = np.arange(len(step_gaps))
     slope, intercept, r_value, p_value, std_err = stats.linregress(t[-100:], step_gaps[-100:])
     results['gap_trend'] = {
@@ -34,9 +29,8 @@ def verify_convergence(
         'decreasing': slope < 0 and p_value < 0.05
     }
 
-    # 3. Verificar cruzamento do limiar com intervalo de confiança
     final_energy = step_energies[-1]
-    energy_std = np.std(step_energies[-50:])
+    energy_std = np.std(step_energies[-50:]) if len(step_energies) >= 50 else 0
     ci_lower = final_energy - stats.norm.ppf((1+confidence)/2) * energy_std / np.sqrt(50)
     results['kolmogorov_reached'] = ci_lower >= kolmogorov_limit
     results['final_energy_ci'] = (ci_lower, final_energy + stats.norm.ppf((1+confidence)/2) * energy_std / np.sqrt(50))

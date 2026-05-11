@@ -1,6 +1,6 @@
 const std = @import("std");
 const c = @cImport({
-    @cInclude("arkhe.h");
+    @cInclude("../../arkhe.h");
 });
 
 pub const FinalityLevel = enum(u32) {

@@ -1,0 +1,10 @@
+--- src/components/BonsaiPrismPanel.tsx
++++ src/components/BonsaiPrismPanel.tsx
+@@ -35,3 +35,2 @@
+   role: 'user' | 'assistant';
+-  role: string;
+   content: string;
+@@ -57,4 +56,2 @@
+   const canvasRef = useRef<HTMLCanvasElement>(null);
+-  const ritualRef = useRef<number | null>(null);
+-  const canvasRef = useRef<HTMLCanvasElement>(null);

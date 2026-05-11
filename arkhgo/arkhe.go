@@ -1,7 +1,7 @@
 package arkhgo
 
 /*
-#cgo LDFLAGS: -L.. -larkhe -lz
+#cgo LDFLAGS: -larkhe -lz
 #include "../arkhe.h"
 */
 import "C"

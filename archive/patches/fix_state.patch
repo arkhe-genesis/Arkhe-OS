@@ -1,0 +1,7 @@
+--- server/state.ts
++++ server/state.ts
+@@ -10,3 +10,3 @@
+
+-export const getInitialState = (): SimulationState => ({
++export const getInitialState = (): any => ({
+   coherenceData: Array.from({ length: 50 }, (_, i) => ({

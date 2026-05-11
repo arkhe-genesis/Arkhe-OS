@@ -1,5 +1,0 @@
-# Arkhe Ontology (simplificado)
-Task:assignedTo:regex=^arkhe:Agent_[0-9]+$
-Task:priority:min=1:max=10
-Task:taskType:enum=QEC_EXECUTION,INFERENCE,ORCHESTRATION
-SussurroDeSubversao:exploraRachadura:required=true

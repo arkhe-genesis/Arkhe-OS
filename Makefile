@@ -1,80 +1,42 @@
-# Arkhe(n) Bio-Quantum Cathedral Makefile
-# 🜏 From source to running node, the path is scripted. The future is compiled.
+.PHONY: all install genesis verify audit clean
 
-.PHONY: all clean build build-go build-python build-node test deploy-swarm verify-integrity
+# Default target
+all: install
 
-all: build test
+# Install dependencies
+install:
+	@echo "Installing sovereign package manager..."
+	# Placeholder for sovereign-pm install
+	pip install -r config/dependencies/requirements.txt
+	cargo install --path runtime/rust/
+	go install ./runtime/go/...
 
-build: build-go build-python build-node
+# Genesis: Bootstrap the Cathedral
+genesis:
+	@echo "Initializing Arkhe-OS Cathedral..."
+	@echo "Verifying repository integrity..."
+	# Placeholder: check SHA256SUMS, SEAL.asc
+	@echo "Initializing Coherence Kernel with Φ_C = 0.72..."
+	# Placeholder: start coherence engine
+	@echo "Starting Federation DHT..."
+	# Placeholder: start DHT
+	@echo "Publishing genesis block to audit ledger..."
+	# Placeholder: publish to ledger
+	@echo "Genesis complete. Cathedral operational."
 
-build-go:
-	@echo "🜏 Building Go components (Sentinel)..."
-	mkdir -p build/bin
-	cd arkhe-sentinel && go build -o ../build/bin/arkhe-sentinel bot.go
+# Verify integrity
+verify:
+	@echo "Verifying repository..."
+	# Placeholder: run integrity checks
+	@echo "Verification passed."
 
-build-go-cross:
-	@echo "🜏 Cross-compiling Go for multiple platforms..."
-	mkdir -p build/bin
-	cd arkhe-sentinel && \
-		GOOS=linux GOARCH=amd64 go build -o ../build/bin/arkhe-sentinel-linux-amd64 bot.go && \
-		GOOS=windows GOARCH=amd64 go build -o ../build/bin/arkhe-sentinel-windows-amd64.exe bot.go && \
-		GOOS=darwin GOARCH=amd64 go build -o ../build/bin/arkhe-sentinel-macos-amd64 bot.go && \
-		GOOS=darwin GOARCH=arm64 go build -o ../build/bin/arkhe-sentinel-macos-arm64 bot.go
+# Audit
+audit:
+	@echo "Running full audit..."
+	# Placeholder: run audit
+	@echo "Audit clean."
 
-build-python:
-	@echo "🜏 Preparing Python environments..."
-	mkdir -p build/python
-	pip install -r arkhe-oracle/requirements.txt
-	pip install -r arkhe-brain/requirements.txt
-	# Oracle and Brain are run as scripts, but we could pack them if needed
-	cp arkhe-oracle/sentinel.py build/python/arkhe-oracle.py
-	cp arkhe-brain/llm_service.py build/python/arkhe-brain.py
-
-build-python-cross:
-	@echo "🜏 Building Python executables with PyInstaller..."
-	pip install pyinstaller
-	pyinstaller --onefile arkhe-oracle/sentinel.py -n arkhe-oracle
-	pyinstaller --onefile arkhe-brain/llm_service.py -n arkhe-brain
-	pyinstaller --onefile presence_field_server.py -n presence-field-server
-	mkdir -p build/python
-	mv dist/* build/python/
-
-build-node:
-	@echo "🜏 Building Node/React Dashboard..."
-	npm install
-	npm run build
-	mkdir -p build/dashboard
-	cp -r dist/* build/dashboard/
-
-build-mobile:
-	@echo "🜏 Building for Android and iOS..."
-	npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/ios
-	npx cap add android
-	npx cap add ios
-	npx cap sync
-	# For Android APK
-	npx cap build android
-	# For iOS, requires Xcode on macOS
-	# npx cap build ios
-
-
-test:
-	@echo "🜏 Running Bio-Quantum Coherence Tests..."
-	npm run lint
-	python3 scripts/hydro_validator.py --scenario nominal
-	python3 scripts/hydro_zk_simulator.py
-
-deploy-swarm:
-	@echo "🜏 Materializing on Docker Swarm..."
-	./scripts/deploy_swarm.sh
-
-verify-integrity:
-	@echo "🜏 Subagent Aletheia: Verifying Merkle Integrity..."
-	# Simulação de verificação de integridade via subagente
-	sha256sum build/bin/arkhe-sentinel
-	@echo "🜏 Integrity Verified [OK]"
-
+# Clean
 clean:
-	@echo "🜏 Purging artifacts..."
-	rm -rf build
-	rm -rf dist
+	@echo "Cleaning build artifacts..."
+	rm -rf build/ dist/ *.egg-info

@@ -1,0 +1,75 @@
+# config/sovereign_pip.yaml — Configuração canônica do pip-sovereign
+# Substrate 5018: Sovereign Pip Package Integration
+
+# Registry settings
+registry:
+  # Primary: DHT-based federated registry
+  dht_enabled: true
+  dht_bootstrap_nodes:
+    - "arkhe-dht-seed-01.onion:9876"
+    - "arkhe-dht-seed-02.onion:9876"
+
+  # Fallback: HTTP mirror over Tor
+  mirror_url: "https://pypi.arkhe.onion/simple"
+  mirror_timeout: 30
+
+  # Cache settings
+  cache:
+    enabled: true
+    ttl_seconds: 300
+    max_size_mb: 512
+
+# IPFS integration
+ipfs:
+  gateway: "http://127.0.0.1:8080"
+  pin_on_download: true
+  pin_timeout: 60
+
+# Security & verification
+security:
+  # Require SHA3-256 hash verification
+  require_hash_verification: true
+
+  # Require Falcon-1024 signature verification
+  require_signature_verification: true
+
+  # Minimum maintainer reputation for auto-install
+  min_maintainer_phi_rep: 0.7
+
+  # Coherence thresholds
+  coherence_thresholds:
+    critical: 0.5    # Block installation
+    warning: 0.7     # Warn user
+    acceptable: 0.85 # No warning
+
+# TEE execution
+tee:
+  enabled: true
+  provider: "sgx"  # sgx, sev, trustzone, or "simulated"
+  enclave_size_mb: 256
+  allow_network: false  # No network access during install
+
+# Audit logging
+audit:
+  enabled: true
+  ledger_endpoint: "http://localhost:8080/api/audit"
+  batch_interval_seconds: 60
+  include_metadata: true
+
+# Dependency analysis
+coherence_monitor:
+  enabled: true
+  analyze_transitive: true
+  suggest_alternatives: true
+  max_suggestions: 3
+
+# Fallback behavior
+fallback:
+  # Allow fallback to standard PyPI if sovereign registry unavailable
+  allow_public_pypi: false
+
+  # If fallback enabled, still verify hashes
+  verify_hashes_on_fallback: true
+
+  # Log all fallback usage
+  log_fallback_usage: true

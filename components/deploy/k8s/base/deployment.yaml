@@ -1,0 +1,93 @@
+# ═══════════════════════════════════════════════════════
+# ARKHE OS — Kubernetes Deployment (Server Node)
+# ═══════════════════════════════════════════════════════
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arkhe-server
+  namespace: arkhe-system
+  labels:
+    app.kubernetes.io/name: arkhe-server
+    app.kubernetes.io/component: core
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: arkhe-server
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: arkhe-server
+        arkhe.os/coherence-group: "alpha"
+      annotations:
+        arkhe.os/mrc-enabled: "true"
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+    spec:
+      serviceAccountName: arkhe-server-sa
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                  - arkhe-server
+              topologyKey: kubernetes.io/hostname
+      containers:
+      - name: arkhe-server
+        image: arkheos/server:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http-api
+        - containerPort: 9090
+          name: metrics
+        - containerPort: 4971
+          name: mrc-roce
+          protocol: UDP
+        envFrom:
+        - configMapRef:
+            name: arkhe-config
+        - secretRef:
+            name: arkhe-secrets
+        resources:
+          requests:
+            cpu: "2"
+            memory: "4Gi"
+          limits:
+            cpu: "8"
+            memory: "16Gi"
+            # Exemplo: nvidia.com/gpu: "1" (se aplicável)
+        livenessProbe:
+          httpGet:
+            path: /health/coherence
+            port: 9090
+          initialDelaySeconds: 60
+          periodSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 9090
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        volumeMounts:
+        - name: ledger-storage
+          mountPath: /opt/arkhe/data
+        - name: mrc-shm
+          mountPath: /dev/shm
+      volumes:
+      - name: ledger-storage
+        persistentVolumeClaim:
+          claimName: arkhe-ledger-pvc
+      - name: mrc-shm
+        emptyDir:
+          medium: Memory
+          sizeLimit: 1Gi

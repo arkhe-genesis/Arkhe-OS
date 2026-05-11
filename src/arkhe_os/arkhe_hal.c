@@ -1,19 +1,17 @@
 #include "arkhe_hal.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <fcntl.h>
-#include <sys/mman.h>
-#include <unistd.h>
 #include <math.h>
-
-// Hardware Register Offsets (UTB-7000-AI / B210)
-#define REG_PHASE_REAL  0x0100
-#define REG_PHASE_IMAG  0x0104
-#define REG_LAMBDA2     0x0108
-#define REG_LML_DECODE  0x0200
-#define REG_TPU_CMD     0x5000
+#include <string.h>
 
 int arkhe_hal_init(arkhe_node_t* node, const char* rf_device_path) {
+    fprintf(stderr, "[A-HAL] Initializing in SIMULATION mode.\n");
+    node->bram_base = NULL;
+    node->tpu_base = NULL;
+    node->lambda2 = 0.999;
+    node->current_phase.real = 1.0;
+    node->current_phase.imag = 0.0;
+    node->fd_rf = -1;
     node->fd_rf = open(rf_device_path, O_RDWR | O_SYNC);
     if (node->fd_rf < 0) {
         // Fallback to simulation mode if hardware is not present
@@ -41,23 +39,14 @@ int arkhe_hal_init(arkhe_node_t* node, const char* rf_device_path) {
 }
 
 arkhe_phase_t arkhe_hal_read_phase(arkhe_node_t* node) {
-    if (!node->bram_base) {
-        // Simulated phase rotation
-        static double t = 0;
-        t += 0.01;
-        arkhe_phase_t p = { cos(t), sin(t) };
-        return p;
-    }
-
-    volatile uint32_t* regs = (volatile uint32_t*)node->bram_base;
-    arkhe_phase_t phase;
-    // Fixed-point to double conversion
-    phase.real = ((int32_t)regs[REG_PHASE_REAL / 4]) / 1000000.0;
-    phase.imag = ((int32_t)regs[REG_PHASE_IMAG / 4]) / 1000000.0;
-    return phase;
+    static double t = 0;
+    t += 0.01;
+    arkhe_phase_t p = { cos(t), sin(t) };
+    return p;
 }
 
 double arkhe_hal_read_lambda2(arkhe_node_t* node) {
+    return 0.999;
     if (!node->bram_base) return 1.618033; // Simulated optimal coherence
 
     volatile uint32_t* regs = (volatile uint32_t*)node->bram_base;

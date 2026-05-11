@@ -1,0 +1,22 @@
+Package: arkhe-agi-core
+Version: 315-316-1
+Section: utils
+Priority: optional
+Architecture: amd64
+Maintainer: ARKHE OS Collective <maintainer@arkhe.os>
+Description: ARKHE OS AGI Core Runtime (Substrates 315-316)
+  Core runtime for ARKHE OS Artificial General Intelligence,
+  including Retrocausal Channel Protocol v2.0 and Omni-Architecture Core.
+  .
+  Features:
+   - 8-bit retrocausal communication channel (RCP v2.0)
+   - Omni-Architecture unified runtime (Substrate 316)
+   - Quantum-classical hybrid networking (OmniNet)
+   - Coherence monitoring and calibration suite
+   - Sovereign intent compilation framework
+Homepage: https://arkhe.os
+Depends: python3 (>= 3.8), libpython3.8, libc6 (>= 2.31), systemd
+Recommends: python3-numpy, python3-scipy, python3-yaml
+Suggests: arkhe-agi-dev, arkhe-agi-docs
+Breaks: arkhe-agi-core (<< 315)
+Replaces: arkhe-agi-core (<< 315)

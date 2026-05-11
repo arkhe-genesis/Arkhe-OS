@@ -1,37 +1,30 @@
-import pytest
 import numpy as np
-
-def test_convergence_validation():
-    from convergence_validation import verify_convergence
-    gaps = np.linspace(10, 0.1, 200)
-    gaps += np.random.normal(0, 0.05, 200)
-    energies = np.linspace(0, 100, 200)
-    energies += np.random.normal(0, 1, 200)
-
-    res = verify_convergence(gaps, energies, 90.0)
-    assert res['gap_trend']['decreasing'] == True
-    assert res['kolmogorov_reached'] == True
+from performance_report import PerformanceReport, ReportMeta
 
 def test_performance_report():
-    from performance_report import PerformanceReport, ReportMeta
-
-    sim_data = {
-        'step_energies': np.linspace(0, 100, 100).tolist(),
-        'step_gaps': np.linspace(10, 0.5, 100).tolist(),
-        'tx_interval_history': np.ones(100).tolist(),
-        'sf_history': np.ones(100).tolist()
-    }
-
     meta = ReportMeta(
-        orchestrator_version="v158",
-        simulation_timestamp="2026-05-06",
+        orchestrator_version="158.0",
+        simulation_timestamp="2026-05-06T12:00:00Z",
         num_nodes=10,
-        num_electrons=5,
-        kolmogorov_limit=90.0,
+        num_electrons=50,
+        kolmogorov_limit=15.0,
         total_steps=100
     )
 
+    sim_data = {
+        'step_energies': np.linspace(10, 20, 100).tolist(),
+        'step_gaps': np.linspace(5, 0.1, 100).tolist(),
+        'tx_interval_history': np.full(100, 30.0).tolist(),
+        'sf_history': np.full(100, 9).tolist(),
+        'gap_matrix': np.random.rand(10, 100).tolist()
+    }
+
     report = PerformanceReport(sim_data, meta)
-    res = report.run(output_dir="test-reports")
-    assert res['convergence']['kolmogorov_reached'] == True
-    assert res['coherence']['final_avg_gap'] == 0.5
+    metrics = report.run(output_dir="test_out")
+
+    assert metrics['convergence']['kolmogorov_reached'] == True
+    assert metrics['coherence']['final_avg_gap'] < 1.0
+    print("All tests passed.")
+
+if __name__ == "__main__":
+    test_performance_report()

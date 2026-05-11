@@ -1,0 +1,48 @@
+# GitHub Actions CI for macOS DMG
+name: Build macOS DMG
+
+on:
+  push:
+    branches: [ deployment ]
+  pull_request:
+    branches: [ deployment ]
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        cd ui/desktop
+        npm install
+
+    - name: Run Genesis
+      run: ./scripts/genesis.sh
+
+    - name: Build DMG
+      run: |
+        cd ui/desktop
+        npm run tauri build
+
+    - name: Verify Artifact
+      run: ./scripts/verify-agi.ps1
+
+    - name: Upload DMG
+      uses: actions/upload-artifact@v3
+      with:
+        name: arkhe-os-macos
+        path: ui/desktop/src-tauri/target/release/bundle/dmg/*.dmg

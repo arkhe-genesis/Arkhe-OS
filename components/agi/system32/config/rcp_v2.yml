@@ -1,0 +1,12 @@
+# Retrocausal Channel Protocol v2.0 Configuration
+version: "2.0"
+
+channel:
+  width: 8
+  max_latency_ms: -50 # Retrocausal target
+  error_correction: "reed_solomon"
+  fidelity_threshold: 0.8
+
+transport:
+  protocol: "qhttp"
+  max_packet_size: 1024

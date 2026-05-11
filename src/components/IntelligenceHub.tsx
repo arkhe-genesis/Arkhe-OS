@@ -58,7 +58,7 @@ interface IntelligenceHubProps {
 }
 
 export const IntelligenceHub: React.FC<IntelligenceHubProps> = ({ onClose }) => {
-  const state: SimulationState = useArkheSimulation();
+  const state: any = useArkheSimulation();
 
   // Map real simulation state to the hub's expected format
   const phase = { drift: 1.0 - state.currentLambda, current: 'Voyager' };

@@ -1,1 +1,9 @@
-export function useArkheSimulation() { return {}; }
+export function useArkheSimulation() { return {} as any; }
+
+/**
+ * @license
+ * Copyright 2026 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+export function useArkheSimulation(): any { return {}; }

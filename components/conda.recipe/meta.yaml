@@ -1,0 +1,62 @@
+{% set version = "1.0.0" %}
+
+package:
+  name: arkhe-rsp-parser
+  version: {{ version }}
+
+source:
+  url: https://pypi.io/packages/source/a/arkhe-rsp-parser/arkhe-rsp-parser-{{ version }}.tar.gz
+  sha256: AUTO_GENERATED
+
+build:
+  number: 0
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  skip: true  # [py<311]
+  entry_points:
+    - arkhe-rsp = arkhe_os.parser.cli:main
+
+requirements:
+  build:
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+    - cmake >=3.25
+    - scikit-build-core >=0.7.0
+    - pip
+  host:
+    - python >=3.11
+    - numpy >=1.26.0
+    - scipy >=1.12.0
+    - pytorch >=2.2.0  # [not win]
+    - pytorch-cpu >=2.2.0  # [win]
+    - pip
+  run:
+    - python >=3.11
+    - numpy >=1.26.0
+    - scipy >=1.12.0
+    - pytorch >=2.2.0  # [not win]
+    - pytorch-cpu >=2.2.0  # [win]
+    - ase >=3.23.0
+    - pymatgen >=2024.0.0
+    - h5py >=3.10.0
+    - pydantic >=2.6.0
+
+test:
+  imports:
+    - arkhe_os.parser
+    - arkhe_os.parser.reciprocal_space_parser
+  commands:
+    - arkhe-rsp --help
+    - pytest -v --pyargs arkhe_os.parser.tests
+
+about:
+  home: https://arkhe.global
+  license: OWFa-0.9
+  summary: "Reciprocal-Space Neural Network Parser for ARKHE OS"
+  description: |
+    Parser para Redes Neurais do Espaço Recíproco (RSP/RSD).
+    Converte configurações atômicas em grafos de coerência LFIR,
+    capturando interações de longo alcance via transformada de Fourier.
+
+extra:
+  recipe-maintainers:
+    - arkhe-maintainers

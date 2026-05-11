@@ -1,2 +1,0 @@
-class CTCMappingEngine:
-    pass

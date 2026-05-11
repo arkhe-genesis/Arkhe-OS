@@ -3,10 +3,8 @@ module arkhf
   implicit none
   private
 
-  ! Constante do pacote
   integer(c_int), parameter :: CRAG_REQUEST_SIZE = 192
 
-  ! Tipos C
   type, bind(C) :: CragRequest
      integer(c_int8_t) :: version
      integer(c_int8_t) :: method
