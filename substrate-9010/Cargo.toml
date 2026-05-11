@@ -1,0 +1,10 @@
+[package]
+name = "arkhe-nanophotonics"
+version = "6.1.0"
+edition = "2021"
+description = "ARKHE Nanophotonic Force Engine — Substrato 9010"
+
+[dependencies]
+num-complex = "0.4.6"
+serde = { version = "1.0", features = ["derive"] }
+arkhe-zklib = { path = "../substrate-6080" }
