@@ -58,17 +58,17 @@ mod monitoring;
 mod compliance;
 mod financial_bridge;
 pub mod stubs;
-pub mod config;
-pub mod tenants;
-pub mod rbac;
-pub mod audit;
-pub mod billing;
-pub mod sla;
-pub mod api;
-pub mod orchestration;
-pub mod monitoring;
-pub mod compliance;
-pub mod financial_bridge;
+
+
+
+
+
+
+
+
+
+
+
 
 // ============================================================================
 // RE‑EXPORTS PÚBLICOS
@@ -133,6 +133,7 @@ pub use financial_bridge::{
 // TIPO PRINCIPAL: ORQUESTRADOR ENTERPRISE
 // ============================================================================
 
+use crate::stubs::*;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use tracing::{info, error, warn};
