@@ -205,7 +205,7 @@ pub use errors::QArtError;
 pub use config::QArtConfig;
 
 // Motor principal
-pub use engine::QArtEngine;
+pub use crate::engine::QArtEngine;
 
 // ZK Proof System
 pub use provenance::zk_circuit::ZKProofSystem;

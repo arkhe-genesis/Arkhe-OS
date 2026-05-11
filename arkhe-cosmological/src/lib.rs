@@ -50,7 +50,8 @@ pub mod dark_information;
 pub mod inflation_boot;
 pub mod observer_effect;
 pub mod cosmological_constant;
-pub mod temporal_bridge;   // Interface com a TemporalHashChain da ARKHE
+pub mod temporal_bridge;
+pub mod visual;   // Interface com a TemporalHashChain da ARKHE
 
 // ============================================================================
 // RE‑EXPORTS

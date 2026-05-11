@@ -48,7 +48,7 @@ hmac = "0.12"
 sha2 = "0.10"
 
 [features]
-default = ["full-zk", "style-models", "x402-payments"]
+default = ["full-zk", "x402-payments"]
 full-zk = ["dep:plonky2"]
 style-models = ["dep:tch", "dep:ndarray", "dep:image"]
 x402-payments = ["dep:reqwest", "dep:tokio"]

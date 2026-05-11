@@ -1,18 +1,19 @@
-1. **Criar a abstração matemática e lógica da Álgebra de Heyting no Oracle:**
-   - Criar arquivo `components/agi/system32/temporal/heyting_oracle.py`.
-   - Implementar uma classe `HeytingConsistencyOracle` (podendo herdar de `TemporalConsistencyOracle`) que defina as operações lógicas sobre mensagens temporais.
-   - **Forcing ($\Rightarrow$):** Implementar $p \Rightarrow q$ de forma eficiente. Em vez de avaliar "todos os futuros" enumerando-os exaustivamente, usar uma busca em profundidade limitada (`max_depth`) no grafo causal (`self._has_causal_path`) ou uma abordagem baseada em ancestrais conhecidos no `ledger`.
-   - **Pseudocomplemento ($\neg p$):** Implementar $\neg p = p \Rightarrow \bot$. Para evitar loops infinitos com mensagens complexas, adicionar verificações de dependência circular e um limite estrito de recursão. Definir o que é "$\bot$" no contexto do Oracle (ex: uma mensagem que sempre falha nos checks de consistência).
-
-2. **Criar o arquivo de prova em Coq (`heyting_consistency.v`):**
-   - Criar `components/layer_4_meta/proofs/heyting_consistency.v`.
-   - Axiomatizar o contexto temporal (mensagens, futuros).
-   - Axiomatizar o `Estimator` como um functor (mapeando a categoria de estados temporais/mensagens).
-   - Definir de maneira rigorosa a relação de *forcing* ($p \Vdash q$).
-   - Provar propriedades básicas (ex: preservação da consistência) de forma a satisfazer as exigências de verificação mecanizada.
-
-3. **Pre-commit checks**
-   - Executar os pre-commit checks para garantir que não haja regressões, validando a integridade das modificações.
-
-4. **Submissão:**
-   - Efetuar o `submit` das mudanças.
+1. **SpacetimeGraph**
+   - Create `src/visual` inside `arkhe-cosmological` containing `mod.rs`, `node.rs`, `edge.rs`, `physics.rs`, and `render.rs`.
+   - Update `arkhe-cosmological/Cargo.toml` to include dependencies `serde`, `serde_json`, and `nalgebra`.
+   - Create structs `VisualNode`, `NodeType`, and `MotorType` in `node.rs`.
+   - Add `render_graph` in `render.rs`.
+   - Ensure the new module is exported in `src/lib.rs`.
+   - Ensure tests pass via `cargo test`.
+2. **Shard Orchestration (`cmd/arkhe`)**
+   - Create a new crate in `cmd/arkhe` with a `Cargo.toml` specifying `clap`, `tonic`, `prost`, `serde`, `serde_json`, and `tokio`.
+   - Add a `src/main.rs` that uses `clap` for the main CLI.
+   - Implement the `shard` and `self-complete` mock commands in `src/commands/shard.rs` and `src/commands/self_complete.rs`.
+   - Ensure it passes `cargo check`.
+3. **Portal Financial**
+   - Implement the mock `QArtEngine::process_new_art_block_auto` logic in `arkhe-qart/substrate-6072/src/engine.rs` (by making a mock `auto_royalty` module).
+   - We must also mock `VisualNode::update_financial_dashboard` in the `node.rs` from Step 1.
+4. **Auto-completion**
+   - Implemented within `cmd/arkhe` from step 2 via the `self-complete` command logic mocking the auto-trigger loops.
+5. **Pre Commit**
+   - Complete pre-commit steps to ensure proper testing, verification, review, and reflection are done.
