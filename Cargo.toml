@@ -17,9 +17,10 @@ members = [
     "substrate-6091",
     "substrate-9001",
     "substrate-9002",
+    "substrate-6085",
 
     # --- New additions ---
-    "arkhe-oracle",
+
     "substrate-9010",
     "substrate-aws-orbital",
     "cmd/arkhe",
