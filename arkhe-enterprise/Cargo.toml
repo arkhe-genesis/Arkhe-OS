@@ -1,0 +1,11 @@
+[package]
+name = "arkhe-enterprise"
+version = "6.0.0"
+edition = "2021"
+description = "ARKHE(N) ENTERPRISE PLUS SUITE - Substrato 9000"
+
+[dependencies]
+tokio = { version = "1.0", features = ["full"] }
+tracing = "0.1"
+arkhe-compliance = { path = "../substrate-6090" }
+arkhe-nanophotonics = { path = "../substrate-9010" }

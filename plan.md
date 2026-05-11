@@ -1,27 +1,38 @@
-1. **Add `recordMitoticEvent` to `AuditLedger`:**
-   - It will log the split of a parent node into two daughter nodes ("MITOSIS").
-2. **Add `validateG2Checkpoint` to `TemporalConsistencyOracle`:**
-   - Verify the ledger/chain genome.
-3. **Expose `oracle_` from `RetrocausalValidator`:**
-   - Add a getter for the `oracle_` instance so the mitotic router can call the G2 checkpoint validation.
-4. **Add `deepCopy` to `TemporalHashChain`:**
-   - Allow cloning the chain.
-5. **Modify `RetroRouter` access modifiers:**
-   - Change `private` variables to `protected` so `MitoticRouter` can inherit from it and use the variables (`chain_`, `node_id_`, `validator_`, etc).
-   - Add a `node_id()` getter.
-6. **Implement `MitoticRouter` class in `arkhe_cpp.cpp`:**
-   - Implement `synthesisPhase` to copy the chain.
-   - Implement `anaphaseDispatch` to send messages to sisters.
-   - Implement `cytokinesis` to instantiate the new daughter routers and record the mitosis.
-7. **Complete pre-commit steps:**
-   - Ensure proper testing, verification, review, and reflection are done.
-1. **Understand the problem**: The goal is to implement the ARKHE Ω-TEMP protocol using x86-64 assembly language (NASM syntax) based on the provided project structure and source files. The structure comprises multiple modules (`arkhe.asm`, `temporal.asm`, `keccak.asm`, `oracle.asm`, `heap.asm`, `dijkstra.asm`, `merkle.asm`, `bn128.asm`, `falcon.asm`, `routing.asm`, `shield.asm`, `syscall.asm`, `trie.asm`) and a main `Makefile`.
-2. **Current state**: I have already created the initial directory structure, copied the provided code into their respective `.asm` files, created the `arkhe.inc` header file with required constants and macros, and created the `Makefile`. I have also fixed various syntax and compilation errors across multiple files (like undefined symbols, unaligned jumps/calls, fixing FPU instruction mismatches with SIMD in `heap.asm`, fixing the Makefile for proper object linking). Currently, the codebase successfully compiles and runs the `run_tests` binary.
-3. **Completing Pre-Commit Steps**:
-   - I need to run `pre_commit_instructions` to fetch validation/review instructions.
-   - I will review the final codebase to ensure there are no lingering compilation warnings or errors that signify broken logic, although the `run_tests` binary works.
-   - The user requested that we shouldn't use high-level abstraction and strictly rely on the hardware.
-   - Ensure the structure strictly matches `arkhe-asm/src`, `arkhe-asm/include`, `arkhe-asm/test` etc.
-4. **Finalizing**:
-   - Execute the code, prove that `make verify` and `make` both pass without critical errors and produce the expected binaries.
-   - Submit the changes under the requested format.
+1.  **Create `substrate-6090` package:**
+    *   Create directory `substrate-6090` and `substrate-6090/src`.
+    *   Create `Cargo.toml` with the specified dependencies and features.
+    *   Create `src/lib.rs` and other modules (`hipaa.rs`, `gdpr.rs`, `lgpd.rs`, `fda_anvisa.rs`, `kyc_aml.rs`, `fair.rs`, `iso_soc.rs`, `audit.rs`, `consent.rs`, `anonymization.rs`, `verification.rs`, `temporal_anchor.rs`).
+
+2.  **Add `substrate-6090` to root workspace:**
+    *   Modify root `Cargo.toml` to include `substrate-6090` in `workspace.members`.
+
+3.  **Implement core modules for `substrate-6090`:**
+    *   `src/lib.rs`: Setup re-exports. Expose structs required by enterprise integration.
+    *   `src/hipaa.rs`: Implement `HIPAACompliance` logic.
+    *   `src/gdpr.rs`: Implement `GDPRCompliance` logic.
+    *   `src/fda_anvisa.rs`: Implement `RegulatoryVerifier` logic. Add `fda` feature for ZKProof dependency conditional compilation.
+    *   `src/kyc_aml.rs`: Implement `KYCChecker`.
+    *   `src/fair.rs`: Implement `FAIRValidator`.
+    *   `src/audit.rs`: Implement `AuditTrail`.
+    *   `src/consent.rs`: Implement `ConsentManager`.
+    *   `src/anonymization.rs`: Implement `AnonymizationEngine`.
+    *   `src/lgpd.rs`, `src/iso_soc.rs`, `src/verification.rs`, `src/temporal_anchor.rs`: Create stubs.
+
+4.  **Integrate with `arkhe-enterprise` (Catedral integration):**
+    *   Modify `arkhe-enterprise/Cargo.toml` to depend on `arkhe-compliance = { path = "../substrate-6090" }`.
+    *   Update `arkhe-enterprise/src/lib.rs` and `EnterpriseOrchestrator` methods to support compliance logic instantiation.
+
+5.  **Address compilation issues:**
+    *   `arkhe_temporal` dependency path.
+    *   `arkhe_zklib` and `plonky2` dependency configuration. Use nightly toolchain for `arkhe_zklib`.
+    *   Fix unused variable warnings.
+
+6.  **Run tests:**
+    *   Execute `cargo check -p arkhe-compliance` and `cargo check -p arkhe-enterprise` to ensure everything compiles correctly.
+    *   Run `cargo test -p arkhe-compliance` if test is provided.
+
+7.  **Pre-commit steps:**
+    *   Complete pre-commit steps to ensure proper testing, verification, review, and reflection are done.
+
+8.  **Submit changes:**
+    *   Commit changes and submit PR.

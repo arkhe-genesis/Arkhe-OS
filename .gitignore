@@ -139,9 +139,12 @@ debug/
 !arkhe-go/
 !arkhe-android/
 arkhe-*/
+!arkhe-cosmological/
 $# arkhe-*/
+!arkhe-cosmological/
 !arkhe-core/
 !arkhe-os/
+!arkhe-qart/
 substrates/legacy/
 archive/
 *.mtp3
@@ -532,3 +535,6 @@ build/pyinstaller/
 app_arkhe/frontend/node_modules
 final_app_arkhe/frontend/node_modules
 arkhe-os/ui/desktop/node_modules
+target/
+arkhe-webrtc/node_modules/
+!arkhe-enterprise/

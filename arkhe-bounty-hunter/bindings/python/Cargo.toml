@@ -1,0 +1,15 @@
+[package]
+name = "arkhe-bounty-hunter-python"
+version = "5.6.0"
+edition = "2021"
+
+[lib]
+name = "arkhe_bounty_hunter"
+crate-type = ["cdylib"]
+
+[dependencies]
+arkhe-bounty-hunter = { path = "../../" }
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

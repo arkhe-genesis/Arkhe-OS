@@ -1,0 +1,21 @@
+[package]
+name = "arkhe-multiversal-compliance"
+version = "6.1.0"
+edition = "2021"
+
+[dependencies]
+arkhe-compliance = { path = "../substrate-6090" }
+arkhe-zklib = { path = "../substrate-6080" }
+arkhe-temporal = { path = "../substrate-6064/temporal" }
+arkhe-qip = { path = "../substrate-6071" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1.0"
+petgraph = "0.6"
+tracing = "0.1"
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1.8", features = ["v4"] }
+hex = "0.4"
+hmac = "0.12"
+sha2 = "0.10"
+regex = "1.10"

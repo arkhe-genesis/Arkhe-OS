@@ -31,10 +31,6 @@
     "federate:leave": "node dist/cli/arkhe-cli.js federate leave",
     "test": "jest --coverage",
     "test:e2e": "jest --config jest.e2e.config.js",
-    "lint": "echo 'Skipping format'",
-    "lint:fix": "eslint src --ext .ts --fix",
-    "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run build && npm run test"
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
     "typecheck": "tsc --noEmit",

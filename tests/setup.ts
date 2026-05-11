@@ -1,34 +1,35 @@
-/**
- * @license
- * Copyright 2025 Google LLC
- * SPDX-License-Identifier: Apache-2.0
- */
+// tests/setup.ts
+import './matchers/coherence';
+import { CoherenceGradientChannel } from '@/ai/coherence_channel';
 
-import '../src/polyfill.js';
+// Mock global para canal de coerência em todos os testes
+jest.mock('@/ai/coherence_channel', () => ({
+  CoherenceGradientChannel: jest.fn().mockImplementation(() => ({
+    submitLocalGradient: jest.fn().mockResolvedValue({ success: true }),
+    getChannelMetrics: jest.fn().mockReturnValue({ gradientsSubmitted: 0 }),
+  })),
+}));
 
-import path from 'node:path';
-import {it} from 'node:test';
-
-if (!it.snapshot) {
-  it.snapshot = {
-    setResolveSnapshotPath: () => {
-      // Internally empty
-    },
-    setDefaultSnapshotSerializers: () => {
-      // Internally empty
-    },
-  };
-}
-
-// This is run by Node when we execute the tests via the --import flag.
-it.snapshot.setResolveSnapshotPath(testPath => {
-  // By default the snapshots go into the build directory, but we want them
-  // in the tests/ directory.
-  const correctPath = testPath?.replace(path.join('build', 'tests'), 'tests');
-  return correctPath + '.snapshot';
+// Setup de timezone consistente para snapshots
+beforeAll(() => {
+  process.env.TZ = 'UTC';
+  jest.useFakeTimers().setSystemTime(new Date('2026-05-06T00:00:00Z'));
 });
 
-// The default serializer is JSON.stringify which outputs a very hard to read
-// snapshot. So we override it to one that shows new lines literally rather
-// than via `\n`.
-it.snapshot.setDefaultSnapshotSerializers([String]);
+afterAll(() => {
+  jest.useRealTimers();
+});
+
+// Helper para criar fixtures de grafo LFIR
+export function createMockLFIRGraph(language: string, filename: string) {
+  return {
+    language,
+    filename,
+    nodes: [],
+    edges: [],
+    metrics: {},
+    coherence: () => 0.5,
+    addNode: jest.fn(),
+    addEdge: jest.fn(),
+  };
+}
