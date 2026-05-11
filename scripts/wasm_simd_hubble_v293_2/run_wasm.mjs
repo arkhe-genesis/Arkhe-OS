@@ -62,7 +62,7 @@ if (isMainThread) {
                     const start = i * nodesPerThread;
                     const end = Math.min(start + nodesPerThread, N);
 
-                    worker.on('message', (e) => {
+                    worker.on('message', (_e) => {
                         completed++;
                         if (completed === this.numThreads) {
                             // Todas as threads completaram: agregar resultados
