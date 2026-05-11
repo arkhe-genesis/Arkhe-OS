@@ -3,6 +3,8 @@ resolver = "2"
 members = [
     "oracle-server",
     "substrate-9010",
+    "substrate-6064",
+    "substrate-6064/temporal",
     "arkhe-enterprise",
     "arkhe-qart/substrate-6072",
 
@@ -12,6 +14,7 @@ members = [
     "substrate-6065",
     "substrate-6071",
     "substrate-6073",
+    "substrate-6070",
     "substrate-6080",
     "substrate-6090",
     "substrate-6091",
@@ -19,8 +22,10 @@ members = [
     "substrate-9002",
 
     # --- New additions ---
-    "arkhe-oracle",
+
     "substrate-9010",
+    "substrate-6064",
+    "substrate-6064/temporal",
     "substrate-aws-orbital",
     "cmd/arkhe",
     "substrate-9110"
