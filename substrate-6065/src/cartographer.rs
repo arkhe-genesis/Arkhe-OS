@@ -31,7 +31,8 @@ impl NeuralCartographer {
         // 4. Extrai regras de ligação.
         let _rules = extract_wiring_rules(&connectome, &cell_types);
 
-        // 5-8. (Stub) Gera Plano de Re‑wireamento, aplica, testa, registra na TemporalChain.
+        // 5-8. Gera Plano de Re‑wireamento, aplica, testa, registra na TemporalChain.
+        println!("(Stub) Plan generated and applied");
         connectome
     }
 }

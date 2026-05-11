@@ -58,17 +58,6 @@ mod monitoring;
 mod compliance;
 mod financial_bridge;
 pub mod stubs;
-// pub mod config;
-// pub mod tenants;
-// pub mod rbac;
-// pub mod audit;
-// pub mod billing;
-// pub mod sla;
-// pub mod api;
-// pub mod orchestration;
-// pub mod monitoring;
-// pub mod compliance;
-// pub mod financial_bridge;
 
 // ============================================================================
 // RE‑EXPORTS PÚBLICOS
@@ -154,7 +143,6 @@ pub struct EnterpriseOrchestrator {
     qip_engine: Option<Arc<crate::stubs::substrate_6071::QIPEngine>>,
     qart_engine: Option<Arc<crate::stubs::substrate_6072::QArtEngine>>,
     financial_validator: Option<Arc<crate::stubs::substrate_6073::FinancialValidator>>,
-    _nanophotonic_engine: Option<Arc<crate::stubs::substrate_9010::NanophotonicEngine>>,
     // Servidores
     grpc_server: Option<GrpcServer>,
     rest_server: Option<RestServer>,

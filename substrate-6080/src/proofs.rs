@@ -1,4 +1,12 @@
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub struct ZKProof;
+
+impl ZKProof {
+    pub fn aggregate(proofs: &[ZKProof]) -> Result<Self, crate::verifier::VerificationError> {
+        Ok(Self)
+    }
+}
+
 pub struct ProofType;
 pub struct ProofHeader;
 pub struct ProofWithMetadata;

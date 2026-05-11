@@ -65,3 +65,15 @@ impl SpacetimeGraph {
         self.circuits.values().map(|c| c.total_entropy()).sum()
     }
 }
+
+impl SpacetimeGraph {
+    pub fn visual_nodes(&self) -> impl Iterator<Item = &crate::visual::node::VisualNode> {
+        // mock implementation
+        std::iter::empty()
+    }
+
+    pub fn visual_edges(&self) -> impl Iterator<Item = &crate::visual::edge::VisualEdge> {
+        // mock implementation
+        std::iter::empty()
+    }
+}

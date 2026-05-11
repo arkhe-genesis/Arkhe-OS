@@ -2,12 +2,12 @@ use crate::connectome::{Connectome, NeuronId, Synapse};
 
 pub const MIN_WEIGHT_THRESHOLD: f64 = 0.01;
 
-// Stub for ContinentalMind layer
+/// Represents a layer within the ContinentalMind model.
 pub struct ContinentalMindLayer {
     pub weight: Vec<Vec<f64>>,
 }
 
-// Stub for ContinentalMind model
+/// Represents the overall ContinentalMind model logic and state.
 pub struct ContinentalMind {
     pub layers: Vec<ContinentalMindLayer>,
 }

@@ -2,49 +2,7 @@
 name = "arkhe-compliance"
 version = "6.1.0"
 edition = "2021"
-description = "ARKHE Full Compliance Engine — HIPAA, GDPR, FDA/ANVISA, KYC/AML, FAIR"
-license = "MIT"
-repository = "https://github.com/arkhe-os/arkhe-compliance"
-keywords = ["compliance", "hipaa", "gdpr", "fda", "audit", "arkhe"]
-categories = ["cryptography", "regulatory", "no-std"]
-
-[lib]
-crate-type = ["cdylib", "rlib"]
-
-[features]
-default = ["full"]
-full = ["hipaa", "gdpr", "lgpd", "fda", "kyc", "fair", "iso"]
-hipaa = []
-gdpr = []
-lgpd = []
-fda = ["dep:arkhe-zklib"]
-kyc = []
-fair = []
-iso = []
-wasm = ["dep:wasm-bindgen"]
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
 thiserror = "1.0"
-tracing = "0.1"
-chrono = { version = "0.4", features = ["serde"] }
-uuid = { version = "1.8", features = ["v4", "serde"] }
-sha3 = "0.10"
-blake3 = "1.7"
-hex = "0.4"
-base64 = "0.22"
-hmac = "0.12"
-sha2 = "0.10"
-rand = "0.8"
-regex = "1.10"
-
-arkhe-temporal = { path = "../substrate-6064/temporal" }
-arkhe-zklib = { path = "../substrate-6080", optional = true }
-# arkhe_x402 = { path = "../../bridges/x402", optional = true }
-wasm-bindgen = { version = "0.2", optional = true }
-
-[dev-dependencies]
-tokio = { version = "1", features = ["full"] }
-proptest = "1.4"
-tempfile = "3.10"
