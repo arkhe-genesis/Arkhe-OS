@@ -3,6 +3,9 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp") version "1.9.20-1.0.14" // Para bindings Kotlin/Native
+plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
 }
 
 android {
@@ -12,6 +15,7 @@ android {
     defaultConfig {
         applicationId = "com.arkhe.cathedral"
         minSdk = 28  // Android 9.0+ para StrongBox support
+        minSdk = 28
         targetSdk = 34
         versionCode = 1
         versionName = "4.3.5"
@@ -55,6 +59,11 @@ android {
             enableV3Signing = true
             enableV4Signing = true  // APK Signature Scheme v4 para Android 11+
         }
+        externalNativeBuild {
+            cmake {
+                cppFlags += "-std=c++17 -O3"
+            }
+        }
     }
 
     buildTypes {
@@ -92,6 +101,18 @@ android {
     }
 
     // Native build
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
     externalNativeBuild {
         cmake {
             path = file("src/main/jni/CMakeLists.txt")
@@ -158,4 +179,10 @@ fun computeNativeHash(): String {
     // Em produção: calcular SHA3-256 do .so compilado
     // Aqui: placeholder
     return "placeholder_native_hash_32chars"
+}
+}
+
+dependencies {
+    implementation("androidx.core:core-ktx:1.12.0")
+    testImplementation("junit:junit:4.13.2")
 }

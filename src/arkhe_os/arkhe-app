@@ -1,0 +1,32 @@
+#!/bin/bash
+# Arkhe OS Application Runner
+
+APP_NAME=$1
+shift
+
+if [ -z "$APP_NAME" ]; then
+    echo "Usage: arkhe-app <fold|cad|music|poetry|generic> [args]"
+    exit 1
+fi
+
+case $APP_NAME in
+    fold)
+        python3 apps/arkhe_fold.py "$@"
+        ;;
+    cad)
+        python3 apps/arkhe_cad.py "$@"
+        ;;
+    music)
+        python3 apps/arkhe_music.py "$@"
+        ;;
+    poetry)
+        python3 apps/arkhe_poetry.py "$@"
+        ;;
+    generic)
+        python3 apps/arkhe_generic.py "$@"
+        ;;
+    *)
+        echo "Unknown application: $APP_NAME"
+        exit 1
+        ;;
+esac

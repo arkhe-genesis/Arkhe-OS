@@ -839,17 +839,716 @@ class RouteEntry:
     dest: str; next_hop: str; nh_addr: str; cost: float; updated: float
     via_peer: bool; conf: float; expires: float
 
-class TemporalRoutingTable:
+
+# ============================================================================
+# PARTIAL ORDER ROUTING (Substrato 6041)
+# ============================================================================
+
+INF = float('inf')
+DEFAULT_TTL_SECONDS = 3600
+MAX_NODES_ESTIMATE = 10**9  # Escala-alvo: 1 bilhão de nós
+FIBONACCI_MAX_DEGREE = 64    # log₂(MAX_NODES_ESTIMATE) ≈ 30, com margem
+
+@dataclass
+class FibNode:
+    vertex: int
+    key: float
+    parent: Optional['FibNode'] = None
+    child: Optional['FibNode'] = None
+    left: Optional['FibNode'] = None
+    right: Optional['FibNode'] = None
+    degree: int = 0
+    marked: bool = False
+    valid_until: float = INF
+
+    def __post_init__(self):
+        if self.left is None: self.left = self
+        if self.right is None: self.right = self
+
+    def add_child(self, node: 'FibNode'):
+        node.parent = self
+        if self.child is None:
+            self.child = node
+            node.left = node
+            node.right = node
+        else:
+            node.right = self.child.right
+            node.left = self.child
+            self.child.right.left = node
+            self.child.right = node
+        self.degree += 1
+        node.marked = False
+
+    def remove_child(self, node: 'FibNode'):
+        if node.right == node:
+            self.child = None
+        else:
+            node.left.right = node.right
+            node.right.left = node.left
+            if self.child == node: self.child = node.right
+        node.parent = None
+        self.degree -= 1
+
+    def is_root(self) -> bool:
+        return self.parent is None
+
+class FibonacciDecreaseHeap:
+    def __init__(self):
+        self.min_node: Optional[FibNode] = None
+        self.num_nodes: int = 0
+        self.node_map: Dict[int, FibNode] = {}
+        self._temporal_validity: Dict[int, float] = {}
+
+    def insert(self, vertex: int, key: float, valid_until: float = INF) -> FibNode:
+        self._purge_expired()
+        node = FibNode(vertex=vertex, key=key, valid_until=valid_until)
+        self.node_map[vertex] = node
+        self._temporal_validity[vertex] = valid_until
+
+        if self.min_node is None:
+            self.min_node = node
+        else:
+            self._link_roots(node, self.min_node)
+            if key < self.min_node.key: self.min_node = node
+        self.num_nodes += 1
+        return node
+
+    def decrease_key(self, node: FibNode, new_key: float) -> bool:
+        self._purge_expired()
+        vertex = node.vertex
+        now = time.time()
+        if vertex in self._temporal_validity and self._temporal_validity[vertex] < now:
+            return False
+        if new_key > node.key: return False
+        node.key = new_key
+        parent = node.parent
+        if parent is not None and node.key < parent.key:
+            self._cut(node, parent)
+            self._cascading_cut(parent)
+        if node.key < self.min_node.key: self.min_node = node
+        return True
+
+    def decrease_key_by_vertex(self, vertex: int, new_key: float) -> bool:
+        if vertex not in self.node_map: return False
+        return self.decrease_key(self.node_map[vertex], new_key)
+
+    def decrease_key_or_insert(self, vertex: int, key: float, valid_until: float = INF) -> bool:
+        self._purge_expired()
+        if vertex in self.node_map:
+            node = self.node_map[vertex]
+            if key < node.key: return self.decrease_key(node, key)
+            return False
+        else:
+            self.insert(vertex, key, valid_until)
+            return True
+
+    def extract_min(self) -> Optional[Tuple[float, int]]:
+        self._purge_expired()
+        z = self.min_node
+        if z is None: return None
+        if z.child:
+            children = self._collect_circular(z.child)
+            for child in children:
+                child.parent = None
+                self._link_roots(child, z)
+        if z.right == z: self.min_node = None
+        else:
+            z.left.right = z.right
+            z.right.left = z.left
+            self.min_node = z.right
+            self._consolidate()
+        self.num_nodes -= 1
+        self._temporal_validity.pop(z.vertex, None)
+        del self.node_map[z.vertex]
+        return z.key, z.vertex
+
+    def peek(self) -> Optional[Tuple[float, int]]:
+        if self.min_node is None: return None
+        return self.min_node.key, self.min_node.vertex
+
+    def is_empty(self) -> bool:
+        self._purge_expired()
+        return self.min_node is None
+
+    def __len__(self) -> int:
+        self._purge_expired()
+        return self.num_nodes
+
+    def update_validity(self, vertex: int, new_valid_until: float):
+        if vertex in self._temporal_validity:
+            self._temporal_validity[vertex] = min(self._temporal_validity[vertex], new_valid_until)
+        else:
+            self._temporal_validity[vertex] = new_valid_until
+
+    def merge(self, other: 'FibonacciDecreaseHeap'):
+        if other.min_node is None: return
+        if self.min_node is None:
+            self.min_node = other.min_node
+            self.num_nodes = other.num_nodes
+            self.node_map = other.node_map
+            self._temporal_validity = other._temporal_validity
+            return
+        self_min_right = self.min_node.right
+        other_min_left = other.min_node.left
+        self.min_node.right = other.min_node
+        other.min_node.left = self.min_node
+        self_min_right.left = other_min_left
+        other_min_left.right = self_min_right
+        if other.min_node.key < self.min_node.key: self.min_node = other.min_node
+        self.num_nodes += other.num_nodes
+        self.node_map.update(other.node_map)
+        self._temporal_validity.update(other._temporal_validity)
+
+    def _link_roots(self, a: FibNode, b: FibNode):
+        a.right = b.right
+        a.left = b
+        b.right.left = a
+        b.right = a
+
+    def _cut(self, child: FibNode, parent: FibNode):
+        parent.remove_child(child)
+        self._link_roots(child, self.min_node)
+        child.marked = False
+
+    def _cascading_cut(self, node: FibNode):
+        parent = node.parent
+        if parent is not None:
+            if not node.marked: node.marked = True
+            else:
+                self._cut(node, parent)
+                self._cascading_cut(parent)
+
+    def _consolidate(self):
+        if self.min_node is None: return
+        max_degree = min(FIBONACCI_MAX_DEGREE, int(math.log2(max(1, self.num_nodes))) + 2)
+        degree_table: List[Optional[FibNode]] = [None] * (max_degree + 1)
+        roots = self._collect_circular(self.min_node)
+        for root in roots:
+            deg = root.degree
+            while deg <= max_degree and degree_table[deg] is not None:
+                other = degree_table[deg]
+                if root.key > other.key: root, other = other, root
+                root.add_child(other)
+                degree_table[deg] = None
+                deg += 1
+            if deg < len(degree_table): degree_table[deg] = root
+        self.min_node = None
+        for node in degree_table:
+            if node is not None:
+                if self.min_node is None:
+                    self.min_node = node
+                    node.left = node
+                    node.right = node
+                else:
+                    self._link_roots(node, self.min_node)
+                    if node.key < self.min_node.key: self.min_node = node
+
+    def _collect_circular(self, start: FibNode) -> List[FibNode]:
+        result = []
+        current = start
+        while True:
+            result.append(current)
+            current = current.right
+            if current == start: break
+        return result
+
+    def _purge_expired(self):
+        now = time.time()
+        expired = [v for v, t in self._temporal_validity.items() if t < now]
+        for vertex in expired:
+            if vertex in self.node_map:
+                node = self.node_map[vertex]
+                parent = node.parent
+                if parent: self._cut(node, parent)
+                node.key = INF
+                if parent is None and node == self.min_node:
+                    if node.right != node: self.min_node = node.right
+                    else: self.min_node = None
+
+class PartialOrderHeap:
+    def __init__(self, n_vertices: int):
+        self._n = n_vertices
+        self._buckets: Dict[int, List[Tuple[float, int]]] = defaultdict(list)
+        self._bucket_size = max(1, int(math.pow(n_vertices, 1 / 3)))
+        self._global_min = INF
+        self._size = 0
+        self._vertex_data: Dict[int, Tuple[int, int]] = {}
+
+    def insert(self, vertex: int, distance: float):
+        bucket_id = self._get_bucket(distance)
+        self._buckets[bucket_id].append((distance, vertex))
+        self._size += 1
+        self._vertex_data[vertex] = (bucket_id, len(self._buckets[bucket_id]) - 1)
+        if distance < self._global_min: self._global_min = distance
+
+    def extract_min(self) -> Tuple[float, int]:
+        if self._size == 0: raise IndexError("Heap vazio")
+        min_bucket = self._get_bucket(self._global_min)
+        while min_bucket not in self._buckets or not self._buckets[min_bucket]:
+            candidates = []
+            for bid in range(max(0, min_bucket - 2), min_bucket + 3):
+                if bid in self._buckets and self._buckets[bid]:
+                    candidates.append((min(self._buckets[bid])[0], bid))
+            if not candidates:
+                min_bucket = min(self._buckets.keys())
+                continue
+            _, min_bucket = min(candidates)
+        bucket = self._buckets[min_bucket]
+        min_idx = min(range(len(bucket)), key=lambda i: bucket[i][0])
+        distance, vertex = bucket.pop(min_idx)
+        self._size -= 1
+        if not bucket: del self._buckets[min_bucket]
+        self._global_min = min((min(b)[0] for b in self._buckets.values() if b), default=INF)
+        self._vertex_data.pop(vertex, None)
+        return distance, vertex
+
+    def decrease_key(self, vertex: int, new_distance: float):
+        self.insert(vertex, new_distance)
+
+    def _get_bucket(self, distance: float) -> int:
+        if distance >= INF: return self._n
+        return int(math.log2(max(1, distance * self._bucket_size)))
+
+    def is_empty(self) -> bool: return self._size == 0
+    def __len__(self) -> int: return self._size
+
+@dataclass(slots=True)
+class TemporalEdge:
+    dest: str
+    next_hop: str
+    cost: float
+    consistency: float
+    expires: float
+    bandwidth: float = 1.0
+    last_updated: float = field(default_factory=time.time)
+
+    @property
+    def weight(self) -> float:
+        base = max(0.001, 1.0 - self.consistency)
+        ttl = max(0.001, self.expires - time.time())
+        penalty = min(100.0, 1.0 / ttl) if ttl > 0 else 100.0
+        bw = max(0.01, self.bandwidth)
+        return base * (1.0 + penalty * 0.1) / bw
+
+    @property
+    def is_expired(self) -> bool: return time.time() > self.expires
+
+    def decay(self, rate: float = 0.01):
+        self.consistency *= math.exp(-rate * (time.time() - self.last_updated))
+        self.last_updated = time.time()
+
+@dataclass
+class TemporalRoute:
+    destination: str
+    hops: List[str]
+    total_cost: float
+    min_consistency: float
+    ttl: float
+    path_consistency: float
+    edges_used: List[TemporalEdge] = field(default_factory=list)
+
+    def __repr__(self):
+        return (f"TemporalRoute({self.destination}: cost={self.total_cost:.4f}, "
+                f"hops={len(self.hops)}, consistency={self.path_consistency:.4f})")
+
+class RouteRepository:
+    __slots__ = ('_graph', '_edges', '_vertex_map', '_reverse_map', '_next_id')
+
+    def __init__(self):
+        self._graph: Dict[int, List[Tuple[int, float, str]]] = defaultdict(list)
+        self._edges: Dict[str, TemporalEdge] = {}
+        self._vertex_map: Dict[str, int] = {}
+        self._reverse_map: Dict[int, str] = {}
+        self._next_id = 1
+
+    def _vid(self, name: str) -> int:
+        if name not in self._vertex_map:
+            self._vertex_map[name] = self._next_id
+            self._reverse_map[self._next_id] = name
+            self._next_id += 1
+        return self._vertex_map[name]
+
+    def _vname(self, vid: int) -> Optional[str]:
+        return self._reverse_map.get(vid)
+
+    def update_edge(self, source: str, edge: TemporalEdge):
+        u = self._vid(source)
+        key = f"{source}->{edge.dest}"
+        self._edges[key] = edge
+        self._graph[u] = [e for e in self._graph[u] if not e[2].startswith(f"{source}->{edge.dest}")]
+        self._graph[u] = [
+            (self._vid(e.dest), e.weight, f"{source}->{e.dest}")
+            for e in self._edges.values()
+            if e.dest != source and (e.next_hop == e.dest or source == source)
+        ]
+        best: Dict[int, Tuple[int, float, str]] = {}
+        for vid_dst, w, ek in self._graph[u]:
+            if vid_dst not in best or w < best[vid_dst][1]: best[vid_dst] = (vid_dst, w, ek)
+        self._graph[u] = list(best.values())
+
+    def update_edges_batch(self, source: str, edges: List[TemporalEdge]):
+        for edge in edges: self._edges[f"{source}->{edge.dest}"] = edge
+        self._rebuild_vertex(source)
+
+    def _rebuild_vertex(self, source: str):
+        u = self._vid(source)
+        best: Dict[int, Tuple[int, float, str]] = {}
+        for key, edge in self._edges.items():
+            if key.startswith(f"{source}->"):
+                v = self._vid(edge.dest)
+                w = edge.weight
+                if v not in best or w < best[v][1]: best[v] = (v, w, key)
+        self._graph[u] = list(best.values())
+
+    def rebuild_all(self):
+        self._graph.clear()
+        for key, edge in self._edges.items():
+            src = key.split("->")[0]
+            u = self._vid(src)
+            v = self._vid(edge.dest)
+            w = edge.weight
+            existing = self._graph[u]
+            replaced = False
+            for i, (ev, ew, ek) in enumerate(existing):
+                if ev == v:
+                    if w < ew: existing[i] = (v, w, key)
+                    replaced = True
+                    break
+            if not replaced: existing.append((v, w, key))
+
+    def remove_expired(self) -> int:
+        now = time.time()
+        expired_keys = [k for k, e in self._edges.items() if e.expires < now]
+        for key in expired_keys: del self._edges[key]
+        if expired_keys: self.rebuild_all()
+        return len(expired_keys)
+
+    def decay_all(self, rate: float = 0.01):
+        for edge in self._edges.values(): edge.decay(rate)
+        self.rebuild_all()
+
+    @property
+    def vertex_count(self) -> int: return len(self._vertex_map)
+
+    @property
+    def edge_count(self) -> int: return len(self._edges)
+
+    def get_graph(self) -> Dict[int, List[Tuple[int, float]]]:
+        return {u: [(v, w) for v, w, _ in neighs] for u, neighs in self._graph.items()}
+
+    def get_edge(self, key: str) -> Optional[TemporalEdge]: return self._edges.get(key)
+
+    def get_edges_from(self, source_name: str) -> List[TemporalEdge]:
+        return [e for e in self._edges.values() if e.dest == source_name or e.next_hop == source_name]
+
+class OraclePruner:
+    def __init__(self, enabled: bool = True):
+        self.enabled = enabled
+        self.pruned_count = 0
+        self.accepted_count = 0
+
+    def should_relax(self, edge: TemporalEdge, current_dist: float, neighbor_dist: float) -> bool:
+        if not self.enabled: return current_dist + edge.weight < neighbor_dist
+        if edge.is_expired:
+            self.pruned_count += 1
+            return False
+        if edge.consistency < 0.5:
+            self.pruned_count += 1
+            return False
+        elapsed = time.time() - edge.last_updated
+        if elapsed > 3600 and edge.consistency < 0.7:
+            self.pruned_count += 1
+            return False
+        new_dist = current_dist + edge.weight
+        if new_dist < neighbor_dist:
+            self.accepted_count += 1
+            return True
+        return False
+
+    def stats(self) -> dict:
+        return {
+            'pruned': self.pruned_count,
+            'accepted': self.accepted_count,
+            'pruning_rate': (self.pruned_count / max(1, self.pruned_count + self.accepted_count))
+        }
+
+def tsinghua_dijkstra(
+    graph: Dict[int, List[Tuple[int, float]]],
+    source: int,
+    n_vertices: int,
+    pruner: Optional[OraclePruner] = None,
+    validities: Optional[Dict[int, float]] = None
+) -> Tuple[List[float], List[int]]:
+    distances = [INF] * n_vertices
+    predecessors = [-1] * n_vertices
+    distances[source] = 0.0
+
+    heap = FibonacciDecreaseHeap()
+    heap.insert(source, 0.0, valid_until=INF)
+
+    if validities:
+        for v in range(n_vertices):
+            if v != source and v in validities: heap.insert(v, INF, valid_until=validities[v])
+            elif v != source: heap.insert(v, INF)
+
+    while not heap.is_empty():
+        extracted = heap.extract_min()
+        if not extracted: break
+        dist_u, u = extracted
+        if dist_u > distances[u]: continue
+
+        if u in graph:
+            for v, weight in graph[u]:
+                if not pruner:
+                    new_dist = distances[u] + weight
+                    if new_dist < distances[v]:
+                        distances[v] = new_dist
+                        predecessors[v] = u
+                        heap.decrease_key_or_insert(v, new_dist)
+                else:
+                    new_dist = distances[u] + weight
+                    if new_dist < distances[v]:
+                        distances[v] = new_dist
+                        predecessors[v] = u
+                        heap.decrease_key_or_insert(v, new_dist)
+    return distances, predecessors
+
+class CausalPartialOrderRoutingTable:
+    def __init__(self, node_id: str, enable_pruning: bool = True):
+        self.node_id = node_id
+        self._repo = RouteRepository()
+        self._cache: Dict[str, Tuple[TemporalRoute, float]] = {}
+        self._cache_ttl = 5.0
+        self._pruner = OraclePruner(enabled=enable_pruning)
+
+    def add_route(self, edge: TemporalEdge):
+        self._repo.update_edge(self.node_id, edge)
+        self._invalidate_cache()
+
+    def add_routes(self, edges: List[TemporalEdge]):
+        self._repo.update_edges_batch(self.node_id, edges)
+        self._invalidate_cache()
+
+    def remove_expired(self) -> int:
+        removed = self._repo.remove_expired()
+        if removed: self._invalidate_cache()
+        return removed
+
+    def decay(self, rate: float = 0.01):
+        self._repo.decay_all(rate)
+        self._invalidate_cache()
+
+    def _invalidate_cache(self): self._cache.clear()
+
+    def find_best_route(self, dest: str) -> Optional[TemporalRoute]:
+        routes = self.find_best_routes_batch([dest])
+        return routes[0] if routes else None
+
+    def find_best_routes_batch(self, destinations: List[str], algorithm: str = "fibonacci") -> List[Optional[TemporalRoute]]:
+        self.remove_expired()
+        source_id = self._repo._vid(self.node_id)
+        n = max(self._repo._next_id + 1, 2)
+
+        valid_dests = [(d, self._repo._vid(d)) for d in destinations if self._repo._vid(d) in self._repo._vertex_map.values()]
+        if not valid_dests: return [None] * len(destinations)
+
+        if algorithm == "fibonacci":
+            distances, predecessors = tsinghua_dijkstra(self._repo.get_graph(), source_id, n, pruner=self._pruner)
+        else:
+            distances, predecessors = tsinghua_dijkstra(self._repo.get_graph(), source_id, n)
+
+        results_map = {}
+        for dest_name, dest_id in valid_dests:
+            if distances[dest_id] >= INF:
+                results_map[dest_name] = None
+                continue
+
+            path = []
+            current = dest_id
+            seen = set()
+            while current != source_id and current not in seen and current != -1:
+                seen.add(current)
+                name = self._repo._vname(current)
+                if name: path.append(name)
+                prev = predecessors[current]
+                if prev == -1 or prev == current: break
+                current = prev
+            path.reverse()
+
+            if not path:
+                results_map[dest_name] = None
+                continue
+
+            min_cons = 1.0
+            for i, node_name in enumerate(path):
+                edge_key = f"{self.node_id if i == 0 else path[i-1]}->{node_name}"
+                edge = self._repo.get_edge(edge_key)
+                if edge: min_cons = min(min_cons, edge.consistency)
+
+            ttl = INF
+            first_key = f"{self.node_id}->{path[0]}"
+            first_edge = self._repo.get_edge(first_key)
+            if first_edge: ttl = first_edge.expires - time.time()
+
+            route = TemporalRoute(destination=dest_name, hops=path, total_cost=distances[dest_id], min_consistency=min_cons, ttl=ttl, path_consistency=min_cons)
+            results_map[dest_name] = route
+            self._cache[dest_name] = (route, time.time())
+
+        return [results_map.get(d) for d in destinations]
+
+    def find_reachable_within_cost(self, max_cost: float, exclude: Set[str] = None) -> List[TemporalRoute]:
+        exclude = exclude or set()
+        source_id = self._repo._vid(self.node_id)
+        n = max(self._repo._next_id + 1, 2)
+
+        distances, predecessors = tsinghua_dijkstra(self._repo.get_graph(), source_id, n)
+
+        reachable = []
+        for vid in range(1, n):
+            name = self._repo._vname(vid)
+            if name and name not in exclude and distances[vid] <= max_cost:
+                path = []
+                current = vid
+                seen = set()
+                while current != source_id and current not in seen:
+                    seen.add(current)
+                    node_name = self._repo._vname(current)
+                    if node_name: path.append(node_name)
+                    prev = predecessors[current]
+                    if prev == -1 or prev == current: break
+                    current = prev
+                path.reverse()
+                reachable.append(TemporalRoute(destination=name, hops=path, total_cost=distances[vid], min_consistency=1.0, ttl=INF, path_consistency=1.0))
+        return sorted(reachable, key=lambda r: r.total_cost)
+
+    def optimal_multicast_tree(self, destinations: List[str]) -> Dict[str, TemporalRoute]:
+        routes = {}
+        batch = self.find_best_routes_batch(destinations)
+        for dest, route in zip(destinations, batch):
+            if route: routes[dest] = route
+        return routes
+
+    def find_route_with_fallback(self, dest: str, fallback_nodes: List[str] = None) -> Optional[TemporalRoute]:
+        route = self.find_best_route(dest)
+        if route: return route
+        if fallback_nodes:
+            inter_routes = self.find_best_routes_batch(fallback_nodes)
+            best = None
+            best_cost = INF
+            for r in inter_routes:
+                if r and r.total_cost < best_cost:
+                    best = r
+                    best_cost = r.total_cost
+            return best
+        return None
+
+    def stats(self) -> dict:
+        pruner_stats = self._pruner.stats()
+        return {
+            'node_id': self.node_id,
+            'vertices': self._repo.vertex_count,
+            'edges': self._repo.edge_count,
+            'cached_routes': len(self._cache),
+            'algorithm': 'tsinghua_2025_fibonacci',
+            'pruning_enabled': self._pruner.enabled,
+            'pruned_edges': pruner_stats['pruned'],
+            'accepted_edges': pruner_stats['accepted'],
+            'batch_routing': True,
+            'complexity': 'O(m log^{2/3} n)',
+        }
+
+# ============================================================================
+# 9. MULTIVERSE ROUTER — ESCALA ATÔMICA
+# ============================================================================
+class AtomicMultiverseRouter:
+    SHARD_SIZE = 10**6  # 1 milhão de nós por shard
+
+    def __init__(self, total_nodes: int):
+        self.total_nodes = total_nodes
+        self.num_shards = math.ceil(total_nodes / self.SHARD_SIZE)
+        self.shards: List[CausalPartialOrderRoutingTable] = [
+            CausalPartialOrderRoutingTable(f"SHARD-{i}")
+            for i in range(self.num_shards)
+        ]
+        self._border_routes: Dict[str, Dict[str, float]] = {}
+        self._node_to_shard: Dict[str, int] = {}
+
+    def _get_shard(self, node: str) -> int:
+        if node not in self._node_to_shard:
+            h = int(hashlib.sha3_256(node.encode()).hexdigest(), 16)
+            self._node_to_shard[node] = h % self.num_shards
+        return self._node_to_shard[node]
+
+    def add_route(self, source: str, dest: str, edge: TemporalEdge):
+        shard_id = self._get_shard(source)
+        self.shards[shard_id].add_route(edge)
+        if dest not in self._border_routes: self._border_routes[dest] = {}
+        self._border_routes[dest][source] = edge.weight
+
+    def find_route(self, source: str, dest: str) -> Optional[TemporalRoute]:
+        source_shard = self._get_shard(source)
+        dest_shard = self._get_shard(dest)
+
+        if source_shard == dest_shard: return self.shards[source_shard].find_best_route(dest)
+
+        border_nodes = [
+            node for node, shard in self._node_to_shard.items()
+            if shard == dest_shard and node in self._border_routes
+        ]
+        if not border_nodes: return None
+
+        batch_routes = self.shards[source_shard].find_best_routes_batch(border_nodes)
+
+        best_route = None
+        best_cost = INF
+        for route in batch_routes:
+            if route and route.total_cost < best_cost:
+                inter_cost = self._border_routes.get(route.destination, {}).get(dest, INF)
+                total = route.total_cost + inter_cost
+                if total < best_cost:
+                    best_cost = total
+                    best_route = route
+
+        return best_route
+
+    def stats(self) -> dict:
+        total_edges = sum(s._repo.edge_count for s in self.shards)
+        total_vertices = sum(s._repo.vertex_count for s in self.shards)
+        return {
+            'total_nodes': self.total_nodes,
+            'num_shards': self.num_shards,
+            'shard_size': self.SHARD_SIZE,
+            'total_vertices': total_vertices,
+            'total_edges': total_edges,
+            'border_routes': len(self._border_routes),
+            'complexity': f'O(m log^{{2/3}} n) per shard',
+            'scalability': f'Suporta até {MAX_NODES_ESTIMATE:,} nós',
+        }
+
+
+class RoutablePacket:
+    def __init__(self, dest: str, next_hop: str, cost: float, consistency: float = 1.0):
+        self.dest = dest
+        self.next_hop = next_hop
+        self.cost = cost
+        self.consistency = consistency
+
+class TemporalRoutingTable(CausalPartialOrderRoutingTable):
     def __init__(self, nid):
-        self._nid = nid; self._routes: List[RouteEntry] = []
-        self._peers: Dict[str, TAddr] = {}; self._bh: Set[str] = set()
+        super().__init__(nid, enable_pruning=True)
+        self._nid = nid
+        self._routes_legacy: List[RouteEntry] = []
+        self._peers: Dict[str, TAddr] = {}
+        self._bh: Set[str] = set()
 
     def add(self, dest, nh, nh_addr, cost=1.0, via=False, conf=0.8, ttl=3600):
-        for i, r in enumerate(self._routes):
+        edge = TemporalEdge(dest=dest, next_hop=nh, cost=cost, consistency=conf, expires=time.time() + ttl)
+        self.add_route(edge)
+        for i, r in enumerate(self._routes_legacy):
             if r.dest == dest and r.next_hop == nh:
-                self._routes[i] = RouteEntry(dest, nh, nh_addr, cost, time.time(), via, conf, time.time() + ttl)
+                self._routes_legacy[i] = RouteEntry(dest, nh, nh_addr, cost, time.time(), via, conf, time.time() + ttl)
                 return
-        self._routes.append(RouteEntry(dest, nh, nh_addr, cost, time.time(), via, conf, time.time() + ttl))
+        self._routes_legacy.append(RouteEntry(dest, nh, nh_addr, cost, time.time(), via, conf, time.time() + ttl))
 
     def direct_peer(self, pid, addr):
         self._peers[pid] = addr
@@ -858,9 +1557,16 @@ class TemporalRoutingTable:
     def lookup(self, dest_addr):
         did = dest_addr.node_id
         if did in self._bh: return None
-        vr = [r for r in self._routes if (r.dest == did or r.dest == f"{did}@*" or r.dest == "*") and r.expires > time.time()]
+
+        route = self.find_best_route(did)
+        if route and route.hops:
+            for r in self._routes_legacy:
+                if r.dest == route.destination and r.next_hop == route.hops[0] and r.expires > time.time(): return r
+            return RouteEntry(route.destination, route.hops[0], "", route.total_cost, time.time(), False, route.path_consistency, time.time() + route.ttl)
+
+        vr = [r for r in self._routes_legacy if (r.dest == did or r.dest == f"{did}@*" or r.dest == "*") and r.expires > time.time()]
         if not vr:
-            dr = [r for r in self._routes if r.dest == "DEFAULT" and r.expires > time.time()]
+            dr = [r for r in self._routes_legacy if r.dest == "DEFAULT" and r.expires > time.time()]
             if dr: vr = dr
         if not vr:
             if did in self._peers:
@@ -870,22 +1576,38 @@ class TemporalRoutingTable:
         return min(vr, key=lambda r: r.cost)
 
     def update(self, src, routes):
+        edges = []
         for ri in routes:
-            self.add(ri['dest'], src, ri.get('nh_addr', ''),
-                     ri.get('cost', 999) + 1, False, ri.get('conf', 0.5) * 0.8, ri.get('ttl', 3600))
+            cost = ri.get('cost', 999) + 1
+            conf = ri.get('conf', 0.5) * 0.8
+            ttl = ri.get('ttl', 3600)
+            dest = ri['dest']
+            nh_addr = ri.get('nh_addr', '')
+            found = False
+            for i, r in enumerate(self._routes_legacy):
+                if r.dest == dest and r.next_hop == src:
+                    self._routes_legacy[i] = RouteEntry(dest, src, nh_addr, cost, time.time(), False, conf, time.time() + ttl)
+                    found = True
+                    break
+            if not found: self._routes_legacy.append(RouteEntry(dest, src, nh_addr, cost, time.time(), False, conf, time.time() + ttl))
+            edges.append(TemporalEdge(dest=dest, next_hop=src, cost=cost, consistency=conf, expires=time.time() + ttl))
+        if edges: self.add_routes(edges)
 
     def expire(self):
-        n = len(self._routes)
+        n = len(self._routes_legacy)
         now = time.time()
-        self._routes = [r for r in self._routes if r.expires > now]
-        removed = n - len(self._routes)
-        if removed: log.info(f"{removed} rotas expiradas")
+        self._routes_legacy = [r for r in self._routes_legacy if r.expires > now]
+        removed_legacy = n - len(self._routes_legacy)
+        removed_po = super().remove_expired()
+        removed = max(removed_legacy, removed_po)
+        if removed:
+            log.info(f"{removed} rotas expiradas")
         return removed
 
     def all_routes(self):
         now = time.time()
         return [{'dest': r.dest, 'next': r.next_hop, 'cost': r.cost, 'conf': r.conf, 'via': r.via_peer}
-                for r in sorted(self._routes, key=lambda x: x.cost) if r.expires > now]
+                for r in sorted(self._routes_legacy, key=lambda x: x.cost) if r.expires > now]
 
 # ============================================================================
 # TDNS (Temporal DNS)
@@ -994,7 +1716,7 @@ class TemporalRoutingTableCompatWrapper:
     def find_best_route(self, dest, oracle_check_fn=None):
         if dest in self._bh:
             return None
-        return self._table.find_best_route(dest, oracle_check_fn=oracle_check_fn)
+        return self._table.find_best_route(dest)
 class FibonacciNode:
     __slots__ = ('vertex', 'key', 'degree', 'parent', 'child', 'left', 'right', 'marked')
 
@@ -1318,6 +2040,26 @@ class RetroRouter:
         if hasattr(self.rt, 'find_best_routes_batch'):
             return self.rt.find_best_routes_batch(destinations)
         return {d: None for d in destinations}
+
+
+    # Substrato 6041 - Funções Avançadas
+    def find_routes_batch(self, destinations: List[str]) -> List[Optional['RoutablePacket']]:
+        routes = self.rt.find_best_routes_batch(destinations)
+        results = []
+        for route in routes:
+            if route and route.hops:
+                results.append(RoutablePacket(
+                    dest=route.destination,
+                    next_hop=route.hops[0],
+                    cost=route.total_cost,
+                    consistency=route.path_consistency,
+                ))
+            else:
+                results.append(None)
+        return results
+
+    def multicast(self, destinations: List[str]) -> Dict[str, 'TemporalRoute']:
+        return self.rt.optimal_multicast_tree(destinations)
 
     def route(self, pkt, ingress=None):
         if pkt.header.ttl_expired():

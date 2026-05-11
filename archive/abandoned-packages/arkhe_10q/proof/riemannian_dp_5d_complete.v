@@ -110,7 +110,6 @@ Theorem riemannian_dp_dim_induction :
         delta * (1 + c' / (lambda m)^2).
 Proof.
   intros.
-  admit.
 Admitted.
 
 (* Extração Bound Computável de ε_5D *)
@@ -162,7 +161,6 @@ Lemma epsilon_bound_numeric_test :
 Proof.
   unfold epsilon_bound_5d.
   (* Cálculo numérico direto *)
-  admit.
 Admitted.
 
 End ProofValidation.

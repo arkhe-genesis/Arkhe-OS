@@ -448,11 +448,11 @@ class MultiverseRouter:
         self.ledger.record("timeline_branch", {'action': 'create', 'branch_id': 'main', 'divergence_event': 'big_bang'})
         return main
 
-    def create_branch(self, divergence_event: str, from_timestamp: float, branch_id: str = None) -> TimelineBranch:
+    def create_branch(self, divergence_event: str, from_timestamp: float, branch_id: str = None, base_timeline: str = "main") -> TimelineBranch:
         bid = branch_id or f"branch-{uuid.uuid4().hex[:8]}"
         epoch = from_timestamp + MULTIVERSE_BASE_OFFSET * len(self.branches)
         branch = TimelineBranch(branch_id=bid, divergence_timestamp=from_timestamp,
-                                divergence_event=divergence_event, base_timeline="main",
+                                divergence_event=divergence_event, base_timeline=base_timeline,
                                 taddr_base=TAddr.from_parts(bid, epoch, 0.01))
         self.branches[bid] = branch
         self.chain.insert_retrocausal(target_ts=epoch, data={'action': 'branch_create', 'branch_id': bid,
@@ -479,6 +479,35 @@ class MultiverseRouter:
                     return b
             raise TimelineNotFoundError(f"Branch '{branch_id}' não encontrada")
         return self.branches[branch_id]
+
+    def is_accessible(self, world_a: str, world_b: str) -> bool:
+        if world_a == world_b:
+            return True
+        current = world_b
+        visited = set([current])
+        while current in self.branches and current != "main":
+            parent = self.branches[current].base_timeline
+            if parent == world_a:
+                return True
+            if parent in visited:
+                break
+            visited.add(parent)
+            current = parent
+        return False
+
+    def verify_kripke_semantics(self) -> bool:
+        branches = list(self.branches.keys())
+        for w in branches:
+            if not self.is_accessible(w, w):
+                return False
+        for w1 in branches:
+            for w2 in branches:
+                if self.is_accessible(w1, w2):
+                    for w3 in branches:
+                        if self.is_accessible(w2, w3):
+                            if not self.is_accessible(w1, w3):
+                                return False
+        return True
 
     def inter_branch_message(self, src_branch: str, dst_branch: str,
                               content: str, priority: int = 2) -> Tuple[bool, str, float]:
@@ -541,6 +570,40 @@ class MultiverseRouter:
                 removed += 1
                 log.info(f"🌀 Branch podada: {bid} (coerência={self.branches[bid].coherence_score:.4f})")
         return removed
+
+    def is_accessible(self, world_a: str, world_b: str) -> bool:
+        if world_a == world_b:
+            return True
+
+        current = world_b
+        visited = {current}
+        while current in self.branches and current != "main":
+            parent = self.branches[current].base_timeline
+            if parent == world_a:
+                return True
+            if parent in visited:
+                break
+            visited.add(parent)
+            current = parent
+
+        return False
+
+    def verify_kripke_semantics(self) -> bool:
+        branches = list(self.branches.keys())
+
+        for w in branches:
+            if not self.is_accessible(w, w):
+                return False
+
+        for w1 in branches:
+            for w2 in branches:
+                if self.is_accessible(w1, w2):
+                    for w3 in branches:
+                        if self.is_accessible(w2, w3):
+                            if not self.is_accessible(w1, w3):
+                                return False
+
+        return True
 
 
 # ============================================================================
@@ -1025,6 +1088,50 @@ class RetroRouter:
         self.node = node; self.rt = TemporalRoutingTable(node.nid); self.tdns = TemporalDNS()
         self.fw = TemporalFirewall(node.nid); self.pkt_log: List[Dict] = []
         self._upd_t = 0; self._hb_t = 0
+        self.recovery_gateway = None
+
+    @property
+    def ledger(self):
+        return self.node._channel.ledger
+
+    def chain(self):
+        return self.node._channel.temporal_hash_chain
+
+    @property
+    def validator(self):
+        if not hasattr(self, "_validator"):
+            self._validator = RetrocausalValidator(self.ledger)
+        return self._validator
+
+    def enable_recovery_email(self, config):
+        # Local import to avoid circular dependency
+        from recovery_email_gateway import RecoveryEmailGateway
+        self.recovery_gateway = RecoveryEmailGateway(self, config)
+        def recovery_worker():
+            while True:
+                if self.recovery_gateway:
+                    self.recovery_gateway.send_retry_queue()
+                    received = self.recovery_gateway.poll_inbox()
+                    if received:
+                        self.recovery_gateway.reconcile(received)
+                time.sleep(30)
+        threading.Thread(target=recovery_worker, daemon=True).start()
+
+    def _send_via_primary(self, msg, primary_route: str) -> bool:
+        # Dummy implementation of primary route sending to avoid error
+        return False
+
+    def send_message_with_fallback(self, msg, primary_route: str) -> bool:
+        if self._send_via_primary(msg, primary_route):
+            return True
+        if self.recovery_gateway:
+            score = self.validator.validate(msg).score
+            chain_hash = self.chain().head_hash
+            self.recovery_gateway.enqueue(msg, score, chain_hash)
+            log.info(f"Message {msg.id} enqueued for email recovery")
+            return True
+        return False
+
     def route(self, pkt, ingress=None):
         if pkt.header.ttl_expired(): self._err(pkt, "TTL_ERR"); return None
         if pkt.header.hops_bad(): self._err(pkt, "HOP_ERR"); return None

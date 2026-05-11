@@ -14,6 +14,9 @@ on:
         required: true
         default: '3600'
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   fuzz:
     runs-on: ubuntu-latest

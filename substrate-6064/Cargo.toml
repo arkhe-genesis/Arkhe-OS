@@ -1,0 +1,15 @@
+[workspace]
+resolver = "2"
+members = [
+    "quantum_cell",
+    "zk_therapeutic",
+    "cell_royalty",
+    "integration",
+]
+[package]
+name = "substrate-6064"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+arkhe-temporal = { path = "temporal" }

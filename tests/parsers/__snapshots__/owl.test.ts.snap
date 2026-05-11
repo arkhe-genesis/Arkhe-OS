@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`OWLFrontend 📸 Snapshot of parsed ontology LFIR 1`] = `
+{
+  "edges": [],
+  "metadata": {
+    "coherence": Any<Number>,
+    "parseTimestamp": Any<String>,
+  },
+  "nodes": [
+    {
+      "attributes": {
+        "label": "Person",
+      },
+      "type": "Class",
+    },
+    {
+      "attributes": {
+        "label": "Student",
+        "subClassOf": [
+          "Person",
+        ],
+      },
+      "type": "Class",
+    },
+  ],
+}
+`;

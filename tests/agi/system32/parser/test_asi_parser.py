@@ -7,7 +7,14 @@ import time
 from unittest.mock import patch, mock_open, MagicMock
 
 # Create a dummy payload to pass the test
-from agi.system32.parser.asi_parser import ASIParser, ASI_MAGIC, HEADER_SIZE
+from agi.system32.parser.asi_parser import (
+    ASIParser,
+    ASI_MAGIC,
+    HEADER_SIZE,
+    ASIParserError,
+    ASIHeaderError,
+    ASIDatabaseError
+)
 
 @pytest.fixture
 def dummy_asi_file(tmp_path):
@@ -96,3 +103,39 @@ def test_asi_parser_full_cycle(dummy_asi_file):
     assert history[0]["phi_c"] == 0.92
 
     parser.close()
+
+def test_asi_parser_file_not_found(tmp_path):
+    with pytest.raises(FileNotFoundError):
+        ASIParser(str(tmp_path / "missing.asi"), str(tmp_path / "db.sqlite"))
+
+def test_asi_parser_invalid_magic(tmp_path):
+    invalid_asi = tmp_path / "invalid.asi"
+    with open(invalid_asi, "wb") as f:
+        f.write(b"INVALID_MAGIC_BYTES" + b"\x00" * 50)
+
+    parser = ASIParser(str(invalid_asi), str(tmp_path / "db.sqlite"))
+    with pytest.raises(ASIHeaderError, match="Invalid ASI magic bytes"):
+        parser.parse_header()
+
+def test_asi_parser_invalid_core_json(tmp_path):
+    invalid_asi = tmp_path / "bad_json.asi"
+    # Construct a valid header but point to bad JSON
+    version = b"1.0.0".ljust(8, b'\x00')
+    parent_seal = bytes.fromhex("00"*16)
+    phi_c = struct.pack('!d', 0.95)
+    bootloader_off = 64
+    core_off = 64
+    sub_off = 100
+
+    header = ASI_MAGIC + version + parent_seal + phi_c + struct.pack('!IIII', bootloader_off, core_off, sub_off, 100)
+
+    bad_json = b"{ bad json content"
+
+    with open(invalid_asi, "wb") as f:
+        f.write(header)
+        f.write(struct.pack('!I', len(bad_json)))
+        f.write(bad_json)
+
+    parser = ASIParser(str(invalid_asi), str(tmp_path / "db.sqlite"))
+    with pytest.raises(ASIParserError, match="Failed to parse consciousness core JSON"):
+        parser.extract_consciousness_core()

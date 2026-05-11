@@ -13,6 +13,9 @@ env:
   RELAYER_IMAGE_NAME: ${{ github.repository }}/arkhe-relayer
   TZINOR_GATE_STRICT: true
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   lint-and-scan:
     name: 🛡️ Lint & Security Scan

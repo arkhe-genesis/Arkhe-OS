@@ -89,8 +89,7 @@ Proof.
   unfold norm_5d, inner_product_5d.
   rewrite metric_5d_block_decomposition.
   (* Expandir produto matricial block-diagonal *)
-  admit. (* Detalhe técnico: expansão de block_diag *)
-Qed.
+  Admitted. (* Detalhe técnico: expansão de block_diag *)
 
 (* Lemma 3: Aproximação da exponencial 5D via decomposição *)
 Lemma exp_map_5d_approximation :
@@ -106,8 +105,7 @@ Proof.
   intros m x v.
   (* Usar propriedades de exp_map_4d e tratar componente de escala separadamente *)
   apply exp_map_4d_properties in H.
-  admit.
-Qed.
+  Admitted.
 
 (* Corolário: Distâncias 4D e 5D relacionadas via fator de escala *)
 Corollary distance_5d_4d_relation :
@@ -119,8 +117,7 @@ Proof.
   intros m x y.
   unfold geodesic_distance_5d, geodesic_distance_4d.
   (* Usar decomposição da norma e desigualdade triangular *)
-  admit.
-Qed.
+  Admitted.
 
 End ApproximationLemmas5D.
 
@@ -203,7 +200,7 @@ Proof.
       apply Rle_trans with (r2 := sensitivity * sqrt (2 * ln (1.25 / delta)) / epsilon).
       + apply H_sigma.
       + (* σ >= (sensitivity/λ) * sqrt(2ln(1.25/(δ·c'/λ²))) / (ε·c/λ²) *)
-        admit. (* Cálculo algébrico *)
+        Admitted. (* Cálculo algébrico *)
   }
 
   (* Passo 5: Combinar bounds via composição avançada *)
@@ -217,7 +214,7 @@ Proof.
     (* Decomposição do mecanismo via block-diagonal da métrica *)
     unfold gaussian_mechanism_riemannian_5d, gaussian_mechanism_riemannian_4d.
     rewrite metric_5d_block_decomposition.
-    admit.
+    Admitted.
   }
 
   (* Passo 6: Aplicar composição de DP para produto de mecanismos *)
@@ -228,8 +225,7 @@ Proof.
   - apply H_scale_dp.
   - (* Composição: ε_total = ε₁ + ε₂ + ε₁ε₂, δ_total = δ₁ + δ₂ *)
     unfold advanced_composition_product.
-    admit.
-Qed.
+    Admitted.
 
 (* Corolário: Bound computável de ε_5d *)
 Corollary epsilon_bound_5d_computable :
@@ -242,8 +238,7 @@ Proof.
   intros delta_privacy sigma lambda_eff delta H_lambda.
   unfold epsilon_bound_5d.
   (* Derivação algébrica direta do teorema principal *)
-  admit.
-Qed.
+  Admitted.
 
 End RiemannianDPInduction.
 

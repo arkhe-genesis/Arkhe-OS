@@ -5,8 +5,12 @@ namespace Arkhe.Identity
   Using an opaque type to ensure formal properties without Float issues.
 -/
 opaque Coherence : Type
-instance : LE Coherence := ⟨sorry⟩
-instance : LT Coherence := ⟨sorry⟩
+
+axiom coherence_le : Coherence → Coherence → Prop
+axiom coherence_lt : Coherence → Coherence → Prop
+
+instance : LE Coherence := ⟨coherence_le⟩
+instance : LT Coherence := ⟨coherence_lt⟩
 
 structure IdentityState where
   lambda : Coherence       -- Coherence metric λ₂

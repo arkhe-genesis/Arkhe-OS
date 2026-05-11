@@ -16,5 +16,8 @@
     "url": "https://github.com/Arkhe-Network/Arkhe-PNT.git"
   },
   "author": "Arkhe Network",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "posthog-js": "^1.372.10"
+  }
 }

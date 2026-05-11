@@ -7,8 +7,10 @@
 
 import { X, Video, Play, Loader2, Download, ShieldCheck, Cpu } from 'lucide-react';
 import React, { useState, useRef } from 'react';
+import { X, Video, Play, Loader2, Download, ShieldCheck, Cpu } from 'lucide-react';
 
 import { Card } from '../components/ui/Card';
+import AtelierLog from './AtelierLog';
 
 import AtelierLog from './AtelierLog';
 
@@ -63,6 +65,8 @@ export default function VideoGenerationPanel({ onClose }: VideoGenerationPanelPr
       const data = await response.json() as { videoUrl: string };
       setVideoUrl(data.videoUrl);
       setStage('IDLE');
+    } catch (err: any) {
+      setError(err.message || 'An unexpected error occurred.');
     } catch (err: unknown) {
       setError((err as any).message || 'An unexpected error occurred.');
       setError((err as Error).message || 'An unexpected error occurred.');
@@ -162,6 +166,10 @@ export default function VideoGenerationPanel({ onClose }: VideoGenerationPanelPr
             ) : videoUrl ? (
               <video
                 ref={videoRef}
+                src={videoUrl} 
+                controls 
+                autoPlay 
+                loop 
                 src={videoUrl}
                 controls
                 autoPlay
@@ -174,6 +182,7 @@ export default function VideoGenerationPanel({ onClose }: VideoGenerationPanelPr
                 Awaiting Projection Proof
               </div>
             )}
+            
 
             {videoUrl && stage === 'IDLE' && (
               <button

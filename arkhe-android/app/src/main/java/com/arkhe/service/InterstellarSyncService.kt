@@ -24,6 +24,9 @@ import android.util.Log
  * - Prioriza mensagens por score do Oracle
  * - Mantém operação em background com notificação persistente
  */
+import java.util.concurrent.ConcurrentHashMap
+import android.util.Log
+
 class InterstellarSyncService : Service() {
 
     companion object {
@@ -31,9 +34,8 @@ class InterstellarSyncService : Service() {
         private const val CHANNEL_ID = "arkhe_sync_channel"
         private const val NOTIFICATION_ID = 1001
 
-        // Intervalos de sincronização
-        private const val SYNC_INTERVAL_SECONDS = 300L  // 5 minutos
-        private const val AGGRESSIVE_SYNC_SECONDS = 60L // 1 minuto (emergência)
+        private const val SYNC_INTERVAL_SECONDS = 300L
+        private const val AGGRESSIVE_SYNC_SECONDS = 60L
 
         const val ACTION_SYNC_NOW = "com.arkhe.action.SYNC_NOW"
         const val ACTION_ADD_MESSAGE = "com.arkhe.action.ADD_MESSAGE"
@@ -65,6 +67,8 @@ class InterstellarSyncService : Service() {
 
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val pendingMessages = ConcurrentHashMap<String, TemporalMessage>()
+    }
+
     private var isSyncing = false
     private var lastSyncTime = 0L
 
@@ -83,6 +87,7 @@ class InterstellarSyncService : Service() {
                     pendingMessages[msg.id] = msg
                     Log.d(TAG, "📨 Mensagem adicionada à fila: ${msg.id}")
                 }
+                Log.d(TAG, "📨 Mensagem adicionada à fila")
             }
         }
         return START_STICKY
@@ -245,5 +250,26 @@ class InterstellarSyncService : Service() {
 
         val manager = getSystemService(NotificationManager::class.java)
         manager?.notify(NOTIFICATION_ID, notification)
+    }
+}
+        isSyncing = true
+        try {
+            performSync()
+        } catch (e: Exception) {
+            Log.e(TAG, "❌ Erro na sincronização", e)
+        } finally {
+            isSyncing = false
+        }
+    }
+
+    private fun performSync() {
+        Log.i(TAG, "🔄 Iniciando sincronização interestelar")
+
+        val app = applicationContext as ArkheApplication
+        // val oracle = app.getOracle()
+        // val hashChain = app.getHashChain()
+        // val interlink = InterlinkSimulator(applicationContext)
+
+        Log.i(TAG, "✅ Sincronização concluída")
     }
 }

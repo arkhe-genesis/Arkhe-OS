@@ -1,0 +1,9 @@
+[workspace]
+resolver = "2"
+members = [
+    "arkhe-enterprise",
+    "arkhe-qart/substrate-6072",
+    "substrate-6071",
+    "substrate-6090",
+    "substrate-6091"
+]

@@ -9,3 +9,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 arkhe-bounty-hunter = { path = "../../" }
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

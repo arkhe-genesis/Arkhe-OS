@@ -4,23 +4,20 @@
 #include <stdio.h>
 
 #define K_COUPLING 0.15
-#define PHI 1.6180339887
 
 static cronos_thread_t* thread_ring_root = NULL;
-static cronos_thread_t* current_thread = NULL;
 static arkhe_node_t* hw_context = NULL;
-static uint64_t thread_counter = 0;
 
 void cronos_init(arkhe_node_t* hw_node) {
     hw_context = hw_node;
-    fprintf(stderr, "[CRONOS] Scheduler initialized. Time is now phase-locked.\n");
 }
 
 cronos_thread_t* cronos_spawn(void* entry_point, double natural_freq) {
-    cronos_thread_t* t = (cronos_thread_t*)malloc(sizeof(cronos_thread_t)); // In reality, uses arkhe_malloc
-    t->id = ++thread_counter;
+    cronos_thread_t* t = (cronos_thread_t*)malloc(sizeof(cronos_thread_t));
     t->instruction_ptr = entry_point;
     t->natural_freq = natural_freq;
+    t->state = THREAD_RESONATING;
+    
 
     // Tag with current hardware coherence
     t->lambda_alloc = arkhe_hal_read_lambda2(hw_context);
@@ -43,18 +40,8 @@ cronos_thread_t* cronos_spawn(void* entry_point, double natural_freq) {
     return t;
 }
 
-// Helper to calculate phase angle from complex phase
-static double get_angle(arkhe_phase_t p) {
-    return atan2(p.imag, p.real);
-}
-
-// Helper to create complex phase from angle
-static arkhe_phase_t from_angle(double angle) {
-    arkhe_phase_t p = { cos(angle), sin(angle) };
-    return p;
-}
-
 cronos_thread_t* cronos_tick(void) {
+    return thread_ring_root;
     if (!thread_ring_root) return NULL;
 
     // 1. Read Global Hardware Phase

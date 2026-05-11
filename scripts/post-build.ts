@@ -11,6 +11,10 @@ import * as path from 'node:path';
 const BUILD_DIR = path.join(process.cwd(), 'build');
 
 function writeFile(filePath: string, content: string): void {
+  const dirPath = path.dirname(filePath);
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
+  }
   fs.writeFileSync(filePath, content, 'utf-8');
 }
 

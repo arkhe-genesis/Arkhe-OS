@@ -27,3 +27,8 @@ codegen-units = 1
 [dependencies]
 parser-core = { path = "parser-core" }
 runtime = { path = "runtime" }
+[workspace]
+members = [
+    "parser-core",
+    "bindings/cli",
+]
