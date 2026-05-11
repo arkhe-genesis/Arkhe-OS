@@ -1,0 +1,13 @@
+[package]
+name = "arkhe-polyglot-parser-python"
+version = "5.0.0"
+edition = "2021"
+
+[lib]
+name = "arkhe_polyglot_parser"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.20", features = ["extension-module"] }
+parser-core = { path = "../../parser-core" }
+runtime = { path = "../../runtime" }

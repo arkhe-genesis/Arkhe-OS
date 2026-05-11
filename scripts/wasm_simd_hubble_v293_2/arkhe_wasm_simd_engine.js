@@ -48,7 +48,7 @@ class HubbleWasmEngine {
                 const start = i * nodesPerThread;
                 const end = Math.min(start + nodesPerThread, N);
 
-                worker.onmessage = (e) => {
+                worker.onmessage = (_e) => {
                     completed++;
                     if (completed === NUM_THREADS) {
                         // Todas as threads completaram: agregar resultados

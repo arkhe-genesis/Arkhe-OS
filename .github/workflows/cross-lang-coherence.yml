@@ -2,6 +2,9 @@
 name: Cross-Language Coherence Aggregation
 on: [push, pull_request]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   aggregate:
     runs-on: ubuntu-latest

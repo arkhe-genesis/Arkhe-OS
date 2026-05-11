@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: arkhe-vera-rubin
+  namespace: orbital-mesh
+spec:
+  replicas: 819200
+  selector:
+    matchLabels:
+      hardware: vera-rubin
+  template:
+    metadata:
+      labels:
+        hardware: vera-rubin
+    spec:
+      nodeSelector:
+        nvidia.com/device: vera-rubin
+      containers:
+      - name: continental-mind
+        image: arkhe/continental-mind:stable
+        resources:
+          limits:
+            nvidia.com/gpu: 1
+        env:
+        - name: HARDWARE_TYPE
+          value: "vera-rubin"
+        - name: ORBIT_PLANE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.annotations['arkhe.io/orbit-plane']

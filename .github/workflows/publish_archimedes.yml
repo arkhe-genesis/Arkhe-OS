@@ -4,6 +4,9 @@ on:
   push:
     tags: ['v*']
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   docker:
     runs-on: ubuntu-latest
@@ -32,7 +35,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-        with: { node-version: '18', registry-url: 'https://registry.npmjs.org' }
+        with: { node-version: '24', registry-url: 'https://registry.npmjs.org' }
       - name: Publish to npm
         run: cd skills/archimedes-omega/clients/js && npm publish --access public
         env:
