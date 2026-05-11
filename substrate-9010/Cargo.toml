@@ -1,7 +1,8 @@
 [package]
-name = "arkhe-amazon-braket"
-version = "9.0.10"
+name = "arkhe-nanophotonics"
+version = "6.1.0"
 edition = "2021"
+description = "ARKHE Nanophotonic Force Engine — Substrato 9010"
 
 [dependencies]
 tokio = { version = "1", features = ["full"] }
