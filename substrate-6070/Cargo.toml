@@ -1,0 +1,6 @@
+[package]
+name = "substrate-6070"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

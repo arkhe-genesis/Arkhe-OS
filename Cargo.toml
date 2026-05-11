@@ -25,7 +25,7 @@ members = [
     "substrate-aws-orbital",
     "cmd/arkhe",
     "substrate-9110"
-]
+, "substrate-6070"]
 
 [workspace.dependencies]
 tokio = { version = "1", features = ["full"] }
