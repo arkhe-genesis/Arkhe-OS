@@ -46,6 +46,18 @@
 // MÓDULOS DO ENTERPRISE SUITE
 // ============================================================================
 
+mod config;
+mod tenants;
+mod rbac;
+mod audit;
+mod billing;
+mod sla;
+mod api;
+mod orchestration;
+mod monitoring;
+mod compliance;
+mod financial_bridge;
+pub mod stubs;
 pub mod config;
 pub mod tenants;
 pub mod rbac;
