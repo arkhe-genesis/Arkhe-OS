@@ -1,27 +1,23 @@
-1. **Add `recordMitoticEvent` to `AuditLedger`:**
-   - It will log the split of a parent node into two daughter nodes ("MITOSIS").
-2. **Add `validateG2Checkpoint` to `TemporalConsistencyOracle`:**
-   - Verify the ledger/chain genome.
-3. **Expose `oracle_` from `RetrocausalValidator`:**
-   - Add a getter for the `oracle_` instance so the mitotic router can call the G2 checkpoint validation.
-4. **Add `deepCopy` to `TemporalHashChain`:**
-   - Allow cloning the chain.
-5. **Modify `RetroRouter` access modifiers:**
-   - Change `private` variables to `protected` so `MitoticRouter` can inherit from it and use the variables (`chain_`, `node_id_`, `validator_`, etc).
-   - Add a `node_id()` getter.
-6. **Implement `MitoticRouter` class in `arkhe_cpp.cpp`:**
-   - Implement `synthesisPhase` to copy the chain.
-   - Implement `anaphaseDispatch` to send messages to sisters.
-   - Implement `cytokinesis` to instantiate the new daughter routers and record the mitosis.
-7. **Complete pre-commit steps:**
-   - Ensure proper testing, verification, review, and reflection are done.
-1. **Understand the problem**: The goal is to implement the ARKHE Ω-TEMP protocol using x86-64 assembly language (NASM syntax) based on the provided project structure and source files. The structure comprises multiple modules (`arkhe.asm`, `temporal.asm`, `keccak.asm`, `oracle.asm`, `heap.asm`, `dijkstra.asm`, `merkle.asm`, `bn128.asm`, `falcon.asm`, `routing.asm`, `shield.asm`, `syscall.asm`, `trie.asm`) and a main `Makefile`.
-2. **Current state**: I have already created the initial directory structure, copied the provided code into their respective `.asm` files, created the `arkhe.inc` header file with required constants and macros, and created the `Makefile`. I have also fixed various syntax and compilation errors across multiple files (like undefined symbols, unaligned jumps/calls, fixing FPU instruction mismatches with SIMD in `heap.asm`, fixing the Makefile for proper object linking). Currently, the codebase successfully compiles and runs the `run_tests` binary.
-3. **Completing Pre-Commit Steps**:
-   - I need to run `pre_commit_instructions` to fetch validation/review instructions.
-   - I will review the final codebase to ensure there are no lingering compilation warnings or errors that signify broken logic, although the `run_tests` binary works.
-   - The user requested that we shouldn't use high-level abstraction and strictly rely on the hardware.
-   - Ensure the structure strictly matches `arkhe-asm/src`, `arkhe-asm/include`, `arkhe-asm/test` etc.
-4. **Finalizing**:
-   - Execute the code, prove that `make verify` and `make` both pass without critical errors and produce the expected binaries.
-   - Submit the changes under the requested format.
+1.  **Create the Substrato 6065 Directory:**
+    - I've created the directory `substrate-6065/` to hold the new module for the Neural Cartography Engine.
+2.  **Initialize the Rust Workspace & Dependencies:**
+    - I added a `Cargo.toml` file to `substrate-6065` according to the provided specification, including dependencies like `tch` (optional), `ndarray`, `serde`, `serde_json`, `petgraph`, `thiserror`, and `arkhe-temporal`. Note that since the user requested `arkhe-temporal = { path = "../substrate-6064/temporal" }`, I've scaffolded a basic `arkhe-temporal` crate in `../substrate-6064/temporal` to allow compilation to succeed, as there was no such file locally.
+3.  **Implement the Connectome (`connectome.rs`):**
+    - The `Synapse` and `NeuronId` structs and the `Connectome` struct have been defined to store graph connections. Added split, merge and pruning skeletons.
+4.  **Implement the Mapper (`mapper.rs`):**
+    - Added the logic to extract weights from the (stubbed) `ContinentalMind` network layers into the `Connectome`.
+5.  **Implement the Proofreader (`proofreader.rs`):**
+    - Added the `Proofreader` to simulate NEURD-like proofreading: detecting splits and merges and pruning weak synapses.
+6.  **Implement Cell Types and Wiring Rules (`cell_types.rs`, `wiring_rules.rs`):**
+    - Added stub representations for functionally typing cells (`ET`, `IT`, `Basket`, `Martinotti`) and establishing/extracting wiring rules.
+7.  **Implement Invariants and Temporal Anchor (`invariants.rs`, `temporal_anchor.rs`):**
+    - Provided skeleton functions/structs representing invariant detection and logging to `TemporalChain`.
+8.  **Implement the Cartographer (`cartographer.rs`):**
+    - Created the `NeuralCartographer` structure that integrates all the above to produce a wired `Connectome`.
+9.  **Compile and verify the correctness of the code:**
+    - Rust's `cargo check` passed after I solved the E0382 borrow checker error in `proofreader.rs` where I had to pass iterations by reference.
+10. **Write Tests:**
+    - Include a test suite using Cargo's standard `cargo test` framework.
+11. **Complete pre commit steps:**
+    - Complete pre-commit steps to ensure proper testing, verification, review, and reflection are done.
+12. **Submit the changes.**
