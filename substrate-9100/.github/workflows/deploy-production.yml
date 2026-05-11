@@ -1,0 +1,34 @@
+name: Deploy Production
+on:
+  workflow_dispatch:
+    inputs:
+      canary_percentage:
+        description: 'Percentage of shards to update first'
+        default: '5'
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+jobs:
+  canary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Build and push image
+        run: |
+          docker build -t arkhe/continental-mind:${{ github.sha }} -f docker/Dockerfile.continental-mind .
+          docker push arkhe/continental-mind:${{ github.sha }}
+      - name: Helm upgrade canary shards
+        run: |
+          helm upgrade --install continental-mind ./helm \
+            --set image.tag=${{ github.sha }} \
+            --set canary.percentage=${{ inputs.canary_percentage }} \
+            --namespace arkhe-production
+      - name: Wait for health check
+        run: sleep 600 && ./scripts/verify_fidelity.sh
+      - name: Full rollout
+        run: |
+          helm upgrade --install continental-mind ./helm \
+            --set image.tag=${{ github.sha }} \
+            --set canary.percentage=100

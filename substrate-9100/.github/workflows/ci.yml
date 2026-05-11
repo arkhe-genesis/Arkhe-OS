@@ -1,0 +1,34 @@
+name: CI
+on: [push, pull_request]
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: cargo fmt --check
+      - run: cargo clippy --workspace -- -D warnings
+  test:
+    strategy:
+      matrix:
+        substrate: [6064, 6072, 6080, 6091, 9001, 9002, 9010]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: cargo test -p substrate-${{ matrix.substrate }} --features full
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: EmbarkStudios/cargo-deny-action@v1
+      - run: cargo audit
