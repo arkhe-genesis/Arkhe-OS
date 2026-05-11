@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "arkhe-enterprise",
+    "arkhe-qart/substrate-6072"
+]

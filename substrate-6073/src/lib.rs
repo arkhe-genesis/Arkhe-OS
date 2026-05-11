@@ -1,3 +1,4 @@
+pub mod cell_data_royalty;
 mod test_vectors;
 mod types;
 mod validator; // não público, só para testes
