@@ -1,3 +1,5 @@
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 # .github/workflows/cross-lang-coherence.yml
 name: Cross-Language Coherence Aggregation
 on: [push, pull_request]

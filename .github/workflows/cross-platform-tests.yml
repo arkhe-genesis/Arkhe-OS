@@ -1,3 +1,5 @@
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 name: Cross-Platform Tests
 
 on:
@@ -19,7 +21,7 @@ jobs:
         python-version: ['3.11', '3.12']
         torch-version: ['cpu', 'cu121']  # Test both CPU and CUDA builds
     steps:
-      - uses: actions/checkout@v4.1.6
+      - uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5.1.0
@@ -59,7 +61,7 @@ jobs:
       matrix:
         python-version: ['3.11', '3.12']
     steps:
-      - uses: actions/checkout@v4.1.6
+      - uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5.1.0
@@ -96,7 +98,7 @@ jobs:
       matrix:
         python-version: ['3.11', '3.12']
     steps:
-      - uses: actions/checkout@v4.1.6
+      - uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5.1.0
@@ -130,7 +132,7 @@ jobs:
   test-wsl2:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.1.6
+      - uses: actions/checkout@v4
 
       - name: Set up WSL2
         uses: Vampire/setup-wsl@v3.1.2
@@ -157,7 +159,7 @@ jobs:
     needs: [test-linux, test-macos, test-windows]
     if: github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v4.1.6
+      - uses: actions/checkout@v4
 
       - name: Build wheel
         env:

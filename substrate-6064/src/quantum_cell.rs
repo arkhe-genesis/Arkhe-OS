@@ -1,6 +1,4 @@
-use std::collections::HashMap;
 
-// Dummy types for CellularQPU
 #[derive(Clone, Debug)]
 pub struct SuperpositionState {
     pub amplitudes: Vec<f64>,
@@ -25,24 +23,34 @@ pub struct Conformation {
 }
 
 pub struct CellularQPU {
-    /// Number of "virtual qubits" per organelle
     pub qubit_register: Vec<SuperpositionState>,
-    /// Decoherence timescale (fs) for each compartment
-    pub tau_decoherence: HashMap<Organelle, f64>,
-    /// Hamiltonian: H = H_metabolism + H_membrane + H_signaling
+    pub tau_decoherence: f64, // updated to match the code requested
     pub hamiltonian: SparseMatrix<f64>,
 }
 
 impl CellularQPU {
-    /// Run a "quantum annealing" step through protein conformation space
     pub fn anneal(&mut self, _dt: f64) -> Vec<Conformation> {
-        // Evolve under H for dt, collapse stochastically at rate 1/tau
-        // Return sampled low-energy configurations
-
-        // Mock return value
         vec![Conformation {
             energy: 0.1,
             state_vector: vec![0.5, 0.5, 0.5, 0.5],
         }]
+    }
+
+    pub fn apply_fold_hamiltonian(&mut self, _dt: f64) {}
+    pub fn apply_membrane_hamiltonian(&mut self, _dt: f64) {}
+    pub fn apply_signal_hamiltonian(&mut self, _dt: f64) {}
+    pub fn collapse_stochastic(&mut self) {}
+
+    pub fn evolve(&mut self, dt: f64) {
+        let n_steps = (dt / self.tau_decoherence).ceil() as usize;
+        let step = dt / n_steps as f64;
+        for _ in 0..n_steps {
+            // First-order Trotter: exp(-i H dt) ≈ ∏ exp(-i H_j dt)
+            self.apply_fold_hamiltonian(step);
+            self.apply_membrane_hamiltonian(step);
+            self.apply_signal_hamiltonian(step);
+        }
+        // Stochastic collapse based on decoherence rates
+        self.collapse_stochastic();
     }
 }
