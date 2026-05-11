@@ -1,0 +1,7 @@
+[package]
+name = "qart-cli"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+arkhe-qart = { path = "../../substrate-6072" }

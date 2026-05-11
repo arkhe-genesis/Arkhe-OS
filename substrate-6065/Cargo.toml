@@ -1,0 +1,17 @@
+[package]
+name = "arkhe-neural-cartography"
+version = "6.1.0"
+edition = "2021"
+
+[dependencies]
+tch = { version = "0.14", optional = true }   # para extrair pesos do modelo
+ndarray = "0.15"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+petgraph = "0.6"
+thiserror = "1.0"
+arkhe-temporal = { path = "../substrate-6064/temporal" }  # para ancoragem
+
+[features]
+default = []
+model-interface = ["tch"]

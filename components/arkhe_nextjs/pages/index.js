@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import Head from 'next/head';
 import * as THREE from 'three';
 import * as tf from '@tensorflow/tfjs';
 
@@ -78,6 +79,31 @@ export default function Home() {
 
   return (
     <div style={{ padding: '40px', backgroundColor: '#000', color: '#0ff', minHeight: '100vh', fontFamily: 'monospace' }}>
+      <Head>
+        <title>Arkhe OS | Frontend Cósmico v18</title>
+        <meta name="description" content="Arkhe OS Nexus Dashboard featuring Ethical Predictive TF.js integration and Real-Time 3D WebGL visualizations." />
+        <meta name="keywords" content="Arkhe OS, Quantum, OS, TF.js, 3D, WebGL, AI, Predictive Ethics" />
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+        <meta name="OAI-SearchBot" content="index, follow" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "name": "Arkhe OS",
+              "operatingSystem": "Any",
+              "applicationCategory": "SystemSoftware",
+              "description": "Arkhe OS Nexus Dashboard featuring Ethical Predictive TF.js integration and Real-Time 3D WebGL visualizations.",
+              "offers": {
+                "@type": "Offer",
+                "price": "0.00",
+                "priceCurrency": "USD"
+              }
+            })
+          }}
+        />
+      </Head>
       <h1>🌌 Arkhe OS | Frontend Cósmico v18</h1>
 
       <div style={{ display: 'flex', gap: '40px', alignItems: 'center' }}>

@@ -1,0 +1,13 @@
+[package]
+name = "arkhe-cosmological"
+version = "6.0.0"
+edition = "2021"
+description = "ARKHE Ω‑TEMP v6.0.0 — Substrato 9001: Cosmological Computation Engine"
+
+[dependencies]
+petgraph = { version = "0.6", features = ["serde-1"] }
+tracing = "0.1"
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+nalgebra = { version = "0.33", features = ["serde-serialize"] }
+

@@ -9,6 +9,9 @@ on:
       - main
   pull_request:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   run-tests:
     name: Tests on ${{ matrix.os }} with node ${{ matrix.node }}

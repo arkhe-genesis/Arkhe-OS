@@ -1,0 +1,10 @@
+[package]
+name = "arkhe-aws-orbital"
+version = "6.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+aws-config = "1.0"
+aws-sdk-groundstation = "1.0"
+anyhow = "1"
