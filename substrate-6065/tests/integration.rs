@@ -52,3 +52,33 @@ fn test_extraction_and_proofreading() {
     assert!(weights.contains("0.8"));
     assert!(weights.contains("0.2"));
 }
+
+#[test]
+fn test_cell_classification() {
+    let mut connectome = arkhe_neural_cartography::connectome::Connectome::new();
+    connectome.add_synapse(arkhe_neural_cartography::connectome::Synapse {
+        pre_neuron: arkhe_neural_cartography::connectome::NeuronId(0, 0), // Sum: 0 (ET)
+        post_neuron: arkhe_neural_cartography::connectome::NeuronId(0, 1), // Sum: 1 (IT)
+        weight: 1.0,
+        activation_correlation: 0.0,
+        is_excitatory: true,
+        layer: 0,
+        head: None,
+    });
+
+    let classifications = arkhe_neural_cartography::cell_types::classify_cell_types(&connectome);
+
+    assert!(matches!(classifications.get(&arkhe_neural_cartography::connectome::NeuronId(0, 0)), Some(arkhe_neural_cartography::cell_types::CellType::ET)));
+    assert!(matches!(classifications.get(&arkhe_neural_cartography::connectome::NeuronId(0, 1)), Some(arkhe_neural_cartography::cell_types::CellType::IT)));
+}
+
+#[test]
+fn test_wiring_rules() {
+    let connectome = arkhe_neural_cartography::connectome::Connectome::new();
+    let cell_types = std::collections::HashMap::new();
+
+    let rules = arkhe_neural_cartography::wiring_rules::extract_wiring_rules(&connectome, &cell_types);
+
+    assert_eq!(rules.len(), 1);
+    assert_eq!(rules[0].description, "Connect ET to Basket");
+}

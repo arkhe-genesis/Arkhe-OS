@@ -1,9 +1,3 @@
-[workspace]
-members = [
-    ".",
-    "bindings/python",
-    "bindings/wasm",
-]
 resolver = "2"
 
 [package]
