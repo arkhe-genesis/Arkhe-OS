@@ -5,5 +5,6 @@ members = [
     "arkhe-qart/substrate-6072",
     "substrate-6071",
     "substrate-6090",
-    "substrate-6091"
+    "substrate-6091",
+    "substrate-9110"
 ]
