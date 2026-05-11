@@ -122,9 +122,11 @@ pub use financial_bridge::{
 // TIPO PRINCIPAL: ORQUESTRADOR ENTERPRISE
 // ============================================================================
 
+use crate::stubs::*;
 use std::sync::Arc;
-use tokio::sync::RwLock;
-use tracing::{info, error, warn};
+
+
+use tracing::info;
 
 pub struct EnterpriseOrchestrator {
     config: EnterpriseConfig,
@@ -166,6 +168,7 @@ impl EnterpriseOrchestrator {
             qip_engine: None,
             qart_engine: None,
             financial_validator: None,
+            _nanophotonic_engine: None,
             grpc_server: None,
             rest_server: None,
             launched: false,
