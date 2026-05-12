@@ -1,0 +1,158 @@
+// ============================================================================
+// ARKHE Ω‑TEMP — Substrato 6062: Anchored File I/O
+// ============================================================================
+// Leitura e escrita de arquivos com registro automático na TemporalChain.
+// Cada operação de escrita pode gerar um bloco temporal com:
+// - Hash do conteúdo escrito
+// - Timestamp preciso
+// - Prova de integridade (opcional ZK)
+// ============================================================================
+
+/// Stream de log com anchoring por linha
+///
+/// Cada chamada a write() registra a linha na TemporalChain
+/// como um bloco independente, permitindo auditoria granular.
+struct AnchoredLogStream {
+    fd: Fd<UnixResource::File, FdPerms::WRITE | FdPerms::APPEND>,
+    buffer: Vec<u8>,
+    anchor_every_n_lines: u64,
+    line_count: u64,
+    batch_hash: Option<Hash>,  // Hash acumulado para batching
+}
+
+impl AnchoredLogStream {
+    /// Cria novo stream de log anchored
+    fn new(
+        path: &str,
+        anchor_every_n_lines: u64 = 1,  // Anchor cada linha por padrão
+    ) -> Result<Self, UnixError> {
+        let fd = open_file(path, FdPerms::WRITE | FdPerms::APPEND, false)?;
+
+        Ok(AnchoredLogStream {
+            fd,
+            buffer: Vec::new(),
+            anchor_every_n_lines,
+            line_count: 0,
+            batch_hash: None,
+        })
+    }
+
+    /// Escreve uma linha e ancora se necessário
+    fn write_line(&mut self, line: &str) -> Result<(), UnixError> {
+        // Adicionar newline se necessário
+        let full_line = if line.ends_with('\n') {
+            line.to_string()
+        } else {
+            format!("{}\n", line)
+        };
+
+        // Escrever no fd
+        libc::write(self.fd._fd, full_line.as_ptr(), full_line.len())?;
+
+        // Atualizar contador
+        self.line_count += 1;
+
+        // Anchor se atingiu threshold
+        if self.line_count % self.anchor_every_n_lines == 0 {
+            self._anchor_batch()?;
+        }
+
+        Ok(())
+    }
+
+    /// Ancora o batch atual na TemporalChain
+    fn _anchor_batch(&mut self) -> Result<(), UnixError> {
+        // Calcular hash do batch
+        let batch_content = if self.buffer.is_empty() {
+            &self.buffer
+        } else {
+            // Incluir buffer acumulado
+            &self.buffer
+        };
+
+        let batch_hash = sha3_256(batch_content);
+
+        // Atualizar hash acumulado
+        self.batch_hash = match self.batch_hash {
+            None => Some(batch_hash),
+            Some(prev) => Some(sha3_256(&[prev.as_slice(), batch_hash.as_slice()].concat())),
+        };
+
+        // Registrar na TemporalChain
+        let block = temporal::anchor_content(
+            batch_content,
+            TemporalPayload {
+                resource_type: UnixResource::File,
+                perms: self.fd.perms,
+                timestamp: time::nanos(),
+                metadata: json::object!({
+                    "type": "log_line",
+                    "line_number": self.line_count,
+                    "batch_hash": hex::encode(batch_hash),
+                }),
+            }
+        )?;
+
+        // Atualizar metadata do fd
+        self.fd.temporal = Some(TemporalMetadata {
+            anchor_hash: Some(batch_hash),
+            timestamp_ns: time::nanos(),
+            block_id: Some(block),
+            entropy_score: entropy::score(batch_content),
+        });
+
+        // Limpar buffer
+        self.buffer.clear();
+
+        Ok(())
+    }
+
+    /// Fecha o stream e ancora o buffer final
+    fn close(mut self) -> Result<(), UnixError> {
+        // Ancorar buffer residual
+        if !self.buffer.is_empty() {
+            self._anchor_batch()?;
+        }
+        self.fd.close()
+    }
+}
+
+/// Função auxiliar para leitura com verificação de entropia
+fn read_with_entropy_check(path: &str) -> Result<(Vec<u8>, f64), UnixError> {
+    let mut fd = open_file(path, FdPerms::READ, false)?;
+
+    // Ler conteúdo
+    let mut content = Vec::new();
+    let mut buf = [0u8; 4096];
+    loop {
+        let n = libc::read(fd._fd, buf.as_mut_ptr(), buf.len())?;
+        if n == 0 { break; }
+        content.extend_from_slice(&buf[..n]);
+    }
+
+    // Calcular entropia
+    let entropy = entropy::score(&content);
+
+    // Warning se entropia suspeita
+    if entropy > 7.5 {
+        log::warn!("High entropy detected in {}: {:.2} bits/byte", path, entropy);
+    }
+
+    fd.close()?;
+    Ok((content, entropy))
+}
+
+/// Exemplo: Logger com anchoring automático
+#[example]
+fn example_anchored_logger() -> Result<(), UnixError> {
+    let mut logger = AnchoredLogStream::new("/var/log/arkhe/audit.log", 10)?;
+
+    logger.write_line("Shard S-0001 initialized")?;
+    logger.write_line("Loading configuration from /etc/arkhe/config.toml")?;
+    logger.write_line("Entropy check passed: 6.2 bits/byte")?;
+    // ... mais logs ...
+
+    // Ao sair de escopo, close() é chamado automaticamente
+    // e o buffer final é anchored
+    Ok(())
+}

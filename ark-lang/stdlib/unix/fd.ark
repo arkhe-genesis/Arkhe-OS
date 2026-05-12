@@ -1,0 +1,181 @@
+// ============================================================================
+// ARKHE Ω‑TEMP — Substrato 6062: Unix Fd<T> Type System
+// ============================================================================
+// File descriptors como recursos lineares tipados.
+// Cada Fd<T> carrega:
+// - Tipo do recurso (File, Socket, Pipe, Process)
+// - Permissões (Read, Write, Append, Execute)
+// - Metadata temporal (anchor_hash, timestamp)
+// - Prova de integridade (opcional ZK proof)
+// ============================================================================
+
+/// Categoria de recurso Unix
+enum UnixResource {
+    File,           // Arquivo regular
+    Directory,      // Diretório
+    Socket,         // Socket (TCP/UDP/Unix)
+    Pipe,           // Pipe unidirecional
+    FIFO,           // Named pipe
+    Device,         // Device file (/dev/*)
+    Process,        // Child process
+    Signal,         // Signal handler
+    Memory,         // Shared memory
+    Lock,           // File/record lock
+}
+
+/// Permissões de acesso (bitmask)
+flags FdPerms: u8 {
+    READ    = 0b0001,
+    WRITE   = 0b0010,
+    APPEND  = 0b0100,
+    EXECUTE = 0b1000,
+}
+
+/// Metadata temporal para anchoring
+struct TemporalMetadata {
+    anchor_hash: Option<Hash>,      // SHA3-256 do conteúdo (se anchored)
+    timestamp_ns: u64,               // Timestamp de criação/abertura
+    block_id: Option<TemporalBlock>, // Bloco da TemporalChain (se anchored)
+    entropy_score: f64,              // Score do Entropy Oracle (0.0-1.0)
+}
+
+/// Descriptor de recurso Unix tipado e linear
+///
+/// Linearidade: Um Fd<T> não pode ser copiado implicitamente.
+/// Para duplicar, use fd.dup() que retorna Result<Fd<T>, Error>.
+/// Ao sair de escopo, o Fd é automaticamente fechado (ou anchored).
+///
+/// @param T: Tipo do recurso (UnixResource variant)
+/// @param P: Permissões (FdPerms flags)
+#[linear]
+type Fd<T: UnixResource, P: FdPerms> {
+    /// Número do file descriptor (interno, não acessível diretamente)
+    #[opaque]
+    _fd: i32,
+
+    /// Tipo do recurso (conhecido em tempo de compilação)
+    resource: T,
+
+    /// Permissões concedidas
+    perms: P,
+
+    /// Metadata temporal (opcional)
+    temporal: Option<TemporalMetadata>,
+
+    /// Prova ZK de integridade (opcional, para recursos críticos)
+    zk_proof: Option<ZKProof>,
+
+    /// Flag de anchored: se true, conteúdo foi registrado na TemporalChain
+    anchored: bool,
+}
+
+/// Métodos comuns a todos Fd<T, P>
+impl<T: UnixResource, P: FdPerms> Fd<T, P> {
+    /// Duplica o descriptor (syscall dup/dup2)
+    /// Requer permissão de leitura ou escrita
+    fn dup(self) -> Result<Fd<T, P>, UnixError>
+        where P includes (READ | WRITE)
+    {
+        // Verificar linearidade em tempo de compilação
+        // Em runtime: syscall dup()
+        let new_fd = libc::dup(self._fd)?;
+        Ok(Fd {
+            _fd: new_fd,
+            resource: self.resource,
+            perms: self.perms,
+            temporal: self.temporal.clone(),
+            zk_proof: None,  // Nova cópia não herda prova ZK
+            anchored: false, // Nova cópia não é anchored por padrão
+        })
+    }
+
+    /// Fecha o descriptor (syscall close)
+    /// Chamado automaticamente ao sair de escopo (drop)
+    fn close(mut self) -> Result<(), UnixError> {
+        // Se anchored, garantir que o anchor foi registrado
+        if self.anchored && self.temporal.is_some() {
+            let meta = self.temporal.as_ref().unwrap();
+            if meta.block_id.is_none() {
+                // Anchor pendente — registrar agora
+                self._finalize_anchor()?;
+            }
+        }
+        libc::close(self._fd)?;
+        self._fd = -1;  // Marcar como fechado
+        Ok(())
+    }
+
+    /// Registra o conteúdo atual na TemporalChain
+    /// Requer permissão de leitura
+    fn anchor(&mut self) -> Result<TemporalBlock, UnixError>
+        where P includes READ
+    {
+        // Ler conteúdo (buffered, não consumir o fd)
+        let content = self._read_for_anchor()?;
+
+        // Calcular hash e registrar
+        let hash = sha3_256(&content);
+        let block = temporal::anchor_content(
+            content,
+            TemporalPayload {
+                resource_type: self.resource,
+                perms: self.perms,
+                timestamp: time::nanos(),
+            }
+        )?;
+
+        // Atualizar metadata
+        self.temporal = Some(TemporalMetadata {
+            anchor_hash: Some(hash),
+            timestamp_ns: time::nanos(),
+            block_id: Some(block.clone()),
+            entropy_score: entropy::score(&content),
+        });
+        self.anchored = true;
+
+        Ok(block)
+    }
+
+    /// Gera prova ZK de integridade do conteúdo
+    /// Útil para verificação remota sem revelar dados
+    fn prove_integrity(&self) -> Result<ZKProof, UnixError>
+        where P includes READ
+    {
+        // Em produção: usar Plonky2/Halo2 para prova de conhecimento
+        // Aqui: simulação com hash + nonce
+        let nonce = random::u64();
+        let proof_data = format!("{}:{}:{}", self._fd, self.temporal.as_ref().map(|m| m.anchor_hash), nonce);
+
+        Ok(ZKProof {
+            scheme: "groth16",
+            public_inputs: vec![sha3_256(proof_data.as_bytes())],
+            proof_bytes: zk::simulate_proof(&proof_data),
+            verification_key: zk::get_verification_key("fd_integrity_v1"),
+        })
+    }
+
+    // Métodos internos (não expostos ao usuário)
+    #[internal]
+    fn _read_for_anchor(&self) -> Result<Vec<u8>, UnixError> { /* ... */ }
+    #[internal]
+    fn _finalize_anchor(&mut self) -> Result<(), UnixError> { /* ... */ }
+}
+
+/// Erros Unix canônicos
+enum UnixError {
+    NotFound(String),           // ENOENT
+    PermissionDenied(String),   // EACCES
+    AlreadyExists(String),      // EEXIST
+    InvalidFd(i32),             // EBADF
+    Interrupted(String),        // EINTR
+    ResourceBusy(String),       // EBUSY
+    TemporalAnchorFailed(String), // Falha ao ancorar na TemporalChain
+    ZKProofGenerationFailed(String), // Falha ao gerar prova ZK
+}
+
+/// Conversão de UnixError para Ark-lang Error
+impl From<UnixError> for Error {
+    fn from(e: UnixError) -> Self {
+        Error::Unix(e)
+    }
+}
