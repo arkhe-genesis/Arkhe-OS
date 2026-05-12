@@ -127,3 +127,6 @@
 [submodule "third_party/nexus-cli"]
 	path = third_party/nexus-cli
 	url = https://github.com/nexus-xyz/nexus-cli.git
+[submodule "components/talos"]
+	path = components/talos
+	url = https://github.com/arkhe-os/talos-agent.git
