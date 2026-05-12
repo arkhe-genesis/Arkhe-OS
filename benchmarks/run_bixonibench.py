@@ -9,8 +9,9 @@ import argparse
 import sys
 import os
 
-# Ensure conrag modules can be imported
+# Ensure conrag is in PYTHONPATH
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from conrag.orchestrator import ProtocoloArkhe, Veredito
 
 def run_benchmark(dataset_path: str, output_path: str):
@@ -23,7 +24,7 @@ def run_benchmark(dataset_path: str, output_path: str):
     resultados = []
 
     print(f"🧪 Iniciando BixoniBench v{dataset['metadata']['version']}")
-    print(f"   Total de casos (amostra): {len(dataset['test_cases'])}")
+    print(f"   Total de casos: {dataset['metadata']['total_cases']}")
     print(f"   Domínios: {', '.join(dataset['metadata']['domains'])}")
     print()
 
@@ -112,12 +113,8 @@ def run_benchmark(dataset_path: str, output_path: str):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Executar BixoniBench")
-    parser.add_argument("--dataset", default=os.path.join(os.path.dirname(__file__), "bixonibench_v1.json"))
-
-    reports_dir = os.path.join(os.path.dirname(__file__), "..", "reports")
-    os.makedirs(reports_dir, exist_ok=True)
-    parser.add_argument("--output", default=os.path.join(reports_dir, "bixonibench_result.json"))
-
+    parser.add_argument("--dataset", default="benchmarks/bixonibench_v1.json")
+    parser.add_argument("--output", default="reports/bixonibench_result.json")
     args = parser.parse_args()
 
     run_benchmark(args.dataset, args.output)

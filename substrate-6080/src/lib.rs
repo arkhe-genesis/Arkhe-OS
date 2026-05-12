@@ -46,57 +46,44 @@
 // MÓDULOS
 // ============================================================================
 
+pub mod circuits;
+pub mod commitments;
 pub mod hash;
 pub mod merkle;
-pub mod commitments;
-pub mod circuits;
 pub mod proofs;
 pub mod prover;
-pub mod verifier;
 pub mod temporal_anchor;
+pub mod verifier;
 
 // ============================================================================
 // RE-EXPORTS
 // ============================================================================
 
-pub use hash::{
-    PoseidonHasher, RescuePrimeHasher, MiMCHasher,
-    HashError, HashOutput,
-};
+pub use hash::{HashError, HashOutput, MiMCHasher, PoseidonHasher, RescuePrimeHasher};
 
-pub use merkle::{
-    MerkleTree, MerkleProof, MerkleError,
-    TreeConfig, LeafIndex,
-};
+pub use merkle::{LeafIndex, MerkleError, MerkleProof, MerkleTree, TreeConfig};
 
 pub use commitments::{
-    PedersenCommitment, KZGCommitment, FRICommitment,
-    CommitmentProof, CommitmentError,
+    CommitmentError, CommitmentProof, FRICommitment, KZGCommitment, PedersenCommitment,
 };
 
 pub use circuits::{
-    CircuitBuilder, CircuitConfig, CircuitError,
-    ArithmeticCircuit, Plonky2Circuit,
+    ArithmeticCircuit, CircuitBuilder, CircuitConfig, CircuitError, Plonky2Circuit,
 };
 
 pub use proofs::{
-    ZKProof, ProofType, ProofHeader, ProofWithMetadata,
-    ProofSerializer, ProofAggregator, ProofCache,
+    ProofAggregator, ProofCache, ProofHeader, ProofSerializer, ProofType, ProofWithMetadata,
+    ZKProof,
 };
 
-pub use prover::{
-    Plonky2Prover, Groth16Prover, ProverTrait,
-    ProvingKey, VerifyingKey,
-};
+pub use prover::{Groth16Prover, Plonky2Prover, ProverTrait, ProvingKey, VerifyingKey};
 
 pub use verifier::{
-    ProofVerifier, VerificationResult, VerificationError,
-    BatchVerifier, UniversalVerifier,
+    BatchVerifier, ProofVerifier, UniversalVerifier, VerificationError, VerificationResult,
 };
 
 pub use temporal_anchor::{
-    AnchorProof, AnchoredProof, TemporalProofEvent,
-    anchor_to_temporal_chain,
+    anchor_to_temporal_chain, AnchorProof, AnchoredProof, TemporalProofEvent,
 };
 
 #[cfg(test)]

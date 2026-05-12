@@ -1,5 +1,5 @@
-use clap::Parser;
 use anyhow::Result;
+use clap::Parser;
 
 #[derive(Parser)]
 pub struct PortalCreateArgs {
@@ -11,7 +11,10 @@ pub struct PortalCreateArgs {
 
 pub async fn handle_portal_create(args: PortalCreateArgs) -> Result<()> {
     if args.r#type == "quantum" {
-        println!("Criando portal quântico para {} via Amazon Braket...", args.endpoint);
+        println!(
+            "Criando portal quântico para {} via Amazon Braket...",
+            args.endpoint
+        );
         let client = arkhe_amazon_braket::braket_client::ArkheBraketClient::new().await;
         let _result = client.run_qft_on_braket("QFT").await?;
         println!("Portal quântico estabelecido com sucesso!");

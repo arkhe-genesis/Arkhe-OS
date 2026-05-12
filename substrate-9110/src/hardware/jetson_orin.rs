@@ -1,4 +1,6 @@
-use super::device::{ShardConfig, SpaceHardware, HardwareError, HealthStatus, PowerMetrics, AttestationProof};
+use super::device::{
+    AttestationProof, HardwareError, HealthStatus, PowerMetrics, ShardConfig, SpaceHardware,
+};
 
 pub struct JetsonOrin {
     ip: String,
@@ -34,7 +36,9 @@ spec:
       limits:
         nvidia.com/gpu: {}
 "#,
-            shard.shard_id, shard.shard_id, if self.gpu_enabled { 1 } else { 0 }
+            shard.shard_id,
+            shard.shard_id,
+            if self.gpu_enabled { 1 } else { 0 }
         );
         // Aplicar manifest via kubectl
         Ok(())

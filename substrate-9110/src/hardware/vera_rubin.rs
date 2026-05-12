@@ -1,4 +1,6 @@
-use super::device::{ShardConfig, SpaceHardware, HardwareError, HealthStatus, PowerMetrics, AttestationProof};
+use super::device::{
+    AttestationProof, HardwareError, HealthStatus, PowerMetrics, ShardConfig, SpaceHardware,
+};
 
 pub struct OrbitParameters {
     pub altitude: f64,
@@ -15,7 +17,10 @@ impl VeraRubin {
     pub fn new() -> Self {
         Self {
             module_id: "vera_rubin_001".into(),
-            orbit_params: OrbitParameters { altitude: 500.0, inclination: 45.0 },
+            orbit_params: OrbitParameters {
+                altitude: 500.0,
+                inclination: 45.0,
+            },
             gpu_model: "Blackwell Space-1".into(),
         }
     }

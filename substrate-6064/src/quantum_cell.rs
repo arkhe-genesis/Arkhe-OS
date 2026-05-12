@@ -1,4 +1,3 @@
-
 #[derive(Clone, Debug)]
 pub struct SuperpositionState {
     pub amplitudes: Vec<f64>,

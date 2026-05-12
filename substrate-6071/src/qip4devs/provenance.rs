@@ -1,5 +1,5 @@
-use std::path::Path;
 use sha2::{Digest, Sha256};
+use std::path::Path;
 use syn::Item;
 
 pub struct FunctionFingerprint {
@@ -15,7 +15,8 @@ impl FunctionFingerprint {
 pub fn fingerprint_crate(crate_path: &Path) -> Vec<FunctionFingerprint> {
     let content = std::fs::read_to_string(crate_path).unwrap_or_default();
     if let Ok(ast) = syn::parse_file(&content) {
-        ast.items.iter()
+        ast.items
+            .iter()
             .filter_map(|item| {
                 if let Item::Fn(f) = item {
                     let s = quote::quote!(#f).to_string();

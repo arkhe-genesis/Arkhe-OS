@@ -1,6 +1,6 @@
-use petgraph::graph::NodeIndex;
 use nalgebra::Point3;
-use serde::{Serialize, Deserialize};
+use petgraph::graph::NodeIndex;
+use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct VisualNode {
@@ -8,7 +8,7 @@ pub struct VisualNode {
     pub position: Point3<f64>,
     pub node_type: NodeType,
     pub label: String,
-    pub locked: bool,      // Se trava posição
+    pub locked: bool, // Se trava posição
     pub scale: f64,
 }
 

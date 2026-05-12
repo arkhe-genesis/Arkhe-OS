@@ -1,21 +1,25 @@
-use crate::compliance_graph::{ComplianceGraph, Jurisdiction, RequirementType, JurisdictionVerifier};
-use crate::mutual_recognition::MutualRecognitionAgreement;
+use crate::compliance_graph::{
+    ComplianceGraph, Jurisdiction, JurisdictionVerifier, RequirementType,
+};
+use crate::cosmic_compliance::{CosmicConfig, CosmicParameters, PhysicalLawCompliance};
 use crate::cross_universe_proof::{MultiversalProof, UniverseSet};
+use crate::financial_compliance::{
+    FinancialMultiversalBridge, FinancialMultiversalConfig, PixTransaction,
+};
+use crate::ip_compliance::{ArtFingerprint, BerneConventionAdapter, IPMultiversalConfig};
+use crate::mutual_recognition::MutualRecognitionAgreement;
+use crate::quantum_compliance::{QuantumExportConfig, QuantumExportControl};
 use crate::temporal_compliance::TemporalCompliance;
-use crate::quantum_compliance::{QuantumExportControl, QuantumExportConfig};
-use crate::financial_compliance::{FinancialMultiversalBridge, FinancialMultiversalConfig, PixTransaction};
-use crate::ip_compliance::{BerneConventionAdapter, IPMultiversalConfig, ArtFingerprint};
-use crate::cosmic_compliance::{PhysicalLawCompliance, CosmicConfig, CosmicParameters};
 use arkhe_compliance::{
-    HIPAACompliance, GDPRCompliance, LGPDCompliance,
-    RegulatoryVerifier, KYCChecker, FAIRValidator,
-    AuditTrail, ConsentManager, HIPAAConfig, GDPRConfig, RegulatoryConfig, ConsentRecord, CoherenceProof
+    AuditTrail, CoherenceProof, ConsentManager, ConsentRecord, FAIRValidator, GDPRCompliance,
+    GDPRConfig, HIPAACompliance, HIPAAConfig, KYCChecker, LGPDCompliance, RegulatoryConfig,
+    RegulatoryVerifier,
 };
 use arkhe_temporal::TemporalChain;
 use arkhe_zklib::ZKProof;
+use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 use std::sync::Arc;
-use serde::{Serialize, Deserialize};
 use thiserror::Error;
 
 /// O motor de compliance que opera em múltiplos universos regulatórios.
@@ -81,7 +85,10 @@ impl MultiversalCompliance {
 
     /// Habilita compliance GDPR para o universo Europa.
     pub fn with_gdpr(mut self, config: GDPRConfig) -> Self {
-        self.gdpr = Some(GDPRCompliance::new(self.audit.clone(), config.retention_days));
+        self.gdpr = Some(GDPRCompliance::new(
+            self.audit.clone(),
+            config.retention_days,
+        ));
         self
     }
 
@@ -145,15 +152,19 @@ impl MultiversalCompliance {
             match jurisdiction {
                 Jurisdiction::HIPAA => {
                     if let Some(ref engine) = self.hipaa {
-                        engine.verify_patient_data(&artifact.payload, &artifact.consent)
-                            .map_err(|e| MultiversalComplianceError::VerificationFailed(e.to_string()))?;
+                        engine
+                            .verify_patient_data(&artifact.payload, &artifact.consent)
+                            .map_err(|e| {
+                                MultiversalComplianceError::VerificationFailed(e.to_string())
+                            })?;
                         passed.insert(jurisdiction.clone());
                     }
                 }
                 Jurisdiction::GDPR => {
                     if let Some(ref engine) = self.gdpr {
-                        engine.handle_request()
-                            .map_err(|e| MultiversalComplianceError::VerificationFailed(e.to_string()))?;
+                        engine.handle_request().map_err(|e| {
+                            MultiversalComplianceError::VerificationFailed(e.to_string())
+                        })?;
                         passed.insert(jurisdiction.clone());
                     }
                 }
@@ -164,53 +175,67 @@ impl MultiversalCompliance {
                         _ => unreachable!(),
                     };
                     if let Some(ref engine) = verifier {
-                        engine.verify_therapeutic_proof(
-                            &artifact.therapeutic_proof,
-                        ).map_err(|e| MultiversalComplianceError::VerificationFailed(e.to_string()))?;
+                        engine
+                            .verify_therapeutic_proof(&artifact.therapeutic_proof)
+                            .map_err(|e| {
+                                MultiversalComplianceError::VerificationFailed(e.to_string())
+                            })?;
                         passed.insert(jurisdiction.clone());
                     }
                 }
                 Jurisdiction::PIX_BRASIL | Jurisdiction::SEPA_EU => {
                     if let Some(ref bridge) = self.financial {
                         if let Some(ref tx) = artifact.financial_tx {
-                            bridge.validate_transaction(tx)
-                                .map_err(|e| MultiversalComplianceError::VerificationFailed(e.to_string()))?;
+                            bridge.validate_transaction(tx).map_err(|e| {
+                                MultiversalComplianceError::VerificationFailed(e.to_string())
+                            })?;
                             passed.insert(jurisdiction.clone());
                         } else {
-                            return Err(MultiversalComplianceError::VerificationFailed("Missing financial_tx for PIX/SEPA".to_string()));
+                            return Err(MultiversalComplianceError::VerificationFailed(
+                                "Missing financial_tx for PIX/SEPA".to_string(),
+                            ));
                         }
                     }
                 }
                 Jurisdiction::BERNE_COPYRIGHT => {
                     if let Some(ref ip) = self.ip {
                         if let Some(ref art) = artifact.art_fingerprint {
-                            ip.validate_artwork(art)
-                                .map_err(|e| MultiversalComplianceError::VerificationFailed(e.to_string()))?;
+                            ip.validate_artwork(art).map_err(|e| {
+                                MultiversalComplianceError::VerificationFailed(e.to_string())
+                            })?;
                             passed.insert(jurisdiction.clone());
                         } else {
-                            return Err(MultiversalComplianceError::VerificationFailed("Missing art_fingerprint for BERNE".to_string()));
+                            return Err(MultiversalComplianceError::VerificationFailed(
+                                "Missing art_fingerprint for BERNE".to_string(),
+                            ));
                         }
                     }
                 }
                 Jurisdiction::QUANTUM_WASSENAAR => {
                     if let Some(ref qc) = self.quantum {
                         if let Some(ref circ) = artifact.quantum_circuit {
-                            qc.check_export(circ)
-                                .map_err(|e| MultiversalComplianceError::VerificationFailed(e.to_string()))?;
+                            qc.check_export(circ).map_err(|e| {
+                                MultiversalComplianceError::VerificationFailed(e.to_string())
+                            })?;
                             passed.insert(jurisdiction.clone());
                         } else {
-                            return Err(MultiversalComplianceError::VerificationFailed("Missing quantum_circuit for WASSENAAR".to_string()));
+                            return Err(MultiversalComplianceError::VerificationFailed(
+                                "Missing quantum_circuit for WASSENAAR".to_string(),
+                            ));
                         }
                     }
                 }
                 Jurisdiction::COSMIC_LAW => {
                     if let Some(ref cosmic) = self.cosmic {
                         if let Some(ref params) = artifact.cosmic_parameters {
-                            cosmic.verify_physical_consistency(params)
-                                .map_err(|e| MultiversalComplianceError::VerificationFailed(e.to_string()))?;
+                            cosmic.verify_physical_consistency(params).map_err(|e| {
+                                MultiversalComplianceError::VerificationFailed(e.to_string())
+                            })?;
                             passed.insert(jurisdiction.clone());
                         } else {
-                            return Err(MultiversalComplianceError::VerificationFailed("Missing cosmic_parameters for COSMIC".to_string()));
+                            return Err(MultiversalComplianceError::VerificationFailed(
+                                "Missing cosmic_parameters for COSMIC".to_string(),
+                            ));
                         }
                     }
                 }
@@ -227,11 +252,16 @@ impl MultiversalCompliance {
         Ok(MultiversalProof {
             target_universes: passed,
             proof: aggregated,
-            anchor: self.audit.anchor_compliance_event("MULTIVERSAL", &artifact.id),
+            anchor: self
+                .audit
+                .anchor_compliance_event("MULTIVERSAL", &artifact.id),
         })
     }
 
-    fn aggregate_proofs(&self, proofs: Vec<ZKProof>) -> Result<ZKProof, arkhe_zklib::VerificationError> {
+    fn aggregate_proofs(
+        &self,
+        proofs: Vec<ZKProof>,
+    ) -> Result<ZKProof, arkhe_zklib::VerificationError> {
         // Usa o zkLib para agregar múltiplas provas em uma
         ZKProof::aggregate(&proofs)
     }

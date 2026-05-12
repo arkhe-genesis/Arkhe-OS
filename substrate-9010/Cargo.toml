@@ -12,3 +12,7 @@ anyhow = "1"
 num-complex = "0.4.6"
 serde = { version = "1.0", features = ["derive"] }
 arkhe-zklib = { path = "../substrate-6080" }
+
+nexus-sdk = { workspace = true, optional = true }
+nexus-core = { workspace = true, optional = true }
+nexus-network = { workspace = true, optional = true }

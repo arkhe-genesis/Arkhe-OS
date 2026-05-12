@@ -1,4 +1,4 @@
-use crate::types::{SpacetimeGraph, Camera, DrawCommand};
+use crate::types::{Camera, DrawCommand, SpacetimeGraph};
 
 pub fn render_graph(graph: &SpacetimeGraph, _camera: &Camera) -> Vec<DrawCommand> {
     let mut commands = Vec::new();

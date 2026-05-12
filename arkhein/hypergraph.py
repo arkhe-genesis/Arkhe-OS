@@ -13,7 +13,6 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Set, Tuple
 from enum import Enum
 import numpy as np
-import faiss
 
 # Constante áurea para coerência φ-ótima
 PHI = (1 + math.sqrt(5)) / 2  # ~1.618
@@ -79,13 +78,21 @@ class ArkheinHypergraph:
     - Invariantes I1-I5 aplicadas em todas as operações
     """
 
-    def __init__(self, coherence_threshold: float = PHI_INV):
+    def __init__(self, coherence_threshold: float = PHI_INV, embedding_dim: int = 768):
         self.nodes: Dict[str, SemanticNode] = {}
         self.edges: Dict[Tuple[str, str, EdgeType], SemanticEdge] = {}
         self.coherence_threshold = coherence_threshold
-        self.embedding_dim = 128
-        self._index_embeddings = faiss.IndexFlatL2(self.embedding_dim)  # Index para busca vetorial
-        self._id_map = [] # Mapeia índice do faiss para ID do nó
+
+        # Inicializa o índice FAISS (Flat L2) para busca semântica
+        try:
+            import faiss
+            self._index_embeddings = faiss.IndexFlatL2(embedding_dim)
+            self._id_map: Dict[int, str] = {}
+            self._next_faiss_id = 0
+            self.embedding_dim = embedding_dim
+        except ImportError:
+            self._index_embeddings = None
+            self.embedding_dim = None
 
     def add_node(self, node: SemanticNode) -> bool:
         """Adiciona nó ao hypergrafo."""
@@ -99,12 +106,14 @@ class ArkheinHypergraph:
         node_id = node.canonical_hash()
         self.nodes[node_id] = node
 
-        # Integrar com FAISS
-        if node.embeddings is not None:
-            emb = node.embeddings.astype(np.float32)
-            if emb.shape == (self.embedding_dim,):
-                self._index_embeddings.add(np.array([emb]))
-                self._id_map.append(node_id)
+        # Adicionar ao índice FAISS se o embedding existir
+        if node.embeddings is not None and self._index_embeddings is not None:
+            # Garantir formato float32 para o faiss
+            vec = np.array([node.embeddings], dtype=np.float32)
+            if vec.shape[1] == self.embedding_dim:
+                self._index_embeddings.add(vec)
+                self._id_map[self._next_faiss_id] = node_id
+                self._next_faiss_id += 1
 
         return True
 
@@ -140,7 +149,7 @@ class ArkheinHypergraph:
             exact_matches = self._find_by_alias(concept, domain)
             candidates.extend(exact_matches)
             # Busca semântica por embedding (se disponível)
-            if self._index_embeddings is not None and self._index_embeddings.ntotal > 0:
+            if self._index_embeddings is not None:
                 semantic_matches = self._semantic_search(concept, top_k=10)
                 candidates.extend(semantic_matches)
 
@@ -340,29 +349,33 @@ class ArkheinHypergraph:
         return common | domain_specific.get(domain, set())
 
     def _semantic_search(self, concept: str, top_k: int) -> List[Dict]:
-        """Busca semântica por embedding."""
-        if self._index_embeddings.ntotal == 0:
+        """Busca semântica por embedding no FAISS."""
+        if self._index_embeddings is None or self._index_embeddings.ntotal == 0:
             return []
 
-        # Em produção: gerar embedding do conceito com modelo NLP real
-        # Aqui, como não temos modelo para text->embedding, criamos dummy vector
-        # (mas o faiss está devidamente implementado e testável)
-        dummy_query_vector = np.zeros((1, self.embedding_dim), dtype=np.float32)
+        # Em produção: usar um modelo de embedding real (como sentence-transformers)
+        # para converter o texto 'concept' em um vetor.
+        # Aqui, simulamos um embedding (vetor aleatório normalizado)
+        try:
+            import faiss
+            mock_embedding = np.random.randn(1, self.embedding_dim).astype(np.float32)
+            faiss.normalize_L2(mock_embedding)
 
-        # Se tivéssemos um embedding para o conceito, faríamos:
-        distances, indices = self._index_embeddings.search(dummy_query_vector, min(top_k, self._index_embeddings.ntotal))
+            distances, indices = self._index_embeddings.search(mock_embedding, top_k)
 
-        results = []
-        for i, idx in enumerate(indices[0]):
-            if idx != -1 and idx < len(self._id_map):
-                node_id = self._id_map[idx]
-                node = self.nodes.get(node_id)
-                if node:
-                    results.append({
-                        'id': node.id,
-                        'label': node.label,
-                        'definitions': node.definitions,
-                        'sources': node.sources,
-                        'relevance': float(1.0 / (1.0 + distances[0][i])) # Conversão de L2 distance para relevance score
-                    })
-        return results
+            results = []
+            for i, idx in enumerate(indices[0]):
+                if idx != -1 and idx in self._id_map:
+                    node_id = self._id_map[idx]
+                    node = self.nodes.get(node_id)
+                    if node:
+                        results.append({
+                            'id': node.id,
+                            'label': node.label,
+                            'definitions': node.definitions,
+                            'sources': node.sources,
+                            'relevance': float(1.0 / (1.0 + distances[0][i])) # Conversão de distância L2 para relevância
+                        })
+            return results
+        except Exception:
+            return []

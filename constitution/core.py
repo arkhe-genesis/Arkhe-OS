@@ -23,15 +23,14 @@ class Principio:
     id: str
     enunciado: str
     descricao: str
-    dominio: str  # "all" ou domínio específico
-    peso: float  # Importância relativa [0, 1]
-    aplicabilidade: Dict  # Condições de aplicação
+    dominio: str
+    peso: float
+    aplicabilidade: Dict
 
     def aplicar(self, allegation: 'Alegacao', facts: List[Dict],
                 confianca_rlcr: float) -> Tuple[bool, str]:
-        """Aplica princípio e retorna (satisfeito, justificativa)."""
         if not self._condicoes_aplicaveis(allegation):
-            return True, "N/A"  # Princípio não aplicável
+            return True, "N/A"
 
         satisfeito, motivo = self._avaliar(allegation, facts, confianca_rlcr)
         if satisfeito:
@@ -40,19 +39,15 @@ class Principio:
             return False, f"✗ {self.enunciado}: {motivo}"
 
     def _condicoes_aplicaveis(self, allegation: 'Alegacao') -> bool:
-        """Verifica se princípio se aplica ao domínio/contexto."""
         if self.dominio == "all":
             return True
-        return allegation.domain == self.dominio
+        return getattr(allegation, "domain", "geral") == self.dominio
 
     def _avaliar(self, allegation: 'Alegacao', facts: List[Dict],
                  confianca_rlcr: float) -> Tuple[bool, str]:
-        """Avaliação específica do princípio."""
-        # Implementado nas subclasses
         raise NotImplementedError
 
 class PrincipioP1(Principio):
-    """P1: 'A evidência mais forte prevalece'"""
     def __init__(self):
         super().__init__(
             id="P1",
@@ -67,27 +62,18 @@ class PrincipioP1(Principio):
                  confianca_rlcr: float) -> Tuple[bool, str]:
         if len(facts) < 2:
             return True, "Insuficientes fatos para aplicar P1"
-
-        # Agrupar fatos por direção (support/refute)
         supports = [f for f in facts if f.get('direction') == 'support']
         refutes = [f for f in facts if f.get('direction') == 'refute']
-
         if not supports and not refutes:
             return True, "Sem evidência direcional"
-
-        # Calcular força agregada
         strength_support = np.mean([f.get('evidence_strength', 0.5) for f in supports]) if supports else 0
         strength_refute = np.mean([f.get('evidence_strength', 0.5) for f in refutes]) if refutes else 0
-
-        # Verificar se evidência dominante é clara
         diff = abs(strength_support - strength_refute)
         if diff < 0.2:
             return False, "Evidências conflitantes com força similar — inconclusivo"
-
         return True, f"Evidência dominante: {'support' if strength_support > strength_refute else 'refute'} (Δ={diff:.2f})"
 
 class PrincipioP2(Principio):
-    """P2: 'Incerteza deve ser explicitamente declarada'"""
     def __init__(self):
         super().__init__(
             id="P2",
@@ -105,7 +91,6 @@ class PrincipioP2(Principio):
         return True, f"Confiança {'alta' if confianca_rlcr > 0.7 else 'baixa'} — incerteza adequadamente expressa"
 
 class PrincipioP3(Principio):
-    """P3: 'Fontes primárias > secundárias > terciárias'"""
     def __init__(self):
         super().__init__(
             id="P3",
@@ -120,22 +105,15 @@ class PrincipioP3(Principio):
                  confianca_rlcr: float) -> Tuple[bool, str]:
         if not facts:
             return False, "Sem fontes para avaliar hierarquia"
-
-        # Classificar fontes por tipo
         primary = [f for f in facts if f.get('source_type') == 'primary']
         secondary = [f for f in facts if f.get('source_type') == 'secondary']
         tertiary = [f for f in facts if f.get('source_type') == 'tertiary']
-
-        # Peso hierárquico
         weight = (len(primary) * 1.0 + len(secondary) * 0.6 + len(tertiary) * 0.3) / max(1, len(facts))
-
         if weight < 0.5 and confianca_rlcr > 0.7:
             return False, f"Confiança alta baseada em fontes de baixa hierarquia (peso={weight:.2f})"
-
         return True, f"Hierarquia de fontes respeitada (peso={weight:.2f})"
 
 class PrincipioP4(Principio):
-    """P4: 'Contradições internas invalidam a cadeia de raciocínio'"""
     def __init__(self):
         super().__init__(
             id="P4",
@@ -154,7 +132,6 @@ class PrincipioP4(Principio):
         return True, "Nenhuma contradição interna detectada"
 
     def _detect_contradictions(self, facts: List[Dict]) -> List[str]:
-        """Detecta contradições entre fatos."""
         contradictions = []
         claims = [(f.get('claim', ''), f.get('id', '')) for f in facts if 'claim' in f]
         for i, (claim1, id1) in enumerate(claims):
@@ -164,8 +141,6 @@ class PrincipioP4(Principio):
         return contradictions
 
     def _are_contradictory(self, claim1: str, claim2: str) -> bool:
-        """Verifica contradição semântica simplificada."""
-        # Em produção: usar NLI (Natural Language Inference)
         contradict_pairs = [
             ("causes", "prevents"), ("increases", "decreases"),
             ("is", "is not"), ("always", "never"), ("approved", "rejected")
@@ -175,7 +150,6 @@ class PrincipioP4(Principio):
                   for p1, p2 in contradict_pairs)
 
 class PrincipioP5(Principio):
-    """P5: 'Afirmações extraordinárias exigem evidências extraordinárias'"""
     def __init__(self):
         super().__init__(
             id="P5",
@@ -189,29 +163,22 @@ class PrincipioP5(Principio):
     def _avaliar(self, allegation: 'Alegacao', facts: List[Dict],
                  confianca_rlcr: float) -> Tuple[bool, str]:
         extraordinariness = self._score_exordinariness(allegation)
-        required_strength = 0.5 + 0.4 * extraordinariness  # 0.5-0.9
-
+        required_strength = 0.5 + 0.4 * extraordinariness
         actual_strength = np.mean([f.get('evidence_strength', 0.5) for f in facts]) if facts else 0
-
         if actual_strength < required_strength and confianca_rlcr > 0.6:
             return False, f"Alegação extraordinária (score={extraordinariness:.2f}) exige evidência ≥{required_strength:.2f}, obtido {actual_strength:.2f}"
-
         return True, f"Evidência adequada para nível de extraordinariedade ({extraordinariness:.2f})"
 
     def _score_exordinariness(self, allegation: 'Alegacao') -> float:
-        """Estima quão extraordinária é a alegação (0-1)."""
-        # Simplificação: palavras-chave indicam extraordinariedade
         extraordinary_keywords = [
             "cure", "miracle", "breakthrough", "revolutionary", "first-ever",
             "proven", "definitive", "undisputed", "conspiracy", "cover-up"
         ]
-        text = allegation.text.lower()
+        text = getattr(allegation, "text", "").lower()
         count = sum(1 for kw in extraordinary_keywords if kw in text)
-        return min(1.0, count / 3.0)  # Normalizar
+        return min(1.0, count / 3.0)
 
 class ConstituicaoCatedral:
-    """Sistema constitucional para julgamento interpretável."""
-
     PRINCIPIOS_BASE = [
         PrincipioP1(), PrincipioP2(), PrincipioP3(),
         PrincipioP4(), PrincipioP5()
@@ -224,7 +191,6 @@ class ConstituicaoCatedral:
 
     def julgar(self, allegation: 'Alegacao', facts: List[Dict],
                confianca_rlcr: float) -> Tuple[Veredito, str]:
-        """Aplica princípios constitucionais para veredito final."""
         resultados = []
         violacoes = []
 
@@ -240,17 +206,13 @@ class ConstituicaoCatedral:
             if not satisfeito and "N/A" not in justificativa:
                 violacoes.append(justificativa)
 
-        # Decisão baseada em violações e confiança
         if violacoes:
-            # Se há violações críticas (P1, P4), refutar
             critical_violations = [v for v in violacoes
                                  if any(p.id in v for p in self.principios if p.peso >= 0.95)]
             if critical_violations:
                 return Veredito.REFUTADO, f"Violações críticas: {'; '.join(critical_violations)}"
-            # Caso contrário, indeterminado
             return Veredito.INDETERMINADO, f"Incerteza constitucional: {'; '.join(violacoes)}"
 
-        # Sem violações: verificar confiança
         if confianca_rlcr >= 0.7:
             return Veredito.VERIFICADO, "Todos os princípios satisfeitos + confiança alta"
         elif confianca_rlcr <= 0.3:
@@ -259,7 +221,6 @@ class ConstituicaoCatedral:
             return Veredito.INDETERMINADO, "Princípios satisfeitos mas confiança intermediária"
 
     def _adaptar_para_dominio(self, dominio: str) -> List[Principio]:
-        """Adapta pesos e interpretações por domínio."""
         adaptacoes = {
             "medicina": {"P1": 1.0, "P2": 1.0, "P3": 0.9, "P4": 1.0, "P5": 0.95},
             "direito": {"P1": 0.9, "P2": 0.8, "P3": 1.0, "P4": 1.0, "P5": 0.8},
@@ -276,7 +237,6 @@ class ConstituicaoCatedral:
         return principios_adaptados
 
     def exportar_para_json(self) -> Dict:
-        """Exporta constituição para formato auditável."""
         return {
             "dominio": self.dominio,
             "principios": [
@@ -290,6 +250,6 @@ class ConstituicaoCatedral:
                 for p in self.principios
             ],
             "hash": hashlib.sha3_256(
-                json.dumps([p.__dict__ for p in self.principios], sort_keys=True).encode()
+                json.dumps([p.__dict__ for p in self.principios if not callable(p)], sort_keys=True, default=str).encode()
             ).hexdigest()
         }

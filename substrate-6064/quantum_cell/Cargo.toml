@@ -5,3 +5,7 @@ edition = "2021"
 
 [dependencies]
 nalgebra-sparse = "0.9.0"
+
+nexus-sdk = { workspace = true, optional = true }
+nexus-core = { workspace = true, optional = true }
+nexus-network = { workspace = true, optional = true }

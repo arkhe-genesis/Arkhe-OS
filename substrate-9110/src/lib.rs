@@ -1,5 +1,5 @@
+pub mod cli;
 pub mod hardware;
+pub mod mesh;
 pub mod provisioning;
 pub mod security;
-pub mod mesh;
-pub mod cli;

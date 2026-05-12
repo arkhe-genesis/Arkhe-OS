@@ -55,14 +55,14 @@ class VerificationRule:
         if cond.get("type") == "exists_in_database":
             field = cond["field"]
             db = cond["database"]
-            value = getattr(allegation, field, None) or allegation.texto
+            value = getattr(allegation, field, None) or allegation.text
             return self._check_database(value, db)
 
         # {"type": "pattern_match", "pattern": r"^\d+\.\d+$", "field": "dosage"}
         elif cond.get("type") == "pattern_match":
             pattern = cond["pattern"]
             field = cond.get("field", "text")
-            value = getattr(allegation, field, None) or allegation.texto
+            value = getattr(allegation, field, None) or allegation.text
             return bool(re.match(pattern, str(value)))
 
         # {"type": "logical_implication", "if": {...}, "then": {...}}
@@ -73,40 +73,62 @@ class VerificationRule:
 
     def _check_database(self, value: str, database: str) -> bool:
         """Verifica existência em base de dados canônica."""
-        try:
-            if database == "fda_approved":
-                url = f"https://api.fda.gov/drug/label.json?search=openfda.substance_name:{value}"
-                resp = requests.get(url, timeout=5)
-                if resp.status_code == 200:
-                    data = resp.json()
-                    return "results" in data and len(data["results"]) > 0
-                return False
+        val_clean = value.lower().strip()
 
-            elif database == "pubmed_indexed":
-                url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term={value}&retmode=json"
-                resp = requests.get(url, timeout=5)
+        # OpenFDA API para verificação de drogas
+        if database == "fda_approved":
+            try:
+                # Utilizamos a OpenFDA API, usando um timeout curto para evitar bloqueios
+                resp = requests.get(f"https://api.fda.gov/drug/label.json?search=openfda.generic_name:\"{val_clean}\"", timeout=5)
+                # Se não encontrar, tenta pelo brand_name
+                if resp.status_code == 404:
+                    resp = requests.get(f"https://api.fda.gov/drug/label.json?search=openfda.brand_name:\"{val_clean}\"", timeout=5)
                 if resp.status_code == 200:
-                    data = resp.json()
-                    return "esearchresult" in data and "count" in data["esearchresult"] and int(data["esearchresult"]["count"]) > 0
-                return False
+                    return True
+                else:
+                    # Fallback ao mock local em caso de erro da API
+                    pass
+            except Exception:
+                pass
 
-            elif database == "github_repo":
-                # value is expected to be "owner/repo"
-                url = f"https://api.github.com/repos/{value}"
-                resp = requests.get(url, timeout=5)
-                return resp.status_code == 200
-        except Exception as e:
-            print(f"Error querying database {database}: {e}")
+            mock_dbs = ["aspirin", "ibuprofen", "paracetamol", "metformin", "acetaminofeno"]
+            return val_clean in [d.lower() for d in mock_dbs]
+
+        elif database == "pubmed_indexed":
+            try:
+                # E-utilities NCBI API para PubMed
+                if val_clean.startswith("10."):  # DOI check
+                    resp = requests.get(f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term={val_clean}[lid]&retmode=json", timeout=5)
+                    data = resp.json()
+                    if int(data.get("esearchresult", {}).get("count", "0")) > 0:
+                        return True
+            except Exception:
+                pass
             return False
 
-        # Fallback to mock databases
+        elif database == "library_api_docs":
+            # GitHub API ou PyPI simplificado (pypi.org/pypi/{pacote}/json)
+            # Como value é a "função" mas pode vir junto com pacote ex: "fastapi.FastAPI"
+            parts = val_clean.split('.')
+            if len(parts) >= 1:
+                package = parts[0]
+                try:
+                    resp = requests.get(f"https://pypi.org/pypi/{package}/json", timeout=3)
+                    if resp.status_code == 200:
+                        return True
+                except Exception:
+                    pass
+                # Verificação mock
+                return package in ["fastapi", "flask", "django", "tokio", "requests", "numpy", "pandas", "asyncio"]
+            return False
+
+        # Fallback mocks
         mock_dbs = {
             "cie10_codes": ["A00", "B00", "C00", "I10", "J00", "K00"],
             "valid_laws": ["Constitution", "CivilCode", "PenalCode"],
-            "library_api_docs": ["asyncio", "numpy", "pandas", "requests", "torch", "flask", "django"]
         }
         db = mock_dbs.get(database, [])
-        return any(d.lower() in value.lower() for d in db)
+        return val_clean in [d.lower() for d in db]
 
     def _evaluate_z3(self, cond: Dict, allegation: 'Alegacao',
                      facts: List[Dict]) -> bool:
@@ -141,7 +163,7 @@ class BEAVEngine:
         Verifica alegação contra todas as regras do domínio.
         Retorna: (aprovado, metadados)
         """
-        domain_rules = self.rules.get(allegation.dominio, [])
+        domain_rules = self.rules.get(getattr(allegation, "domain", "geral"), [])
         # Ordenar por prioridade decrescente
         sorted_rules = sorted(domain_rules, key=lambda r: r.priority, reverse=True)
 
@@ -159,7 +181,7 @@ class BEAVEngine:
         return True, {
             "status": RuleStatus.APPROVED.value,
             "rules_checked": len(sorted_rules),
-            "domain": allegation.dominio
+            "domain": getattr(allegation, "domain", "geral")
         }
 
     def _load_rules(self, rules_data: Dict):

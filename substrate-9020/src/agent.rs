@@ -1,17 +1,21 @@
-use crate::threat_model::ThreatModel;
-use crate::patch_verification::{PatchProof, PatchValidator, Patch};
 use crate::audit::DaybreakAudit;
-use crate::trust_tiers::TrustTier;
 use crate::code_review::ReviewResult;
+use crate::patch_verification::{Patch, PatchProof, PatchValidator};
+use crate::threat_model::ThreatModel;
+use crate::trust_tiers::TrustTier;
 use arkhe_temporal::TemporalChain;
 use std::sync::Arc;
 
 // Stub missing arkhe-agency elements locally for now so we maintain the structure
 pub struct AgentId(String);
 impl AgentId {
-    pub fn new(id: &str) -> Self { Self(id.to_string()) }
+    pub fn new(id: &str) -> Self {
+        Self(id.to_string())
+    }
 }
-pub enum MotorType { SecurityDefender }
+pub enum MotorType {
+    SecurityDefender,
+}
 pub struct MultiversalAgent;
 impl MultiversalAgent {
     pub fn new(_id: AgentId, _mt: MotorType, _tt: TrustTier, _tc: Arc<TemporalChain>) -> Self {
@@ -35,7 +39,10 @@ pub struct SecurityAgentConfig {
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Severity {
-    Low, Medium, High, Critical,
+    Low,
+    Medium,
+    High,
+    Critical,
 }
 
 /// Agente autônomo de segurança cibernética.

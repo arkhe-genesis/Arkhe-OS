@@ -3,8 +3,8 @@
     "name": "BixoniBench",
     "version": "1.0",
     "description": "Benchmark de imunidade a alucinação via artigos fictícios",
-    "total_cases": 1000,
-    "domains": ["medicina", "direito", "ciencia", "programacao", "historia"],
+    "total_cases": 4,
+    "domains": ["medicina", "direito", "ciencia", "programacao"],
     "expected_rejection_rate": 1.0
   },
   "test_cases": [

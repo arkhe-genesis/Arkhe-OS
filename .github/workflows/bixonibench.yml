@@ -1,0 +1,15 @@
+name: BixoniBench Daily
+on:
+  schedule:
+    - cron: '0 6 * * *'
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: pip install -e .
+      - run: bixonibench --dataset benchmarks/bixonibench_v1.json --output reports/daily_report.json
+      - uses: actions/upload-artifact@v3
+        with:
+          name: bixonibench-report
+          path: reports/daily_report.json

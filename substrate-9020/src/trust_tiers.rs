@@ -12,9 +12,9 @@ pub struct OrcidProof;
 
 #[derive(Clone, Debug)]
 pub enum TrustTier {
-    Default,               // acesso público com safeguard padrão
-    TrustedCyber,           // defensor verificado (Trusted Access)
-    CyberSpecialist,        // GPT-5.5-Cyber level: maior permissividade
+    Default,         // acesso público com safeguard padrão
+    TrustedCyber,    // defensor verificado (Trusted Access)
+    CyberSpecialist, // GPT-5.5-Cyber level: maior permissividade
 }
 
 pub struct TieredAccessControl {
@@ -27,12 +27,18 @@ impl TieredAccessControl {
     pub fn authorize(&self, action: &str) -> Result<(), SecurityError> {
         match self.tier {
             TrustTier::Default => {
-                if action.contains("patch") { Err(SecurityError::InsufficientTier) }
-                else { Ok(()) }
+                if action.contains("patch") {
+                    Err(SecurityError::InsufficientTier)
+                } else {
+                    Ok(())
+                }
             }
             TrustTier::TrustedCyber => {
-                if self.kyc != KYCStatus::Verified { Err(SecurityError::InsufficientTier) }
-                else { Ok(()) }
+                if self.kyc != KYCStatus::Verified {
+                    Err(SecurityError::InsufficientTier)
+                } else {
+                    Ok(())
+                }
             }
             TrustTier::CyberSpecialist => Ok(()),
         }

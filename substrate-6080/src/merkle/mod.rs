@@ -1,7 +1,7 @@
 pub struct MerkleTree<H> {
     _marker: std::marker::PhantomData<H>,
     root: Vec<u8>,
-    leaves: Vec<Vec<u8>>,
+    _leaves: Vec<Vec<u8>>,
 }
 
 pub struct MerkleProof {
@@ -27,7 +27,7 @@ impl<H> MerkleTree<H> {
         Ok(MerkleTree {
             _marker: std::marker::PhantomData,
             root,
-            leaves: leaves.to_vec(),
+            _leaves: leaves.to_vec(),
         })
     }
 
