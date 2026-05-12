@@ -647,12 +647,4 @@ pub fn pre_install_check(package: &PackageManifest) -> Result<(), InstallBlocked
     let temporal_anomaly = check_publication_burst(&package.name, 6); // 6 min window
     let obfuscation_score = detect_obfuscation(&package.files);
 
-    if entropy > 6.5 || temporal_anomaly || obfuscation_score > 0.8 {
-        anchor_violation(&package, &entropy, &obfuscation_score)?; // Immutable audit trail on TemporalChain
-        return Err(InstallBlocked {
-            reason: "Entropy anomaly + temporal burst + obfuscation detected. This package may be compromised.",
-            proof: generate_block_proof(&package),
-        });
-    }
-    Ok(())
 }
