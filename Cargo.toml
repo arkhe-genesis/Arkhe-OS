@@ -89,6 +89,7 @@ async-trait = "0.1"
     "substrate-6070",
     "substrate-6090",
     "substrate-6091",
+    "substrate-6093",
     "substrate-9001",
     "substrate-9002",
     "substrate-6085",
