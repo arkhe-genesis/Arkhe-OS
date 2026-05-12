@@ -20,6 +20,5 @@ anyhow = "1.0"
 # Plonky2 required dependencies for EntropyRangeCircuit
 plonky2_field = { git = "https://github.com/mir-protocol/plonky2", version = "1.0.0" }
 
-nexus-sdk = { workspace = true, optional = true }
 nexus-core = { workspace = true, optional = true }
 nexus-network = { workspace = true, optional = true }
