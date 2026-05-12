@@ -6,19 +6,12 @@ authors = ["ARKHE OS <hello@arkhe.os>"]
 description = "Substrato 6070: Entropy Oracle for ARKHE TemporalChain"
 
 [dependencies]
-name = "substrate-6070"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
 serde = { version = "1.0", features = ["derive"] }
 sha3 = "0.10"
 ark-bn254 = "0.4"
 ark-groth16 = "0.4"
 ark-snark = "0.4"
 ark-std = "0.4"
-serde = { version = "1.0", features = ["derive"] }
-sha3 = "0.10"
 
 # Plonky2 dependency as per memory
 plonky2 = { git = "https://github.com/mir-protocol/plonky2" }

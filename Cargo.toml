@@ -50,6 +50,7 @@ members = [
 
     # --- DevOps & infrastructure ---
     "substrate-9100",                       # DevOps Orchestration (CI/CD, Helm, Terraform)
+    "substrate-9515",                       # Ark-lang MCP Bridge
 
     # --- CLI & bindings ---
     "cmd/arkhe",                            # Go CLI (via Go workspace, if applicable) – Rust binary shim
