@@ -20,6 +20,7 @@ pub struct ShardCreateArgs {
 pub async fn handle_shard_create(args: ShardCreateArgs) -> Result<()> {
     let mut client = OracleClient::connect("http://[::1]:50051").await?;
     let request = tonic::Request::new(CreateShardRequest {
+        labels: std::collections::HashMap::new(),
         substrate_id: args.substrate,
         motor: args.motor,
         gpu: args.gpu,

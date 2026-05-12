@@ -2,6 +2,16 @@
 version: '3.9'
 
 services:
+  # Floci local AWS emulator
+  floci:
+    image: floci/floci:latest
+    container_name: floci
+    ports:
+      - "4566:4566"
+    environment:
+      - FLOCI_DEFAULT_REGION=us-east-1
+    restart: unless-stopped
+
   # FastAPI backend (PoC Core)
   arkhe-api:
     build:

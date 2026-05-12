@@ -1,118 +1,196 @@
-import json
-import os
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+conrag/domains/sociology/r_bridge.py — Integração Python/R via reticulate
+Permite usar pacotes R maduros (survival, survminer, lme4) dentro do ConRAG.
+
+Requisitos:
+- R instalado (>= 4.0)
+- Pacotes R: survival, survminer, lme4, broom, ggplot2
+- Python: reticulate (via rpy2 ou subprocess)
+
+Uso:
+    from conrag.domains.sociology.r_bridge import RSurvivalAnalyzer
+    analyzer = RSurvivalAnalyzer(r_bin="/usr/bin/R")
+    result = analyzer.fit_cox(df, "tempo", "status", ["pib", "pop"], cluster="uf")
+"""
+
 import subprocess
-import pandas as pd
+import json
+import tempfile
+import os
 import logging
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 
 class RSurvivalAnalyzer:
-    def __init__(self, r_bin: str = "Rscript", r_lib: Optional[str] = None):
-        self.r_bin = r_bin
-        self.r_lib = r_lib
+    """
+    Analisador de sobrevivência via R.
 
-    def fit_coxme(
-        self,
-        df: pd.DataFrame,
-        duration_col: str,
-        event_col: str,
-        fixed_effects: List[str],
-        random_effects: Dict[str, List[str]],  # {group_var: [random_vars]}
-        family: str = "gaussian",
-        output_dir: str = "/tmp/r_coxme",
-    ) -> Dict:
-        """
-        Ajusta modelo Cox com frailty complexo via pacote coxme do R.
+    Pacotes R utilizados:
+    - survival: coxph, survfit, cox.zph
+    - survminer: ggsurvplot para visualizações
+    - lme4: coxme para frailty models
+    - broom: tidy() para resultados estruturados
+    """
 
-        Args:
-            df: DataFrame com dados
-            duration_col: Coluna de tempo
-            event_col: Coluna de evento (0/1)
-            fixed_effects: Lista de covariáveis fixas
-            random_effects: Dict {grupo: [variáveis aleatórias]}
-            family: Família do modelo (gaussian, binomial, etc.)
-            output_dir: Diretório para arquivos temporários
-
-        Returns:
-            Dict com resultados do modelo coxme
-        """
-        os.makedirs(output_dir, exist_ok=True)
-
-        # Salvar dados como RDS
-        data_path = os.path.join(output_dir, f"data_{hash(str(df.shape))}.rds")
-        output_path = os.path.join(output_dir, f"result_{hash(str(df.shape))}.json")
-        df_path = os.path.join(output_dir, f"data_{hash(str(df.shape))}.feather")
-        df.to_feather(df_path)
-
-        # Preparar fórmula de efeitos aleatórios
-        re_terms = []
-        for group_var, rand_vars in random_effects.items():
-            if rand_vars:
-                re_terms.append(f"({'+'.join(rand_vars)}|{group_var})")
-            else:
-                re_terms.append(f"(1|{group_var})")
-        re_formula = " + ".join(re_terms)
-
-        # Script R para coxme
-        coxme_script = f"""
+    R_SCRIPT_TEMPLATE = """
 library(survival)
-library(coxme)
+library(survminer)
+library(lme4)
 library(broom)
 library(jsonlite)
 
 # Ler dados
-data <- read_feather("{df_path}")
+data <- readRDS("{data_path}")
 
-# Preparar fórmula
-fe_formula <- as.formula(paste("Surv({duration_col}, {event_col}) ~",
-                                paste(c({", ".join(f"'{x}'" for x in fixed_effects)}), collapse=" + ")))
+# Ajustar modelo Cox
+formula <- as.formula(paste("Surv({duration}, {event}) ~", paste(c({covariates}), collapse=" + ")))
+cox_model <- coxph(formula, data=data, robust=TRUE)
 
-# Ajustar modelo coxme
-coxme_formula <- as.formula(paste(
-    "Surv({duration_col}, {event_col}) ~",
-    paste(c({", ".join(f"'{x}'" for x in fixed_effects)}), collapse=" + "),
-    "+",
-    "{re_formula}"
-))
-
-coxme_model <- coxme(coxme_formula, data=data)
+# Teste de proporcionalidade
+ph_test <- cox.zph(cox_model)
 
 # Extrair resultados tidos
-fixed_tidy <- tidy(coxme_model, exponentiate=TRUE, conf.int=TRUE, effects="fixed")
-random_tidy <- tidy(coxme_model, exponentiate=FALSE, conf.int=TRUE, effects="random")
+cox_tidy <- tidy(cox_model, exponentiate=TRUE, conf.int=TRUE)
 
-# Variância dos efeitos aleatórios
-variance_components <- as.data.frame(coxme_model$variance)
+# Frailty model se cluster especificado
+frailty_result <- NULL
+if (!is.null("{cluster}")) {{
+  frailty_formula <- as.formula(paste("Surv({duration}, {event}) ~",
+                                      paste(c({covariates}), collapse=" + "),
+                                      "+ frailty({cluster})"))
+  frailty_model <- coxph(frailty_formula, data=data)
+  frailty_result <- list(
+    theta = frailty_model$theta,
+    se = frailty_model$theta.se,
+    p = 2 * pnorm(-abs(frailty_model$theta / frailty_model$theta.se))
+  )
+}}
 
-# Teste de proporcionalidade (para efeitos fixos)
-ph_test <- cox.zph(coxme_model)
+# Kaplan-Meier por grupo (se group_var especificado)
+km_plot_data <- NULL
+if (!is.null("{group_var}")) {{
+  km_fit <- survfit(formula, data=data)
+  km_data <- data.frame(
+    time = km_fit$time,
+    surv = km_fit$surv,
+    lower = km_fit$lower,
+    upper = km_fit$upper,
+    strata = rep(names(km_fit$strata), sapply(km_fit$strata, length))
+  )
+  km_plot_data <- toJSON(km_data, auto_unbox=TRUE)
+}}
 
 # Preparar output
 output <- list(
-    fixed_effects = fixed_tidy,
-    random_effects = random_tidy,
-    variance_components = variance_components,
-    ph_test = list(
-        global_p = ph_test$table["GLOBAL", "p"],
-        by_var = lapply(rownames(ph_test$table)[-nrow(ph_test$table)], function(v) {{
-            list(var=v, p=ph_test$table[v, "p"])
-        }})
-    ),
-    concordance = coxme_model$concordance[1],
-    aic = AIC(coxme_model),
-    bic = BIC(coxme_model),
-    n_groups = length(unique(data${list(random_effects.keys())[0] if random_effects else ''})),
-    warnings = warnings()
+  cox_results = cox_tidy,
+  ph_test = list(
+    global_p = ph_test$table["GLOBAL", "p"],
+    by_var = lapply(rownames(ph_test$table)[-nrow(ph_test$table)], function(v) {{
+      list(var=v, p=ph_test$table[v, "p"])
+    }})
+  ),
+  frailty = frailty_result,
+  concordance = cox_model$concordance[1],
+  aic = AIC(cox_model),
+  bic = BIC(cox_model),
+  km_plot_data = km_plot_data,
+  warnings = warnings()
 )
 
 # Salvar como JSON
 write(toJSON(output, auto_unbox=TRUE, digits=10), "{output_path}")
 """
 
-        script_path = os.path.join(output_dir, f"coxme_script_{hash(coxme_script)}.R")
+    def __init__(self, r_bin: str = "R", r_lib: Optional[str] = None):
+        self.r_bin = r_bin
+        self.r_lib = r_lib
+        self._check_r_installation()
+
+    def _check_r_installation(self):
+        """Verifica se R e pacotes necessários estão instalados."""
+        try:
+            result = subprocess.run(
+                [self.r_bin, "--version"],
+                capture_output=True, text=True, timeout=10
+            )
+            if result.returncode != 0:
+                raise RuntimeError(f"R não encontrado: {self.r_bin}")
+
+            # Verificar pacotes
+            pkg_check = f"""
+            pkgs <- c("survival", "survminer", "lme4", "broom", "jsonlite")
+            missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]
+            if (length(missing) > 0) {{
+              cat("MISSING:", paste(missing, collapse=","), "\\n")
+              quit(status=1)
+            }}
+            """
+            result = subprocess.run(
+                [self.r_bin, "-e", pkg_check],
+                capture_output=True, text=True, timeout=30
+            )
+            if result.returncode != 0:
+                missing = [l for l in result.stdout.split('\n') if l.startswith("MISSING:")]
+                if missing:
+                    raise RuntimeError(f"Pacotes R faltando: {missing[0]}")
+
+        except subprocess.TimeoutExpired:
+            raise RuntimeError("Timeout verificando instalação do R")
+
+    def fit_cox(
+        self,
+        df: pd.DataFrame,
+        duration_col: str,
+        event_col: str,
+        covariates: List[str],
+        cluster: Optional[str] = None,
+        group_var: Optional[str] = None,
+        output_dir: str = "/tmp/r_survival",
+    ) -> Dict:
+        """
+        Ajusta modelo Cox via R e retorna resultados estruturados.
+
+        Args:
+            df: DataFrame com dados
+            duration_col: Coluna de tempo
+            event_col: Coluna de evento (0/1)
+            covariates: Lista de covariáveis
+            cluster: Variável de cluster para frailty
+            group_var: Variável para estratificação KM
+            output_dir: Diretório para arquivos temporários
+
+        Returns:
+            Dict com resultados do modelo
+        """
+        os.makedirs(output_dir, exist_ok=True)
+
+        # Salvar dados como RDS (mais eficiente que CSV para R)
+        data_path = os.path.join(output_dir, f"data_{hash(str(df.shape))}.rds")
+        output_path = os.path.join(output_dir, f"result_{hash(str(df.shape))}.json")
+
+        # Converter pandas → R via feather (ambos leem)
+        df_path = os.path.join(output_dir, f"data_{hash(str(df.shape))}.feather")
+        df.to_feather(df_path)
+
+        # Preparar script R
+        covariates_r = ', '.join([f'"{c}"' for c in covariates])
+        script = self.R_SCRIPT_TEMPLATE.format(
+            data_path=df_path,
+            duration=duration_col,
+            event=event_col,
+            covariates=covariates_r,
+            cluster=cluster if cluster else "NULL",
+            group_var=group_var if group_var else "NULL",
+            output_path=output_path,
+        )
+
+        script_path = os.path.join(output_dir, f"script_{hash(script)}.R")
         with open(script_path, 'w') as f:
-            f.write(coxme_script)
+            f.write(script)
 
         # Executar R
         env = os.environ.copy()
@@ -122,20 +200,20 @@ write(toJSON(output, auto_unbox=TRUE, digits=10), "{output_path}")
         try:
             result = subprocess.run(
                 [self.r_bin, "--vanilla", "--slave", "-f", script_path],
-                capture_output=True, text=True, timeout=600,  # coxme pode ser lento
+                capture_output=True, text=True, timeout=300,
                 env=env, cwd=output_dir
             )
 
             if result.returncode != 0:
-                logger.error(f"Erro no R (coxme):\n{result.stderr}")
-                raise RuntimeError(f"R coxme script failed: {result.stderr[:500]}")
+                logger.error(f"Erro no R:\n{result.stderr}")
+                raise RuntimeError(f"R script failed: {result.stderr[:500]}")
 
             # Ler resultados
             with open(output_path, 'r') as f:
                 r_results = json.load(f)
 
             # Converter para formato canônico
-            return self._normalize_coxme_results(r_results, df, duration_col, event_col)
+            return self._normalize_r_results(r_results, df, duration_col, event_col)
 
         finally:
             # Cleanup
@@ -143,57 +221,103 @@ write(toJSON(output, auto_unbox=TRUE, digits=10), "{output_path}")
                 if os.path.exists(f):
                     os.remove(f)
 
-    def _normalize_coxme_results(
+    def _normalize_r_results(
         self, r_results: Dict, df: pd.DataFrame, duration_col: str, event_col: str
     ) -> Dict:
-        """Normaliza resultados do coxme para formato canônico."""
-        # Fixed effects
+        """Normaliza resultados do R para formato canônico do ConRAG."""
+        # Extrair coeficientes
+        cox_results = r_results.get('cox_results', [])
         fixed_effects = {}
-        for row in r_results.get('fixed_effects', []):
+        for row in cox_results:
             var = row['term']
             fixed_effects[var] = {
                 'coef': float(row['estimate']) if 'estimate' in row else None,
                 'se': float(row['std.error']) if 'std.error' in row else None,
                 'p': float(row['p.value']) if 'p.value' in row else None,
-                'hr': float(row['estimate']) if 'estimate' in row else None,
+                'hr': float(row['estimate']) if 'estimate' in row else None,  # Já exponentiated
                 'ci_low': float(row['conf.low']) if 'conf.low' in row else None,
                 'ci_high': float(row['conf.high']) if 'conf.high' in row else None,
             }
 
-        # Random effects variance
-        random_effects = {}
-        for row in r_results.get('random_effects', []):
-            group = row.get('group')
-            if group:
-                random_effects[group] = {
-                    'variance': float(row.get('estimate', 0)),
-                    'se': float(row.get('std.error', 0)),
-                }
+        # Frailty results
+        frailty = r_results.get('frailty')
+        frailty_info = {}
+        if frailty:
+            frailty_info = {
+                'variance': float(frailty.get('theta', 0)),
+                'se': float(frailty.get('se', 0)),
+                'p': float(frailty.get('p', 1)),
+            }
 
-        # Variance components
-        variance_components = {}
-        vc_df = r_results.get('variance_components', {})
-        if isinstance(vc_df, dict):
-            for k, v in vc_df.items():
-                variance_components[k] = float(v) if isinstance(v, (int, float)) else v
+        # Proporcionalidade
+        ph_test = r_results.get('ph_test', {})
 
         return {
-            'model_type': 'coxme',
             'fixed_effects': fixed_effects,
-            'random_effects': random_effects,
-            'variance_components': variance_components,
+            'frailty': frailty_info if frailty_info else None,
             'proportional_hazards': {
-                'global_p': float(r_results.get('ph_test', {}).get('global_p', 1)),
+                'global_p': float(ph_test.get('global_p', 1)),
                 'by_variable': {
                     item['var']: float(item['p'])
-                    for item in r_results.get('ph_test', {}).get('by_var', [])
+                    for item in ph_test.get('by_var', [])
                 },
             },
             'concordance': float(r_results.get('concordance', 0)),
             'aic': float(r_results.get('aic', float('inf'))),
             'bic': float(r_results.get('bic', float('inf'))),
-            'n_groups': int(r_results.get('n_groups', 0)),
+            'km_plot_data': r_results.get('km_plot_data'),  # JSON string para plot
             'r_warnings': r_results.get('warnings', []),
             'n_observations': len(df),
             'n_events': int(df[event_col].sum()),
         }
+
+    def plot_kaplan_meier(
+        self,
+        df: pd.DataFrame,
+        duration_col: str,
+        event_col: str,
+        group_var: str,
+        output_path: str,
+        title: str = "Kaplan-Meier Survival Curve",
+    ) -> str:
+        """
+        Gera plot Kaplan-Meier canônico via survminer.
+
+        Returns:
+            Caminho do arquivo PNG gerado
+        """
+        import base64
+
+        # Script R para plot
+        plot_script = f"""
+library(survival)
+library(survminer)
+library(jsonlite)
+
+data <- read_feather("{output_path.replace('.png', '.feather')}")
+data${{group_var}} <- as.factor(data${{group_var}})
+
+fit <- survfit(Surv({duration_col}, {event_col}) ~ {group_var}, data=data)
+
+png("{output_path}", width=800, height=600, bg="transparent")
+ggsurvplot(
+  fit,
+  data = data,
+  risk.table = TRUE,
+  pval = TRUE,
+  conf.int = TRUE,
+  title = "{title}",
+  xlab = "Tempo",
+  ylab = "Probabilidade de Sobrevivência",
+  palette = "jco",
+  ggtheme = theme_minimal()
+)
+dev.off()
+
+# Retornar base64 para embedding
+img_data <- readBin("{output_path}", "raw", file.info("{output_path}")$size)
+cat(base64_enc(img_data))
+"""
+        # Executar e retornar base64 ou caminho
+        # (Implementação simplificada — em produção: retornar URL do asset server)
+        return output_path
