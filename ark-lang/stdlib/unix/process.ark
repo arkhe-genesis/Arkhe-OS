@@ -1,0 +1,217 @@
+// ============================================================================
+// ARKHE Ω‑TEMP — Substrato 6062: Process Management
+// ============================================================================
+// Child processes como recursos lineares que devem ser reapados.
+// Prevenção de zombies via compiler warnings e cleanup automático.
+// Integração com Mythos Gate para validação de comandos executados.
+// ============================================================================
+
+/// Representação de um processo filho
+///
+/// Linear: deve ser waited ou killed explicitamente.
+/// Se sair de escopo sem wait, o compilador emite warning
+/// e o runtime envia SIGTERM + SIGKILL.
+#[linear]
+struct ChildProcess {
+    pid: i32,
+    stdout: Option<Fd<UnixResource::Pipe, FdPerms::READ>>,
+    stderr: Option<Fd<UnixResource::Pipe, FdPerms::READ>>,
+    stdin: Option<Fd<UnixResource::Pipe, FdPerms::WRITE>>,
+    command: String,
+    args: Vec<String>,
+    start_time_ns: u64,
+    mythos_approved: bool,  // Se o comando foi aprovado pelo Mythos Gate
+}
+
+impl ChildProcess {
+    /// Aguarda o processo e retorna seu status de saída
+    fn wait(mut self) -> Result<ProcessStatus, UnixError> {
+        let mut status = 0i32;
+        let pid = libc::waitpid(self.pid, &mut status, 0)?;
+
+        if pid != self.pid {
+            return Err(UnixError::Interrupted("waitpid returned unexpected pid".to_string()));
+        }
+
+        let exit_status = if libc::WIFEXITED(status) {
+            ProcessExit::Exited(libc::WEXITSTATUS(status))
+        } else if libc::WIFSIGNALED(status) {
+            ProcessExit::Signaled(libc::WTERMSIG(status))
+        } else {
+            ProcessExit::Unknown
+        };
+
+        // Registrar no ledger se anchored
+        if self.mythos_approved {
+            temporal::record_event("process_completed", json::object!({
+                "command": self.command,
+                "args": self.args,
+                "exit_status": format!("{:?}", exit_status),
+                "duration_ns": time::nanos() - self.start_time_ns,
+                "pid": self.pid,
+            }))?;
+        }
+
+        // Fechar pipes se existirem
+        if let Some(pipe) = self.stdout.take() { pipe.close()?; }
+        if let Some(pipe) = self.stderr.take() { pipe.close()?; }
+        if let Some(pipe) = self.stdin.take() { pipe.close()?; }
+
+        Ok(ProcessStatus {
+            pid: self.pid,
+            exit: exit_status,
+            duration_ns: time::nanos() - self.start_time_ns,
+        })
+    }
+
+    /// Envia um sinal ao processo
+    fn signal(&self, sig: i32) -> Result<(), UnixError> {
+        libc::kill(self.pid, sig)?;
+        Ok(())
+    }
+
+    /// Mata o processo (SIGKILL)
+    fn kill(mut self) -> Result<(), UnixError> {
+        self.signal(libc::SIGKILL)?;
+        // Aguardar para evitar zombie
+        let _ = libc::waitpid(self.pid, std::ptr::null_mut(), 0);
+        Ok(())
+    }
+}
+
+/// Status de saída de um processo
+struct ProcessStatus {
+    pid: i32,
+    exit: ProcessExit,
+    duration_ns: u64,
+}
+
+enum ProcessExit {
+    Exited(i32),      // Exit code
+    Signaled(i32),    // Signal number
+    Unknown,
+}
+
+/// Spawn de processo com validação Mythos Gate
+fn spawn_approved(
+    program: &str,
+    args: &[&str],
+    context: &MythosContext,
+) -> Result<ChildProcess, UnixError> {
+    // 1. Validar comando via Mythos Gate
+    let proposal = DecisionProposal {
+        action: format!("exec {} {}", program, args.join(" ")),
+        rationale: "Command execution requested by Ark-lang runtime".to_string(),
+        risk_assessment: assess_command_risk(program, args),
+        expected_outcome: "Command executes and returns output".to_string(),
+        fallback_plan: "Command rejected, return error".to_string(),
+        timestamp: time::nanos(),
+        requires_earth_approval: false,
+        deadline_hours: 1.0,
+    };
+
+    let mythos = MythosGate::for_context(context);
+    let decision = mythos.evaluate_decision(proposal, context)?;
+
+    if !decision.approved {
+        return Err(UnixError::PermissionDenied(
+            format!("Mythos Gate rejected command: {}", decision.rationale)
+        ));
+    }
+
+    // 2. Executar comando (implementação simplificada)
+    let (process_fd, stdout_pipe) = spawn_with_pipe(program, args)?;
+
+    Ok(ChildProcess {
+        pid: process_fd._fd,
+        stdout: Some(stdout_pipe),
+        stderr: None,  // Simplificação
+        stdin: None,
+        command: program.to_string(),
+        args: args.iter().map(|s| s.to_string()).collect(),
+        start_time_ns: time::nanos(),
+        mythos_approved: true,
+    })
+}
+
+/// Daemonização com bloco canônico
+macro daemonize_block(name: &str, pidfile: &str, block: fn() -> Result<(), Error>) -> Result<(), UnixError> {
+    // Fork para background
+    let pid = unsafe { libc::fork() };
+    if pid < 0 {
+        return Err(UnixError::ResourceBusy("fork failed".to_string()));
+    }
+
+    if pid > 0 {
+        // Parent: escrever PID file e exit
+        let mut fd = open_file(pidfile, FdPerms::WRITE, false)?;
+        libc::write(fd._fd, format!("{}", pid).as_ptr(), pid.to_string().len())?;
+        fd.close()?;
+        libc::_exit(0);
+    }
+
+    // Child: tornar-se session leader
+    if libc::setsid() < 0 {
+        return Err(UnixError::ResourceBusy("setsid failed".to_string()));
+    }
+
+    // Redirecionar stdio para /dev/null
+    let null_fd = libc::open("/dev/null".as_ptr(), libc::O_RDWR)?;
+    libc::dup2(null_fd, libc::STDIN_FILENO);
+    libc::dup2(null_fd, libc::STDOUT_FILENO);
+    libc::dup2(null_fd, libc::STDERR_FILENO);
+    libc::close(null_fd);
+
+    // Mudar diretório de trabalho
+    libc::chdir("/".as_ptr());
+
+    // Reset umask
+    libc::umask(0);
+
+    // Registrar SandboxTestBlock para startup do daemon
+    temporal::record_event("daemon_started", json::object!({
+        "name": name,
+        "pid": libc::getpid(),
+        "pidfile": pidfile,
+        "timestamp": time::nanos(),
+    }))?;
+
+    // Executar bloco do usuário
+    block()?;
+
+    // Cleanup ao finalizar
+    temporal::record_event("daemon_stopped", json::object!({
+        "name": name,
+        "pid": libc::getpid(),
+        "timestamp": time::nanos(),
+    }))?;
+
+    libc::_exit(0);
+}
+
+/// Exemplo: Worker daemon com anchoring
+#[example]
+fn example_daemon_worker() -> Result<(), Error> {
+    daemonize_block("arkhe-worker", "/var/run/arkhe-worker.pid", || {
+        // Loop principal do daemon
+        loop {
+            // Processar tarefas...
+            let task = fetch_next_task()?;
+
+            // Executar com anchoring
+            let result = run_task_with_anchoring(task)?;
+
+            // Log anchored
+            let mut logger = AnchoredLogStream::new("/var/log/arkhe/worker.log", 100)?;
+            logger.write_line(&format!("Task {} completed: {:?}", task.id, result))?;
+
+            // Checkpoint periódico na TemporalChain
+            if should_checkpoint() {
+                temporal::checkpoint("worker_state", &get_current_state())?;
+            }
+
+            // Sleep para evitar busy-loop
+            std::thread::sleep(std::time::Duration::from_secs(1));
+        }
+    })
+}
