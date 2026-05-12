@@ -20,3 +20,6 @@ uuid = { version = "1", features = ["v4"] }
 [features]
 default = ["plonky2"]
 plonky2 = ["dep:plonky2", "dep:plonky2_field"]
+
+[dependencies.arkhe-entropy-oracle]
+path = "../substrate-6070"

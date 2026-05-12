@@ -1,0 +1,10 @@
+// agent_client.ark
+use mcp::brave_search as search;    // Import Brave Search MCP
+use mcp::browserbase as browser;    // Import Browserbase MCP
+
+block research_agent {
+    let results = search("latest quantum computing breakthrough");
+    let page = browser.scrape(results[0].url);
+    let summary = q_art.generate(prompt: page.content);
+    anchor(summary, prove(summary));
+}

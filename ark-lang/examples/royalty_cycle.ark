@@ -1,0 +1,9 @@
+block monthly_royalty {
+    let usage = saas_nexus.collect_usage(current_month());
+    let payment = saas_nexus.total_revenue(current_month());
+    let distribution = saas_nexus.distribute(payment, usage);
+    anchor(distribution, prove(distribution));
+    for (creator, amount) in distribution {
+        pay(creator, amount, pix);
+    }
+}

@@ -8,3 +8,6 @@ syn = { version = "2.0", features = ["full", "parsing"] }
 quote = "1.0"
 sha2 = "0.10"
 tokio = { version = "1.0", features = ["full"] }
+
+[dependencies.arkhe-entropy-oracle]
+path = "../substrate-6070"
