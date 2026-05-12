@@ -121,3 +121,6 @@
 [submodule "scripts"]
 	path = scripts
 	url = https://github.com/arkhe-os/self-completion.git
+[submodule "components/pay"]
+	path = components/pay
+	url = https://github.com/solana-foundation/pay
