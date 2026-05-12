@@ -7,6 +7,12 @@ Validação determinística para modelos estatísticos (ex. Event History Analys
 
 from typing import Tuple, Dict, Any
 
+try:
+    from .sociology.cox_validator import SociologyBEAVERRules as NewSociologyBEAVERRules, CoxModelValidator as NewCoxModelValidator
+except ImportError:
+    NewSociologyBEAVERRules = None
+    NewCoxModelValidator = None
+
 class SociologyBEAVERRules:
     """
     Regras BEAVER especializadas para sociologia e políticas públicas.
