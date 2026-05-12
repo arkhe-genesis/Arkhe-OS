@@ -18,6 +18,7 @@ members = [
     "substrate-9001",
     "substrate-9002",
     "substrate-6085",
+    "substrate-6070",
 
     # --- New additions ---
 
