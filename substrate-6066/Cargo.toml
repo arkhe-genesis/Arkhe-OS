@@ -1,11 +1,4 @@
 [package]
-name = "arkhe-retrocausal-unix"
-version = "6.1.0"
+name = "substrate-6066"
+version = "0.1.0"
 edition = "2021"
-
-[dependencies]
-# Basic dummy dependencies since we mostly just want python files in this context
-arkhe-temporal = { path = "../substrate-6064/temporal" }
-
-[features]
-default = []

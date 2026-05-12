@@ -1,0 +1,30 @@
+module mcp::ableton {
+    pub fn create_midi_track(index: int, name: str) {
+        // Native call to MCP Ableton server
+    }
+
+    pub fn add_midi_clip(track_index: int, clip_name: str, length_beats: float) {
+        // Native call to MCP Ableton server
+    }
+
+    pub fn set_notes(track_index: int, clip_name: str, notes: list) {
+        // Native call to MCP Ableton server
+    }
+
+    pub fn set_tempo(bpm: float) {
+        // Native call to MCP Ableton server
+    }
+
+    pub fn play() {
+        // Native call to MCP Ableton server
+    }
+
+    pub fn stop() {
+        // Native call to MCP Ableton server
+    }
+
+    pub fn export_audio(path: str) -> str {
+        // Native call to MCP Ableton server
+        return "hash";
+    }
+}

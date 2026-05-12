@@ -1,0 +1,10 @@
+[package]
+name = "arkhe-unix"
+version = "6.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.3", features = ["derive"] }
+tokio = { version = "1.38", features = ["full", "macros", "rt-multi-thread"] }
+rustyline = "11.0"
+ # Assuming there's a core or similar
