@@ -18,7 +18,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: true
 
+      - name: Pull LFS objects
+        run: git lfs pull
       - name: Arkhe Pattern Check (RTZ)
         run: |
           echo "Starting RTZ (Refusal to Zero) validation on Markdown files..."

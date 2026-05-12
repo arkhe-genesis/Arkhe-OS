@@ -17,6 +17,10 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Pull LFS objects
+        run: git lfs pull
       - name: Install dependencies
         run: |
           pip install numpy scipy scikit-learn networkx matplotlib
