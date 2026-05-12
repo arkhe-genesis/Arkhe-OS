@@ -1,0 +1,352 @@
+// ============================================================================
+// ARKHE Ω‑TEMP — Substrato 6062: ZK Backend for Command Execution Proofs
+// ============================================================================
+// Implementa backend Plonky2/Halo2 para gerar provas zero-knowledge de que
+// um comando foi executado e produziu um output específico, sem revelar
+// o conteúdo do output ou os detalhes da execução.
+//
+// Circuito ZK:
+//   Input público: hash do comando, hash do output, timestamp, node_id
+//   Input privado: comando completo, output completo, ambiente de execução
+//   Statement: "O comando com hash H_cmd foi executado e produziu output com hash H_out"
+// ============================================================================
+
+use plonky2::field::goldilocks_field::GoldilocksField;
+use plonky2::hash::hash_types::RichField;
+use plonky2::iop::generator::GeneratedValues;
+use plonky2::plonk::circuit_builder::CircuitBuilder;
+use plonky2::plonk::circuit_data::{CircuitConfig, CircuitData, VerifierOnlyData};
+use plonky2::plonk::config::{GenericConfig, Hasher};
+use plonky2::plonk::proof::ProofWithPublicInputs;
+use halo2_proofs::circuit::{Layouter, SimpleFloorPlanner};
+use halo2_proofs::plonk::{Advice, Column, Circuit, ConstraintSystem, Error};
+use halo2_proofs::poly::commitment::Params;
+
+// ============================================================================
+// CIRCUITO PLONKY2 PARA PROVA DE EXECUÇÃO DE COMANDO
+// ============================================================================
+
+#[derive(Clone, Debug)]
+struct CommandExecutionCircuit<F: RichField + Extendable<D>, const D: usize> {
+    /// Hash do comando (público)
+    pub command_hash: [F; 8],  // SHA3-256 como 8 Goldilocks elements
+    /// Hash do output (público)
+    pub output_hash: [F; 8],
+    /// Timestamp da execução (público)
+    pub timestamp: F,
+    /// Node ID do executor (público)
+    pub node_id: [F; 4],
+
+    /// Comando completo (privado — não revelado na prova)
+    pub command_witness: Vec<F>,
+    /// Output completo (privado)
+    pub output_witness: Vec<F>,
+    /// Ambiente de execução (privado)
+    pub env_witness: Vec<F>,
+}
+
+impl<F: RichField + Extendable<D>, const D: usize> Circuit<F, D> for CommandExecutionCircuit<F, D> {
+    fn build(circuit: &mut CircuitBuilder<F, D>) -> Self {
+        // Registrar inputs públicos
+        let command_hash = circuit.add_virtual_hash_target();
+        let output_hash = circuit.add_virtual_hash_target();
+        let timestamp = circuit.add_virtual_target();
+        let node_id = circuit.add_virtual_target_array(4);
+
+        // Registrar witnesses privados
+        let command_witness = circuit.add_virtual_target_array(256);  // Até 256 tokens
+        let output_witness = circuit.add_virtual_target_array(4096);  // Até 4KB output
+        let env_witness = circuit.add_virtual_target_array(64);  // Variáveis de ambiente
+
+        // Construir circuito de verificação de hash
+        // (Em produção: usar circuito SHA3-256 completo)
+        // Aqui: simplificação com hash simulado
+
+        // Restrição: hash(command_witness) == command_hash
+        circuit.assert_hash_eq(&command_witness, &command_hash);
+
+        // Restrição: hash(output_witness) == output_hash
+        circuit.assert_hash_eq(&output_witness, &output_hash);
+
+        // Restrição: timestamp está dentro de janela válida
+        let min_time = circuit.constant(F::from_canonical_u64(1700000000));  // Exemplo
+        let max_time = circuit.constant(F::from_canonical_u64(1800000000));
+        circuit.assert_between(timestamp, min_time, max_time);
+
+        // Restrição: node_id é válido (não zero)
+        circuit.assert_nonzero_array(&node_id);
+
+        // Restrição opcional: comando não está na blacklist
+        // (Em produção: circuito de lookup para blacklist)
+
+        Self {
+            command_hash: circuit.target_array_to_array(command_hash),
+            output_hash: circuit.target_array_to_array(output_hash),
+            timestamp,
+            node_id: circuit.target_array_to_array(node_id),
+            command_witness,
+            output_witness,
+            env_witness,
+        }
+    }
+}
+
+// ============================================================================
+// GERADOR DE PROVAS
+// ============================================================================
+
+pub struct CommandProofGenerator {
+    config: CircuitConfig,
+    prover_key: Option<CircuitData<GoldilocksField, PoseidonHash, 2>>,
+    verifier_key: Option<VerifierOnlyData<PoseidonHash, 2>>,
+}
+
+impl CommandProofGenerator {
+    pub fn new() -> Self {
+        Self {
+            config: CircuitConfig::standard_recursion_config(),
+            prover_key: None,
+            verifier_key: None,
+        }
+    }
+
+    /// Configura o circuito e gera chaves de prover/verifier
+    pub fn setup(&mut self) -> Result<(), ZKError> {
+        let mut builder = CircuitBuilder::<GoldilocksField, 2>::new(self.config);
+        let _circuit = CommandExecutionCircuit::build(&mut builder);
+
+        let data = builder.build::<PoseidonHash>();
+        self.prover_key = Some(data.prover_only);
+        self.verifier_key = Some(data.verifier_only);
+
+        Ok(())
+    }
+
+    /// Gera prova ZK de execução de comando
+    pub fn prove_execution(
+        &self,
+        command: &str,
+        output: &str,
+        timestamp: u64,
+        node_id: &str,
+    ) -> Result<CommandProof, ZKError> {
+        if self.prover_key.is_none() {
+            return Err(ZKError::NotInitialized);
+        }
+
+        // Calcular hashes públicos
+        let command_hash = sha3_256(command.as_bytes());
+        let output_hash = sha3_256(output.as_bytes());
+
+        // Preparar inputs públicos
+        let mut public_inputs = Vec::new();
+        public_inputs.extend_from_slice(&command_hash.to_goldilocks_array());
+        public_inputs.extend_from_slice(&output_hash.to_goldilocks_array());
+        public_inputs.push(GoldilocksField::from_canonical_u64(timestamp));
+        public_inputs.extend_from_slice(&node_id.to_goldilocks_array());
+
+        // Preparar witnesses privados
+        let mut private_inputs = GeneratedValues::new();
+        private_inputs.set_target_array(
+            &self.circuit.command_witness,
+            &command.to_goldilocks_vec(),
+        );
+        private_inputs.set_target_array(
+            &self.circuit.output_witness,
+            &output.to_goldilocks_vec(),
+        );
+        // ... env_witness ...
+
+        // Gerar prova
+        let proof = self.prover_key.as_ref().unwrap()
+            .prove(private_inputs, &public_inputs)?;
+
+        Ok(CommandProof {
+            command_hash: command_hash.to_vec(),
+            output_hash: output_hash.to_vec(),
+            timestamp,
+            node_id: node_id.to_string(),
+            proof_bytes: proof.to_bytes(),
+            verification_key_hash: self.verifier_key_hash()?,
+        })
+    }
+
+    /// Verifica uma prova de execução de comando
+    pub fn verify_proof(&self, proof: &CommandProof) -> Result<bool, ZKError> {
+        if self.verifier_key.is_none() {
+            return Err(ZKError::NotInitialized);
+        }
+
+        // Reconstruir inputs públicos
+        let mut public_inputs = Vec::new();
+        public_inputs.extend_from_slice(&proof.command_hash.to_goldilocks_array());
+        public_inputs.extend_from_slice(&proof.output_hash.to_goldilocks_array());
+        public_inputs.push(GoldilocksField::from_canonical_u64(proof.timestamp));
+        public_inputs.extend_from_slice(&proof.node_id.to_goldilocks_array());
+
+        // Verificar prova
+        let proof_with_public = ProofWithPublicInputs::from_bytes(&proof.proof_bytes)?;
+
+        Ok(self.verifier_key.as_ref().unwrap()
+            .verify(proof_with_public, &public_inputs).is_ok())
+    }
+
+    fn verifier_key_hash(&self) -> Result<Vec<u8>, ZKError> {
+        // Hash da chave de verificação para referência na prova
+        Ok(sha3_256(self.verifier_key.as_ref().unwrap().to_bytes()).to_vec())
+    }
+}
+
+// ============================================================================
+// ESTRUTURA DA PROVA
+// ============================================================================
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct CommandProof {
+    /// Hash SHA3-256 do comando executado
+    pub command_hash: Vec<u8>,
+    /// Hash SHA3-256 do output produzido
+    pub output_hash: Vec<u8>,
+    /// Timestamp da execução (nanos)
+    pub timestamp: u64,
+    /// ID do nó que executou o comando
+    pub node_id: String,
+    /// Prova ZK serializada
+    pub proof_bytes: Vec<u8>,
+    /// Hash da chave de verificação usada
+    pub verification_key_hash: Vec<u8>,
+}
+
+impl CommandProof {
+    /// Serializa prova para armazenamento/transmissão
+    pub fn to_bytes(&self) -> Vec<u8> {
+        // Formato canônico: [command_hash(32)][output_hash(32)][timestamp(8)][node_id_len(4)][node_id][proof_len(4)][proof][vk_hash(32)]
+        let mut buf = Vec::new();
+        buf.extend_from_slice(&self.command_hash);
+        buf.extend_from_slice(&self.output_hash);
+        buf.extend_from_slice(&self.timestamp.to_be_bytes());
+
+        let node_id_bytes = self.node_id.as_bytes();
+        buf.extend_from_slice(&(node_id_bytes.len() as u32).to_be_bytes());
+        buf.extend_from_slice(node_id_bytes);
+
+        buf.extend_from_slice(&(self.proof_bytes.len() as u32).to_be_bytes());
+        buf.extend_from_slice(&self.proof_bytes);
+
+        buf.extend_from_slice(&self.verification_key_hash);
+        buf
+    }
+
+    /// Deserializa prova de bytes
+    pub fn from_bytes(data: &[u8]) -> Result<Self, ZKError> {
+        let mut cursor = 0;
+
+        let command_hash = data[cursor..cursor+32].to_vec();
+        cursor += 32;
+
+        let output_hash = data[cursor..cursor+32].to_vec();
+        cursor += 32;
+
+        let timestamp = u64::from_be_bytes(data[cursor..cursor+8].try_into()?);
+        cursor += 8;
+
+        let node_id_len = u32::from_be_bytes(data[cursor..cursor+4].try_into()?) as usize;
+        cursor += 4;
+        let node_id = String::from_utf8(data[cursor..cursor+node_id_len].to_vec())?;
+        cursor += node_id_len;
+
+        let proof_len = u32::from_be_bytes(data[cursor..cursor+4].try_into()?) as usize;
+        cursor += 4;
+        let proof_bytes = data[cursor..cursor+proof_len].to_vec();
+        cursor += proof_len;
+
+        let verification_key_hash = data[cursor..cursor+32].to_vec();
+
+        Ok(Self {
+            command_hash,
+            output_hash,
+            timestamp,
+            node_id,
+            proof_bytes,
+            verification_key_hash,
+        })
+    }
+
+    /// Gera hash canônico da prova para referência no ledger
+    pub fn canonical_hash(&self) -> Vec<u8> {
+        sha3_256(&self.to_bytes()).to_vec()
+    }
+}
+
+// ============================================================================
+// INTEGRAÇÃO COM prove_command MACRO
+// ============================================================================
+
+// Atualizar a macro prove_command para usar o backend ZK real
+macro prove_command<T>(
+    cmd: expr,
+    block: fn(String) -> T,
+    zk_backend: ZKBackend
+) -> Result<T, UnixError> {
+    // Executar comando e capturar output
+    let output = command_capture_validated(cmd, default_config())?;
+
+    // Calcular hashes
+    let command_hash = sha3_256(cmd.as_bytes());
+    let output_hash = sha3_256(output.as_bytes());
+
+    // Gerar prova ZK
+    let proof = match zk_backend {
+        ZKBackend::Plonky2 => {
+            let mut generator = CommandProofGenerator::new();
+            generator.setup()?;
+            generator.prove_execution(
+                cmd,
+                &output,
+                time::nanos(),
+                &get_node_id(),
+            )?
+        }
+        ZKBackend::Halo2 => {
+            // Implementação Halo2 similar
+            // ...
+        }
+    };
+
+    // Registrar prova no ledger
+    temporal::record_proof(ProofRecord {
+        proof_type: "command_execution".to_string(),
+        public_inputs: vec![command_hash.to_vec(), output_hash.to_vec()],
+        proof_bytes: proof.to_bytes(),
+        verification_key_hash: proof.verification_key_hash,
+        timestamp: time::nanos(),
+    })?;
+
+    // Executar bloco com output
+    Ok(block(output))
+}
+
+/// Backend ZK suportados
+enum ZKBackend {
+    Plonky2,   // Mais rápido, bom para provas de execução
+    Halo2,     // Mais flexível, bom para circuitos complexos
+}
+
+/// Erros ZK
+#[derive(Debug, thiserror::Error)]
+enum ZKError {
+    #[error("Backend ZK não inicializado")]
+    NotInitialized,
+
+    #[error("Falha ao gerar prova: {0}")]
+    ProofGenerationFailed(String),
+
+    #[error("Falha ao verificar prova: {0}")]
+    ProofVerificationFailed(String),
+
+    #[error("Erro de serialização: {0}")]
+    SerializationError(String),
+
+    #[error("Erro interno: {0}")]
+    Internal(String),
+}

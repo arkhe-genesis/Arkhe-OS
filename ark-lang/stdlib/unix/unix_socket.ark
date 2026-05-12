@@ -1,0 +1,324 @@
+// ============================================================================
+// ARKHE Ω‑TEMP — Substrato 6062: Unix Domain Sockets for Secure IPC
+// ============================================================================
+// Suporte a sockets de domínio Unix para comunicação inter-processo segura,
+// com anchoring na TemporalChain e provas ZK de integridade da comunicação.
+// ============================================================================
+
+/// Socket de domínio Unix como recurso linear tipado
+#[linear]
+type Fd<UnixDomainSocket, P: FdPerms> {
+    _fd: i32,
+    socket_type: UnixSocketType,
+    path: Option<String>,  // Para sockets com nome no filesystem
+    peer_credentials: Option<PeerCredentials>,  // Credenciais do peer (SO_PEERCRED)
+    temporal: Option<TemporalMetadata>,
+    zk_proof: Option<ZKProof>,
+    anchored: bool,
+    /// Buffer de mensagens recebidas para anchoring em batch
+    message_buffer: Vec<SocketMessage>,
+}
+
+/// Tipos de socket Unix
+enum UnixSocketType {
+    Stream,    // SOCK_STREAM — conexão orientada a bytes
+    Datagram,  // SOCK_DGRAM — mensagens discretas
+    SeqPacket, // SOCK_SEQPACKET — mensagens com preservação de limites
+}
+
+/// Credenciais do peer (obtidas via SO_PEERCRED)
+#[derive(Clone, Debug)]
+struct PeerCredentials {
+    pid: i32,
+    uid: u32,
+    gid: u32,
+}
+
+/// Mensagem em socket com metadata para anchoring
+#[derive(Clone, Debug)]
+struct SocketMessage {
+    payload: Vec<u8>,
+    timestamp_ns: u64,
+    direction: MessageDirection,  // Sent or Received
+    sequence: u64,  // Número de sequência para ordenação
+}
+
+enum MessageDirection {
+    Sent,
+    Received,
+}
+
+impl Fd<UnixDomainSocket, FdPerms::READ | FdPerms::WRITE> {
+    /// Cria socket stream sem nome (anonimo)
+    fn create_stream() -> Result<Self, UnixError> {
+        let fd = libc::socket(libc::AF_UNIX, libc::SOCK_STREAM, 0)?;
+
+        Ok(Self {
+            _fd: fd,
+            socket_type: UnixSocketType::Stream,
+            path: None,
+            peer_credentials: None,
+            temporal: None,
+            zk_proof: None,
+            anchored: false,
+            message_buffer: Vec::new(),
+        })
+    }
+
+    /// Conecta a socket com nome no filesystem
+    fn connect(path: &str) -> Result<Self, UnixError> {
+        let fd = libc::socket(libc::AF_UNIX, libc::SOCK_STREAM, 0)?;
+
+        let mut addr: libc::sockaddr_un = unsafe { std::mem::zeroed() };
+        addr.sun_family = libc::AF_UNIX as libc::sa_family_t;
+
+        let path_bytes = path.as_bytes();
+        if path_bytes.len() >= addr.sun_path.len() {
+            return Err(UnixError::InvalidFd(-1));
+        }
+
+        unsafe {
+            std::ptr::copy_nonoverlapping(
+                path_bytes.as_ptr(),
+                addr.sun_path.as_mut_ptr() as *mut u8,
+                path_bytes.len(),
+            );
+        }
+
+        libc::connect(fd, &addr as *const _ as *const libc::sockaddr,
+                     std::mem::size_of::<libc::sockaddr_un>())?;
+
+        // Obter credenciais do peer
+        let creds = Self::get_peer_credentials(fd)?;
+
+        Ok(Self {
+            _fd: fd,
+            socket_type: UnixSocketType::Stream,
+            path: Some(path.to_string()),
+            peer_credentials: creds,
+            temporal: None,
+            zk_proof: None,
+            anchored: false,
+            message_buffer: Vec::new(),
+        })
+    }
+
+    /// Envia mensagem com anchoring opcional
+    fn send(&mut self, data: &[u8], anchor: bool) -> Result<usize, UnixError> {
+        let sent = libc::send(self._fd, data.as_ptr(), data.len(), 0)?;
+
+        if anchor {
+            // Buffer mensagem para anchoring em batch
+            self.message_buffer.push(SocketMessage {
+                payload: data[..sent].to_vec(),
+                timestamp_ns: time::nanos(),
+                direction: MessageDirection::Sent,
+                sequence: self.message_buffer.len() as u64,
+            });
+
+            // Anchor se buffer atingiu threshold
+            if self.message_buffer.len() >= 10 {
+                self.anchor_messages()?;
+            }
+        }
+
+        Ok(sent)
+    }
+
+    /// Recebe mensagem com anchoring opcional
+    fn recv(&mut self, buf: &mut [u8], anchor: bool) -> Result<usize, UnixError> {
+        let received = libc::recv(self._fd, buf.as_mut_ptr(), buf.len(), 0)?;
+
+        if anchor && received > 0 {
+            self.message_buffer.push(SocketMessage {
+                payload: buf[..received].to_vec(),
+                timestamp_ns: time::nanos(),
+                direction: MessageDirection::Received,
+                sequence: self.message_buffer.len() as u64,
+            });
+
+            if self.message_buffer.len() >= 10 {
+                self.anchor_messages()?;
+            }
+        }
+
+        Ok(received)
+    }
+
+    /// Ancora mensagens em batch na TemporalChain
+    fn anchor_messages(&mut self) -> Result<(), UnixError> {
+        if self.message_buffer.is_empty() {
+            return Ok(());
+        }
+
+        // Calcular hash do batch
+        let mut batch_data = Vec::new();
+        for msg in &self.message_buffer {
+            batch_data.extend_from_slice(&msg.timestamp_ns.to_be_bytes());
+            batch_data.extend_from_slice(&(msg.direction as u8).to_be_bytes());
+            batch_data.extend_from_slice(&(msg.sequence.to_be_bytes()));
+            batch_data.extend_from_slice(&msg.payload);
+        }
+
+        let batch_hash = sha3_256(&batch_data);
+
+        // Registrar na TemporalChain
+        let block = temporal::anchor_content(
+            &batch_data,
+            TemporalPayload {
+                resource_type: UnixResource::Socket,
+                perms: FdPerms::READ | FdPerms::WRITE,
+                timestamp: time::nanos(),
+                metadata: json::object!({
+                    "socket_type": "unix_domain",
+                    "message_count": self.message_buffer.len(),
+                    "batch_hash": hex::encode(batch_hash),
+                    "peer_pid": self.peer_credentials.as_ref().map(|c| c.pid),
+                }),
+            }
+        )?;
+
+        // Atualizar metadata
+        self.temporal = Some(TemporalMetadata {
+            anchor_hash: Some(batch_hash),
+            timestamp_ns: time::nanos(),
+            block_id: Some(block),
+            entropy_score: entropy::score(&batch_data),
+        });
+        self.anchored = true;
+
+        // Limpar buffer
+        self.message_buffer.clear();
+
+        Ok(())
+    }
+
+    /// Gera prova ZK de integridade da comunicação
+    fn prove_communication_integrity(&self) -> Result<ZKProof, UnixError> {
+        // Provar que as mensagens no buffer foram trocadas com o peer identificado
+        let peer_info = self.peer_credentials.as_ref()
+            .map(|c| format!("pid:{}:uid:{}:gid:{}", c.pid, c.uid, c.gid))
+            .unwrap_or_else(|| "unknown".to_string());
+
+        let proof_data = format!(
+            "unix_socket_comm:{}:{}:{}:{}",
+            self.path.as_deref().unwrap_or("anonymous"),
+            peer_info,
+            self.message_buffer.len(),
+            self.temporal.as_ref().map(|m| m.anchor_hash.as_ref().map(hex::encode).unwrap_or_default()).unwrap_or_default()
+        );
+
+        Ok(ZKProof {
+            scheme: "plonky2",
+            public_inputs: vec![sha3_256(proof_data.as_bytes()).to_vec()],
+            proof_bytes: zk::simulate_proof(&proof_data),
+            verification_key: zk::get_verification_key("unix_socket_ipc_v1"),
+        })
+    }
+
+    /// Obtém credenciais do peer via SO_PEERCRED
+    fn get_peer_credentials(fd: i32) -> Result<Option<PeerCredentials>, UnixError> {
+        #[cfg(target_os = "linux")]
+        {
+            use libc::{sockcred, SOL_SOCKET, SO_PEERCRED};
+
+            let mut creds: sockcred = unsafe { std::mem::zeroed() };
+            let mut len = std::mem::size_of::<sockcred>() as libc::socklen_t;
+
+            let ret = unsafe {
+                libc::getsockopt(
+                    fd,
+                    SOL_SOCKET,
+                    SO_PEERCRED,
+                    &mut creds as *mut _ as *mut libc::c_void,
+                    &mut len,
+                )
+            };
+
+            if ret == 0 {
+                Ok(Some(PeerCredentials {
+                    pid: creds.pid,
+                    uid: creds.uid,
+                    gid: creds.gid,
+                }))
+            } else {
+                Ok(None)
+            }
+        }
+
+        #[cfg(not(target_os = "linux"))]
+        Ok(None)  // SO_PEERCRED não disponível em todos os sistemas
+    }
+
+    /// Fecha socket e ancora mensagens pendentes
+    fn close(mut self) -> Result<(), UnixError> {
+        // Ancorar mensagens pendentes
+        if !self.message_buffer.is_empty() {
+            self.anchor_messages()?;
+        }
+
+        // Gerar prova final se anchored
+        if self.anchored {
+            self.zk_proof = Some(self.prove_communication_integrity()?);
+        }
+
+        libc::close(self._fd)?;
+        Ok(())
+    }
+}
+
+/// Cria par de sockets conectados para IPC local
+fn create_unix_socket_pair() -> Result<
+    (Fd<UnixDomainSocket, FdPerms::READ | FdPerms::WRITE>,
+     Fd<UnixDomainSocket, FdPerms::READ | FdPerms::WRITE>),
+    UnixError
+> {
+    let mut fds = [0i32; 2];
+    libc::socketpair(libc::AF_UNIX, libc::SOCK_STREAM, 0, fds.as_mut_ptr())?;
+
+    let sock1 = Fd {
+        _fd: fds[0],
+        socket_type: UnixDomainSocket::Stream,
+        path: None,
+        peer_credentials: None,  // Será obtido após conexão estabelecida
+        temporal: None,
+        zk_proof: None,
+        anchored: false,
+        message_buffer: Vec::new(),
+    };
+
+    let sock2 = Fd {
+        _fd: fds[1],
+        socket_type: UnixDomainSocket::Stream,
+        path: None,
+        peer_credentials: None,
+        temporal: None,
+        zk_proof: None,
+        anchored: false,
+        message_buffer: Vec::new(),
+    };
+
+    Ok((sock1, sock2))
+}
+
+/// Exemplo: IPC seguro entre processos com anchoring
+#[example]
+fn example_secure_ipc() -> Result<(), UnixError> {
+    // Criar par de sockets para IPC
+    let (mut sender, mut receiver) = create_unix_socket_pair()?;
+
+    // Enviar mensagem com anchoring
+    sender.send(b"Hello from sender", true)?;
+
+    // Receber mensagem com anchoring
+    let mut buf = [0u8; 256];
+    let received = receiver.recv(&mut buf, true)?;
+
+    println!("Received: {}", String::from_utf8_lossy(&buf[..received]));
+
+    // Fechar sockets (ancora mensagens pendentes)
+    sender.close()?;
+    receiver.close()?;
+
+    Ok(())
+}

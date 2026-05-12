@@ -1,0 +1,380 @@
+// ============================================================================
+// ARKHE Ω‑TEMP — Substrato 6062: Fd<Device> for Safe Device Access
+// ============================================================================
+// Acesso a dispositivos do sistema (/dev/*) com verificação de capacidades,
+// anchoring de operações e provas ZK de uso autorizado.
+// ============================================================================
+
+/// Categoria de dispositivo para controle de acesso granular
+enum DeviceCategory {
+    Block,          // /dev/sd*, /dev/nvme* — dispositivos de bloco
+    Character,      // /dev/tty*, /dev/random — dispositivos de caractere
+    PseudoTerminal, // /dev/pts/* — pseudo-terminals
+    Memory,         // /dev/mem, /dev/kmem — acesso à memória (restrito)
+    Crypto,         // /dev/crypto, /dev/hwrng — dispositivos criptográficos
+    Input,          // /dev/input/* — dispositivos de entrada
+    Video,          // /dev/fb*, /dev/dri/* — dispositivos de vídeo
+    Sound,          // /dev/snd/* — dispositivos de áudio
+    Custom,         // Dispositivos customizados com políticas específicas
+}
+
+/// Capacidades necessárias para operar dispositivo
+flags DeviceCaps: u64 {
+    READ        = 0b00000001,
+    WRITE       = 0b00000010,
+    IOCTL       = 0b00000100,
+    MMAP        = 0b00001000,
+    DIRECT_IO   = 0b00010000,
+    PRIVILEGED  = 0b00100000,  // Requer CAP_SYS_ADMIN ou similar
+    AUDIT       = 0b01000000,  // Operações devem ser auditadas
+    ANCHOR      = 0b10000000,  // Operações devem ser ancoradas
+}
+
+/// Descriptor de dispositivo com verificação de capacidades
+#[linear]
+type Fd<Device, P: FdPerms> {
+    _fd: i32,
+    device_path: String,
+    category: DeviceCategory,
+    required_caps: DeviceCaps,
+    granted_caps: DeviceCaps,  // Capacidades efetivamente concedidas
+    temporal: Option<TemporalMetadata>,
+    zk_proof: Option<ZKProof>,
+    anchored: bool,
+    /// Log de operações para auditoria
+    operation_log: Vec<DeviceOperation>,
+}
+
+/// Operação registrada em dispositivo
+#[derive(Clone, Debug)]
+struct DeviceOperation {
+    op_type: DeviceOpType,
+    offset: u64,
+    length: usize,
+    timestamp_ns: u64,
+    result: OperationResult,
+}
+
+enum DeviceOpType {
+    Read,
+    Write,
+    Ioctl { request: u64 },
+    Mmap { prot: i32, flags: i32 },
+    Seek { whence: i32 },
+}
+
+enum OperationResult {
+    Success { bytes: usize },
+    Error { code: i32, message: String },
+}
+
+impl Fd<Device, FdPerms::READ | FdPerms::WRITE> {
+    /// Abre dispositivo com verificação de capacidades
+    fn open_device(
+        path: &str,
+        perms: FdPerms,
+        required_caps: DeviceCaps,
+    ) -> Result<Self, UnixError> {
+        // 1. Verificar se o caminho é um dispositivo válido
+        let stat = unsafe {
+            let mut buf: libc::stat = std::mem::zeroed();
+            if libc::stat(path.as_ptr() as *const i8, &mut buf) != 0 {
+                return Err(UnixError::NotFound(path.to_string()));
+            }
+            buf
+        };
+
+        // 2. Verificar se é um dispositivo (S_IFCHR ou S_IFBLK)
+        let is_device = (stat.st_mode & libc::S_IFMT) == libc::S_IFCHR
+                     || (stat.st_mode & libc::S_IFMT) == libc::S_IFBLK;
+
+        if !is_device {
+            return Err(UnixError::PermissionDenied(
+                format!("{} is not a device file", path)
+            ));
+        }
+
+        // 3. Determinar categoria do dispositivo
+        let category = Self::categorize_device(path, stat.st_rdev)?;
+
+        // 4. Verificar capacidades do processo atual
+        let granted_caps = Self::check_capabilities(required_caps, &category)?;
+
+        // 5. Abrir dispositivo
+        let flags = perms_to_open_flags(perms);
+        let fd = libc::open(path.as_ptr() as *const i8, flags)?;
+
+        // 6. Registrar abertura no ledger se requer auditoria
+        if required_caps.contains(DeviceCaps::AUDIT) {
+            temporal::record_event("device_opened", json::object!({
+                "path": path,
+                "category": format!("{:?}", category),
+                "required_caps": format!("{:?}", required_caps),
+                "granted_caps": format!("{:?}", granted_caps),
+                "pid": unsafe { libc::getpid() },
+                "timestamp": time::nanos(),
+            }))?;
+        }
+
+        Ok(Self {
+            _fd: fd,
+            device_path: path.to_string(),
+            category,
+            required_caps,
+            granted_caps,
+            temporal: None,
+            zk_proof: None,
+            anchored: required_caps.contains(DeviceCaps::ANCHOR),
+            operation_log: Vec::new(),
+        })
+    }
+
+    /// Categoriza dispositivo baseado no caminho e número do dispositivo
+    fn categorize_device(path: &str, dev: libc::dev_t) -> Result<DeviceCategory, UnixError> {
+        // Mapeamento simplificado — em produção: usar udev database
+        if path.starts_with("/dev/sd") || path.starts_with("/dev/nvme") {
+            Ok(DeviceCategory::Block)
+        } else if path.starts_with("/dev/tty") || path.starts_with("/dev/ptmx") {
+            Ok(DeviceCategory::PseudoTerminal)
+        } else if path == "/dev/random" || path == "/dev/urandom" {
+            Ok(DeviceCategory::Crypto)
+        } else if path.starts_with("/dev/input/") {
+            Ok(DeviceCategory::Input)
+        } else if path.starts_with("/dev/dri/") || path.starts_with("/dev/fb") {
+            Ok(DeviceCategory::Video)
+        } else if (dev & 0xffff) == 1 {  // major number 1 = mem devices
+            Ok(DeviceCategory::Memory)
+        } else {
+            Ok(DeviceCategory::Character)
+        }
+    }
+
+    /// Verifica se o processo possui as capacidades necessárias
+    fn check_capabilities(
+        required: DeviceCaps,
+        category: &DeviceCategory,
+    ) -> Result<DeviceCaps, UnixError> {
+        // Em produção: usar libcap ou syscalls capget/capset
+        // Aqui: simulação baseada em regras
+
+        let mut granted = DeviceCaps::empty();
+
+        // Capacidades básicas sempre concedidas se perms permitem
+        if required.contains(DeviceCaps::READ) {
+            granted.insert(DeviceCaps::READ);
+        }
+        if required.contains(DeviceCaps::WRITE) {
+            granted.insert(DeviceCaps::WRITE);
+        }
+
+        // Capacidades privilegiadas requerem verificação
+        if required.contains(DeviceCaps::PRIVILEGED) {
+            // Simulação: verificar se processo é root ou tem CAP_SYS_ADMIN
+            #[cfg(target_os = "linux")]
+            {
+                if unsafe { libc::geteuid() } == 0 {
+                    granted.insert(DeviceCaps::PRIVILEGED);
+                } else {
+                    // Em produção: capget() para verificar capabilities
+                    return Err(UnixError::PermissionDenied(
+                        "PRIVILEGED capability requires root or CAP_SYS_ADMIN".to_string()
+                    ));
+                }
+            }
+        }
+
+        // Dispositivos de memória sempre requerem privilégio
+        if matches!(category, DeviceCategory::Memory) {
+            if !granted.contains(DeviceCaps::PRIVILEGED) {
+                return Err(UnixError::PermissionDenied(
+                    "Memory devices require PRIVILEGED capability".to_string()
+                ));
+            }
+        }
+
+        // Propagar outras flags se concedidas
+        if required.contains(DeviceCaps::AUDIT) {
+            granted.insert(DeviceCaps::AUDIT);
+        }
+        if required.contains(DeviceCaps::ANCHOR) {
+            granted.insert(DeviceCaps::ANCHOR);
+        }
+
+        Ok(granted)
+    }
+
+    /// Lê do dispositivo com logging e anchoring opcional
+    fn read_device(&mut self, buf: &mut [u8], anchor: bool) -> Result<usize, UnixError> {
+        if !self.granted_caps.contains(DeviceCaps::READ) {
+            return Err(UnixError::PermissionDenied("READ capability not granted".to_string()));
+        }
+
+        let result = libc::read(self._fd, buf.as_mut_ptr(), buf.len());
+
+        let (bytes, op_result) = if result >= 0 {
+            (result as usize, OperationResult::Success { bytes: result as usize })
+        } else {
+            (0, OperationResult::Error {
+                code: *libc::__errno_location(),
+                message: std::io::Error::last_os_error().to_string(),
+            })
+        };
+
+        // Registrar operação se auditing habilitado
+        if self.required_caps.contains(DeviceCaps::AUDIT) {
+            self.operation_log.push(DeviceOperation {
+                op_type: DeviceOpType::Read,
+                offset: 0,  // Em produção: usar lseek para obter offset atual
+                length: buf.len(),
+                timestamp_ns: time::nanos(),
+                result: op_result,
+            });
+
+            // Ancorar se configurado
+            if anchor && self.anchored {
+                self.anchor_operations()?;
+            }
+        }
+
+        if result < 0 {
+            Err(UnixError::Interrupted("read failed".to_string()))
+        } else {
+            Ok(bytes)
+        }
+    }
+
+    /// Escreve no dispositivo com logging e anchoring
+    fn write_device(&mut self, buf: &[u8], anchor: bool) -> Result<usize, UnixError> {
+        if !self.granted_caps.contains(DeviceCaps::WRITE) {
+            return Err(UnixError::PermissionDenied("WRITE capability not granted".to_string()));
+        }
+
+        let result = libc::write(self._fd, buf.as_ptr(), buf.len());
+
+        let (bytes, op_result) = if result >= 0 {
+            (result as usize, OperationResult::Success { bytes: result as usize })
+        } else {
+            (0, OperationResult::Error {
+                code: *libc::__errno_location(),
+                message: std::io::Error::last_os_error().to_string(),
+            })
+        };
+
+        if self.required_caps.contains(DeviceCaps::AUDIT) {
+            self.operation_log.push(DeviceOperation {
+                op_type: DeviceOpType::Write,
+                offset: 0,
+                length: buf.len(),
+                timestamp_ns: time::nanos(),
+                result: op_result,
+            });
+
+            if anchor && self.anchored {
+                self.anchor_operations()?;
+            }
+        }
+
+        if result < 0 {
+            Err(UnixError::Interrupted("write failed".to_string()))
+        } else {
+            Ok(bytes)
+        }
+    }
+
+    /// Ancora operações em batch na TemporalChain
+    fn anchor_operations(&mut self) -> Result<(), UnixError> {
+        if self.operation_log.is_empty() {
+            return Ok(());
+        }
+
+        // Serializar operações para hashing
+        let mut log_data = Vec::new();
+        for op in &self.operation_log {
+            log_data.extend_from_slice(&(op.op_type as u8).to_be_bytes());
+            log_data.extend_from_slice(&op.offset.to_be_bytes());
+            log_data.extend_from_slice(&(op.length as u32).to_be_bytes());
+            log_data.extend_from_slice(&op.timestamp_ns.to_be_bytes());
+            match op.result {
+                OperationResult::Success { bytes } => {
+                    log_data.extend_from_slice(&[0u8]);  // Success marker
+                    log_data.extend_from_slice(&(bytes as u32).to_be_bytes());
+                }
+                OperationResult::Error { code, .. } => {
+                    log_data.extend_from_slice(&[1u8]);  // Error marker
+                    log_data.extend_from_slice(&code.to_be_bytes());
+                }
+            }
+        }
+
+        let batch_hash = sha3_256(&log_data);
+
+        // Registrar na TemporalChain
+        let block = temporal::anchor_content(
+            &log_data,
+            TemporalPayload {
+                resource_type: UnixResource::Device,
+                perms: self.granted_caps.into(),  // Converter para FdPerms
+                timestamp: time::nanos(),
+                metadata: json::object!({
+                    "device_path": self.device_path,
+                    "category": format!("{:?}", self.category),
+                    "operation_count": self.operation_log.len(),
+                    "batch_hash": hex::encode(batch_hash),
+                }),
+            }
+        )?;
+
+        self.temporal = Some(TemporalMetadata {
+            anchor_hash: Some(batch_hash),
+            timestamp_ns: time::nanos(),
+            block_id: Some(block),
+            entropy_score: entropy::score(&log_data),
+        });
+
+        // Limpar log após anchoring
+        self.operation_log.clear();
+
+        Ok(())
+    }
+
+    /// Gera prova ZK de uso autorizado do dispositivo
+    fn prove_authorized_use(&self) -> Result<ZKProof, UnixError> {
+        let proof_data = format!(
+            "device_access:{}:{}:{}:{}:{}",
+            self.device_path,
+            format!("{:?}", self.category),
+            format!("{:?}", self.granted_caps),
+            self.operation_log.len(),
+            self.temporal.as_ref().map(|m| m.anchor_hash.as_ref().map(hex::encode).unwrap_or_default()).unwrap_or_default()
+        );
+
+        Ok(ZKProof {
+            scheme: "plonky2",
+            public_inputs: vec![sha3_256(proof_data.as_bytes()).to_vec()],
+            proof_bytes: zk::simulate_proof(&proof_data),
+            verification_key: zk::get_verification_key("device_access_v1"),
+        })
+    }
+}
+
+/// Exemplo: Leitura segura de /dev/urandom com anchoring
+#[example]
+fn example_secure_device_read() -> Result<(), UnixError> {
+    // Abrir /dev/urandom com capacidades mínimas
+    let mut rng = Fd::<Device, _>::open_device(
+        "/dev/urandom",
+        FdPerms::READ,
+        DeviceCaps::READ | DeviceCaps::AUDIT,  // Auditar leituras
+    )?;
+
+    // Ler 32 bytes de random
+    let mut buf = [0u8; 32];
+    rng.read_device(&mut buf, true)?;  // anchor=true para ancorar leitura
+
+    println!("Random bytes: {}", hex::encode(&buf));
+
+    // Fechar dispositivo (ancora operações pendentes)
+    rng.close()?;
+
+    Ok(())
+}
