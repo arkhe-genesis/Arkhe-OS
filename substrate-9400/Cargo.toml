@@ -1,0 +1,9 @@
+[package]
+name = "substrate-9400"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow.workspace = true
+serde = { version = "1.0", features = ["derive"] }
+substrate-6070 = { path = "../substrate-6070" }

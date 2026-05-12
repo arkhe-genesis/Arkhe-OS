@@ -18,9 +18,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: false
       - name: Pull LFS objects
-        run: git lfs pull
+        run: # git lfs pull
       - name: Install dependencies
         run: |
           pip install numpy scipy scikit-learn networkx matplotlib

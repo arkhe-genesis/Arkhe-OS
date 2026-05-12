@@ -1,5 +1,5 @@
-use std::sync::Arc;
 use crate::agent::SecurityAgent;
+use std::sync::Arc;
 
 /// Analisa o grafo de dependências do workspace em busca de riscos.
 pub struct DependencyAudit {

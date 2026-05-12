@@ -2,7 +2,7 @@
 pub struct ZKProof;
 
 impl ZKProof {
-    pub fn aggregate(proofs: &[ZKProof]) -> Result<Self, crate::verifier::VerificationError> {
+    pub fn aggregate(_proofs: &[ZKProof]) -> Result<Self, crate::verifier::VerificationError> {
         Ok(Self)
     }
 }

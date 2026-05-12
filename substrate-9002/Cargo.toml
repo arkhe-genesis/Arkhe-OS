@@ -6,3 +6,7 @@ edition = "2021"
 [dependencies]
 rand = "0.8"
 async-trait = "0.1"
+
+nexus-sdk = { workspace = true, optional = true }
+nexus-core = { workspace = true, optional = true }
+nexus-network = { workspace = true, optional = true }

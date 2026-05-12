@@ -22,13 +22,13 @@ members = [
 
     # --- Core neural and biological substrates ---
     "substrate-6064",                       # Continental Mind (250T)
-    "substrate-6064.1",                     # Carbon Twin: Quantum‑Biological Bridge
+    # "substrate-6064.1",                     # Carbon Twin: Quantum‑Biological Bridge
     "substrate-6065",                       # Neural Cartography (proofreading)
 
     # --- Intellectual property & art ---
     "substrate-6070",                       # The Entropy Oracle
     "substrate-6071",                       # Quantum IP (QIP)
-    "substrate-6072",                       # Q‑Art (artistic influence & royalties)
+    "arkhe-qart/substrate-6072",                       # Q‑Art (artistic influence & royalties)
     "substrate-6073",                       # Financial Message Validator (SWIFT/Pix)
 
     # --- Cryptography & compliance ---
@@ -50,6 +50,7 @@ members = [
 
     # --- DevOps & infrastructure ---
     "substrate-9100",                       # DevOps Orchestration (CI/CD, Helm, Terraform)
+    "substrate-9515",                       # Ark-lang MCP Bridge
 
     # --- CLI & bindings ---
     "cmd/arkhe",                            # Go CLI (via Go workspace, if applicable) – Rust binary shim
@@ -66,7 +67,31 @@ members = [
 # ============================================================================
 # Workspace‑level shared dependencies
 # ============================================================================
+
+[workspace.package]
+edition = "2021"
+version = "6.1.0"
+authors = ["Arkhe OS Team"]
+homepage = "https://arkhe-os.com"
+repository = "https://github.com/arkhe-os/arkhe"
+publish = false
+keywords = []
+categories = []
+
+
 [workspace.dependencies]
+
+nexus-sdk = { path = "third_party/nexus-zkvm/sdk" }
+nexus-core = { path = "third_party/nexus-zkvm/core" }
+nexus-network = { path = "third_party/nexus-cli/clients/cli" }
+
+
+clap = { version = "4.3", features = ["derive"] }
+num-derive = "0.4.2"
+stwo = { git = "https://github.com/starkware-libs/stwo", rev = "0790eba", features = ["std", "prover", "parallel"] }
+stwo-constraint-framework = { git = "https://github.com/starkware-libs/stwo", rev = "0790eba", features = ["std", "prover", "parallel"] }
+tiny-keccak = { version = "2.0.2", features = ["keccak"] }
+
 # Async runtime
 tokio = { version = "1.38", features = ["full"] }
 async-trait = "0.1"
@@ -93,8 +118,10 @@ async-trait = "0.1"
     "substrate-6093",
     "substrate-9001",
     "substrate-9002",
+    "substrate-9020",
     "substrate-6085",
     "substrate-6070",
+    "substrate-9400",
 
     # --- New additions ---
 
@@ -103,12 +130,10 @@ async-trait = "0.1"
     "substrate-6064/temporal",
     "substrate-aws-orbital",
     "cmd/arkhe",
-    "substrate-9110"
-, "substrate-6070"]
+    "substrate-9110",
+    "substrate-6092",
+]
 
-[workspace.dependencies]
-tokio = { version = "1", features = ["full"] }
-async-trait = "0.1"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 bincode = "1.3"
@@ -155,6 +180,9 @@ arkhe-temporal = { path = "substrate-6064/temporal" }
 # ============================================================================
 # Workspace‑level features (aggregate top‑level features)
 # ============================================================================
+
+
+
 [workspace.features]
 full = [
     "substrate-6080/full",

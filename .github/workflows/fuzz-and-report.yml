@@ -13,9 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: false
       - name: Pull LFS objects
-        run: git lfs pull
+        run: # git lfs pull
       - name: Run AFL++ with coherence bridge
         run: |
           python -m arkhe_os.fuzzing.afl_coherence_harness \

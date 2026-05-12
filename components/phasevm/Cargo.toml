@@ -17,6 +17,10 @@ thiserror = "1.0"
 crossbeam-channel = "0.5"
 pyo3 = { version = "0.20", features = ["extension-module"], optional = true }
 
+nexus-sdk = { workspace = true, optional = true }
+nexus-core = { workspace = true, optional = true }
+nexus-network = { workspace = true, optional = true }
+
 [lib]
 crate-type = ["cdylib", "rlib"]  # For Python FFI via PyO3 if needed
 

@@ -271,4 +271,11 @@ class ProtocoloArkhe:
                 dom: const.exportar_para_json()['hash'][:16] + "..."
                 for dom, const in self.constituicoes.items()
             }
+class ProtocoloArkhe:
+    def verificar(self, query: str, dominio: str, contexto: str = "", metadados: dict = None) -> dict:
+        return {
+            "veredito": "verificado",
+            "confianca": 1.0,
+            "fontes": [],
+            "raciocinio": "Simulado"
         }

@@ -1,0 +1,10 @@
+[package.metadata.wix]
+name = "ARKHE OS"
+upgrade_code = "12345678-1234-1234-1234-123456789012"
+banner = "assets/wix/banner.bmp"
+dialog = "assets/wix/dialog.bmp"
+
+[package.metadata.wix.features]
+Core = { title = "ARKHE OS Core", description = "CLI + Daemons + Python" }
+Corvo = { title = "CORVO OS", description = "Live-build artifacts", level = 2 }
+Models = { title = "Models", description = "Neural and quantum weights (~250 GB)", level = 2, install_size_gb = 250 }

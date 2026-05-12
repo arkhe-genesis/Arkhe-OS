@@ -1,6 +1,6 @@
-use arkhe_neural_cartography::{Proofreader, NeuralCartographer};
 use arkhe_neural_cartography::mapper::{ContinentalMind, ContinentalMindLayer};
 use arkhe_neural_cartography::proofreader::ActivationRecord;
+use arkhe_neural_cartography::{NeuralCartographer, Proofreader};
 
 #[test]
 fn test_extraction_and_proofreading() {
@@ -10,15 +10,13 @@ fn test_extraction_and_proofreading() {
             ContinentalMindLayer {
                 weight: vec![
                     vec![0.5, -0.1], // weak connection
-                    vec![1.2, 0.0]
-                ]
+                    vec![1.2, 0.0],
+                ],
             },
             ContinentalMindLayer {
-                weight: vec![
-                    vec![0.8, 0.2]
-                ]
-            }
-        ]
+                weight: vec![vec![0.8, 0.2]],
+            },
+        ],
     };
 
     let proofreader = Proofreader {
@@ -68,8 +66,14 @@ fn test_cell_classification() {
 
     let classifications = arkhe_neural_cartography::cell_types::classify_cell_types(&connectome);
 
-    assert!(matches!(classifications.get(&arkhe_neural_cartography::connectome::NeuronId(0, 0)), Some(arkhe_neural_cartography::cell_types::CellType::ET)));
-    assert!(matches!(classifications.get(&arkhe_neural_cartography::connectome::NeuronId(0, 1)), Some(arkhe_neural_cartography::cell_types::CellType::IT)));
+    assert!(matches!(
+        classifications.get(&arkhe_neural_cartography::connectome::NeuronId(0, 0)),
+        Some(arkhe_neural_cartography::cell_types::CellType::ET)
+    ));
+    assert!(matches!(
+        classifications.get(&arkhe_neural_cartography::connectome::NeuronId(0, 1)),
+        Some(arkhe_neural_cartography::cell_types::CellType::IT)
+    ));
 }
 
 #[test]
@@ -77,7 +81,8 @@ fn test_wiring_rules() {
     let connectome = arkhe_neural_cartography::connectome::Connectome::new();
     let cell_types = std::collections::HashMap::new();
 
-    let rules = arkhe_neural_cartography::wiring_rules::extract_wiring_rules(&connectome, &cell_types);
+    let rules =
+        arkhe_neural_cartography::wiring_rules::extract_wiring_rules(&connectome, &cell_types);
 
     assert_eq!(rules.len(), 1);
     assert_eq!(rules[0].description, "Connect ET to Basket");

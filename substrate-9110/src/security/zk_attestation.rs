@@ -1,4 +1,4 @@
-use crate::hardware::device::{SpaceHardware, AttestationProof, HardwareError};
+use crate::hardware::device::{AttestationProof, HardwareError, SpaceHardware};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 pub struct ZKProver {}
@@ -13,7 +13,10 @@ impl ZKProver {
 }
 
 fn now() -> u64 {
-    SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs()
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_secs()
 }
 
 /// Gera prova ZK de que o firmware do dispositivo NVIDIA está íntegro.
@@ -24,5 +27,9 @@ pub async fn generate_hardware_attestation(
     let measurement = device.secure_attestation().await?;
     // Provar que o measurement corresponde a uma hash conhecida, sem revelar a hash
     let proof = zk_prover.prove_membership(&measurement.hash)?;
-    Ok(AttestationProof { proof, timestamp: now(), hash: measurement.hash })
+    Ok(AttestationProof {
+        proof,
+        timestamp: now(),
+        hash: measurement.hash,
+    })
 }

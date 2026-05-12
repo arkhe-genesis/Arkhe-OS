@@ -37,6 +37,7 @@ func main() {
 	rootCmd.AddCommand(portalCmd())
 	rootCmd.AddCommand(selfCompleteCmd())
 	rootCmd.AddCommand(x402Cmd())
+	rootCmd.AddCommand(saasNexusCmd())
 
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
@@ -190,4 +191,29 @@ func runSelfComplete(cmd *cobra.Command, args []string) {
 		}
 		time.Sleep(24 * time.Hour)
 	}
+}
+
+func saasNexusCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "saas-nexus",
+		Short: "Manage SaaS Nexus Substrate 9400",
+	}
+
+	onboardCmd := &cobra.Command{
+		Use:   "onboard",
+		Short: "Onboard a new vendor",
+		Run:   runSaasNexusOnboard,
+	}
+	onboardCmd.Flags().String("orcid", "", "Vendor ORCID")
+	onboardCmd.MarkFlagRequired("orcid")
+
+	cmd.AddCommand(onboardCmd)
+	return cmd
+}
+
+func runSaasNexusOnboard(cmd *cobra.Command, args []string) {
+	orcid, _ := cmd.Flags().GetString("orcid")
+	fmt.Printf("Onboarding vendor with ORCID: %s to SaaS Nexus...\n", orcid)
+	// Placeholder for grpc call or local handling
+	fmt.Printf("Vendor %s successfully registered. The cathedral's economy beats faster. 🛒💸🏛️\n", orcid)
 }

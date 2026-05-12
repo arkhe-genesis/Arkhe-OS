@@ -59,6 +59,10 @@ rayon = { version = "1.10", optional = true }
 blake3 = { version = "1.7", optional = true }
 hmac = { version = "0.12", optional = true }
 
+nexus-sdk = { workspace = true, optional = true }
+nexus-core = { workspace = true, optional = true }
+nexus-network = { workspace = true, optional = true }
+
 [dev-dependencies]
 tokio = { version = "1", features = ["full"] }
 proptest = "1.4"

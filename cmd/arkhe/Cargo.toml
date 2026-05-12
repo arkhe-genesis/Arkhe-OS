@@ -2,6 +2,8 @@
 name = "arkhe"
 version = "6.1.0"
 edition = "2021"
+description = "ARKHE OS Multiversal Orchestrator"
+authors = ["Arkhe Network <noreply@arkhe.network>"]
 
 [[bin]]
 name = "arkhe"
@@ -18,6 +20,10 @@ tokio = { version = "1", features = ["full"] }
 anyhow = "1"
 arkhe-nanophotonics = { path = "../../substrate-9010" }
 arkhe-aws-orbital = { path = "../../substrate-aws-orbital" }
+
+nexus-sdk = { workspace = true, optional = true }
+nexus-core = { workspace = true, optional = true }
+nexus-network = { workspace = true, optional = true }
 
 [build-dependencies]
 tonic-build = "0.12"

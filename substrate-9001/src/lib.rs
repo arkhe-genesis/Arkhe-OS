@@ -1,2 +1,2 @@
-pub mod visual;
 pub mod types;
+pub mod visual;

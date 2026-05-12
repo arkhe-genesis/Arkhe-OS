@@ -6,13 +6,13 @@
 // Computes H(X), certifies it via ZK range proof, and feeds the
 // Cathedral's fee/royalty/audit engines.
 
-use ark_snark::SNARK;
+
 use serde::{Deserialize, Serialize};
 use sha3::{Digest, Sha3_256};
 
 use plonky2::field::goldilocks_field::GoldilocksField;
 use plonky2::field::types::Field;
-use plonky2::iop::witness::{PartialWitness, WitnessWrite};
+
 use plonky2::plonk::circuit_builder::CircuitBuilder;
 use plonky2::plonk::circuit_data::CircuitConfig;
 use plonky2::plonk::config::PoseidonGoldilocksConfig;
@@ -50,7 +50,11 @@ pub fn shannon_entropy(data: &[u8]) -> f64 {
 pub fn normalized_entropy(data: &[u8]) -> f64 {
     let h = shannon_entropy(data);
     let unique_symbols = data.iter().collect::<std::collections::HashSet<_>>().len() as f64;
-    let h_max = if unique_symbols > 1.0 { unique_symbols.log2() } else { 1.0 };
+    let h_max = if unique_symbols > 1.0 {
+        unique_symbols.log2()
+    } else {
+        1.0
+    };
     (h / h_max).clamp(0.0, 1.0)
 }
 
@@ -101,7 +105,11 @@ pub fn min_entropy(data: &[u8]) -> f64 {
 /// KL divergence D_KL(P || Q) for Eidos-6075 echo strength.
 /// Both P and Q must be probability distributions (sum to 1).
 pub fn kl_divergence(p: &[f64], q: &[f64]) -> f64 {
-    assert_eq!(p.len(), q.len(), "ARKHE: KL divergence requires equal-length distributions");
+    assert_eq!(
+        p.len(),
+        q.len(),
+        "ARKHE: KL divergence requires equal-length distributions"
+    );
     let mut d = 0.0;
     for (&pi, &qi) in p.iter().zip(q.iter()) {
         if pi > 0.0 && qi > 0.0 {
@@ -118,14 +126,14 @@ pub fn kl_divergence(p: &[f64], q: &[f64]) -> f64 {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct EntropyCertificate {
     pub substrate_id: u32,
-    pub stream_hash: [u8; 32],      // Sha3-256 of input data
-    pub entropy_bits: f64,          // H(X) in bits per symbol
-    pub normalized_entropy: f64,    // H_norm ∈ [0,1]
-    pub min_entropy: f64,           // H_min for compliance
+    pub stream_hash: [u8; 32],   // Sha3-256 of input data
+    pub entropy_bits: f64,       // H(X) in bits per symbol
+    pub normalized_entropy: f64, // H_norm ∈ [0,1]
+    pub min_entropy: f64,        // H_min for compliance
     pub timestamp: u64,
-    pub merkle_root: [u8; 32],      // Anchored to TemporalChain
-    pub zk_commitment: [u8; 32],    // Pedersen-like commitment to entropy
-    pub phi_c: f64,                 // Cathedral coherence score
+    pub merkle_root: [u8; 32],   // Anchored to TemporalChain
+    pub zk_commitment: [u8; 32], // Pedersen-like commitment to entropy
+    pub phi_c: f64,              // Cathedral coherence score
 }
 
 impl EntropyCertificate {
@@ -183,11 +191,11 @@ impl EntropyCertificate {
 
 #[derive(Clone, Debug)]
 pub struct EconomicParameters {
-    pub base_fee: f64,              // Base transaction fee
-    pub royalty_rate: f64,          // Base royalty multiplier
-    pub audit_priority: f64,        // Priority score for compliance audit
-    pub quantum_job_price: f64,     // QIP-6071 job pricing
-    pub dark_info_density: f64,     // Cosmological Engine-9001 coupling
+    pub base_fee: f64,          // Base transaction fee
+    pub royalty_rate: f64,      // Base royalty multiplier
+    pub audit_priority: f64,    // Priority score for compliance audit
+    pub quantum_job_price: f64, // QIP-6071 job pricing
+    pub dark_info_density: f64, // Cosmological Engine-9001 coupling
 }
 
 impl Default for EconomicParameters {
@@ -314,16 +322,6 @@ impl DarkInformationField for EntropyOracle {
 // 5. ZK CIRCUIT SKELETON (Arkworks/BN254)
 // ─────────────────────────────────────────────────────────────
 
-use plonky2::field::types::Field;
-use plonky2::field::goldilocks_field::GoldilocksField;
-use plonky2::plonk::circuit_builder::CircuitBuilder;
-use plonky2::plonk::config::{GenericConfig, PoseidonGoldilocksConfig};
-use plonky2::plonk::circuit_data::CircuitConfig;
-
-const D: usize = 2;
-type C = PoseidonGoldilocksConfig;
-type F = <C as GenericConfig<D>>::F;
-
 /// ZK statement: "I know a byte stream whose normalized entropy is in [δ, 1-δ]"
 /// This is a range proof over the entropy computation.
 /// ZK statement: "I know a byte stream whose normalized entropy is in [δ, 1-δ]"
@@ -372,9 +370,9 @@ impl EntropyRangeCircuit {
         let data = builder.build::<C>();
         let mut pw = plonky2::iop::witness::PartialWitness::new();
         use plonky2::iop::witness::WitnessWrite;
-        pw.set_target(h_target, F::from_canonical_u64(h_scaled));
-        pw.set_target(delta_target, F::from_canonical_u64(delta_scaled));
-        pw.set_target(upper_target, F::from_canonical_u64(upper_scaled));
+        let _ = pw.set_target(h_target, F::from_canonical_u64(h_scaled));
+        let _ = pw.set_target(delta_target, F::from_canonical_u64(delta_scaled));
+        let _ = pw.set_target(upper_target, F::from_canonical_u64(upper_scaled));
 
         let proof = data.prove(pw)?;
         data.verify(proof)?;
@@ -409,7 +407,11 @@ mod tests {
         // Uniform distribution over 256 symbols → H = 8.0
         let data: Vec<u8> = (0u16..256).map(|i| i as u8).collect();
         let h = shannon_entropy(&data);
-        assert!((h - 8.0).abs() < 1e-10, "Uniform entropy should be 8.0, got {}", h);
+        assert!(
+            (h - 8.0).abs() < 1e-10,
+            "Uniform entropy should be 8.0, got {}",
+            h
+        );
     }
 
     #[test]
@@ -417,7 +419,11 @@ mod tests {
         // Single symbol repeated → H = 0
         let data = vec![0x42u8; 1000];
         let h = shannon_entropy(&data);
-        assert!(h.abs() < 1e-10, "Deterministic entropy should be 0, got {}", h);
+        assert!(
+            h.abs() < 1e-10,
+            "Deterministic entropy should be 0, got {}",
+            h
+        );
     }
 
     #[test]
@@ -426,32 +432,48 @@ mod tests {
         let mut data = vec![0u8; 500];
         data.extend(vec![1u8; 500]);
         let h = shannon_entropy(&data);
-        assert!((h - 1.0).abs() < 1e-10, "Fair binary entropy should be 1.0, got {}", h);
+        assert!(
+            (h - 1.0).abs() < 1e-10,
+            "Fair binary entropy should be 1.0, got {}",
+            h
+        );
     }
 
     #[test]
     fn test_normalized_entropy() {
         let uniform: Vec<u8> = (0u16..256).map(|i| i as u8).collect();
         let h_norm = normalized_entropy(&uniform);
-        assert!((h_norm - 1.0).abs() < 1e-10, "Uniform normalized entropy should be 1.0");
+        assert!(
+            (h_norm - 1.0).abs() < 1e-10,
+            "Uniform normalized entropy should be 1.0"
+        );
 
         let constant = vec![0xAAu8; 1000];
         let h_norm_const = normalized_entropy(&constant);
-        assert!(h_norm_const.abs() < 1e-10, "Constant normalized entropy should be 0");
+        assert!(
+            h_norm_const.abs() < 1e-10,
+            "Constant normalized entropy should be 0"
+        );
     }
 
     #[test]
     fn test_min_entropy() {
         let uniform: Vec<u8> = (0u16..256).map(|i| i as u8).collect();
         let h_min = min_entropy(&uniform);
-        assert!((h_min - 8.0).abs() < 1e-10, "Uniform min-entropy should be 8.0");
+        assert!(
+            (h_min - 8.0).abs() < 1e-10,
+            "Uniform min-entropy should be 8.0"
+        );
 
         let biased = vec![0u8; 900];
         let mut biased_ext = biased.clone();
         biased_ext.extend(vec![1u8; 100]);
         let h_min_biased = min_entropy(&biased_ext);
         let expected = -(0.9f64).log2();
-        assert!((h_min_biased - expected).abs() < 1e-10, "Biased min-entropy mismatch");
+        assert!(
+            (h_min_biased - expected).abs() < 1e-10,
+            "Biased min-entropy mismatch"
+        );
     }
 
     #[test]
@@ -471,9 +493,15 @@ mod tests {
         let merkle = [0u8; 32];
         let cert = EntropyCertificate::new(&data, merkle);
 
-        assert!(cert.verify_range(0.04, 0.10), "Uniform entropy should pass range check");
+        assert!(
+            cert.verify_range(0.04, 0.10),
+            "Uniform entropy should pass range check"
+        );
         assert_eq!(cert.substrate_id, 6070);
-        assert!(cert.phi_c > 0.3, "Uniform entropy should have moderate phi_c");
+        assert!(
+            cert.phi_c > 0.3,
+            "Uniform entropy should have moderate phi_c"
+        );
     }
 
     #[test]
@@ -503,13 +531,19 @@ mod tests {
         let oracle = EntropyOracle;
         // True randomness (simulated uniform)
         let random: Vec<u8> = (0u16..256).map(|i| i as u8).collect();
-        assert!(oracle.verify_min_entropy(&random, 7.9), "Uniform source should pass min-entropy threshold");
+        assert!(
+            oracle.verify_min_entropy(&random, 7.9),
+            "Uniform source should pass min-entropy threshold"
+        );
 
         // Biased source
         let biased = vec![0u8; 900];
         let mut biased_ext = biased.clone();
         biased_ext.extend(vec![1u8; 100]);
-        assert!(!oracle.verify_min_entropy(&biased_ext, 7.9), "Biased source should fail min-entropy threshold");
+        assert!(
+            !oracle.verify_min_entropy(&biased_ext, 7.9),
+            "Biased source should fail min-entropy threshold"
+        );
     }
 
     #[test]
@@ -517,7 +551,10 @@ mod tests {
         let data: Vec<u8> = (0u16..256).map(|i| i as u8).collect();
         let cert = EntropyCertificate::new(&data, [0u8; 32]);
         let value = EntropyOracle::anchor_value(&cert);
-        assert!(value > 0.0, "Anchor value should be positive for high-entropy data");
+        assert!(
+            value > 0.0,
+            "Anchor value should be positive for high-entropy data"
+        );
     }
 
     #[test]
@@ -530,9 +567,14 @@ mod tests {
         let cert_a = EntropyCertificate::new(&data_a, [0u8; 32]);
         let cert_b = EntropyCertificate::new(&data_b, [0u8; 32]);
 
-        assert_ne!(cert_a.zk_commitment, cert_b.zk_commitment, "Different data must yield different commitments");
-        assert!((cert_a.entropy_bits - cert_b.entropy_bits).abs() < 1e-10,
-            "Same structure should yield same entropy");
+        assert_ne!(
+            cert_a.zk_commitment, cert_b.zk_commitment,
+            "Different data must yield different commitments"
+        );
+        assert!(
+            (cert_a.entropy_bits - cert_b.entropy_bits).abs() < 1e-10,
+            "Same structure should yield same entropy"
+        );
     }
 
     #[test]
@@ -549,64 +591,95 @@ mod tests {
 // 5. ZK CIRCUIT SKELETON (Plonky2)
 // ─────────────────────────────────────────────────────────────
 
-impl EntropyRangeCircuit {
-    pub fn prove(&self) -> anyhow::Result<plonky2::plonk::proof::ProofWithPublicInputs<F, C, D>> {
-        let config = CircuitConfig::standard_recursion_config();
-        let mut builder = CircuitBuilder::<F, D>::new(config);
+// ─────────────────────────────────────────────────────────────
+// PRE-INSTALL CHECKS (Added for Supply Chain Security)
+// ─────────────────────────────────────────────────────────────
 
-        // Normalize constants as field elements
-        // Note: Field scaling handles f64 -> finite field approximation.
-        // We scale f64 to u64 by 10^6
-        let scale = 1_000_000.0;
-        let norm_val = (self.entropy_norm * scale) as u64;
-        let delta_val = (self.delta * scale) as u64;
-        let max_val = ((1.0 - self.delta) * scale) as u64;
+pub struct PackageManifest {
+    pub name: String,
+    pub payload: Vec<u8>,
+    pub files: Vec<String>,
+}
 
-        let norm_target = builder.add_virtual_target();
-        let delta_target = builder.add_virtual_target();
-        let max_target = builder.add_virtual_target();
+#[derive(Debug)]
+pub struct InstallBlocked {
+    pub reason: &'static str,
+    pub proof: Vec<u8>,
+}
 
-        builder.register_public_input(norm_target);
-        builder.register_public_input(delta_target);
-        builder.register_public_input(max_target);
+pub fn check_publication_burst(_name: &str, _window_mins: u64) -> bool {
+    // Stub
+    false
+}
 
-        // Verify: delta_target <= norm_target <= max_target
-        // We approximate this using Plonky2's range checks.
-        // norm_target - delta_target >= 0 => requires num_bits range check
-        // max_target - norm_target >= 0 => requires num_bits range check
+pub fn detect_obfuscation(_files: &[String]) -> f64 {
+    // Stub
+    0.0
+}
 
-        // 1. norm_target >= delta_target  =>  diff1 = norm - delta
-        let diff1 = builder.sub(norm_target, delta_target);
-        builder.range_check(diff1, 32);
+pub fn anchor_violation(_package: &PackageManifest, _entropy: &f64, _obfuscation_score: &f64) -> Result<(), InstallBlocked> {
+    // Stub
+    Ok(())
+}
 
-        // 2. norm_target <= max_target  => diff2 = max - norm
-        let diff2 = builder.sub(max_target, norm_target);
-        builder.range_check(diff2, 32);
+pub fn generate_block_proof(_package: &PackageManifest) -> Vec<u8> {
+    // Stub
+    vec![]
+}
 
-        let data = builder.build::<C>();
-        let mut pw = PartialWitness::new();
+pub fn pre_install_check(package: &PackageManifest) -> Result<(), InstallBlocked> {
+    let entropy = shannon_entropy(&package.payload);
+    let temporal_anomaly = check_publication_burst(&package.name, 6); // 6 min window
+    let obfuscation_score = detect_obfuscation(&package.files);
 
-        pw.set_target(norm_target, F::from_canonical_u64(norm_val));
-        pw.set_target(delta_target, F::from_canonical_u64(delta_val));
-        pw.set_target(max_target, F::from_canonical_u64(max_val));
-
-        let proof = data.prove(pw)?;
-        Ok(proof)
+    if entropy > 6.5 || temporal_anomaly || obfuscation_score > 0.8 {
+        anchor_violation(package, &entropy, &obfuscation_score)?; // Immutable audit trail on TemporalChain
+        return Err(InstallBlocked {
+            reason: "Entropy anomaly + temporal burst + obfuscation detected. This package may be compromised.",
+            proof: generate_block_proof(package),
+        });
     }
+}
 
-    pub fn verify(
-        proof: plonky2::plonk::proof::ProofWithPublicInputs<F, C, D>,
-        verifier_data: plonky2::plonk::circuit_data::VerifierCircuitData<F, C, D>,
-    ) -> anyhow::Result<()> {
-        verifier_data.verify(proof)
+
+pub struct PackageManifest {
+    pub name: String,
+    pub payload: Vec<u8>,
+    pub files: Vec<String>,
+}
+
+pub struct InstallBlocked {
+    pub reason: &'static str,
+    pub proof: Vec<u8>,
+}
+
+fn check_publication_burst(_name: &str, _window_min: u64) -> bool {
+    false
+}
+
+fn detect_obfuscation(_files: &[String]) -> f64 {
+    0.0
+}
+
+fn anchor_violation(_package: &PackageManifest, _entropy: &f64, _obfuscation_score: &f64) -> Result<(), InstallBlocked> {
+    Ok(())
+}
+
+fn generate_block_proof(_package: &PackageManifest) -> Vec<u8> {
+    vec![]
+}
+
+pub fn pre_install_check(package: &PackageManifest) -> Result<(), InstallBlocked> {
+    let entropy = shannon_entropy(&package.payload);
+    let temporal_anomaly = check_publication_burst(&package.name, 6); // 6 min window
+    let obfuscation_score = detect_obfuscation(&package.files);
+
+    if entropy > 6.5 || temporal_anomaly || obfuscation_score > 0.8 {
+        anchor_violation(&package, &entropy, &obfuscation_score)?; // Immutable audit trail on TemporalChain
+        return Err(InstallBlocked {
+            reason: "Entropy anomaly + temporal burst + obfuscation detected. This package may be compromised.",
+            proof: generate_block_proof(&package),
+        });
     }
-/// Shannon entropy of a byte stream.
-pub fn shannon_entropy(data: &[u8]) -> f64 {
-    let mut counts = [0u64; 256];
-    for &b in data { counts[b as usize] += 1; }
-    let len = data.len() as f64;
-    counts.iter()
-        .filter(|&&c| c > 0)
-        .map(|&c| { let p = c as f64 / len; -p * p.log2() })
-        .sum()
+    Ok(())
 }

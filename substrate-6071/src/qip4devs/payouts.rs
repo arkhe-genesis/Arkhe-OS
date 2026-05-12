@@ -14,7 +14,10 @@ pub async fn settle_developer_royalties(binary_hash: &str, revenue: f64) {
 pub struct GraphStub {}
 impl GraphStub {
     pub fn get_contributors(&self) -> Vec<Developer> {
-        vec![Developer { orcid: "0000-0000-0000-0000".to_string(), pix_key: "stub_key".to_string() }]
+        vec![Developer {
+            orcid: "0000-0000-0000-0000".to_string(),
+            pix_key: "stub_key".to_string(),
+        }]
     }
 }
 
