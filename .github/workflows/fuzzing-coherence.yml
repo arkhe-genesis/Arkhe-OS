@@ -24,7 +24,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: true
 
+      - name: Pull LFS objects
+        run: git lfs pull
       - name: Install AFL++
         run: |
           sudo apt-get update

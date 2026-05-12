@@ -23,7 +23,11 @@ jobs:
         format: [msi, exe, deb, rpm, apk, aab, ipa, pkg, dmg]
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: true
 
+      - name: Pull LFS objects
+        run: git lfs pull
       - name: Install ARKHE CLI + Installer Parser
         run: |
           curl -fsSL https://arkhe.os/install-installer-parser.sh | bash
