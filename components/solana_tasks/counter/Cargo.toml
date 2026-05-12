@@ -7,6 +7,10 @@ edition = "2021"
 
 anchor-lang = "0.30.1"
 
+nexus-sdk = { workspace = true, optional = true }
+nexus-core = { workspace = true, optional = true }
+nexus-network = { workspace = true, optional = true }
+
 [lib]
 crate-type = ["cdylib", "lib"]
 [features]

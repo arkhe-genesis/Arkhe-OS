@@ -1,5 +1,5 @@
-use clap::Parser;
 use anyhow::Result;
+use clap::Parser;
 use oracle::oracle_client::OracleClient;
 use oracle::CreateShardRequest;
 
@@ -25,6 +25,9 @@ pub async fn handle_shard_create(args: ShardCreateArgs) -> Result<()> {
         gpu: args.gpu,
     });
     let response = client.create_shard(request).await?;
-    println!("Shard {} criado com sucesso.", response.into_inner().shard_id);
+    println!(
+        "Shard {} criado com sucesso.",
+        response.into_inner().shard_id
+    );
     Ok(())
 }

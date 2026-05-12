@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// Verificador de conformidade com as leis físicas
 pub struct PhysicalLawCompliance {
@@ -16,11 +16,16 @@ impl PhysicalLawCompliance {
         }
     }
 
-    pub fn verify_physical_consistency(&self, params: &CosmicParameters) -> Result<(), CosmicViolation> {
+    pub fn verify_physical_consistency(
+        &self,
+        params: &CosmicParameters,
+    ) -> Result<(), CosmicViolation> {
         if params.local_speed > self.speed_of_light {
             return Err(CosmicViolation::FasterThanLight);
         }
-        if params.vacuum_energy < self.allowed_vacuum_energy_range.0 || params.vacuum_energy > self.allowed_vacuum_energy_range.1 {
+        if params.vacuum_energy < self.allowed_vacuum_energy_range.0
+            || params.vacuum_energy > self.allowed_vacuum_energy_range.1
+        {
             return Err(CosmicViolation::InvalidVacuumEnergy);
         }
         Ok(())

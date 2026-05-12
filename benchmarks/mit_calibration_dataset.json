@@ -1,0 +1,8 @@
+[
+    {"raw_score": 0.9, "correct": true},
+    {"raw_score": 0.8, "correct": true},
+    {"raw_score": 0.95, "correct": false},
+    {"raw_score": 0.7, "correct": true},
+    {"raw_score": 0.6, "correct": false},
+    {"raw_score": 0.85, "correct": true}
+]

@@ -16,7 +16,11 @@ pub async fn factor_with_vortex_qpu(
     // Choose a random coprime base 'a'
     let mut rng = rand::thread_rng();
     for _attempt in 0..max_attempts {
-        let a = if n <= 2 { return None; } else { rng.gen_range(2..n) };
+        let a = if n <= 2 {
+            return None;
+        } else {
+            rng.gen_range(2..n)
+        };
         let g = gcd(a, n);
         if g > 1 {
             // Found a factor by luck

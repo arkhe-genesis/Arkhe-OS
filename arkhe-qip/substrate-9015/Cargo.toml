@@ -1,0 +1,6 @@
+[package]
+name = "arkhe-igha"
+version = "5.7.0"
+edition = "2021"
+
+[dependencies]

@@ -5,3 +5,7 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.0", features = ["derive"] }
+
+nexus-sdk = { workspace = true, optional = true }
+nexus-core = { workspace = true, optional = true }
+nexus-network = { workspace = true, optional = true }

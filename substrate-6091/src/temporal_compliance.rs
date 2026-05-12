@@ -9,7 +9,9 @@ pub struct TemporalCompliance {
 }
 
 impl TemporalCompliance {
-    pub fn new(chain: Arc<TemporalChain>) -> Self { Self { chain } }
+    pub fn new(chain: Arc<TemporalChain>) -> Self {
+        Self { chain }
+    }
 
     /// Verifica que um novo bloco não viola a causalidade
     pub fn verify_causality(&self, block: &TemporalBlock) -> Result<(), CausalityViolation> {

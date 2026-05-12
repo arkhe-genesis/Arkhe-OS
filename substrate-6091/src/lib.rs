@@ -5,57 +5,50 @@
 #![allow(clippy::too_many_arguments)]
 
 mod compliance_graph;
-mod mutual_recognition;
-mod temporal_compliance;
-mod quantum_compliance;
-mod financial_compliance;
-mod ip_compliance;
 mod cosmic_compliance;
 mod cross_universe_proof;
+mod financial_compliance;
+mod ip_compliance;
 mod multiversal_orchestrator;
+mod mutual_recognition;
+mod quantum_compliance;
+mod temporal_compliance;
 
 // ============================================================================
 // RE‑EXPORTS
 // ============================================================================
 
 pub use compliance_graph::{
-    ComplianceGraph, RegulatoryNode, ComplianceEdge,
-    Jurisdiction, RequirementType, JurisdictionVerifier
+    ComplianceEdge, ComplianceGraph, Jurisdiction, JurisdictionVerifier, RegulatoryNode,
+    RequirementType,
 };
 
-pub use mutual_recognition::{
-    MutualRecognitionAgreement, MRABridge,
-    RecognitionProof,
-};
+pub use mutual_recognition::{MRABridge, MutualRecognitionAgreement, RecognitionProof};
 
 pub use temporal_compliance::{
-    TemporalCompliance, CausalityProof,
-    TemporalBlockValidator, CausalityViolation
+    CausalityProof, CausalityViolation, TemporalBlockValidator, TemporalCompliance,
 };
 
 pub use quantum_compliance::{
-    QuantumExportControl, WassenaarChecker,
-    QuantumCircuitExportProof, QuantumExportConfig, QuantumExportViolation
+    QuantumCircuitExportProof, QuantumExportConfig, QuantumExportControl, QuantumExportViolation,
+    WassenaarChecker,
 };
 
 pub use financial_compliance::{
-    FinancialMultiversalBridge, PixToSepa, FedNowToPix,
-    CrossBorderCompliance, FinancialMultiversalConfig, PixTransaction
+    CrossBorderCompliance, FedNowToPix, FinancialMultiversalBridge, FinancialMultiversalConfig,
+    PixToSepa, PixTransaction,
 };
 
 pub use ip_compliance::{
-    BerneConventionAdapter, OrcidToCopyright,
-    IPMultiversalProof, IPMultiversalConfig, ArtFingerprint
+    ArtFingerprint, BerneConventionAdapter, IPMultiversalConfig, IPMultiversalProof,
+    OrcidToCopyright,
 };
 
 pub use cosmic_compliance::{
-    PhysicalLawCompliance, ConstantValidator,
-    VacuumPermit, CosmicConfig, CosmicParameters, CosmicViolation
+    ConstantValidator, CosmicConfig, CosmicParameters, CosmicViolation, PhysicalLawCompliance,
+    VacuumPermit,
 };
 
-pub use cross_universe_proof::{
-    MultiversalProof, UniverseSet,
-    CrossUniverseVerifier,
-};
+pub use cross_universe_proof::{CrossUniverseVerifier, MultiversalProof, UniverseSet};
 
-pub use multiversal_orchestrator::{MultiversalCompliance, Artifact, MultiversalComplianceError};
+pub use multiversal_orchestrator::{Artifact, MultiversalCompliance, MultiversalComplianceError};

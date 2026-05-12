@@ -1,6 +1,6 @@
-use arkhe_temporal::TemporalChain;
-use crate::patch_verification::PatchProof;
 use crate::agent::SecurityError;
+use crate::patch_verification::PatchProof;
+use arkhe_temporal::TemporalChain;
 use std::sync::Arc;
 
 pub struct DaybreakAudit {
@@ -8,7 +8,9 @@ pub struct DaybreakAudit {
 }
 
 impl DaybreakAudit {
-    pub fn new(chain: Arc<TemporalChain>) -> Self { Self { chain } }
+    pub fn new(chain: Arc<TemporalChain>) -> Self {
+        Self { chain }
+    }
 
     /// Ancorar prova de patch na TemporalChain.
     pub async fn record_patch_verified(&self, proof: &PatchProof) -> Result<(), SecurityError> {

@@ -25,6 +25,10 @@ postcard = { version = "1.0", features = ["alloc"] }
 hex = "0.4"
 hex-literal = "0.4"
 
+nexus-sdk = { workspace = true, optional = true }
+nexus-core = { workspace = true, optional = true }
+nexus-network = { workspace = true, optional = true }
+
 [dev-dependencies]
 wasm-bindgen-test = "0.3"
 console_error_panic_hook = "0.1"
