@@ -20,6 +20,7 @@ members = [
     "substrate-6091",
     "substrate-9001",
     "substrate-9002",
+    "substrate-9020",
     "substrate-6085",
     "substrate-6070",
 
@@ -30,8 +31,9 @@ members = [
     "substrate-6064/temporal",
     "substrate-aws-orbital",
     "cmd/arkhe",
-    "substrate-9110"
-, "substrate-6070"]
+    "substrate-9110",
+    "substrate-6092",
+]
 
 [workspace.dependencies]
 tokio = { version = "1", features = ["full"] }
