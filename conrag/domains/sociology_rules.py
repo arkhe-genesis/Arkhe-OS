@@ -34,6 +34,16 @@ class SociologyBEAVERRules:
             "check": "_check_independence",
             "severity": "warn",
         },
+        "homogeneous_distribution": {
+            "description": "A distribuição dos eventos deve ser homogênea",
+            "check": "_check_homogeneous_distribution",
+            "severity": "warn",
+        },
+        "time_independence": {
+            "description": "Os tempos de evento devem ser independentes",
+            "check": "_check_time_independence",
+            "severity": "block",
+        },
     }
 
     @staticmethod
@@ -68,11 +78,29 @@ class SociologyBEAVERRules:
     @staticmethod
     def _check_independence(is_independent: bool, context: Dict[str, Any] = None) -> Tuple[bool, str]:
         """
-        Verifica se as observações (e tempos de evento) são independentes.
+        Verifica se as observações são independentes.
         """
         if is_independent:
             return True, "OK (Independência confirmada)"
         return False, "Violação de independência nas observações"
+
+    @staticmethod
+    def _check_homogeneous_distribution(is_homogeneous: bool, context: Dict[str, Any] = None) -> Tuple[bool, str]:
+        """
+        Verifica se a distribuição de eventos/censuras é homogênea ao longo do tempo.
+        """
+        if is_homogeneous:
+            return True, "OK (Distribuição homogênea confirmada)"
+        return False, "Violação de distribuição homogênea"
+
+    @staticmethod
+    def _check_time_independence(is_time_independent: bool, context: Dict[str, Any] = None) -> Tuple[bool, str]:
+        """
+        Verifica se os tempos de censura são independentes do tempo de evento.
+        """
+        if is_time_independent:
+            return True, "OK (Independência dos tempos confirmada)"
+        return False, "Violação de independência dos tempos de censura"
 
 class CoxModelValidator:
     """
@@ -80,7 +108,7 @@ class CoxModelValidator:
     """
 
     @staticmethod
-    def validate_model(p_value: float, max_vif: float, is_linear: bool, is_independent: bool) -> Dict[str, Any]:
+    def validate_model(p_value: float, max_vif: float, is_linear: bool, is_independent: bool, is_homogeneous: bool = True, is_time_independent: bool = True) -> Dict[str, Any]:
         """
         Valida todas as suposições chave do modelo de Cox.
         Retorna um dicionário com os resultados de cada teste.
@@ -90,6 +118,8 @@ class CoxModelValidator:
             "multicollinearity": SociologyBEAVERRules._check_multicollinearity(max_vif),
             "linearity": SociologyBEAVERRules._check_linearity(is_linear),
             "independence": SociologyBEAVERRules._check_independence(is_independent),
+            "homogeneous_distribution": SociologyBEAVERRules._check_homogeneous_distribution(is_homogeneous),
+            "time_independence": SociologyBEAVERRules._check_time_independence(is_time_independent),
         }
 
         all_passed = all(res[0] for res in results.values())
