@@ -1,0 +1,9 @@
+// genesis.ark
+block genesis {
+    let silence = entropy(0);
+    // "ARKHE" as the first utterance
+    let word = "ARKHE";
+    let first_art = q_art.generate(prompt: word);
+    anchor(first_art, prove(first_art));
+    pay(orcid("0000-0000-0000-0000"), 1.0, pix); // Offering to the void
+}

@@ -60,6 +60,7 @@ members = [
     # --- Tooling & scripts ---
     "oracle-server",                        # gRPC oracle daemon (Rust)
     "scripts",                              # Self‑completion binary (arkhe-self-complete)
+    "ark-lang/ark-compiler",
 ]
 
 # ============================================================================
@@ -118,8 +119,6 @@ thiserror = "1.0"
 anyhow = "1.0"
 
 # Hashing
-thiserror = "1.0"
-anyhow = "1.0"
 sha2 = "0.10"
 sha3 = "0.10"
 blake3 = "1.7"
@@ -135,8 +134,6 @@ tracing = "0.1"
 tracing-subscriber = "0.3"
 
 # Numerical / linear algebra
-tracing = "0.1"
-tracing-subscriber = "0.3"
 nalgebra = "0.32"
 ndarray = "0.15"
 num-complex = "0.4"

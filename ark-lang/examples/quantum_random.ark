@@ -1,0 +1,6 @@
+quantum {
+    let q1: Qubit = 0.5;
+    let q2: Qubit = 0.5;
+    let entangled = hadamard(q1) ^ cnot(q2);
+    measure(entangled) => (a, b);
+}
