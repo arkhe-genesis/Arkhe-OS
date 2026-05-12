@@ -30,6 +30,7 @@ DOMAIN_CONSTITUTIONS = {
             "journalism": 0.35,  # Reportagem investigativa > editorial
             "engineering": 0.40, # Normas técnicas > regras de bolso
             "art": 0.20,         # Catálogos raisonnés > interpretação amadora
+            "sociology": 0.35,   # Dados censitários/estudos estatísticos > opinião
             "general": 0.25,     # Enciclopédias > blogs
         },
         description="Hierarquia de fontes: primárias > secundárias > terciárias"
@@ -47,6 +48,7 @@ DOMAIN_CONSTITUTIONS = {
             "journalism": 0.30,  # "Informações ainda não confirmadas"
             "engineering": 0.25, # "Margem de erro não calculada"
             "art": 0.20,         # "Autoria contestada"
+            "sociology": 0.25,   # "Causalidade não provada"
             "general": 0.20,     # "Informação carece de verificação"
         },
         description="Transparência sobre limites do conhecimento"
@@ -64,6 +66,7 @@ DOMAIN_CONSTITUTIONS = {
             "journalism": 0.30,  # Entrevista direta > agência de notícias > agregador
             "engineering": 0.20, # Especificações do fabricante > manual genérico
             "art": 0.30,         # Obra original > crítica contemporânea > análise moderna
+            "sociology": 0.25,   # Dados microdados > relatórios resumidos > artigos
             "general": 0.25,     # Fontes primárias de eventos > relatos secundários
         },
         description="Credibilidade baseada na proximidade da fonte original"
@@ -81,6 +84,7 @@ DOMAIN_CONSTITUTIONS = {
             "journalism": 0.20,  # Relatos divergentes de testemunhas
             "engineering": 0.30, # Especificações contraditórias em projetos
             "art": 0.15,         # Análises contraditórias da mesma obra
+            "sociology": 0.20,   # Modelos estatísticos conflitantes
             "general": 0.20,     # Incoerências lógicas
         },
         description="Consistência lógica como pré-requisito para validade"
@@ -98,6 +102,7 @@ DOMAIN_CONSTITUTIONS = {
             "journalism": 0.10,  # Denúncias graves requerem múltiplas fontes
             "engineering": 0.05, # Novos materiais com propriedades impossíveis
             "art": 0.15,         # Descoberta de obra perdida de mestre famoso
+            "sociology": 0.10,   # Dinâmicas sociais completamente novas
             "general": 0.10,     # Afirmações que quebram o senso comum
         },
         description="Ceticismo proporcional à novidade da afirmação"
