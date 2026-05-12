@@ -1,44 +1,18 @@
 syntax = "proto3";
-package arkhe.oracle;
 
-service Oracle {
-  rpc CreateShard (CreateShardRequest) returns (Shard);
-  rpc ListShards (ListShardsRequest) returns (ListShardsResponse);
-  rpc DestroyShard (DestroyShardRequest) returns (Empty);
-  rpc GetShardStatus (GetShardStatusRequest) returns (ShardStatus);
-}
-
-message Empty {}
+package oracle;
 
 message CreateShardRequest {
-  string substrate_id = 1;
-  string motor = 2;         // e.g., "continental-mind", "qart-engine"
-  bool gpu = 3;
-  map<string,string> labels = 4;
+    string substrate_id = 1;
+    string motor = 2;
+    bool gpu = 3;
+    map<string, string> labels = 4;
 }
 
-message Shard {
-  string shard_id = 1;
-  string substrate_id = 2;
-  string motor = 3;
-  string status = 4;        // "provisioning", "running", "dead"
-  string endpoint = 5;      // gRPC endpoint do shard
+message CreateShardResponse {
+    string shard_id = 1;
 }
 
-message ListShardsRequest {}
-
-message ListShardsResponse {
-  repeated Shard shards = 1;
-}
-
-message DestroyShardRequest {
-  string shard_id = 1;
-}
-
-message GetShardStatusRequest {
-  string shard_id = 1;
-}
-
-message ShardStatus {
-  string status = 1;
+service Oracle {
+    rpc CreateShard(CreateShardRequest) returns (CreateShardResponse);
 }

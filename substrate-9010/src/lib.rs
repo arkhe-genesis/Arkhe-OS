@@ -6,6 +6,8 @@ pub mod pulling_optimizer;
 pub mod zk_force_proof;
 pub mod temporal_anchor;
 pub mod nanomanipulation_cli;
+pub mod braket_client;
+pub mod braket_executor;
 
 pub use nonlocal_conductivity::CNTConductivity;
 pub use zk_force_proof::ForceConvergenceProof;

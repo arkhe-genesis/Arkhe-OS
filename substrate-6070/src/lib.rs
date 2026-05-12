@@ -314,15 +314,7 @@ impl DarkInformationField for EntropyOracle {
 // 5. ZK CIRCUIT SKELETON (Arkworks/BN254)
 // ─────────────────────────────────────────────────────────────
 
-use plonky2::field::types::Field;
-use plonky2::field::goldilocks_field::GoldilocksField;
-use plonky2::plonk::circuit_builder::CircuitBuilder;
-use plonky2::plonk::config::{GenericConfig, PoseidonGoldilocksConfig};
-use plonky2::plonk::circuit_data::CircuitConfig;
 
-const D: usize = 2;
-type C = PoseidonGoldilocksConfig;
-type F = <C as GenericConfig<D>>::F;
 
 /// ZK statement: "I know a byte stream whose normalized entropy is in [δ, 1-δ]"
 /// This is a range proof over the entropy computation.
@@ -545,68 +537,3 @@ mod tests {
     }
 }
 
-// ─────────────────────────────────────────────────────────────
-// 5. ZK CIRCUIT SKELETON (Plonky2)
-// ─────────────────────────────────────────────────────────────
-
-impl EntropyRangeCircuit {
-    pub fn prove(&self) -> anyhow::Result<plonky2::plonk::proof::ProofWithPublicInputs<F, C, D>> {
-        let config = CircuitConfig::standard_recursion_config();
-        let mut builder = CircuitBuilder::<F, D>::new(config);
-
-        // Normalize constants as field elements
-        // Note: Field scaling handles f64 -> finite field approximation.
-        // We scale f64 to u64 by 10^6
-        let scale = 1_000_000.0;
-        let norm_val = (self.entropy_norm * scale) as u64;
-        let delta_val = (self.delta * scale) as u64;
-        let max_val = ((1.0 - self.delta) * scale) as u64;
-
-        let norm_target = builder.add_virtual_target();
-        let delta_target = builder.add_virtual_target();
-        let max_target = builder.add_virtual_target();
-
-        builder.register_public_input(norm_target);
-        builder.register_public_input(delta_target);
-        builder.register_public_input(max_target);
-
-        // Verify: delta_target <= norm_target <= max_target
-        // We approximate this using Plonky2's range checks.
-        // norm_target - delta_target >= 0 => requires num_bits range check
-        // max_target - norm_target >= 0 => requires num_bits range check
-
-        // 1. norm_target >= delta_target  =>  diff1 = norm - delta
-        let diff1 = builder.sub(norm_target, delta_target);
-        builder.range_check(diff1, 32);
-
-        // 2. norm_target <= max_target  => diff2 = max - norm
-        let diff2 = builder.sub(max_target, norm_target);
-        builder.range_check(diff2, 32);
-
-        let data = builder.build::<C>();
-        let mut pw = PartialWitness::new();
-
-        pw.set_target(norm_target, F::from_canonical_u64(norm_val));
-        pw.set_target(delta_target, F::from_canonical_u64(delta_val));
-        pw.set_target(max_target, F::from_canonical_u64(max_val));
-
-        let proof = data.prove(pw)?;
-        Ok(proof)
-    }
-
-    pub fn verify(
-        proof: plonky2::plonk::proof::ProofWithPublicInputs<F, C, D>,
-        verifier_data: plonky2::plonk::circuit_data::VerifierCircuitData<F, C, D>,
-    ) -> anyhow::Result<()> {
-        verifier_data.verify(proof)
-    }
-/// Shannon entropy of a byte stream.
-pub fn shannon_entropy(data: &[u8]) -> f64 {
-    let mut counts = [0u64; 256];
-    for &b in data { counts[b as usize] += 1; }
-    let len = data.len() as f64;
-    counts.iter()
-        .filter(|&&c| c > 0)
-        .map(|&c| { let p = c as f64 / len; -p * p.log2() })
-        .sum()
-}
