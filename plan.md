@@ -1,38 +1,25 @@
-1.  **Create `substrate-6090` package:**
-    *   Create directory `substrate-6090` and `substrate-6090/src`.
-    *   Create `Cargo.toml` with the specified dependencies and features.
-    *   Create `src/lib.rs` and other modules (`hipaa.rs`, `gdpr.rs`, `lgpd.rs`, `fda_anvisa.rs`, `kyc_aml.rs`, `fair.rs`, `iso_soc.rs`, `audit.rs`, `consent.rs`, `anonymization.rs`, `verification.rs`, `temporal_anchor.rs`).
+1.  **Implement the Lexer in `ark-lang/ark-compiler/src/lexer.rs`**
+    *   Use the `logos` crate to define the tokens for Ark-lang based on the specification.
+    *   Tokens will include keywords (`block`, `prove`, `anchor`, `pay`, `pretend`, `quantum`, `entropy`, `coherence`, `q_art`, `vortex`, `orcid`, `pix`, `multiversal`, `let`, `fn`, `if`, `else`, `for`, `in`, `return`, `import`, `as`, `from`, `type`, `struct`, `enum`, `trait`, `impl`, `true`, `false`, `zk`, `Secret`, `Temporal`, `Qubit`, `Influence`, `Entropy`, `Coherence`, `block_id`, `linear`, `mut`, `pub`, `self`, `Self`, `where`).
+    *   Tokens will include primitives (`Int`, `Float`, `Bool`, `String`, `Byte`, `Unit`).
+    *   Tokens will include identifiers, integers, floats, strings, and byte literals based on the provided regex.
+    *   Handle single-line and multi-line comments.
 
-2.  **Add `substrate-6090` to root workspace:**
-    *   Modify root `Cargo.toml` to include `substrate-6090` in `workspace.members`.
+2.  **Define the AST (Abstract Syntax Tree)**
+    *   Create `ark-lang/ark-compiler/src/ast.rs` to hold the AST definitions.
+    *   Define types for primitive values, expressions (including function calls, macro calls like `prove`, `anchor`, `$(...)`), statements (`let`, assignments, control flow), definitions (`fn`, `struct`, `enum`, `trait`, `impl`), and the `block` construct.
 
-3.  **Implement core modules for `substrate-6090`:**
-    *   `src/lib.rs`: Setup re-exports. Expose structs required by enterprise integration.
-    *   `src/hipaa.rs`: Implement `HIPAACompliance` logic.
-    *   `src/gdpr.rs`: Implement `GDPRCompliance` logic.
-    *   `src/fda_anvisa.rs`: Implement `RegulatoryVerifier` logic. Add `fda` feature for ZKProof dependency conditional compilation.
-    *   `src/kyc_aml.rs`: Implement `KYCChecker`.
-    *   `src/fair.rs`: Implement `FAIRValidator`.
-    *   `src/audit.rs`: Implement `AuditTrail`.
-    *   `src/consent.rs`: Implement `ConsentManager`.
-    *   `src/anonymization.rs`: Implement `AnonymizationEngine`.
-    *   `src/lgpd.rs`, `src/iso_soc.rs`, `src/verification.rs`, `src/temporal_anchor.rs`: Create stubs.
+3.  **Implement the Parser in `ark-lang/ark-compiler/src/parser.rs`**
+    *   Implement a recursive descent parser (or use a parser combinator library if preferred, but manual might be easier for a simple spec) that takes the token stream and produces an AST.
+    *   Handle parsing of top-level items, blocks, statements, and expressions.
+    *   Make sure to capture the `#[linear]` attribute for types.
 
-4.  **Integrate with `arkhe-enterprise` (Catedral integration):**
-    *   Modify `arkhe-enterprise/Cargo.toml` to depend on `arkhe-compliance = { path = "../substrate-6090" }`.
-    *   Update `arkhe-enterprise/src/lib.rs` and `EnterpriseOrchestrator` methods to support compliance logic instantiation.
+4.  **Implement the `main.rs` CLI**
+    *   Use `clap` to create a basic CLI with a `build` subcommand.
+    *   The `build` subcommand should take a file, read its contents, lex it, and parse it. (We can stub the actual code generation to Rust/WASM/Solidity for now if the task is just to get the lexing/parsing/AST up and running, but I will prepare a basic rust codegen stub to match the output in the spec).
 
-5.  **Address compilation issues:**
-    *   `arkhe_temporal` dependency path.
-    *   `arkhe_zklib` and `plonky2` dependency configuration. Use nightly toolchain for `arkhe_zklib`.
-    *   Fix unused variable warnings.
+5.  **Pre-commit steps**
+    *   Ensure proper testing, verification, review, and reflection are done before submitting the final changes.
 
-6.  **Run tests:**
-    *   Execute `cargo check -p arkhe-compliance` and `cargo check -p arkhe-enterprise` to ensure everything compiles correctly.
-    *   Run `cargo test -p arkhe-compliance` if test is provided.
-
-7.  **Pre-commit steps:**
-    *   Complete pre-commit steps to ensure proper testing, verification, review, and reflection are done.
-
-8.  **Submit changes:**
-    *   Commit changes and submit PR.
+6.  **Submit**
+    *   Commit and push the implementation of Ark-lang v1.0 core.

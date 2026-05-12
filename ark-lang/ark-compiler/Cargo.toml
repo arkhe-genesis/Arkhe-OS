@@ -3,4 +3,9 @@ name = "arkc"
 version = "1.0.0"
 edition = "2021"
 
+[workspace]
+
 [dependencies]
+clap = { version = "4.4", features = ["derive"] }
+anyhow = "1.0"
+logos = "0.14"
