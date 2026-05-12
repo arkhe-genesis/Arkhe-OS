@@ -25,6 +25,7 @@ class Domain(Enum):
     JOURNALISM = auto()       # Jornalismo e fact-checking
     ENGINEERING = auto()      # Engenharia tradicional
     ART = auto()              # Arte e humanidades
+    SOCIOLOGY = auto()        # Sociologia e Ciências Sociais
 
 @dataclass
 class DomainConfig:
@@ -118,6 +119,15 @@ DOMAIN_REGISTRY: Dict[Domain, DomainConfig] = {
         risk_threshold=0.5,
         constitution_weights={"P1": 0.1, "P2": 0.2, "P3": 0.3, "P4": 0.2, "P5": 0.2},
         require_expert_review=False,
+    ),
+    Domain.SOCIOLOGY: DomainConfig(
+        name="sociology",
+        description="Sociologia e Ciências Sociais, com foco em difusão de políticas públicas",
+        primary_apis=["ibge", "osf", "scielo", "ipea"],
+        critical_keywords=["survival_analysis", "cox_model", "diffusion", "public_policy", "kaplan-meier"],
+        risk_threshold=0.3,
+        constitution_weights={"P1": 0.3, "P2": 0.2, "P3": 0.2, "P4": 0.2, "P5": 0.1},
+        require_expert_review=True,
     ),
     Domain.GENERAL: DomainConfig(
         name="general",
