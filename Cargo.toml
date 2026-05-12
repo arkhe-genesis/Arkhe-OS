@@ -72,47 +72,6 @@ members = [
 tokio = { version = "1.38", features = ["full"] }
 async-trait = "0.1"
 
-# Serialization
-    "oracle-server",
-    "substrate-9010",
-    "substrate-6064",
-    "substrate-6064/temporal",
-    "arkhe-enterprise",
-    "arkhe-qart/substrate-6072",
-
-    # Stubs (created via the script above)
-    "bootloader",
-    "kernel",
-    "substrate-6065",
-    "substrate-6071",
-    "substrate-6073",
-    "substrate-6070",
-    "substrate-6080",
-    "substrate-6070",
-    "substrate-6090",
-    "substrate-6091",
-    "substrate-6093",
-    "substrate-9001",
-    "substrate-9002",
-    "substrate-9020",
-    "substrate-6085",
-    "substrate-6070",
-    "substrate-9400",
-
-    # --- New additions ---
-
-    "substrate-9010",
-    "substrate-6064",
-    "substrate-6064/temporal",
-    "substrate-aws-orbital",
-    "cmd/arkhe",
-    "substrate-9110",
-    "substrate-6092",
-]
-
-[workspace.dependencies]
-tokio = { version = "1", features = ["full"] }
-async-trait = "0.1"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 bincode = "1.3"
