@@ -16,10 +16,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: false
 
       - name: Pull LFS objects
-        run: git lfs pull
+        run: # git lfs pull
       - name: Setup ${{ matrix.lang }}
         uses: actions/setup-${{ matrix.lang }}@v4
         with: { version: 'latest' }
@@ -45,9 +45,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: false
       - name: Pull LFS objects
-        run: git lfs pull
+        run: # git lfs pull
       - name: Download all metrics
         uses: actions/download-artifact@v4
         with: { path: ./metrics }
