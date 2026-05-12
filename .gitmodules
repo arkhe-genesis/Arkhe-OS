@@ -10,3 +10,6 @@
 [submodule "zinc-plus"]
 	path = zinc-plus
 	url = https://github.com/zinc-network/zinc-plus.git
+[submodule "components/talos"]
+	path = components/talos
+	url = https://github.com/talos-agent/talos.git
