@@ -43,6 +43,7 @@ import * as scriptTools from './script.js';
 import * as slimTools from './slim/tools.js';
 import * as snapshotTools from './snapshot.js';
 import * as spectraTools from './spectra.js';
+import * as archiveTools from './0xarchive.js';
 import * as storageTools from './storage.js';
 import * as tauTools from './tau.js';
 import type {ToolDefinition} from './ToolDefinition.js';
@@ -81,6 +82,7 @@ export const createTools = (args: ParsedArguments) => {
         ...Object.values(lambdaTools),
         ...Object.values(osCathedralTools),
         ...Object.values(spectraTools),
+        ...Object.values(archiveTools),
         ...Object.values(tauTools),
         ...Object.values(mercuryTools),
         ...Object.values(microsandboxTools),

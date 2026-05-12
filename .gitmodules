@@ -1,12 +1,123 @@
-[submodule "extensions/arkhe-deer-flow"]
-	path = extensions/arkhe-deer-flow
-	url = https://github.com/bytedance/deer-flow.git
-[submodule "blackbox_node"]
-	path = blackbox_node
-	url = https://github.com/wadadawadada/blackbox_node
-[submodule "goose"]
-	path = goose
-	url = https://github.com/block/goose.git
-[submodule "zinc-plus"]
-	path = zinc-plus
-	url = https://github.com/zinc-network/zinc-plus.git
+# ============================================================================
+# ARKHE Ω‑TEMP — .gitmodules
+# ============================================================================
+# This file defines all submodules that constitute the ARKHE multiverse.
+# Each substrate, binding, mock SDK, and tooling is an independent repository
+# pinned to a specific commit. Recursive clone:
+#   git clone --recurse-submodules https://github.com/arkhe-os/arkhe.git
+# ============================================================================
+
+# ── Low‑level firmware ───────────────────────────────────────────────────
+[submodule "bootloader"]
+	path = bootloader
+	url = https://github.com/arkhe-os/bootloader.git
+[submodule "kernel"]
+	path = kernel
+	url = https://github.com/arkhe-os/kernel.git
+
+# ── Core neural & biological substrates ──────────────────────────────────
+[submodule "substrate-6064"]
+	path = substrate-6064
+	url = https://github.com/arkhe-os/continental-mind.git
+[submodule "substrate-6064.1"]
+	path = substrate-6064.1
+	url = https://github.com/arkhe-os/quantum-biological-bridge.git
+[submodule "substrate-6065"]
+	path = substrate-6065
+	url = https://github.com/arkhe-os/neural-cartography.git
+
+# ── Intellectual property & art ──────────────────────────────────────────
+[submodule "substrate-6071"]
+	path = substrate-6071
+	url = https://github.com/arkhe-os/quantum-ip.git
+[submodule "substrate-6072"]
+	path = substrate-6072
+	url = https://github.com/arkhe-os/q-art.git
+[submodule "substrate-6073"]
+	path = substrate-6073
+	url = https://github.com/arkhe-os/financial-validator.git
+
+# ── Cryptography & compliance ───────────────────────────────────────────
+[submodule "substrate-6080"]
+	path = substrate-6080
+	url = https://github.com/arkhe-os/zklib.git
+[submodule "substrate-6085"]
+	path = substrate-6085
+	url = https://github.com/arkhe-os/quantum-compliance.git
+[submodule "substrate-6090"]
+	path = substrate-6090
+	url = https://github.com/arkhe-os/full-compliance.git
+[submodule "substrate-6091"]
+	path = substrate-6091
+	url = https://github.com/arkhe-os/multiversal-compliance.git
+
+# ── Agency & orchestration ──────────────────────────────────────────────
+[submodule "substrate-6095"]
+	path = substrate-6095
+	url = https://github.com/arkhe-os/multiversal-agency.git
+[submodule "substrate-9000"]
+	path = substrate-9000
+	url = https://github.com/arkhe-os/enterprise-suite.git
+
+# ── Cosmic & quantum engines ────────────────────────────────────────────
+[submodule "substrate-9001"]
+	path = substrate-9001
+	url = https://github.com/arkhe-os/cosmological-engine.git
+[submodule "substrate-9002"]
+	path = substrate-9002
+	url = https://github.com/arkhe-os/vortex-qpu.git
+[submodule "substrate-9010"]
+	path = substrate-9010
+	url = https://github.com/arkhe-os/nanophotonic-force.git
+[submodule "substrate-9015"]
+	path = substrate-9015
+	url = https://github.com/arkhe-os/igha.git
+[submodule "substrate-9016"]
+	path = substrate-9016
+	url = https://github.com/arkhe-os/polynomial-light.git
+[submodule "substrate-9020"]
+	path = substrate-9020
+	url = https://github.com/arkhe-os/daybreak-security.git
+
+# ── Infrastructure & DevOps ─────────────────────────────────────────────
+[submodule "substrate-9100"]
+	path = substrate-9100
+	url = https://github.com/arkhe-os/devops-orchestration.git
+[submodule "substrate-9110"]
+	path = substrate-9110
+	url = https://github.com/arkhe-os/nvidia-space-hardware.git
+[submodule "substrate-9200"]
+	path = substrate-9200
+	url = https://github.com/arkhe-os/leveldb-storage.git
+[submodule "substrate-9300"]
+	path = substrate-9300
+	url = https://github.com/arkhe-os/sophon-agent.git
+
+# ── Service daemon ──────────────────────────────────────────────────────
+[submodule "oracle-server"]
+	path = oracle-server
+	url = https://github.com/arkhe-os/oracle-daemon.git
+
+# ── Mock SDKs (Azure / IBM Quantum) ─────────────────────────────────────
+[submodule "azure-quantum-sdk"]
+	path = azure-quantum-sdk
+	url = https://github.com/arkhe-os/mock-azure-quantum.git
+[submodule "ibm-quantum-sdk"]
+	path = ibm-quantum-sdk
+	url = https://github.com/arkhe-os/mock-ibm-quantum.git
+
+# ── Bindings ───────────────────────────────────────────────────────────
+[submodule "bindings/python"]
+	path = bindings/python
+	url = https://github.com/arkhe-os/py-arkhe.git
+[submodule "bindings/wasm"]
+	path = bindings/wasm
+	url = https://github.com/arkhe-os/wasm-arkhe.git
+[submodule "bindings/cli"]
+	path = bindings/cli
+	url = https://github.com/arkhe-os/cli-rs.git
+
+# ── Self‑completion scripts ─────────────────────────────────────────────
+[submodule "scripts"]
+	path = scripts
+	url = https://github.com/arkhe-os/self-completion.git

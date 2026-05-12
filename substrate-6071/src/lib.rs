@@ -9,3 +9,4 @@ impl QipInfluence {
         oracle.influence_entropy(gradients)
     }
 }
+pub mod qip4devs;

@@ -30,6 +30,12 @@ use plonky2::plonk::circuit_builder::CircuitBuilder;
 use plonky2::plonk::config::{GenericConfig, PoseidonGoldilocksConfig};
 use plonky2::plonk::proof::ProofWithPublicInputsTarget;
 use plonky2::util::timing::TimingTree;
+use plonky2::hash::hash_types::RichField;
+use plonky2::plonk::config::Hasher;
+use plonky2::plonk::circuit_data::VerifyingKey;
+use plonky2::plonk::proof::ProofWithPublicInputs;
+use plonky2::plonk::verifier::verify_proof;
+use plonky2::field::extension::Extendable;
 
 use crate::errors::QArtError;
 use crate::types::ArtFingerprint;
@@ -121,6 +127,20 @@ pub struct StyleInfluenceCircuit {
 }
 
 impl StyleInfluenceCircuit {
+
+    pub fn verify<F: RichField + Extendable<D>, C: GenericConfig<D, F = F>, const D: usize>(
+        proof: &ZKProof,
+        vk: &VerifyingKey<F, C, D>,
+    ) -> Result<bool, QArtError>
+    where
+        <C as GenericConfig<D>>::Hasher: Hasher<F>,
+    {
+        let proof_with_pis: ProofWithPublicInputs<F, C, D> =
+            postcard::from_bytes(&proof.proof_bytes).map_err(|e| QArtError::ZkProofError(format!("Deserialization failed: {}", e)))?;
+        verify_proof(vk, proof_with_pis, &Default::default())
+            .map(|()| true)
+            .map_err(|e| QArtError::ZkProofError(format!("Plonky2 verify: {}", e)))
+    }
     /// Cria novo circuito de influência estilística
     pub fn new<F: PrimeField64>(
         builder: &mut CircuitBuilder<F, 2>,

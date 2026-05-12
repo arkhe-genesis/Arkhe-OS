@@ -1,3 +1,5 @@
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 name: Arkhe(n) Sovereign Multi-Cloud CI/CD
 
 on:
@@ -25,10 +27,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22.x'
+          node-version: '24.x'
           cache: ''
       - name: Install Dependencies
-        run: # npm install (no package.json)
+        run: echo "No npm package.json, skipping"
       - name: Run Lint
         run: # npm run lint
       - name: Security Scan (Trivy)
@@ -50,7 +52,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '22.x'
+        node-version: '24.x'
         cache: ''
 
     - name: Setup Go

@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package arkhe;
+
+option go_package = "github.com/arkhe-os/arkhe/api";
+
+import "google/protobuf/empty.proto";
+
+service ShardService {
+  rpc CreateShard (CreateShardRequest) returns (Shard);
+  rpc ListShards (ListShardsRequest) returns (ListShardsResponse);
+  rpc DestroyShard (DestroyShardRequest) returns (google.protobuf.Empty);
+  rpc GetShardStatus (GetShardStatusRequest) returns (ShardStatus);
+  rpc QueryRoyalties (QueryRoyaltiesRequest) returns (QueryRoyaltiesResponse);
+}
+
+message CreateShardRequest {
+  string substrate_id = 1;
+  string motor = 2;         // e.g., "continental-mind", "qart-engine"
+  bool gpu = 3;
+  map<string,string> labels = 4;
+}
+
+message Shard {
+  string shard_id = 1;
+  string substrate_id = 2;
+  string motor = 3;
+  string status = 4;        // "provisioning", "running", "dead"
+  string endpoint = 5;      // gRPC endpoint to the shard itself
+}
+
+message ListShardsRequest {
+}
+
+message ListShardsResponse {
+  repeated Shard shards = 1;
+}
+
+message DestroyShardRequest {
+  string shard_id = 1;
+}
+
+message GetShardStatusRequest {
+  string shard_id = 1;
+}
+
+message ShardStatus {
+  string status = 1;
+}
+
+message QueryRoyaltiesRequest {
+  int32 limit = 1;
+}
+
+message Royalty {
+  string target_block_id = 1;
+  string source_orcid = 2;
+  int64 amount = 3;
+  string status = 4;
+}
+
+message QueryRoyaltiesResponse {
+  repeated Royalty royalties = 1;
+}

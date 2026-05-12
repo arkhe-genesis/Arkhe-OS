@@ -122,6 +122,7 @@ pub use financial_bridge::{
 // TIPO PRINCIPAL: ORQUESTRADOR ENTERPRISE
 // ============================================================================
 
+use crate::stubs::*;
 use std::sync::Arc;
 
 
@@ -167,7 +168,6 @@ impl EnterpriseOrchestrator {
             qip_engine: None,
             qart_engine: None,
             financial_validator: None,
-            _nanophotonic_engine: None,
             grpc_server: None,
             rest_server: None,
             launched: false,
