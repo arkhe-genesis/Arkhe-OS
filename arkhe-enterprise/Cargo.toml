@@ -8,4 +8,4 @@ description = "ARKHE(N) ENTERPRISE PLUS SUITE - Substrato 9000"
 tokio = { version = "1.0", features = ["full"] }
 tracing = "0.1"
 arkhe-compliance = { path = "../substrate-6090" }
-arkhe-nanophotonics = { path = "../substrate-9010" }
+arkhe-amazon-braket = { path = "../substrate-9010" }
