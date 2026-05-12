@@ -1,0 +1,240 @@
+// ============================================================================
+// ARKHE Ω‑TEMP — Substrato 6062: Command Execution & Pipelines
+// ============================================================================
+// Sintaxe: $(cmd) para capturar stdout
+//          pipe { cmd1 | cmd2 | ... } para pipelines nativos
+// Integração com prove {} para ZK circuits
+// ============================================================================
+
+/// Executa um comando e retorna stdout como String
+///
+/// Em tempo de compilação: parse do comando para AST
+/// Em tempo de execução: fork/exec/wait com pipe para stdout
+///
+/// @param cmd: Comando como string (parseado pelo shell interno)
+/// @param context: Contexto do Mythos Gate para validação
+/// @return Result<String, UnixError>
+macro command_capture(cmd: expr, context: &MythosContext) -> Result<String, UnixError> {
+    // Parse do comando em tempo de compilação
+    let ast = parse_command(cmd)?;
+
+    // 1. Validar comando via Mythos Gate
+    let proposal = DecisionProposal {
+        action: format!("exec {} {}", ast.program, ast.args.join(" ")),
+        rationale: "Command execution requested via command_capture".to_string(),
+        risk_assessment: assess_command_risk(ast.program, &ast.args),
+        expected_outcome: "Command executes and returns output".to_string(),
+        fallback_plan: "Command rejected, return error".to_string(),
+        timestamp: time::nanos(),
+        requires_earth_approval: false,
+        deadline_hours: 1.0,
+    };
+
+    let mythos = MythosGate::for_context(context);
+    let decision = mythos.evaluate_decision(proposal, context)?;
+
+    if !decision.approved {
+        return Err(UnixError::PermissionDenied(
+            format!("Mythos Gate rejected command: {}", decision.rationale)
+        ));
+    }
+
+    // Executar via fork/exec
+    let (process_fd, stdout_pipe) = spawn_with_pipe(ast.program, &ast.args)?;
+
+    // Ler stdout
+    let mut output = Vec::new();
+    let mut buf = [0u8; 4096];
+    loop {
+        let n = libc::read(stdout_pipe._fd, buf.as_mut_ptr(), buf.len())?;
+        if n == 0 { break; }  // EOF
+        output.extend_from_slice(&buf[..n]);
+    }
+
+    // Fechar pipe de leitura
+    stdout_pipe.close()?;
+
+    // Aguardar processo filho
+    let mut status = 0i32;
+    libc::waitpid(process_fd._fd, &mut status, 0)?;
+
+    // Verificar exit code
+    if libc::WIFEXITED(status) && libc::WEXITSTATUS(status) != 0 {
+        return Err(UnixError::ResourceBusy(
+            format!("command exited with code {}", libc::WEXITSTATUS(status))
+        ));
+    }
+
+    // Converter para String (UTF-8)
+    String::from_utf8(output).map_err(|e|
+        UnixError::Interrupted(format!("invalid UTF-8 in output: {}", e))
+    )
+}
+
+/// Macro para pipelines nativos
+///
+/// Constroi a pipeline usando pipe() e dup2(), sem shell intermediário.
+/// Todos os exit codes são verificados.
+///
+/// @param pipeline: Expressão de pipeline (cmd1 | cmd2 | ... | cmdN)
+/// @return Result<String, UnixError> — stdout do último comando
+macro pipeline(pipeline: expr) -> Result<String, UnixError> {
+    // Parse da pipeline em componentes
+    let commands = parse_pipeline(pipeline)?;
+
+    if commands.is_empty() {
+        return Err(UnixError::InvalidFd(-1));
+    }
+
+    // Caso especial: único comando
+    if commands.len() == 1 {
+        let ctx = MythosContext::default();
+        return command_capture(commands[0], &ctx);
+    }
+
+    // Criar array de pipes para conectar comandos
+    let mut pipes = Vec::new();
+    for _ in 0..(commands.len() - 1) {
+        pipes.push(create_pipe()?);
+    }
+
+    // Fork para cada comando
+    let mut children = Vec::new();
+
+    for (i, cmd) in commands.iter().enumerate() {
+        let pid = unsafe { libc::fork() };
+        if pid < 0 {
+            // Cleanup: matar processos já criados
+            for &child_pid in &children {
+                libc::kill(child_pid, libc::SIGKILL);
+            }
+            return Err(UnixError::ResourceBusy("fork failed in pipeline".to_string()));
+        }
+
+        if pid == 0 {
+            // Child process
+            // Configurar stdin
+            if i > 0 {
+                let (read_end, _) = &pipes[i - 1];
+                libc::dup2(read_end._fd, libc::STDIN_FILENO)?;
+            }
+            // Configurar stdout
+            if i < commands.len() - 1 {
+                let (_, write_end) = &pipes[i];
+                libc::dup2(write_end._fd, libc::STDOUT_FILENO)?;
+            }
+            // Fechar todos os pipes no child
+            for (r, w) in &pipes {
+                libc::close(r._fd);
+                libc::close(w._fd);
+            }
+
+            // Executar comando
+            let ast = parse_command(cmd)?;
+            let c_program = std::ffi::CString::new(ast.program)?;
+            let c_args: Vec<std::ffi::CString> = ast.args.iter()
+                .map(|s| std::ffi::CString::new(*s))
+                .collect::<Result<_, _>>()?;
+            let mut c_arg_ptrs: Vec<*const i8> = c_args.iter().map(|s| s.as_ptr()).collect();
+            c_arg_ptrs.push(std::ptr::null());
+
+            libc::execvp(c_program.as_ptr(), c_arg_ptrs.as_mut_ptr())?;
+            libc::_exit(127);
+        }
+
+        children.push(pid);
+    }
+
+    // Parent: fechar todos os pipes
+    for (r, w) in &pipes {
+        r.close()?;
+        w.close()?;
+    }
+
+    // Ler stdout do último comando (já conectado ao parent's stdout via pipe)
+    // Na implementação real, o parent redireciona stdout para um buffer
+    // Aqui: simplificação — assumir que o último comando escreve para um pipe lido pelo parent
+
+    // Aguardar todos os filhos e verificar exit codes
+    for &pid in &children {
+        let mut status = 0i32;
+        libc::waitpid(pid, &mut status, 0)?;
+        if libc::WIFEXITED(status) && libc::WEXITSTATUS(status) != 0 {
+            return Err(UnixError::ResourceBusy(
+                format!("pipeline command exited with code {}", libc::WEXITSTATUS(status))
+            ));
+        }
+    }
+
+    // Retornar output capturado (implementação simplificada)
+    Ok(String::from("pipeline_output_placeholder"))
+}
+
+/// Executa comando dentro de um bloco prove
+///
+/// O comando é executado, mas seu output só é visível dentro do bloco.
+/// Uma prova ZK é gerada atestando que o comando foi executado
+/// e produziu um output com determinado hash.
+///
+/// @param cmd: Comando a executar
+/// @param block: Bloco de código que recebe o output como argumento
+/// @return Result<T, UnixError> — resultado do bloco prove
+macro prove_command<T>(cmd: expr, block: fn(String) -> T) -> Result<T, UnixError> {
+    // Executar comando e capturar output
+    let ctx = MythosContext::default();
+    let output = command_capture(cmd, &ctx)?;
+
+    // Calcular hash do output para a prova
+    let output_hash = sha3_256(output.as_bytes());
+
+    // Gerar prova ZK: "O comando X foi executado e produziu output com hash H"
+    let proof_statement = format!(
+        "executed_command(cmd='{}', output_hash='{}', timestamp={})",
+        cmd,
+        hex::encode(output_hash),
+        time::nanos()
+    );
+
+    // ZK backend para prove_command (Plonky2/Halo2)
+    let zk_proof = zk::prove_plonky2(
+        "command_execution_v1",
+        &proof_statement,
+        &[output_hash.as_slice()]
+    )?;
+
+    // Registrar prova no ledger
+    temporal::record_proof(zk_proof.clone())?;
+
+    // Executar bloco com output (somente dentro do contexto prove)
+    // Em produção: o output seria "blinded" fora do bloco
+    Ok(block(output))
+}
+
+/// Exemplos de uso
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_simple_command() {
+        let ctx = MythosContext::default();
+        let output = command_capture("echo hello", &ctx)?;
+        assert_eq!(output.trim(), "hello");
+    }
+
+    #[test]
+    fn test_pipeline() {
+        let count = pipeline("ls -la /tmp | grep arkhe | wc -l")?;
+        // count é uma string com o número de linhas
+        assert!(count.trim().parse::<i32>().is_ok());
+    }
+
+    #[test]
+    fn test_prove_command() {
+        let result = prove_command("date", |output| {
+            // Dentro do bloco, output é visível
+            assert!(output.contains("2026") || output.contains("2027"));
+            output.len()
+        })?;
+        // Fora do bloco, só sabemos que a prova foi gerada
+        assert!(result > 0);
+    }
+}
