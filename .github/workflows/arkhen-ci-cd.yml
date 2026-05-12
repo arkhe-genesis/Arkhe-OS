@@ -25,9 +25,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: false
       - name: Pull LFS objects
-        run: git lfs pull
+        run: # git lfs pull
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -53,10 +53,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        lfs: true
+        lfs: false
     
     - name: Pull LFS objects
-      run: git lfs pull
+      run: # git lfs pull
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
@@ -93,9 +93,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: false
       - name: Pull LFS objects
-        run: git lfs pull
+        run: # git lfs pull
       - name: Download Build Artifacts
         uses: actions/download-artifact@v4
         with:
@@ -133,9 +133,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        lfs: true
+        lfs: false
     - name: Pull LFS objects
-      run: git lfs pull
+      run: # git lfs pull
     - name: Setup Docker Buildx
       uses: docker/setup-buildx-action@v3
     - name: Login no Container Registry (GHCR)
@@ -197,9 +197,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        lfs: true
+        lfs: false
     - name: Pull LFS objects
-      run: git lfs pull
+      run: # git lfs pull
     - name: Subagent Skopos: Coordinate Deployment & Hermes Distribution
       run: |
         DIST_FLAG=""
@@ -216,9 +216,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        lfs: true
+        lfs: false
     - name: Pull LFS objects
-      run: git lfs pull
+      run: # git lfs pull
     - name: Deploy to AWS EKS & GCP GKE
       run: |
         echo "🜏 Applying manifests to AWS EKS (Primary)..."

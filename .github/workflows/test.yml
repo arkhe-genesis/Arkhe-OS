@@ -16,10 +16,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        lfs: true
+        lfs: false
 
     - name: Pull LFS objects
-      run: git lfs pull
+      run: # git lfs pull
     - name: Setup Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:

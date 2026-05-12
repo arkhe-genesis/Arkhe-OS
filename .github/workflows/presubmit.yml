@@ -23,11 +23,11 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: false
           fetch-depth: 2
 
       - name: Pull LFS objects
-        run: git lfs pull
+        run: # git lfs pull
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -49,11 +49,11 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: false
           fetch-depth: 2
 
       - name: Pull LFS objects
-        run: git lfs pull
+        run: # git lfs pull
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
