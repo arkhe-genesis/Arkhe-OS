@@ -1,5 +1,6 @@
 use crate::export_control::WassenaarCircuitProof;
 use crate::quantum_fairness::FairnessProof;
+use arkhe_entropy_oracle::{EntropyOracle, QuantumRandomnessVerify};
 
 pub struct QuantumAuditTrail;
 
@@ -9,6 +10,12 @@ impl QuantumAuditTrail {
         _fairness_proof: &FairnessProof,
     ) -> Result<(), AuditError> {
         Ok(())
+    }
+
+    pub fn verify_source_randomness(source_data: &[u8]) -> bool {
+        let oracle = EntropyOracle;
+        // Verify minimum entropy requirement for quantum source
+        oracle.verify_min_entropy(source_data, 7.5)
     }
 }
 
