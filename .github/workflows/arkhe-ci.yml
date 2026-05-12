@@ -58,12 +58,12 @@ jobs:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: false
           fetch-depth: 0
           submodules: recursive
 
       - name: Pull LFS objects
-        run: git lfs pull
+        run: # git lfs pull
       - name: 🐍 Setup Python
         uses: actions/setup-python@v5
         with:
@@ -132,10 +132,10 @@ jobs:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: false
 
       - name: Pull LFS objects
-        run: git lfs pull
+        run: # git lfs pull
       - name: 🐳 Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:

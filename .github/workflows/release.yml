@@ -28,10 +28,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: false
 
       - name: Pull LFS objects
-        run: git lfs pull
+        run: # git lfs pull
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
