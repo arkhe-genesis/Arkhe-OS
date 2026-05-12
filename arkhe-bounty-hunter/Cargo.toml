@@ -1,0 +1,126 @@
+resolver = "2"
+
+[package]
+name = "arkhe-bounty-hunter"
+version = "5.6.0"
+edition = "2021"
+description = "ARKHE Ω-TEMP — Universal Bug Bounty Hunter: Automated vulnerability discovery across all languages"
+license = "MIT"
+repository = "https://github.com/arkhe-os/bounty-hunter"
+readme = "README.md"
+keywords = ["arkhe", "security", "bug-bounty", "vulnerability", "fuzzing", "static-analysis", "multilingual"]
+categories = ["security", "static-analysis", "fuzzing", "development-tools"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+strip = true
+codegen-units = 1
+panic = "abort"
+incremental = false
+
+[profile.dev]
+opt-level = 0
+debug = true
+overflow-checks = true
+
+[profile.bench]
+opt-level = 3
+lto = true
+debug = false
+
+[features]
+default = ["full-vuln-db", "ml-detection", "temporal-integration"]
+full-vuln-db = []
+mini-vuln-db = []
+ml-detection = ["dep:smartcore", "dep:linfa", "dep:ndarray", ]
+temporal-integration = []
+python-bindings = ["dep:pyo3"]
+wasm-bindings = ["dep:wasm-bindgen"]
+sim-test = []
+
+[dependencies]
+# === ARKHE Ecosystem ===
+
+# === Parallelism ===
+tokio = { version = "1.38", features = ["full", "sync", "time", "rt-multi-thread"], optional = true }
+async-trait = "0.1.80"
+rayon = "1.10"
+crossbeam = "0.8.4"
+dashmap = "5.5.3"
+parking_lot = "0.12.3"
+
+# === ML ===
+smartcore = { version = "0.4.0", optional = true }
+linfa = { version = "0.7.0", optional = true }
+ndarray = { version = "0.15.6", optional = true }
+tch = { version = "0.14.0", optional = true }
+
+# === Serialization ===
+serde = { version = "1.0.204", features = ["derive"] }
+serde_json = "1.0.120"
+serde_yaml = "0.9.34+deprecated"
+bincode = "1.3.3"
+
+# === Text Processing ===
+regex = "1.10.6"
+aho-corasick = "1.1.3"
+simdutf8 = "0.1.5"
+unicode-segmentation = "1.12.0"
+unicode-ident = "1.0.12"
+unicode-normalization = "0.1.23"
+
+# === Treesitter bindings for AST analysis ===
+tree-sitter = "0.20"
+tree-sitter-highlight = "0.20"
+
+# === Cryptography ===
+sha3 = "0.10.8"
+blake3 = "1.7.1"
+ed25519 = "2.2.3"
+hmac = "0.12.1"
+aes = "0.8.4"
+
+# === HTTP & Webhooks ===
+reqwest = { version = "0.12.0", features = ["rustls-tls"], optional = true }
+hyper = { version = "1.3.0", optional = true }
+serde_qs = "0.13.0"
+
+# === Utilities ===
+indicatif = "0.17.8"
+uuid = { version = "1.8.0", features = ["v4", "serde"] }
+chrono = { version = "0.4.38", features = ["serde"] }
+itertools = "0.13.0"
+hex = "0.4.3"
+base64 = "0.22.1"
+bitflags = "2.6.0"
+smallvec = "1.13.2"
+petgraph = "0.6.4"
+thiserror = "1.0.61"
+anyhow = "1.0.81"
+once_cell = "1.19.0"
+ahash = "0.8.11"
+rand = "0.8.5"
+log = "0.4.22"
+tracing = "0.1.40"
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+memmap2 = "0.9.4"
+tempfile = "3.10.1"
+
+# === Python Bindings ===
+pyo3 = { version = "0.22.0", optional = true }
+wasm-bindgen = { version = "0.2.92", optional = true }
+js-sys = { version = "0.3.69", optional = true }
+serde-wasm-bindgen = { version = "0.6.5", optional = true }
+
+[dev-dependencies]
+criterion = { version = "0.5.1", features = ["html_reports"] }
+insta = "1.34.0"
+pretty_assertions = "1.4.0"
+arbitrary = { version = "1.3.2", features = ["derive"] }
+proptest = "1.4.0"
+tokio = { version = "1.38", features = ["full", "test-util", "sync"] }
+rstest = "0.18.2"

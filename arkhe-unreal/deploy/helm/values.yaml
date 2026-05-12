@@ -1,0 +1,66 @@
+replicaCount: 1
+
+image:
+  repository: arkhe/arkhe-unreal
+  pullPolicy: IfNotPresent
+  tag: "6.0.0"
+
+service:
+  type: LoadBalancer
+  port: 7777  # Default UE port
+  name: arkhe-unreal
+
+arkhe:
+  # Temporal chain configuration
+  temporal:
+    enabled: true
+    genesisBlock: "auto"
+    blockInterval: "16ms"     # Per-frame blocks at 60fps
+    merkleTree: true
+    zkProofs: false           # Enable for production
+
+  # Spatial grid configuration
+  spatial:
+    enabled: true
+    cellSize: 500.0           # Unreal units
+    worldSize: 100000.0       # 100km
+    maxActorsPerCell: 1024
+
+  # Consciousness engine
+  consciousness:
+    enabled: true
+    maxAgents: 100
+    inferenceMode: "simulation"  # cloud | local | hybrid | simulation
+    wasmModulePath: "/arkhe/wasm"
+
+  # Wasm runtime
+  wasm:
+    enabled: true
+    maxMemoryMB: 256
+    maxExecutionMs: 100
+    sandboxLevel: "strict"    # strict | relaxed | none
+
+  # Multiplayer temporal sync
+  multiplayer:
+    enabled: true
+    maxPlayers: 64
+    tickRate: 60
+    stateSyncInterval: 1      # frames
+    rollbackFrames: 3
+
+resources:
+  limits:
+    cpu: "8"
+    memory: "16Gi"
+  requests:
+    cpu: "4"
+    memory: "8Gi"
+
+nodeSelector:
+  accelerator: gpu
+
+tolerations:
+  - key: "arkhe"
+    operator: "Equal"
+    value: "true"
+    effect: "NoSchedule"

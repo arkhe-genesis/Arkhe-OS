@@ -139,9 +139,12 @@ debug/
 !arkhe-go/
 !arkhe-android/
 arkhe-*/
+!arkhe-cosmological/
 $# arkhe-*/
+!arkhe-cosmological/
 !arkhe-core/
 !arkhe-os/
+!arkhe-qart/
 substrates/legacy/
 archive/
 *.mtp3
@@ -533,6 +536,9 @@ app_arkhe/frontend/node_modules
 final_app_arkhe/frontend/node_modules
 arkhe-os/ui/desktop/node_modules
 arkhe-webrtc/node_modules/
-
-# Override to allow arkhe-qip for QIP + ORCID + Entropy + Light Sculptor + IGHA
-!arkhe-qip/
+arkhe-polyglot-parser/target/
+!arkhe-polyglot-parser/
+arkhe-polyglot-parser/target/
+target/
+arkhe-webrtc/node_modules/
+!arkhe-enterprise/

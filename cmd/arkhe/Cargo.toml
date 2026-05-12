@@ -1,0 +1,25 @@
+[package]
+name = "arkhe"
+version = "6.1.0"
+edition = "2021"
+description = "ARKHE OS Multiversal Orchestrator"
+authors = ["Arkhe Network <noreply@arkhe.network>"]
+
+[[bin]]
+name = "arkhe"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+tonic = "0.12"
+prost = "=0.13.5"
+prost-types = "=0.13.5"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["full"] }
+anyhow = "1"
+arkhe-nanophotonics = { path = "../../substrate-9010" }
+arkhe-aws-orbital = { path = "../../substrate-aws-orbital" }
+
+[build-dependencies]
+tonic-build = "0.12"

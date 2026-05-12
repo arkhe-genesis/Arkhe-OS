@@ -1,0 +1,25 @@
+[package]
+name = "arkhe-quantum-compliance"
+version = "6.1.0"
+edition = "2021"
+
+[dependencies]
+arkhe-zklib = { path = "../substrate-6080" }
+arkhe-compliance = { path = "../substrate-6090" }
+arkhe-multiversal-compliance = { path = "../substrate-6091" }
+arkhe-temporal = { path = "../substrate-6064/temporal" }
+plonky2 = { git = "https://github.com/mir-protocol/plonky2", optional = true }
+plonky2_field = { git = "https://github.com/mir-protocol/plonky2", optional = true }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "1"
+tracing = "0.1"
+hex = "0.4"
+uuid = { version = "1", features = ["v4"] }
+
+[features]
+default = ["plonky2"]
+plonky2 = ["dep:plonky2", "dep:plonky2_field"]
+
+[dependencies.arkhe-entropy-oracle]
+path = "../substrate-6070"

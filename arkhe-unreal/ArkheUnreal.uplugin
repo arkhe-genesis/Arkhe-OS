@@ -1,0 +1,51 @@
+{
+    "FileVersion": 3,
+    "Version": 1,
+    "VersionName": "6.0.0",
+    "FriendlyName": "ARKHE Ω-TEMP",
+    "Description": "Temporal Chain, Spatial Computing & Consciousness Bridge for Unreal Engine",
+    "Category": "Rendering",
+    "CreatedBy": "ARKHE OS Collective",
+    "CreatedByURL": "https://github.com/arkhe-os",
+    "DocsURL": "https://docs.arkhe-os.org/unreal",
+    "MarketplaceURL": "",
+    "SupportURL": "https://github.com/arkhe-os/arkhe-unreal/issues",
+    "CanContainContent": true,
+    "IsBetaVersion": false,
+    "IsExperimentalVersion": false,
+    "Installed": false,
+    "Modules": [
+        {
+            "Name": "ArkheUnreal",
+            "Type": "Runtime",
+            "LoadingPhase": "Default",
+            "AdditionalDependencies": ["Engine"]
+        },
+        {
+            "Name": "ArkheUnrealEditor",
+            "Type": "Editor",
+            "LoadingPhase": "PostEngineInit"
+        },
+        {
+            "Name": "ArkheWasmRuntime",
+            "Type": "Runtime",
+            "LoadingPhase": "PreDefault",
+            "WhitelistPlatforms": ["Win64", "Linux", "Mac"]
+        }
+    ],
+    "Plugins": [
+        {
+            "Name": "Wasmtime",
+            "Enabled": true
+        },
+        {
+            "Name": "Nanite",
+            "Enabled": true
+        },
+        {
+            "Name": "MetaHuman",
+            "Enabled": true,
+            "Optional": true
+        }
+    ]
+}

@@ -1,0 +1,8 @@
+rule "pull_request_target_cache_poisoning" {
+    // Detect workflows that use pull_request_target + actions/cache
+    // across the fork→base trust boundary
+    pattern = "pull_request_target" && "actions/cache@";
+    severity = CRITICAL;
+    action = BLOCK;
+    explanation = "Este workflow permite que código de um fork acesse o cache do repositório base. Isso pode ser explorado para injetar payloads maliciosos no pipeline de build.";
+}

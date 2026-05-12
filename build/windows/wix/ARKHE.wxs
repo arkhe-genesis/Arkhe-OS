@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" Name="ARKHE OS" Language="1033" Version="6.1.0.0" Manufacturer="ARKHE Foundation"
+           UpgradeCode="12345678-1234-1234-1234-123456789012">
+
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x64"/>
+
+    <!-- Custom UI with EULA and feature selection -->
+    <UI>
+      <UIRef Id="WixUI_FeatureTree"/>
+      <UIRef Id="WixUI_ErrorProgressText"/>
+    </UI>
+
+    <!-- Major upgrade support -->
+    <MajorUpgrade DowngradeErrorMessage="A newer version of ARKHE OS is already installed."/>
+
+    <!-- Environment PATH addition -->
+    <Environment Id="ARKHE_PATH" Name="PATH" Value="[INSTALLDIR]bin" Permanent="no" Part="last" Action="set" System="yes"/>
+
+    <!-- Directory structure -->
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder">
+        <Directory Id="INSTALLDIR" Name="ARKHE OS">
+          <Directory Id="BINDIR" Name="bin"/>
+          <Directory Id="LIBDIR" Name="lib"/>
+          <Directory Id="SHAREDIR" Name="share">
+            <Directory Id="CORVODIR" Name="corvo"/>
+            <Directory Id="PYTHONDIR" Name="python"/>
+            <Directory Id="MODELSDIR" Name="models"/>
+          </Directory>
+          <Directory Id="CONFDIR" Name="etc"/>
+          <Directory Id="VARDIR" Name="var">
+            <Directory Id="DATADIR" Name="data"/>
+            <Directory Id="LOGDIR" Name="log"/>
+            <Directory Id="TEMPORALDIR" Name="temporal"/>
+          </Directory>
+          <Directory Id="DOCSDIR" Name="docs"/>
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <!-- Core Feature: Services + CLI -->
+    <Feature Id="CoreFeature" Title="ARKHE OS Core" Level="1" Absent="disallow" ConfigurableDirectory="INSTALLDIR">
+      <!-- CLI binary -->
+      <Component Id="ArkheCLI" Directory="BINDIR" Guid="*">
+        <File Id="ArkheEXE" Name="arkhe.exe" Source="target/release/arkhe.exe"/>
+        <File Id="ArkhePK2EXE" Name="arkhe-pk2.exe" Source="target/release/arkhe-pk2.exe"/>
+      </Component>
+
+      <!-- System services (daemons) -->
+      <Component Id="ArkheDaemon" Directory="BINDIR" Guid="*">
+        <File Id="ArkhedEXE" Name="arkhed.exe" Source="target/release/arkhed.exe"/>
+        <ServiceInstall Id="ARKHE_SVC" Name="ARKHE" DisplayName="ARKHE OS Daemon"
+                        Description="Core orchestration service for the ARKHE multiversal fabric"
+                        Start="auto" ErrorControl="normal" Type="ownProcess"/>
+        <ServiceControl Id="ARKHE_SVC_CTRL" Name="ARKHE" Start="install" Stop="both" Remove="uninstall" Wait="yes"/>
+      </Component>
+
+      <!-- WebSocket relay -->
+      <Component Id="ArkheWSService" Directory="BINDIR" Guid="*">
+        <File Id="ArkheWSexe" Name="arkhe-ws.exe" Source="target/release/arkhe-ws.exe"/>
+        <ServiceInstall Id="ARKHE_WS_SVC" Name="ARKHews" DisplayName="ARKHE WebSocket Relay"
+                        Start="auto" ErrorControl="normal" Type="ownProcess"/>
+      </Component>
+
+      <!-- Consciousness engine -->
+      <Component Id="ConsciousnessService" Directory="BINDIR" Guid="*">
+        <File Id="ArkheConsciousnessEXE" Name="arkhe-consciousness.exe" Source="target/release/arkhe-consciousness.exe"/>
+        <ServiceInstall Id="ARKHE_CONSC_SVC" Name="ARKHECon" DisplayName="ARKHE Consciousness Engine"
+                        Start="demand" ErrorControl="normal" Type="ownProcess"/>
+      </Component>
+
+      <!-- Phase oracle -->
+      <Component Id="PhaseOracleService" Directory="BINDIR" Guid="*">
+        <File Id="PhaseOracleEXE" Name="phase-oracle.exe" Source="target/release/phase-oracle.exe"/>
+        <ServiceInstall Id="ARKHE_PHASE_SVC" Name="ARKHEPhase" DisplayName="ARKHE Phase Oracle"
+                        Start="demand" ErrorControl="normal" Type="ownProcess"/>
+      </Component>
+
+      <!-- Python runtime + components -->
+      <Component Id="PythonComponents" Directory="PYTHONDIR" Guid="*">
+        <File Id="PixBridgePy" Name="x402_pix_bridge.py" Source="bridges/x402/x402_pix_bridge.py"/>
+        <File Id="QArtPy" Name="qart.py" Source="bindings/python/qart.py"/>
+        <File Id="ArkhePyLib" Name="arkhe_core.py" Source="arkhe_core/temporal_network.py"/>
+        <File Id="PyExe" Name="python.exe" Source="python-embedded/python.exe"/>
+      </Component>
+
+      <!-- Configuration files -->
+      <Component Id="ConfigFiles" Directory="CONFDIR" Guid="*">
+        <File Id="ArkheConf" Name="arkhe.toml" Source="config/arkhe.toml"/>
+      </Component>
+    </Feature>
+
+    <!-- CORVO OS live-build artifacts -->
+    <Feature Id="CorvoFeature" Title="CORVO OS" Level="2" Description="CORVO Operating System live-build artifacts">
+      <Component Id="CorvoISO" Directory="CORVODIR" Guid="*">
+        <File Id="CorvoISOFile" Name="corvo-live.iso" Source="corvo/live-build/artifacts/corvo-live.iso"/>
+        <File Id="CorvoKernel" Name="vmlinuz" Source="corvo/live-build/artifacts/vmlinuz"/>
+        <File Id="CorvoInitrd" Name="initrd.img" Source="corvo/live-build/artifacts/initrd.img"/>
+      </Component>
+    </Feature>
+
+    <!-- Model artifacts (Quantum, Carbon Twin, etc.) -->
+    <Feature Id="ModelsFeature" Title="ARKHE Models" Level="2" Description="Neural, quantum, and biological model weights">
+      <Component Id="ModelWeights" Directory="MODELSDIR" Guid="*">
+        <File Id="ContinentalMindWeights" Name="250T-full.safetensors" Source="data/models/continental-mind/250T-full/weights_fp8_e4m3.safetensors"/>
+        <File Id="QartCLIP" Name="clip-vit-l14.pt" Source="data/models/qart/clip-vit-l14.pt"/>
+        <File Id="VortexCalib" Name="heron_calibrations.json" Source="data/models/vortex-qpu/ibm_heron_calibrations.json"/>
+      </Component>
+    </Feature>
+
+    <!-- Documentation -->
+    <Feature Id="DocsFeature" Title="Documentation" Level="1">
+      <Component Id="Docs" Directory="DOCSDIR" Guid="*">
+        <File Id="ArchitectureDoc" Name="ARCHITECTURE.md" Source="docs/ARCHITECTURE.md"/>
+        <File Id="QArtSpec" Name="QART_SPECIFICATION.md" Source="docs/QART_SPECIFICATION.md"/>
+        <File Id="ZKProofsDoc" Name="ZK_DERIVATION_PROOFS.md" Source="docs/ZK_DERIVATION_PROOFS.md"/>
+      </Component>
+    </Feature>
+
+    <!-- Registry entries for version and ARKHE_HOME -->
+    <Component Id="RegistryEntries" Directory="TARGETDIR" Guid="*">
+      <RegistryKey Root="HKLM" Key="SOFTWARE\ARKHE OS Foundation\ARKHE OS">
+        <RegistryValue Name="Version" Value="6.1.0.0" Type="string"/>
+        <RegistryValue Name="InstallPath" Value="[INSTALLDIR]" Type="string"/>
+        <RegistryValue Name="DataPath" Value="[VARDIR]data" Type="string"/>
+        <RegistryValue Name="ConfigPath" Value="[CONFDIR]" Type="string"/>
+      </RegistryKey>
+    </Component>
+  </Product>
+</Wix>

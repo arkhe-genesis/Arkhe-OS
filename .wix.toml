@@ -1,0 +1,5 @@
+[package]
+name = "arkhe"
+version = "6.1.0"
+description = "ARKHE OS Multiversal Orchestrator"
+manufacturer = "Arkhe Network"

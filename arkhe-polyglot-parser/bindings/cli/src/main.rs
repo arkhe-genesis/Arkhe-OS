@@ -63,13 +63,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     match cli.command {
         Commands::Detect { file } => {
-            let mut parser = PolyglotParser::new(None);
+            let parser = PolyglotParser::new(None);
             println!("Detecting language for file: {:?}", file);
             let content = std::fs::read_to_string(&file)?;
             let detection = parser.detect_language(&content, file.file_name().and_then(|n| n.to_str()));
             println!("Language detected: {:?}", detection.language);
         },
-        Commands::Parse { file, language, format } => {
+        Commands::Parse { file, language, format: _ } => {
             println!("Parsing file: {:?} with language {:?}", file, language);
         },
         Commands::Docs { file, format, plantuml_type } => {

@@ -1,6 +1,11 @@
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 # .github/workflows/cross-lang-coherence.yml
 name: Cross-Language Coherence Aggregation
 on: [push, pull_request]
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   aggregate:
@@ -10,7 +15,11 @@ jobs:
         lang: [python, typescript, rust, go]
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: false
 
+      - name: Pull LFS objects
+        run: # git lfs pull
       - name: Setup ${{ matrix.lang }}
         uses: actions/setup-${{ matrix.lang }}@v4
         with: { version: 'latest' }
@@ -35,6 +44,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: false
+      - name: Pull LFS objects
+        run: # git lfs pull
       - name: Download all metrics
         uses: actions/download-artifact@v4
         with: { path: ./metrics }
