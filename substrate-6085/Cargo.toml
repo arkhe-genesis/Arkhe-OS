@@ -24,3 +24,6 @@ nexus-network = { workspace = true, optional = true }
 [features]
 default = ["plonky2"]
 plonky2 = ["dep:plonky2", "dep:plonky2_field"]
+
+[dependencies.arkhe-entropy-oracle]
+path = "../substrate-6070"

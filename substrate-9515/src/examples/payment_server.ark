@@ -1,0 +1,20 @@
+// payment_server.ark
+#[mcp_tool(name = "pay", description = "Send a Pix payment to an ORCID")]
+fn pay_tool(dest: ORCID, amount: Float) -> Result<PaymentReceipt, Error> {
+    pay(dest, amount, pix);
+    PaymentReceipt { txid: "abc", status: "completed" }
+}
+
+#[mcp_resource(name = "ledger", description = "Current TemporalChain state")]
+fn ledger_resource() -> TemporalState {
+    qfetch("qhttp://temporal/state")
+}
+
+block mcp_start {
+    let server = mcp::serve(
+        tools: [pay_tool],
+        resources: [ledger_resource],
+        transport: http("0.0.0.0:9515")
+    );
+    server.start();
+}

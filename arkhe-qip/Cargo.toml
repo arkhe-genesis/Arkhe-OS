@@ -1,0 +1,11 @@
+[workspace]
+members = [
+    "substrate-6071",
+    "orcid",
+    "bindings/python",
+    "bindings/wasm",
+    "substrate-6070",
+    "substrate-9016",
+    "substrate-9015",
+]
+resolver = "2"

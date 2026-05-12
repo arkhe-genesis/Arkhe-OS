@@ -2,6 +2,8 @@
 name = "arkhe"
 version = "6.1.0"
 edition = "2021"
+description = "ARKHE OS Multiversal Orchestrator"
+authors = ["Arkhe Network <noreply@arkhe.network>"]
 
 [[bin]]
 name = "arkhe"

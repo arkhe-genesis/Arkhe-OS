@@ -1,7 +1,9 @@
 [package]
-name = "substrate-6070"
-version = "0.1.0"
+name = "arkhe-entropy-oracle"
+version = "6.1.0"
 edition = "2021"
+authors = ["ARKHE OS <hello@arkhe.os>"]
+description = "Substrato 6070: Entropy Oracle for ARKHE TemporalChain"
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
@@ -21,3 +23,4 @@ plonky2_field = { git = "https://github.com/mir-protocol/plonky2", version = "1.
 nexus-sdk = { workspace = true, optional = true }
 nexus-core = { workspace = true, optional = true }
 nexus-network = { workspace = true, optional = true }
+plonky2_field = { git = "https://github.com/mir-protocol/plonky2", version = "1.0.0" }

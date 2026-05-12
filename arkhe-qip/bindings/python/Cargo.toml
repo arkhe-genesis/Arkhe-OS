@@ -1,0 +1,10 @@
+[package]
+name = "arkhe-qip-python"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "arkhe_qip_python"
+crate-type = ["cdylib"]
+
+[dependencies]

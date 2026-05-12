@@ -20,6 +20,10 @@ jobs:
     container: rust:slim
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Pull LFS objects
+        run: git lfs pull
       - name: Install wasm target
         run: rustup target add wasm32-wasi
       - name: Clippy
@@ -32,6 +36,10 @@ jobs:
     container: rust:slim
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Pull LFS objects
+        run: git lfs pull
       - run: cargo test --target wasm32-wasi
       - run: cargo bench --target wasm32-wasi
 
@@ -40,6 +48,10 @@ jobs:
     needs: [rust-lint, rust-test]
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Pull LFS objects
+        run: git lfs pull
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: wasm32-wasi
