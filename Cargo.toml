@@ -24,6 +24,7 @@ members = [
     "substrate-6064",                       # Continental Mind (250T)
     # "substrate-6064.1",                     # Carbon Twin: Quantum‑Biological Bridge
     "substrate-6065",                       # Neural Cartography (proofreading)
+    "substrate-6066",                       # Retrocausal UNIX Channel
 
     # --- Intellectual property & art ---
     "substrate-6070",                       # The Entropy Oracle
@@ -53,8 +54,8 @@ members = [
     "substrate-9515",                       # Ark-lang MCP Bridge
 
     # --- CLI & bindings ---
-    "cmd/arkhe",
-    "cmd/arkhe-unix",                            # Go CLI (via Go workspace, if applicable) – Rust binary shim
+    "cmd/arkhe",                            # Go CLI (via Go workspace, if applicable) – Rust binary shim
+    "cmd/arkhe-unix",
     "bindings/python",                      # Python bindings (PyO3)
     "bindings/wasm",                        # Wasm bindings
     "bindings/cli",                         # Rust CLI helpers (if any)
