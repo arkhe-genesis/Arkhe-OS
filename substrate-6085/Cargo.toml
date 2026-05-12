@@ -17,6 +17,10 @@ tracing = "0.1"
 hex = "0.4"
 uuid = { version = "1", features = ["v4"] }
 
+nexus-sdk = { workspace = true, optional = true }
+nexus-core = { workspace = true, optional = true }
+nexus-network = { workspace = true, optional = true }
+
 [features]
 default = ["plonky2"]
 plonky2 = ["dep:plonky2", "dep:plonky2_field"]

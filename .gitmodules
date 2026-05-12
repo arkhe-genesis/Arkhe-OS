@@ -121,3 +121,9 @@
 [submodule "scripts"]
 	path = scripts
 	url = https://github.com/arkhe-os/self-completion.git
+[submodule "third_party/nexus-zkvm"]
+	path = third_party/nexus-zkvm
+	url = https://github.com/nexus-xyz/nexus-zkvm.git
+[submodule "third_party/nexus-cli"]
+	path = third_party/nexus-cli
+	url = https://github.com/nexus-xyz/nexus-cli.git

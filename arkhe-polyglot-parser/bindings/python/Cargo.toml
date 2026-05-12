@@ -11,3 +11,7 @@ crate-type = ["cdylib"]
 pyo3 = { version = "0.20", features = ["extension-module"] }
 parser-core = { path = "../../parser-core" }
 runtime = { path = "../../runtime" }
+
+nexus-sdk = { workspace = true, optional = true }
+nexus-core = { workspace = true, optional = true }
+nexus-network = { workspace = true, optional = true }

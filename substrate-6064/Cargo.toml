@@ -11,3 +11,7 @@ lazy_static = "1.4"
 rcgen = "0.10"
 rustls = "0.21"
 tokio = { version = "1.38", features = ["full"] }
+
+nexus-sdk = { workspace = true, optional = true }
+nexus-core = { workspace = true, optional = true }
+nexus-network = { workspace = true, optional = true }

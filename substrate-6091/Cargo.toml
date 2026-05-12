@@ -19,3 +19,7 @@ hex = "0.4"
 hmac = "0.12"
 sha2 = "0.10"
 regex = "1.10"
+
+nexus-sdk = { workspace = true, optional = true }
+nexus-core = { workspace = true, optional = true }
+nexus-network = { workspace = true, optional = true }

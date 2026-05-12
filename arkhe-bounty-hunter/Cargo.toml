@@ -116,6 +116,10 @@ wasm-bindgen = { version = "0.2.92", optional = true }
 js-sys = { version = "0.3.69", optional = true }
 serde-wasm-bindgen = { version = "0.6.5", optional = true }
 
+nexus-sdk = { workspace = true, optional = true }
+nexus-core = { workspace = true, optional = true }
+nexus-network = { workspace = true, optional = true }
+
 [dev-dependencies]
 criterion = { version = "0.5.1", features = ["html_reports"] }
 insta = "1.34.0"

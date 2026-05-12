@@ -7,3 +7,7 @@ edition = "2021"
 quantum_cell = { path = "../quantum_cell" }
 zk_therapeutic = { path = "../zk_therapeutic" }
 cell_royalty = { path = "../cell_royalty" }
+
+nexus-sdk = { workspace = true, optional = true }
+nexus-core = { workspace = true, optional = true }
+nexus-network = { workspace = true, optional = true }

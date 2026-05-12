@@ -5,3 +5,7 @@ edition = "2021"
 
 [dependencies]
 arkhe-qart = { path = "../../substrate-6072" }
+
+nexus-sdk = { workspace = true, optional = true }
+nexus-core = { workspace = true, optional = true }
+nexus-network = { workspace = true, optional = true }

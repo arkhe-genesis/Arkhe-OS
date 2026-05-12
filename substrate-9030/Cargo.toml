@@ -5,3 +5,7 @@ edition = "2021"
 
 [dependencies]
 # ZK dependencies, maybe later
+
+nexus-sdk = { workspace = true, optional = true }
+nexus-core = { workspace = true, optional = true }
+nexus-network = { workspace = true, optional = true }
