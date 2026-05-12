@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  droid-vm:
+    build: .
+    privileged: true
+    devices:
+      - /dev/kvm:/dev/kvm
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - ../../../components/droid-vm:/app
+    ports:
+      - "5900:5900" # VNC port (if applicable)
+      - "5037:5037" # ADB port
+    environment:
+      - ANDROID_HOME=/usr/lib/android-sdk

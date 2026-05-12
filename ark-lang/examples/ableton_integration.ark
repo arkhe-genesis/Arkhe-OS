@@ -1,0 +1,32 @@
+use mcp::ableton;
+use arkhe::q_art;
+use arkhe::temporal::{anchor, prove};
+
+block produce_drum_loop {
+    ableton.set_tempo(120.0);
+    ableton.create_midi_track(0, "drums");
+
+    // Kick on beats 1 and 3
+    ableton.add_midi_clip(0, "kick", length_beats: 4.0);
+    ableton.set_notes(0, "kick", [
+        { pitch: 36, start_time: 0.0, duration: 0.5 },
+        { pitch: 36, start_time: 2.0, duration: 0.5 }
+    ]);
+
+    // Hi-hat on 8th notes
+    ableton.add_midi_clip(0, "hihat", length_beats: 4.0);
+    let mut hihat_notes = [];
+    for i in 0..8 {
+        hihat_notes.push({ pitch: 42, start_time: i as f32 * 0.5, duration: 0.1 });
+    }
+    ableton.set_notes(0, "hihat", hihat_notes);
+
+    // Play and verify
+    ableton.play();
+    ableton.stop();
+
+    // Anchor the production as an ArtBlock
+    let audio_hash = ableton.export_audio("/tmp/drum_loop.wav");
+    let fp = q_art.fingerprint(audio_hash);
+    anchor(fp, prove(fp));
+}

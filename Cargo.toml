@@ -24,6 +24,7 @@ members = [
     "substrate-6064",                       # Continental Mind (250T)
     # "substrate-6064.1",                     # Carbon Twin: Quantum‑Biological Bridge
     "substrate-6065",                       # Neural Cartography (proofreading)
+    "substrate-6066",                       # Retrocausal UNIX Channel
 
     # --- Intellectual property & art ---
     "substrate-6070",                       # The Entropy Oracle
@@ -54,6 +55,7 @@ members = [
 
     # --- CLI & bindings ---
     "cmd/arkhe",                            # Go CLI (via Go workspace, if applicable) – Rust binary shim
+    "cmd/arkhe-unix",
     "bindings/python",                      # Python bindings (PyO3)
     "bindings/wasm",                        # Wasm bindings
     "bindings/cli",                         # Rust CLI helpers (if any)
@@ -61,9 +63,7 @@ members = [
     # --- Tooling & scripts ---
     "oracle-server",                        # gRPC oracle daemon (Rust)
     "scripts",                              # Self‑completion binary (arkhe-self-complete)
-    "ark-lang/ark-compiler",
-    "tools/arkp",
-    "tools/arkp",
+    "ark-lang/ark-compiler", "substrate-6067",
 ]
 
 # ============================================================================
@@ -98,6 +98,7 @@ tiny-keccak = { version = "2.0.2", features = ["keccak"] }
 tokio = { version = "1.38", features = ["full"] }
 async-trait = "0.1"
 
+# Serialization
 
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
