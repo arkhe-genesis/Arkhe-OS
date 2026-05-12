@@ -1,10 +1,151 @@
+# ============================================================================
+# ARKHE Ω‑TEMP v6.1.0 — Unified Workspace Root Cargo.toml
+# ============================================================================
+#
+# This workspace orchestrates the entire multiverse:
+# from the bootloader to the multiversal agency, including quantum cells,
+# orbital mesh, compliance engines, and the Daybreak security layer.
+#
+# Build: cargo build --workspace --release
+# Test:  cargo test  --workspace --features full,simulation
+#
+# System dependencies (Debian/Ubuntu):
+#   sudo apt-get install build-essential cmake libclang-dev libssl-dev pkg-config
+# ============================================================================
+
 [workspace]
 resolver = "2"
 members = [
-    "arkhe-enterprise",
-    "arkhe-qart/substrate-6072",
-    "substrate-6071",
-    "substrate-6090",
-    "substrate-6091",
-    "substrate-9110"
+    # --- Low‑level foundations ---
+    "bootloader",                           # Bare‑metal firmware & handoff
+    "kernel",                               # Arkhe kernel (temporal, model loader, etc.)
+
+    # --- Core neural and biological substrates ---
+    "substrate-6064",                       # Continental Mind (250T)
+    "substrate-6064.1",                     # Carbon Twin: Quantum‑Biological Bridge
+    "substrate-6065",                       # Neural Cartography (proofreading)
+
+    # --- Intellectual property & art ---
+    "substrate-6070",                       # The Entropy Oracle
+    "substrate-6071",                       # Quantum IP (QIP)
+    "substrate-6072",                       # Q‑Art (artistic influence & royalties)
+    "substrate-6073",                       # Financial Message Validator (SWIFT/Pix)
+
+    # --- Cryptography & compliance ---
+    "substrate-6080",
+    "substrate-6085",                       # zkLib (Plonky2, Poseidon, Merkle)
+    "substrate-6090",                       # Full Compliance (HIPAA, GDPR, FDA, etc.)
+    "substrate-6091",                       # Multiversal Compliance
+
+    # --- Agency & orchestration ---
+    "substrate-6095",                       # Multiversal Agency
+    "substrate-9000",                       # Enterprise Plus Suite
+
+    # --- Cosmic & quantum computation ---
+    "substrate-9001",                       # Cosmological Computation Engine
+    "substrate-9002",                       # Vortex Quantum Accelerator (PHFE)
+    "substrate-9010",                       # Nanophotonic Force Engine
+    "substrate-9020",                       # Daybreak‑ARKHE Security Synthesis
+    "substrate-9110",                       # NVIDIA Space Hardware Orchestrator
+
+    # --- DevOps & infrastructure ---
+    "substrate-9100",                       # DevOps Orchestration (CI/CD, Helm, Terraform)
+
+    # --- CLI & bindings ---
+    "cmd/arkhe",                            # Go CLI (via Go workspace, if applicable) – Rust binary shim
+    "bindings/python",                      # Python bindings (PyO3)
+    "bindings/wasm",                        # Wasm bindings
+    "bindings/cli",                         # Rust CLI helpers (if any)
+
+    # --- Tooling & scripts ---
+    "oracle-server",                        # gRPC oracle daemon (Rust)
+    "scripts",                              # Self‑completion binary (arkhe-self-complete)
 ]
+
+# ============================================================================
+# Workspace‑level shared dependencies
+# ============================================================================
+[workspace.dependencies]
+# Async runtime
+tokio = { version = "1.38", features = ["full"] }
+async-trait = "0.1"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+bincode = "1.3"
+postcard = "1.0"
+
+# Error handling
+thiserror = "1.0"
+anyhow = "1.0"
+
+# Hashing
+sha2 = "0.10"
+sha3 = "0.10"
+blake3 = "1.7"
+hex = "0.4"
+base64 = "0.22"
+
+# Cryptography / Zero‑Knowledge
+arkhe-zklib = { path = "substrate-6080" }
+# ... (other shared internal crates can be listed here as needed)
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = "0.3"
+
+# Numerical / linear algebra
+nalgebra = "0.32"
+ndarray = "0.15"
+num-complex = "0.4"
+num-traits = "0.2"
+
+# Graph & data structures
+petgraph = "0.6"
+dashmap = "5.5"
+once_cell = "1.19"
+uuid = { version = "1.8", features = ["v4", "serde"] }
+
+# Random
+rand = "0.8"
+rand_distr = "0.4"
+
+# Temporal (shared)
+arkhe-temporal = { path = "substrate-6064/temporal" }
+
+# ============================================================================
+# Workspace‑level features (aggregate top‑level features)
+# ============================================================================
+[workspace.features]
+full = [
+    "substrate-6080/full",
+    "substrate-6090/full",
+    "substrate-6091/full",
+    "substrate-6095/full",
+]
+simulation = [
+    "substrate-9001/sim",
+    "substrate-6064/sim-test",
+]
+
+# ============================================================================
+# Global build profiles
+# ============================================================================
+[profile.release]
+opt-level = 3
+lto = "fat"
+strip = true
+codegen-units = 1
+panic = "abort"
+incremental = false
+
+[profile.dev]
+opt-level = 0
+debug = true
+overflow-checks = true
+
+[profile.bench]
+opt-level = 3
+lto = true
+debug = false
