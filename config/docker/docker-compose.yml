@@ -61,5 +61,23 @@ services:
       retries: 5
     restart: unless-stopped
 
+  # ar.io Verify Sidecar
+  verify-sidecar:
+    image: ar-io-verify:local
+    build:
+      context: ../../components/ar-io-verify
+    container_name: verify-sidecar
+    restart: unless-stopped
+    ports:
+      - "4001:4001"
+    environment:
+      - GATEWAY_URL=http://ar-io-node-envoy-1:3000
+      - NODE_ENV=production
+      - PORT=4001
+      - SQLITE_PATH=/app/data/verify.db
+    volumes:
+      - verify-data:/app/data
+
 volumes:
   arkhe_pgdata:
+  verify-data:

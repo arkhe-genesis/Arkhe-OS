@@ -136,3 +136,6 @@
 [submodule "third_party/leveldb"]
 	path = third_party/leveldb
 	url = https://github.com/google/leveldb.git
+[submodule "components/ar-io-verify"]
+	path = components/ar-io-verify
+	url = https://github.com/ar-io/ar-io-verify.git
