@@ -4,7 +4,7 @@ use oracle::oracle_client::OracleClient;
 use oracle::CreateShardRequest;
 
 pub mod oracle {
-    tonic::include_proto!("oracle");
+    tonic::include_proto!("arkhe.oracle");
 }
 
 #[derive(Parser)]

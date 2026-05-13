@@ -1,4 +1,4 @@
-use arkhe_entropy_oracle::{EntropyOracle, QipInfluenceEntropy};
+use substrate_6070::{EntropyOracle, QipInfluenceEntropy};
 
 pub struct Developer {
     pub orcid: String,
@@ -23,5 +23,6 @@ pub fn compute_dev_influence(
     // Normalize and compute final probability based on entropy factor
     // Here we just use entropy as a stand-in for the calculation.
     let base_prob = 0.5;
-    (base_prob + (entropy_factor / 100.0)).clamp(0.0, 1.0)
+    let res: f64 = base_prob + (entropy_factor / 100.0);
+    res.clamp(0.0, 1.0)
 }

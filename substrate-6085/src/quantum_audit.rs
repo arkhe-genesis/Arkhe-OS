@@ -1,6 +1,6 @@
 use crate::export_control::WassenaarCircuitProof;
 use crate::quantum_fairness::FairnessProof;
-use arkhe_entropy_oracle::{EntropyOracle, QuantumRandomnessVerify};
+use substrate_6070::{EntropyOracle, QuantumRandomnessVerify};
 
 pub struct QuantumAuditTrail;
 
