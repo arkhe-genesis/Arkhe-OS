@@ -1,0 +1,20 @@
+services:
+  gateway:
+    image: ar-io-gateway:latest
+    ports:
+      - "3000:3000"
+  verify-sidecar:
+    build: .
+    environment:
+      GATEWAY_URL: http://gateway:3000
+      WALLET_FILE: /wallet/key.json
+    ports:
+      - "4001:4001"
+    volumes:
+      - ./wallet:/wallet
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
