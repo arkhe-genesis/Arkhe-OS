@@ -130,3 +130,9 @@
 [submodule "components/droid-vm"]
 	path = components/droid-vm
 	url = https://github.com/droid-vm/droidvm.git
+[submodule "components/talos"]
+	path = components/talos
+	url = https://github.com/arkhe-os/talos-agent.git
+[submodule "third_party/leveldb"]
+	path = third_party/leveldb
+	url = https://github.com/google/leveldb.git
