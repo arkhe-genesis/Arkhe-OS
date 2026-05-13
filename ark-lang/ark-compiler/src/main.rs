@@ -5,6 +5,7 @@ use std::path::PathBuf;
 pub mod lexer;
 pub mod ast;
 pub mod parser;
+pub mod typer;
 
 #[derive(Parser)]
 #[command(author = "Arkhe OS Team", version = "1.0", about = "Ark-lang core compiler", long_about = None)]
@@ -36,19 +37,17 @@ fn main() {
                 .expect("Should have been able to read the file");
 
             let tokens = lexer::lex(&contents);
-            // Ignore token errors for now, just print what we lexed
-            // println!("Tokens: {:?}", tokens);
 
             let mut parser = parser::Parser::new(tokens);
             match parser.parse() {
                 Ok(_ast) => {
-                    // In a real compiler, we'd hand this to codegen.
                     println!("✅ Successfully parsed {} to AST", file.display());
-                    // println!("AST: {:#?}", ast);
 
-                    // Stub generation success
                     let file_stem = file.file_stem().unwrap().to_str().unwrap();
                     println!("✅ {} → {}.rs", file_stem, file_stem);
+
+                    // Call type_check as it was in the original file
+                    typer::type_check();
                 }
                 Err(e) => {
                     eprintln!("❌ Parse error: {}", e);
@@ -56,9 +55,4 @@ fn main() {
             }
         }
     }
-mod typer;
-
-fn main() {
-    println!("arkc compiler");
-    typer::type_check();
 }
