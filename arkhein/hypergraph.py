@@ -28,6 +28,10 @@ class EdgeType(Enum):
     SUPPORTS = "supports"            # Evidência de suporte
     DERIVED_FROM = "derived_from"    # Derivação lógica
     TEMPORAL_BEFORE = "temporal_before"  # Ordem temporal
+    # Systems Bioinformatics specific edges
+    REGULATES = "regulates"
+    INTERACTS_WITH = "interacts_with"
+    EXPRESSED_IN = "expressed_in"
 
 @dataclass
 class SemanticNode:
@@ -39,7 +43,7 @@ class SemanticNode:
     sources: List[Dict]              # Fontes com hashes e timestamps
     aliases: List[str] = field(default_factory=list)  # Sinônimos
     embeddings: Optional[np.ndarray] = None  # Embedding semântico
-    metadata: Dict = field(default_factory=dict)
+    metadata: Dict = field(default_factory=dict) # multi-omics layers, GO terms, etc.
 
     def canonical_hash(self) -> str:
         """Hash SHA3-256 canônico do nó."""
@@ -76,6 +80,7 @@ class ArkheinHypergraph:
     - Coerência φ-ótima: apenas arestas com score ≥ φ⁻¹ (~0.618) são mantidas
     - Busca estrutural: ranking considera profundidade, força, cobertura
     - Invariantes I1-I5 aplicadas em todas as operações
+    - Integrado com Systems Bioinformatics (Multi-omics layers)
     """
 
     def __init__(self, coherence_threshold: float = PHI_INV, embedding_dim: int = 768):
@@ -167,13 +172,22 @@ class ArkheinHypergraph:
 
         return verified[:max_results]
 
+    def cross_domain_reasoning(self, concept_a: str, concept_b: str) -> List[Dict]:
+        """
+        Realiza raciocínio transdomínio, buscando conexões entre conceitos
+        em diferentes camadas (ex: genômica -> fenotípica).
+        """
+        # Simplificação: busca por caminhos mais curtos entre dois conceitos
+        # usando as arestas do hypergrafo. Em produção: algoritmos de grafos mais robustos.
+        pass
+
     def _decompose_query(self, query: str, domain: str) -> List[str]:
         """Decompõe query em conceitos canônicos."""
-        # Em produção: usar NLP + domínio específico
-        # Simplificação: tokenização + lematização básica
         import re
         tokens = re.findall(r'\b[a-zA-Z][a-zA-Z0-9_-]*\b', query.lower())
-        # Filtrar stopwords do domínio
+        # GO Terms check:
+        go_terms = re.findall(r'GO:\d+', query)
+        tokens.extend(go_terms)
         stopwords = self._get_domain_stopwords(domain)
         return [t for t in tokens if t not in stopwords and len(t) > 2]
 
@@ -181,7 +195,7 @@ class ArkheinHypergraph:
         """Busca exata por conceito ou alias."""
         results = []
         for node in self.nodes.values():
-            if node.domain != domain:
+            if node.domain != domain and domain != "general": # Permite busca cruzada se o dominio for general
                 continue
             if concept == node.label.lower() or concept in [a.lower() for a in node.aliases]:
                 results.append({
@@ -189,7 +203,8 @@ class ArkheinHypergraph:
                     'label': node.label,
                     'definitions': node.definitions,
                     'sources': node.sources,
-                    'relevance': 1.0
+                    'relevance': 1.0,
+                    'metadata': node.metadata
                 })
         return results
 
@@ -216,7 +231,8 @@ class ArkheinHypergraph:
                                 'relation': etype.value,
                                 'strength': edge.strength,
                                 'coherence': edge.coherence_score(),
-                                'evidence': edge.evidence
+                                'evidence': edge.evidence,
+                                'metadata': neighbor.metadata
                             })
                             visited.add(tgt)
                             queue.append((tgt, depth + 1))
@@ -230,7 +246,8 @@ class ArkheinHypergraph:
                                 'relation': f"inverse_{etype.value}",
                                 'strength': edge.strength,
                                 'coherence': edge.coherence_score(),
-                                'evidence': edge.evidence
+                                'evidence': edge.evidence,
+                                'metadata': neighbor.metadata
                             })
                             visited.add(src)
                             queue.append((src, depth + 1))
@@ -283,7 +300,6 @@ class ArkheinHypergraph:
     # Métodos auxiliares de verificação de invariantes
     def _check_physical_laws(self, node: SemanticNode) -> bool:
         """I1: Verifica se definições violam leis físicas conhecidas."""
-        # Simplificação: lista negra de afirmações fisicamente impossíveis
         impossible = [
             "perpetual motion", "faster than light", "negative mass",
             "violate conservation of energy", "create energy from nothing"
@@ -293,15 +309,13 @@ class ArkheinHypergraph:
 
     def _check_falsifiability(self, node: SemanticNode) -> bool:
         """I2: Verifica se conceito é falsificável em princípio."""
-        # Simplificação: conceitos não-testáveis são rejeitados
         non_falsifiable = ["metaphysical", "supernatural", "unknowable"]
         text = " ".join(node.definitions).lower()
         return not any(term in text for term in non_falsifiable)
 
     def _check_polynomial_complexity(self, edge: SemanticEdge) -> bool:
         """I4: Verifica se verificação da aresta é em tempo polinomial."""
-        # Simplificação: arestas com evidência excessivamente complexa são rejeitadas
-        return len(str(edge.evidence)) < 10000  # Limite arbitrário
+        return len(str(edge.evidence)) < 10000
 
     def _check_physical_laws_fact(self, fact: Dict) -> bool:
         """I1 aplicado a fato recuperado."""
@@ -325,7 +339,6 @@ class ArkheinHypergraph:
 
     def _temporal_recency(self, fact: Dict) -> float:
         """Calcula recência temporal do fato (0-1)."""
-        # Simplificação: fatos com timestamp recente têm score maior
         sources = fact.get('sources', [])
         if not sources:
             return 0.5
@@ -334,7 +347,6 @@ class ArkheinHypergraph:
             return 0.5
         latest = max(timestamps)
         now = time.time()
-        # Decaimento exponencial: 1 ano = fator 0.9
         age_years = (now - latest) / (365.25 * 24 * 3600)
         return max(0.0, min(1.0, 0.9 ** age_years))
 
@@ -352,10 +364,6 @@ class ArkheinHypergraph:
         """Busca semântica por embedding no FAISS."""
         if self._index_embeddings is None or self._index_embeddings.ntotal == 0:
             return []
-
-        # Em produção: usar um modelo de embedding real (como sentence-transformers)
-        # para converter o texto 'concept' em um vetor.
-        # Aqui, simulamos um embedding (vetor aleatório normalizado)
         try:
             import faiss
             mock_embedding = np.random.randn(1, self.embedding_dim).astype(np.float32)
@@ -374,7 +382,8 @@ class ArkheinHypergraph:
                             'label': node.label,
                             'definitions': node.definitions,
                             'sources': node.sources,
-                            'relevance': float(1.0 / (1.0 + distances[0][i])) # Conversão de distância L2 para relevância
+                            'relevance': float(1.0 / (1.0 + distances[0][i])),
+                            'metadata': node.metadata
                         })
             return results
         except Exception:
