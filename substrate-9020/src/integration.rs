@@ -1,6 +1,6 @@
 use crate::agent::SecurityAgent;
-use crate::threat_model::ThreatModel;
 use crate::code_review::ReviewResult;
+use crate::threat_model::ThreatModel;
 
 impl SecurityAgent {
     /// Reconstroi o modelo de ameaças a partir do Multiversal Compliance (6091).

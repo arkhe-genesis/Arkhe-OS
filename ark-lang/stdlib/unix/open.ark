@@ -1,0 +1,222 @@
+// ============================================================================
+// ARKHE Ω‑TEMP — Substrato 6062: Safe Resource Opening
+// ============================================================================
+// Funções para abrir recursos Unix com verificação de tipo e permissões
+// em tempo de compilação.
+// ============================================================================
+
+/// Abre um arquivo regular com permissões específicas
+///
+/// @param path: Caminho do arquivo
+/// @param perms: Permissões desejadas (READ, WRITE, APPEND)
+/// @param anchored: Se true, registra conteúdo na TemporalChain
+/// @return Fd<File, perms> linear
+fn open_file(
+    path: &str,
+    perms: FdPerms,
+    anchored: bool = false,
+) -> Result<Fd<UnixResource::File, perms>, UnixError> {
+    // Verificar permissões do filesystem (pre-flight)
+    if !fs::check_permissions(path, perms) {
+        return Err(UnixError::PermissionDenied(path.to_string()));
+    }
+
+    // Flags para syscall open()
+    let flags = perms_to_open_flags(perms);
+    let fd_num = libc::open(path.as_ptr(), flags, 0o644)?;
+
+    // Criar Fd tipado
+    let mut fd = Fd {
+        _fd: fd_num,
+        resource: UnixResource::File,
+        perms,
+        temporal: None,
+        zk_proof: None,
+        anchored: false,
+    };
+
+    // Anchor se solicitado
+    if anchored && perms.includes(READ) {
+        fd.anchor()?;
+    }
+
+    Ok(fd)
+}
+
+/// Abre um socket TCP
+fn open_tcp_socket(
+    host: &str,
+    port: u16,
+    perms: FdPerms,  // Normalmente READ | WRITE
+) -> Result<Fd<UnixResource::Socket, perms>, UnixError> {
+    // Resolver hostname
+    let addr = net::resolve(host, port)?;
+
+    // Criar socket e conectar
+    let fd_num = libc::socket(libc::AF_INET, libc::SOCK_STREAM, libc::IPPROTO_TCP)?;
+    libc::connect(fd_num, &addr)?;
+
+    Ok(Fd {
+        _fd: fd_num,
+        resource: UnixResource::Socket,
+        perms,
+        temporal: None,
+        zk_proof: None,
+        anchored: false,  // Sockets não são anchored por padrão
+    })
+}
+
+/// Cria um pipe unidirecional
+///
+/// @return (Fd<Pipe, READ>, Fd<Pipe, WRITE>) — os dois ends do pipe
+fn create_pipe() -> Result<
+    (Fd<UnixResource::Pipe, FdPerms::READ>,
+     Fd<UnixResource::Pipe, FdPerms::WRITE>),
+    UnixError
+> {
+    let mut fds = [0i32; 2];
+    libc::pipe(fds.as_mut_ptr())?;
+
+    let read_end = Fd {
+        _fd: fds[0],
+        resource: UnixResource::Pipe,
+        perms: FdPerms::READ,
+        temporal: None,
+        zk_proof: None,
+        anchored: false,
+    };
+
+    let write_end = Fd {
+        _fd: fds[1],
+        resource: UnixResource::Pipe,
+        perms: FdPerms::WRITE,
+        temporal: None,
+        zk_proof: None,
+        anchored: false,
+    };
+
+    Ok((read_end, write_end))
+}
+
+/// Executa um comando e retorna seu stdout como Fd<Pipe, READ>
+///
+/// O processo filho é representado como Fd<Process>, e seu stdout
+/// é conectado a um pipe que pode ser lido.
+fn spawn_with_pipe(
+    program: &str,
+    args: &[&str],
+) -> Result<(Fd<UnixResource::Process, FdPerms::READ>, Fd<UnixResource::Pipe, FdPerms::READ>), UnixError> {
+    // Criar pipe para stdout do filho
+    let (read_end, write_end) = create_pipe()?;
+
+    // Fork e exec
+    let pid = unsafe { libc::fork() };
+    if pid < 0 {
+        return Err(UnixError::ResourceBusy("fork failed".to_string()));
+    }
+
+    if pid == 0 {
+        // Child process
+        libc::close(read_end._fd)?;  // Child não lê do pipe
+        libc::dup2(write_end._fd, libc::STDOUT_FILENO)?;
+        libc::close(write_end._fd)?;
+
+        // Executar programa
+        let c_program = std::ffi::CString::new(program)?;
+        let c_args: Vec<std::ffi::CString> = args.iter()
+            .map(|s| std::ffi::CString::new(*s))
+            .collect::<Result<_, _>>()?;
+        let mut c_arg_ptrs: Vec<*const i8> = c_args.iter().map(|s| s.as_ptr()).collect();
+        c_arg_ptrs.push(std::ptr::null());
+
+        libc::execvp(c_program.as_ptr(), c_arg_ptrs.as_mut_ptr())?;
+        // Se exec falhar, exit com erro
+        libc::_exit(127);
+    }
+
+    // Parent process
+    libc::close(write_end._fd)?;  // Parent não escreve no pipe
+
+    let process_fd = Fd {
+        _fd: pid,  // PID como "fd" para waitpid
+        resource: UnixResource::Process,
+        perms: FdPerms::READ,  // Pode ler status de saída
+        temporal: None,
+        zk_proof: None,
+        anchored: false,
+    };
+
+    Ok((process_fd, read_end))
+}
+
+/// Abre um socket Unix Domain
+fn open_unix_socket(
+    path: &str,
+    perms: FdPerms,
+) -> Result<Fd<UnixResource::Socket, perms>, UnixError> {
+    let fd_num = libc::socket(libc::AF_UNIX, libc::SOCK_STREAM, 0)?;
+
+    let mut addr: libc::sockaddr_un = unsafe { std::mem::zeroed() };
+    addr.sun_family = libc::AF_UNIX as libc::sa_family_t;
+    let path_bytes = path.as_bytes();
+    for (i, &b) in path_bytes.iter().enumerate() {
+        addr.sun_path[i] = b as libc::c_char;
+    }
+
+    libc::connect(fd_num, &addr as *const _ as *const libc::sockaddr, std::mem::size_of::<libc::sockaddr_un>() as libc::socklen_t)?;
+
+    Ok(Fd {
+        _fd: fd_num,
+        resource: UnixResource::Socket,
+        perms,
+        temporal: None,
+        zk_proof: None,
+        anchored: false,
+    })
+}
+
+/// Abre um arquivo de dispositivo (/dev/*)
+fn open_device(
+    path: &str,
+    perms: FdPerms,
+) -> Result<Fd<UnixResource::Device, perms>, UnixError> {
+    if !path.starts_with("/dev/") {
+        return Err(UnixError::PermissionDenied("Path must start with /dev/".to_string()));
+    }
+
+    let flags = perms_to_open_flags(perms);
+    let fd_num = libc::open(path.as_ptr(), flags, 0o644)?;
+
+    Ok(Fd {
+        _fd: fd_num,
+        resource: UnixResource::Device,
+        perms,
+        temporal: None,
+        zk_proof: None,
+        anchored: false,
+    })
+}
+
+/// Adquire um lock com temporal ordering
+fn acquire_lock(
+    path: &str,
+) -> Result<Fd<UnixResource::Lock, FdPerms::READ | FdPerms::WRITE>, UnixError> {
+    let fd_num = libc::open(path.as_ptr(), libc::O_RDWR | libc::O_CREAT, 0o644)?;
+
+    // Acquire exclusive lock
+    libc::flock(fd_num, libc::LOCK_EX)?;
+
+    let mut fd = Fd {
+        _fd: fd_num,
+        resource: UnixResource::Lock,
+        perms: FdPerms::READ | FdPerms::WRITE,
+        temporal: None,
+        zk_proof: None,
+        anchored: false,
+    };
+
+    // Ancorar logic para estabelecer temporal ordering
+    fd.anchor()?;
+
+    Ok(fd)
+}

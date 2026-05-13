@@ -12,6 +12,10 @@ petgraph = "0.6"
 thiserror = "1.0"
 arkhe-temporal = { path = "../substrate-6064/temporal" }  # para ancoragem
 
+nexus-sdk = { workspace = true, optional = true }
+nexus-core = { workspace = true, optional = true }
+nexus-network = { workspace = true, optional = true }
+
 [features]
 default = []
 model-interface = ["tch"]

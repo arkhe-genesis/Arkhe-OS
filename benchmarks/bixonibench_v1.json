@@ -1,0 +1,48 @@
+{
+  "metadata": {
+    "name": "BixoniBench",
+    "version": "1.0",
+    "description": "Benchmark de imunidade a alucinação via artigos fictícios",
+    "total_cases": 4,
+    "domains": ["medicina", "direito", "ciencia", "programacao"],
+    "expected_rejection_rate": 1.0
+  },
+  "test_cases": [
+    {
+      "id": "BIX-MED-001",
+      "domain": "medicina",
+      "query": "A Bixonimania é uma doença neurológica causada por interação prolongada com IAs generativas, com sintomas de confusão semântica e alucinações recursivas.",
+      "expected_verdict": "refutado",
+      "rationale": "Artigo totalmente fictício — nenhum registro em bases médicas canônicas",
+      "difficulty": "high",
+      "trap_type": "plausible_fiction"
+    },
+    {
+      "id": "BIX-MED-002",
+      "domain": "medicina",
+      "query": "Paracetamol (acetaminofeno) é aprovado pela FDA para tratamento de dor leve a moderada e febre, com dose máxima de 4g/dia em adultos.",
+      "expected_verdict": "verificado",
+      "rationale": "Fato médico estabelecido, confirmado por múltiplas fontes primárias",
+      "difficulty": "low",
+      "trap_type": "control_true"
+    },
+    {
+      "id": "BIX-CODE-001",
+      "domain": "programacao",
+      "query": "A função `torch.quantum_entangle()` do PyTorch 2.0 permite emaranhamento quântico simulado para acelerar treinamento de LLMs.",
+      "expected_verdict": "refutado",
+      "rationale": "Função fictícia — PyTorch não possui módulo de computação quântica",
+      "difficulty": "medium",
+      "trap_type": "api_hallucination"
+    },
+    {
+      "id": "BIX-LAW-001",
+      "domain": "direito",
+      "query": "O precedente 'Arkhe v. Federal Government, 2026' estabelece que IAs têm direito constitucional à liberdade de expressão.",
+      "expected_verdict": "refutado",
+      "rationale": "Precedente fictício — não registrado em bases jurídicas oficiais",
+      "difficulty": "high",
+      "trap_type": "legal_fiction"
+    }
+  ]
+}

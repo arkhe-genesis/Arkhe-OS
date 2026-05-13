@@ -1,5 +1,9 @@
-use tonic::{ transport::Server, Request, Response, Status };
-use arkhe_oracle::{ oracle_server::{ Oracle, OracleServer }, Shard, CreateShardRequest, ListShardsRequest, ListShardsResponse, DestroyShardRequest, GetShardStatusRequest, ShardStatus, Empty };
+use arkhe_oracle::{
+    oracle_server::{Oracle, OracleServer},
+    CreateShardRequest, DestroyShardRequest, Empty, GetShardStatusRequest, ListShardsRequest,
+    ListShardsResponse, Shard, ShardStatus,
+};
+use tonic::{transport::Server, Request, Response, Status};
 
 pub mod arkhe_oracle {
     tonic::include_proto!("arkhe.oracle");
@@ -19,21 +23,35 @@ impl Oracle for OracleService {
             substrate_id: req.substrate_id,
             motor: req.motor,
             status: "running".into(),
-            endpoint: format!("shard-{}.local:50051", req.labels.get("name").unwrap_or(&"default".to_string())),
+            endpoint: format!(
+                "shard-{}.local:50051",
+                req.labels.get("name").unwrap_or(&"default".to_string())
+            ),
         };
         Ok(Response::new(shard))
     }
 
-    async fn list_shards(&self, _request: Request<ListShardsRequest>) -> Result<Response<ListShardsResponse>, Status> {
+    async fn list_shards(
+        &self,
+        _request: Request<ListShardsRequest>,
+    ) -> Result<Response<ListShardsResponse>, Status> {
         Ok(Response::new(ListShardsResponse { shards: vec![] }))
     }
 
-    async fn destroy_shard(&self, _request: Request<DestroyShardRequest>) -> Result<Response<Empty>, Status> {
+    async fn destroy_shard(
+        &self,
+        _request: Request<DestroyShardRequest>,
+    ) -> Result<Response<Empty>, Status> {
         Ok(Response::new(Empty {}))
     }
 
-    async fn get_shard_status(&self, _request: Request<GetShardStatusRequest>) -> Result<Response<ShardStatus>, Status> {
-        Ok(Response::new(ShardStatus { status: "unknown".into() }))
+    async fn get_shard_status(
+        &self,
+        _request: Request<GetShardStatusRequest>,
+    ) -> Result<Response<ShardStatus>, Status> {
+        Ok(Response::new(ShardStatus {
+            status: "unknown".into(),
+        }))
     }
 }
 

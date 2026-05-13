@@ -1,0 +1,104 @@
+// ============================================================================
+// ARKHE Ω‑TEMP — Substrato 6062: Orbital Mesh Mapping
+// ============================================================================
+// Em nós orbitais, operações Unix são mapeadas para operações de mesh:
+// - /temporal/block/* → leitura de blocos da TemporalChain distribuída
+// - /mesh/peers → tabela de roteamento do orbital mesh
+// - /storage/object/* → objetos distribuídos (erasure-coded)
+// ============================================================================
+
+/// Detecta se o código está rodando em ambiente orbital
+fn is_orbital_environment() -> bool {
+    // Verificar variável de ambiente ou feature de compilação
+    cfg!(feature = "orbital") ||
+    std::env::var("ARKHE_ENV").unwrap_or_default() == "orbital"
+}
+
+/// Abstração de leitura que funciona em Terra e em órbita
+///
+/// Em Terra: lê do filesystem local
+/// Em órbita: lê do orbital mesh (Substrato 9001)
+fn read_universal(path: &str) -> Result<Vec<u8>, UnixError> {
+    if is_orbital_environment() {
+        // Mapear caminho Unix para operação de mesh
+        if path.starts_with("/temporal/block/") {
+            let block_id = path.strip_prefix("/temporal/block/").unwrap();
+            orbital::fetch_block(block_id)
+                .map_err(|e| UnixError::NotFound(format!("block {} not found: {}", block_id, e)))
+        } else if path.starts_with("/mesh/peers") {
+            orbital::get_routing_table()
+                .map_err(|e| UnixError::Interrupted(format!("failed to get peers: {}", e)))
+        } else if path.starts_with("/storage/object/") {
+            let object_id = path.strip_prefix("/storage/object/").unwrap();
+            orbital::fetch_object(object_id)
+                .map_err(|e| UnixError::NotFound(format!("object {} not found: {}", object_id, e)))
+        } else {
+            // Fallback: tentar filesystem local do satélite
+            read_local_fallback(path)
+        }
+    } else {
+        // Ambiente terrestre: leitura normal
+        let mut fd = open_file(path, FdPerms::READ, false)?;
+        let mut content = Vec::new();
+        let mut buf = [0u8; 4096];
+        loop {
+            let n = libc::read(fd._fd, buf.as_mut_ptr(), buf.len())?;
+            if n == 0 { break; }
+            content.extend_from_slice(&buf[..n]);
+        }
+        fd.close()?;
+        Ok(content)
+    }
+}
+
+/// Escrita universal com anchoring automático em ambiente orbital
+fn write_universal(path: &str, content: &[u8], anchored: bool) -> Result<(), UnixError> {
+    if is_orbital_environment() {
+        // Em órbita: escrever no mesh com replicação
+        if path.starts_with("/temporal/block/") {
+            // Ancorar bloco na TemporalChain distribuída
+            if anchored {
+                orbital::anchor_block(content, TemporalMetadata {
+                    timestamp_ns: time::nanos(),
+                    ..Default::default()
+                })?;
+            } else {
+                orbital::store_block(content)?;
+            }
+        } else if path.starts_with("/storage/object/") {
+            let object_id = path.strip_prefix("/storage/object/").unwrap();
+            orbital::store_object(object_id, content, anchored)?;
+        } else {
+            // Fallback local
+            write_local_fallback(path, content)?;
+        }
+    } else {
+        // Ambiente terrestre: escrita normal com anchoring opcional
+        let mut fd = open_file(path, FdPerms::WRITE, anchored)?;
+        libc::write(fd._fd, content.as_ptr(), content.len())?;
+        if anchored {
+            fd.anchor()?;
+        }
+        fd.close()?;
+    }
+    Ok(())
+}
+
+/// Exemplo: Código que funciona em Terra e em órbita sem modificação
+#[example]
+fn example_universal_code() -> Result<(), UnixError> {
+    // Ler configuração (funciona em ambos os ambientes)
+    let config = read_universal("/etc/arkhe/config.toml")?;
+
+    // Processar...
+    let result = process_config(&config)?;
+
+    // Escrever resultado com anchoring
+    write_universal(
+        "/data/results/output.bin",
+        &result,
+        anchored: true  // Ancorar em ambos os ambientes
+    )?;
+
+    Ok(())
+}

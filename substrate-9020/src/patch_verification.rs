@@ -1,9 +1,9 @@
-use arkhe_zklib::ZKProof;
+use crate::agent::{SecurityError, ZKCircuit, ZKProver};
 use crate::threat_model::ThreatModel;
-use crate::agent::{SecurityError, ZKProver, ZKCircuit};
+use arkhe_zklib::ZKProof;
+use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use std::time::{SystemTime, UNIX_EPOCH};
-use serde::{Serialize, Deserialize};
 
 /// Prova de que um patch corrige a vulnerabilidade sem introduzir regressões.
 pub struct PatchValidator {
@@ -35,7 +35,9 @@ fn now() -> u64 {
 }
 
 impl PatchValidator {
-    pub fn new(prover: Arc<dyn ZKProver>) -> Self { Self { prover } }
+    pub fn new(prover: Arc<dyn ZKProver>) -> Self {
+        Self { prover }
+    }
 
     fn build_regression_circuit(&self, _patch: &Patch, _threat: &ThreatModel) -> ZKCircuit {
         ZKCircuit
@@ -50,7 +52,10 @@ impl PatchValidator {
         // 1. O código pós‑patch não contém a vulnerabilidade modelada.
         // 2. Todos os testes do CI permanecem passando (simulação quântica de cobertura).
         let circuit = self.build_regression_circuit(patch, threat);
-        let _proof = self.prover.prove(&circuit).map_err(|e| SecurityError::ZKError(e))?;
+        let _proof = self
+            .prover
+            .prove(&circuit)
+            .map_err(|e| SecurityError::ZKError(e))?;
         Ok(PatchProof {
             // inner: proof,
             coverage: 0.999, // placeholder

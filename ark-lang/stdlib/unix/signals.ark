@@ -1,0 +1,131 @@
+// ============================================================================
+// ARKHE Ω‑TEMP — Substrato 6062: Signal Handling as Interruptible Proofs
+// ============================================================================
+// Sinais Unix mapeados para handlers Ark-lang com suporte a:
+// - Checkpoint automático na TemporalChain antes de shutdown
+// - Geração de prova ZK do estado no momento do sinal
+// - Handlers que podem ser provados como executados
+// ============================================================================
+
+/// Registro de handler para sinal Unix
+///
+/// O handler é uma função que recebe o sinal e pode:
+/// - Executar cleanup
+/// - Gerar checkpoint temporal
+/// - Retornar se o processo deve continuar ou terminar
+///
+/// @param signal: Número do sinal (SIGINT, SIGTERM, etc.)
+/// @param handler: Função a ser chamada quando o sinal é recebido
+/// @return Result<(), UnixError>
+fn on_signal<F>(signal: i32, handler: F) -> Result<(), UnixError>
+where
+    F: Fn(i32) -> SignalAction + Send + Sync + 'static,
+{
+    // Wrapper que converte handler Ark-lang para função C
+    unsafe extern "C" fn signal_handler_trampoline(sig: i32) {
+        // Recuperar handler registrado (via thread-local ou global)
+        if let Some(handler) = get_registered_handler(sig) {
+            match handler(sig) {
+                SignalAction::Continue => {
+                    // Ignorar — processo continua
+                }
+                SignalAction::CheckpointAndExit => {
+                    // Checkpoint antes de exit
+                    let _ = temporal::checkpoint("signal_handler", &get_process_state());
+                    libc::_exit(0);
+                }
+                SignalAction::GenerateProofAndExit => {
+                    // Gerar prova ZK do estado atual
+                    let state = get_process_state();
+                    let proof = zk::prove("signal_state_v1", &state, &[]);
+                    if let Ok(p) = proof {
+                        let _ = temporal::record_proof(p);
+                    }
+                    libc::_exit(0);
+                }
+            }
+        } else {
+            // Comportamento padrão: terminar
+            libc::_exit(128 + sig);
+        }
+    }
+
+    // Registrar handler via sigaction
+    let mut sa: libc::sigaction = std::mem::zeroed();
+    sa.sa_sigaction = signal_handler_trampoline as usize;
+    sigemptyset(&mut sa.sa_mask);
+    sa.sa_flags = libc::SA_SIGINFO;
+
+    if libc::sigaction(signal, &sa, std::ptr::null_mut()) < 0 {
+        return Err(UnixError::Interrupted("sigaction failed".to_string()));
+    }
+
+    // Registrar no registry global (para o trampoline encontrar)
+    register_handler(signal, Box::new(handler));
+
+    Ok(())
+}
+
+/// Ação a ser tomada pelo handler de sinal
+enum SignalAction {
+    Continue,                  // Ignorar sinal, continuar execução
+    CheckpointAndExit,         // Salvar estado e terminar
+    GenerateProofAndExit,      // Gerar prova ZK e terminar
+}
+
+/// Exemplo: Handler para SIGTERM com checkpoint
+#[example]
+fn example_sigterm_handler() -> Result<(), UnixError> {
+    on_signal(libc::SIGTERM, |sig| {
+        log::info!("Received SIGTERM ({}), checkpointing...", sig);
+
+        // Salvar estado atual
+        let state = get_application_state();
+
+        // Ancorar na TemporalChain
+        let _ = temporal::anchor_content(
+            &serde_json::to_vec(&state).unwrap_or_default(),
+            TemporalPayload {
+                resource_type: UnixResource::Process,
+                perms: FdPerms::READ,
+                timestamp: time::nanos(),
+                metadata: json::object!({
+                    "event": "sigterm_checkpoint",
+                    "state_hash": sha3_256(&serde_json::to_vec(&state).unwrap_or_default()),
+                }),
+            }
+        );
+
+        SignalAction::CheckpointAndExit
+    })?;
+
+    // Loop principal da aplicação
+    run_application_loop()?;
+
+    Ok(())
+}
+
+/// Prova de que um handler foi executado
+///
+/// Útil para auditoria: provar que um sinal foi recebido
+/// e o handler correspondente foi executado, sem revelar
+/// o conteúdo do estado processado.
+fn prove_signal_handled(
+    signal: i32,
+    handler_name: &str,
+    state_commitment: Hash,
+) -> Result<ZKProof, UnixError> {
+    let statement = format!(
+        "signal_handler_executed(signal={}, handler='{}', state_commitment='{}', timestamp={})",
+        signal,
+        handler_name,
+        hex::encode(state_commitment),
+        time::nanos()
+    );
+
+    zk::prove(
+        "signal_handler_v1",
+        &statement,
+        &[state_commitment.as_slice()]
+    )
+}

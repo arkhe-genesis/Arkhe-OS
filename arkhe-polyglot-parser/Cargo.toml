@@ -52,6 +52,10 @@ sha3 = "0.10"                  # Keccak/SHA3
 lazy_static = "1.4"
 thiserror = "2.0.18"
 
+nexus-sdk = { workspace = true, optional = true }
+nexus-core = { workspace = true, optional = true }
+nexus-network = { workspace = true, optional = true }
+
 [dev-dependencies]
 criterion = { version = "0.5", features = ["html_reports"] }
 insta = "1.34"                 # Snapshot testing

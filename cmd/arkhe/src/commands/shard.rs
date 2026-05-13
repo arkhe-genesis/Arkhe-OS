@@ -1,5 +1,5 @@
-use clap::Parser;
 use anyhow::Result;
+use clap::Parser;
 use oracle::oracle_client::OracleClient;
 use oracle::CreateShardRequest;
 
@@ -20,11 +20,15 @@ pub struct ShardCreateArgs {
 pub async fn handle_shard_create(args: ShardCreateArgs) -> Result<()> {
     let mut client = OracleClient::connect("http://[::1]:50051").await?;
     let request = tonic::Request::new(CreateShardRequest {
+        labels: std::collections::HashMap::new(),
         substrate_id: args.substrate,
         motor: args.motor,
         gpu: args.gpu,
     });
     let response = client.create_shard(request).await?;
-    println!("Shard {} criado com sucesso.", response.into_inner().shard_id);
+    println!(
+        "Shard {} criado com sucesso.",
+        response.into_inner().shard_id
+    );
     Ok(())
 }

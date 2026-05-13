@@ -15,6 +15,10 @@ serde_json = "1.0"
 # Usando default-features = false pois não precisamos do CLI etc aqui.
 arkhe-polyglot-parser = { path = "../../parser-core", default-features = false }
 
+nexus-sdk = { workspace = true, optional = true }
+nexus-core = { workspace = true, optional = true }
+nexus-network = { workspace = true, optional = true }
+
 [profile.release]
 opt-level = "z"
 lto = true

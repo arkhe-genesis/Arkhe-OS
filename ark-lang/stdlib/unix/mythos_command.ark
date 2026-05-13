@@ -1,0 +1,343 @@
+// ============================================================================
+// ARKHE Ω‑TEMP — Substrato 6062: Mythos Gate Integration for Commands
+// ============================================================================
+// Integra command_capture e pipeline com o Mythos Gate para validação
+// de comandos executados contra políticas de segurança, compliance e
+// princípios éticos da Catedral.
+// ============================================================================
+
+use crate::mythos::{MythosGate, DecisionProposal, RiskAssessment};
+use crate::temporal::TemporalPayload;
+
+/// Configuração de validação de comando
+#[derive(Clone, Debug)]
+struct CommandValidationConfig {
+    /// Nível de risco permitido (0.0 = nenhum risco, 1.0 = qualquer risco)
+    max_risk_tolerance: f64,
+    /// Comandos permitidos por padrão (whitelist)
+    allowed_commands: HashSet<String>,
+    /// Comandos bloqueados por padrão (blacklist)
+    blocked_commands: HashSet<String>,
+    /// Requer aprovação humana para comandos de alto risco
+    require_human_approval_for: HashSet<String>,
+    /// Contexto da execução (para avaliação de risco)
+    execution_context: ExecutionContext,
+}
+
+/// Contexto de execução para avaliação de risco
+#[derive(Clone, Debug)]
+struct ExecutionContext {
+    user_id: Option<String>,
+    role: UserRole,  // admin, developer, readonly, etc.
+    environment: ExecutionEnvironment,  // production, staging, dev, orbital
+    data_sensitivity: DataSensitivity,  // public, internal, confidential, secret
+}
+
+/// Macro aprimorada: command_capture com validação Mythos
+macro command_capture_validated(
+    cmd: expr,
+    config: CommandValidationConfig
+) -> Result<String, CommandError> {
+    // 1. Parse do comando para AST
+    let ast = parse_command(cmd)?;
+
+    // 2. Avaliar risco via Mythos Gate
+    let risk = assess_command_risk(&ast, &config)?;
+
+    // 3. Verificar se comando é permitido
+    if config.blocked_commands.contains(&ast.program) {
+        return Err(CommandError::BlockedByPolicy(ast.program));
+    }
+
+    if !config.allowed_commands.contains(&ast.program)
+        && config.allowed_commands.is_empty()
+    {
+        // Whitelist vazia = todos permitidos exceto blacklist
+        // Whitelist não-vazia = apenas permitidos
+        if !config.allowed_commands.is_empty() {
+            return Err(CommandError::NotInWhitelist(ast.program));
+        }
+    }
+
+    // 4. Verificar risco vs tolerância
+    if risk.overall_score > config.max_risk_tolerance {
+        // Verificar se requer aprovação humana
+        if config.require_human_approval_for.contains(&ast.program) {
+            return Err(CommandError::RequiresHumanApproval {
+                command: ast.program,
+                risk_score: risk.overall_score,
+                rationale: risk.rationale,
+            });
+        }
+        return Err(CommandError::RiskTooHigh {
+            command: ast.program,
+            risk_score: risk.overall_score,
+            threshold: config.max_risk_tolerance,
+        });
+    }
+
+    // 5. Registrar proposta de decisão no ledger (para auditoria)
+    let proposal = DecisionProposal {
+        action: format!("exec {} {}", ast.program, ast.args.join(" ")),
+        rationale: format!("Command execution requested by {}",
+                          config.execution_context.user_id.as_deref().unwrap_or("system")),
+        risk_assessment: risk.to_map(),
+        expected_outcome: "Command executes and returns output".to_string(),
+        fallback_plan: "Command rejected, return error".to_string(),
+        timestamp: time::nanos(),
+        requires_earth_approval: config.require_human_approval_for.contains(&ast.program),
+        deadline_hours: 1.0,
+    };
+
+    let mythos = MythosGate::for_context(&config.execution_context);
+    let decision = mythos.evaluate_decision(proposal, &config.execution_context)?;
+
+    if !decision.approved {
+        return Err(CommandError::MythosRejected {
+            command: ast.program,
+            rationale: decision.rationale,
+        });
+    }
+
+    // 6. Executar comando (implementação original)
+    let (process_fd, stdout_pipe) = spawn_with_pipe(ast.program, &ast.args)?;
+
+    // 7. Ler stdout
+    let mut output = Vec::new();
+    let mut buf = [0u8; 4096];
+    loop {
+        let n = libc::read(stdout_pipe._fd, buf.as_mut_ptr(), buf.len())?;
+        if n == 0 { break; }
+        output.extend_from_slice(&buf[..n]);
+    }
+    stdout_pipe.close()?;
+
+    // 8. Aguardar processo e verificar exit code
+    let mut status = 0i32;
+    libc::waitpid(process_fd._fd, &mut status, 0)?;
+
+    if libc::WIFEXITED(status) && libc::WEXITSTATUS(status) != 0 {
+        // Registrar falha no ledger
+        temporal::record_event("command_failed", json::object!({
+            "command": cmd,
+            "exit_code": libc::WEXITSTATUS(status),
+            "mythos_decision_id": decision.id,
+            "timestamp": time::nanos(),
+        }))?;
+
+        return Err(CommandError::CommandFailed {
+            command: ast.program,
+            exit_code: libc::WEXITSTATUS(status),
+        });
+    }
+
+    // 9. Registrar sucesso no ledger com prova de execução
+    let output_hash = sha3_256(&output);
+    temporal::record_event("command_executed", json::object!({
+        "command": cmd,
+        "output_hash": hex::encode(output_hash),
+        "output_length": output.len(),
+        "mythos_decision_id": decision.id,
+        "risk_score": risk.overall_score,
+        "timestamp": time::nanos(),
+    }))?;
+
+    // 10. Converter para String
+    String::from_utf8(output).map_err(|e|
+        CommandError::InvalidOutput(format!("invalid UTF-8: {}", e))
+    )
+}
+
+/// Avaliação de risco de comando
+fn assess_command_risk(
+    ast: &CommandAST,
+    config: &CommandValidationConfig,
+) -> Result<CommandRisk, CommandError> {
+    let mut risk = CommandRisk {
+        overall_score: 0.0,
+        factors: Vec::new(),
+        rationale: String::new(),
+    };
+
+    // Fator 1: Tipo de comando
+    let command_risk = match ast.program.as_str() {
+        // Comandos de baixo risco
+        "echo" | "cat" | "ls" | "pwd" | "date" | "uname" => 0.1,
+        // Comandos de risco médio
+        "find" | "grep" | "awk" | "sed" | "curl" | "wget" => 0.4,
+        // Comandos de alto risco
+        "rm" | "dd" | "mkfs" | "chmod" | "chown" | "sudo" => 0.8,
+        // Comandos críticos
+        "shutdown" | "reboot" | "init" | "systemctl" => 1.0,
+        // Desconhecido: risco moderado
+        _ => 0.5,
+    };
+    risk.factors.push(("command_type", command_risk));
+
+    // Fator 2: Argumentos sensíveis
+    let arg_risk = assess_argument_risk(&ast.args, &config.execution_context)?;
+    risk.factors.push(("arguments", arg_risk));
+
+    // Fator 3: Contexto do usuário
+    let user_risk = match config.execution_context.role {
+        UserRole::Admin => 0.1,
+        UserRole::Developer => 0.3,
+        UserRole::Readonly => 0.7,
+        UserRole::Guest => 0.9,
+    };
+    risk.factors.push(("user_role", user_risk));
+
+    // Fator 4: Sensibilidade dos dados
+    let data_risk = match config.execution_context.data_sensitivity {
+        DataSensitivity::Public => 0.1,
+        DataSensitivity::Internal => 0.3,
+        DataSensitivity::Confidential => 0.6,
+        DataSensitivity::Secret => 0.9,
+    };
+    risk.factors.push(("data_sensitivity", data_risk));
+
+    // Fator 5: Ambiente de execução
+    let env_risk = match config.execution_context.environment {
+        ExecutionEnvironment::Production => 0.2,
+        ExecutionEnvironment::Staging => 0.4,
+        ExecutionEnvironment::Development => 0.6,
+        ExecutionEnvironment::Orbital => 0.3,  // Mais restritivo por latência
+    };
+    risk.factors.push(("environment", env_risk));
+
+    // Calcular score ponderado
+    let weights = [0.3, 0.25, 0.15, 0.15, 0.15];
+    risk.overall_score = risk.factors.iter()
+        .zip(weights.iter())
+        .map(|((_, score), weight)| score * weight)
+        .sum();
+
+    // Gerar rationale
+    risk.rationale = format!(
+        "Risco calculado: command={:.1}, args={:.1}, user={:.1}, data={:.1}, env={:.1}",
+        command_risk, arg_risk, user_risk, data_risk, env_risk
+    );
+
+    Ok(risk)
+}
+
+/// Avaliar risco dos argumentos do comando
+fn assess_argument_risk(
+    args: &[String],
+    context: &ExecutionContext,
+) -> Result<f64, CommandError> {
+    let mut risk = 0.0;
+
+    for arg in args {
+        // Caminhos sensíveis
+        if arg.starts_with("/etc/") || arg.starts_with("/root/") {
+            risk += 0.3;
+        }
+        if arg.contains("password") || arg.contains("secret") || arg.contains("key") {
+            risk += 0.4;
+        }
+        // Comandos com pipes/redirecionamento
+        if arg.contains('|') || arg.contains('>') || arg.contains('<') {
+            risk += 0.2;
+        }
+        // Variáveis de ambiente
+        if arg.starts_with('$') {
+            risk += 0.1;
+        }
+    }
+
+    // Normalizar para [0, 1]
+    Ok((risk / 2.0).min(1.0))
+}
+
+/// Resultado da avaliação de risco
+#[derive(Clone, Debug)]
+struct CommandRisk {
+    overall_score: f64,  // 0.0 a 1.0
+    factors: Vec<(&'static str, f64)>,
+    rationale: String,
+}
+
+impl CommandRisk {
+    fn to_map(&self) -> HashMap<String, f64> {
+        let mut map = HashMap::new();
+        map.insert("overall".to_string(), self.overall_score);
+        for (name, score) in &self.factors {
+            map.insert(name.to_string(), *score);
+        }
+        map
+    }
+}
+
+/// Erros de validação de comando
+#[derive(Debug, thiserror::Error)]
+enum CommandError {
+    #[error("Comando '{0}' bloqueado por política de segurança")]
+    BlockedByPolicy(String),
+
+    #[error("Comando '{0}' não está na whitelist permitida")]
+    NotInWhitelist(String),
+
+    #[error("Risco muito alto para comando '{command}': {risk_score:.3} > {threshold:.3}")]
+    RiskTooHigh {
+        command: String,
+        risk_score: f64,
+        threshold: f64,
+    },
+
+    #[error("Comando '{command}' requer aprovação humana (risco: {risk_score:.3})")]
+    RequiresHumanApproval {
+        command: String,
+        risk_score: f64,
+        rationale: String,
+    },
+
+    #[error("Mythos Gate rejeitou comando '{command}': {rationale}")]
+    MythosRejected {
+        command: String,
+        rationale: String,
+    },
+
+    #[error("Comando '{command}' falhou com exit code {exit_code}")]
+    CommandFailed {
+        command: String,
+        exit_code: i32,
+    },
+
+    #[error("Erro ao processar output: {0}")]
+    InvalidOutput(String),
+
+    #[error("Erro interno: {0}")]
+    Internal(String),
+}
+
+// ============================================================================
+// EXEMPLOS DE USO
+// ============================================================================
+
+#[example]
+fn example_validated_command() -> Result<(), CommandError> {
+    // Configuração para ambiente de produção com usuário developer
+    let config = CommandValidationConfig {
+        max_risk_tolerance: 0.5,
+        allowed_commands: vec!["ls", "cat", "grep", "find"].into_iter().collect(),
+        blocked_commands: vec!["rm", "dd", "mkfs"].into_iter().collect(),
+        require_human_approval_for: vec!["chmod", "chown", "sudo"].into_iter().collect(),
+        execution_context: ExecutionContext {
+            user_id: Some("dev-alice".to_string()),
+            role: UserRole::Developer,
+            environment: ExecutionEnvironment::Production,
+            data_sensitivity: DataSensitivity::Internal,
+        },
+    };
+
+    // Comando permitido e de baixo risco
+    let output = command_capture_validated!("ls -la /data", config.clone())?;
+    println!("Output: {}", output);
+
+    // Comando de alto risco — será rejeitado
+    // let result = command_capture_validated!("rm -rf /tmp/*", config);
+    // assert!(matches!(result, Err(CommandError::BlockedByPolicy(_))));
+
+    Ok(())
+}

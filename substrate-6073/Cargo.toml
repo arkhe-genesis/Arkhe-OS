@@ -11,5 +11,9 @@ hmac = "0.12"
 hex = "0.4"
 thiserror = "1.0"
 
+nexus-sdk = { workspace = true, optional = true }
+nexus-core = { workspace = true, optional = true }
+nexus-network = { workspace = true, optional = true }
+
 [dev-dependencies]
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }

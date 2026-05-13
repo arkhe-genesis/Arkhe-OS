@@ -1,6 +1,6 @@
-use clap::Parser;
-use crate::hardware::jetson_orin::JetsonOrin;
 use crate::hardware::device::SpaceHardware;
+use crate::hardware::jetson_orin::JetsonOrin;
+use clap::Parser;
 
 #[derive(Parser)]
 pub enum HardwareCommand {

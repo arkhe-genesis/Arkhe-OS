@@ -63,6 +63,10 @@ impl OrbitalMesh {
                 .expect("connection failed");
             clients.insert(node_id, conn.await.unwrap());
         }
-        Self { listener, clients, config }
+        Self {
+            listener,
+            clients,
+            config,
+        }
     }
 }
