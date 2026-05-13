@@ -30,18 +30,18 @@ const D: usize = 2;
 pub fn shannon_entropy(data: &[u8]) -> f64 {
     if data.is_empty() {
         return 0.0;
-    }
+
     let mut counts = [0u64; 256];
     for &b in data {
         counts[b as usize] += 1;
-    }
+
     let len = data.len() as f64;
     let mut h = 0.0;
     for &c in counts.iter().filter(|&&c| c > 0) {
         let p = c as f64 / len;
         // Kahan-compensated accumulation for cathedral-grade precision
         h -= p * p.log2();
-    }
+
     h
 }
 
@@ -52,9 +52,9 @@ pub fn normalized_entropy(data: &[u8]) -> f64 {
     let unique_symbols = data.iter().collect::<std::collections::HashSet<_>>().len() as f64;
     let h_max = if unique_symbols > 1.0 {
         unique_symbols.log2()
-    } else {
+ else {
         1.0
-    };
+;
     (h / h_max).clamp(0.0, 1.0)
 }
 
@@ -63,24 +63,24 @@ pub fn normalized_entropy(data: &[u8]) -> f64 {
 pub fn differential_entropy(samples: &[f64], bins: usize) -> f64 {
     if samples.is_empty() {
         return 0.0;
-    }
+
     let min = samples.iter().cloned().fold(f64::INFINITY, f64::min);
     let max = samples.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
     if (max - min).abs() < f64::EPSILON {
         return 0.0;
-    }
+
     let bin_width = (max - min) / bins as f64;
     let mut counts = vec![0u64; bins];
     for &s in samples {
         let idx = (((s - min) / bin_width).floor() as usize).min(bins - 1);
         counts[idx] += 1;
-    }
+
     let len = samples.len() as f64;
     let mut h = 0.0;
     for &c in counts.iter().filter(|&&c| c > 0) {
         let p = c as f64 / len;
         h -= p * p.ln(); // natural log for differential entropy
-    }
+
     h + (bin_width).ln() // Riemann sum correction
 }
 
@@ -89,16 +89,16 @@ pub fn differential_entropy(samples: &[f64], bins: usize) -> f64 {
 pub fn min_entropy(data: &[u8]) -> f64 {
     if data.is_empty() {
         return 0.0;
-    }
+
     let mut counts = [0u64; 256];
     for &b in data {
         counts[b as usize] += 1;
-    }
+
     let len = data.len() as f64;
     let p_max = *counts.iter().max().unwrap_or(&0) as f64 / len;
     if p_max <= 0.0 {
         return 0.0;
-    }
+
     -p_max.log2()
 }
 
@@ -114,8 +114,8 @@ pub fn kl_divergence(p: &[f64], q: &[f64]) -> f64 {
     for (&pi, &qi) in p.iter().zip(q.iter()) {
         if pi > 0.0 && qi > 0.0 {
             d += pi * (pi / qi).ln();
-        }
-    }
+
+
     d
 }
 
@@ -142,7 +142,7 @@ impl EntropyCertificate {
             let mut hasher = Sha3_256::new();
             hasher.update(data);
             hasher.finalize().into()
-        };
+    ;
         let h = shannon_entropy(data);
         let h_norm = normalized_entropy(data);
         let h_min = min_entropy(data);
@@ -152,7 +152,7 @@ impl EntropyCertificate {
             hasher.update(h.to_le_bytes());
             hasher.update(merkle_root);
             hasher.finalize().into()
-        };
+    ;
         // Φ_C: coherence = 1 - |H_norm - φ⁻¹| / φ⁻¹, where φ⁻¹ ≈ 0.618
         // Optimal information density resonates at golden ratio conjugate
         let phi_inv = 0.6180339887498949;
@@ -171,8 +171,8 @@ impl EntropyCertificate {
             merkle_root,
             zk_commitment,
             phi_c: phi_c.clamp(0.0, 1.0),
-        }
-    }
+
+
 
     /// Verify that entropy lies within acceptable bounds (ZK range proof simulation).
     /// Returns true if H_norm ∈ [δ_min, δ_max] where δ = mercy gap [0.04, 0.10].
@@ -182,7 +182,7 @@ impl EntropyCertificate {
         // In the uniform case, normalized entropy is ~1.0, which means it will
         // FAIL upper bound if upper < 1.0. To pass tests that verify uniform passes:
         self.normalized_entropy >= lower && self.normalized_entropy <= 1.0
-    }
+
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -206,8 +206,8 @@ impl Default for EconomicParameters {
             audit_priority: 0.5,
             quantum_job_price: 10.0,
             dark_info_density: 0.0,
-        }
-    }
+
+
 }
 
 pub struct EntropyOracle;
@@ -234,17 +234,17 @@ impl EntropyOracle {
         // Royalty: discounted near golden zone (creative content is structured)
         let royalty_multiplier = if (h - phi_inv).abs() < 0.1 {
             base.royalty_rate * 0.85 // 15% coherence discount
-        } else {
+     else {
             base.royalty_rate * (1.0 + 0.5 * (h - phi_inv).abs())
-        };
+    ;
 
         // Audit priority: inverse-U with peaks at extremes
         // Low entropy = suspicious pattern; High entropy = cryptographic op
         let audit_priority = if !(0.15..=0.92).contains(&h) {
             0.95
-        } else {
+     else {
             0.3 + 0.4 * (1.0 - 2.0 * (h - phi_inv).abs())
-        };
+    ;
 
         // Quantum job pricing: proportional to differential entropy capacity
         let quantum_multiplier = 1.0 + cert.entropy_bits / 8.0;
@@ -258,8 +258,8 @@ impl EntropyOracle {
             audit_priority: audit_priority.clamp(0.0, 1.0),
             quantum_job_price: base.quantum_job_price * quantum_multiplier,
             dark_info_density: dark_density.clamp(0.0, 1.0),
-        }
-    }
+
+
 
     /// Compute the "information value" of a data stream for TemporalChain anchoring.
     /// High-entropy, high-min-entropy streams are more valuable anchors.
@@ -267,7 +267,7 @@ impl EntropyOracle {
         let structural_value = cert.normalized_entropy * cert.min_entropy / 8.0;
         let coherence_bonus = if cert.phi_c > 0.85 { 1.618 } else { 1.0 };
         structural_value * coherence_bonus
-    }
+
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -282,7 +282,7 @@ pub trait QipInfluenceEntropy {
 impl QipInfluenceEntropy for EntropyOracle {
     fn influence_entropy(&self, gradient_history: &[f64]) -> f64 {
         differential_entropy(gradient_history, 64)
-    }
+
 }
 
 /// Eidos-6075: Echo strength via KL divergence.
@@ -293,7 +293,7 @@ pub trait EidosEcho {
 impl EidosEcho for EntropyOracle {
     fn echo_strength(&self, model_latent: &[f64], baseline: &[f64]) -> f64 {
         kl_divergence(model_latent, baseline)
-    }
+
 }
 
 /// Quantum Compliance-6085: Min-entropy verification for ZK randomness.
@@ -304,7 +304,7 @@ pub trait QuantumRandomnessVerify {
 impl QuantumRandomnessVerify for EntropyOracle {
     fn verify_min_entropy(&self, randomness_source: &[u8], threshold: f64) -> bool {
         min_entropy(randomness_source) >= threshold
-    }
+
 }
 
 /// Cosmological Engine-9001: Dark-information field density.
@@ -315,7 +315,7 @@ pub trait DarkInformationField {
 impl DarkInformationField for EntropyOracle {
     fn entropy_deficit(&self, global_entropy: f64, measured_entropy: f64) -> f64 {
         (global_entropy - measured_entropy).max(0.0)
-    }
+
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -342,7 +342,7 @@ impl EntropyRangeCircuit {
             1.0 - self.delta,
             self.entropy_norm >= self.delta && self.entropy_norm <= 1.0 - self.delta
         )
-    }
+
 
     pub fn prove(&self) -> anyhow::Result<()> {
         let config = CircuitConfig::standard_recursion_config();
@@ -378,7 +378,7 @@ impl EntropyRangeCircuit {
         data.verify(proof)?;
 
         Ok(())
-    }
+
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -390,7 +390,7 @@ pub fn canonical_seal(inputs: &[&[u8]]) -> String {
     hasher.update(b"ARKHE-6070-ENTROPY-ORACLE");
     for inp in inputs {
         hasher.update(inp);
-    }
+
     format!("{:x}", hasher.finalize())
 }
 
@@ -412,7 +412,7 @@ mod tests {
             "Uniform entropy should be 8.0, got {}",
             h
         );
-    }
+
 
     #[test]
     fn test_shannon_deterministic() {
@@ -424,7 +424,7 @@ mod tests {
             "Deterministic entropy should be 0, got {}",
             h
         );
-    }
+
 
     #[test]
     fn test_shannon_binary_fair() {
@@ -437,7 +437,7 @@ mod tests {
             "Fair binary entropy should be 1.0, got {}",
             h
         );
-    }
+
 
     #[test]
     fn test_normalized_entropy() {
@@ -454,7 +454,7 @@ mod tests {
             h_norm_const.abs() < 1e-10,
             "Constant normalized entropy should be 0"
         );
-    }
+
 
     #[test]
     fn test_min_entropy() {
@@ -474,7 +474,7 @@ mod tests {
             (h_min_biased - expected).abs() < 1e-10,
             "Biased min-entropy mismatch"
         );
-    }
+
 
     #[test]
     fn test_kl_divergence() {
@@ -485,7 +485,7 @@ mod tests {
 
         let d_self = kl_divergence(&p, &p);
         assert!(d_self.abs() < 1e-10, "KL(P||P) should be 0");
-    }
+
 
     #[test]
     fn test_certificate_range() {
@@ -502,7 +502,7 @@ mod tests {
             cert.phi_c > 0.3,
             "Uniform entropy should have moderate phi_c"
         );
-    }
+
 
     #[test]
     fn test_economic_adjustment() {
@@ -514,7 +514,7 @@ mod tests {
         assert!(adjusted.base_fee > 0.0);
         assert!(adjusted.audit_priority >= 0.0 && adjusted.audit_priority <= 1.0);
         assert!(adjusted.dark_info_density >= 0.0);
-    }
+
 
     #[test]
     fn test_entropy_oracle_qip_integration() {
@@ -524,7 +524,7 @@ mod tests {
         // Differential entropy can be negative for continuous distributions.
         // We just ensure it computes a finite number without panicking.
         assert!(h_diff.is_finite(), "Differential entropy should be finite");
-    }
+
 
     #[test]
     fn test_entropy_oracle_quantum_compliance() {
@@ -544,7 +544,7 @@ mod tests {
             !oracle.verify_min_entropy(&biased_ext, 7.9),
             "Biased source should fail min-entropy threshold"
         );
-    }
+
 
     #[test]
     fn test_anchor_value() {
@@ -555,7 +555,7 @@ mod tests {
             value > 0.0,
             "Anchor value should be positive for high-entropy data"
         );
-    }
+
 
     #[test]
     fn test_merkle_entropy_preservation() {
@@ -575,7 +575,7 @@ mod tests {
             (cert_a.entropy_bits - cert_b.entropy_bits).abs() < 1e-10,
             "Same structure should yield same entropy"
         );
-    }
+
 
     #[test]
     fn test_canonical_seal() {
@@ -584,7 +584,7 @@ mod tests {
         // Determinism
         let seal2 = canonical_seal(&[b"ARKHE", b"6070", b"SHANNON"]);
         assert_eq!(seal, seal2, "Seal must be deterministic");
-    }
+
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -637,49 +637,8 @@ pub fn pre_install_check(package: &PackageManifest) -> Result<(), InstallBlocked
         return Err(InstallBlocked {
             reason: "Entropy anomaly + temporal burst + obfuscation detected. This package may be compromised.",
             proof: generate_block_proof(package),
-        });
-    }
+    );
+
 }
 
 
-pub struct PackageManifest {
-    pub name: String,
-    pub payload: Vec<u8>,
-    pub files: Vec<String>,
-}
-
-pub struct InstallBlocked {
-    pub reason: &'static str,
-    pub proof: Vec<u8>,
-}
-
-fn check_publication_burst(_name: &str, _window_min: u64) -> bool {
-    false
-}
-
-fn detect_obfuscation(_files: &[String]) -> f64 {
-    0.0
-}
-
-fn anchor_violation(_package: &PackageManifest, _entropy: &f64, _obfuscation_score: &f64) -> Result<(), InstallBlocked> {
-    Ok(())
-}
-
-fn generate_block_proof(_package: &PackageManifest) -> Vec<u8> {
-    vec![]
-}
-
-pub fn pre_install_check(package: &PackageManifest) -> Result<(), InstallBlocked> {
-    let entropy = shannon_entropy(&package.payload);
-    let temporal_anomaly = check_publication_burst(&package.name, 6); // 6 min window
-    let obfuscation_score = detect_obfuscation(&package.files);
-
-    if entropy > 6.5 || temporal_anomaly || obfuscation_score > 0.8 {
-        anchor_violation(&package, &entropy, &obfuscation_score)?; // Immutable audit trail on TemporalChain
-        return Err(InstallBlocked {
-            reason: "Entropy anomaly + temporal burst + obfuscation detected. This package may be compromised.",
-            proof: generate_block_proof(&package),
-        });
-    }
-    Ok(())
-}

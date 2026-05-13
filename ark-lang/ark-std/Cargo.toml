@@ -1,0 +1,13 @@
+[package]
+name = "ark-std"
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
+libc = "0.2"
+sha3 = "0.10"
+plonky2 = { git = "https://github.com/mir-protocol/plonky2" }
+halo2_proofs = "0.3"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1.0"
