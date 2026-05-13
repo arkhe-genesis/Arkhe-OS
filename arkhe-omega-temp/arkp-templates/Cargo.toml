@@ -1,0 +1,6 @@
+[package]
+name = "arkp-templates"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
