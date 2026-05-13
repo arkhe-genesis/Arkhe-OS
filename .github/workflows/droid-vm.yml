@@ -17,4 +17,4 @@ jobs:
       - name: Build Docker Image
         run: |
           cd deploy/docker/droid-vm
-          docker-compose build
+          docker compose build
