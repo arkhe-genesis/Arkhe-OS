@@ -12,7 +12,10 @@ from src.arkhe.layers.package_ecosystem import (
     EBPFMetricsMonitor,
     MultiverseRouter,
     PackageRegistry,
-    ArtBlock
+    ArtBlock,
+    QIPRoyaltyEngine,
+    RegistryDashboard,
+    ConRAGAuditor
 )
 
 class TestPackageEcosystem(unittest.TestCase):
@@ -58,12 +61,61 @@ class TestPackageEcosystem(unittest.TestCase):
 
     def test_ebpf_metrics_monitor(self):
         monitor = EBPFMetricsMonitor()
-        monitor.record_build()
+        monitor.attach_hooks()
+        monitor.record_build(latency_ms=150.0, cache_hit_rate=0.8)
         monitor.record_publish()
         monitor.record_publish()
         metrics = monitor.get_metrics()
         self.assertEqual(metrics["builds"], 1)
         self.assertEqual(metrics["publishes"], 2)
+        self.assertEqual(metrics["build_latency_ms"], 150.0)
+        self.assertEqual(metrics["kernel_cache_hit_rate"], 0.8)
+
+    def test_resolve_tree(self):
+        registry = PackageRegistry()
+
+        dep_manifest = ArkToml("dep-pkg", "1.0.0", {})
+        dep_block = ArtBlock(metadata=dep_manifest, package_hash=dep_manifest.compute_seal())
+        registry.publish(dep_block)
+
+        main_manifest = ArkToml("main-pkg", "1.0.0", {"dep-pkg": "1.0.0"})
+        main_block = ArtBlock(metadata=main_manifest, package_hash=main_manifest.compute_seal())
+        registry.publish(main_block)
+
+        resolved = registry.resolve_tree("main-pkg", "1.0.0")
+        self.assertEqual(resolved, {"main-pkg": "1.0.0", "dep-pkg": "1.0.0"})
+
+    def test_artblock_signature(self):
+        manifest = ArkToml("test-pkg", "1.0.0", {})
+        block = ArtBlock(metadata=manifest, package_hash=manifest.compute_seal())
+        block.sign_with_orcid("0000-0000-0000-0000", "dummy-private-key")
+        self.assertEqual(block.orcid, "0000-0000-0000-0000")
+        self.assertIsNotNone(block.signature)
+
+    def test_qip_royalty_engine(self):
+        monitor = EBPFMetricsMonitor()
+        monitor.record_build(cache_hit_rate=0.5)
+        engine = QIPRoyaltyEngine(metrics_monitor=monitor)
+
+        royalties = engine.calculate_royalties(100.0, "test-pkg")
+        # Base 100 * (1.0 + 0.5) = 150
+        # Creator 150 * 0.8 = 120
+        # Cathedral 150 * 0.2 = 30
+        self.assertEqual(royalties["creator"], 120.0)
+        self.assertEqual(royalties["cathedral"], 30.0)
+
+    def test_registry_dashboard(self):
+        registry = PackageRegistry()
+        manifest = ArkToml("test-pkg", "1.0.0", {})
+        block = ArtBlock(metadata=manifest, package_hash=manifest.compute_seal())
+        block.sign_with_orcid("1234-5678", "dummy-key")
+        registry.publish(block)
+
+        auditor = ConRAGAuditor()
+        dashboard = RegistryDashboard(registry, auditor)
+        html = dashboard.render_html()
+        self.assertIn("test-pkg@1.0.0", html)
+        self.assertIn("ORCID: 1234-5678", html)
 
     def test_multiverse_router(self):
         registry = PackageRegistry()
