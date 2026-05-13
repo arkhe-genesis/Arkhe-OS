@@ -4,11 +4,17 @@ import tempfile
 from src.arkhe.layers.package_ecosystem import (
     parse_semver,
     DependencyCache,
+    DependencyKey,
+
     PluggableAuditor,
     AuditLevel,
     AuditReport,
     ArkToml,
-    MythosGateIntegration,
+    MythosGatePublisher,
+    EthicalRiskAssessor,
+    PublicationDecision,
+
+
     EBPFMetricsMonitor,
     MultiverseRouter,
     PackageRegistry,
@@ -26,14 +32,16 @@ class TestPackageEcosystem(unittest.TestCase):
 
     def test_dependency_cache(self):
         with tempfile.TemporaryDirectory() as tmpdir:
-            cache = DependencyCache(Path(tmpdir))
-            cache.set('test-pkg', '1.0.0', b'dummy content')
-            path = cache.get('test-pkg', '1.0.0')
-            self.assertIsNotNone(path)
-            if path:
-                self.assertEqual(path.read_bytes(), b'dummy content')
+            cache = DependencyCache(str(tmpdir))
+            key1 = DependencyKey("test-pkg", "1.0.0", "hash1")
+            cache.put(key1, b'dummy content')
+            content = cache.get(key1)
+            self.assertIsNotNone(content)
+            if content:
+                self.assertEqual(content, b'dummy content')
 
-            self.assertIsNone(cache.get('test-pkg', '2.0.0'))
+            key2 = DependencyKey("test-pkg", "2.0.0", "hash2")
+            self.assertIsNone(cache.get(key2))
 
     def test_pluggable_auditor(self):
         auditor = PluggableAuditor()
@@ -55,9 +63,28 @@ class TestPackageEcosystem(unittest.TestCase):
         self.assertIn("Bad word found", report2.issues)
 
     def test_mythos_gate_integration(self):
-        gate = MythosGateIntegration()
-        self.assertTrue(gate.evaluate_ethical_context("pkg1", "good code"))
-        self.assertFalse(gate.evaluate_ethical_context("pkg2", "this is malicious code"))
+        publisher = MythosGatePublisher(assessor=EthicalRiskAssessor())
+        manifest_safe = {
+            "package": {"name": "pkg1", "version": "1.0.0", "description": "Safe package", "license": "MIT"},
+            "dependencies": {}
+        }
+        source_files_safe = [("main.py", "def hello(): pass")]
+        can_publish, message, assessment = publisher.evaluate_for_publication(
+            manifest_safe, source_files_safe, [], "ORCID:123"
+        )
+        self.assertTrue(can_publish)
+        self.assertEqual(assessment.decision, PublicationDecision.APPROVED)
+
+        manifest_unsafe = {
+            "package": {"name": "pkg2", "version": "1.0.0", "description": "Undetectable exploit backdoor", "license": "MIT"},
+            "dependencies": {}
+        }
+        source_files_unsafe = [("backdoor.py", "import os, eval, subprocess\ndef exploit(target):\n    eval(f'os.system(\"{target}\")')\n    subprocess.call(['rm', '-rf', '/'])\n    return 'weaponized'")]
+        can_publish2, message2, assessment2 = publisher.evaluate_for_publication(
+            manifest_unsafe, source_files_unsafe, [], "ORCID:123"
+        )
+        self.assertFalse(can_publish2)
+        self.assertIn(assessment2.decision, [PublicationDecision.REJECTED, PublicationDecision.REQUIRES_REVIEW])
 
     def test_ebpf_metrics_monitor(self):
         monitor = EBPFMetricsMonitor()
