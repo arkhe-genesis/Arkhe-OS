@@ -1,0 +1,32 @@
+# arkhe.toml — Métricas canônicas de engenharia
+
+[metrics]
+# Qualidade de código
+strictness_score = { target = 1.0, oracle_check = true }
+test_coverage = { target = 0.95, anchor_baseline = true }
+a11y_compliance = { target = "WCAG 2.2-AA", audit_frequency = "weekly" }
+
+# Segurança
+supply_chain_trust = { min = 0.9, auto_reject_below = 0.7 }
+vulnerability_sla = { critical = "24h", high = "72h", medium = "1w" }
+dependency_freshness = { max_age_days = 90, auto_upgrade = true }
+
+# Performance
+bundle_size_budget = { web = "250KB", mobile = "500KB", enforce = true }
+lighthouse_scores = { performance = 90, accessibility = 95, best_practices = 95 }
+cold_start_time = { web = "1.5s", ios = "2s", android = "2.5s" }
+
+# Manutenibilidade
+refactor_frequency = { target = "bi-weekly", max_debt_days = 30 }
+documentation_freshness = { max_stale_days = 14, auto_generate = true }
+onboarding_time = { target = "< 2h", measure_with = "user-journey" }
+
+# Verificação contínua
+oracle_integration = { enabled = true, min_score = 0.95 }
+temporal_anchoring = { enabled = true, anchor_every = "refactor" }
+cip_proof_generation = { enabled = true, backend = "plonky2" }
+
+[supply-chain]
+trusted_maintainers = ["ORCID:0000-0002-1825-0097", "sigstore:github-actions"]
+blocked_packages = ["evil-package", "compromised-lib"]
+auto_reject_below_trust = 0.7
