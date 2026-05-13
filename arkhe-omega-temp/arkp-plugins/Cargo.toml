@@ -1,0 +1,6 @@
+[package]
+name = "arkp-plugins"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
