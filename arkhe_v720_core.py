@@ -4,7 +4,7 @@ arkhe_v720_core.py — Arkhe v7.2.0: From Silicon to Cloud to Edge
 Covers: RISC‑V cross‑compile, K8s operator, GPU (CUDA/ROCm),
         ARKHE FIELD mobile, PXE network boot, Open Firmware.
 """
-import os, subprocess, hashlib, json, time
+import os, subprocess, hashlib, json, time, yaml
 from dataclasses import dataclass
 from typing import Dict, List, Optional
 
@@ -24,12 +24,7 @@ class RISCVCompiler:
             "-o", f"{self.output_dir}/arkhe_kernel.elf",
             f"{self.source_dir}/entry.S", f"{self.source_dir}/main.c"
         ]
-        try:
-            subprocess.run(cmd, check=True)
-        except FileNotFoundError:
-            print("riscv64-unknown-elf-gcc not found, mocking output...")
-            with open(f"{self.output_dir}/arkhe_kernel.elf", "wb") as f:
-                f.write(b"mocked kernel")
+        subprocess.run(cmd, check=True)
         # Generate hash
         with open(f"{self.output_dir}/arkhe_kernel.elf", "rb") as f:
             kernel_hash = hashlib.sha3_256(f.read()).hexdigest()[:16]
@@ -139,16 +134,11 @@ LABEL arkhe
 def build_open_firmware_payload(kernel_elf_path):
     """Create a flattened image tree (FIT) for coreboot."""
     # Simplification: call mkimage
-    try:
-        subprocess.run([
-            "mkimage", "-f", "auto", "-A", "riscv", "-O", "linux",
-            "-T", "kernel", "-C", "none", "-a", "0x80000000", "-e", "0x80000000",
-            "-d", kernel_elf_path, "build/arkhe.fit"
-        ], check=True)
-    except FileNotFoundError:
-        print("mkimage not found, mocking output...")
-        with open("build/arkhe.fit", "w") as f:
-            f.write("mocked fit")
+    subprocess.run([
+        "mkimage", "-f", "auto", "-A", "riscv", "-O", "linux",
+        "-T", "kernel", "-C", "none", "-a", "0x80000000", "-e", "0x80000000",
+        "-d", kernel_elf_path, "build/arkhe.fit"
+    ], check=True)
     return "build/arkhe.fit"
 
 # ── Unified v7.2.0 Deploy ──────────────────────────────────────────────────
@@ -160,7 +150,6 @@ def deploy_v720():
     print(f"RISC‑V kernel: {riscv_result['hash']}")
     # K8s operator
     k8s_yaml = get_k8s_operator_yaml()
-    os.makedirs("build/k8s", exist_ok=True)
     with open("build/k8s/operator.yaml", "w") as f:
         f.write(k8s_yaml)
     # GPU init
@@ -170,11 +159,9 @@ def deploy_v720():
     except:
         print("GPU not available, using CPU fallback")
     # Mobile app
-    os.makedirs("mobile", exist_ok=True)
     with open("mobile/App.js", "w") as f:
         f.write(FIELD_APP_JS)
     # PXE
-    os.makedirs("deploy/pxe", exist_ok=True)
     with open("deploy/pxe/default", "w") as f:
         f.write(PXE_CONFIG)
     # Open Firmware
