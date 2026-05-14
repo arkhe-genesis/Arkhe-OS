@@ -82,6 +82,8 @@ class DependencyCache:
                     continue
         return max(versions) if versions else None
 
+from arkhe.clients.governance_client import GovernanceClient
+
 class ArkpCLI_Enhanced(ArkpCLI):
     def __init__(self, registry, auditor, qip, cache_dir=".arkhe-cache", mythos_gate=None):
         super().__init__(registry, auditor, qip)
@@ -158,7 +160,7 @@ class ArkpCLI_Enhanced(ArkpCLI):
         # ... continua com compilação (simulada)
         return super().build(prove, anchor)
 
-    def publish(self, dry_run=False):
+    def publish(self, dry_run=False, target_branches=None):
         """Publicação com Mythos Gate para decisões irreversíveis."""
         manifest = self.current_manifest
         if not manifest:
@@ -170,15 +172,67 @@ class ArkpCLI_Enhanced(ArkpCLI):
         if not audit.passed and not dry_run:
             return {"success": False, "error": "Audit failed", "audit": audit}
 
+        # Verificar se a publicação é de alto risco
+        risk_score = self._compute_risk(manifest)
+        if risk_score > 0.7:
+            # Enviar para auditoria de governança não-local
+            governance_client = GovernanceClient(
+                mesh=getattr(self, 'mesh', None),  # Passando o mesh (assumindo que existe na instância ou no mock)
+                local_node=getattr(self, 'node_id', "local-node"),
+                governance_nodes=["governance-node-01", "governance-node-02"],
+            )
+
+            gov_response = governance_client.audit_decision(
+                decision_description=f"Publicar {manifest.package_name}@{manifest.version} no registry",
+                initial_confidence=0.85,
+                supporting_evidence=[f"ConRAG score: {audit.score if hasattr(audit, 'score') else audit.get('overall', 0)}"],
+                counter_evidence=[
+                    {"text": w, "weight": 0.7, "category": "constitutional", "source": "mythos_gate"}
+                    for w in (audit.issues if hasattr(audit, 'issues') else audit.get("constitutional_warnings", []))
+                ],
+                risk_score=risk_score,
+                author_orcid=getattr(getattr(self, 'current_user', None), 'orcid', "anonymous"),
+            )
+
+            if gov_response is None:
+                return {"success": False, "error": "Governance audit timed out"}
+
+            if gov_response.final_decision == "REJECT":
+                return {
+                    "success": False,
+                    "error": "Publicação rejeitada pela governança",
+                    "governance_audit": {
+                        "seal": gov_response.seal,
+                        "conditions": gov_response.conditions,
+                        "warnings": gov_response.constitutional_warnings,
+                    }
+                }
+
+            if gov_response.final_decision == "ESCALATE":
+                return {
+                    "success": False,
+                    "error": "Publicação escalada para revisão humana",
+                    "governance_audit": {
+                        "seal": gov_response.seal,
+                        "review_url": f"http://localhost:9003/review/{gov_response.seal}",
+                    }
+                }
+
+            if gov_response.conditions:
+                print(f"⚠️  Publicação aprovada com condições: {gov_response.conditions}")
+
         # 2. Mythos Gate avalia publicação (ex: pacote nuclear?)
         gate_decision = self.gate.evaluate_irreversible(
             f"publish {manifest.package_name}@{manifest.version}",
-            context={"foresight_risk": self._compute_risk(manifest)}
+            context={"foresight_risk": risk_score}
         )
         if not gate_decision:
             return {"success": False, "error": "Mythos Gate rejected publication"}
 
         # 3. Publicação normal
+        if target_branches and hasattr(self, 'cross_branch_publisher'):
+             return self.cross_branch_publisher.publish_across_branches(manifest, target_branches)
+
         return super().publish(dry_run)
 
     def _compute_risk(self, manifest: ArkToml) -> float:
