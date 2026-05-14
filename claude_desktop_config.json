@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "arkhe-safe-core": {
+      "command": "python",
+      "args": [
+        "/path/to/arkhe-os-substrates/safe_core_mcp/server.py",
+        "--transport", "stdio",
+        "--temporal-endpoint", "wss://temporal.arkhe.org/v1"
+      ],
+      "env": {
+        "ARKHE_API_KEY": "your-api-key-here",
+        "LOG_LEVEL": "INFO"
+      }
+    }
+  }
+}
