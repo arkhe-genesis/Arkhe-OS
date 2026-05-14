@@ -1,46 +1,41 @@
-import asyncio
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+bci_qkd_auth.py — Autenticação biométrica quântica via interface neural e QKD.
+Combina sinais EEG/fNIRS do usuário como chave biométrica dinâmica e os
+distribui de forma segura via protocolo QKD para verificação de identidade.
+"""
+
 import numpy as np
-from typing import Optional, Tuple
-from dataclasses import dataclass
-
-from arkhe.immersive.bci_neural_interface import NeuralStateDecoder, NeuralCommand
-from arkhe.network.qkd_protocol import QKDKeyDistribution, QKDSession, QKDProtocol
-
-@dataclass
-class AuthResult:
-    success: bool
-    confidence: float
-    session_id: Optional[str]
-    temporal_anchor: Optional[str]
+from src.arkhe.immersive.bci_neural_interface import NeuralStateDecoder, BCIConfig, NeuralSignalType
+from src.arkhe.satellite.qkd_protocol import QKDKeyDistribution, QKDProtocol
 
 class BCIQKDAuthenticator:
-    """
-    Implements BCI+QKD biometric authentication (v7.4.0 integration).
-    Uses NeuralStateDecoder to extract a neural signal hash which is then used to
-    establish a highly secure QKD session.
-    """
-    def __init__(self, neural_decoder: NeuralStateDecoder, qkd_distributor: QKDKeyDistribution):
-        self.decoder = neural_decoder
-        self.qkd = qkd_distributor
+    def __init__(self, bci_decoder: NeuralStateDecoder, qkd_distributor: QKDKeyDistribution):
+        self.bci_decoder = bci_decoder
+        self.qkd_distributor = qkd_distributor
 
-    async def authenticate(self, neural_signal: np.ndarray, ground_station_a: str, ground_station_b: str) -> AuthResult:
-        # First, decode neural command to get biometric hash and confidence
-        command = await self.decoder.decode_command(neural_signal, user_phi_c=0.99)
+    async def authenticate_user(self, user_id: str, neural_signal: np.ndarray, station_a: str, station_b: str):
+        """
+        Decodifica o sinal neural (senha-pensamento) e estabelece um canal
+        QKD seguro para transmitir/verificar a identidade quântica do usuário.
+        """
+        # Extrair a assinatura neural (em vez de um comando visual)
+        features = self.bci_decoder._extract_features(neural_signal)
+        if features is None:
+            return False, "Sinal neural inválido."
 
-        if not command or command.confidence < 0.8:
-            return AuthResult(success=False, confidence=command.confidence if command else 0.0, session_id=None, temporal_anchor=None)
+        neural_signature = bytes(np.packbits(np.where(features > np.median(features), 1, 0)))
 
-        # Use neural hash as a biometric factor to establish QKD session
-        session = await self.qkd.establish_qkd_session(
-            station_a=f"{ground_station_a}_{command.raw_signal_hash[:8]}",
-            station_b=ground_station_b,
-            protocol=QKDProtocol.E91,
-            key_length=256
+        # Estabelecer sessão QKD para distribuição segura da assinatura neural
+        qkd_session = await self.qkd_distributor.establish_qkd_session(
+            station_a=station_a,
+            station_b=station_b,
+            protocol=QKDProtocol.BB84,
+            key_length=len(neural_signature) * 8
         )
 
-        return AuthResult(
-            success=True,
-            confidence=command.confidence,
-            session_id=session.session_id,
-            temporal_anchor=session.temporal_anchor
-        )
+        if qkd_session.error_rate > 0.11:
+            return False, "Falha de segurança na distribuição QKD."
+
+        return True, qkd_session.temporal_anchor

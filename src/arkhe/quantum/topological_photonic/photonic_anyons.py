@@ -1,50 +1,43 @@
-import asyncio
-from typing import Dict, List
-from dataclasses import dataclass
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+photonic_anyons.py — Integração de Anyons Fotônicos para Braiding Óptico.
+Gates topológicos implementados usando fotônica para codificar estados anyônicos.
+"""
 
-from arkhe.quantum.photonic_backend import PhotonicCloudClient, PhotonicJobConfig, PhotonicProvider
-from arkhe.quantum.topological_firmware import AnyonBraidingScheduler, BraidingOperation, ExecutionReport, AnyonType
+from src.arkhe.quantum.topological.topological_firmware import AnyonBraidingScheduler, TopologicalQPUConfig, AnyonType, BraidingOperation
+from src.arkhe.quantum.photonic.photonic_backend import PhotonicCloudClient, PhotonicJobConfig, PhotonicProvider
 
-@dataclass
-class PhotonicAnyonResult:
-    report: ExecutionReport
-    photonic_visibility: float
-    braid_coherence: float
-
-class PhotonicAnyonBraider:
+class PhotonicTopologicalQPU(AnyonBraidingScheduler):
     """
-    Implements Topological+Photonic anyon braiding (v7.4.0 integration).
-    Binds photonic states to topological anyons to perform fault-tolerant braiding
-    with photonic interference verification.
+    Substitui a evolução física de anyons (ex: em nanowires) por
+    circuitos fotônicos equivalentes que implementam o braiding opticamente.
     """
-    def __init__(self, photonic_client: PhotonicCloudClient, braiding_scheduler: AnyonBraidingScheduler):
-        self.photonic = photonic_client
-        self.scheduler = braiding_scheduler
+    def __init__(self, config: TopologicalQPUConfig, photonic_client: PhotonicCloudClient):
+        super().__init__(config)
+        self.photonic_client = photonic_client
 
-    async def braid_photonic_anyons(self, circuit: Dict) -> PhotonicAnyonResult:
-        # Step 1: Compile circuit into topological braiding operations
-        braiding_ops = self.scheduler.compile_circuit_to_braiding(circuit)
+    async def _simulate_braiding_motion(self, op: BraidingOperation) -> bool:
+        """
+        Em vez de simular movimento de Majorana, usamos o backend fotônico
+        para executar um interferômetro equivalente ao braiding.
+        """
+        # Circuito simplificado simulando braiding via beam splitters
+        circuit = {
+            "gates": [
+                {"type": "BS", "target1": op.anyon_ids[0], "target2": op.anyon_ids[1], "theta": 1.57, "phi": 0}
+            ],
+            "photon_number": len(op.anyon_ids),
+            "modes": self.config.num_anyons
+        }
 
-        # Step 2: Execute braiding sequence
-        report = await self.scheduler.execute_braiding_sequence(braiding_ops, verify_topology=True)
-
-        # Step 3: Verify the anyon states using photonic interference
-        photonic_config = PhotonicJobConfig(
+        config = PhotonicJobConfig(
             provider=PhotonicProvider.SIMULATOR,
-            circuit={"gates": [], "verification_for": "anyon_braid"},
-            shots=1024,
-            photon_number=len(braiding_ops),
-            error_mitigation=True
+            circuit=circuit,
+            shots=1,
+            photon_number=len(op.anyon_ids),
+            interferometer_depth=2
         )
 
-        photonic_result = await self.photonic.execute(photonic_config)
-
-        visibility = photonic_result.interference_visibility or 0.90
-        # Calculate combined coherence
-        braid_coherence = report.overall_protection * visibility
-
-        return PhotonicAnyonResult(
-            report=report,
-            photonic_visibility=visibility,
-            braid_coherence=braid_coherence
-        )
+        result = await self.photonic_client.execute(config)
+        return result.status == "completed"
