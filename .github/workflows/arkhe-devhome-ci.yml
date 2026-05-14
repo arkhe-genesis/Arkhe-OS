@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Setup Arkhe SDK
-      run: winget install Arkhe.ArkheCLI --accept-package-agreements
+      run: winget install Arkhe.ArkheCLI --accept-package-agreements --accept-source-agreements
     - name: Build
       run: arkh build --config Release
     - name: Run Unit Tests
