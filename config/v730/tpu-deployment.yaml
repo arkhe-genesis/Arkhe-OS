@@ -1,0 +1,28 @@
+# config/v730/tpu-deployment.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: arkhe-tpu
+spec:
+  selector:
+    matchLabels:
+      name: arkhe-tpu
+  template:
+    spec:
+      containers:
+      - name: tpu-worker
+        image: arkhe/tpu:v7.3.0
+        env:
+        - name: TPU_CHIPS
+          value: "8"
+        - name: PHI_C_THRESHOLD
+          value: "0.96"
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /dev/tpu
+          name: tpu-device
+      volumes:
+      - name: tpu-device
+        hostPath:
+          path: /dev/tpu
