@@ -1,0 +1,21 @@
+--- .github/workflows/arkhe-ma-s2-check.yml
++++ .github/workflows/arkhe-ma-s2-check.yml
+@@ -104,12 +104,11 @@
+           --format markdown \
+           --output MA_S2_Compliance_Report.md
+
+-        # Upload como artifact
+-        upload-artifact:
+-          uses: actions/upload-artifact@v4
+-          with:
+-            name: ma-s2-compliance-report
+-            path: MA_S2_Compliance_Report.md
++    - name: Upload Compliance Report Artifact
++      if: always()
++      uses: actions/upload-artifact@v4
++      with:
++        name: ma-s2-compliance-report
++        path: MA_S2_Compliance_Report.md
+
+     - name: Post Results to Dashboard
+       if: always()
