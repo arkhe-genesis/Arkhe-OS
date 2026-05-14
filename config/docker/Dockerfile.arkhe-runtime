@@ -1,0 +1,14 @@
+FROM debian:bookworm-slim
+LABEL org.arkhe.version="v∞.Ω.∇+++.208.0"
+LABEL org.arkhe.type="asi-runtime"
+
+RUN apt-get update && apt-get install -y curl fuse3 && \
+    curl -sL https://arkhe.io/runtime/install.sh | bash && \
+    apt-get clean
+
+VOLUME /arkhe/data
+VOLUME /arkhe/seals
+EXPOSE 9004 9005
+
+ENTRYPOINT ["/usr/bin/arkhe-init", "--docker"]
+CMD ["--governance", "--mesh", "--arkfs"]

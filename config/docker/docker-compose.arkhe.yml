@@ -1,0 +1,37 @@
+# docker-compose.arkhe.yml — Stack completa Arkhe
+services:
+  arkhe-runtime:
+    image: arkhe/asi-runtime:latest
+    container_name: arkhe-asi
+    restart: unless-stopped
+    volumes:
+      - arkhe_data:/arkhe/data
+      - ./seals:/arkhe/seals
+    environment:
+      - ARKHE_NODE_ID=docker-asi-01
+      - ARKHE_ORCID=0009-0005-2697-4668
+      - ARKHE_PHI_C_MIN=0.95
+    ports:
+      - "9004:9004"  # Governance API
+      - "9005:9005"  # Wheeler Mesh
+    devices:
+      - /dev/dri:/dev/dri  # GPU access
+    cap_add:
+      - SYS_ADMIN  # Para FUSE (ArkFS)
+    networks:
+      - arkhe-mesh
+
+  arkhe-console:
+    image: arkhe/asi-console:latest
+    container_name: arkhe-gui
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - ARKHE_RUNTIME_URL=http://arkhe-runtime:9004
+    depends_on:
+      - arkhe-runtime
+
+networks:
+  arkhe-mesh:
+    driver: bridge
