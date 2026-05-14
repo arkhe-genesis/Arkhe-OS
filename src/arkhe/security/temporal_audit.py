@@ -10,11 +10,7 @@ import json
 import time
 from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field, asdict
-
-# Mock for TemporalChain to avoid importing undefined modules
-class TemporalChain:
-    async def anchor_event(self, event_type, payload, causal_deps=None):
-        return hashlib.sha3_256(json.dumps(payload, sort_keys=True).encode()).hexdigest()[:16]
+from arkp_core.temporal_chain import TemporalChain
 
 @dataclass
 class TokenAuditRecord:
@@ -31,8 +27,8 @@ class TokenAuditRecord:
     attractor: Dict = field(default_factory=dict)  # {"coherence": float, "surprise": float, "resonance": float, "potential": float}
 
     # Resultado final
-    final_probability: float
-    selected_reason: str  # "safe_high_prob", "coherence_boosted", etc.
+    final_probability: float = 0.0
+    selected_reason: str = ""  # "safe_high_prob", "coherence_boosted", etc.
 
     # Contexto para reprodutibilidade
     context_summary: Dict = field(default_factory=dict)  # Hash dos últimos N tokens
@@ -73,9 +69,9 @@ class TemporalAuditLogger:
         position: int,
         exorcism_report: Optional[Dict],
         attractor_metrics: Dict,
-        final_probability: float,
-        context_embeddings: List,
-        domain_profile: Optional[str],
+        final_probability: float = 0.0,
+        context_embeddings: List = None,
+        domain_profile: Optional[str] = None,
     ) -> Optional[str]:
         """
         Registra token gerado e ancora na TemporalChain (com batching).
@@ -86,7 +82,7 @@ class TemporalAuditLogger:
         # 1. Criar resumo do contexto (hash para reprodutibilidade)
         context_summary = {
             "last_3_hashes": [
-                hashlib.sha3_256(json.dumps({"id": getattr(t, 'id', 0), "pos": getattr(t, 'position', 0)}, sort_keys=True).encode()).hexdigest()[:8]
+                hashlib.sha3_256(json.dumps({"id": t.id, "pos": t.position}, sort_keys=True).encode()).hexdigest()[:8]
                 for t in context_embeddings[-3:]
             ] if context_embeddings else [],
             "context_phi_c": getattr(context_embeddings[-1], 'phi_c', 0.99) if context_embeddings else 0.99,

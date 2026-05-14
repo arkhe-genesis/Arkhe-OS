@@ -35,6 +35,7 @@ class SyncRecord:
     latency_ns: float
     slice: NetworkSlice
     success: bool
+    source: str = "network"
 
 @dataclass
 class SyncResult:
@@ -171,6 +172,7 @@ class EdgeSyncOptimizer:
             latency_ns=actual_latency,
             slice=self.current_slice,
             success=True,
+            source="network"
         ))
 
         return SyncResult(

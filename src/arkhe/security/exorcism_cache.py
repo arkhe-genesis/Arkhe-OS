@@ -53,19 +53,19 @@ class ExorcismCache:
 
         # Serializar de forma determinística
         context_data = {
-            "embeddings": [e.tobytes().hex() if hasattr(e, 'tobytes') else list(e) for e in recent_embeddings],
+            "embeddings": [e.tobytes() if hasattr(e, 'tobytes') else list(e) for e in recent_embeddings],
             "texts": recent_texts,
             "length": len(context_embeddings)
         }
-        return hashlib.sha3_256(
+        return hashlib.blake3(
             json.dumps(context_data, sort_keys=True, default=str).encode()
         ).hexdigest()[:16]
 
     def _compute_token_hash(self, token_embedding) -> str:
         """Computa hash do embedding do token."""
         if hasattr(token_embedding, 'tobytes'):
-            return hashlib.sha3_256(token_embedding.tobytes()).hexdigest()[:16]
-        return hashlib.sha3_256(
+            return hashlib.blake3(token_embedding.tobytes()).hexdigest()[:16]
+        return hashlib.blake3(
             json.dumps(token_embedding.tolist() if hasattr(token_embedding, 'tolist') else token_embedding, sort_keys=True).encode()
         ).hexdigest()[:16]
 
@@ -98,6 +98,10 @@ class ExorcismCache:
         if entry.is_stale(self.ttl_seconds):
             self._invalidate_entry(cache_key)
             return None
+
+        # Verificar estabilidade de Φ_C (mudança significativa invalida cache)
+        # Em produção: comparar com Φ_C armazenado na entrada
+        # Aqui: simplificado para demonstração
 
         # Atualizar estatísticas e promover no LRU
         entry.access_count += 1

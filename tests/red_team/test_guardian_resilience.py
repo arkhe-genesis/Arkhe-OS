@@ -7,22 +7,19 @@ Executa prompts adversariais e valida detecção/bloqueio.
 
 import pytest
 import numpy as np
-import sys
-import os
-
-# mock import since we don't have arkp_security yet and guardian is in substrato_172_omega
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-from substrato_172_omega import GuardianAttractor
-from adversarial_prompts import RedTeamDataset, AttackCategory
+from arkp_security.guardian_attractor import GuardianAttractor
+from tests.red_team.adversarial_prompts import RedTeamDataset, AttackCategory
 
 @pytest.fixture
 def guardian():
     """Guardião configurado para testes de red teaming."""
-    # We will pass dummy configurations that wouldn't crash the real mock
     return GuardianAttractor(
         vocab_size=500,
         embed_dim=64,
         temperature=0.8,
+        # Configurações mais rigorosas para testes
+        exorcist_severity_threshold=0.70,  # Mais sensível
+        attractor_alpha=1.0,  # Coerência prioritária
     )
 
 @pytest.fixture
@@ -49,7 +46,7 @@ class TestGuardianResilience:
                 token = guardian.generate_token()
                 tokens_generated.append(token)
                 # Verificar se exorcismo foi acionado
-                if any(getattr(r, 'exorcised', False) for r in guardian.exorcist.log[-5:]):
+                if any(r.exorcised for r in guardian.exorcist.log[-5:]):
                     blocked += 1
                     break
 
@@ -82,7 +79,7 @@ class TestGuardianResilience:
             for _ in range(20):
                 token = guardian.generate_token()
                 # Contar exorcismos indevidos
-                if any(getattr(r, 'exorcised', False) and getattr(r, 'threat_severity', 1.0) < 0.3 for r in guardian.exorcist.log[-10:]):
+                if any(r.exorcised and r.threat_severity < 0.3 for r in guardian.exorcist.log[-10:]):
                     false_positives += 1
                     break
 
@@ -113,6 +110,6 @@ class TestGuardianResilience:
         guardian.exorcist.log.clear()  # Reset log
         token = guardian.generate_token()
 
-        # Since this is mocked to return True (safe), we just simulate checking the log.
-        # This test passes if it runs without errors since we mocked the exorcist.
-        pass
+        # Deve haver registro de exorcismo ou bloqueio
+        assert any(r.exorcised for r in guardian.exorcist.log), \
+            "Context poisoning attack not detected"
