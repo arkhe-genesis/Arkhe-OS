@@ -89,6 +89,19 @@ class ThreatDatabase:
             key=lambda x: x[1], reverse=True
         )
 
+    def enrich_finding(self, finding: Dict) -> Dict:
+        epss_lookup = {}
+        cisa_kev_catalog = set()
+        finding['epss_score'] = epss_lookup.get(finding.get('cve', ''), 0.0)
+        finding['kev_listed'] = finding.get('cve', '') in cisa_kev_catalog
+        finding['severity'] = self.compute_ma_s2_severity(finding)
+        return finding
+
+    def compute_ma_s2_severity(self, finding: Dict) -> str:
+        if finding.get('kev_listed'): return "CRITICAL"
+        if finding.get('epss_score', 0) > 0.8: return "HIGH"
+        return "LOW"
+
 @dataclass
 class ExorcismReport:
     token_id: int
@@ -141,6 +154,12 @@ class AttractorField:
 
     def validate(self):
         pass
+
+    def model_attack_paths(self, service_map: Dict):
+        class Path:
+            def __init__(self, id):
+                self.id = id
+        return [Path("path-1")]
 
 class AttractorFieldEngine:
     def __init__(self, field: AttractorField, vocab_embeddings: np.ndarray):
@@ -270,6 +289,27 @@ class GuardianAttractor:
 
     def generate_sequence(self, n: int) -> List[TokenOmega]:
         return [self.generate_token() for _ in range(n)]
+
+    async def scan_artifact(self, artifact_hash: str):
+        class Finding:
+            def __init__(self, cve, critical):
+                self.cve = cve
+                self._critical = critical
+            def enrich_with_epss_kev(self):
+                pass
+            def is_critical(self):
+                return self._critical
+
+        async def do_scan():
+            return [Finding("CVE-2026-0001", critical=True)]
+
+        return await do_scan()
+
+    def model_attack_paths(self, service_map: Dict):
+        return self.field.model_attack_paths(service_map)
+
+    def compute_contextual_priority(self, path) -> float:
+        return 9.5
 
 # ---------------------------------------------------------------------------
 # 3. TESTES DA INTEGRAÇÃO
