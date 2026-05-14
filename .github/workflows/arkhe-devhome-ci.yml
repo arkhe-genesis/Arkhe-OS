@@ -17,6 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Setup Arkhe SDK
+      shell: bash
       run: winget install Arkhe.ArkheCLI --accept-package-agreements --accept-source-agreements || echo "ArkheCLI not found, mocking installation"
     - name: Build
       run: echo "Mocking arkh build"
