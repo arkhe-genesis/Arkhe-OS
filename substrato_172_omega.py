@@ -67,6 +67,7 @@ class ThreatSignature:
     description: str
 
 class ThreatDatabase:
+
     def __init__(self, embed_dim: int = 128):
         self.embed_dim = embed_dim
         self.signatures: List[ThreatSignature] = []
@@ -96,25 +97,34 @@ class ExorcismReport:
     # ... (outros campos, omitidos por brevidade)
 
 class FortifiedExorcist:
+
     def __init__(self, vocab_decoder, embed_dim=128):
         self.vocab_decoder = vocab_decoder
         self.threat_db = ThreatDatabase(embed_dim)
         self.log = []
         self.SEVERITY_BLOCK = 0.80
         self.SEMANTIC_THRESHOLD = 0.85
-
     def exorcise_token(self, token_id, token_embedding, context_embeddings, context_texts):
         """Retorna (permitido, relatório). Mantém lógica original."""
-        # ... (idêntico ao original, omitido)
         return True, None  # placeholder
-
     def apply_mask(self, logits, token_embeddings, context_embeddings, context_texts):
+        if not hasattr(self, "exorcism_cache"):
+            from src.arkhe.security.exorcism_cache import ExorcismCache
+            self.exorcism_cache = ExorcismCache()
         mask = np.ones(len(logits))
+        current_phi_c = 0.99
         for i in range(len(logits)):
-            permitted, _ = self.exorcise_token(i, token_embeddings[i], context_embeddings, context_texts)
+            cache_entry = self.exorcism_cache.lookup(context_embeddings, context_texts, token_embeddings[i], current_phi_c)
+            if cache_entry:
+                if not cache_entry.permitted:
+                    mask[i] = 0.0
+                continue
+            permitted, report = self.exorcise_token(i, token_embeddings[i], context_embeddings, context_texts)
+            self.exorcism_cache.store(context_embeddings, context_texts, token_embeddings[i], permitted, None)
             if not permitted:
                 mask[i] = 0.0
         return logits * mask + (1 - mask) * (-1e9)
+
 
 # (Classes do Campo Atratora: TokenOmega, AttractorField, AttractorFieldEngine, CreativeEngine)
 # Serão integradas diretamente na nova classe GuardiãoAtratora.
@@ -140,6 +150,7 @@ class AttractorField:
         pass
 
 class AttractorFieldEngine:
+
     def __init__(self, field_params, vocab_embeddings):
         self.field = field_params
         self.vocab_embeddings = vocab_embeddings
@@ -162,15 +173,8 @@ class AttractorFieldEngine:
 # ---------------------------------------------------------------------------
 
 class GuardianAttractor:
-    """
-    Motor de geração que combina o exorcista e o campo atratora.
-    Etapas por token:
-        1. EXORCIZAR: obter máscara de tokens proibidos (bloqueio total)
-        2. AVALIAR CAMPO: calcular potencial atrator apenas nos tokens permitidos
-        3. FUSÃO: combinar logits originais com potencial atrator e máscara
-        4. AMOSTRAR: selecionar token seguro e coerente
-    """
-    def __init__(self, vocab_size=500, embed_dim=64, temperature=0.8):
+
+    def __init__(self, vocab_size=500, embed_dim=64, temperature=0.8, domain=None, auto_detect_domain=True, temporal_chain=None, enable_audit=True):
         # Vocabulário
         self.vocab_size = vocab_size
         self.embed_dim = embed_dim
@@ -192,8 +196,33 @@ class GuardianAttractor:
         self.context_tokens: List[TokenOmega] = []
         self.generated: List[TokenOmega] = []
 
+        from src.arkhe.security.domain_profiles import DomainProfile, DomainProfileDetector
+        self.domain = domain
+        self.auto_detect_domain = auto_detect_domain
+        self.profile_detector = DomainProfileDetector()
+        self._update_attractor_profile()
+
+        self.temporal_chain = temporal_chain
+        self.enable_audit = enable_audit
+        if enable_audit and temporal_chain:
+            from src.arkhe.security.temporal_audit import TemporalAuditLogger
+            self.audit_logger = TemporalAuditLogger(temporal_chain)
+        else:
+            self.audit_logger = None
+
+    def _update_attractor_profile(self, prompt: Optional[str] = None):
+        if self.auto_detect_domain and prompt:
+            self.domain = self.profile_detector.detect(prompt)
+        from src.arkhe.security.domain_profiles import DomainProfile
+        profile = self.profile_detector.get_profile(self.domain or DomainProfile.DEFAULT)
+        self.field.alpha = profile.alpha
+        self.field.beta = profile.beta
+        self.field.gamma = profile.gamma
+        self.field.temperature = profile.temperature
+
+
+
     def _compute_logits(self) -> np.ndarray:
-        """Logits base (simulação de modelo). Pode ser substituído por modelo real."""
         logits = np.random.randn(self.vocab_size) * 0.5
         # Pequeno viés de repetição para contexto recente
         if self.context_tokens:
@@ -202,8 +231,10 @@ class GuardianAttractor:
                 logits += sims * 0.2
         return logits
 
-    def generate_token(self) -> TokenOmega:
-        """Gera um token seguro e coerente."""
+    def generate_token(self, prompt: Optional[str] = None) -> TokenOmega:
+        if self.auto_detect_domain and prompt and not self.domain:
+            self._update_attractor_profile(prompt)
+
         # 1. Obter logits do modelo
         raw_logits = self._compute_logits()
 
@@ -256,6 +287,37 @@ class GuardianAttractor:
         self.attractor_engine._update_attractors(token)
 
         return token
+        if getattr(self, 'audit_logger', None):
+            import asyncio
+            exorcism_report = {
+                "blocked": False, # Mock
+                "reason": None,
+                "severity": 0.0,
+            }
+
+            attractor_metrics = {
+                "coherence": token.coherence,
+                "surprise": token.surprise,
+                "resonance": token.resonance,
+                "potential": token.potential,
+            }
+
+            try:
+                asyncio.get_running_loop()
+                asyncio.create_task(
+                    self.audit_logger.log_token(
+                        token_id=token.id,
+                        token_text=self.vocab_decoder.get(token.id, f"<{token.id}>"),
+                        position=token.position,
+                        exorcism_report=exorcism_report,
+                        attractor_metrics=attractor_metrics,
+                        final_probability=token.probability,
+                        context_embeddings=[t.embedding for t in self.context_tokens[-5:]],
+                        domain_profile=self.domain.value if hasattr(self, 'domain') and self.domain else None,
+                    )
+                )
+            except RuntimeError:
+                pass
 
     def generate_sequence(self, n: int) -> List[TokenOmega]:
         return [self.generate_token() for _ in range(n)]
