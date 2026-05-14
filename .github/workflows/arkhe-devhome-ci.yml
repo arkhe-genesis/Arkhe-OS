@@ -46,6 +46,7 @@ jobs:
         name: ArkheApp-MSIX
         path: ./dist/
     - name: Deploy to Intune
+      shell: bash
       env:
         AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
       run: echo "Mocking arkh intune deploy"
