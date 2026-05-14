@@ -8,7 +8,7 @@ Gates topológicos implementados usando fotônica para codificar estados anyôni
 from src.arkhe.quantum.topological.topological_firmware import AnyonBraidingScheduler, TopologicalQPUConfig, AnyonType, BraidingOperation
 from src.arkhe.quantum.photonic.photonic_backend import PhotonicCloudClient, PhotonicJobConfig, PhotonicProvider
 
-class PhotonicTopologicalQPU(AnyonBraidingScheduler):
+class PhotonicAnyonBraider(AnyonBraidingScheduler):
     """
     Substitui a evolução física de anyons (ex: em nanowires) por
     circuitos fotônicos equivalentes que implementam o braiding opticamente.

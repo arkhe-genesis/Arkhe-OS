@@ -11,7 +11,7 @@ import numpy as np
 
 # Estender enum para adicionar slice Terahertz (no Python nativo não podemos modificar Enum facilmente,
 # mas podemos mapear internamente)
-class THzEdgeSyncOptimizer(EdgeSyncOptimizer):
+class Terahertz6GSynchronizer(EdgeSyncOptimizer):
     def __init__(self, config: EdgeSyncConfig):
         super().__init__(config)
         # Adicionar parâmetro QoS extremo para 6G THz (<100us)
