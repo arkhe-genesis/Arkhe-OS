@@ -209,6 +209,17 @@ class RealQuantumInterface:
                 # Extrair quasiprobabilidades
                 quasi_probs = result.quasi_dists[0]
 
+            elif self.config.backend == QuantumBackend.RIGETTI_QPU:
+                if not RIGETTI_AVAILABLE:
+                    raise ImportError("qcs-sdk not installed")
+
+                from qcs_sdk.quil import QuilCompiler
+                compiler = QuilCompiler()
+                program = compiler.compile(str(circuit))
+                job = self.client.execute(program, shots=self.config.shots)
+                result = job.get_result()
+                quasi_probs = result.to_dict()
+
             elif self.config.backend == QuantumBackend.IONQ_QPU:
                 # Executar via IonQ API
                 job = self.ionq_client.submit(
