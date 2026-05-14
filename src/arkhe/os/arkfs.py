@@ -1,3 +1,4 @@
+# src/arkhe/os/arkfs.py
 """
 ArkFS — Sistema de Arquivos com Selos Canônicos
 Cada escrita gera um selo SHA3‑256. Cada leitura verifica a integridade.
@@ -40,3 +41,6 @@ class ArkFS(LoggingMixIn, Operations):
         return dict(st_mode=(stat.S_IFDIR | 0o755) if path == "/" else (stat.S_IFREG | 0o644),
                     st_nlink=2, st_size=len(self.files.get(path, b"")),
                     st_ctime=now, st_mtime=now, st_atime=now)
+
+if __name__ == "__main__":
+    print("ArkFS initialized.")

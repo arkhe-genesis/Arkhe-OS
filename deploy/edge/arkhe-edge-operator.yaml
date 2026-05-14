@@ -1,0 +1,101 @@
+# ============================================================================
+# ARKHE Ω‑TEMP — Edge Operator Manifest
+# Deploy de Arkhe Runtime em AWS Greengrass / Azure IoT Edge
+# ============================================================================
+apiVersion: arkhe.org/v1alpha1
+kind: ArkheEdgeDeployment
+metadata:
+  name: arkhe-edge-cluster-001
+  namespace: arkhe-edge
+spec:
+  # Configuração do dispositivo de borda
+  device:
+    type: "aws-greengrass"  # ou "azure-iot-edge", "balena"
+    device_id: "edge-device-001"
+    architecture: "arm64"
+    memory_gb: 4
+    storage_gb: 32
+
+  # Configuração do runtime Arkhe
+  runtime:
+    image: "arkhe/asi-runtime:edge-v7.3.0"
+    phi_c_min: 0.90  # Threshold menor para edge devices
+    offline_mode: true
+    sync_interval_seconds: 300
+
+  # Configuração de sincronização com mesh
+  mesh:
+    enabled: true
+    sync_on_connect: true
+    cache_local_results: true
+    max_pending_ops: 100
+
+  # Recursos computacionais
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+    limits:
+      cpu: "1000m"
+      memory: "512Mi"
+
+  # Políticas de segurança
+  security:
+    enable_secure_boot: true
+    encrypt_local_storage: true
+    attest_before_sync: true
+
+  # Configuração de fallback
+  fallback:
+    on_connection_loss: "continue-local"  # continue-local, pause, fail-fast
+    max_offline_hours: 72
+    auto_reconcile_on_reconnect: true
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arkhe-edge-agent
+  namespace: arkhe-edge
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: arkhe-edge-agent
+  template:
+    metadata:
+      labels:
+        app: arkhe-edge-agent
+    spec:
+      nodeSelector:
+        kubernetes.io/arch: arm64
+      containers:
+      - name: edge-agent
+        image: arkhe/edge-agent:latest
+        args:
+        - --greengrass-group=arkhe-edge-group
+        - --sync-endpoint=https://mesh.arkhe.org/edge
+        env:
+        - name: ARKHE_DEVICE_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: ARKHE_ORCID
+          valueFrom:
+            secretKeyRef:
+              name: arkhe-secrets
+              key: orcid
+        volumeMounts:
+        - name: arkhe-data
+          mountPath: /var/arkhe
+        - name: device-certs
+          mountPath: /etc/arkhe/certs
+          readOnly: true
+      volumes:
+      - name: arkhe-data
+        hostPath:
+          path: /var/lib/arkhe-edge
+          type: DirectoryOrCreate
+      - name: device-certs
+        secret:
+          secretName: edge-device-certs

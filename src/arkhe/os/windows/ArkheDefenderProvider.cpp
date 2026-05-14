@@ -4,7 +4,11 @@
 // ============================================================================
 #include <windows.h>
 #include <amsi.h>
-#include <MpClient.h>
+
+// Mocks
+typedef void* IMpHandle;
+typedef int MP_SCAN_RESULT;
+#define MP_SCAN_RESULT_CLEAN 0
 
 // Inicializar provider ASI para Windows Defender
 HRESULT InitializeArkheDefenderProvider() {

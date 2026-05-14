@@ -6,7 +6,40 @@
 #include <dontuse.h>
 #include <suppress.h>
 #include <ntddk.h>
-#include <sha3_256.h>  // Biblioteca SHA3-256 para kernel
+
+// Mocks para simular tipos e funções
+typedef void* PFLT_FILTER;
+#define FLT_PREOP_SUCCESS_WITH_CALLBACK 0
+#define FLT_POSTOP_FINISHED_PROCESSING 0
+typedef int FLT_PREOP_CALLBACK_STATUS;
+typedef int FLT_POSTOP_CALLBACK_STATUS;
+typedef struct _FLT_CALLBACK_DATA {} FLT_CALLBACK_DATA, *PFLT_CALLBACK_DATA;
+typedef struct _FLT_RELATED_OBJECTS {} FLT_RELATED_OBJECTS, *PCFLT_RELATED_OBJECTS;
+typedef ULONG FLT_POST_OPERATION_FLAGS;
+
+typedef struct _FLT_OPERATION_REGISTRATION {
+    UCHAR MajorFunction;
+    ULONG Flags;
+    PVOID PreOperation;
+    PVOID PostOperation;
+} FLT_OPERATION_REGISTRATION;
+
+typedef struct _FLT_CONTEXT_REGISTRATION {
+    ULONG ContextType;
+    ULONG Flags;
+    PVOID ContextCleanupCallback;
+    SIZE_T Size;
+    ULONG PoolTag;
+} FLT_CONTEXT_REGISTRATION;
+
+#define IRP_MJ_CREATE 0x00
+#define IRP_MJ_WRITE 0x04
+#define IRP_MJ_READ 0x03
+#define IRP_MJ_SET_INFORMATION 0x05
+#define IRP_MJ_OPERATION_END 0x80
+#define FLTFL_OPERATION_REGISTRATION_SKIP_PAGING_IO 0x00000001
+#define FLT_FILE_CONTEXT 0x00000002
+#define FLT_CONTEXT_END 0xffff
 
 PFLT_FILTER gFilterHandle = NULL;
 
@@ -62,14 +95,18 @@ const FLT_OPERATION_REGISTRATION Callbacks[] = {
     { IRP_MJ_WRITE, FLTFL_OPERATION_REGISTRATION_SKIP_PAGING_IO, ArkhePreWrite, NULL },
     { IRP_MJ_READ, FLTFL_OPERATION_REGISTRATION_SKIP_PAGING_IO, NULL, ArkhePostRead },
     { IRP_MJ_SET_INFORMATION, 0, NULL, NULL },
-    { IRP_MJ_OPERATION_END }
+    { IRP_MJ_OPERATION_END, 0, NULL, NULL }
 };
 
 // Registro de contextos
 const FLT_CONTEXT_REGISTRATION Contexts[] = {
     { FLT_FILE_CONTEXT, 0, NULL, sizeof(ARKHE_FILE_CONTEXT), 'AKRF' },
-    { FLT_CONTEXT_END }
+    { FLT_CONTEXT_END, 0, NULL, 0, 0 }
 };
+
+int FilterRegistration = 0;
+NTSTATUS FltRegisterFilter(PDRIVER_OBJECT Driver, void* reg, PFLT_FILTER* handle) { return STATUS_SUCCESS; }
+NTSTATUS FltStartFiltering(PFLT_FILTER handle) { return STATUS_SUCCESS; }
 
 // DriverEntry
 NTSTATUS
