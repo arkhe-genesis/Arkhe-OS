@@ -4,12 +4,16 @@ arkhe_chrono_coil_v133_2.py
 Substrato 232: CHRONO-COIL FINAL — Squeezing adaptativo, correção gravitacional, qhttp:// interplanetário.
 """
 
+import asyncio
+import time
 import numpy as np
 import hashlib
 import json
 from collections import deque
 from typing import List, Tuple, Dict, Optional
 from dataclasses import dataclass
+
+from arkp_multi_node.src.multi_node import WheelerMeshNetwork, WheelerMeshNode, NodeStatus, SyncPriority
 
 @dataclass
 class FPGAConfig:
@@ -196,11 +200,50 @@ class ZynqChronoCoilPipeline:
         self.qhttp_network = MultiNodeQHTTP(["GRU", "TKY", "ZUR", "SVD"])
         self._calibrated = False
 
+        # Initialize Wheeler Mesh Network
+        self.wheeler_mesh = WheelerMeshNetwork("Zynq-GRU", "127.0.0.1", 9001, "GRU")
+
+        # Register some relay nodes
+        tky_node = WheelerMeshNode("TKY", "10.0.0.51", 9001, "TKY", NodeStatus.ONLINE, time.time(), 0.95, ["quantum-relay"])
+        zur_node = WheelerMeshNode("ZUR", "10.0.0.52", 9001, "ZUR", NodeStatus.ONLINE, time.time(), 0.99, ["quantum-relay"])
+        svd_node = WheelerMeshNode("SVD", "10.0.0.53", 9001, "SVD", NodeStatus.ONLINE, time.time(), 0.97, ["quantum-relay"])
+
+        self.wheeler_mesh.register_node(tky_node)
+        self.wheeler_mesh.register_node(zur_node)
+        self.wheeler_mesh.register_node(svd_node)
+
     def calibrate(self, pulse_template: np.ndarray):
         # Aplica dispersão antes do FIR design
         dispersed_pulse = self.transliterator.apply_fiber_dispersion(pulse_template)
         self.fir.design_correlation_detector(dispersed_pulse)
         self._calibrated = True
+
+    async def sync_and_gossip_state(self):
+        """Sincroniza o estado atual do FPGA via qhttp:// Wheeler Mesh."""
+        if not self._calibrated:
+            return None
+
+        # Gather state metrics to sync
+        metrics = self.simulate_v133_2_metrics()
+        crdt_payload = {
+            "latest_zk_hash": {"_version": 1, "value": self.fir._mask_hash},
+            "ch0_peaks": {"_version": 1, "value": metrics["Correlacao_Dual_Channel"]["CH0_picos"]},
+            "timestamp": {"_version": 1, "value": time.time()}
+        }
+
+        # Sync state to CRDT
+        await self.wheeler_mesh.sync_crdt("fpga_state_zynq-gru", crdt_payload)
+
+        # Gossip over Wheeler Mesh
+        gossip_result = await self.wheeler_mesh.gossip_protocol()
+
+        # Compute Merkle Root
+        merkle = self.wheeler_mesh.compute_merkle_root(list(self.wheeler_mesh.crdt_state.values()))
+
+        return {
+            "gossip_result": gossip_result,
+            "merkle_root": merkle
+        }
 
     def simulate_v133_2_metrics(self):
         """Retorna métricas simuladas baseadas no relatório v∞.133.2."""
@@ -235,7 +278,7 @@ class ZynqChronoCoilPipeline:
             }
         }
 
-if __name__ == "__main__":
+async def main():
     print("🌌🔲♾️ ARKHE OS v∞.133.2 — CHRONO-COIL FINAL (Substrato 232)")
     config = FPGAConfig()
     pipeline = ZynqChronoCoilPipeline(config)
@@ -256,3 +299,15 @@ if __name__ == "__main__":
         print(f"[{k}]")
         for sub_k, sub_v in v.items():
             print(f"  - {sub_k}: {sub_v}")
+
+    # Ação 5: Integrar FPGA via qhttp:/ - Ativar Wheeler Mesh gossip no Zynq UltraScale+
+    print("\n🔄 Wheeler Mesh Gossip (qhttp://) - Sincronizando Zynq UltraScale+...")
+    sync_result = await pipeline.sync_and_gossip_state()
+    if sync_result:
+        gossip = sync_result["gossip_result"]
+        print(f"   Nós notificados: {gossip['targets']} (Total: {gossip['gossiped']})")
+        print(f"   🔐 Merkle Root do estado Wheeler Mesh: {sync_result['merkle_root']}")
+        print("✅ Integração concluída: O Zynq UltraScale+ agora fofoca estados quânticos via qhttp://")
+
+if __name__ == "__main__":
+    asyncio.run(main())
