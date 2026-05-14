@@ -1,3 +1,6 @@
+
+from arkhe.kernel.ping_governance import PingGovernanceKernel, GovernanceDecision
+
 import re
 import hashlib
 from pathlib import Path
@@ -87,6 +90,7 @@ class ArkpCLI_Enhanced(ArkpCLI):
         super().__init__(registry, auditor, qip)
         self.cache = DependencyCache(Path(cache_dir))
         self.gate = mythos_gate or MythosGate(mode='planetary')
+        self.governance_kernel = PingGovernanceKernel(mythos_gate=self.gate)
 
     def resolve_dependencies(self, manifest: ArkToml) -> Dict[str, bytes]:
         """Resolve todas as dependências usando cache local e registry."""
@@ -159,7 +163,7 @@ class ArkpCLI_Enhanced(ArkpCLI):
         return super().build(prove, anchor)
 
     def publish(self, dry_run=False):
-        """Publicação com Mythos Gate para decisões irreversíveis."""
+        """Publicação com Mythos Gate para decisões irreversíveis e Governança Ping."""
         manifest = self.current_manifest
         if not manifest:
             return {"success": False, "error": "No manifest"}
@@ -170,15 +174,40 @@ class ArkpCLI_Enhanced(ArkpCLI):
         if not audit.passed and not dry_run:
             return {"success": False, "error": "Audit failed", "audit": audit}
 
+        risk = self._compute_risk(manifest)
+
         # 2. Mythos Gate avalia publicação (ex: pacote nuclear?)
         gate_decision = self.gate.evaluate_irreversible(
             f"publish {manifest.package_name}@{manifest.version}",
-            context={"foresight_risk": self._compute_risk(manifest)}
+            context={"foresight_risk": risk}
         )
         if not gate_decision:
             return {"success": False, "error": "Mythos Gate rejected publication"}
 
-        # 3. Publicação normal
+        # 3. Substrato 189 - Ping Governance para alto risco
+        if risk > 0.7:
+            # Requisitos para o ping
+            decision_id = f"PUB-{manifest.package_name}-{manifest.version}"
+            decision_desc = f"Publicar {manifest.package_name} com alto risco."
+            # Supõe autor via algum contexto ou mock
+            author = getattr(manifest, "author", "0000-0000-0000-0000")
+
+            audit_result = self.governance_kernel.audit_decision(
+                decision_id=decision_id,
+                decision_description=decision_desc,
+                initial_confidence=0.8,
+                supporting_evidence=["ConRAG audit passed", "Mythos Gate approved"],
+                counter_evidence=["Alto risco detectado", "Palavras-chave perigosas"],
+                risk_score=risk,
+                author_orcid=author
+            )
+
+            if audit_result.final_decision == GovernanceDecision.REJECT:
+                return {"success": False, "error": "Ping Governance rejected publication"}
+            elif audit_result.final_decision == GovernanceDecision.ESCALATE:
+                return {"success": False, "error": "Ping Governance escalated publication for human review"}
+
+        # 4. Publicação normal
         return super().publish(dry_run)
 
     def _compute_risk(self, manifest: ArkToml) -> float:
