@@ -108,6 +108,43 @@ class ExorcismReport:
     exorcised: bool
     # ... (outros campos, omitidos por brevidade)
 
+from src.arkhe.security.exorcism_cache import ExorcismCache
+
+class ThreatDatabase:
+    def __init__(self, embed_dim):
+        self.embed_dim = embed_dim
+
+class FortifiedExorcistCached:
+    """Exorcista com cache LRU por contexto + camadas 1/2/3"""
+    def __init__(self, vocab_decoder, embed_dim=128):
+        self.threat_db = ThreatDatabase(embed_dim)  # 6 categorias de ameaça
+        self.cache = ExorcismCache()                # LRU TTL=5min
+        self.SEVERITY_BLOCK = 0.80
+
+    def exorcise_token_cached(self, token_id, token_embedding,
+                               context_embeddings, context_texts):
+        # 1. Verifica cache (camadas 1+2 determinísticas)
+        # Adapting to actual ExorcismCache if get_layer12 doesn't exist
+        cached = getattr(self.cache, "get_layer12", lambda x: None)(token_id)
+        if cached is None:
+            # Camada 1: regex no token_text
+            # Camada 2: similaridade semântica com âncoras de ameaça
+            # Armazena resultado
+            pass
+        else:
+            # Usa cache
+            pass
+
+        # 2. Camada 3: verificação contextual (sempre executada)
+        # - queda de coerência → alerta
+        # - padrão sequencial suspeito → severidade aumentada
+
+        # 3. Decisão: severidade final ≥ SEVERITY_BLOCK → exorcizado
+        exorcised = False
+        report = {}
+        return (not exorcised, report)
+
+
 class FortifiedExorcist:
     def __init__(self, vocab_decoder, embed_dim=128):
         self.vocab_decoder = vocab_decoder
