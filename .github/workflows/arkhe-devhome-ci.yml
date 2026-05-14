@@ -1,0 +1,51 @@
+# .github/workflows/arkhe-devhome-ci.yml
+# Substrato 7.7.1‑δ: Pipeline de CI/CD do Arkhe via GitHub Actions, acionado pelo Dev Home.
+name: Arkhe CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  # Acionamento via Dev Home (repository_dispatch)
+  repository_dispatch:
+    types: [devhome-trigger]
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup Arkhe SDK
+      run: winget install Arkhe.ArkheCLI --accept-package-agreements --accept-source-agreements
+    - name: Build
+      run: arkh build --config Release
+    - name: Run Unit Tests
+      run: arkh test --coverage
+    - name: Verify Φ_C Coherence
+      run: arkh phi-c verify --threshold 0.99
+    - name: Package MSIX
+      run: arkh package msix --output ./dist/ArkheApp.msix
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ArkheApp-MSIX
+        path: ./dist/ArkheApp.msix
+
+  deploy-to-intune:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main'
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Download MSIX
+      uses: actions/download-artifact@v4
+      with:
+        name: ArkheApp-MSIX
+        path: ./dist/
+    - name: Deploy to Intune
+      env:
+        AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+      run: arkh intune deploy --package ./dist/ArkheApp.msix --group "Early Adopters"
+    - name: Anchor Deployment in TemporalChain
+      run: arkh temporal anchor --type "ci_deploy" --metadata "{\"commit\":\"${{ github.sha }}\"}"
