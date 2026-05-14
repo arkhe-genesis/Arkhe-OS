@@ -20,10 +20,10 @@ class GenomicEmbedding:
     and the full sequence is a tensor product with positional encoding.
     """
     NUCLEOTIDE_STATES = {
-        'A': np.array([1, 0, 0, 0], dtype=complex),
-        'T': np.array([0, 1, 0, 0], dtype=complex),
-        'G': np.array([0, 0, 1, 0], dtype=complex),
-        'C': np.array([0, 0, 0, 1], dtype=complex),
+        'A': np.array([1] + [0]*15, dtype=complex),
+        'T': np.array([0, 1] + [0]*14, dtype=complex),
+        'G': np.array([0, 0, 1] + [0]*13, dtype=complex),
+        'C': np.array([0, 0, 0, 1] + [0]*12, dtype=complex),
     }
 
     def __init__(self, max_len=128, embedding_dim=8):
@@ -33,10 +33,16 @@ class GenomicEmbedding:
         self.pos_enc = np.exp(2j * np.pi * np.arange(max_len)[:, None] / max_len)
 
     def encode(self, sequence: str) -> np.ndarray:
-        """Encodes a DNA sequence into a density matrix of shape (max_len, 4, 4)."""
+        """Encodes a DNA sequence into a density matrix of shape (max_len, dim, dim)."""
         rho_seq = []
+        dim = self.embedding_dim
         for i, nuc in enumerate(sequence[:self.max_len]):
-            psi = self.NUCLEOTIDE_STATES.get(nuc, np.array([0,0,0,0], dtype=complex))
+            if nuc in self.NUCLEOTIDE_STATES:
+                psi = self.NUCLEOTIDE_STATES[nuc][:dim]
+            else:
+                psi = np.zeros(dim, dtype=complex)
+            if len(psi) < dim:
+                psi = np.pad(psi, (0, dim - len(psi)))
             rho = np.outer(psi, psi.conj())
             # Apply positional phase
             phase = self.pos_enc[i % self.max_len]
@@ -44,7 +50,7 @@ class GenomicEmbedding:
             rho_seq.append(rho)
         # Pad if necessary
         while len(rho_seq) < self.max_len:
-            rho_seq.append(np.zeros((4,4), dtype=complex))
+            rho_seq.append(np.zeros((dim, dim), dtype=complex))
         return np.stack(rho_seq)
 
 class PhiCGatedAttention:
