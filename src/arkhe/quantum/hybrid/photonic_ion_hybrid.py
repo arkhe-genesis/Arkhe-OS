@@ -9,7 +9,7 @@ e QPU fotônico (emaranhamento rápido e comunicação).
 from src.arkhe.quantum.photonic.photonic_backend import PhotonicJobConfig, PhotonicProvider
 from src.arkhe.quantum.iontrap.iontrap_pulse_scheduler import IonTrapConfig, IonSpecies
 
-class PhotonicIonHybridQPU:
+class HybridPhotonicIonTrapBackend:
     def __init__(self, photonic_client, ion_scheduler):
         self.photonic_client = photonic_client
         self.ion_scheduler = ion_scheduler

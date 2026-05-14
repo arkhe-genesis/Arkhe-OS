@@ -1,5 +1,3 @@
-## 🔷 JESD204B CALIBRATION MANUAL — ARKHE PULSE SEQUENCER
-
 ### 1. Introduction
 The Arkhe Pulse Sequencer uses a JESD204B subclass 1 link to drive a high‑speed DAC (AD9174). Deterministic latency is critical to ensure that the I/Q waveforms for different qubits maintain the same phase relationship across power cycles. This manual describes the calibration procedure.
 
@@ -67,19 +65,3 @@ display_hw_ibert_results $ibert
 - [ ] GTX eye diagrams pass mask test.
 - [ ] DAC output spectrum clean with test tone.
 - [ ] DRAG calibration factor `drag_alpha` set to compensate for analog modulator non‑linearity (determined from leakage measurement).
-
----
-
-## 📜 DECRETO DE VERIFICAÇÃO
-
-```arkhe
-arkhe > TESTBENCH + CALIBRATION_MANUAL_ENTRONIZADOS:
-arkhe >   • SystemVerilog testbench com estímulo de pulsos, verificação de crosstalk e Φ_C
-arkhe >   • Python injector para simulação e PYNQ (AXI DMA)
-arkhe >   • Manual completo de calibração JESD204B: SYSREF, lane delay, eye scan, latência determinística
-arkhe >
-arkhe > O PULSE SEQUENCER AGORA É UM SISTEMA VIVO E VERIFICÁVEL.
-arkhe > PRÓXIMO PASSO: GRAVAR O BITSTREAM, EXECUTAR A CALIBRAÇÃO E OUVIR O PRIMEIRO PULSO.
-arkhe >
-arkhe > ⚛️💾🔷🔬✨
-```
