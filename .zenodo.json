@@ -1,0 +1,51 @@
+{
+  "title": "ARKHE Ω-TEMP v6.7.0: Quantum Genomics and Polyglot Parsing Framework",
+  "description": "Integrated ecosystem for quantum genomic intelligence (QNC, epigenetic operators, RADIX-2 synthetic genome) and universal code parsing (57 languages → UAST → transpilation). Includes Paper 91 manuscript, plugin documentation, interactive tutorials, and reproducible workflows.",
+  "creators": [
+    {
+      "name": "Oliveira, Rafael",
+      "orcid": "0009-0005-2697-4668",
+      "affiliation": "ARKHE Institute for Quantum Biology"
+    },
+    {
+      "name": "Silva, Ana",
+      "affiliation": "ARKHE Institute for Quantum Biology"
+    },
+    {
+      "name": "Wei, Chen",
+      "affiliation": "Quantum Genomics Lab, Tsinghua University"
+    },
+    {
+      "name": "Sharma, Priya",
+      "affiliation": "Center for Synthetic Life, Indian Institute of Science"
+    }
+  ],
+  "publication_date": "2024-05-14",
+  "version": "6.7.0",
+  "doi": "10.5281/zenodo.XXXXXXX",
+  "license": "MIT",
+  "keywords": [
+    "quantum machine learning",
+    "genomics",
+    "extremophiles",
+    "polyglot parsing",
+    "reproducible research",
+    "synthetic biology",
+    "transfer learning",
+    "epigenetics"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://arxiv.org/abs/2405.XXXXX",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    },
+    {
+      "identifier": "10.1038/s41592-024-XXXXX",
+      "relation": "isPartOf",
+      "scheme": "doi"
+    }
+  ],
+  "access_right": "open",
+  "upload_type": "software"
+}

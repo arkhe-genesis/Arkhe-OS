@@ -1,11 +1,31 @@
 cff-version: 1.2.0
-title: "Verifiable Homeostatic Manifold Discovery in Quantum Oscillator Networks"
-message: "If you use this software, please cite the preprint and the Zenodo archive."
+message: "If you use this software, please cite it as below."
+title: "ARKHE Ω-TEMP: Quantum Genomics and Polyglot Parsing Framework"
+abstract: "An integrated ecosystem for quantum genomic intelligence and universal code parsing, featuring Quantum Neural Coding (QNC), epigenetic quantum operators, and the Polymath-Polyglot Parser (P³)."
 authors:
-  - given-names: Rafael
-    family-names: Oliveira
+  - family-names: "Oliveira"
+    given-names: "Rafael"
     orcid: "https://orcid.org/0009-0005-2697-4668"
-repository-code: "https://github.com/ARKHE-OS/crystal-brain"
-doi: "10.5281/zenodo.ARKHE_CRYSTAL_BRAIN"
-license: "CC-BY-4.0"
-date-released: "2026-05-03"
+    affiliation: "ARKHE Institute for Quantum Biology"
+  - family-names: "Silva"
+    given-names: "Ana"
+    affiliation: "ARKHE Institute for Quantum Biology"
+  - family-names: "Wei"
+    given-names: "Chen"
+    affiliation: "Quantum Genomics Lab, Tsinghua University"
+  - family-names: "Sharma"
+    given-names: "Priya"
+    affiliation: "Center for Synthetic Life, Indian Institute of Science"
+version: "6.7.0"
+doi: "10.5281/zenodo.XXXXXXX"
+date-released: 2024-05-14
+url: "https://github.com/arkhe-os/arkhe-os"
+repository-code: "https://github.com/arkhe-os/arkhe-os"
+license: MIT
+keywords:
+  - "quantum machine learning"
+  - "genomics"
+  - "extremophiles"
+  - "polyglot parsing"
+  - "reproducible research"
+  - "synthetic biology"
