@@ -1,0 +1,3 @@
+type UnixDomainSocket = Fd<UnixResource::Socket, FdPerms::READ | FdPerms::WRITE>;
+type FdDevice = Fd<UnixResource::Device, FdPerms::READ | FdPerms::WRITE>;
+type FdLock = Fd<UnixResource::Lock, FdPerms::READ | FdPerms::WRITE>;

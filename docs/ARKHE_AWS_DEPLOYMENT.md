@@ -25,7 +25,50 @@ Para erguer a ARKHE na AWS, mapeamos os substratos a serviços gerenciados que o
 
 ---
 
-## 2. Infraestrutura como Código (Terraform)
+## 2. Componentes Essenciais AWS (The Arkhe Cloud Pillars)
+
+A infraestrutura fundacional da ARKHE depende de pilares essenciais da AWS para operar com segurança, escala e alta disponibilidade:
+
+### Gestão de Identidade e Acesso (IAM)
+- **Users, Roles, Policies**: A ARKHE utiliza o princípio do privilégio mínimo (Zero Trust). Cada substrato (ex: Q-Art, TemporalChain) roda sob uma **IAM Role** específica, definida via OIDC (OpenID Connect) para pods no EKS (IRSA - IAM Roles for Service Accounts). As **Policies** limitam acesso estrito a buckets S3 e chaves do KMS específicas. O acesso de engenheiros é gerenciado via IAM Identity Center (SSO), com sessões efêmeras.
+
+### Computação Elástica (EC2, AMIs, Scaling)
+- **Instances**: Utilizamos instâncias P4d/P5 para inferência do Continental Mind e EC2 bare-metal com Nitro Enclaves para geração de ZK-Proofs com confidencialidade extrema.
+- **AMIs (Amazon Machine Images)**: "Imagens Douradas" (Golden AMIs) são geradas automaticamente pelo pipeline CI/CD, endurecidas com políticas CIS Benchmark, contendo o Kernel ARKHE e o agente de segurança.
+- **Auto Scaling**: Grupos de Auto Scaling (ASG) monitoram a fila de eventos quânticos (SQS) e métricas customizadas para expandir a frota de EC2 durante picos de inferência quântica, contraindo durante o repouso.
+
+### Armazenamento (S3, Classes, Lifecycle, Security)
+- **S3 (Simple Storage Service)**: O Códice (modelos, checkpoints) é armazenado em buckets S3.
+- **Storage Classes & Lifecycle Policies**: Dados quentes (inferência ativa) ficam em S3 Standard. Modelos antigos são transferidos para S3 Standard-IA após 30 dias, e arquivados no S3 Glacier Deep Archive após 90 dias (reduzindo custos de preservação histórica).
+- **Security**: Todos os buckets bloqueiam acesso público. Criptografia em repouso (SSE-KMS) e políticas de bucket exigem TLS 1.3. O S3 Object Lock no modo Compliance previne alteração das provas criptográficas (TemporalChain).
+
+### Rede Virtual (VPC, Subnets, Routing, NAT, IGW)
+- **VPC (Virtual Private Cloud)**: A Catedral opera isolada em sua VPC, segmentada em múltiplas zonas de disponibilidade (AZs) para alta disponibilidade.
+- **Subnets e Roteamento**: Sub-redes públicas (com Internet Gateway - IGW) hospedam os Application Load Balancers. Sub-redes privadas abrigam nós de processamento EKS, RDS e Nitro Enclaves. O tráfego de saída das sub-redes privadas passa por NAT Gateways altamente disponíveis.
+
+### Bancos de Dados: RDS vs DynamoDB
+- **Amazon RDS (PostgreSQL/Aurora)**: Utilizado para gerenciar metadados relacionais complexos, contas de usuários empresariais e consultas analíticas (relatórios de royalties do Financial Validator).
+- **Amazon DynamoDB**: Um banco NoSQL chave-valor de latência de um dígito de milissegundo. Utilizado pela ARKHE para a telemetria em tempo real do Continental Mind, registro rápido de estados efêmeros de emaranhamento quântico e caching de sessão de dispositivos da Orbital Mesh.
+
+### Load Balancers + Auto Scaling
+- O tráfego de entrada global é roteado por **Application Load Balancers (ALB)** para APIs HTTP(s) e **Network Load Balancers (NLB)** para tráfego TCP/UDP de ultra-baixa latência (comunicação com hardware quântico IonQ).
+- Esses balanceadores distribuem o tráfego dinamicamente para os alvos (pods no EKS ou instâncias EC2) em várias AZs, enquanto o **Auto Scaling** ajusta o tamanho da frota sob o balanceador de acordo com a pressão da carga.
+
+### Monitoramento e Observabilidade (CloudWatch)
+- **Logs, Metrics, Alarms**: O Amazon CloudWatch ingere logs de todos os containers e instâncias. Métricas customizadas de "Coerência Quântica" e "Erros de Fatoração" disparam **CloudWatch Alarms**. Se a taxa de erro quântico ultrapassar um limiar, um alarme aciona uma função Lambda para reiniciar o circuito de calibração.
+
+### Resolução de Nomes (Route 53)
+- **DNS e Routing Policies**: O Amazon Route 53 atua como o mapa de rotas da Catedral. Utilizamos roteamento baseado em latência (Latency Routing) para enviar os usuários da América Latina para sa-east-1 e Europa para eu-central-1. Políticas de Failover garantem que, se uma região cair, o tráfego seja direcionado para a infraestrutura de Disaster Recovery.
+
+### Basic Security Best Practices (Práticas Básicas de Segurança)
+- **MFA Obrigatório**: Todos os acessos de console exigem autenticação multifator.
+- **Criptografia Ubíqua**: Uso do AWS KMS para criptografar EBS, S3, RDS e DynamoDB.
+- **Zero Trust Network**: Security Groups restritos, bloqueando todo o tráfego não explicitamente permitido.
+- **CloudTrail e GuardDuty**: Auditoria contínua de todas as chamadas de API (CloudTrail) e detecção de ameaças baseada em machine learning (GuardDuty) para identificar nós ou credenciais comprometidas na rede da ARKHE.
+
+---
+
+## 3. Infraestrutura como Código (Terraform)
 
 O seguinte código Terraform provisiona a base da ARKHE na AWS: cluster EKS para o Continental Mind, ambiente Braket para experimentos quânticos, e uma VPC segura.
 
@@ -126,7 +169,7 @@ output "cluster_endpoint" {
 
 ---
 
-## 3. Deploy dos Substratos no Kubernetes
+## 4. Deploy dos Substratos no Kubernetes
 
 Cada substrato é empacotado como um container Docker e implantado no EKS. Exemplo de manifesto para o **Continental Mind**:
 
@@ -175,7 +218,7 @@ spec:
 
 ---
 
-## 4. Executando Experimentos Quânticos no Braket
+## 5. Executando Experimentos Quânticos no Braket
 
 O Substrato 9002 pode ser conectado ao Amazon Braket para executar circuitos reais ou simulados. Exemplo de submissão de um circuito de QFT:
 
@@ -203,7 +246,7 @@ pub async fn run_qft_on_braket(circuit: &str) -> Result<String, Box<dyn std::err
 
 ---
 
-## 5. Pipeline de Pagamentos com AWS Step Functions
+## 6. Pipeline de Pagamentos com AWS Step Functions
 
 A compensação de royalties via Pix pode ser orquestrada com Step Functions, integrando o validador financeiro (6073), o Q‑Art (6072) e o x402 bridge.
 
@@ -235,17 +278,6 @@ A compensação de royalties via Pix pode ser orquestrada com Step Functions, in
   }
 }
 ```
-
----
-
-## 6. Monitoramento e Alertas
-
-Configurar o CloudWatch para métricas de inferência, uso de GPU, latência da malha orbital e execuções quânticas. Um dashboard do Grafana pode agregar:
-
-- Número de blocos temporais por minuto.
-- Tokens de inferência por segundo.
-- Royalties distribuídos (BRL/hora).
-- Resultados de QFT / Shor (fatoração recente).
 
 ---
 

@@ -1,0 +1,10 @@
+[package]
+name = "arkhe-omega-tests"
+version = "0.2.0"
+edition = "2021"
+
+[dev-dependencies]
+tokio = { version = "1.35", features = ["full", "macros"] }
+arkp-state = { path = "../arkp-state" }
+arkp-telecom = { path = "../arkp-telecom" }
+arkp-core = { path = "../arkp-core" }

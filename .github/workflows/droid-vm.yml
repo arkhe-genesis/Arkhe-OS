@@ -1,0 +1,22 @@
+name: DroidVM Docker Integration
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        env:
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+        with:
+          submodules: recursive
+
+      - name: Build Docker Image
+        run: |
+          cd deploy/docker/droid-vm
+          docker compose build

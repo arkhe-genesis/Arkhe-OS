@@ -9,16 +9,6 @@ export async function stop() {
   await daemon.stop({ reason: 'npm-stop' });
 }
 
-if (require.main === module) {
-  const daemon = new AGIDaemonController({ nodeId: process.env.ARKHE_NODE_ID || 'default-node' });
-  daemon.initialize().then(success => {
-    if (success) {
-      daemon.run().catch(console.error);
-    } else {
-      process.exit(1);
-    }
-  }).catch(console.error);
-
 export async function stop() {
     console.log("Stopping from script...");
     const daemon = new AGIDaemonController({ nodeId: 'stop-script' });

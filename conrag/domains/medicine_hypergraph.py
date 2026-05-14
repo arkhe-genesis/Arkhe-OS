@@ -14,13 +14,14 @@ import re
 class MedicalFact:
     """Fato médico estruturado."""
     concept: str                    # Ex: "paracetamol", "hypertension"
-    fact_type: str                  # "drug", "diagnosis", "procedure", "guideline"
+    fact_type: str                  # "drug", "diagnosis", "procedure", "guideline", "go_term"
     value: str                      # Valor ou descrição
     source: str                     # Fonte oficial (FDA, WHO, etc.)
     last_updated: datetime
     confidence: float               # 0.0-1.0, baseado na qualidade da fonte
     contraindications: List[str] = field(default_factory=list)
     interactions: List[str] = field(default_factory=list)
+    go_annotations: List[str] = field(default_factory=list) # GO terms (e.g. GO:0006914)
 
 class MedicineHypergraph:
     """
@@ -28,6 +29,7 @@ class MedicineHypergraph:
     - Conecta drogas, diagnósticos, sintomas e protocolos
     - Verifica interações medicamentosas e contraindicações
     - Prioriza fontes primárias (FDA, EMA, WHO) sobre secundárias
+    - Integra Gene Ontology (GO) para anotações biológicas e verificação
     """
 
     def __init__(self):
@@ -46,7 +48,8 @@ class MedicineHypergraph:
                 last_updated=datetime.now() - timedelta(days=30),
                 confidence=0.99,
                 contraindications=["severe_hepatic_impairment"],
-                interactions=["warfarin", "alcohol_chronic"]
+                interactions=["warfarin", "alcohol_chronic"],
+                go_annotations=["GO:0006954", "GO:0051402"] # inflammatory response, neuron apoptotic process
             )
         ]
         self.facts["hypertension"] = [
@@ -56,7 +59,8 @@ class MedicineHypergraph:
                 value="BP ≥140/90 mmHg on ≥2 occasions. ICD-10: I10",
                 source="WHO",
                 last_updated=datetime.now() - timedelta(days=90),
-                confidence=0.98
+                confidence=0.98,
+                go_annotations=["GO:0008217"] # regulation of blood pressure
             )
         ]
 

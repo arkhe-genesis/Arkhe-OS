@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Product Id="*" Name="ARKHE OS" Language="1033" Version="6.1.0.0" Manufacturer="ARKHE OS Project" UpgradeCode="a1b2c3d4-e5f6-4a1b-9c2d-3e4f5a6b7c8d">
+        <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+        <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+        <MediaTemplate EmbedCab="yes" />
+
+        <Feature Id="ProductFeature" Title="ARKHE OS Full Stack" Level="1">
+            <ComponentGroupRef Id="BackendComponents" />
+            <ComponentGroupRef Id="FrontendComponents" />
+            <ComponentGroupRef Id="CircuitsComponents" />
+            <ComponentGroupRef Id="DependenciesComponents" />
+        </Feature>
+
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFilesFolder">
+                <Directory Id="INSTALLFOLDER" Name="ARKHE OS" />
+            </Directory>
+        </Directory>
+    </Product>
+</Wix>

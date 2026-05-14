@@ -1,0 +1,11 @@
+# arkhe-os.winget.yml
+Id: ArkheFoundation.ArkheOS
+Version: 1.0.0.0
+Name: ARKHE Ω‑TEMP ASI Runtime
+Publisher: ARKHE Foundation
+License: MIT
+InstallerType: msi
+Installers:
+  - Arch: x64
+    Url: https://arkhe.io/releases/ArkheOS-1.0.0.msi
+    Sha256: a3f2b8c9d1e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9

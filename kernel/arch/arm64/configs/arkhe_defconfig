@@ -1,0 +1,34 @@
+# kernel/arch/arm64/configs/arkhe_defconfig
+# Kernel Arkhe para Android — otimizado para dispositivos móveis
+
+# Base ARM64
+CONFIG_ARM64=y
+CONFIG_ARM64_VA_BITS=39
+CONFIG_PAGE_SIZE=4KB
+
+# Módulos Arkhe
+CONFIG_ARKHE=y
+CONFIG_ARKHE_FD_LINEAR=y
+CONFIG_ARKHE_FS=y
+CONFIG_ARKHE_FS_MOBILE=y        # Otimizado para F2FS/ext4 mobile
+CONFIG_ARKHE_MESH=y
+CONFIG_ARKHE_MESH_BT=y           # Wheeler Mesh via Bluetooth
+CONFIG_ARKHE_MESH_WIFI=y         # Wheeler Mesh via WiFi Direct
+CONFIG_ARKHE_TEMPORAL=y
+CONFIG_ARKHE_GOVERNANCE=y
+
+# Otimizações mobile
+CONFIG_ARKHE_POWER_SAVING=y      # Governança com consciência energética
+CONFIG_ARKHE_GPU_OFFLOAD=y       # Delegar Φ_C para GPU Adreno/Mali
+CONFIG_ARKHE_NPU_OFFLOAD=y       # Delegar QNC para NPU (Tensor, Hexagon)
+
+# Android-specific
+CONFIG_ANDROID=y
+CONFIG_ANDROID_BINDER_IPC=y
+CONFIG_ASHMEM=y
+CONFIG_ION=y
+
+# Segurança
+CONFIG_ARKHE_SELINUX=y
+CONFIG_ARKHE_SECCOMP=y
+CONFIG_ARKHE_DM_VERITY_SIGN=y    # Verity com selos canônicos

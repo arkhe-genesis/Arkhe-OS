@@ -1,0 +1,54 @@
+{
+  "welcome": "Bem-vindo",
+  "reviewer_login": "Login de Revisor",
+  "orcid_id": "ID ORCID",
+  "login": "Entrar",
+  "logout": "Sair",
+  "pending_tasks": "Tarefas Pendentes",
+  "total_reviews": "Total de Revisões",
+  "offline": "Offline",
+  "syncing": "Sincronizando...",
+  "sync_now": "Sincronizar Agora",
+  "error": "Erro",
+  "invalid_orcid": "ORCID inválido. Formato: 0000-0000-0000-0000",
+
+  "reputation": {
+    "novice": "Iniciante",
+    "contributor": "Contribuidor",
+    "expert": "Especialista",
+    "trusted": "Confiável",
+    "guardian": "Guardião"
+  },
+
+  "review": {
+    "approve": "Aprovar",
+    "reject": "Rejeitar",
+    "request_changes": "Solicitar Alterações",
+    "escalate": "Escalar para Comitê",
+    "rationale": "Justificativa",
+    "confidence": "Nível de Confiança",
+    "submit_vote": "Enviar Voto",
+    "consensus_reached": "Consenso Alcançado",
+    "your_vote": "Seu Voto: {{vote}}",
+    "deadline": "Prazo: {{hours}}h restantes"
+  },
+
+  "plugin": {
+    "install": "Instalar",
+    "installed": "Instalado",
+    "update_available": "Atualização Disponível",
+    "verify_signature": "Verificar Assinatura",
+    "domain": "Domínio: {{domain}}",
+    "author": "Autor: {{author}}",
+    "rating": "Avaliação: {{rating}}/5 ({{count}} avaliações)"
+  },
+
+  "ethics": {
+    "risk_score": "Score de Risco: {{score}}",
+    "safety": "Segurança",
+    "privacy": "Privacidade",
+    "bias": "Viés",
+    "transparency": "Transparência",
+    "recommendation": "Recomendação: {{text}}"
+  }
+}

@@ -1,0 +1,91 @@
+[workspace]
+members = [
+    "arkhe-omega-tests",
+    "arkp-core",
+    "arkp-cli",
+    "arkp-wasm",
+    "arkp-auth",
+    "arkp-state",
+    "arkp-output",
+    "arkp-i18n",
+    "arkp-registry",
+    "arkp-qip",
+    "arkp-templates",
+    "arkp-conrag",
+    "arkp-plugins",
+    "arkp-security",
+    "arkp-docs",
+    "arkp-telecom"
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.2.0"
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/arkhe-os/arkhe-omega-temp"
+
+[workspace.dependencies]
+# core
+tokio = { version = "1.35", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1.0"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+sha3 = "0.10"
+hex = "0.4"
+time = { version = "0.3", features = ["macros"] }
+
+# auth
+ark-crypto = { git = "https://github.com/arkworks-rs/crypto", branch = "main" }
+ed25519-dalek = { version = "2.1", features = ["serde", "rand_core"] }
+rand = "0.8"
+
+# i18n
+fluent = "0.16"
+unic-langid = "0.9"
+
+# output
+colored = "2.1"
+indicatif = "0.17"
+console = "0.15"
+
+# wasm
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+serde-wasm-bindgen = "0.6"
+js-sys = "0.3"
+
+# registry
+reqwest = { version = "0.11", features = ["json", "stream"] }
+axum = "0.7"
+urlencoding = "2.1"
+
+# audit
+plonky2 = { git = "https://github.com/mir-protocol/plonky2" }
+
+# plugins
+async-trait = "0.1"
+
+# testing
+mockall = "0.12"
+tempfile = "3.9"
+tokio-test = "0.4"
+
+# ci/security
+cargo-deny = "0.14"
+
+[profile.release]
+opt-level = "z"
+lto = true
+strip = true
+codegen-units = 1
+panic = "abort"
+
+[workspace.dependencies.arkp-core]
+path = "arkp-core"
+[workspace.dependencies.arkp-state]
+path = "arkp-state"
+[workspace.dependencies.arkp-telecom]
+path = "arkp-telecom"

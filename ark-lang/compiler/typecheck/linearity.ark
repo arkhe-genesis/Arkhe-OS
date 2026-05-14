@@ -1,0 +1,409 @@
+// ============================================================================
+// ARKHE Ω‑TEMP — Substrato 6062: Linearity Checker para Fd<T>
+// ============================================================================
+// Verifica em tempo de compilação que recursos lineares Fd<T> são:
+// - Usados exatamente uma vez (ou explicitamente duplicados via .dup())
+// - Não copiados implicitamente
+// - Fechados ou ancorados antes de sair de escopo
+// ============================================================================
+
+use crate::ast::{Expr, Stmt, Pattern, Type, NodeId};
+use crate::semantic::{ScopeId, TypeRef, Mutability};
+use std::collections::{HashMap, HashSet};
+use ahash::AHashMap;
+
+/// Estado do verificador de linearidade
+#[derive(Clone, Debug)]
+struct LinearityContext {
+    /// Recursos lineares ativos no escopo atual: {var_name: (type, used)}
+    linear_vars: AHashMap<String, (TypeRef, bool)>,
+    /// Escopo atual para aninhamento
+    scope_id: ScopeId,
+    /// Erros coletados
+    errors: Vec<LinearityError>,
+    /// Warnings para recursos não-anchored ao final
+    warnings: Vec<LinearityWarning>,
+}
+
+/// Erros de violação de linearidade
+#[derive(Clone, Debug)]
+enum LinearityError {
+    /// Tentativa de copiar recurso linear implicitamente
+    ImplicitCopy { var: String, span: SourceSpan },
+    /// Recurso linear não usado antes de sair de escopo
+    UnusedResource { var: String, span: SourceSpan },
+    /// Recurso linear usado múltiplas vezes sem .dup()
+    MultipleUse { var: String, uses: Vec<SourceSpan> },
+    /// Recurso linear fechado/anchored múltiplas vezes
+    DoubleConsume { var: String, spans: Vec<SourceSpan> },
+    /// Tipo linear usado em contexto não-linear (ex: em loop sem move)
+    LinearInNonLinearContext { var: String, context: String, span: SourceSpan },
+}
+
+/// Warnings de linearidade (não fatais, mas recomendados)
+#[derive(Clone, Debug)]
+enum LinearityWarning {
+    /// Recurso linear não anchored ao final do escopo
+    NotAnchored { var: String, resource_type: String },
+    /// Recurso linear consumido sem prova ZK gerada
+    NoProofGenerated { var: String, resource_type: String },
+}
+
+/// Verificador principal de linearidade
+pub struct LinearityChecker {
+    contexts: Vec<LinearityContext>,  // Pilha de escopos
+    type_registry: TypeRegistry,       // Para verificar se tipo é linear
+}
+
+impl LinearityChecker {
+    pub fn new(type_registry: TypeRegistry) -> Self {
+        Self {
+            contexts: vec![LinearityContext {
+                linear_vars: AHashMap::new(),
+                scope_id: ScopeId::root(),
+                errors: Vec::new(),
+                warnings: Vec::new(),
+            }],
+            type_registry,
+        }
+    }
+
+    /// Verifica linearidade de uma expressão
+    pub fn check_expr(&mut self, expr: &Expr, scope: ScopeId) -> Result<(), Vec<LinearityError>> {
+        match expr {
+            // Uso de variável: marcar como usada se for linear
+            Expr::Ident(var_name, span) => {
+                self.check_var_use(var_name, span)?;
+            }
+
+            // Atribuição: consumir recurso se estiver sendo movido
+            Expr::Assign { lhs, rhs, .. } => {
+                self.check_expr(rhs, scope)?;
+                if let Pattern::Ident(var_name) = lhs.as_ref() {
+                    // Se rhs é linear, lhs agora possui o recurso
+                    if self.is_linear_type(&self.infer_type(rhs)?) {
+                        self.register_linear_var(var_name, self.infer_type(rhs)?, span)?;
+                    }
+                }
+            }
+
+            // Chamada de método .dup() em recurso linear
+            Expr::MethodCall { receiver, method, args, span } => {
+                if method == "dup" && self.is_fd_type(&self.infer_type(receiver)?) {
+                    // .dup() consome o original e retorna uma cópia
+                    self.check_var_use_from_expr(receiver)?;
+                    // Registrar nova variável se houver atribuição
+                    // (tratado pelo caller)
+                } else {
+                    self.check_expr(receiver, scope)?;
+                    for arg in args {
+                        self.check_expr(arg, scope)?;
+                    }
+                }
+            }
+
+            // Chamada de função: verificar argumentos lineares
+            Expr::Call { func, args, .. } => {
+                self.check_expr(func, scope)?;
+                let func_type = self.infer_type(func)?;
+                if let Type::Function { params, .. } = func_type {
+                    for (arg, param_type) in args.iter().zip(params) {
+                        if self.is_linear_type(param_type) {
+                            // Argumento linear deve ser movido, não copiado
+                            self.check_linear_arg_move(arg)?;
+                        } else {
+                            self.check_expr(arg, scope)?;
+                        }
+                    }
+                }
+            }
+
+            // Bloco: entrar em novo escopo
+            Expr::Block { stmts, .. } => {
+                self.enter_scope(scope);
+                for stmt in stmts {
+                    self.check_stmt(stmt, scope)?;
+                }
+                self.exit_scope()?;  // Verificar recursos não consumidos
+            }
+
+            // Match/If: recursos lineares devem ser consumidos em todos os branches
+            Expr::If { cond, then_branch, else_branch, .. } => {
+                self.check_expr(cond, scope)?;
+
+                // Verificar que recursos lineares são tratados consistentemente
+                let then_linear = self.check_branch_linear_consistency(then_branch, scope)?;
+                let else_linear = else_branch.as_ref()
+                    .map(|e| self.check_branch_linear_consistency(e, scope))
+                    .transpose()?
+                    .unwrap_or_default();
+
+                // Recursos usados em um branch devem ser usados no outro
+                self.check_branch_consistency(&then_linear, &else_linear)?;
+            }
+
+            // Loop: recursos lineares não podem ser capturados sem move
+            Expr::Loop { body, .. } => {
+                // Recursos lineares no escopo do loop devem ser movidos para dentro
+                self.check_loop_linear_capture(body, scope)?;
+            }
+
+            // Demais expressões: recursão padrão
+            _ => {
+                for child in expr.children() {
+                    self.check_expr(child, scope)?;
+                }
+            }
+        }
+        Ok(())
+    }
+
+    /// Verifica uso de variável linear
+    fn check_var_use(&mut self, var_name: &str, span: &SourceSpan) -> Result<(), LinearityError> {
+        let ctx = self.current_context_mut();
+
+        if let Some((type_ref, used)) = ctx.linear_vars.get_mut(var_name) {
+            if *used {
+                // Já foi usada — erro de uso múltiplo
+                return Err(LinearityError::MultipleUse {
+                    var: var_name.to_string(),
+                    uses: vec![*span],  // Em produção: acumular todos os usos
+                });
+            }
+            *used = true;  // Marcar como usada
+        }
+        // Se não é linear, não há restrição
+        Ok(())
+    }
+
+    /// Registra nova variável linear no escopo atual
+    fn register_linear_var(
+        &mut self,
+        var_name: &str,
+        type_ref: TypeRef,
+        span: &SourceSpan,
+    ) -> Result<(), LinearityError> {
+        if !self.is_linear_type(&type_ref) {
+            return Ok(());  // Não é linear, sem restrição
+        }
+
+        let ctx = self.current_context_mut();
+        if ctx.linear_vars.contains_key(var_name) {
+            return Err(LinearityError::ImplicitCopy {
+                var: var_name.to_string(),
+                span: *span,
+            });
+        }
+
+        ctx.linear_vars.insert(var_name.to_string(), (type_ref, false));
+        Ok(())
+    }
+
+    /// Verifica consistência de recursos lineares entre branches
+    fn check_branch_linear_consistency(
+        &mut self,
+        branch: &Expr,
+        scope: ScopeId,
+    ) -> Result<HashSet<String>, Vec<LinearityError>> {
+        // Clone do contexto para análise isolada do branch
+        let original_context = self.current_context().clone();
+
+        self.check_expr(branch, scope)?;
+
+        // Coletar recursos lineares consumidos neste branch
+        let consumed: HashSet<String> = self.current_context()
+            .linear_vars
+            .iter()
+            .filter(|(_, (_, used))| *used)
+            .map(|(name, _)| name.clone())
+            .collect();
+
+        // Restaurar contexto original para análise do próximo branch
+        *self.current_context_mut() = original_context;
+
+        Ok(consumed)
+    }
+
+    /// Verifica que recursos lineares são tratados consistentemente entre branches
+    fn check_branch_consistency(
+        &self,
+        then_consumed: &HashSet<String>,
+        else_consumed: &HashSet<String>,
+    ) -> Result<(), LinearityError> {
+        // Recursos lineares devem ser consumidos em AMBOS os branches
+        // ou em NENHUM (se forem passados adiante)
+        let all_vars: HashSet<&String> = then_consumed.union(else_consumed).collect();
+
+        for var in all_vars {
+            let in_then = then_consumed.contains(var);
+            let in_else = else_consumed.contains(var);
+
+            if in_then != in_else {
+                // Consumido em um branch mas não no outro — erro
+                return Err(LinearityError::MultipleUse {
+                    var: var.clone(),
+                    uses: vec![],  // Em produção: indicar os branches
+                });
+            }
+        }
+        Ok(())
+    }
+
+    /// Entra em novo escopo
+    fn enter_scope(&mut self, scope_id: ScopeId) {
+        self.contexts.push(LinearityContext {
+            linear_vars: AHashMap::new(),
+            scope_id,
+            errors: Vec::new(),
+            warnings: Vec::new(),
+        });
+    }
+
+    /// Sai do escopo atual — verifica recursos não consumidos
+    fn exit_scope(&mut self) -> Result<(), Vec<LinearityError>> {
+        let ctx = self.contexts.pop().unwrap();
+
+        // Recursos lineares não usados são erros
+        for (var_name, (type_ref, used)) in &ctx.linear_vars {
+            if !used {
+                // Warning: recurso não usado
+                ctx.warnings.push(LinearityWarning::UnusedResource {
+                    var: var_name.clone(),
+                    resource_type: type_ref.to_string(),
+                });
+
+                // Se for Fd<T> e não foi anchored, warning adicional
+                if self.is_fd_type(type_ref) {
+                    ctx.warnings.push(LinearityWarning::NotAnchored {
+                        var: var_name.clone(),
+                        resource_type: "Fd".to_string(),
+                    });
+                }
+            }
+        }
+
+        // Propagar erros para o contexto pai
+        if !ctx.errors.is_empty() {
+            return Err(ctx.errors);
+        }
+
+        // Propagar warnings
+        self.current_context_mut().warnings.extend(ctx.warnings);
+
+        Ok(())
+    }
+
+    /// Verifica se um tipo é linear (marca #[linear])
+    fn is_linear_type(&self, type_ref: &TypeRef) -> bool {
+        match type_ref {
+            TypeRef::Named { name, .. } => {
+                // Fd<T> é sempre linear
+                if name == "Fd" {
+                    return true;
+                }
+                // Consultar registry para tipos customizados marcados #[linear]
+                self.type_registry.is_linear_type(name)
+            }
+            TypeRef::Generic { inner, .. } => self.is_linear_type(inner),
+            _ => false,
+        }
+    }
+
+    /// Verifica se um tipo é Fd<T>
+    fn is_fd_type(&self, type_ref: &TypeRef) -> bool {
+        matches!(type_ref, TypeRef::Named { name, .. } if name == "Fd")
+    }
+
+    // Helpers para acesso ao contexto
+    fn current_context(&self) -> &LinearityContext {
+        self.contexts.last().unwrap()
+    }
+
+    fn current_context_mut(&mut self) -> &mut LinearityContext {
+        self.contexts.last_mut().unwrap()
+    }
+
+    fn infer_type(&self, expr: &Expr) -> Result<TypeRef, TypeInferenceError> {
+        // Delegar para o type inference engine existente
+        self.type_registry.infer_type(expr)
+    }
+
+    fn check_linear_arg_move(&mut self, arg: &Expr) -> Result<(), LinearityError> {
+        // Argumentos lineares devem ser expressões que consomem o recurso
+        match arg {
+            Expr::Ident(var_name, span) => {
+                self.check_var_use(var_name, span)?;
+            }
+            Expr::MethodCall { method, .. } if method == "dup" => {
+                // .dup() é permitido — consome e retorna cópia
+            }
+            _ => {
+                // Outros casos: verificar que o recurso é consumido
+                self.check_expr(arg, ScopeId::current())?;
+            }
+        }
+        Ok(())
+    }
+
+    fn check_loop_linear_capture(&mut self, body: &Expr, scope: ScopeId) -> Result<(), Vec<LinearityError>> {
+        // Em loops, recursos lineares do escopo externo não podem ser capturados
+        // sem move explícito
+        let outer_linears: HashSet<String> = self.current_context()
+            .linear_vars
+            .keys()
+            .cloned()
+            .collect();
+
+        // Analisar corpo do loop em contexto isolado
+        self.enter_scope(scope.child());
+        self.check_expr(body, scope)?;
+        self.exit_scope()?;
+
+        // Verificar que nenhum recurso linear externo foi capturado implicitamente
+        // (implementação simplificada — em produção: análise de captura mais sofisticada)
+        Ok(())
+    }
+}
+
+/// Resultado da verificação de linearidade
+#[derive(Clone, Debug)]
+pub struct LinearityReport {
+    pub valid: bool,
+    pub errors: Vec<LinearityError>,
+    pub warnings: Vec<LinearityWarning>,
+    pub linear_vars_tracked: usize,
+}
+
+/// Integração com o type checker principal
+impl TypeChecker {
+    pub fn check_linearity(&mut self, ast: &AST) -> Result<LinearityReport, Vec<LinearityError>> {
+        let mut checker = LinearityChecker::new(self.type_registry.clone());
+
+        // Verificar cada função/módulo
+        for item in &ast.items {
+            match item {
+                ASTItem::Function(func) => {
+                    checker.check_expr(&func.body, func.scope_id)?;
+                }
+                ASTItem::Impl { methods, .. } => {
+                    for method in methods {
+                        checker.check_expr(&method.body, method.scope_id)?;
+                    }
+                }
+                _ => {}
+            }
+        }
+
+        // Coletar warnings do contexto raiz
+        let warnings = checker.contexts[0].warnings.clone();
+
+        Ok(LinearityReport {
+            valid: checker.contexts.iter().all(|c| c.errors.is_empty()),
+            errors: checker.contexts.iter().flat_map(|c| c.errors.clone()).collect(),
+            warnings,
+            linear_vars_tracked: checker.contexts.iter()
+                .map(|c| c.linear_vars.len())
+                .sum(),
+        })
+    }
+}

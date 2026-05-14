@@ -7,12 +7,10 @@
 
 import { X, Video, Play, Loader2, Download, ShieldCheck, Cpu } from 'lucide-react';
 import React, { useState, useRef } from 'react';
-import { X, Video, Play, Loader2, Download, ShieldCheck, Cpu } from 'lucide-react';
 
 import { Card } from '../components/ui/Card';
 import AtelierLog from './AtelierLog';
 
-import AtelierLog from './AtelierLog';
 
 interface VideoGenerationPanelProps {
   onClose: () => void;
@@ -67,8 +65,6 @@ export default function VideoGenerationPanel({ onClose }: VideoGenerationPanelPr
       setStage('IDLE');
     } catch (err: any) {
       setError(err.message || 'An unexpected error occurred.');
-    } catch (err: unknown) {
-      setError((err as any).message || 'An unexpected error occurred.');
       setError((err as Error).message || 'An unexpected error occurred.');
       setStage('IDLE');
     }
@@ -168,10 +164,6 @@ export default function VideoGenerationPanel({ onClose }: VideoGenerationPanelPr
                 ref={videoRef}
                 src={videoUrl} 
                 controls 
-                autoPlay 
-                loop 
-                src={videoUrl}
-                controls
                 autoPlay
                 loop
                 className="w-full h-full object-contain shadow-[0_0_50px_rgba(0,255,170,0.1)]"

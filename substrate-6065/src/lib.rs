@@ -6,6 +6,7 @@ pub mod mapper;
 pub mod proofreader;
 pub mod temporal_anchor;
 pub mod wiring_rules;
+pub mod riemannian_bridge;
 
 pub use cartographer::NeuralCartographer;
 pub use cell_types::CellType;

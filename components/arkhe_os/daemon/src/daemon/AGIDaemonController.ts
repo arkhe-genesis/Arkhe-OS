@@ -1,7 +1,7 @@
 // src/daemon/AGIDaemonController.ts
 import { EventEmitter } from 'events';
-export class LFIRGraph { public nodes = new Map(); public metrics = { coherenceScore: 0.95 }; async load(x:any){} async save(x:any){} }
-export class RetrocausalGradientEngine { constructor(x:any){} async initialize(){} async shutdown(){} setInferenceInterval(x:any){} async computeRetroGradient(x:any): Promise<any> { return {}; } async applyRetroUpdate(x:any): Promise<any> { return x.graph; } getEfficiency() { return 0.9; } }
+
+
 import { LFIRGraph, LFIRMetrics } from '../mock';
 import { RetrocausalGradientEngine } from '../mock';
 import { ConfigSyncEngine } from '../config/ConfigSyncEngine';
@@ -247,11 +247,8 @@ export class AGIDaemonController extends EventEmitter {
 
   // Métodos privados de implementação
   private async _initializeLFIRGraph(config: any): Promise<LFIRGraph> {
-    // Carregar grafo LFIR inicial a partir de config ou estado salvo
-    const lfir = new LFIRGraph();
-    await lfir.load({});
     const lfir = new LFIRGraph({ nodeId: this.logger.nodeId });
-    await lfir.load({ path: config.state?.initialGraphPath ?? './state/initial-lfir.json' });
+    await lfir.load({ path: config.state?.initialGraphPath ?? "./state/initial-lfir.json" });
     return lfir;
   }
 
@@ -308,7 +305,6 @@ export class AGIDaemonController extends EventEmitter {
     // Executar scripts/prestop.ts se existir
     try {
       const prestop = await import('../prestop');
-      const prestop = await import('../mock').then(() => ({ default: (opts: any) => {} }));
       if (prestop.default && typeof prestop.default === 'function') {
         await prestop.default({ daemon: this, logger: this.logger });
       }

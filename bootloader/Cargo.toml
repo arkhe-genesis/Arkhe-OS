@@ -1,4 +1,8 @@
 [package]
 name = "bootloader"
-version = "0.1.0"
+version = "6.1.0"
 edition = "2021"
+authors = ["ARKHE OS Project <info@arkhe.global>"]
+description = "ARKHE OS Bootloader"
+
+[dependencies]

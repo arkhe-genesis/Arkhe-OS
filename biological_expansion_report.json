@@ -1,0 +1,25 @@
+{
+  "dataset_stats": {
+    "total_genomes": 50,
+    "cross_validation": {
+      "train_size": 40,
+      "test_size": 10,
+      "train_avg_junk_percentage": 24.66,
+      "test_avg_junk_percentage": 28.91,
+      "train_avg_rad_resistance": 0.29,
+      "test_avg_rad_resistance": 0.34,
+      "validation_error_junk": 4.26,
+      "validation_error_rad": 0.05
+    }
+  },
+  "rs_benchmark": {
+    "custom": 0.0002989768981933594,
+    "reedsolo": 0.0006802082061767578,
+    "unireedsolomon": 0.005350589752197266
+  },
+  "chaperone_simulation": {
+    "no_chaperone_steps": 25,
+    "hsp70_steps": 4,
+    "groel_steps": 3
+  }
+}

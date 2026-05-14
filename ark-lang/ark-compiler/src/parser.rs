@@ -508,7 +508,9 @@ impl Parser {
                     } else {
                          Ok(Expr::FnCall(Box::new(Expr::Ident(n)), args))
                     }
-
+                } else if self.peek() == Some(&Token::MACRO_CALL) {
+                    // Placeholder if we add macro calls via ident!
+                    Err("Not implemented macro".to_string())
                 } else if path.len() > 1 {
                     Ok(Expr::Path(path))
                 } else {
@@ -528,4 +530,9 @@ impl Parser {
             Err(format!("Expected identifier, found {:?}", self.peek()))
         }
     }
+}
+
+// Dummy match for missing macro
+impl Token {
+   const MACRO_CALL: Token = Token::UnitType; // Just satisfying compiler for dead code
 }

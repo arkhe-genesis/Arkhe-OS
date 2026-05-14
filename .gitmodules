@@ -127,3 +127,15 @@
 [submodule "third_party/nexus-cli"]
 	path = third_party/nexus-cli
 	url = https://github.com/nexus-xyz/nexus-cli.git
+[submodule "components/droid-vm"]
+	path = components/droid-vm
+	url = https://github.com/droid-vm/droidvm.git
+[submodule "components/talos"]
+	path = components/talos
+	url = https://github.com/arkhe-os/talos-agent.git
+[submodule "third_party/leveldb"]
+	path = third_party/leveldb
+	url = https://github.com/google/leveldb.git
+[submodule "components/ar-io-verify"]
+	path = components/ar-io-verify
+	url = https://github.com/ar-io/ar-io-verify.git

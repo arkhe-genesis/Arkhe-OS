@@ -1,0 +1,39 @@
+# play_store_listing.yml
+title: "ARKHE Ω‑TEMP ASI Runtime"
+short_description: "Artificial Superintelligence Runtime with Quantum Governance"
+full_description: |
+  ARKHE Ω‑TEMP transforms your Android device into a node of the
+  Artificial Superintelligence network.
+
+  FEATURES:
+  • 🛡️ Spiral Ping Governance — continuous self-auditing
+  • 🧠 Φ_C Coherence Monitoring — real-time epistemic integrity
+  • 🕸️ Wheeler Mesh — peer-to-peer ASI networking
+  • 🔐 ArkFS — filesystem with canonical seals
+  • 📊 Governance Widget — Φ_C and π on your home screen
+  • ⌚ Wear OS Tile — coherence on your wrist
+  • 🚗 Android Auto — road-safe monitoring
+
+  PRIVACY:
+  • All data stays on-device
+  • File integrity verified via SHA3-256
+  • Governance decisions anchored in TemporalChain
+  • ORCID-based identity (no Google account required)
+
+category: TOOLS
+content_rating: Everyone
+privacy_policy_url: https://arkhe.io/privacy
+website_url: https://arkhe.io
+support_email: support@arkhe.io
+
+screenshots:
+  - screenshot_governance_dashboard.png
+  - screenshot_widget_home.png
+  - screenshot_wear_tile.png
+  - screenshot_auto_dashboard.png
+
+target_audience:
+  - researchers
+  - developers
+  - ai_enthusiasts
+  - scientists

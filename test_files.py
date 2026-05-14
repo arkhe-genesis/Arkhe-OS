@@ -1,0 +1,11 @@
+import subprocess
+print("Files created:")
+subprocess.run(["ls", "-la", "src/arkhe/dimensions"])
+subprocess.run(["ls", "-la", "src/arkhe/baremetal"])
+subprocess.run(["ls", "-la", "src/arkhe/ethics"])
+subprocess.run(["ls", "-la", "src/arkhe/edge"])
+subprocess.run(["ls", "-la", "src/arkhe/quantum/photonic"])
+subprocess.run(["ls", "-la", "src/arkhe/quantum/iontrap"])
+subprocess.run(["ls", "-la", "src/arkhe/immersive"])
+subprocess.run(["ls", "-la", "src/arkhe/satellite"])
+subprocess.run(["ls", "-la", "src/arkhe/quantum/topological"])

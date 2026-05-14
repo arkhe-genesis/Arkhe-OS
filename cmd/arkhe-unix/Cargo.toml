@@ -1,0 +1,15 @@
+[package]
+name = "arkhe-unix"
+version = "6.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.3", features = ["derive"] }
+tokio = { version = "1.38", features = ["full", "macros", "rt-multi-thread"] }
+rustyline = "11.0"
+rand = "0.8"
+arkhe-temporal = { path = "../../substrate-6064/temporal" }
+substrate-6064 = { path = "../../substrate-6064" }
+arkhe-neural-cartography = { path = "../../substrate-6065" }
+substrate-6066 = { path = "../../substrate-6066" }
+arkhe-heterogeneous = { path = "../../substrate-6067" }

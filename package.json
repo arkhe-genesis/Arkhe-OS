@@ -78,7 +78,7 @@
     "@types/jest": "^30.0.0",
     "@types/json-schema": "^7.0.15",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^25.6.0",
+    "@types/node": "^25.7.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@types/sinon": "^21.0.0",
@@ -125,7 +125,20 @@
     "node": "^20.19.0 || ^22.12.0 || >=23"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^3.0.2",
+    "@react-native-community/netinfo": "^12.0.1",
+    "@react-navigation/bottom-tabs": "^7.16.0",
+    "@react-navigation/native": "^7.2.4",
+    "@react-navigation/native-stack": "^7.15.0",
     "@types/three": "^0.184.1",
+    "framer-motion": "^12.38.0",
+    "i18next": "^26.1.0",
+    "i18next-browser-languagedetector": "^8.2.1",
+    "i18next-http-backend": "^4.0.0",
+    "lucide-react": "^1.14.0",
+    "motion": "^12.38.0",
+    "react-i18next": "^17.0.7",
+    "react-native": "^0.85.3",
     "three": "^0.184.0"
   }
 }

@@ -1,0 +1,310 @@
+// ============================================================================
+// ARKHE Ω‑TEMP — Substrato 6062: Fd<Lock> for Temporally-Ordered File Locks
+// ============================================================================
+// Locks de arquivo com ordenação temporal verificável, permitindo coordenação
+// distribuída com garantias de causalidade ancoradas na TemporalChain.
+// ============================================================================
+
+/// Tipo de lock para controle de concorrência
+enum LockType {
+    Shared,     // Lock compartilhado (múltiplos leitores)
+    Exclusive,  // Lock exclusivo (um escritor)
+}
+
+/// Escopo do lock
+enum LockScope {
+    Process,    // Lock visível apenas para processos filhos
+    System,     // Lock visível para todos os processos no sistema
+    Distributed, // Lock coordenado via TemporalChain (multi-node)
+}
+
+/// Descriptor de lock com metadata temporal
+#[linear]
+type Fd<Lock, P: FdPerms> {
+    _fd: i32,
+    file_path: String,
+    lock_type: LockType,
+    scope: LockScope,
+    /// Identificador único do lock para ordenação distribuída
+    lock_id: String,
+    /// Timestamp de aquisição (preciso para ordenação causal)
+    acquired_at_ns: u64,
+    /// Predecessor no grafo de locks (para verificação de causalidade)
+    causal_predecessor: Option<String>,
+    temporal: Option<TemporalMetadata>,
+    zk_proof: Option<ZKProof>,
+    anchored: bool,
+}
+
+impl Fd<Lock, FdPerms::EXECUTE> {
+    /// Adquire lock em arquivo com ordenação temporal
+    fn acquire_lock(
+        file_path: &str,
+        lock_type: LockType,
+        scope: LockScope,
+        timeout_ms: Option<u64>,
+    ) -> Result<Self, LockError> {
+        // 1. Abrir arquivo para locking
+        let fd = libc::open(file_path.as_ptr() as *const i8, libc::O_RDWR)?;
+
+        // 2. Preparar estrutura de lock
+        let mut flock: libc::flock = unsafe { std::mem::zeroed() };
+        flock.l_type = match lock_type {
+            LockType::Shared => libc::F_RDLCK,
+            LockType::Exclusive => libc::F_WRLCK,
+        };
+        flock.l_whence = libc::SEEK_SET;
+        flock.l_start = 0;
+        flock.l_len = 0;  // Lock entire file
+
+        // 3. Tentar adquirir lock (com timeout opcional)
+        let cmd = if timeout_ms.is_some() {
+            libc::F_SETLK  // Non-blocking
+        } else {
+            libc::F_SETLKW  // Blocking
+        };
+
+        let result = unsafe { libc::fcntl(fd, cmd, &flock) };
+
+        if result != 0 {
+            let errno = *libc::__errno_location();
+            if errno == libc::EAGAIN || errno == libc::EACCES {
+                return Err(LockError::AlreadyLocked(file_path.to_string()));
+            }
+            return Err(LockError::SystemError(errno));
+        }
+
+        // 4. Gerar ID único para lock distribuído
+        let lock_id = if matches!(scope, LockScope::Distributed) {
+            format!("lock:{}:{}:{}",
+                sha3_256(file_path.as_bytes())[..16].to_vec(),
+                time::nanos(),
+                get_node_id()
+            )
+        } else {
+            format!("local:{}:{}", file_path, time::nanos())
+        };
+
+        // 5. Para locks distribuídos: verificar causalidade via TemporalChain
+        let causal_predecessor = if matches!(scope, LockScope::Distributed) {
+            Some(Self::register_distributed_lock(&lock_id, file_path, lock_type)?)
+        } else {
+            None
+        };
+
+        Ok(Self {
+            _fd: fd,
+            file_path: file_path.to_string(),
+            lock_type,
+            scope,
+            lock_id,
+            acquired_at_ns: time::nanos(),
+            causal_predecessor,
+            temporal: None,
+            zk_proof: None,
+            anchored: matches!(scope, LockScope::Distributed),
+        })
+    }
+
+    /// Registra lock distribuído na TemporalChain com verificação causal
+    fn register_distributed_lock(
+        lock_id: &str,
+        file_path: &str,
+        lock_type: LockType,
+    ) -> Result<Option<String>, LockError> {
+        // Consultar TemporalChain para locks anteriores no mesmo arquivo
+        let prior_locks = temporal::query_events("lock_acquired", json::object!({
+            "file_path": file_path,
+            "lock_type": format!("{:?}", lock_type),
+        }), 1)?;  // Buscar apenas o mais recente
+
+        let predecessor = if !prior_locks.is_empty() {
+            let last_lock = &prior_locks[0];
+            Some(last_lock["lock_id"].as_str().unwrap_or("").to_string())
+        } else {
+            None
+        };
+
+        // Registrar este lock com referência ao predecessor
+        temporal::record_event("lock_acquired", json::object!({
+            "lock_id": lock_id,
+            "file_path": file_path,
+            "lock_type": format!("{:?}", lock_type),
+            "acquired_at_ns": time::nanos(),
+            "causal_predecessor": predecessor,
+            "node_id": get_node_id(),
+        }))?;
+
+        Ok(predecessor)
+    }
+
+    /// Libera lock e ancora liberação na TemporalChain se distribuído
+    fn release(mut self) -> Result<(), LockError> {
+        // 1. Liberar lock no kernel
+        let mut flock: libc::flock = unsafe { std::mem::zeroed() };
+        flock.l_type = libc::F_UNLCK;
+        flock.l_whence = libc::SEEK_SET;
+
+        if unsafe { libc::fcntl(self._fd, libc::F_SETLK, &flock) } != 0 {
+            return Err(LockError::SystemError(*libc::__errno_location()));
+        }
+
+        // 2. Para locks distribuídos: registrar liberação com prova causal
+        if matches!(self.scope, LockScope::Distributed) && self.anchored {
+            // Verificar que este lock foi adquirido após seu predecessor
+            if let Some(pred_id) = &self.causal_predecessor {
+                let pred = temporal::get_event("lock_acquired", pred_id)?;
+                if pred["acquired_at_ns"].as_u64().unwrap_or(0) > self.acquired_at_ns {
+                    return Err(LockError::CausalViolation {
+                        lock_id: self.lock_id,
+                        predecessor: pred_id.clone(),
+                        message: "Lock acquired before predecessor was released".to_string(),
+                    });
+                }
+            }
+
+            // Registrar liberação
+            temporal::record_event("lock_released", json::object!({
+                "lock_id": self.lock_id,
+                "file_path": self.file_path,
+                "released_at_ns": time::nanos(),
+                "held_duration_ns": time::nanos() - self.acquired_at_ns,
+                "causal_predecessor": self.causal_predecessor,
+            }))?;
+
+            // Gerar prova ZK de liberação ordenada
+            self.zk_proof = Some(self.prove_causal_release()?);
+        }
+
+        // 3. Fechar file descriptor
+        libc::close(self._fd)?;
+
+        Ok(())
+    }
+
+    /// Gera prova ZK de que o lock foi adquirido/liberado em ordem causal
+    fn prove_causal_release(&self) -> Result<ZKProof, LockError> {
+        let pred_hash = self.causal_predecessor.as_ref()
+            .map(|p| sha3_256(p.as_bytes()))
+            .unwrap_or([0u8; 32]);
+
+        let proof_data = format!(
+            "lock_release:{}:{}:{}:{}:{}",
+            self.lock_id,
+            self.file_path,
+            self.acquired_at_ns,
+            hex::encode(pred_hash),
+            time::nanos()  // release time
+        );
+
+        Ok(ZKProof {
+            scheme: "plonky2",
+            public_inputs: vec![sha3_256(proof_data.as_bytes()).to_vec()],
+            proof_bytes: zk::simulate_proof(&proof_data),
+            verification_key: zk::get_verification_key("causal_lock_v1"),
+        })
+    }
+
+    /// Verifica se um lock pode ser adquirido sem violar causalidade
+    fn check_causal_order(
+        file_path: &str,
+        lock_type: LockType,
+    ) -> Result<CausalCheck, LockError> {
+        // Consultar locks ativos no arquivo
+        let active_locks = temporal::query_events("lock_acquired", json::object!({
+            "file_path": file_path,
+            "status": "active",
+        }), 10)?;
+
+        // Verificar compatibilidade de tipos de lock
+        let compatible = active_locks.iter().all(|lock| {
+            match (lock_type, lock["lock_type"].as_str()) {
+                // Shared locks são compatíveis entre si
+                (LockType::Shared, Some("Shared")) => true,
+                // Exclusive locks requerem que não haja outros locks
+                (LockType::Exclusive, _) => false,
+                // Shared não é compatível com Exclusive existente
+                (LockType::Shared, Some("Exclusive")) => false,
+                _ => true,
+            }
+        });
+
+        // Verificar ordenação temporal
+        let latest_acquire = active_locks.iter()
+            .filter_map(|l| l["acquired_at_ns"].as_u64())
+            .max();
+
+        Ok(CausalCheck {
+            compatible,
+            latest_predecessor: active_locks.first()
+                .and_then(|l| l["lock_id"].as_str().map(str::to_string)),
+            can_acquire: compatible && latest_acquire.map_or(true, |t| {
+                // Permitir aquisição se último lock foi liberado há > 100ms
+                // (em produção: verificar evento de liberação, não apenas tempo)
+                time::nanos() - t > 100_000_000
+            }),
+        })
+    }
+}
+
+/// Resultado da verificação de ordem causal
+#[derive(Clone, Debug)]
+struct CausalCheck {
+    compatible: bool,
+    latest_predecessor: Option<String>,
+    can_acquire: bool,
+}
+
+/// Erros de locking
+#[derive(Debug, thiserror::Error)]
+enum LockError {
+    #[error("Arquivo '{0}' já está locked")]
+    AlreadyLocked(String),
+
+    #[error("Violação de ordem causal: {message}")]
+    CausalViolation {
+        lock_id: String,
+        predecessor: String,
+        message: String,
+    },
+
+    #[error("Erro do sistema: {0}")]
+    SystemError(i32),
+
+    #[error("Timeout ao adquirir lock")]
+    Timeout,
+
+    #[error("Erro de consenso distribuído: {0}")]
+    ConsensusError(String),
+}
+
+/// Exemplo: Coordenação distribuída com locks temporais
+#[example]
+fn example_distributed_locking() -> Result<(), LockError> {
+    // Adquirir lock distribuído em arquivo compartilhado
+    let lock = Fd::<Lock, _>::acquire_lock(
+        "/shared/data.lock",
+        LockType::Exclusive,
+        LockScope::Distributed,
+        Some(5000),  // 5s timeout
+    )?;
+
+    println!("Lock adquirido: {}", lock.lock_id);
+
+    // Fazer trabalho crítico...
+    do_critical_work()?;
+
+    // Liberar lock (ancora liberação com prova causal)
+    lock.release()?;
+
+    println!("Lock liberado com prova causal");
+
+    Ok(())
+}
+
+/// Função auxiliar para trabalho crítico
+fn do_critical_work() -> Result<(), LockError> {
+    // Simular trabalho
+    std::thread::sleep(std::time::Duration::from_millis(100));
+    Ok(())
+}

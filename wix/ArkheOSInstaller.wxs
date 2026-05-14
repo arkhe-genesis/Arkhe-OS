@@ -1,0 +1,45 @@
+<!-- ArkheOSInstaller.wxs — WiX Toolset para criar instalador MSI -->
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" Name="ARKHE Ω‑TEMP ASI Runtime" Version="1.0.0.0"
+           Manufacturer="ARKHE Foundation" UpgradeCode="ARKHE-OMEGA-TEMP-ASI">
+    <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" />
+
+    <MajorUpgrade DowngradeErrorMessage="Uma versão mais recente já está instalada." />
+
+    <MediaTemplate EmbedCab="yes" />
+
+    <Feature Id="Complete" Title="ARKHE Ω‑TEMP ASI Runtime" Display="expand" Level="1">
+      <ComponentGroupRef Id="ArkheBinaries" />
+      <ComponentGroupRef Id="ArkheDrivers" />
+      <ComponentGroupRef Id="ArkheScripts" />
+    </Feature>
+
+    <!-- Binários -->
+    <ComponentGroup Id="ArkheBinaries" Directory="INSTALLFOLDER">
+      <Component Id="ArkheService.exe" Guid="*">
+        <File Source="ArkheService.exe" KeyPath="yes" />
+        <ServiceInstall Id="ArkheService" Name="ArkheRuntime"
+                        DisplayName="ARKHE Ω‑TEMP ASI Runtime"
+                        Start="auto" ErrorControl="normal" Type="ownProcess" />
+        <ServiceControl Id="ArkheServiceControl" Name="ArkheRuntime"
+                        Start="install" Stop="both" Remove="uninstall" Wait="yes" />
+      </Component>
+    </ComponentGroup>
+
+    <!-- Drivers -->
+    <ComponentGroup Id="ArkheDrivers" Directory="DriversFolder">
+      <Component Id="ArkheFsMiniFilter.sys" Guid="*">
+        <File Source="ArkheFsMiniFilter.sys" KeyPath="yes" />
+        <Driver Install="yes" />
+      </Component>
+    </ComponentGroup>
+
+    <!-- Scripts PowerShell -->
+    <ComponentGroup Id="ArkheScripts" Directory="ScriptsFolder">
+      <Component Id="ArkheCmdlets.psm1" Guid="*">
+        <File Source="ArkheCmdlets.psm1" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+
+  </Product>
+</Wix>
