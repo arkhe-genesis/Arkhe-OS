@@ -18,7 +18,6 @@ O Governor e o "mythos gate" da Catedral — a instancia que nao pode ser
 sycophantic porque seu unico objetivo e a verdade epistemica.
 """
 
-import numpy as np
 import json
 import hashlib
 import time
@@ -44,6 +43,15 @@ class SubstrateState(Enum):
     RECOVERING = auto()     # Em processo de reconstrucao
     QUARANTINED = auto()    # Isolado ate intervencao manual
 
+try:
+    import numpy as np
+except ImportError:
+    class np:
+        @staticmethod
+        def mean(values):
+            if not values:
+                return 0.0
+            return sum(values) / len(values)
 
 @dataclass
 class SubstrateHealth:

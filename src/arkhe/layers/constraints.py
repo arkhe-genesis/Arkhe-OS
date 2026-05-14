@@ -30,5 +30,8 @@ class ConstitutionValidator:
         return True
 
 class TemporalChainClient:
+    def __init__(self, endpoint=None):
+        self.endpoint = endpoint
+
     def anchor_content(self, content_hash, metadata):
         return f"anchor_{content_hash}"
