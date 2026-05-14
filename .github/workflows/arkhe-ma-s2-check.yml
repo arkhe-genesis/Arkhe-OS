@@ -64,9 +64,7 @@ jobs:
         gh api /repos/${{ github.repository }}/code-scanning/sarifs \
           -f commit_sha=${{ github.sha }} \
           -f ref=refs/heads/${{ github.head_ref || github.ref_name }} \
-          -f sarif=@sarif.json || echo "Mock gh api call"
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          -f sarif=@sarif.json
 
     - name: Attack Path Modeling (APM‑1.1 to 1.4)
       run: |
@@ -91,7 +89,6 @@ jobs:
           --scope ${{ github.event.inputs.scope || 'full' }} \
           --release ${{ github.sha }} \
           --format json || echo '{"overall_status": "compliant", "domain_results": {}, "temporal_seal": "mock_seal"}')
-        REPORT='{"overall_status": "compliant", "domain_results": {}, "temporal_seal": "mock_seal"}'
         echo "report=$REPORT" >> $GITHUB_OUTPUT
 
         # Falhar job se não conforme
@@ -129,8 +126,8 @@ jobs:
           "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
           "repository": "${{ github.repository }}",
           "commit": "${{ github.sha }}",
-          "compliance_status": "compliant",
-          "domains": {},
-          "temporal_seal": "mock_seal"
+          "compliance_status": "${{ fromJson(steps.assessment.outputs.report).overall_status }}",
+          "domains": ${{ fromJson(steps.assessment.outputs.report).domain_results }},
+          "temporal_seal": "${{ fromJson(steps.assessment.outputs.report).temporal_seal }}"
         }
         EOF
