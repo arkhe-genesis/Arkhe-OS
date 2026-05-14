@@ -5,7 +5,7 @@ rest.py — API REST para TemporalChain usando FastAPI.
 """
 
 from fastapi import FastAPI, HTTPException, Query, Depends
-from fastapi.responses import JSONResponse
+from fastapi.responses import Response
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any
 import time
@@ -25,7 +25,7 @@ class AnchorEventRequest(BaseModel):
     payload: Dict[str, Any]
     metadata: Optional[Dict[str, Any]] = None
     causal_deps: Optional[List[str]] = None
-    validate_event: bool = True
+    validate: bool = True
 
 class AnchorEventResponse(BaseModel):
     event_id: str
@@ -54,7 +54,7 @@ async def anchor_event(
             payload=request.payload,
             metadata=request.metadata,
             causal_deps=request.causal_deps,
-            validate_with_guardian=request.validate_event,
+            validate_with_guardian=request.validate,
         )
         return AnchorEventResponse(
             event_id=anchor.event.event_id,
@@ -123,7 +123,7 @@ async def export_chain(
     """Exporta cadeia para auditoria externa."""
     content = await timechain.export_chain(start, end, format)
     media_type = "application/json" if format == "json" else "application/octet-stream"
-    return JSONResponse(content=content if format == "json" else content, media_type=media_type)
+    return Response(content=content, media_type=media_type)
 
 @app.get("/health")
 async def health_check(timechain: TemporalChain = Depends(get_timechain)):

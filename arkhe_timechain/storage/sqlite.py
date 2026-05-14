@@ -73,7 +73,7 @@ class SQLiteStorage(StorageBackend):
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 anchor.event.event_id,
-                anchor.event.event_type.value if isinstance(anchor.event.event_type, EventType) else anchor.event.event_type,
+                anchor.event.event_type.value,
                 json.dumps(anchor.event.payload),
                 json.dumps(anchor.event.metadata),
                 anchor.event.timestamp,
@@ -166,6 +166,7 @@ class SQLiteStorage(StorageBackend):
         return await asyncio.to_thread(_query)
 
     async def get_anchors_range(self, start: int, end: int) -> List[Anchor]:
+        """Recupera âncoras em um intervalo de posições."""
         def _query():
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
@@ -179,12 +180,12 @@ class SQLiteStorage(StorageBackend):
         return await asyncio.to_thread(_query)
 
     async def save_chain_state(self, state: Dict[str, Any]) -> bool:
+        """Salva estado da cadeia (seal atual, count, merkle root)."""
         def _save():
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
 
-            for k, v in state.items():
-                cursor.execute("INSERT OR REPLACE INTO chain_state (key, value) VALUES (?, ?)", (k, json.dumps(v)))
+            cursor.execute("INSERT OR REPLACE INTO chain_state (key, value) VALUES (?, ?)", ("state", json.dumps(state)))
 
             conn.commit()
             conn.close()
@@ -193,28 +194,29 @@ class SQLiteStorage(StorageBackend):
         return await asyncio.to_thread(_save)
 
     def load_chain_state(self) -> Optional[Dict[str, Any]]:
+        """Carrega estado da cadeia do storage."""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
 
-        cursor.execute("SELECT * FROM chain_state")
-        rows = cursor.fetchall()
+        # Check if table exists
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='chain_state'")
+        if not cursor.fetchone():
+            conn.close()
+            return None
+
+        cursor.execute("SELECT value FROM chain_state WHERE key = ?", ("state",))
+        row = cursor.fetchone()
         conn.close()
 
-        state = {}
-        for row in rows:
-            state[row[0]] = json.loads(row[1])
-        return state if state else None
+        if row:
+            return json.loads(row[0])
+        return None
 
     def _row_to_anchor(self, row: tuple) -> Anchor:
         """Converte linha do banco para objeto Anchor."""
-        try:
-            et = EventType(row[1])
-        except ValueError:
-            et = row[1]
-
         event = Event(
             event_id=row[0],
-            event_type=et,
+            event_type=EventType(row[1]),
             payload=json.loads(row[2]),
             metadata=json.loads(row[3]),
             timestamp=row[4],

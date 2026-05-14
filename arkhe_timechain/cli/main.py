@@ -102,11 +102,7 @@ def query(ctx, event_id: str, seal: str, type: str, limit: int):
         else:
             events = await tc.query_events(event_type=type, limit=limit)
             for e in events:
-                try:
-                    et = e.event_type.value
-                except:
-                    et = e.event_type
-                click.echo(f"{e.timestamp:.0f} [{et}] {e.event_id[:12]}... {e.seal[:8]}...")
+                click.echo(f"{e.timestamp:.0f} [{e.event_type.value}] {e.event_id[:12]}... {e.seal[:8]}...")
 
     asyncio.run(_query())
 

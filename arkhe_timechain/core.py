@@ -199,22 +199,22 @@ class TemporalChain:
     def _init_storage(self, backend: str, config: Dict):
         """Inicializa backend de armazenamento."""
         from .storage.base import StorageBackend
-        # from .storage.in_memory import InMemoryStorage
+        from .storage.in_memory import InMemoryStorage
         from .storage.sqlite import SQLiteStorage
-        # from .storage.postgresql import PostgreSQLStorage
-        # from .storage.redis import RedisStorage
-        # from .storage.decentralized import DecentralizedStorage
+        from .storage.postgresql import PostgreSQLStorage
+        from .storage.redis import RedisStorage
+        from .storage.decentralized import DecentralizedStorage
 
         backends = {
-            # "in_memory": InMemoryStorage,
+            "in_memory": InMemoryStorage,
             "sqlite": SQLiteStorage,
-            # "postgresql": PostgreSQLStorage,
-            # "redis": RedisStorage,
-            # "ipfs": DecentralizedStorage,
-            # "arweave": DecentralizedStorage,
+            "postgresql": PostgreSQLStorage,
+            "redis": RedisStorage,
+            "ipfs": DecentralizedStorage,
+            "arweave": DecentralizedStorage,
         }
 
-        backend_class = backends.get(backend, SQLiteStorage)
+        backend_class = backends.get(backend, InMemoryStorage)
         return backend_class(config)
 
     def _load_chain_state(self):

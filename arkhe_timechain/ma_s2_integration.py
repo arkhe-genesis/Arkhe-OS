@@ -5,9 +5,9 @@ ma_s2_integration.py — Integração do TemporalChain com conformidade MA‑S2.
 Cada controle MA‑S2 gera eventos auditáveis na cadeia temporal.
 """
 
-import time
 from typing import Dict, Optional
 from .core import TemporalChain, EventType
+import time
 
 class MA_S2_TimechainIntegration:
     """Integração que mapeia controles MA‑S2 para eventos na Timechain."""
