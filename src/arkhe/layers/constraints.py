@@ -28,3 +28,7 @@ class ConstitutionValidator:
         if not props.get('temporal_anchor_enabled', False):
             return False
         return True
+
+class TemporalChainClient:
+    def anchor_content(self, content_hash, metadata):
+        return f"anchor_{content_hash}"

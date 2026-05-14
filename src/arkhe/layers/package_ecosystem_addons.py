@@ -85,6 +85,8 @@ class DependencyCache:
                     continue
         return max(versions) if versions else None
 
+from arkhe.clients.governance_client import GovernanceClient
+
 class ArkpCLI_Enhanced(ArkpCLI):
     def __init__(self, registry, auditor, qip, cache_dir=".arkhe-cache", mythos_gate=None):
         super().__init__(registry, auditor, qip)
