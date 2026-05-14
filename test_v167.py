@@ -8,4 +8,4 @@ import sys
 # So our minimal_import_test.py was the correct validation.
 
 print("Validation passed.")
-sys.exit(0)
+pass

@@ -1,0 +1,11 @@
+{
+  "servers": {
+    "arkhe-safe-core": {
+      "type": "sse",
+      "url": "http://localhost:8051/sse",
+      "tools": ["scan_code", "exorcise_text", "audit_query", "compliance_status", "generate_sbom", "model_attack_paths", "deploy_patch", "phi_c_status"],
+      "resources": ["arkhe://metrics/phi_c", "arkhe://metrics/compliance"],
+      "prompts": ["security_audit", "vulnerability_analysis", "compliance_report"]
+    }
+  }
+}

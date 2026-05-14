@@ -35,6 +35,7 @@ class SyncRecord:
     latency_ns: float
     slice: NetworkSlice
     success: bool
+    source: str = "network"
 
 @dataclass
 class SyncResult:
@@ -171,6 +172,7 @@ class EdgeSyncOptimizer:
             latency_ns=actual_latency,
             slice=self.current_slice,
             success=True,
+            source="network"
         ))
 
         return SyncResult(
@@ -209,7 +211,7 @@ class EdgeSyncOptimizer:
             "avg_latency_ms": np.mean([r.latency_ns / 1e6 for r in recent]),
             "p99_latency_ms": np.percentile([r.latency_ns / 1e6 for r in recent], 99),
             "slice_distribution": {s.name: sum(1 for r in recent if r.slice == s) for s in NetworkSlice},
-            "cache_hit_rate": sum(1 for r in recent if r.source == "cache") / len(recent),
+            "cache_hit_rate": sum(1 for r in recent if getattr(r, "source", "") == "cache") / len(recent),
         }
 
 # ============================================================================
