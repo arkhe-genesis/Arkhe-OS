@@ -1,0 +1,17 @@
+# config/v730/quantum-cloud.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: quantum-cloud-config
+data:
+  providers: |
+    - ionq:
+        endpoint: https://api.ionq.com/v0.3
+        auth: BearerToken
+    - ibm:
+        endpoint: https://quantum-computing.ibm.com/api
+        auth: IBMQuantumExperience
+    - rigetti:
+        endpoint: https://api.rigetti.com/qcs
+        auth: ApiKey
+  phi_c_threshold: "0.95"

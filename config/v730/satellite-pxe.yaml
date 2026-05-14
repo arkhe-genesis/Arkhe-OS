@@ -1,0 +1,12 @@
+# config/v730/satellite-pxe.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: satellite-boot
+data:
+  bootstrap.ipxe: |
+    #!ipxe
+    set satellite-gw 10.100.0.1
+    kernel http://${satellite-gw}/arkhe/vmlinuz phi_c=0.88 satellite_link=starlink
+    initrd http://${satellite-gw}/arkhe/initrd.img
+    boot
