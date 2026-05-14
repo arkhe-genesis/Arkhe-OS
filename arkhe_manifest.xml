@@ -1,0 +1,25 @@
+<!-- arkhe_manifest.xml — Manifesto para compilar AOSP + Arkhe -->
+<manifest>
+    <!-- Base AOSP Android 14 (UpsideDownCake) -->
+    <remote name="aosp" fetch="https://android.googlesource.com/" />
+    <remote name="arkhe" fetch="https://github.com/arkhe-os/" />
+
+    <default revision="android-14.0.0_r67" remote="aosp" />
+
+    <!-- Substituir kernel genérico pelo kernel Arkhe -->
+    <project path="kernel/arkhe" name="android-kernel-arkhe" remote="arkhe" revision="omega-temp">
+        <copyfile src="arch/arm64/configs/arkhe_defconfig" dest="kernel/configs/arkhe_defconfig" />
+    </project>
+
+    <!-- Adicionar Arkhe Runtime ao system_ext -->
+    <project path="packages/apps/ArkheRuntime" name="android-arkhe-runtime" remote="arkhe" />
+
+    <!-- Módulos de kernel Arkhe -->
+    <project path="kernel/modules/arkhe" name="kernel-modules-arkhe" remote="arkhe" />
+
+    <!-- SELinux policies para Arkhe -->
+    <project path="device/arkhe/sepolicy" name="android-sepolicy-arkhe" remote="arkhe" />
+
+    <!-- Arkhe Settings (substitui Google Settings) -->
+    <project path="packages/apps/ArkheSettings" name="android-arkhe-settings" remote="arkhe" />
+</manifest>

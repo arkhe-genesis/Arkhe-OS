@@ -1,0 +1,38 @@
+<!-- res/layout/widget_governance.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="@drawable/widget_background">
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:gravity="center_vertical" android:orientation="horizontal">
+        <ImageView android:layout_width="24dp" android:layout_height="24dp"
+            android:src="@drawable/ic_arkhe_logo" />
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:text="ARKHE Ω‑TEMP" android:textStyle="bold"
+            android:textColor="#C9A84C" android:layout_marginStart="8dp" />
+    </LinearLayout>
+
+    <ProgressBar android:id="@+id/pb_phi_c" style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent" android:layout_height="6dp"
+        android:layout_marginTop="8dp" android:progressTint="#C9A84C" />
+
+    <TextView android:id="@+id/tv_phi_c" android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:text="Φ_C: --" android:textSize="18sp"
+        android:textStyle="bold" android:layout_marginTop="4dp" />
+
+    <TextView android:id="@+id/tv_pi" android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:text="π: --" android:textSize="12sp"
+        android:textColor="#666666" />
+
+    <TextView android:id="@+id/tv_peers" android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:text="Pares: --" android:textSize="12sp"
+        android:textColor="#666666" />
+
+    <Button android:id="@+id/btn_ping" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:text="🛡️ PING"
+        android:backgroundTint="#1A3A5C" android:textColor="#FFFFFF"
+        android:layout_marginTop="8dp" />
+</LinearLayout>
