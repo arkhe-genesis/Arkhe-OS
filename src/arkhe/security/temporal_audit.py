@@ -188,6 +188,9 @@ class TemporalAuditLogger:
                 causal_deps=[self._sequence_anchor] if self._sequence_anchor else None,
             )
 
+            if batch_payload.get("event_type") == "cvs_scan_complete":
+                self.emit_sla_report(batch_payload)
+
             # Atualizar âncora de sequência para próximo batch
             self._sequence_anchor = batch_anchor
 
@@ -216,3 +219,6 @@ class TemporalAuditLogger:
             "buffer_size": len(self._buffer),
             "sequence_anchor": self._sequence_anchor,
         }
+
+    def emit_sla_report(self, payload):
+        pass
