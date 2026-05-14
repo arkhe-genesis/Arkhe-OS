@@ -10,7 +10,19 @@ using Windows.Media.Capture;
 using Windows.Media.Effects;
 using Windows.Graphics.DirectX.Direct3D11;
 using Arkhe.Core.Immersive;
-using Arkhe.Core.Consensus;
+
+namespace Windows.Media.Capture {
+    public class VideoFrame {}
+}
+namespace Windows.Graphics.DirectX.Direct3D11 {
+    public interface IDirect3DDevice {}
+}
+namespace Arkhe.Core.Immersive {
+    public class PhiCMonitor {
+        public static PhiCMonitor Instance { get; } = new PhiCMonitor();
+        public Task<double> GetLocalCoherenceAsync() => Task.FromResult(0.99);
+    }
+}
 
 namespace Arkhe.Integrations.Windows.StudioEffects
 {
@@ -69,7 +81,7 @@ namespace Arkhe.Integrations.Windows.StudioEffects
         }
     }
 
-    // --- Simulação das classes internas (Temporário) ---
+    // --- Simulação das classes internas ---
     public class VideoPipeline
     {
         public VideoPipeline(IDirect3DDevice device) { }

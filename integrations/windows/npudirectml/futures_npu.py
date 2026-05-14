@@ -8,8 +8,42 @@ from dataclasses import dataclass
 from enum import Enum
 import numpy as np
 
-# Reutiliza imports e classes base do npu_directml_executor.py
-from npu_directml_executor import NPUDirectMLExecutor, NPUInfo
+# ... (reutiliza imports e classes base do npu_directml_executor.py)
+@dataclass
+class NPUInfo:
+    name: str
+    vendor: Enum
+    tops: float
+    efficiency_tops_per_watt: float
+    memory_gb: int
+    supports_complex_ops: bool
+    supports_fp16: bool
+    supports_int8: bool
+    driver_version: str
+
+@dataclass
+class NPUDirectMLConfig:
+    enable_power_optimization: bool
+
+class NPUDirectMLExecutor:
+    def __init__(self):
+        self.config = NPUDirectMLConfig(enable_power_optimization=True)
+
+    def _enumerate_npus(self) -> List[NPUInfo]:
+        return []
+
+    async def _execute_directml_operator(
+        self,
+        compiled_op,
+        input_tensor: np.ndarray,
+        precision: str
+    ) -> np.ndarray:
+        return input_tensor
+
+    def _select_npu(self, available: List[NPUInfo]) -> Optional[NPUInfo]:
+        if available:
+            return available[0]
+        return None
 
 class NPUVendorExtended(Enum):
     """Vendors de NPU estendidos para incluir futuros aceleradores."""

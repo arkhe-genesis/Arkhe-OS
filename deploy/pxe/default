@@ -1,0 +1,6 @@
+
+# /var/lib/tftpboot/pxelinux.cfg/default
+DEFAULT arkhe
+LABEL arkhe
+  KERNEL boot/arkhe-kernel
+  APPEND initrd=arkhe-initramfs.img root=/dev/nfs nfsroot=192.168.1.10:/srv/arkhe ip=dhcp phi_c=0.99 mesh_node=pxe-boot-node

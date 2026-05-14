@@ -3,10 +3,28 @@
 // Permite acionar pipelines do GitHub Actions e Azure DevOps diretamente do Dev Home.
 
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Windows.Devices.DevicesHome;
-using Arkhe.Core.Temporal;
+
+namespace Windows.Devices.DevicesHome {
+    public interface IDevHomeSkill {}
+    public class DevHomeCommandContext {
+        public Dictionary<string, object> Parameters { get; } = new Dictionary<string, object>();
+    }
+    public class DevHomeCommandResult {
+        public bool Success { get; set; }
+        public string Message { get; set; }
+        public string TemporalAnchor { get; set; }
+        public string Data { get; set; }
+    }
+}
+namespace Arkhe.Integrations.Windows.DevHome {
+    public class TemporalChain {
+        public Task<string> AnchorEventAsync(string type, object metadata) => Task.FromResult("anchor_hash_mock");
+    }
+}
 
 namespace Arkhe.Integrations.Windows.DevHome
 {
