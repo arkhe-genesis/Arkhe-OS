@@ -7,8 +7,9 @@ Controle de lasers, gates Molmer-Sorensen e calibração em tempo real para IonQ
 
 import numpy as np
 import hashlib, json, time
-from typing import Optional, Dict, List, Tuple, Union
+from typing import Optional, Dict, List, Tuple, Union, Any
 from dataclasses import dataclass, field
+from abc import ABC, abstractmethod
 from enum import Enum, auto
 
 class IonSpecies(Enum):
@@ -318,3 +319,19 @@ async def run_qnc_on_ion_trap():
 if __name__ == "__main__":
     import asyncio
     asyncio.run(run_qnc_on_ion_trap())
+
+# ============================================================================
+# Mocks/Stubs adicionados para suporte ao QuantumRouter Híbrido
+# ============================================================================
+@dataclass
+class IonTrapJobConfig:
+    ion_species: IonSpecies
+    circuit: Union[Dict, str]
+    shots: int
+    calibration_mode: str = "auto"
+
+class IonTrapBackend(ABC):
+    """Interface abstraindo QPU de íons para roteamento híbrido."""
+    @abstractmethod
+    async def execute(self, config: IonTrapJobConfig) -> Any:
+        pass
