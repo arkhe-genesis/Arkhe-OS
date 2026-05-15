@@ -1,0 +1,20 @@
+syntax = "proto3";
+package arkhe.photon;
+
+service PhotonEmitter {
+  rpc EmitPolarized(EmitRequest) returns (EmitResponse);
+}
+
+message EmitRequest {
+  int64 count = 1;
+  double rate = 2;
+}
+
+message EmitResponse {
+  repeated Photon photons = 1;
+}
+
+message Photon {
+  int32 basis = 1;
+  int32 bit = 2;
+}
