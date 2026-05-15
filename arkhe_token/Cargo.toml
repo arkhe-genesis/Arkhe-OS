@@ -1,0 +1,13 @@
+[package]
+name = "arkhe_token"
+version = "1.1.0"
+edition = "2021"
+description = "Arkhe Token — Inter-LLM Transport Protocol in Rust"
+
+[dependencies]
+sha3 = "0.10"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+hex = "0.4"
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1.0", features = ["v4"] }

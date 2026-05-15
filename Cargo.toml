@@ -16,6 +16,7 @@
 [workspace]
 resolver = "2"
 members = [
+    "arkhe_token",
     # --- Low‑level foundations ---
     "bootloader",                           # Bare‑metal firmware & handoff
     "kernel",                               # Arkhe kernel (temporal, model loader, etc.)
