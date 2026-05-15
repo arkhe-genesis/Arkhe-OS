@@ -1,0 +1,19 @@
+arkhe_substrates_191_192/
+├── arkhe_quantum_production/
+│   ├── __init__.py
+│   ├── epr_sync.py          ← Sincronização EPR picosegundo
+│   ├── ldpc.py              ← LDPC assistida por fótons
+│   ├── dithering.py         ← Dithering quântico sub-fs
+│   ├── qos_router.py        ← Roteamento Φ_C-aware
+│   ├── hardware_controller.py ← Controlador 1550nm/40MHz
+│   ├── bell_validator.py    ← Teste de Bell CHSH
+│   └── hybrid_signer.py     ← Assinatura híbrida PQC+QC
+├── arkhe_tinyml/
+│   ├── __init__.py
+│   ├── core.py              ← TinyModel + PhiCEngine + TinyAgent
+│   ├── federated.py         ← FederatedTinyTrainer
+│   ├── guardrails.py        ← Guardrails ROM-based
+│   └── tflite_bridge.py     ← Ponte TFLite Micro
+├── tests/
+│   └── test_substrates_191_192.py  ← 19 testes executáveis
+└── MANIFEST.txt
