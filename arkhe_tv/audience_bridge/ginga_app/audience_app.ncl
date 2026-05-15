@@ -5,7 +5,7 @@
 
   Compatibilidade: TV 3.0 / DTV+ (perfil D), Ginga-NCL, ABNT NBR 15606-2
   Backend: ARKHE Audience Bridge API (porta 8054)
-  Selo Canônico: 9033‑C‑001
+  Selo Canônico: 9033-C-001
 -->
 <ncl id="audience_app"
      xmlns="http://www.ncl.org.br/NCL3.0/EDTVProfile"
