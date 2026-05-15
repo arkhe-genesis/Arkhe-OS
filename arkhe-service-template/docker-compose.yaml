@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  service:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - ARKHE_PHI_BUS_ENDPOINT=grpc://phi-bus.arkhe:8052
+      - ARKHE_TEMPORAL_ENDPOINT=grpc://temporal-chain.arkhe:8051
+      - ARKHE_QBUS_ENDPOINT=http://qbus-sidecar.arkhe:8088
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8080/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

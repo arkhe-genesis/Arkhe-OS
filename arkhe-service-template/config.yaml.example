@@ -1,0 +1,7 @@
+service_name: "arkhe-generic"
+phi_bus_endpoint: "grpc://phi-bus.arkhe:8052"
+temporal_endpoint: "grpc://temporal-chain.arkhe:8051"
+qbus_endpoint: "http://qbus-sidecar.arkhe:8088"
+quantum_enabled: true
+pqc_algorithm: "Dilithium3"
+quantum_witness_photons: 256

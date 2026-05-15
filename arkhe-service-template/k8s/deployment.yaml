@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arkhe-generic-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: arkhe-generic
+  template:
+    metadata:
+      labels:
+        app: arkhe-generic
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+    spec:
+      containers:
+      - name: service
+        image: arkhe/generic-service:v196.0
+        ports:
+        - containerPort: 8080
+        env:
+        - name: ARKHE_PHI_BUS_ENDPOINT
+          value: "grpc://phi-bus.arkhe:8052"
+        - name: ARKHE_TEMPORAL_ENDPOINT
+          value: "grpc://temporal-chain.arkhe:8051"
+        - name: ARKHE_QBUS_ENDPOINT
+          value: "http://qbus-sidecar.arkhe:8088"
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
