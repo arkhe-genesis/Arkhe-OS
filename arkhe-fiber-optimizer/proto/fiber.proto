@@ -1,0 +1,29 @@
+syntax = "proto3";
+package arkhe.fiber;
+
+service FiberOptimizer {
+  rpc OptimizeLink (LinkRequest) returns (stream OptimizationUpdate);
+  rpc GetClockSyncStatus (NodeId) returns (ClockStatus);
+}
+
+message LinkRequest {
+  string fiber_span_id = 1;
+  double current_osnr = 2;
+  double current_ber = 3;
+  double latency_ms = 4;
+  bytes epr_sample = 5;          // medições EPR do emissor
+}
+
+message OptimizationUpdate {
+  double new_osnr_target = 1;
+  double dithering_amplitude = 2;
+  string fec_scheme = 3;         // ex: "LDPC_EPR"
+  bool clock_sync_adjust = 4;
+  double clock_offset_correction_ps = 5;
+}
+
+message NodeId { string id = 1; }
+message ClockStatus {
+  double drift_ps = 1;
+  double epr_correlation = 2;
+}

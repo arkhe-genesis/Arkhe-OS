@@ -1,0 +1,17 @@
+[package]
+name = "arkhe-fiber-optimizer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tonic = "0.11"
+prost = "0.12"
+tokio = { version = "1.37", features = ["macros", "rt-multi-thread"] }
+tokio-stream = "0.1"
+rand = "0.8"
+arkhe_photon = { path = "../arkhe_photon" }
+
+[build-dependencies]
+tonic-build = "0.11"
+
+[workspace]

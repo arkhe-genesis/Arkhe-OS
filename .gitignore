@@ -542,3 +542,4 @@ arkhe-polyglot-parser/target/
 target/
 arkhe-webrtc/node_modules/
 !arkhe-enterprise/
+!arkhe-fiber-optimizer/
