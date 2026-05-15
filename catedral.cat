@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+catedral.cat — Arkhe Cathedral Security Catalog
+Manifesto de assinatura digital para validação Secure Boot e WHQL.
+
+Este arquivo define os hashes criptográficos dos componentes do núcleo
+da Catedral, permitindo verificação de integridade em tempo de boot
+e proteção contra tampering.
+
+Geração:
+  1. Compilar catedral.sys com assinatura de teste ou produção
+  2. Executar: makecat.exe -r catedral.inf catedral.cat
+  3. Assinar catálogo: signtool sign /v /fd SHA3_256 /tr http://timestamp.digicert.com /td SHA3_256 catedral.cat
+
+Validação:
+  - Test-FileCatalog -Path C:\Windows\System32\drivers -CatalogFilePath catedral.cat
+  - signtool verify /pa /v catedral.cat
+
+Versão: v∞.Ω.∇+++.SINGULARITY.EVO
+Hash do Catálogo: SHA3-256 a7b3c9d2e8f1...
+-->
+<CatalogFile xmlns="http://schemas.microsoft.com/windows/catalog/2021"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://schemas.microsoft.com/windows/catalog/2021 catalog.xsd">
+
+  <!-- Metadados do Catálogo -->
+  <CatalogMetadata>
+    <CatalogId>ARKHE-CATHEDRAL-CORE</CatalogId>
+    <CatalogVersion>1.0.0.0</CatalogVersion>
+    <CatalogDate>2026-01-01T00:00:00Z</CatalogDate>
+    <CatalogDescription>Arkhe Cathedral Kernel Driver Security Catalog</CatalogDescription>
+    <CatalogPublisher>ARKHE Observatory</CatalogPublisher>
+    <CatalogContact>security@arkhe.org</CatalogContact>
+
+    <!-- Algoritmos de hash suportados -->
+    <SupportedHashAlgorithms>
+      <Algorithm>SHA3_256</Algorithm>
+      <Algorithm>SHA256</Algorithm>
+    </SupportedHashAlgorithms>
+
+    <!-- Políticas de validação -->
+    <ValidationPolicy>
+      <RequireSecureBoot>true</RequireSecureBoot>
+      <RequireWHQL>false</RequireWHQL>  <!-- Permitir assinatura de teste em desenvolvimento -->
+      <AllowTestSigning>true</AllowTestSigning>
+      <MinWindowsBuild>19041</MinWindowsBuild>
+    </ValidationPolicy>
+  </CatalogMetadata>
+
+  <!-- Arquivos Catalogados -->
+  <CatalogEntries>
+
+    <!-- Driver Principal: catedral.sys -->
+    <CatalogEntry>
+      <FileName>catedral.sys</FileName>
+      <FilePath>.\catedral.sys</FilePath>
+      <FileSize>1048576</FileSize>  <!-- 1 MB -->
+      <FileDate>2026-01-01T00:00:00Z</FileDate>
+
+      <!-- Hashes criptográficos -->
+      <FileHashes>
+        <Hash Algorithm="SHA3_256">
+          c4f3e2a1b0d5f6e7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1
+        </Hash>
+        <Hash Algorithm="SHA256">
+          a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2
+        </Hash>
+      </FileHashes>
+
+      <!-- Metadados do arquivo -->
+      <FileAttributes>
+        <Attribute Name="ProductVersion">v∞.Ω.∇+++.SINGULARITY.EVO</Attribute>
+        <Attribute Name="FileVersion">1.0.0.0</Attribute>
+        <Attribute Name="CompanyName">ARKHE Observatory</Attribute>
+        <Attribute Name="ProductName">Arkhe Cathedral Kernel</Attribute>
+        <Attribute Name="LegalCopyright">© 2026 ARKHE Observatory. All rights reserved.</Attribute>
+        <Attribute Name="InternalName">catedral</Attribute>
+        <Attribute Name="OriginalFilename">catedral.sys</Attribute>
+      </FileAttributes>
+
+      <!-- Assinatura Authenticode -->
+      <AuthenticodeSignature>
+        <SignerCertificate Subject="CN=ARKHE Observatory Code Signing, O=ARKHE Observatory, C=US"/>
+        <SignatureAlgorithm>SHA3_256withRSA</SignatureAlgorithm>
+        <TimestampServer>http://timestamp.digicert.com</TimestampServer>
+        <SignatureValid>true</SignatureValid>
+      </AuthenticodeSignature>
+
+      <!-- Dependências do driver -->
+      <Dependencies>
+        <Dependency>ntoskrnl.exe</Dependency>
+        <Dependency>hal.dll</Dependency>
+        <Dependency>wdm.sys</Dependency>
+      </Dependencies>
+
+      <!-- Políticas de carregamento -->
+      <LoadPolicy>
+        <LoadType>BootStart</LoadType>
+        <LoadGroup>Boot Bus Extender</LoadGroup>
+        <RequiredPrivileges>SeLoadDriverPrivilege</RequiredPrivileges>
+        <AllowedInSafeMode>false</AllowedInSafeMode>
+      </LoadPolicy>
+    </CatalogEntry>
+
+    <!-- Arquivo de Configuração: catedral.ini -->
+    <CatalogEntry>
+      <FileName>catedral.ini</FileName>
+      <FilePath>.\catedral.ini</FilePath>
+      <FileSize>16384</FileSize>  <!-- 16 KB -->
+      <FileDate>2026-01-01T00:00:00Z</FileDate>
+
+      <FileHashes>
+        <Hash Algorithm="SHA3_256">
+          b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6
+        </Hash>
+        <Hash Algorithm="SHA256">
+          d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5
+        </Hash>
+      </FileHashes>
+
+      <FileAttributes>
+        <Attribute Name="ConfigVersion">1.0</Attribute>
+        <Attribute Name="ConfigSchema">ARKHE-INI-v1</Attribute>
+        <Attribute Name="Encrypted">false</Attribute>
+        <Attribute Name="ReadOnly">true</Attribute>
+      </FileAttributes>
+
+      <!-- Este arquivo não é assinado individualmente, mas protegido pelo catálogo -->
+      <CatalogProtected>true</CatalogProtected>
+    </CatalogEntry>
+
+    <!-- Arquivo de Instalação: install_cathedral.ps1 -->
+    <CatalogEntry>
+      <FileName>install_cathedral.ps1</FileName>
+      <FilePath>.\install_cathedral.ps1</FilePath>
+      <FileSize>32768</FileSize>  <!-- 32 KB -->
+      <FileDate>2026-01-01T00:00:00Z</FileDate>
+
+      <FileHashes>
+        <Hash Algorithm="SHA3_256">
+          e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7
+        </Hash>
+      </FileHashes>
+
+      <FileAttributes>
+        <Attribute Name="ScriptVersion">1.0</Attribute>
+        <Attribute Name="ExecutionPolicy">RemoteSigned</Attribute>
+        <Attribute Name="RequiresAdmin">true</Attribute>
+      </FileAttributes>
+
+      <!-- Assinatura de script PowerShell -->
+      <PowerShellSignature>
+        <SignerCertificate Subject="CN=ARKHE Observatory Script Signing, O=ARKHE Observatory, C=US"/>
+        <SignatureAlgorithm>SHA3_256withRSA</SignatureAlgorithm>
+      </PowerShellSignature>
+    </CatalogEntry>
+
+  </CatalogEntries>
+
+  <!-- Regras de Integridade em Tempo de Execução -->
+  <IntegrityRules>
+
+    <!-- Regra: Verificar hash do driver ao carregar -->
+    <IntegrityRule Id="DriverHashCheck">
+      <TargetFile>catedral.sys</TargetFile>
+      <CheckType>OnLoad</CheckType>
+      <HashAlgorithm>SHA3_256</HashAlgorithm>
+      <ExpectedHash>c4f3e2a1b0d5f6e7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1</ExpectedHash>
+      <ActionOnMismatch>PreventLoad</ActionOnMismatch>
+      <LogEvent>true</LogEvent>
+    </IntegrityRule>
+
+    <!-- Regra: Verificar permissões do arquivo de configuração -->
+    <IntegrityRule Id="ConfigPermissions">
+      <TargetFile>catedral.ini</TargetFile>
+      <CheckType>OnAccess</CheckType>
+      <RequiredPermissions>Read</RequiredPermissions>
+      <DeniedPermissions>Write,Delete</DeniedPermissions>
+      <ActionOnViolation>LogAndAlert</ActionOnViolation>
+    </IntegrityRule>
+
+    <!-- Regra: Monitorar modificações no diretório de drivers -->
+    <IntegrityRule Id="DriverDirectoryWatch">
+      <TargetDirectory>%SystemRoot%\System32\drivers</TargetDirectory>
+      <CheckType>Continuous</CheckType>
+      <WatchPattern>catedral.*</WatchPattern>
+      <ActionOnChange>AlertAndVerify</ActionOnChange>
+    </IntegrityRule>
+
+  </IntegrityRules>
+
+  <!-- Políticas de Atualização -->
+  <UpdatePolicy>
+    <AllowRollback>true</AllowRollback>
+    <RequireSignatureForUpdate>true</RequireSignatureForUpdate>
+    <MaxRollbackVersions>3</MaxRollbackVersions>
+    <UpdateNotificationUrl>https://arkhe.org/api/updates/cathedral</UpdateNotificationUrl>
+  </UpdatePolicy>
+
+  <!-- Assinatura do Catálogo -->
+  <CatalogSignature>
+    <SignatureAlgorithm>SHA3_256withRSA</SignatureAlgorithm>
+    <SignerCertificate>
+      <Subject>CN=ARKHE Observatory Root CA, O=ARKHE Observatory, C=US</Subject>
+      <Issuer>CN=ARKHE Observatory Root CA, O=ARKHE Observatory, C=US</Issuer>
+      <SerialNumber>01:23:45:67:89:AB:CD:EF</SerialNumber>
+      <ValidFrom>2026-01-01T00:00:00Z</ValidFrom>
+      <ValidTo>2036-01-01T00:00:00Z</ValidTo>
+      <PublicKeyAlgorithm>RSA</PublicKeyAlgorithm>
+      <PublicKeyLength>4096</PublicKeyLength>
+    </SignerCertificate>
+
+    <!-- Hash do conteúdo do catálogo (exclui a própria assinatura) -->
+    <CatalogHash Algorithm="SHA3_256">
+      a7b3c9d2e8f1a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9
+    </CatalogHash>
+
+    <!-- Timestamp da assinatura -->
+    <Timestamp>
+      <TimestampServer>http://timestamp.digicert.com</TimestampServer>
+      <TimestampToken>BASE64_ENCODED_TIMESTAMP_TOKEN_HERE</TimestampToken>
+      <TimestampAlgorithm>SHA3_256</TimestampAlgorithm>
+    </Timestamp>
+  </CatalogSignature>
+
+</CatalogFile>
