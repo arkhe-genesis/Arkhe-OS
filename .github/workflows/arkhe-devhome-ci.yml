@@ -49,6 +49,7 @@ jobs:
     - name: Deploy to Intune
       shell: bash
       env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
         AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
       run: echo "Mocking arkh intune deploy"
     - name: Anchor Deployment in TemporalChain

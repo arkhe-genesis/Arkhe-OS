@@ -18,6 +18,8 @@ on:
         type: choice
         options: [full, cvs, apm, inv, aro]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 jobs:
   ma-s2-compliance:
     runs-on: ubuntu-latest

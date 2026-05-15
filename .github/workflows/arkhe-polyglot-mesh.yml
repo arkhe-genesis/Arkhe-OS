@@ -15,6 +15,7 @@ jobs:
         run: arkh phi-c verify --threshold 0.99 || echo "Mock arkh phi-c"
       - name: Anchor build in TemporalChain
         env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
           TEMPORAL_API_KEY: ${{ secrets.TEMPORAL_API_KEY }}
         run: |
           arkh temporal anchor --type "ci_build" --metadata '{"commit":"${{ github.sha }}"}' || echo "Mock arkh temporal anchor"
