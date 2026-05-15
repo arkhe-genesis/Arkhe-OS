@@ -1,0 +1,68 @@
+{
+  "substrato": 185,
+  "nome": "Polyglot Harmony",
+  "events": [
+    {
+      "component": "agent-financial-risk-01",
+      "language": "python",
+      "phi_c": 1.0,
+      "data": {
+        "action": "hedge_risk",
+        "asset": "energy_futures",
+        "confidence": 0.998
+      },
+      "timestamp": 1778875024.7115977
+    },
+    {
+      "component": "scada-gateway-energy-01",
+      "language": "go",
+      "phi_c": 1.0,
+      "data": {
+        "pressure_primary": 120,
+        "status": "stable"
+      },
+      "timestamp": 1778875024.711906
+    },
+    {
+      "component": "resilience-capsule-01",
+      "language": "rust",
+      "phi_c": 1.0,
+      "data": {
+        "state_hash": "a1b2c3d4",
+        "signature": "dilithium_mock_sig"
+      },
+      "timestamp": 1778875024.7120707
+    },
+    {
+      "component": "arkhe-tv-guardian",
+      "language": "node.js",
+      "phi_c": 1.0,
+      "data": {
+        "stream": "twitch_live",
+        "coherence": 0.999
+      },
+      "timestamp": 1778875024.7121956
+    },
+    {
+      "component": "eal4-dashboard",
+      "language": "typescript",
+      "phi_c": 1.0,
+      "data": {
+        "viewers": 1500,
+        "active_sessions": 42
+      },
+      "timestamp": 1778875024.712318
+    },
+    {
+      "component": "cics-connector-01",
+      "language": "java",
+      "phi_c": 1.0,
+      "data": {
+        "transaction_id": "TX998877",
+        "status": "settled"
+      },
+      "timestamp": 1778875024.71243
+    }
+  ],
+  "seal": "e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0"
+}
