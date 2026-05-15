@@ -84,3 +84,24 @@ async def test_multi_agent_orchestration(tc):
     assert len(result["results"]) == 2
     assert result["results"][0] == "success"
     assert result["results"][1] == "success"
+
+@pytest.mark.asyncio
+async def test_agent_expansion(tc):
+    energy_agent = ArkheAgent(agent_id="agent-energy-01", agent_type="Energy_Grid_Monitor", version="1.0", tc=tc)
+    traffic_agent = ArkheAgent(agent_id="agent-traffic-01", agent_type="Traffic_Control", version="1.0", tc=tc)
+    financial_agent = ArkheAgent(agent_id="agent-finance-01", agent_type="Financial_Market_Analyst", version="1.0", tc=tc)
+
+    assert energy_agent.agent_id == "agent-energy-01"
+    assert traffic_agent.agent_id == "agent-traffic-01"
+    assert financial_agent.agent_id == "agent-finance-01"
+
+@pytest.mark.asyncio
+async def test_eal4_audit_submission(tc):
+    audit_payload = {
+        "lab": "CipherLock Labs",
+        "status": "COMPLIANT"
+    }
+    seal = await tc.anchor_event("guardrails_audit_eal4", audit_payload)
+    assert seal is not None
+    assert len(tc.anchors) == 1
+    assert tc.anchors[0]["event"] == "guardrails_audit_eal4"
