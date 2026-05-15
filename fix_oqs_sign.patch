@@ -1,0 +1,37 @@
+--- security/hybrid_pqc_quantum_signer.py	2024-05-15 22:14:00.000000000 +0000
++++ security/hybrid_pqc_quantum_signer.py	2024-05-15 22:14:00.000000000 +0000
+@@ -82,9 +82,11 @@
+         self._pqc_keypair: Optional[Dict] = None
+         self._quantum_emitter: Optional = None
+
++        self.pqc_signer = None
+         if PQC_AVAILABLE:
+             try:
+-                self._pqc_keypair = PQCSignature(pqc_algorithm).generate_keypair()
++                self.pqc_signer = PQCSignature(pqc_algorithm)
++                self._pqc_keypair = {"public_key": self.pqc_signer.generate_keypair(), "private_key": self.pqc_signer.export_secret_key()}
+                 logger.info(f"✅ Par de chaves PQC gerado: {pqc_algorithm}")
+             except Exception as e:
+                 logger.warning(f"⚠️  Falha ao gerar chaves PQC: {e}")
+@@ -109,10 +111,7 @@
+
+             if PQC_AVAILABLE and self._pqc_keypair:
+                 try:
+-                    pqc_sig = PQCSignature(self.pqc_algorithm).sign_message(
+-                        message,
+-                        self._pqc_keypair["private_key"]
+-                    )
++                    pqc_sig = self.pqc_signer.sign(message)
+                     pqc_success = True
+                 except Exception as e:
+                     logger.warning(f"⚠️  Falha na assinatura PQC: {e}")
+@@ -236,8 +235,8 @@
+         # Verificar PQC se disponível
+         if signature_result.pqc_signature_hex and PQC_AVAILABLE and public_key:
+             try:
+-                verifier = PQCSignature(self.pqc_algorithm, public_key=public_key)
+-                pqc_valid = verifier.verify_message(message, bytes.fromhex(signature_result.pqc_signature_hex))
++                verifier = PQCSignature(self.pqc_algorithm)
++                pqc_valid = verifier.verify(message, bytes.fromhex(signature_result.pqc_signature_hex), public_key)
+             except Exception as e:
+                 logger.warning(f"⚠️  Falha na verificação PQC: {e}")

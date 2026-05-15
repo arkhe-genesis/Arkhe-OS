@@ -1,0 +1,80 @@
+#!/usr/bin/env python3
+"""
+Arkhe OS - Substrato 191: Quantum Production Integration Demo
+Demonstrates the integration of hardware emitter, EPR validation,
+and hybrid signing.
+"""
+
+import asyncio
+import logging
+import time
+from hardware.emitter_integration.quantum_dot_controller import QuantumDotHardwareController, HardwareConfig
+from tests.field.quantum_correlation_validator import QuantumCorrelationValidator
+from security.hybrid_pqc_quantum_signer import HybridPQCQuantumSigner, SignatureMode
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+async def run_demo():
+    print("\n" + "="*80)
+    print("🌌 ARKHE Ω-TEMP v∞.Ω — SUBSTRATO 191: QUANTUM PRODUCTION INTEGRATION")
+    print("="*80 + "\n")
+
+    # 1. Hardware Integration Demo
+    print("🔬 1. INITIALIZING QUANTUM HARDWARE INTEGRATION")
+    config = HardwareConfig(
+        device_serial="ARKHE-QD-1550-001",
+        wavelength_nm=1550.0,
+        emission_rate_mhz=40.0,
+        temperature_setpoint_c=4.0
+    )
+
+    controller = QuantumDotHardwareController(config)
+    await controller.connect_hardware()
+
+    print("   Emitting test batch...")
+    result = await controller.emit_polarized_batch(1000, ["rectilinear", "diagonal", "circular"])
+    print(f"   ✅ Emitted {result['photons_emitted']} photons in {result['emission_time_us']:.2f} µs")
+    print(f"   📊 Metrics: Rate={result['metrics']['rate_mhz']:.2f} MHz, Fidelity={result['metrics']['polarization_fidelity']:.4f}\n")
+
+    await controller.disconnect_hardware()
+
+    # 2. EPR Validation Demo
+    print("🧪 2. RUNNING EPR FIELD VALIDATION (BELL TEST)")
+    validator = QuantumCorrelationValidator({}, {})
+
+    print("   Collecting EPR measurements...")
+    # Using small pair count and duration for quick demo
+    bell_result = await validator.run_bell_test(pair_count=1000, measurement_duration_seconds=2.0)
+
+    print(f"   📊 Bell Parameter (S): {bell_result.s_parameter:.4f}")
+    print(f"   📊 Violation: {bell_result.violation} (Significance: {bell_result.statistical_significance:.2f}σ)")
+    print(f"   📊 QBER: {bell_result.qber:.4f}\n")
+
+    # 3. Hybrid Signing Demo
+    print("🔐 3. DEMONSTRATING HYBRID PQC+QUANTUM SIGNING")
+    signer = HybridPQCQuantumSigner(pqc_algorithm="Dilithium3")
+
+    message = b"Critical Arkhe Production Command"
+    metadata = {"node": "alpha", "priority": "high"}
+
+    print("   Signing message...")
+    sig_result = await signer.sign_message(message, metadata, SignatureMode.HYBRID_PARALLEL)
+
+    if sig_result.success:
+        print(f"   ✅ Hybrid Signature Created!")
+        print(f"   🔐 Mode: {sig_result.mode.value}")
+        if sig_result.pqc_signature_hex:
+            print(f"   🔐 PQC Signature: {sig_result.pqc_signature_hex[:20]}...")
+        if sig_result.quantum_witness_hash:
+            print(f"   🔐 Quantum Witness: {sig_result.quantum_witness_hash}")
+        print(f"   🔗 Combined Hash: {sig_result.combined_signature_hash}")
+    else:
+        print(f"   ❌ Signing failed: {sig_result.error_message}")
+
+    print("\n" + "="*80)
+    print("✨ SUBSTRATO 191 DEMO COMPLETE ✨")
+    print("="*80 + "\n")
+
+if __name__ == "__main__":
+    asyncio.run(run_demo())

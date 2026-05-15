@@ -1,0 +1,153 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qbus-sidecar
+  namespace: arkhe-quantum-staging
+  labels:
+    app: qbus-sidecar
+    component: quantum-bridge
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: qbus-sidecar
+  template:
+    metadata:
+      labels:
+        app: qbus-sidecar
+        substrate: "191"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9091"
+    spec:
+      serviceAccountName: qbus-service-account
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+      - name: qbus
+        image: ghcr.io/arkhe-os/qbus-sidecar:v191.0-staging
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8052
+          name: grpc
+        - containerPort: 9091
+          name: metrics
+        env:
+        - name: PHOTON_EMITTER_ENDPOINT
+          value: "arkhe-photon-emitter.arkhe-quantum-staging.svc.cluster.local:50051"
+        - name: CLASSICAL_FALLBACK_ENDPOINT
+          value: "grpc://phi-bus.arkhe-staging:8052"
+        - name: QUANTUM_THRESHOLD_BYTES
+          value: "4096"
+        - name: PHI_C_MIN_FOR_QUANTUM
+          value: "0.99"
+        - name: TEMPORAL_CHAIN_ENDPOINT
+          value: "grpc://temporal-chain.arkhe-staging:8051"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+        livenessProbe:
+          grpc:
+            port: 8052
+            service: "arkhe.qbus.QBusHealth/Check"
+          initialDelaySeconds: 30
+          periodSeconds: 20
+        readinessProbe:
+          grpc:
+            port: 8052
+            service: "arkhe.qbus.QBusHealth/Ready"
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        volumeMounts:
+        - name: tls-certs
+          mountPath: /etc/arkhe/tls
+          readOnly: true
+        - name: hsm-config
+          mountPath: /etc/arkhe/hsm
+          readOnly: true
+      volumes:
+      - name: tls-certs
+        secret:
+          secretName: arkhe-quantum-tls
+      - name: hsm-config
+        secret:
+          secretName: arkhe-hsm-configuration
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - qbus-sidecar
+              topologyKey: kubernetes.io/hostname
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qbus-sidecar
+  namespace: arkhe-quantum-staging
+spec:
+  type: ClusterIP
+  selector:
+    app: qbus-sidecar
+  ports:
+  - port: 8052
+    targetPort: 8052
+    name: grpc
+  - port: 9091
+    targetPort: 9091
+    name: metrics
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: qbus-sidecar-hpa
+  namespace: arkhe-quantum-staging
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: qbus-sidecar
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 15
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 10
+        periodSeconds: 60

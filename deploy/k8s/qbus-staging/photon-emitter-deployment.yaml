@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arkhe-photon-emitter
+  namespace: arkhe-quantum-staging
+  labels:
+    app: photon-emitter
+    component: quantum-hardware-interface
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: photon-emitter
+  template:
+    metadata:
+      labels:
+        app: photon-emitter
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9092"
+    spec:
+      serviceAccountName: photon-emitter-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+      - name: photon-emitter
+        image: ghcr.io/arkhe-os/arkhe-photon:v191.0-staging
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 50051
+          name: grpc
+        - containerPort: 9092
+          name: metrics
+        env:
+        - name: EMITTER_WAVELENGTH_NM
+          value: "1550.0"
+        - name: EMITTER_RATE_MHZ
+          value: "40.0"
+        - name: HARDWARE_SERIAL
+          valueFrom:
+            secretKeyRef:
+              name: quantum-hardware-secrets
+              key: emitter-serial
+              optional: true
+        - name: EMULATION_MODE
+          value: "true"  # Staging: usar emulador
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "2000m"
+        livenessProbe:
+          grpc:
+            port: 50051
+            service: "arkhe.photon.PhotonEmitter/GetStatus"
+          initialDelaySeconds: 45
+          periodSeconds: 30
+        volumeMounts:
+        - name: emitter-config
+          mountPath: /etc/arkhe/emitter
+          readOnly: true
+      volumes:
+      - name: emitter-config
+        configMap:
+          name: photon-emitter-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: arkhe-photon-emitter
+  namespace: arkhe-quantum-staging
+spec:
+  type: ClusterIP
+  selector:
+    app: photon-emitter
+  ports:
+  - port: 50051
+    targetPort: 50051
+    name: grpc

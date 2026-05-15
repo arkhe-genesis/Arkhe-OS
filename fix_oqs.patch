@@ -1,0 +1,33 @@
+--- security/hybrid_pqc_quantum_signer.py	2024-05-15 22:14:00.000000000 +0000
++++ security/hybrid_pqc_quantum_signer.py	2024-05-15 22:14:00.000000000 +0000
+@@ -52,7 +52,7 @@
+
+     def __init__(
+         self,
+-        pqc_algorithm: str = "Dilithium3",
++        pqc_algorithm: str = "ML-DSA-65",
+         quantum_witness_photons: int = 256,
+         temporal_chain=None,
+         hsm_config: Optional[Dict] = None,
+--- arkhe_timechain/hybrid_signer.py	2024-05-15 22:14:00.000000000 +0000
++++ arkhe_timechain/hybrid_signer.py	2024-05-15 22:14:00.000000000 +0000
+@@ -14,7 +14,7 @@
+
+ class TemporalChainHybridSigner:
+     def __init__(self):
+-        self.signer = HybridPQCQuantumSigner(pqc_algorithm="Dilithium3")
++        self.signer = HybridPQCQuantumSigner(pqc_algorithm="ML-DSA-65")
+
+     async def sign_block(self, block_data: dict) -> dict:
+         """Sign a TemporalChain block using hybrid signature."""
+--- substrato_191_quantum_production.py	2024-05-15 22:14:00.000000000 +0000
++++ substrato_191_quantum_production.py	2024-05-15 22:14:00.000000000 +0000
+@@ -48,7 +48,7 @@
+
+     # 3. Hybrid Signing Demo
+     print("🔐 3. DEMONSTRATING HYBRID PQC+QUANTUM SIGNING")
+-    signer = HybridPQCQuantumSigner(pqc_algorithm="Dilithium3")
++    signer = HybridPQCQuantumSigner(pqc_algorithm="ML-DSA-65")
+
+     message = b"Critical Arkhe Production Command"
+     metadata = {"node": "alpha", "priority": "high"}

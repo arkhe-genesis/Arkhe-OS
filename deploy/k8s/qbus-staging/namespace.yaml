@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: arkhe-quantum-staging
+  labels:
+    environment: staging
+    substrate: "191"
+    quantum-enabled: "true"

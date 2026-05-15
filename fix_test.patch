@@ -1,0 +1,13 @@
+--- test_substrato_191.py	2024-05-15 22:14:00.000000000 +0000
++++ test_substrato_191.py	2024-05-15 22:14:00.000000000 +0000
+@@ -16,8 +16,8 @@
+ @pytest.mark.asyncio
+ async def test_epr_validation():
+     validator = QuantumCorrelationValidator({}, {})
+-    result = await validator.run_bell_test(pair_count=100)
+-    assert result.total_pairs_measured == 100
++    result = await validator.run_bell_test(pair_count=1000)
++    assert result.total_pairs_measured == 1000
+     assert result.s_parameter > 2.0
+
+ @pytest.mark.asyncio
