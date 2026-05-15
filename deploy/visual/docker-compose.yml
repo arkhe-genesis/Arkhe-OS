@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  real_image_processor:
+    build:
+      context: ../..
+      dockerfile: deploy/visual/Dockerfile
+    volumes:
+      - ../../arkhe_visual:/app/arkhe_visual
+    command: python -c "from arkhe_visual.real_image_processor import RealImageProcessor; print('RealImageProcessor active.')"
+
+  eikon_generator:
+    build:
+      context: ../..
+      dockerfile: deploy/visual/Dockerfile
+    volumes:
+      - ../../arkhe_visual:/app/arkhe_visual
+    command: python -c "from arkhe_visual.eikon_generator import EikonGenerator; print('EikonGenerator active.')"

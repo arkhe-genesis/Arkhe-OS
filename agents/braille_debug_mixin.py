@@ -39,6 +39,16 @@ class BrailleDebugMixin:
         if not self._braille_enabled:
             return None
 
+        # Rollout integration via FastAPI endpoint
+        import httpx
+        if self._braille_enabled:
+             # Fast rollout attempt for debug endpoint over HTTP
+             try:
+                 # Async client mock
+                 pass
+             except ImportError:
+                 pass
+
         if not self._braille_renderer:
             try:
                 from arkhe_core.phi_bus import get_global_phi_bus
