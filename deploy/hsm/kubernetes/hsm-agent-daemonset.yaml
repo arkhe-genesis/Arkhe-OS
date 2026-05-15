@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: hsm-agent
+  namespace: arkhe-singularity
+  labels:
+    app: hsm-agent
+    component: security
+spec:
+  selector:
+    matchLabels:
+      app: hsm-agent
+  template:
+    metadata:
+      labels:
+        app: hsm-agent
+      annotations:
+        # Injetar agente Vault para segredos
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/agent-inject-secret-hsm-pin: "secret/data/arkhe/hsm/pin"
+        vault.hashicorp.com/agent-inject-template-hsm-pin: |
+          {{- with secret "secret/data/arkhe/hsm/pin" -}}
+          {{ index .Data "value" }}
+          {{- end }}
+    spec:
+      hostNetwork: true
+      serviceAccountName: arkhe-hsm-sa
+      securityContext:
+        runAsUser: 0
+        runAsGroup: 0
+      containers:
+      - name: hsm-agent
+        image: arkhe/hsm-agent:1.3.0
+        securityContext:
+          privileged: true
+          capabilities:
+            add: ["IPC_LOCK", "SYS_ADMIN"]
+        env:
+        - name: HSM_PROVIDER
+          value: "${HSM_PROVIDER}"
+        - name: PKCS11_LIBRARY
+          value: "${PKCS11_LIB}"
+        - name: HSM_SLOT_ID
+          value: "${HSM_SLOT_ID}"
+        - name: VAULT_ADDR
+          value: "${VAULT_ADDR}"
+        - name: VAULT_ROLE
+          value: "arkhe-hsm-agent"
+        volumeMounts:
+        - name: hsm-device
+          mountPath: /dev/hsm
+        - name: pkcs11-config
+          mountPath: /etc/pkcs11
+        - name: vault-secrets
+          mountPath: /etc/arkhe/secrets
+          readOnly: true
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          exec:
+            command:
+            - /usr/local/bin/hsm-healthcheck
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          exec:
+            command:
+            - /usr/local/bin/hsm-ready
+          initialDelaySeconds: 30
+          periodSeconds: 10
+      volumes:
+      - name: hsm-device
+        hostPath:
+          path: /dev/hsm
+          type: CharDevice
+      - name: pkcs11-config
+        configMap:
+          name: pkcs11-config
+      - name: vault-secrets
+        projected:
+          sources:
+          - secret:
+              name: vault-auth
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pkcs11-config
+  namespace: arkhe-singularity
+data:
+  pkcs11.conf: |
+    # Configuração PKCS#11 para HSM
+    provider = ${HSM_PROVIDER}
+    library = ${PKCS11_LIB}
+    slot_id = ${HSM_SLOT_ID}
+    token_label = ${HSM_TOKEN_LABEL}
+
+    # Parâmetros de sessão
+    session_timeout = 300
+    max_sessions = 10
+
+    # Logging
+    log_level = INFO
+    log_file = /var/log/arkhe/hsm-agent.log

@@ -1,97 +1,62 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
-substrato_9043_cross_platform_mesh.py — Substrato 9043: Cross-Platform Mesh
-Ponto de entrada consolidado para a Malha de Transmissão Arkhe-OS (Produção).
-Integra Vault, HSM, Spark Tuning, Dashboard, Prometheus e conectores multiplataforma.
+Substrato 9043 — Cross Platform Mesh
+Orquestrador multi‑plataforma: Twitch, YouTube, TikTok e demonstração.
 """
 
-import time
-import logging
-from security.vault_hsm_manager import VaultHSMManager
-from monitoring.mesh_prometheus_exporter import MeshPrometheusExporter
-from monitoring.mesh_dashboard import render_dashboard
-from arkhe_spark.mesh_tuning import SparkMeshTuning
-from arkhe_mesh.connectors.instagram_connector import InstagramConnector
-from arkhe_mesh.connectors.kick_connector import KickConnector
-from arkhe_mesh.connectors.trovo_connector import TrovoConnector
+import asyncio, time
+from typing import Dict, List, Optional
+from arkhe_twitch.broadcast_connector_interface import BroadcastConnector, LiveStreamInfo, LiveChatMessage, Platform
+from arkhe_twitch.youtube_live_connector import YouTubeLiveConnector, YouTubeConfig
+from arkhe_twitch.tiktok_live_connector import TikTokLiveConnector, TikTokConfig
+from arkhe_twitch.twitch_connector import ArkheTwitchConnector, TwitchConfig
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger("ArkheMesh9043")
+class MultiPlatformMesh:
+    def __init__(self, phi_bus=None, temporal_chain=None, spark=None):
+        self.connectors: Dict[str, BroadcastConnector] = {}
+        self.phi_bus = phi_bus
+        self.temporal = temporal_chain
+        self.spark = spark
+        self._mesh_phi_c = 0.0
 
-class MockGuardianBus:
-    def __init__(self):
-        self.blocks = 0
-    def block_message(self, platform, msg):
-        self.blocks += 1
-    def allow_message(self, platform, msg):
-        pass
+    async def add_twitch(self, stream_id: str, twitch_config: TwitchConfig):
+        conn = ArkheTwitchConnector(twitch_config, self.temporal, None, self.phi_bus)
+        await conn.__aenter__()
+        self.connectors[stream_id] = conn
+        await conn.subscribe_events(lambda msg: self._handle_message(stream_id, msg))
 
-def main():
-    print("==========================================================================")
-    print(" ARKHE Ω‑TEMP v∞.Ω — SUBSTRATO 9043 (CROSS-PLATFORM MESH)")
-    print(" Malha de Transmissão Coerente em Produção")
-    print("==========================================================================\n")
+    async def add_youtube(self, stream_id: str, yt_config: YouTubeConfig):
+        conn = YouTubeLiveConnector(yt_config, self.temporal, None, self.phi_bus)
+        self.connectors[stream_id] = conn
+        await conn.subscribe_events(lambda msg: self._handle_message(stream_id, msg))
 
-    # 1. Segurança: Vault e HSM
-    logger.info("--- 1. Inicializando Camada de Segurança ---")
-    vault = VaultHSMManager()
-    signature = vault.sign_metadata_pqc("arkhe_mesh_init_sequence")
-    logger.info(f"Assinatura PQC Inicial: {signature[:16]}...")
+    async def add_tiktok(self, stream_id: str, tk_config: TikTokConfig):
+        conn = TikTokLiveConnector(tk_config, self.temporal, None, self.phi_bus)
+        self.connectors[stream_id] = conn
+        await conn.subscribe_events(lambda msg: self._handle_message(stream_id, msg))
 
-    # 2. Spark: Tuning e Otimização
-    logger.info("\n--- 2. Inicializando Processamento (Arkhe-Spark) ---")
-    spark_tuner = SparkMeshTuning()
-    spark_config = spark_tuner.get_spark_config()
-    logger.info(f"Batch Interval configurado para: {spark_config.get('spark.streaming.batchInterval')}")
+    async def _handle_message(self, stream_id: str, msg: LiveChatMessage):
+        # Publicar no Kafka para processamento Spark
+        if self.spark:
+            await self.spark.publish_event("chat_messages", {
+                "stream_id": stream_id, "platform": msg.platform.value,
+                "message": msg.message, "chatter": msg.chatter_name,
+                "safe": msg.phi_c_safe, "timestamp": msg.timestamp,
+            })
 
-    # 3. Monitoramento: Prometheus
-    logger.info("\n--- 3. Inicializando Monitoramento (Prometheus) ---")
-    prom_exporter = MeshPrometheusExporter()
-    prom_exporter.start_server(8053)
-
-    # 4. Conectores: Expansão da Malha
-    logger.info("\n--- 4. Ativando Conectores da Malha ---")
-    guardian = MockGuardianBus()
-    platforms = [InstagramConnector(), KickConnector(), TrovoConnector()]
-
-    total_viewers = 0
-    total_messages = 0
-
-    for p in platforms:
-        if p.connect(vault):
-            info = p.get_stream_info(f"stream_{p.platform_name.lower()}_prod")
-            logger.info(f"[{p.platform_name}] Stream ativa com {info['viewers']} espectadores.")
-            p.process_chat(guardian)
-            metrics = p.get_metrics()
-            total_viewers += metrics["viewers"]
-            total_messages += metrics["messages_processed"]
-
-    # 5. Dashboard Consolidação
-    logger.info("\n--- 5. Gerando Dashboard de Produção ---")
-    dashboard_data = {
-        "phi_c": 0.998,
-        "streams_active": len(platforms) + 3, # Incluindo Twitch/YT/TikTok base
-        "viewers_total": total_viewers + 150000,
-        "messages_total": total_messages + 12000,
-        "guardian_blocks": guardian.blocks + 45,
-        "batch_duration": 3.8,
-        "temporal_anchors": 850
-    }
-
-    prom_exporter.update_metrics(
-        dashboard_data["streams_active"],
-        dashboard_data["viewers_total"],
-        dashboard_data["phi_c"],
-        dashboard_data["messages_total"],
-        dashboard_data["guardian_blocks"],
-        dashboard_data["batch_duration"],
-        dashboard_data["temporal_anchors"]
-    )
-
-    render_dashboard(dashboard_data)
-
-    print("\n✅ Substrato 9043 inicializado com sucesso e em execução de produção.")
-
-if __name__ == "__main__":
-    main()
+    async def get_mesh_status(self) -> Dict:
+        status = {"streams": {}, "total_viewers": 0, "mesh_phi_c": self._mesh_phi_c}
+        for sid, conn in self.connectors.items():
+            try:
+                info = await conn.get_stream_info()
+                if info:
+                    status["streams"][sid] = {
+                        "platform": info.platform.value,
+                        "title": info.title,
+                        "viewers": info.viewer_count,
+                        "phi_c": info.phi_c_coherence,
+                    }
+                    status["total_viewers"] += info.viewer_count
+            except Exception:
+                pass
+        return status

@@ -54,6 +54,15 @@ class SparkARKHEContext:
         quantum_backend: str = "qiskit_aer",  # ou "ibm", "braket", "ionq"
     ):
         self.spark = spark
+
+        # Spark Optimization: Tuning & Checkpointing
+        self.spark.conf.set("spark.sql.adaptive.enabled", "true")
+        self.spark.conf.set("spark.streaming.stopGracefullyOnShutdown", "true")
+        try:
+            self.spark.sparkContext.setCheckpointDir("/tmp/spark_checkpoints")
+        except Exception:
+            pass
+
         self.qnc_config = qnc_config or GenomicQNCConfig()
         self.temporal_chain = temporal_chain or TemporalChain()
         self.ma_s2_engine = ma_s2_engine or MA_S2_ComplianceEngine()

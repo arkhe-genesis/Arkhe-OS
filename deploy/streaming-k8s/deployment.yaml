@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arkhe-streaming
+  namespace: arkhe
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: arkhe-streaming
+  template:
+    metadata:
+      labels:
+        app: arkhe-streaming
+    spec:
+      containers:
+      - name: streaming-processor
+        image: arkhe/streaming:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: ENVIRONMENT
+          value: "production"

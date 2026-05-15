@@ -1,0 +1,30 @@
+# config/federated_intel.yaml
+federated_intel:
+  broadcaster_id: "globo"
+  encryption_key: "${FEDERATED_INTEL_KEY}"  # Gerado via: python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+
+  peers:
+    - broadcaster: "sbt"
+      endpoint: "https://intel.sbt.arkhe.internal:8443/api/v1/intel"
+      public_key: "0xSBT_PUBLIC_KEY"
+    - broadcaster: "record"
+      endpoint: "https://intel.record.arkhe.internal:8443/api/v1/intel"
+      public_key: "0xRECORD_PUBLIC_KEY"
+    - broadcaster: "band"
+      endpoint: "https://intel.band.arkhe.internal:8443/api/v1/intel"
+      public_key: "0xBAND_PUBLIC_KEY"
+
+  # Políticas de compartilhamento
+  sharing_policy:
+    auto_share: true                # Compartilhar automaticamente IOCs detectados
+    min_severity: "medium"          # Compartilhar apenas medium+ severity
+    min_confidence: 0.7             # Confiança mínima para compartilhamento
+    anonymize_reporter: true        # Não revelar qual emissora reportou
+    retention_days: 90              # Reter IOCs por 90 dias
+    rate_limit_per_minute: 60       # Limite de consultas por minuto
+
+  # Integração com SIEM
+  siem_forwarding:
+    enabled: true
+    platforms: ["splunk", "sentinel"]
+    format: "cef"                   # Common Event Format

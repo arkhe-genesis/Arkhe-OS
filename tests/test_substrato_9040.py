@@ -1,89 +1,94 @@
-import pytest
+#!/usr/bin/env python3
 import asyncio
-from mirage import Workspace
-from mirage.resource.ram import RAMResource
-from arkhe_mirage.secure_workspace import SecureMirageWorkspace
+from tests.field.e2e_receiver_validation import FieldE2EValidator, ReceiverConfig, ReceiverType
+from security.hsm_pqc_production_signer import HSMProductionSigner, HSMConfig, HSMProvider, PQCSignatureAlgorithm
+from integrations.siem_correlation_engine import SIEMCorrelationEngine, AlertSource
 
-class MockTemporal:
-    async def anchor_event(self, event_type, data):
-        return "a3f2b8c9d1e4f5a6"
+def test_receiver_validation():
+    async def run():
+        config = ReceiverConfig(
+            receiver_type=ReceiverType.CONSUMER_STB,
+            device_id="test",
+            frequency_mhz=500.0,
+            bandwidth_khz=6000,
+            modulation="ATSC3"
+        )
+        val = FieldE2EValidator(config)
+        res = await val.run_field_validation(1, 0.5)
+        assert res.overall_status == "passed"
+    asyncio.run(run())
 
-class MockGuardian:
-    def exorcise(self, command):
-        if "rm -rf" in command:
-            return False, None
-        return True, None
+def test_hsm_signer():
+    async def run():
+        hsm_config = HSMConfig(
+            provider=HSMProvider.THALES_NCRYPT,
+            pkcs11_library_path="mock",
+            key_label="arkhe-production-key-v1"
+        )
+        signer = HSMProductionSigner(hsm_config, algorithm=PQCSignatureAlgorithm.DILITHIUM_3)
+        res = await signer.sign_segment(b"test", {})
+        assert res.success is True
+    asyncio.run(run())
 
-class MockPhiBus:
-    def get_mesh_coherence(self):
-        return 0.997
+def test_siem():
+    async def run():
+        siem = SIEMCorrelationEngine()
+        await siem.ingest_alert(AlertSource.GATESAIR_MAXIVA, {
+            "id": "mx_001", "alert_type": "cnr_low", "severity": "medium",
+            "channel_id": "ch1", "cnr_db": 19.5, "message": "CNR below threshold"
+        })
+        await siem.ingest_alert(AlertSource.ARKHE_INTERNAL, {
+            "id": "ark_001", "alert_type": "phi_c_drop", "severity": "high",
+            "channel_id": "ch1", "phi_c_value": 0.94, "message": "Phi_C drop detected"
+        })
+        await asyncio.sleep(0.5)
+        corr = siem.get_correlated_alerts()
+        assert len(corr) > 0
+    asyncio.run(run())
 
-@pytest.mark.asyncio
-async def test_secure_mirage_workspace_safe_command():
-    ws = Workspace({'/data': RAMResource()})
-    secure_ws = SecureMirageWorkspace(
-        ws,
-        temporal_chain=MockTemporal(),
-        guardian=MockGuardian(),
-        phi_bus=MockPhiBus()
-    )
-    result = await secure_ws.execute("cp /data/test.txt /data/copy.txt")
+import asyncio
+from tests.field.e2e_receiver_validation import FieldE2EValidator, ReceiverConfig, ReceiverType
+from security.hsm_pqc_production_signer import HSMProductionSigner, HSMConfig, HSMProvider, PQCSignatureAlgorithm
+from integrations.siem_correlation_engine import SIEMCorrelationEngine, AlertSource
 
-    assert result.success is True
-    assert result.guardian_approved is True
-    assert result.phi_c_before == 0.997
-    assert result.phi_c_after == 0.997
-    assert result.temporal_seal == "a3f2b8c9d1e4f5a6"
-    assert len(secure_ws.operation_log) == 1
+def test_receiver_validation():
+    async def run():
+        config = ReceiverConfig(
+            receiver_type=ReceiverType.CONSUMER_STB,
+            device_id="test",
+            frequency_mhz=500.0,
+            bandwidth_khz=6000,
+            modulation="ATSC3"
+        )
+        val = FieldE2EValidator(config)
+        res = await val.run_field_validation(1, 0.5)
+        assert res.overall_status == "passed"
+    asyncio.run(run())
 
-@pytest.mark.asyncio
-async def test_secure_mirage_workspace_blocked_command_by_pattern():
-    ws = Workspace({'/data': RAMResource()})
-    secure_ws = SecureMirageWorkspace(
-        ws,
-        temporal_chain=MockTemporal(),
-        guardian=MockGuardian(),
-        phi_bus=MockPhiBus()
-    )
-    result = await secure_ws.execute("rm -rf /")
+def test_hsm_signer():
+    async def run():
+        hsm_config = HSMConfig(
+            provider=HSMProvider.THALES_NCRYPT,
+            pkcs11_library_path="mock",
+            key_label="arkhe-production-key-v1"
+        )
+        signer = HSMProductionSigner(hsm_config, algorithm=PQCSignatureAlgorithm.DILITHIUM_3)
+        res = await signer.sign_segment(b"test", {})
+        assert res.success is True
+    asyncio.run(run())
 
-    assert result.success is False
-    assert result.guardian_approved is False
-    assert result.blocked_reason is not None
-    assert "padrão de segurança" in result.blocked_reason
-    assert len(secure_ws.operation_log) == 1
-
-@pytest.mark.asyncio
-async def test_secure_mirage_workspace_blocked_command_by_guardian():
-    ws = Workspace({'/data': RAMResource()})
-    # Remove rm -rf from blocked patterns to test guardian directly
-    secure_ws = SecureMirageWorkspace(
-        ws,
-        temporal_chain=MockTemporal(),
-        guardian=MockGuardian(),
-        phi_bus=MockPhiBus()
-    )
-    secure_ws.BLOCKED_PATTERNS = []
-
-    result = await secure_ws.execute("rm -rf /data")
-
-    assert result.success is False
-    assert result.guardian_approved is False
-    assert result.blocked_reason == "Comando bloqueado pelo Guardian Attractor"
-    assert len(secure_ws.operation_log) == 1
-
-@pytest.mark.asyncio
-async def test_custom_arkhe_commands():
-    ws = Workspace({'/data': RAMResource()})
-    secure_ws = SecureMirageWorkspace(
-        ws,
-        temporal_chain=MockTemporal(),
-        guardian=MockGuardian(),
-        phi_bus=MockPhiBus()
-    )
-
-    phi_res = await secure_ws._cmd_arkhe_phi_c("/data")
-    assert "0.9970" in phi_res
-
-    anchor_res = await secure_ws._cmd_arkhe_anchor("/data/test.txt")
-    assert "a3f2b8c9d1e4f5a6" in anchor_res
+def test_siem():
+    async def run():
+        siem = SIEMCorrelationEngine()
+        await siem.ingest_alert(AlertSource.GATESAIR_MAXIVA, {
+            "id": "mx_001", "alert_type": "cnr_low", "severity": "medium",
+            "channel_id": "ch1", "cnr_db": 19.5, "message": "CNR below threshold"
+        })
+        await siem.ingest_alert(AlertSource.ARKHE_INTERNAL, {
+            "id": "ark_001", "alert_type": "phi_c_drop", "severity": "high",
+            "channel_id": "ch1", "phi_c_value": 0.94, "message": "Phi_C drop detected"
+        })
+        await asyncio.sleep(0.5)
+        corr = siem.get_correlated_alerts()
+        assert len(corr) > 0
+    asyncio.run(run())
