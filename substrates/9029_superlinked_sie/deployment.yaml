@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sie-inference
+  labels:
+    app: sie-inference
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sie-inference
+  template:
+    metadata:
+      labels:
+        app: sie-inference
+    spec:
+      containers:
+      - name: sie-inference
+        image: superlinked/sie-inference:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: SIE_LOG_LEVEL
+          value: "INFO"
+        - name: SIE_MODELS
+          value: "bge-small-en-v1.5,bge-reranker-base,llama-3-8b-instruct"
+        resources:
+          limits:
+            nvidia.com/gpu: 1
+        volumeMounts:
+        - name: model-cache
+          mountPath: /root/.cache/sie
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+      volumes:
+      - name: model-cache
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sie-inference
+spec:
+  selector:
+    app: sie-inference
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000

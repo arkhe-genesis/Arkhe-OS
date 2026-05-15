@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  sie-inference:
+    image: superlinked/sie-inference:latest
+    ports:
+      - "8000:8000"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    environment:
+      - SIE_LOG_LEVEL=INFO
+      # Example models to load explicitly, otherwise downloaded lazily
+      - SIE_MODELS=bge-small-en-v1.5,bge-reranker-base,llama-3-8b-instruct
+    volumes:
+      - sie_models:/root/.cache/sie
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  sie_models:
