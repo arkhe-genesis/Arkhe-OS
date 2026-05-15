@@ -1,0 +1,86 @@
+# docker-compose.broadcast.yml
+version: "3.9"
+services:
+  temporal-chain:
+    image: arkhe/temporal-chain:9018
+    environment:
+      - STORAGE_BACKEND=postgresql
+    ports: ["8051:8051"]
+    networks: [arkhe-net]
+
+  phi-bus:
+    image: arkhe/phi-bus:latest
+    environment:
+      - TARGET_PHI_C=1.0
+    ports: ["8052:8052"]
+    networks: [arkhe-net]
+
+  guardian:
+    image: arkhe/guardian:latest
+    environment:
+      - VOCAB_SIZE=50000
+    ports: ["8050:8050"]
+    networks: [arkhe-net]
+
+  kafka:
+    image: bitnami/kafka:3.5
+    environment:
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+    networks: [arkhe-net]
+
+  spark-master:
+    image: bitnami/spark:3.5
+    command: master
+    environment:
+      - SPARK_MODE=master
+    networks: [arkhe-net]
+
+  spark-worker:
+    image: bitnami/spark:3.5
+    command: worker
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+    deploy:
+      replicas: 3
+    networks: [arkhe-net]
+
+  mesh-orchestrator:
+    build:
+      context: .
+      dockerfile: Dockerfile.broadcast
+    environment:
+      - TWITCH_CLIENT_ID=${TWITCH_CLIENT_ID}
+      - TWITCH_CLIENT_SECRET=${TWITCH_CLIENT_SECRET}
+      - TWITCH_BROADCASTER_ID=${TWITCH_BROADCASTER_ID}
+      - YT_CLIENT_ID=${YT_CLIENT_ID}
+      - YT_CLIENT_SECRET=${YT_CLIENT_SECRET}
+      - YT_REFRESH_TOKEN=${YT_REFRESH_TOKEN}
+      - YT_CHANNEL_ID=${YT_CHANNEL_ID}
+      - YT_API_KEY=${YT_API_KEY}
+      - TIKTOK_CLIENT_KEY=${TIKTOK_CLIENT_KEY}
+      - TIKTOK_CLIENT_SECRET=${TIKTOK_CLIENT_SECRET}
+      - TIKTOK_ACCESS_TOKEN=${TIKTOK_ACCESS_TOKEN}
+      - TIKTOK_OPEN_ID=${TIKTOK_OPEN_ID}
+      - TIKTOK_ROOM_ID=${TIKTOK_ROOM_ID}
+      - KAFKA_BROKER=kafka:9092
+      - GUARDIAN_ENDPOINT=http://guardian:8050
+    ports: ["8053:8053"]
+    depends_on:
+      - temporal-chain
+      - phi-bus
+      - guardian
+      - kafka
+      - spark-master
+    networks: [arkhe-net]
+
+  delta-lake:
+    image: deltaio/delta-docker:latest
+    volumes:
+      - /mnt/arkhe/delta:/data
+    networks: [arkhe-net]
+
+networks:
+  arkhe-net:
+    driver: bridge
