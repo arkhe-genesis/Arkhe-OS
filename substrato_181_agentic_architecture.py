@@ -175,6 +175,19 @@ class ArkheAgent:
     async def learn(self, action_result: ActionResult, feedback: dict):
         await self.memory.store_episode({"result": action_result.status, "feedback": feedback})
 
+    async def braille_detail(self) -> str:
+        """Modo de depuração visual do estado interno (Risomorphism-1911 integration)."""
+        tools_count = len(self.toolset._tools) if hasattr(self.toolset, '_tools') else 0
+
+        detail = []
+        detail.append(f"⡿⠹⠏ ⠙⠂⠁ {self.agent_id} ⠙⠂⠁ ⠹⠏⡿")
+        detail.append(f"Type   : {self.agent_type}")
+        detail.append(f"Version: {self.version}")
+        detail.append(f"Phi_C  : {self.phi_c:.4f}")
+        detail.append(f"Tools  : {tools_count} registered")
+        detail.append(f"Memory : W[{len(self.memory.working_memory)}] E[{len(self.memory.episodic_memory)}] S[{len(self.memory.semantic_memory)}]")
+        return "\n".join(detail)
+
 
 # --- 5. Multi-Agent Orchestration ---
 class TaskSpec:
