@@ -131,8 +131,11 @@ class ActionResult:
         self.status = status
         self.data = data
 
-class ArkheAgent:
-    def __init__(self, agent_id: str, agent_type: str, version: str, tc: MockTemporalChain, phi_c: float = 0.99):
+from agents.braille_debug_mixin import BrailleDebugMixin
+
+class ArkheAgent(BrailleDebugMixin):
+    def __init__(self, agent_id: str, agent_type: str, version: str, tc: MockTemporalChain, phi_c: float = 0.99, **kwargs):
+        super().__init__(**kwargs)
         self.agent_id = agent_id
         self.agent_type = agent_type
         self.version = version
