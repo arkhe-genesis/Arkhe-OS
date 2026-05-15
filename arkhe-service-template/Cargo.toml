@@ -1,0 +1,7 @@
+[package]
+name = "arkhe-generic-rust"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Placeholder para dependências Rust (Tonic, Tokio, etc)

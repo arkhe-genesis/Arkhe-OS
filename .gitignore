@@ -543,3 +543,4 @@ target/
 arkhe-webrtc/node_modules/
 !arkhe-enterprise/
 !arkhe-fiber-optimizer/
+!arkhe-service-template/
