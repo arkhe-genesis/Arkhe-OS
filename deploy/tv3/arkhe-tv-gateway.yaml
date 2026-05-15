@@ -1,0 +1,37 @@
+# deploy/tv3/arkhe-tv-gateway.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arkhe-tv-gateway
+  namespace: arkhe
+  labels:
+    substrate: "9033"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: arkhe-tv
+  template:
+    metadata:
+      labels:
+        app: arkhe-tv
+    spec:
+      containers:
+      - name: broadcast-guardian
+        image: arkhe/tv3-guardian:v1.0.0
+        ports:
+        - containerPort: 8053
+          name: mcp
+        env:
+        - name: TEMPORAL_CHAIN_ENDPOINT
+          value: "http://temporal-chain.arkhe:8051"
+        - name: PHI_C_THRESHOLD
+          value: "0.95"
+        - name: ATSC3_MIMO_ENABLED
+          value: "true"
+        - name: GINGA_SANDBOX_ENABLED
+          value: "true"
+        resources:
+          limits:
+            memory: "2Gi"
+            cpu: "2"
