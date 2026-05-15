@@ -1,19 +1,24 @@
 #!/usr/bin/env python3
 """Ferramentas MCP para a Malha de Transmissão Coerente."""
-from arkhe_twitch.mesh_orchestrator import CoherentBroadcastMesh, TwitchConfig
+from typing import Dict, Any
 
-class TextContent:
-    def __init__(self, type: str, text: str):
-        self.type = type
-        self.text = text
+from arkhe_twitch.mesh_orchestrator import CoherentBroadcastMesh
+from arkhe_twitch.twitch_connector import TwitchConfig
+from arkhe_twitch.youtube_connector import YouTubeConfig
+from arkhe_twitch.tiktok_connector import TikTokConfig
 
 class Tool:
-    def __init__(self, name: str, description: str, inputSchema: dict):
+    def __init__(self, name, description, inputSchema):
         self.name = name
         self.description = description
         self.inputSchema = inputSchema
 
-def register_mesh_tools(server, mesh: CoherentBroadcastMesh):
+class TextContent:
+    def __init__(self, type, text):
+        self.type = type
+        self.text = text
+
+def register_mesh_tools(server: Any, mesh: CoherentBroadcastMesh):
     @server.list_tools()
     async def list_tools() -> list:
         return [
@@ -29,11 +34,12 @@ def register_mesh_tools(server, mesh: CoherentBroadcastMesh):
                     "type": "object",
                     "properties": {
                         "stream_id": {"type": "string"},
-                        "client_id": {"type": "string"},
+                        "platform": {"type": "string", "enum": ["twitch", "youtube", "tiktok"]},
+                        "api_key": {"type": "string"},
                         "client_secret": {"type": "string"},
-                        "broadcaster_id": {"type": "string"},
+                        "channel_id": {"type": "string"},
                     },
-                    "required": ["stream_id", "client_id", "broadcaster_id"],
+                    "required": ["stream_id", "platform", "api_key", "channel_id"],
                 },
             ),
             Tool(
@@ -69,16 +75,31 @@ def register_mesh_tools(server, mesh: CoherentBroadcastMesh):
                      f"💬 Chat messages: {status['total_chat_messages']}\n"
                      f"🎁 Redemptions: {status['total_redemptions']}\n"
                      f"🎮 Drops: {status['total_drops']}\n"
-                     f"🔐 Selo: {status['temporal_anchor'][:16] if status['temporal_anchor'] else 'N/A'}..."
             )]
 
         elif name == "mesh_add_stream":
-            config = TwitchConfig(
-                client_id=arguments["client_id"],
-                client_secret=arguments.get("client_secret", ""),
-                broadcaster_id=arguments["broadcaster_id"],
-            )
-            stream = await mesh.add_stream(arguments["stream_id"], config)
+            platform = arguments["platform"]
+
+            if platform == "twitch":
+                config = TwitchConfig(
+                    client_id=arguments["api_key"],
+                    client_secret=arguments.get("client_secret", ""),
+                    broadcaster_id=arguments["channel_id"],
+                )
+            elif platform == "youtube":
+                config = YouTubeConfig(
+                    api_key=arguments["api_key"],
+                    channel_id=arguments["channel_id"]
+                )
+            elif platform == "tiktok":
+                config = TikTokConfig(
+                    api_key=arguments["api_key"],
+                    user_id=arguments["channel_id"]
+                )
+            else:
+                raise ValueError(f"Platform {platform} not supported")
+
+            await mesh.add_stream(arguments["stream_id"], platform, config)
             return [TextContent(
                 type="text",
                 text=f"✅ Stream '{arguments['stream_id']}' adicionado à malha. "
@@ -94,7 +115,7 @@ def register_mesh_tools(server, mesh: CoherentBroadcastMesh):
 
         elif name == "mesh_phi_c_snapshot":
             snapshots = {
-                sid: f"Φ_C={s.phi_c:.4f} ({'🟢' if s.active else '🔴'})"
+                sid: f"Φ_C={s.phi_c:.4f} ({'🟢' if s.active else '🔴'}) [{s.platform}]"
                 for sid, s in mesh.streams.items()
             }
             return [TextContent(

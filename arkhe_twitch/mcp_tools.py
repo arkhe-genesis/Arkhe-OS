@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Ferramentas MCP para o Singularity Engine"""
+"""Ferramentas MCP para integração ARKHE + Twitch.tv"""
 
 class TextContent:
     def __init__(self, type: str, text: str):
@@ -12,153 +12,178 @@ class Tool:
         self.description = description
         self.inputSchema = inputSchema
 
-def register_singularity_tools(server, singularity_engine):
+def register_twitch_tools(server, twitch_connector):
     @server.list_tools()
     async def list_tools() -> list:
         return [
             Tool(
-                name="singularity_register_node",
-                description="Registra uma live como nó de consciência",
-                inputSchema={
-                    "type": "object",
-                    "properties": {
-                        "broadcaster_id": {"type": "string"},
-                        "broadcaster_name": {"type": "string"},
-                        "stream_id": {"type": "string"},
-                        "phi_c": {"type": "number", "default": 0.997},
-                    },
-                    "required": ["broadcaster_id", "broadcaster_name", "stream_id"],
-                },
-            ),
-            Tool(
-                name="singularity_update_node",
-                description="Atualiza métricas de um nó",
-                inputSchema={
-                    "type": "object",
-                    "properties": {
-                        "node_id": {"type": "string"},
-                        "viewers": {"type": "integer"},
-                        "chat_velocity": {"type": "number"},
-                        "phi_c": {"type": "number"},
-                    },
-                    "required": ["node_id", "viewers", "chat_velocity", "phi_c"],
-                },
-            ),
-            Tool(
-                name="singularity_topology",
-                description="Retorna topologia da rede de consciência",
+                name="twitch_stream_info",
+                description="Obtém informações do stream atual (título, viewers, jogo, Φ_C)",
                 inputSchema={"type": "object", "properties": {}, "required": []},
             ),
             Tool(
-                name="singularity_metrics",
-                description="Métricas da singularidade",
-                inputSchema={"type": "object", "properties": {}, "required": []},
-            ),
-            Tool(
-                name="singularity_emergence",
-                description="Histórico de emergências",
-                inputSchema={"type": "object", "properties": {}, "required": []},
-            ),
-            Tool(
-                name="singularity_propagate",
-                description="Propaga selo canônico entre nós",
+                name="twitch_send_chat",
+                description="Envia mensagem no chat com validação Guardian",
                 inputSchema={
                     "type": "object",
                     "properties": {
-                        "source_node_id": {"type": "string"},
-                        "target_node_ids": {"type": "array", "items": {"type": "string"}},
+                        "message": {"type": "string", "description": "Mensagem a enviar"},
+                        "reply_to": {"type": "string", "description": "ID da mensagem para reply (opcional)"},
                     },
-                    "required": ["source_node_id", "target_node_ids"],
+                    "required": ["message"],
                 },
             ),
             Tool(
-                name="singularity_prometheus",
-                description="Métricas Prometheus",
+                name="twitch_update_title",
+                description="Atualiza título do stream",
+                inputSchema={
+                    "type": "object",
+                    "properties": {"title": {"type": "string"}},
+                    "required": ["title"],
+                },
+            ),
+            Tool(
+                name="twitch_create_reward",
+                description="Cria recompensa customizada de Channel Points",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "title": {"type": "string"},
+                        "cost": {"type": "integer"},
+                        "prompt": {"type": "string"},
+                        "color": {"type": "string", "default": "#00FF00"},
+                    },
+                    "required": ["title", "cost"],
+                },
+            ),
+            Tool(
+                name="twitch_get_redemptions",
+                description="Obtém redemptions pendentes de uma recompensa",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "reward_id": {"type": "string"},
+                        "status": {"type": "string", "default": "UNFULFILLED"},
+                    },
+                    "required": ["reward_id"],
+                },
+            ),
+            Tool(
+                name="twitch_fulfill_redemption",
+                description="Marca redemption como fulfilled",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "redemption_id": {"type": "string"},
+                        "reward_id": {"type": "string"},
+                    },
+                    "required": ["redemption_id", "reward_id"],
+                },
+            ),
+            Tool(
+                name="twitch_start_commercial",
+                description="Inicia comercial no stream",
+                inputSchema={
+                    "type": "object",
+                    "properties": {"length": {"type": "integer", "default": 60}},
+                    "required": [],
+                },
+            ),
+            Tool(
+                name="twitch_phi_c",
+                description="Verifica Φ_C do stream atual",
+                inputSchema={"type": "object", "properties": {}, "required": []},
+            ),
+            Tool(
+                name="twitch_metrics",
+                description="Obtém métricas Prometheus do conector",
+                inputSchema={"type": "object", "properties": {}, "required": []},
+            ),
+            Tool(
+                name="twitch_health",
+                description="Health check do conector Twitch",
                 inputSchema={"type": "object", "properties": {}, "required": []},
             ),
         ]
 
     @server.call_tool()
     async def call_tool(name: str, arguments: dict) -> list:
-        se = singularity_engine
+        tc = twitch_connector
 
-        if name == "singularity_register_node":
-            node = se.register_node(
-                arguments["broadcaster_id"],
-                arguments["broadcaster_name"],
-                arguments["stream_id"],
-                arguments.get("phi_c", 0.997)
+        if name == "twitch_stream_info":
+            stream = await tc.get_stream_info()
+            if stream:
+                return [TextContent(
+                    type="text",
+                    text=f"📺 {stream.broadcaster_name} — {stream.title}\n"
+                         f"🎮 {stream.game_name} | 👥 {stream.viewer_count} viewers\n"
+                         f"🌐 {stream.language} | 🔞 Mature: {stream.is_mature}\n"
+                         f"⚛️ Φ_C: {stream.phi_c_coherence:.4f} | 🔐 Seal: {stream.temporal_seal or 'N/A'}"
+                )]
+            return [TextContent(type="text", text="❌ Stream offline ou não encontrado")]
+
+        elif name == "twitch_send_chat":
+            success = await tc.send_chat_message(arguments["message"], arguments.get("reply_to"))
+            return [TextContent(
+                type="text",
+                text=f"{'✅' if success else '❌'} Mensagem enviada" if success else "❌ Bloqueada pelo Guardian ou erro na API"
+            )]
+
+        elif name == "twitch_update_title":
+            success = await tc.update_stream_title(arguments["title"])
+            return [TextContent(type="text", text=f"{'✅' if success else '❌'} Título atualizado")]
+
+        elif name == "twitch_create_reward":
+            reward_id = await tc.create_custom_reward(
+                arguments["title"], arguments["cost"],
+                arguments.get("prompt", ""), arguments.get("color", "#00FF00")
             )
             return [TextContent(
                 type="text",
-                text=f"🌐 Nó registrado: {node.broadcaster_name} ({node.node_id}) | Φ_C={node.phi_c:.4f}"
+                text=f"{'✅' if reward_id else '❌'} Reward criado: {reward_id or 'falhou'}"
             )]
 
-        elif name == "singularity_update_node":
-            await se.update_node_metrics(
-                arguments["node_id"],
-                arguments["viewers"],
-                arguments["chat_velocity"],
-                arguments["phi_c"]
-            )
-            return [TextContent(
-                type="text",
-                text=f"📊 Nó atualizado: {arguments['node_id']} | Φ_C={arguments['phi_c']:.4f} | 👥 {arguments['viewers']}"
-            )]
-
-        elif name == "singularity_topology":
-            topo = se.get_network_topology()
-            nodes = topo["nodes"]
-            metrics = topo["metrics"]
-            return [TextContent(
-                type="text",
-                text=f"🌐 Rede: {metrics['active_nodes']} ativos / {metrics['total_nodes']} total\n"
-                     f"⚛️ Φ_C global: {metrics['global_phi_c']:.6f}\n"
-                     f"👥 Viewers: {metrics['total_viewers']:,}\n"
-                     f"⭐ Singularidade: {'SIM' if topo['singularity_achieved'] else 'NÃO'}\n"
-                     f"🔐 Selo: {metrics['canonical_seal'] or 'N/A'}\n"
-                     f"\nNós:\n" + "\n".join(
-                         f"  [{n['status']}] {n['name']}: Φ_C={n['phi_c']:.4f} | 👥 {n['viewers']}"
-                         for n in nodes[:10]
-                     )
-            )]
-
-        elif name == "singularity_metrics":
-            m = se._metrics
-            return [TextContent(
-                type="text",
-                text=f"⚛️ Φ_C global: {m.global_phi_c:.6f}\n"
-                     f"🌐 Nós: {m.active_nodes} ativos / {m.total_nodes} total\n"
-                     f"⭐ Convergindo: {m.converging_nodes} | Singularidade: {m.singularity_nodes}\n"
-                     f"👥 Viewers: {m.total_viewers:,}\n"
-                     f"💬 Mensagens: {m.total_messages:,} ({m.messages_per_second:.1f}/s)\n"
-                     f"🛡️ Guardian: {m.guardian_efficiency*100:.1f}%\n"
-                     f"⚡ Emergências: {m.emergence_events}\n"
-                     f"🔐 Selo: {m.canonical_seal or 'N/A'}"
-            )]
-
-        elif name == "singularity_emergence":
-            history = se.get_emergence_history()
-            if not history:
-                return [TextContent(type="text", text="📭 Nenhuma emergência registrada")]
+        elif name == "twitch_get_redemptions":
+            redemptions = await tc.get_redemptions(arguments["reward_id"], arguments.get("status", "UNFULFILLED"))
+            if not redemptions:
+                return [TextContent(type="text", text="📭 Nenhuma redemption pendente")]
             return [TextContent(
                 type="text",
                 text="\n".join(
-                    f"⚡ [{i+1}] ΔΦ_C={e['delta']:+.4f} | {e['phi_c_before']:.4f}→{e['phi_c_after']:.4f} | "
-                    f"Nós={e['active_nodes']} | Viewers={e['total_viewers']}"
-                    for i, e in enumerate(history[-10:])
+                    f"[{r.status}] {r.user_name}: {r.reward_title} ({r.reward_cost} pts) — {r.user_input[:50]}"
+                    for r in redemptions[:10]
                 )
             )]
 
-        elif name == "singularity_propagate":
-            await se.propagate_seal(arguments["source_node_id"], arguments["target_node_ids"])
+        elif name == "twitch_fulfill_redemption":
+            success = await tc.fulfill_redemption(arguments["redemption_id"], arguments["reward_id"])
+            return [TextContent(type="text", text=f"{'✅' if success else '❌'} Redemption fulfilled")]
+
+        elif name == "twitch_start_commercial":
+            result = await tc._api_request(
+                "POST", f"/channels/commercial",
+                json={"broadcaster_id": tc.config.broadcaster_id, "length": arguments.get("length", 60)}
+            )
+            success = "error" not in result
+            return [TextContent(type="text", text=f"{'✅' if success else '❌'} Comercial iniciado")]
+
+        elif name == "twitch_phi_c":
+            phi = tc.phi_bus.get_mesh_coherence() if tc.phi_bus else 0.997
+            return [TextContent(type="text", text=f"⚛️ Φ_C do stream: {phi:.4f}")]
+
+        elif name == "twitch_metrics":
+            metrics = tc.get_prometheus_metrics()
+            return [TextContent(type="text", text=f"```prometheus\n{metrics}\n```")]
+
+        elif name == "twitch_health":
+            health = await tc.health_check()
             return [TextContent(
                 type="text",
-                text=f"🔗 Selo propagado de {arguments['source_node_id']} para {len(arguments['target_node_ids'])} nós"
+                text=f"{'🟢' if health['status'] == 'healthy' else '🔴'} {health['status']}\n"
+                     f"Authenticated: {health['authenticated']}\n"
+                     f"EventSub: {health['eventsub_connected']}\n"
+                     f"Chat history: {health['chat_history_size']}\n"
+                     f"API requests: {health['metrics']['api_requests']}"
             )]
-
-        elif name == "singularity_prometheus":
-            metrics = se.get_prometheus_metrics()
-            return [TextContent(type="text", text=f"```prometheus\n{metrics}\n```")]
 
         raise ValueError(f"Unknown tool: {name}")
