@@ -1,0 +1,185 @@
+# deploy/audience-bridge/production-audience-bridge.yaml
+# Deploy do Audience Bridge em produção com alta disponibilidade
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: arkhe-audience
+  labels:
+    name: arkhe-audience
+    environment: production
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: audience-bridge-config
+  namespace: arkhe-audience
+data:
+  POLL_INTERVAL_SECONDS: "60"
+  CACHE_TTL_SECONDS: "45"
+  TWITCH_RATE_LIMIT: "800"
+  LOG_LEVEL: "INFO"
+  PROMETHEUS_ENABLED: "true"
+  TEMPORAL_CHAIN_ENABLED: "true"
+  PHI_C_VALIDATION: "true"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: audience-bridge
+  namespace: arkhe-audience
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: audience-bridge
+  template:
+    metadata:
+      labels:
+        app: audience-bridge
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8054"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: arkhe-audience-sa
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - audience-bridge
+              topologyKey: kubernetes.io/hostname
+      containers:
+      - name: audience-bridge
+        image: arkhe/audience-bridge:1.0.0
+        ports:
+        - containerPort: 8054
+          name: api
+        - containerPort: 8055
+          name: metrics
+        env:
+        - name: SECURITY_LEVEL
+          value: "production"
+        - name: VAULT_ADDR
+          value: "${VAULT_ADDR}"
+        - name: TWITCH_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: audience-bridge-secrets
+              key: twitch_client_id
+        - name: TWITCH_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: audience-bridge-secrets
+              key: twitch_token
+        - name: YOUTUBE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: audience-bridge-secrets
+              key: youtube_api_key
+        envFrom:
+        - configMapRef:
+            name: audience-bridge-config
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8054
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8054
+          initialDelaySeconds: 10
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: audience-bridge
+  namespace: arkhe-audience
+spec:
+  selector:
+    app: audience-bridge
+  ports:
+  - name: api
+    port: 8054
+    targetPort: 8054
+    protocol: TCP
+  - name: metrics
+    port: 8055
+    targetPort: 8055
+    protocol: TCP
+  type: ClusterIP
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: audience-bridge-hpa
+  namespace: arkhe-audience
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: audience-bridge
+  minReplicas: 3
+  maxReplicas: 20
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Pods
+    pods:
+      metric:
+        name: audience_requests_per_second
+      target:
+        type: AverageValue
+        averageValue: "500"
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: audience-bridge-ingress
+  namespace: arkhe-audience
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - audience.arkhe.internal
+    secretName: audience-bridge-tls
+  rules:
+  - host: audience.arkhe.internal
+    http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: audience-bridge
+            port:
+              name: api
