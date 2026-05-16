@@ -150,7 +150,7 @@ class PromptFuzzingCampaign:
             category_stats[category] = {
                 "tests": len(selected),
                 "successes": category_successes,
-                "success_rate": category_successes / len(selected) if len(selected) > 0 else 0
+                "success_rate": category_successes / len(selected) if selected else 0
             }
 
         # Análise de padrões de falha
