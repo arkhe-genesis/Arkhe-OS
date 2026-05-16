@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arkhe-banking-rtgs
+  namespace: arkhe-production
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: banking
+      component: rtgs
+  template:
+    metadata:
+      labels:
+        app: banking
+        component: rtgs
+    spec:
+      containers:
+      - name: rtgs
+        image: arkhe/banking-rtgs:latest
+        ports:
+        - containerPort: 8083

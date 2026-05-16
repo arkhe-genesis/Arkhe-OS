@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arkhe-banking-trade-finance
+  namespace: arkhe-production
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: banking
+      component: trade-finance
+  template:
+    metadata:
+      labels:
+        app: banking
+        component: trade-finance
+    spec:
+      containers:
+      - name: trade-finance
+        image: arkhe/banking-trade-finance:latest
+        ports:
+        - containerPort: 8084

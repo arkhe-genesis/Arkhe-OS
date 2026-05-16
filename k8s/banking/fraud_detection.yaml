@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arkhe-banking-fraud-detection
+  namespace: arkhe-production
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: banking
+      component: fraud-detection
+  template:
+    metadata:
+      labels:
+        app: banking
+        component: fraud-detection
+    spec:
+      containers:
+      - name: fraud-detection
+        image: arkhe/banking-fraud-detection:latest
+        ports:
+        - containerPort: 8081
