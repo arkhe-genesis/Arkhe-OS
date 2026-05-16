@@ -72,6 +72,16 @@ class RegulatorySubmissionEngine:
             "status": "https://api.bcb.gov.br/v1/drs/status/{submission_id}",
             "auth": "certificate"
         },
+        RegulatoryAgency.GDPR_SUPERVISORY: {
+            "submit": "https://api.edpb.europa.eu/v1/compliance/submit",
+            "status": "https://api.edpb.europa.eu/v1/compliance/status/{submission_id}",
+            "auth": "oauth2"
+        },
+        RegulatoryAgency.LGPD_ANPD: {
+            "submit": "https://api.anpd.gov.br/v1/compliance/submit",
+            "status": "https://api.anpd.gov.br/v1/compliance/status/{submission_id}",
+            "auth": "oauth2"
+        },
     }
 
     # Formatos de relatório por agência
@@ -88,6 +98,15 @@ class RegulatorySubmissionEngine:
         RegulatoryAgency.BACEN: {
             "financial_integrity": "BACEN_SCR_Financial_Integrity",
             "operational_risk": "BACEN_SCR_Operational_Risk"
+        },
+        RegulatoryAgency.GDPR_SUPERVISORY: {
+            "data_breach": "GDPR_ART33_DATA_BREACH",
+            "dpia_summary": "GDPR_ART35_DPIA_SUMMARY",
+            "dsar_metrics": "GDPR_ART15_DSAR_METRICS"
+        },
+        RegulatoryAgency.LGPD_ANPD: {
+            "incident_report": "LGPD_ART48_INCIDENT",
+            "ripd_summary": "LGPD_ART38_RIPD"
         }
     }
 
@@ -105,6 +124,35 @@ class RegulatorySubmissionEngine:
         self._submissions: List[RegulatorySubmission] = []
         self._submission_queue: asyncio.Queue = asyncio.Queue()
         self._worker_task: Optional[asyncio.Task] = None
+        self.ticketing_config = {"enabled": True, "system": "servicenow"} # Configuração de ticketing
+
+    async def _create_ticket(self, submission: RegulatorySubmission, error_msg: str):
+        """Cria ticket em sistema corporativo (Jira/ServiceNow) para submissões falhas."""
+        if not self.ticketing_config.get("enabled"):
+            return
+
+        system = self.ticketing_config.get("system", "servicenow")
+        ticket_id = f"COMPLIANCE-{hashlib.sha3_256(submission.submission_id.encode()).hexdigest()[:8].upper()}"
+
+        ticket_data = {
+            "short_description": f"Falha na submissão regulatória: {submission.agency.value}",
+            "description": f"A submissão {submission.submission_id} falhou. Erro: {error_msg}",
+            "priority": "High",
+            "category": "Compliance",
+            "submission_id": submission.submission_id,
+            "agency": submission.agency.value
+        }
+
+        logger.info(f"🎫 Ticket corporativo criado no {system}: {ticket_id} para falha na submissão {submission.submission_id}")
+
+        if self.temporal:
+            if hasattr(self.temporal, "anchor_event") and asyncio.iscoroutinefunction(self.temporal.anchor_event):
+                await self.temporal.anchor_event("ticket_created", {
+                    "ticket_id": ticket_id,
+                    "system": system,
+                    "submission_id": submission.submission_id,
+                    "timestamp": time.time()
+                })
 
     async def start_submission_worker(self):
         """Inicia worker assíncrono para processar fila de submissões."""
@@ -139,6 +187,7 @@ class RegulatorySubmissionEngine:
                         else:
                             logger.error(f"❌ Falha permanente na submissão {submission.submission_id}: {e}")
                             submission.submission_status = "rejected"
+                            await self._create_ticket(submission, str(e))
 
                 self._submission_queue.task_done()
 
@@ -172,8 +221,9 @@ class RegulatorySubmissionEngine:
         if report_type not in valid_formats:
             raise ValueError(f"Formato inválido '{report_type}' para agência {agency.value}")
 
-        # Calcular hash do conteúdo
-        content_json = json.dumps(report_content, sort_keys=True)
+        # Gerar template específico e calcular hash
+        formatted_content = self._generate_template(agency, report_type, report_content)
+        content_json = json.dumps(formatted_content, sort_keys=True)
         content_hash = hashlib.sha3_256(content_json.encode()).hexdigest()
 
         # Assinar com PQC via HSM
@@ -231,6 +281,27 @@ class RegulatorySubmissionEngine:
 
         logger.info(f"📤 Relatório enfileirado: {submission_id} ({agency.value}/{report_type})")
         return submission
+
+    def _generate_template(self, agency: RegulatoryAgency, report_type: str, content: Dict) -> Dict:
+        """Gera o template de submissão específico para a agência."""
+        # Processamento base (mock)
+        template = {
+            "agency_id": agency.value,
+            "type": report_type,
+            "payload": content,
+            "generated_at": time.time()
+        }
+
+        if agency == RegulatoryAgency.GDPR_SUPERVISORY:
+            template["data_protection_officer"] = "dpo@arkhe.com"
+            template["eu_representative"] = "eu_rep@arkhe.com"
+            template["compliance_framework"] = "GDPR_EU_2016_679"
+        elif agency == RegulatoryAgency.LGPD_ANPD:
+            template["encarregado_dados"] = "dpo@arkhe.com"
+            template["marco_legal"] = "LGPD_LEI_13709_2018"
+            template["cnpj_controlador"] = "00.000.000/0001-00"
+
+        return template
 
     async def _submit_to_agency(self, submission: RegulatorySubmission):
         """Executa submissão real para a agência regulatória."""

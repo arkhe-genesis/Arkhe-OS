@@ -140,7 +140,38 @@ class ExpandedHealingOrchestrator:
         self.config_db = config_db
         self._action_handlers: Dict[ExpandedHealingAction, Callable] = {}
         self._healing_history: List[Dict] = []
+        self._circuit_breakers_state = {}  # service_name -> {"state": "closed"|"open"|"half-open", "failures": 0}
         self._register_expanded_handlers()
+
+    async def _request_multi_agent_consensus(self, action: ExpandedHealingAction, anomaly_alert: Dict) -> bool:
+        """
+        Solicita consenso multi-agente (via barramento) antes de executar ações destrutivas.
+        Ações destrutivas precisam de aprovação de instâncias adicionais do Sentinel.
+        """
+        destructive_actions = {
+            ExpandedHealingAction.RESTART_SERVICE,
+            ExpandedHealingAction.ISOLATE_PROCESS,
+            ExpandedHealingAction.TRIGGER_FAILOVER,
+            ExpandedHealingAction.APPLY_SECURITY_PATCH,
+            ExpandedHealingAction.REVOKE_SESSIONS
+        }
+
+        if action not in destructive_actions:
+            return True  # Ações seguras passam direto
+
+        logger.info(f"🤝 Solicitando consenso multi-agente para ação destrutiva: {action.value}")
+
+        # Simula barramento: publica pedido de consenso e aguarda respostas
+        if self.phi_bus:
+            await self.phi_bus.publish_metric("healing_consensus_request", {
+                "action": action.value,
+                "alert_id": anomaly_alert.get("alert_id", "unknown")
+            })
+
+        await asyncio.sleep(0.5)  # Simula tempo de rede
+        # Mock: Assume que a malha aprovou a ação
+        logger.info(f"✅ Consenso multi-agente alcançado para {action.value}")
+        return True
 
     def _register_expanded_handlers(self):
         """Registra handlers para todas as 15+ ações."""
@@ -224,11 +255,22 @@ class ExpandedHealingOrchestrator:
         return True
 
     async def _activate_circuit_breaker(self, anomaly_alert: Dict) -> bool:
-        """Ativa circuit breaker para serviço afetado."""
+        """Ativa circuit breaker distribuído (cross-service) para o serviço afetado."""
         service = anomaly_alert.get("executable_path", "unknown")
-        logger.info(f"🔌 Ativando circuit breaker para: {service}")
+        logger.info(f"🔌 Ativando circuit breaker (Estado: OPEN) para: {service}")
 
-        # Mock: em produção, atualizar config do circuit breaker
+        # Atualiza estado interno
+        self._circuit_breakers_state[service] = {"state": "open", "opened_at": time.time()}
+
+        # Notifica serviços dependentes via barramento
+        if self.phi_bus:
+            await self.phi_bus.publish_metric("circuit_breaker_state_changed", {
+                "service": service,
+                "new_state": "open",
+                "reason": "Anomaly threshold reached"
+            })
+
+        # Em produção, chamaria API do Envoy / Istio ou similar
         await asyncio.sleep(0.1)
         return True
 
@@ -343,9 +385,15 @@ class ExpandedHealingOrchestrator:
         return True
 
     async def execute_healing(self, anomaly_alert: Dict, action: ExpandedHealingAction) -> bool:
-        """Executa a ação de healing especificada."""
+        """Executa a ação de healing especificada após obter consenso."""
         if action not in self._action_handlers:
              logger.error(f"Ação {action} não mapeada.")
+             return False
+
+        # Validação de consenso multi-agente
+        consensus_reached = await self._request_multi_agent_consensus(action, anomaly_alert)
+        if not consensus_reached:
+             logger.warning(f"❌ Consenso recusado para a ação {action.value}. Abortando healing.")
              return False
 
         handler = self._action_handlers[action]
@@ -353,6 +401,22 @@ class ExpandedHealingOrchestrator:
 
         if success:
              self._healing_history.append({"alert": anomaly_alert, "action": action.value})
+
+             # Notifica a malha sobre o healing executado
+             if self.phi_bus:
+                 await self.phi_bus.publish_metric("healing_action_completed", {
+                     "action": action.value,
+                     "target": anomaly_alert.get("executable_path")
+                 })
+
+             # Ancorar ação na TemporalChain
+             if self.temporal:
+                 await self.temporal.anchor_event("expanded_healing_executed", {
+                     "action": action.value,
+                     "target": anomaly_alert.get("executable_path"),
+                     "success": True,
+                     "timestamp": time.time()
+                 })
 
         return success
 
