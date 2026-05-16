@@ -130,3 +130,12 @@ Este projeto é distribuído sob a licença **MIT**. Se usar em pesquisa acadêm
 
 ---
 *ARKHE Ω-TEMP v6.7.0 • Substratos 6061, 6160-6180 • Código aberto, ciência aberta, verdade verificável.*
+### Enterprise Banking — Substrato 200
+- **Core Settlement**: Liquidação interbancária com consenso MAC + PQC e rejeição baseada em $\Phi_C$.
+- **Fraud Detection**: Isolation Forest com peso contextual de $\Phi_C$ para detecção de anomalias financeiras.
+- **Compliance Automation**: Geração e assinatura PQC de relatórios regulatórios (BACEN, SEC, BCBS, CVM).
+- **Quantum-Safe Custody**: Guarda de ativos protegidos por HSM e testemunhos quânticos EPR.
+- **RTGS**: Liquidação bruta em tempo real com provas de integridade quântica.
+- **Trade Finance**: Smart contracts para comércio exterior com privacidade diferencial.
+- **CICS Bridge**: Conectividade legada com mainframes IBM z/OS via Java.
+- **Edge ATM Fraud Detector**: TinyML em C++(Arduino) para análise de fraudes em caixas eletrônicos físicos.
