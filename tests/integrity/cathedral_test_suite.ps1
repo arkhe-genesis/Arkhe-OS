@@ -21,7 +21,7 @@ param(
     [ValidateSet('Silent', 'Verbose')]
     [string]$Mode = 'Silent',
 
-    [string]$LogFile = "C:\temp\cathedral_integrity_test.log",
+    [string]$LogFile = "C:\temp\integrity_results.log",
 
     [string]$OutputJson = "C:\temp\integrity_results.json"
 )

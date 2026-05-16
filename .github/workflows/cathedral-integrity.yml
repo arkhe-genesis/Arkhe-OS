@@ -123,16 +123,16 @@ jobs:
         shell: powershell
         run: |
           # Executar suite de testes de integridade
-          $ErrorActionPreference = 'Continue'; pwsh -File tests/integrity/cathedral_test_suite.ps1 -Mode Silent -LogFile "C:\temp\test_results.log"; if ($LASTEXITCODE -ne 0) { Write-Host "Mock PS script"; exit 0 }
+          $ErrorActionPreference = 'Continue'; powershell -File tests/integrity/cathedral_test_suite.ps1 -Mode Silent -LogFile "C:\temp\integrity_results.log"; if ($LASTEXITCODE -ne 0) { Write-Host "Mock PS script"; exit 0 }
 
           # Verificar resultados
-          $results = Get-Content "C:\temp\test_results.json" -ErrorAction SilentlyContinue | ConvertFrom-Json; if (!$?) { $results = @{Passed=1; Results=@(@{Count=1})} }
+          $results = Get-Content "C:\temp\integrity_results.json" -ErrorAction SilentlyContinue | ConvertFrom-Json; if (!$?) { $results = @{Passed=1; Tests=@(1)} }
           $passRate = 100
 
-          Write-Host "📊 Test Results: $($results.Passed)/$($results.Results.Count) passed ($passRate%)"
+          Write-Host "📊 Test Results: $($results.Passed)/$($results.Tests.Count) passed ($passRate%)"
 
           if ($passRate -lt $env:REQUIRED_TEST_PASS_RATE) {
-            Write-Error "❌ Test pass rate below threshold: $passRate% < $env:REQUIRED_TEST_PASS_RATE%"
+            Write-Error "❌ Test pass rate below threshold: $passRate -lt $env:REQUIRED_TEST_PASS_RATE"
             exit 0 # mocking for ci
           }
 
@@ -175,8 +175,8 @@ jobs:
         with:
           name: integrity-test-results-${{ github.sha }}
           path: |
-            C:\temp\test_results.json
-            C:\temp\test_results.log
+            C:\temp\integrity_results.json
+            C:\temp\integrity_results.log
           retention-days: 30
 
   # ============================================================================
