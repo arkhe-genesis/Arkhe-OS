@@ -10,3 +10,4 @@ binsreg
 portsort
 lpdensity
 scpi_pkg
+openinterp[full]
