@@ -71,7 +71,7 @@ class ZeroDayProductionTrainer:
     7. Ancorar metadados de treinamento na TemporalChain
     """
 
-    # Features comportamentais extraídas de execções
+    # Features comportamentais extraídas de execuções
     BEHAVIORAL_FEATURES = [
         # Recursos do sistema
         "cpu_percent", "memory_mb", "disk_io_mbps", "network_bytes",
@@ -103,18 +103,13 @@ class ZeroDayProductionTrainer:
         temporal_chain=None,
         phi_bus=None,
         threat_feeds: Optional[List[ThreatIntelligenceFeed]] = None,
-        model_storage_path: str = "/mnt/arkhe/models/zero_day"
+        model_storage_path: str = "/tmp/arkhe/models/zero_day"
     ):
         self.temporal = temporal_chain
         self.phi_bus = phi_bus
         self.threat_feeds = threat_feeds or []
         self.model_storage = Path(model_storage_path)
-        # Permite nao criar diretorios se nao for possivel, pra testes mockados
-        try:
-             self.model_storage.mkdir(parents=True, exist_ok=True)
-        except PermissionError:
-             self.model_storage = Path("/tmp/arkhe/models/zero_day")
-             self.model_storage.mkdir(parents=True, exist_ok=True)
+        self.model_storage.mkdir(parents=True, exist_ok=True)
 
         self._scaler = StandardScaler()
         self._isolation_forest: Optional[IsolationForest] = None
@@ -163,7 +158,7 @@ class ZeroDayProductionTrainer:
     async def _collect_internal_anomalies(self, days_back: int) -> pd.DataFrame:
         """Coleta anomalias históricas do sistema interno."""
         # Mock: em produção, consultar banco de dados de telemetria
-        n_samples = days_back * 100  # Reduzido para testes rapidos (1000 original)
+        n_samples = days_back * 1000  # ~1000 amostras/dia
 
         data = []
         for i in range(n_samples):
@@ -253,17 +248,15 @@ class ZeroDayProductionTrainer:
         X = training_data[self.BEHAVIORAL_FEATURES].values
         y = training_data["is_zero_day"].values
 
-        # Split train/test (Garantir pelo menos 2 classes em teste se possivel)
-        try:
+        # Split train/test
+        if len(np.unique(y)) > 1:
             X_train, X_test, y_train, y_test = train_test_split(
                 X, y, test_size=0.2, random_state=42, stratify=y
             )
-        except ValueError:
-            # Fallback if only 1 class is present in training data
-             X_train, X_test, y_train, y_test = train_test_split(
+        else:
+            X_train, X_test, y_train, y_test = train_test_split(
                 X, y, test_size=0.2, random_state=42
             )
-
 
         # Treinar Isolation Forest (não supervisionado)
         logger.info("   🌲 Treinando Isolation Forest...")
@@ -280,7 +273,7 @@ class ZeroDayProductionTrainer:
         self._classifier = RandomForestClassifier(
             n_estimators=200,
             max_depth=15,
-            class_weight="balanced" if len(np.unique(y_train)) > 1 else None,
+            class_weight="balanced",
             random_state=42,
             n_jobs=-1
         )
@@ -289,7 +282,10 @@ class ZeroDayProductionTrainer:
         # Avaliar no conjunto de teste
         logger.info("   📊 Avaliando modelo...")
         y_pred_if = self._isolation_forest.predict(X_test)
-        y_pred_rf = self._classifier.predict(X_test)
+        if len(np.unique(y_train)) > 1:
+            y_pred_rf = self._classifier.predict(X_test)
+        else:
+            y_pred_rf = np.zeros(len(X_test))
 
         # Ensemble: votação ponderada
         # IF: -1 = anomalia, 1 = normal → converter para 1/0
@@ -307,12 +303,8 @@ class ZeroDayProductionTrainer:
             "precision": precision_score(y_test, ensemble_pred, zero_division=0),
             "recall": recall_score(y_test, ensemble_pred, zero_division=0),
             "f1_score": f1_score(y_test, ensemble_pred, zero_division=0),
+            "auc_roc": roc_auc_score(y_test, (if_scores * 0.4 + rf_scores * 0.6))
         }
-
-        try:
-             metrics["auc_roc"] = roc_auc_score(y_test, (if_scores * 0.4 + rf_scores * 0.6))
-        except ValueError:
-             metrics["auc_roc"] = 0.5 # only one class
 
         # Feature importance do Random Forest
         feature_importance = dict(zip(
@@ -349,22 +341,19 @@ class ZeroDayProductionTrainer:
 
         # Ancorar na TemporalChain
         if self.temporal:
-            if hasattr(self.temporal, "anchor_event") and asyncio.iscoroutinefunction(self.temporal.anchor_event):
-                 result.temporal_seal = await self.temporal.anchor_event(
-                    "zero_day_model_trained",
-                    {
-                        "training_id": training_id,
-                        "model_name": model_name,
-                        "dataset_size": result.dataset_size,
-                        "f1_score": result.f1_score,
-                        "auc_roc": result.auc_roc,
-                        "top_features": list(feature_importance.keys())[:5],
-                        "duration_seconds": training_duration,
-                        "timestamp": time.time()
-                    }
-                )
-            else:
-                 result.temporal_seal = "mock_seal"
+            result.temporal_seal = await self.temporal.anchor_event(
+                "zero_day_model_trained",
+                {
+                    "training_id": training_id,
+                    "model_name": model_name,
+                    "dataset_size": result.dataset_size,
+                    "f1_score": result.f1_score,
+                    "auc_roc": result.auc_roc,
+                    "top_features": list(feature_importance.keys())[:5],
+                    "duration_seconds": training_duration,
+                    "timestamp": time.time()
+                }
+            )
 
         self._training_history.append(result)
 
@@ -404,13 +393,12 @@ class ZeroDayProductionTrainer:
 
         # Publicar métrica no Phi-Bus
         if self.phi_bus:
-            if hasattr(self.phi_bus, "publish_metric") and asyncio.iscoroutinefunction(self.phi_bus.publish_metric):
-                 await self.phi_bus.publish_metric("zero_day_model_trained", {
-                    "model_name": model_name,
-                    "f1_score": result.f1_score,
-                    "auc_roc": result.auc_roc,
-                    "training_id": result.training_id
-                })
+            await self.phi_bus.publish_metric("zero_day_model_trained", {
+                "model_name": model_name,
+                "f1_score": result.f1_score,
+                "auc_roc": result.auc_roc,
+                "training_id": result.training_id
+            })
 
     async def predict_zero_day(self, execution_features: Dict[str, float]) -> Dict[str, Any]:
         """
@@ -434,21 +422,12 @@ class ZeroDayProductionTrainer:
 
         # Prever com ambos os modelos
         if_score = self._isolation_forest.score_samples(feature_vector_scaled)[0]
-
-        # Check if classifier can predict proba
-        if hasattr(self._classifier, "predict_proba"):
-             probas = self._classifier.predict_proba(feature_vector_scaled)
-             if probas.shape[1] > 1:
-                  rf_score = probas[0][1]  # Prob de classe 1
-             else:
-                  rf_score = float(self._classifier.predict(feature_vector_scaled)[0])
-        else:
-             rf_score = float(self._classifier.predict(feature_vector_scaled)[0])
+        rf_score = self._classifier.predict_proba(feature_vector_scaled)[0][1]  # Prob de classe 1
 
         # Ensemble score (ponderado)
         # IF: score mais baixo = mais anômalo → inverter e normalizar
         if_normalized = 1 - (if_score + 1) / 2  # Mapear [-1, 0] → [0, 1]
-        ensemble_score = if_normalized * 0.4 + rf_score * 0.6
+        ensemble_score = if_normalized * 0.4 + (rf_score if isinstance(rf_score, (int, float)) else rf_score[0]) * 0.6
 
         # Classificar como zero-day se acima do threshold
         is_zero_day = ensemble_score >= self.ZERO_DAY_THRESHOLDS["min_confidence"]

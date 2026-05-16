@@ -7,6 +7,7 @@ para cobertura completa de anomalias em produção.
 
 from enum import Enum, auto
 from typing import Dict, List, Callable, Optional, Any
+import time
 import asyncio
 import logging
 
@@ -183,11 +184,11 @@ class ExpandedHealingOrchestrator:
         logger.info(f"⬆️  Scale-up de recursos para: {target}")
 
         # Mock: em produção, chamar K8s API para aumentar limits/requests
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.3)
         return True
 
     async def _scale_down_resources(self, anomaly_alert: Dict) -> bool:
-        """Libera recursos ociosos."""
+        """Diminui recursos."""
         return True
 
     async def _rotate_credentials(self, anomaly_alert: Dict) -> bool:
@@ -196,7 +197,7 @@ class ExpandedHealingOrchestrator:
         logger.info(f"🔄 Rotação de credenciais para: {service}")
 
         # Mock: em produção, chamar Vault/Secrets Manager
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.2)
         return True
 
     async def _update_firewall_rules(self, anomaly_alert: Dict) -> bool:
@@ -204,7 +205,7 @@ class ExpandedHealingOrchestrator:
         logger.info(f"🔥 Atualizando regras de firewall...")
 
         # Mock: em produção, chamar API do firewall/NSG
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.4)
         return True
 
     async def _clear_cache_layers(self, anomaly_alert: Dict) -> bool:
@@ -212,7 +213,7 @@ class ExpandedHealingOrchestrator:
         logger.info(f"🧹 Limpando camadas de cache...")
 
         # Mock: em produção, chamar endpoints de cache de cada camada
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.25)
         return True
 
     async def _rebalance_load(self, anomaly_alert: Dict) -> bool:
@@ -220,7 +221,7 @@ class ExpandedHealingOrchestrator:
         logger.info(f"⚖️  Rebalanceando carga do cluster...")
 
         # Mock: em produção, chamar load balancer API
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.35)
         return True
 
     async def _activate_circuit_breaker(self, anomaly_alert: Dict) -> bool:
@@ -229,7 +230,7 @@ class ExpandedHealingOrchestrator:
         logger.info(f"🔌 Ativando circuit breaker para: {service}")
 
         # Mock: em produção, atualizar config do circuit breaker
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.15)
         return True
 
     async def _trigger_health_check(self, anomaly_alert: Dict) -> bool:
@@ -238,7 +239,7 @@ class ExpandedHealingOrchestrator:
         logger.info(f"🏥 Triggering deep health check: {service}")
 
         # Mock: em produção, chamar endpoint /health?deep=true
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.2)
         return True
 
     async def _revoke_sessions(self, anomaly_alert: Dict) -> bool:
@@ -246,7 +247,7 @@ class ExpandedHealingOrchestrator:
         logger.info(f"🔐 Revogando sessões suspeitas...")
 
         # Mock: em produção, chamar auth service para invalidar tokens
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.18)
         return True
 
     async def _update_dns_cache(self, anomaly_alert: Dict) -> bool:
@@ -254,7 +255,7 @@ class ExpandedHealingOrchestrator:
         logger.info(f"🌐 Atualizando cache DNS...")
 
         # Mock: em produção, chamar comando de flush DNS
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.12)
         return True
 
     async def _flush_connection_pool(self, anomaly_alert: Dict) -> bool:
@@ -263,7 +264,7 @@ class ExpandedHealingOrchestrator:
         logger.info(f"💧 Flushing connection pool: {service}")
 
         # Mock: em produção, chamar endpoint de admin do service
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.22)
         return True
 
     async def _restart_dependent_services(self, anomaly_alert: Dict) -> bool:
@@ -272,7 +273,7 @@ class ExpandedHealingOrchestrator:
         logger.info(f"🔄 Reiniciando serviços dependentes de: {service}")
 
         # Mock: em produção, consultar service mesh para dependências
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.4)
         return True
 
     async def _apply_security_patch(self, anomaly_alert: Dict) -> bool:
@@ -281,7 +282,7 @@ class ExpandedHealingOrchestrator:
         logger.info(f"🛡️  Aplicando patch de segurança: {cve_id}")
 
         # Mock: em produção, chamar sistema de patch management
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.5)
         return True
 
     async def _enable_rate_limiting(self, anomaly_alert: Dict) -> bool:
@@ -289,7 +290,7 @@ class ExpandedHealingOrchestrator:
         logger.info(f"🚦 Ativando rate limiting emergencial...")
 
         # Mock: em produção, atualizar config do API gateway
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.15)
         return True
 
     async def _trigger_backup_recovery(self, anomaly_alert: Dict) -> bool:
@@ -297,35 +298,35 @@ class ExpandedHealingOrchestrator:
         logger.info(f"💾 Acionando recuperação de backup...")
 
         # Mock: em produção, chamar sistema de backup/restore
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.6)
         return True
 
     # Handlers originais (mantidos para compatibilidade)
     async def _restart_service(self, anomaly_alert: Dict) -> bool:
         service_name = anomaly_alert.get("executable_path", "unknown").split("\\")[-1]
         logger.info(f"🔄 Reiniciando serviço: {service_name}")
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.5)
         return True
 
     async def _isolate_process(self, anomaly_alert: Dict) -> bool:
         process_id = anomaly_alert.get("execution_hash", "unknown")
         logger.info(f"🔒 Isolando processo: {process_id}")
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.3)
         return True
 
     async def _flush_memory(self, anomaly_alert: Dict) -> bool:
         logger.info(f"🧹 Liberando memória...")
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.2)
         return True
 
     async def _reset_network(self, anomaly_alert: Dict) -> bool:
         logger.info(f"🌐 Resetando interface de rede...")
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.8)
         return True
 
     async def _restore_registry(self, anomaly_alert: Dict) -> bool:
         logger.info(f"📋 Restaurando registro...")
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.6)
         return True
 
     async def _notify_operator(self, anomaly_alert: Dict) -> bool:
@@ -334,27 +335,42 @@ class ExpandedHealingOrchestrator:
 
     async def _trigger_failover(self, anomaly_alert: Dict) -> bool:
         logger.info(f"🔄 Ativando failover para nó secundário...")
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.7)
         return True
 
     async def _rollback_driver(self, anomaly_alert: Dict) -> bool:
         logger.info(f"⬅️  Revertendo driver para versão anterior...")
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.5)
         return True
 
-    async def execute_healing(self, anomaly_alert: Dict, action: ExpandedHealingAction) -> bool:
-        """Executa a ação de healing especificada."""
-        if action not in self._action_handlers:
-             logger.error(f"Ação {action} não mapeada.")
-             return False
+    async def execute_healing(self, anomaly_alert: Dict, action_override: Optional[ExpandedHealingAction] = None) -> Dict:
+        """Executa ação de healing para uma anomalia."""
+        # Detect feature from alert
+        target_feature = None
+        for feature in self.FEATURE_HEALING_MAP.keys():
+            if feature in anomaly_alert:
+                target_feature = feature
+                break
 
-        handler = self._action_handlers[action]
+        if not target_feature and not action_override:
+            logger.warning("Nenhuma feature reconhecida para healing")
+            return {"status": "failed", "reason": "no_feature_recognized"}
+
+        # Select first action
+        action = action_override if action_override else self.FEATURE_HEALING_MAP[target_feature][0]
+        handler = self._action_handlers.get(action)
+        if not handler:
+             return {"status": "failed", "reason": "handler_not_found"}
+
         success = await handler(anomaly_alert)
-
-        if success:
-             self._healing_history.append({"alert": anomaly_alert, "action": action.value})
-
-        return success
+        result = {
+            "action": action.value,
+            "feature": target_feature,
+            "success": success,
+            "timestamp": time.time()
+        }
+        self._healing_history.append(result)
+        return result
 
     def get_expanded_action_catalog(self) -> Dict[str, List[str]]:
         """Retorna catálogo completo de ações mapeadas por feature."""
@@ -368,7 +384,8 @@ class ExpandedHealingOrchestrator:
         from collections import Counter
 
         action_counts = Counter(
-            h.get("action") for h in self._healing_history
+            h.get("action", {}).get("value") if isinstance(h.get("action"), dict) else str(h.get("action"))
+            for h in self._healing_history
         )
 
         return {
