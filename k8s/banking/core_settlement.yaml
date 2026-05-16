@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arkhe-banking-core-settlement
+  namespace: arkhe-production
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: banking
+      component: core-settlement
+  template:
+    metadata:
+      labels:
+        app: banking
+        component: core-settlement
+    spec:
+      containers:
+      - name: core-settlement
+        image: arkhe/banking-core-settlement:latest
+        ports:
+        - containerPort: 8080
