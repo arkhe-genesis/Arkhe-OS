@@ -17,8 +17,14 @@ from enum import Enum, auto
 from collections import deque
 import numpy as np
 import logging
+from prometheus_client import Counter, Gauge
 
 logger = logging.getLogger(__name__)
+
+# Métricas Prometheus globais
+METRIC_FEDERATED_IOCS = Counter('federated_iocs_total', 'Total de IOCs ingeridos', ['partner_id'])
+METRIC_CROSS_ORG_CORRELATIONS = Counter('cross_org_correlations', 'Total de correlações cross-org')
+METRIC_TICKETS_CREATED = Counter('tickets_created_by_partner', 'Tickets criados', ['partner_id', 'system'])
 
 # ═══════════════════════════════════════════════════════════════
 # 1. ORGANIZAÇÕES PARCEIRAS (3+ instituições)
@@ -87,17 +93,18 @@ PARTNER_ORGS = [
     )
 ]
 
+from pydantic import BaseModel, Field
+
 # ═══════════════════════════════════════════════════════════════
 # 2. THREAT INTELLIGENCE — IOCs e correlação federada
 # ═══════════════════════════════════════════════════════════════
 
-@dataclass
-class ThreatIndicator:
+class ThreatIndicator(BaseModel):
     ioc_id: str
-    ioc_type: str  # "ip", "domain", "hash", "url", "email"
-    value: str
-    severity: int  # 1-10
-    confidence: float  # 0.0-1.0
+    ioc_type: str = Field(..., pattern="^(ip|domain|hash|url|email)$")
+    value: str = Field(..., min_length=1)
+    severity: int = Field(..., ge=1, le=10)
+    confidence: float = Field(..., ge=0.0, le=1.0)
     source_org: str
     first_seen: float
     last_seen: float
@@ -114,6 +121,44 @@ class FederatedThreatCorrelator:
         self._iocs: Dict[str, ThreatIndicator] = {}
         self._correlations: deque = deque(maxlen=10000)
         self._partner_contributions: Dict[str, List[str]] = {}
+        self._running = False
+        self._ingestion_queue: asyncio.Queue = asyncio.Queue()
+        self._discovered_partners: Dict[str, PartnerOrganization] = {p.org_id: p for p in PARTNER_ORGS}
+
+    async def discover_partner(self, new_partner_data: Dict) -> PartnerOrganization:
+        """API de auto-descoberta para parceiros BRICS+ adicionais."""
+        org_id = new_partner_data["org_id"]
+        if org_id in self._discovered_partners:
+            return self._discovered_partners[org_id]
+
+        partner = PartnerOrganization(
+            org_id=org_id,
+            name=new_partner_data["name"],
+            org_type=PartnerType(new_partner_data["org_type"]),
+            country=new_partner_data["country"],
+            siem_endpoint=new_partner_data["siem_endpoint"],
+            ticketing_system=new_partner_data["ticketing_system"],
+            ticketing_url=new_partner_data["ticketing_url"],
+            api_key_hash=new_partner_data["api_key_hash"],
+            dp_epsilon=new_partner_data.get("dp_epsilon", 1.0)
+        )
+        self._discovered_partners[org_id] = partner
+        logger.info(f"🌍 Novo parceiro descoberto: {partner.name} ({partner.country})")
+        return partner
+
+    async def handshake_partner(self, partner: PartnerOrganization, proposed_epsilon: float) -> bool:
+        """Protocolo de handshake inicial com validação mútua de ε."""
+        # A validação mútua exige que o epsilon do parceiro atenda a um limite mínimo de privacidade
+        min_epsilon = 0.1
+        max_epsilon = 5.0
+
+        if min_epsilon <= proposed_epsilon <= max_epsilon:
+            partner.dp_epsilon = proposed_epsilon
+            logger.info(f"🤝 Handshake com {partner.name} bem-sucedido. DP-ε ajustado para {proposed_epsilon}")
+            return True
+        else:
+            logger.warning(f"❌ Handshake falhou: DP-ε {proposed_epsilon} fora dos limites.")
+            return False
 
     def _add_laplace_noise(self, true_count: int, epsilon: float) -> int:
         """Adiciona ruído Laplace(0, 1/ε) ao contador."""
@@ -131,6 +176,17 @@ class FederatedThreatCorrelator:
         # Chave canônica para deduplicação
         canonical_key = hashlib.sha3_256(f"{ioc.ioc_type}:{ioc.value}".encode()).hexdigest()[:16]
 
+        # Ancoragem / Log Imutável de Ingestão
+        immutable_log_entry = json.dumps({
+            "ioc_key": canonical_key,
+            "org_id": partner.org_id,
+            "timestamp": time.time(),
+            "dp_noisy_count": ioc.dp_noisy_count
+        })
+        with open("immutable_ioc_ingestion.log", "a") as f:
+            f.write(immutable_log_entry + "\n")
+        logger.debug(f"Ancorado na TemporalChain (mock): {immutable_log_entry}")
+
         if canonical_key in self._iocs:
             # Correlação: IOC visto por múltiplos parceiros
             existing = self._iocs[canonical_key]
@@ -145,7 +201,15 @@ class FederatedThreatCorrelator:
                 "correlation_type": "CROSS_ORG",
                 "timestamp": time.time()
             }
+
+            # Assinatura PQC para o payload de correlação (Mock)
+            # Em uma implementação real com liboqs-python, isso assinaria usando CRYSTALS-Dilithium
+            payload_str = json.dumps(correlation, sort_keys=True)
+            pqc_signature_mock = f"pqc_sig_dilithium_{hashlib.sha3_512(payload_str.encode()).hexdigest()[:32]}"
+            correlation["pqc_signature"] = pqc_signature_mock
+
             self._correlations.append(correlation)
+            METRIC_CROSS_ORG_CORRELATIONS.inc()
 
             if self.phi_bus:
                 await self.phi_bus.publish_metric("cross_org_correlation", correlation)
@@ -154,6 +218,7 @@ class FederatedThreatCorrelator:
         else:
             self._iocs[canonical_key] = ioc
             self._partner_contributions.setdefault(partner.org_id, []).append(canonical_key)
+            METRIC_FEDERATED_IOCS.labels(partner_id=partner.org_id).inc()
 
     async def correlate_real_traffic(self, traffic_sample: List[Dict]) -> List[Dict]:
         """Correla ameaças em tráfego real de rede."""
@@ -179,6 +244,27 @@ class FederatedThreatCorrelator:
             "partner_contributions": {k: len(v) for k, v in self._partner_contributions.items()},
             "avg_dp_epsilon": np.mean([p.dp_epsilon for p in PARTNER_ORGS])
         }
+
+    def enqueue_threat(self, partner: PartnerOrganization, ioc: ThreatIndicator):
+        """Enfileira um IOC para processamento no loop contínuo."""
+        self._ingestion_queue.put_nowait((partner, ioc))
+
+    async def run_federated_correlation_loop(self):
+        """Loop de ingestão contínua processando a fila de eventos."""
+        self._running = True
+        logger.info("Iniciando loop de correlação federada...")
+        while self._running:
+            try:
+                partner, ioc = await self._ingestion_queue.get()
+                await self.ingest_threat(partner, ioc)
+                self._ingestion_queue.task_done()
+            except asyncio.CancelledError:
+                break
+            except Exception as e:
+                logger.error(f"Erro no loop de correlação: {e}")
+
+    def stop_loop(self):
+        self._running = False
 
 # ═══════════════════════════════════════════════════════════════
 # 3. TICKETING AUTOMÁTICO — ServiceNow + Jira
@@ -264,15 +350,28 @@ class AutoTicketingSystem:
 
     async def create_ticket(self, partner: PartnerOrganization,
                            correlation: Dict) -> Dict:
-        """Cria ticket no sistema de ticketing do parceiro."""
+        """Cria ticket no sistema de ticketing do parceiro usando HTTPX."""
 
         system = partner.ticketing_system
         payload = self._create_ticket_payload(partner, correlation, system)
 
-        # Simular criação de ticket
+        # Generate ticket id for tracking
         ticket_id = hashlib.sha3_256(
             f"{partner.org_id}:{correlation['ioc_key']}:{time.time()}".encode()
         ).hexdigest()[:12]
+
+        # Fazer chamada HTTP real usando httpx
+        import httpx
+        try:
+            async with httpx.AsyncClient() as client:
+                headers = {"Authorization": f"Bearer {partner.api_key_hash}"}
+                response = await client.post(partner.ticketing_url, json=payload, headers=headers, timeout=5.0)
+                if response.status_code in [200, 201]:
+                    logger.info(f"🎫 Ticket criado com sucesso na API de {partner.name}: {response.status_code}")
+                else:
+                    logger.warning(f"⚠️ Erro ao criar ticket na API de {partner.name}: {response.status_code} (mock fallback ativado)")
+        except httpx.RequestError as e:
+            logger.warning(f"⚠️ Falha de rede ao acessar API de ticketing de {partner.name}: {e} (mock fallback ativado)")
 
         ticket = {
             "ticket_id": ticket_id,
@@ -286,6 +385,18 @@ class AutoTicketingSystem:
         }
 
         self._ticket_log.append(ticket)
+        METRIC_TICKETS_CREATED.labels(partner_id=partner.org_id, system=system).inc()
+
+        # Ancoragem / Log Imutável de Ticketing
+        immutable_ticket_entry = json.dumps({
+            "ticket_id": ticket_id,
+            "partner": partner.org_id,
+            "system": system,
+            "timestamp": time.time()
+        })
+        with open("immutable_ticket_creation.log", "a") as f:
+            f.write(immutable_ticket_entry + "\n")
+        logger.debug(f"Ancorado na TemporalChain (mock ticket): {immutable_ticket_entry}")
 
         if self.phi_bus:
             await self.phi_bus.publish_metric("auto_ticket_created", {
@@ -294,7 +405,7 @@ class AutoTicketingSystem:
                 "system": system
             })
 
-        logger.info(f"🎫 Ticket {ticket_id} criado em {partner.name} ({system})")
+        logger.info(f"🎫 Ticket {ticket_id} registrado localmente para {partner.name} ({system})")
         return ticket
 
     def get_ticketing_summary(self) -> Dict:

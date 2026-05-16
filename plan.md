@@ -1,30 +1,22 @@
-1. **Create the Project Structure:**
-   - Create directories `arkhe-service-template/src`, `arkhe-service-template/tests`, `arkhe-service-template/k8s`.
+The user requested to implement the following features and improvements:
+1. Completar Implementação
+   - Adicionar método `run_federated_correlation_loop()` para ingestão contínua em `FederatedThreatCorrelator`
+   - Implementar adaptadores HTTP reais para ServiceNow/Jira APIs (usando httpx/aiohttp)
+   - Adicionar validação de schema para IOCs recebidos
+2. Testes e Validação
+   - Criar suite de testes unitários para `_add_laplace_noise()`
+   - Teste de integração para correlação cross-org com 3+ parceiros
+   - Validação de DP: verificar que ε calibrado produz ruído esperado
+3. Métricas e Observabilidade
+   - Exportar métricas para Prometheus: `federated_iocs_total`, `cross_org_correlations`, `tickets_created_by_partner`
+   - Dashboard Streamlit para visualização de correlações em tempo real
+4. Segurança e Auditoria
+   - Adicionar assinatura PQC para payloads de correlação
+   - Ancoragem de tickets criados na TemporalChain
+   - Log imutável de todas as ingestões de IOC
+5. Expansão para Mais Parceiros
+   - Template para onboarding de novo parceiro (checklist de integração)
+   - API de auto-descoberta para parceiros BRICS+ adicionais
+   - Protocolo de handshake inicial com validação mútua de ε
 
-2. **Create Python Source Files in `src/`:**
-   - `__init__.py`
-   - `service.py` (FastAPI service with sidecar and security)
-   - `sidecar.py` (ArkheSidecar, TemporalChainClient, GuardianClient, QBusClient)
-   - `security.py` (HybridSigner)
-   - `config.py` (Configuration loader)
-   - `metrics.py` (Empty or basic metrics exporter)
-
-3. **Create Testing and Deployment Files:**
-   - `tests/test_service.py`
-   - `Dockerfile`
-   - `docker-compose.yaml`
-   - `k8s/deployment.yaml`, `k8s/service.yaml`, `k8s/hpa.yaml`
-   - `config.yaml.example`
-   - `requirements.txt`
-   - `Cargo.toml`, `go.mod` (Basic files for Rust and Go as requested)
-   - `README.md`
-
-4. **Create Root-level Demonstration and Test Script:**
-   - `substrato_196_boilerplate.py` to output the canonical seal and boilerplate structure.
-   - `test_substrato_196.py` to run the pytest suite against `arkhe-service-template/tests/test_service.py`.
-
-5. **Pre-commit Steps:**
-   - Run `pre_commit_instructions` tool to ensure all verifications, reviews, and tests are passed.
-
-6. **Submit:**
-   - Commit the changes and push to a new branch for Substrato 196.
+I will map these to my execution plan.

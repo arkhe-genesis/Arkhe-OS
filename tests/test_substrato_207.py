@@ -131,3 +131,51 @@ async def test_correlate_traffic():
     expected_matches = sum(1 for p in packets if p.get("src_ip") == target_ip or p.get("dst_ip") == target_ip)
 
     assert len(matches) == expected_matches
+
+def test_add_laplace_noise():
+    correlator = FederatedThreatCorrelator()
+    true_count = 100
+
+    # Epsilon alto => Menos ruído
+    epsilon_high = 10.0
+    values_high = [correlator._add_laplace_noise(true_count, epsilon_high) for _ in range(100)]
+    variance_high = sum((x - true_count)**2 for x in values_high) / len(values_high)
+
+    # Epsilon baixo => Mais ruído
+    epsilon_low = 0.1
+    values_low = [correlator._add_laplace_noise(true_count, epsilon_low) for _ in range(100)]
+    variance_low = sum((x - true_count)**2 for x in values_low) / len(values_low)
+
+    # Variância com epsilon baixo deve ser maior
+    assert variance_low > variance_high
+
+@pytest.mark.asyncio
+async def test_cross_org_correlation_3_partners(mock_phi_bus):
+    correlator = FederatedThreatCorrelator(phi_bus=mock_phi_bus)
+    p1, p2, p3 = PARTNER_ORGS[0], PARTNER_ORGS[1], PARTNER_ORGS[2]
+
+    target_ip = "192.168.1.100"
+
+    # Parceiro 1
+    await correlator.ingest_threat(p1, ThreatIndicator(
+        ioc_id="ioc_1", ioc_type="ip", value=target_ip, severity=5, confidence=0.7,
+        source_org=p1.org_id, first_seen=time.time(), last_seen=time.time()
+    ))
+    assert len(correlator._correlations) == 0
+
+    # Parceiro 2
+    await correlator.ingest_threat(p2, ThreatIndicator(
+        ioc_id="ioc_2", ioc_type="ip", value=target_ip, severity=6, confidence=0.8,
+        source_org=p2.org_id, first_seen=time.time(), last_seen=time.time()
+    ))
+    assert len(correlator._correlations) == 1
+    assert len(correlator._correlations[0]["sources"]) == 2
+
+    # Parceiro 3
+    await correlator.ingest_threat(p3, ThreatIndicator(
+        ioc_id="ioc_3", ioc_type="ip", value=target_ip, severity=8, confidence=0.9,
+        source_org=p3.org_id, first_seen=time.time(), last_seen=time.time()
+    ))
+    assert len(correlator._correlations) == 2
+    assert len(correlator._correlations[1]["sources"]) == 2  # The second correlation event also links with the existing one
+    assert correlator._correlations[1]["severity_max"] == 8
