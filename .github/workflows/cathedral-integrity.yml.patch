@@ -1,0 +1,92 @@
+--- a/.github/workflows/cathedral-integrity.yml
++++ b/.github/workflows/cathedral-integrity.yml
+@@ -25,9 +25,6 @@
+           - .github/workflows/cathedral-integrity.yml
+
+ env:
+-  # Bypass Node.js 20 deprecation warning
+-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+-
+   # Configurações do Arkhe OS
+   CATHEDRAL_VERSION: "v∞.Ω.∇+++.SINGULARITY.EVO"
+   MIN_PHI_C_THRESHOLD: "0.99"
+@@ -52,19 +49,19 @@
+
+     steps:
+       - name: 📥 Checkout code
+-        uses: actions/checkout@v4
++        uses: actions/checkout@v4.2.2
+
+       - name: 🛠️ Setup MSVC environment
+         uses: ilammy/msvc-dev-cmd@v1
+
+       - name: 🔐 Generate Mock Test Certificate
+         run: |
+           echo "Generating test certificate for Cathedral Driver..."
+           # Em produção, usa-se hardware HSM via SignTool
+           # Aqui simulamos a criação do certificado para testes
+
+       - name: 🔨 Build Cathedral Driver (x64 Release)
+         run: |
+           echo "Building Cathedral Driver..."
+           mkdir -p catedral/x64/Release/
+           echo "MOCK DRIVER BINARY" > catedral/x64/Release/catedral.sys
+@@ -87,7 +84,7 @@
+           echo "Verification Complete"
+
+       - name: 📦 Upload build artifacts
+-        uses: actions/upload-artifact@v4
++        uses: actions/upload-artifact@v4.6.0
+         with:
+           name: cathedral-driver-${{ github.sha }}
+           path: |
+             catedral/x64/Release/catedral.sys
+@@ -102,7 +99,7 @@
+
+     steps:
+       - name: 📥 Checkout code
+-        uses: actions/checkout@v4
++        uses: actions/checkout@v4.2.2
+
+       - name: 📦 Download build artifacts
+-        uses: actions/download-artifact@v4
++        uses: actions/download-artifact@v4.1.8
+         continue-on-error: true
+         with:
+           name: cathedral-driver-${{ github.sha }}
+@@ -171,7 +168,7 @@
+           Write-Host "✅ Φ_C coherence: $phiC (threshold: $env:MIN_PHI_C_THRESHOLD)"
+
+       - name: 📊 Upload test results
+-        uses: actions/upload-artifact@v4
++        uses: actions/upload-artifact@v4.6.0
+         if: always()
+         continue-on-error: true
+         with:
+@@ -189,7 +186,7 @@
+
+     steps:
+       - name: 📦 Download signed driver
+-        uses: actions/download-artifact@v4
++        uses: actions/download-artifact@v4.1.8
+         with:
+           name: cathedral-driver-${{ github.sha }}
+           path: ./artifacts
+@@ -226,7 +223,7 @@
+
+     steps:
+       - name: 📥 Checkout code
+-        uses: actions/checkout@v4
++        uses: actions/checkout@v4.2.2
+
+       - name: 🔍 Run static security analysis
+         uses: github/codeql-action/init@v3
+@@ -254,7 +251,7 @@
+           echo "- High severity issues: \$(snyk test --json | jq '.vulnerabilities | map(select(.severity == \"high\")) | length')" >> security-report.md
+
+       - name: 📤 Upload security report
+-        uses: actions/upload-artifact@v4
++        uses: actions/upload-artifact@v4.6.0
+         with:
+           name: security-audit-${{ github.run_id }}
+           path: security-report.md
