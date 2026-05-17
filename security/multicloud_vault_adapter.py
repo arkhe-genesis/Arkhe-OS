@@ -273,6 +273,7 @@ class MultiCloudVaultAdapter:
         results[config.primary_provider.value] = primary_result
 
         if not primary_result["success"]:
+            await self._log_secret_access(secret_name, config.primary_provider, "write", success=False, error=primary_result.get("error"))
             return {"status": "failed", "reason": "primary_write_failed", "results": results}
 
         # Replicar para provedores secundários
