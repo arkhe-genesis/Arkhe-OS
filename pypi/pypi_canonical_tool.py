@@ -23,11 +23,13 @@ class PyPICanonicalTool:
     Cada método é um handler registrado como ferramenta.
     """
 
-    def __init__(self, working_dir: str = "/app", tool_system=None, temporal=None, hsm=None):
+    def __init__(self, working_dir: str = "/app", tool_system=None, temporal=None, hsm=None, pqc_verifier=None, vuln_auditor=None):
         self.cwd = Path(working_dir)
         self.tool_system = tool_system
         self.temporal = temporal
         self.hsm = hsm
+        self.pqc_verifier = pqc_verifier
+        self.vuln_auditor = vuln_auditor
         self._last_freeze_hash: Optional[str] = None
 
     async def _run_command(self, cmd: List[str], cwd: str = None, env: Dict = None) -> dict:
@@ -54,6 +56,21 @@ class PyPICanonicalTool:
         requirements_file = parameters.get("requirements_file")
         upgrade = parameters.get("upgrade", False)
         version = parameters.get("version")
+
+        if package and self.pqc_verifier:
+            is_valid = await self.pqc_verifier.verify_package_signature(package, version or "latest")
+            if not is_valid:
+                return {"status": "error", "reason": "PQC signature validation failed"}
+
+        if package and self.vuln_auditor:
+            audit = await self.vuln_auditor.audit_package(package, version or "latest")
+            if audit["vulnerabilities"] > 0:
+                return {"status": "error", "reason": "Vulnerabilities found"}
+
+        if requirements_file and self.vuln_auditor:
+            audit = await self.vuln_auditor.audit_requirements(requirements_file)
+            if audit["vulnerabilities"] > 0:
+                return {"status": "error", "reason": "Vulnerabilities found in requirements"}
 
         args = ["pip", "install"]
         if upgrade:
