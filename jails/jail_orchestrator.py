@@ -260,22 +260,22 @@ enable_capsicum={enable_capsicum}
                 return []
 
             jails = []
-            lines = result.stdout.strip().split('\n')[1:]  # Skip header
+            lines = result.stdout.strip().split('\n')
 
             for line in lines:
-                parts = line.split()
-                if len(parts) >= 5:
-                    jid, name, hostname, ip4_addr, path = parts[:5]
+                parts = dict(p.split('=', 1) for p in line.split() if '=' in p)
+                if 'name' in parts:
+                    name = parts['name']
                     # Encontrar jail no nosso registro
                     for jail in self._active_jails.values():
                         if jail.name == name:
                             jails.append({
-                                "jid": jid,
+                                "jid": parts.get('jid', ''),
                                 "jail_id": jail.jail_id,
                                 "name": name,
-                                "hostname": hostname,
-                                "ip4_addr": ip4_addr,
-                                "path": path,
+                                "hostname": parts.get('hostname', ''),
+                                "ip4_addr": parts.get('ip4.addr', ''),
+                                "path": parts.get('path', ''),
                                 "status": jail.status,
                                 "capsicum": jail.capsicum_enabled
                             })
