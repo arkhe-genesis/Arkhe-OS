@@ -1,0 +1,8 @@
+[package]
+name = "arkp-i18n"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+fluent.workspace = true
+unic-langid.workspace = true

@@ -1,0 +1,9 @@
+[package]
+name = "arkp-auth"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+ed25519-dalek.workspace = true
+serde.workspace = true
+rand.workspace = true

@@ -35,9 +35,7 @@ class InvisibleWatermarkEncoder:
         # Derivar chave de watermark do fingerprint PQC
         if self.pqc_derived:
             seed = int(hashlib.sha3_256(creator_fingerprint.encode()).hexdigest()[:16], 16)
-            rng = np.random.default_rng(seed % (2**32))
-        else:
-            rng = np.random.default_rng()
+            np.random.seed(seed % (2**32))
 
         # Converter para YCbCr e aplicar DCT no canal Y (luminância)
         ycbcr = self._rgb_to_ycbcr(image)
@@ -56,8 +54,8 @@ class InvisibleWatermarkEncoder:
                 # (robusto a compressão, imperceptível visualmente)
                 for ki in range(2, 6):
                     for kj in range(2, 6):
-                        if rng.random() < 0.3:  # Esparsidade para imperceptibilidade
-                            dct_block[ki, kj] += self.strength * rng.choice([-1, 1])
+                        if np.random.random() < 0.3:  # Esparsidade para imperceptibilidade
+                            dct_block[ki, kj] += self.strength * np.random.choice([-1, 1])
 
                 watermarked[i:i+8, j:j+8] = self._idct_2d(dct_block)
 
@@ -76,9 +74,7 @@ class InvisibleWatermarkEncoder:
         # Derivar mesma chave do fingerprint
         if self.pqc_derived:
             seed = int(hashlib.sha3_256(creator_fingerprint.encode()).hexdigest()[:16], 16)
-            rng = np.random.default_rng(seed % (2**32))
-        else:
-            rng = np.random.default_rng()
+            np.random.seed(seed % (2**32))
 
         # Extrair watermark via DCT reverso
         ycbcr = self._rgb_to_ycbcr(image)
@@ -96,7 +92,7 @@ class InvisibleWatermarkEncoder:
                 # Correlacionar com padrão esperado
                 for ki in range(2, 6):
                     for kj in range(2, 6):
-                        expected_sign = rng.choice([-1, 1]) if rng.random() < 0.3 else 0
+                        expected_sign = np.random.choice([-1, 1]) if np.random.random() < 0.3 else 0
                         if expected_sign != 0:
                             actual_sign = np.sign(dct_block[ki, kj])
                             if actual_sign == expected_sign:
