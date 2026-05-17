@@ -18,7 +18,7 @@ class OpenCodeConfig:
     model: str = "claude-sonnet-4-20250514"
     provider: str = "anthropic"
     mode: str = "interactive"
-    tools_enabled: List[str] = field(default_factory=list)
+    tools_enabled: Optional[List[str]] = None
     phi_c_threshold: float = 0.85
     temporal_anchor: bool = True
     max_tokens_per_request: int = 4096
@@ -48,7 +48,7 @@ class OpenCodeCanonicalTool:
                 },
                 "mode": self.config.mode,
                 "tools": {
-                    "enabled": self.config.tools_enabled or [
+                    "enabled": self.config.tools_enabled if self.config.tools_enabled is not None else [
                         "read", "write", "edit", "bash", "grep", "glob"
                     ]
                 },
