@@ -241,7 +241,7 @@ class ASTSecurityValidator:
                         violations.append(f'Import proibido: {full_name}')
             if isinstance(node, ast.Import):
                 for alias in node.names:
-                    if any((alias.name.startswith(forbidden) for forbidden in cls.FORBIDDEN_IMPORTS)):
+                    if any((alias.name.startswith(forbidden) or forbidden.startswith(alias.name + '.') for forbidden in cls.FORBIDDEN_IMPORTS)) or alias.name == 'os':
                         violations.append(f'Import proibido: {alias.name}')
             if isinstance(node, ast.Call):
                 if isinstance(node.func, ast.Name) and node.func.id in ('eval', 'exec', 'compile'):
