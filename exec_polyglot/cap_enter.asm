@@ -15,13 +15,13 @@ _start:
     syscall
 
     ; write message to stdout
-    mov rax, 1          ; sys_write (Linux) / on FreeBSD write is 4, Linux is 1
+    mov rax, 4          ; sys_write (FreeBSD 4)
     mov rdi, 1          ; stdout
     mov rsi, msg
     mov rdx, len
     syscall
 
     ; exit(0)
-    mov rax, 60          ; sys_exit (Linux 60)
+    mov rax, 1          ; sys_exit (FreeBSD 1)
     xor rdi, rdi
     syscall
