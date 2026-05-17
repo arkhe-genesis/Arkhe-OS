@@ -356,9 +356,10 @@ class RecursiveSubstrateSecure:
     def _save_state(self):
         self.state.timestamp = time.time()
         data = self.state.serialize()
-        temp = self.STATE_FILE.with_suffix('.tmp')
-        temp.write_bytes(data)
-        temp.rename(self.STATE_FILE)
+        fd, temp_path = tempfile.mkstemp(dir=self.STATE_FILE.parent, suffix='.tmp')
+        with os.fdopen(fd, 'wb') as f:
+            f.write(data)
+        os.rename(temp_path, self.STATE_FILE)
 
     def read_self(self):
         content = self.source_path.read_text()
