@@ -124,6 +124,7 @@ class AutonomousSentinelOrchestrator:
             sentinel = self.sentinels.get(role)
             if not sentinel:
                 logger.warning(f"⚠️  Sentinel {role.value} não disponível")
+                sentinel_votes[role] = {"approve": False, "phi_c": 0.0, "details": "Required sentinel missing"}
                 continue
 
             # Consultar sentinel
