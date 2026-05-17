@@ -90,7 +90,7 @@ class FiveFoldIntegration:
             "multi_modal_training": self._result_or_error(results[2]),
             "global_adaptive_dp": self._result_or_error(results[3]),
             "phi_c_recon_playbook": self._result_or_error(results[4]),
-            "status": "ALL_FIVE_DEPLOYED"
+            "status": "ALL_FIVE_DEPLOYED" if not any(isinstance(r, BaseException) for r in results) else "PARTIAL_OR_FAILED"
         }
         await self.cathedral.temporal.anchor_event("fivefold_integration_complete", final_report)
         return final_report
