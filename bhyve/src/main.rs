@@ -201,7 +201,7 @@ impl BhyveManager {
         let vms_clone = Arc::clone(&self.vms);
         let vm_id_clone = vm_id.to_string();
         tokio::spawn(async move {
-            let _ = child.wait();
+            let _ = tokio::task::spawn_blocking(move || child.wait()).await;
             // Atualizar status quando processo terminar
             let mut vms = vms_clone.lock().unwrap();
             if let Some(vm_ref) = vms.get_mut(&vm_id_clone) {
