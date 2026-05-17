@@ -104,20 +104,20 @@ impl BhyveManager {
             ).await.map_err(|e| format!("TemporalChain error: {}", e))?;
 
             // Atualizar VM com seal
-            let mut vms = self.vms.lock().unwrap();
-            let vm_ref = vms.get_mut(&vm_id).unwrap();
+            let mut vms = self.vms.lock().map_err(|_| "Mutex poisoned")?;
+            let vm_ref = vms.get_mut(&vm_id).ok_or("VM not found")?;
             vm_ref.temporal_seal = Some(seal);
         }
 
         // Registrar no mapa
-        self.vms.lock().unwrap().insert(vm_id.clone(), vm.clone());
+        self.vms.lock().map_err(|_| "Mutex poisoned")?.insert(vm_id.clone(), vm.clone());
 
         Ok(vm)
     }
 
     pub async fn start_vm(&self, vm_id: &str) -> Result<(), String> {
         let vm = {
-            let vms = self.vms.lock().unwrap();
+            let vms = self.vms.lock().map_err(|_| "Mutex poisoned")?;
             vms.get(vm_id)
                 .cloned()
                 .ok_or_else(|| format!("VM not found: {}", vm_id))?
@@ -176,7 +176,7 @@ impl BhyveManager {
 
         // Atualizar status da VM
         {
-            let mut vms = self.vms.lock().unwrap();
+            let mut vms = self.vms.lock().map_err(|_| "Mutex poisoned")?;
             if let Some(vm_ref) = vms.get_mut(vm_id) {
                 vm_ref.status = VMStatus::Running;
                 vm_ref.pid = Some(pid);
@@ -203,10 +203,11 @@ impl BhyveManager {
         tokio::spawn(async move {
             let _ = tokio::task::spawn_blocking(move || child.wait()).await;
             // Atualizar status quando processo terminar
-            let mut vms = vms_clone.lock().unwrap();
-            if let Some(vm_ref) = vms.get_mut(&vm_id_clone) {
-                vm_ref.status = VMStatus::Stopped;
-                vm_ref.pid = None;
+            if let Ok(mut vms) = vms_clone.lock() {
+                if let Some(vm_ref) = vms.get_mut(&vm_id_clone) {
+                    vm_ref.status = VMStatus::Stopped;
+                    vm_ref.pid = None;
+                }
             }
         });
 
@@ -215,7 +216,7 @@ impl BhyveManager {
 
     pub fn stop_vm(&self, vm_id: &str) -> Result<(), String> {
         let pid = {
-            let vms = self.vms.lock().unwrap();
+            let vms = self.vms.lock().map_err(|_| "Mutex poisoned")?;
             let vm = vms.get(vm_id)
                 .ok_or_else(|| format!("VM not found: {}", vm_id))?;
 
@@ -233,7 +234,7 @@ impl BhyveManager {
 
         // Atualizar status
         {
-            let mut vms = self.vms.lock().unwrap();
+            let mut vms = self.vms.lock().map_err(|_| "Mutex poisoned")?;
             if let Some(vm_ref) = vms.get_mut(vm_id) {
                 vm_ref.status = VMStatus::Stopped;
                 vm_ref.pid = None;
@@ -287,17 +288,23 @@ impl BhyveManager {
     fn current_timestamp() -> u64 {
         SystemTime::now()
             .duration_since(UNIX_EPOCH)
-            .unwrap()
+            .unwrap_or(std::time::Duration::from_secs(0))
             .as_secs()
     }
 
     pub fn list_vms(&self) -> Vec<ArkheVM> {
-        self.vms.lock().unwrap().values().cloned().collect()
+        self.vms.lock()
+            .map(|vms| vms.values().cloned().collect())
+            .unwrap_or_default()
     }
 
     pub fn get_statistics(&self) -> HashMap<String, serde_json::Value> {
-        let vms = self.vms.lock().unwrap();
         let mut stats = HashMap::new();
+
+        let vms = match self.vms.lock() {
+            Ok(v) => v,
+            Err(_) => return stats,
+        };
 
         stats.insert("total_vms".to_string(), serde_json::Value::from(vms.len()));
         stats.insert(
@@ -309,7 +316,7 @@ impl BhyveManager {
                     *count += 1;
                 }
                 map
-            }).unwrap()
+            }).unwrap_or_else(|_| serde_json::Value::Null)
         );
 
         stats
