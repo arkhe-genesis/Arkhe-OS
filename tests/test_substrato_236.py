@@ -52,3 +52,13 @@ async def test_execute_opencode_error(opencode_tool):
     # Since opencode is not installed, it will raise FileNotFoundError which should be caught and returned as an error state
     assert result["status"] == "error"
     assert result["reason"] == "opencode executable not found"
+
+
+@pytest.mark.asyncio
+async def test_execute_opencode_no_prompt(opencode_tool):
+    result = await opencode_tool.execute_opencode({"working_dir": "."})
+
+    # Since opencode is not installed, it will raise FileNotFoundError which should be caught and returned as an error state
+    # This specifically checks that we don't get an AttributeError on empty prompt
+    assert result["status"] == "error"
+    assert result["reason"] == "opencode executable not found"
