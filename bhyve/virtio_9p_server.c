@@ -351,6 +351,10 @@ handle_p9_read(int client_fd, struct p9_message *msg)
     memcpy(&offset, msg->payload + 6, 8);
     memcpy(&count, msg->payload + 14, 4);
 
+    if (count > P9_MAX_MSG_SIZE) {
+        return -1;
+    }
+
     printf("[9p] TREAD: tag=%d fid=%u offset=%lu count=%u\n",
            tag, fid, (unsigned long)offset, count);
 
