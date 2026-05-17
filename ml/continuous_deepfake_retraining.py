@@ -243,10 +243,9 @@ class ContinuousRetrainingPipeline:
         X = new_data[self.MODEL_FEATURES].values
         y = new_data["is_deepfake"].values
 
-        # Split train/test com estratificação apenas se houver múltiplas classes
-        stratify_param = y if len(np.unique(y)) > 1 else None
+        # Split train/test com estratificação
         X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42, stratify=stratify_param
+            X, y, test_size=0.2, random_state=42, stratify=y
         )
 
         # Treinar novo modelo (Gradient Boosting para deepfakes)
