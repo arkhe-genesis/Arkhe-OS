@@ -16,7 +16,6 @@ def test_ast_validation():
     assert not valid
     assert any("Chamada proibida: eval" in v for v in violations) or any("eval" in v.lower() for v in violations)
 
-def test_unbuildable_secure_init():
-    substrate = RecursiveSubstrateSecure()
-    assert substrate.state is not None
-    assert substrate.source_path.exists()
+def test_unbuildable_secure_init_fails_without_hsm():
+    with pytest.raises(RuntimeError, match="Falha CRÍTICA ao conectar ao HSM"):
+        substrate = RecursiveSubstrateSecure()
