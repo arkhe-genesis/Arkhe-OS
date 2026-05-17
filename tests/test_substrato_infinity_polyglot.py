@@ -33,14 +33,19 @@ def mock_orchestrator(monkeypatch):
         elif cmd[0] == "nasm" or cmd[0] == "ld":
             return MockCompletedProcess()
         elif cmd[0] == "npx" and cmd[1] == "solc":
+            # Extract the actual output directory from the command arguments
+            out_dir = "/tmp/solc_output"
+            if "-o" in cmd:
+                out_dir = cmd[cmd.index("-o") + 1]
+
             # Just create the dummy output file
-            os.makedirs("/tmp/solc_output", exist_ok=True)
-            with open("/tmp/solc_output/ArkheSeal.bin", "w") as f:
+            os.makedirs(out_dir, exist_ok=True)
+            with open(os.path.join(out_dir, "ArkheSeal.bin"), "w") as f:
                 f.write("mock")
             return MockCompletedProcess()
         elif cmd[0] == "g++":
             return MockCompletedProcess()
-        elif cmd[0] == "/tmp/cap_enter" or cmd[0] == "/tmp/temporal_anchor":
+        elif "cap_enter" in cmd[0] or "temporal_anchor" in cmd[0]:
             return MockCompletedProcess("Selo=mock_seal_for_bin")
 
         return subprocess.original_run(cmd, *args, **kwargs)

@@ -10,6 +10,7 @@ import time
 import json
 import logging
 import shutil
+import tempfile
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger("PolyglotExecution")
@@ -18,8 +19,9 @@ class PolyglotOrchestrator:
     def __init__(self, base_dir="exec_polyglot"):
         self.base_dir = base_dir
         self.results = []
+        self.tmp_env = tempfile.TemporaryDirectory()
         os.makedirs(self.base_dir, exist_ok=True)
-        os.makedirs("/tmp/solc_output", exist_ok=True)
+        os.makedirs(os.path.join(self.tmp_env.name, "solc_output"), exist_ok=True)
 
     def run_python(self):
         logger.info("Executing Python orchestrator seal...")
@@ -81,7 +83,7 @@ class PolyglotOrchestrator:
     def run_rust(self):
         logger.info("Compiling and executing Rust agent...")
         rs_file = os.path.join(self.base_dir, "capsicum_agent.rs")
-        bin_file = "/tmp/rust_agent"
+        bin_file = os.path.join(self.tmp_env.name, "rust_agent")
         try:
             if not os.path.exists(rs_file):
                 logger.error(f"File not found: {rs_file}")
@@ -90,7 +92,7 @@ class PolyglotOrchestrator:
             # Requires sha3 crate in Rust, use cargo script or just create a temporary cargo project
             # Because it uses external crates, rustc directly will fail. We need a cargo project.
 
-            project_dir = "/tmp/rust_polyglot"
+            project_dir = os.path.join(self.tmp_env.name, "rust_polyglot")
             os.makedirs(project_dir, exist_ok=True)
 
             # Create Cargo.toml
@@ -134,8 +136,8 @@ sha3 = "0.10.8"
     def run_assembly(self):
         logger.info("Compiling and executing Assembly syscall...")
         asm_file = os.path.join(self.base_dir, "cap_enter.asm")
-        obj_file = "/tmp/cap_enter.o"
-        bin_file = "/tmp/cap_enter"
+        obj_file = os.path.join(self.tmp_env.name, "cap_enter.o")
+        bin_file = os.path.join(self.tmp_env.name, "cap_enter")
         try:
             if not os.path.exists(asm_file):
                 logger.error(f"File not found: {asm_file}")
@@ -165,7 +167,7 @@ sha3 = "0.10.8"
     def run_solidity(self):
         logger.info("Compiling Solidity contract...")
         sol_file = os.path.join(self.base_dir, "ArkheSeal.sol")
-        out_dir = "/tmp/solc_output/"
+        out_dir = os.path.join(self.tmp_env.name, "solc_output")
         try:
             if not os.path.exists(sol_file):
                 logger.error(f"File not found: {sol_file}")
@@ -194,7 +196,7 @@ sha3 = "0.10.8"
     def run_cpp(self):
         logger.info("Compiling and executing C++ anchor...")
         cpp_file = os.path.join(self.base_dir, "temporal_anchor.cpp")
-        bin_file = "/tmp/temporal_anchor"
+        bin_file = os.path.join(self.tmp_env.name, "temporal_anchor")
         try:
             if not os.path.exists(cpp_file):
                 logger.error(f"File not found: {cpp_file}")
