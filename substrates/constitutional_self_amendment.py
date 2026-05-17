@@ -156,9 +156,10 @@ class ConstitutionalSelfAmendment:
 
         # Atualizar status
         if amendment.quorum_reached and consensus >= self.CONSENSUS_THRESHOLD:
-            amendment.status = AmendmentStatus.CONSENSUS_REACHED
-            # Agendar ratificação
-            asyncio.create_task(self._schedule_ratification(amendment))
+            if amendment.status != AmendmentStatus.CONSENSUS_REACHED:
+                amendment.status = AmendmentStatus.CONSENSUS_REACHED
+                # Agendar ratificação
+                asyncio.create_task(self._schedule_ratification(amendment))
         elif participation >= amendment.quorum_required and consensus < 0.5:
             amendment.status = AmendmentStatus.REJECTED
             self._active_proposals.discard(amendment_id)
