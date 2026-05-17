@@ -1,0 +1,60 @@
+# k8s/multiregion-temporalchain.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: temporalchain-multiregion-config
+  namespace: arkhe-temporal
+data:
+  regions.json: |
+    {
+      "us-east-1": {
+        "priority": 1,
+        "endpoints": ["https://us-east-1.temporal.arkhe.os"],
+        "geo_fence": ["US", "CA", "MX"]
+      },
+      "eu-west-1": {
+        "priority": 2,
+        "endpoints": ["https://eu-west-1.temporal.arkhe.os"],
+        "geo_fence": ["GB", "DE", "FR", "ES", "IT", "NL"]
+      },
+      "sa-east-1": {
+        "priority": 3,
+        "endpoints": ["https://sa-east-1.temporal.arkhe.os"],
+        "geo_fence": ["BR", "AR", "CL", "CO", "PE"]
+      },
+      "ap-southeast-1": {
+        "priority": 4,
+        "endpoints": ["https://ap-southeast-1.temporal.arkhe.os"],
+        "geo_fence": ["SG", "MY", "TH", "ID", "PH", "AU"]
+      }
+    }
+---
+apiVersion: networking.k8s.io/v1
+kind: GlobalIngress
+metadata:
+  name: temporalchain-global-ingress
+  namespace: arkhe-temporal
+spec:
+  routingPolicy: "geo-aware"
+  healthCheck:
+    path: /health
+    intervalSeconds: 10
+    timeoutSeconds: 5
+    unhealthyThreshold: 3
+  failover:
+    enabled: true
+    automatic: true
+    minHealthyRegions: 2
+  regions:
+  - name: us-east-1
+    weight: 40
+    backupRegions: ["eu-west-1", "sa-east-1"]
+  - name: eu-west-1
+    weight: 30
+    backupRegions: ["us-east-1", "ap-southeast-1"]
+  - name: sa-east-1
+    weight: 15
+    backupRegions: ["us-east-1", "eu-west-1"]
+  - name: ap-southeast-1
+    weight: 15
+    backupRegions: ["eu-west-1", "us-east-1"]

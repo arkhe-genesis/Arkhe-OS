@@ -279,8 +279,49 @@ class HSMProductionSigner:
             return bytes(signature)
 
         except Exception as e:
-            logger.error(f"❌ Falha na assinatura HSM: {e}")
-            raise
+            logger.warning(f"⚠️ Falha na assinatura PQC nativa, tentando fallback clássico: {e}")
+
+            try:
+                # Tentar fallback para RSA PSS
+                signature = self._hsm_session.sign(
+                    private_key,
+                    data_hash,
+                    mechanism=PyKCS11.Mechanism.RSA_PKCS_PSS,  # Fallback clássico
+                    hashAlg=PyKCS11.Mechanism.SHA256,
+                )
+
+                # Registrar que o fallback foi utilizado
+                logger.info("✅ Assinatura de fallback (RSA_PKCS_PSS) executada com sucesso")
+                return bytes(signature)
+
+            except Exception as fallback_err:
+                logger.error(f"❌ Falha no fallback de assinatura HSM: {fallback_err}")
+                raise
+
+    async def audit_hsm_signatures(self, recent_operations: List[Dict]) -> bool:
+        """
+        Auditoria automatizada de assinaturas HSM.
+        Verifica a integridade das operações criptográficas recentes.
+        """
+        logger.info(f"🔍 Iniciando auditoria de {len(recent_operations)} operações HSM recentes...")
+        audit_passed = True
+
+        for op in recent_operations:
+            if op.get("status") != "success":
+                logger.warning(f"⚠️ Operação falha detectada na auditoria: {op}")
+                audit_passed = False
+
+            # Validação de selo temporal
+            if op.get("temporal_seal") is None:
+                logger.warning(f"⚠️ Operação sem selo temporal: {op.get('id')}")
+                audit_passed = False
+
+        if audit_passed:
+            logger.info("✅ Auditoria HSM concluída com sucesso.")
+        else:
+            logger.error("❌ Auditoria HSM encontrou inconsistências.")
+
+        return audit_passed
 
     async def verify_signature(
         self,

@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arkhe-banking-custody
+  namespace: arkhe-production
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: banking
+      component: custody
+  template:
+    metadata:
+      labels:
+        app: banking
+        component: custody
+    spec:
+      containers:
+      - name: custody
+        image: arkhe/banking-custody:latest
+        ports:
+        - containerPort: 8082

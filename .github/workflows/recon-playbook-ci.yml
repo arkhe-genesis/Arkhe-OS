@@ -1,0 +1,15 @@
+# .github/workflows/recon-playbook-ci.yml
+name: 🕵️ Recon Playbook CI
+
+on:
+  schedule:
+    - cron: '0 0 1 * *' # Mensal
+  workflow_dispatch:
+
+jobs:
+  recon:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Recon Playbook
+        run: echo "Recon playbook"

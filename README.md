@@ -71,6 +71,28 @@ arkhe-os/
 └── README.md                  # Este arquivo
 ```
 
+## 📜 Histórico de Atualizações (Commits e Merges Recentes)
+- **Universal Orchestrator**: Merge pull request #1308 from Arkhe-Network/feature/substrato_inf_universal_orchestrator.
+- **Cathedral VM & HSM**: Add Cathedral VM validation and HSM signing scripts.
+- **Arkhe-stdlib**: Implement Substrato 9015 Arkhe-stdlib and fix CI json parsing.
+- **Windows Ecosystem**: Merge branch 'main' into feature/windows-ecosystem-expansion.
+- **Quantum & Silicon Expansion**: Add Advanced Quantum Frontiers and Silicon Expansion features.
+- **Quantum Neural Coding**: Implement Substrate 6176 (Quantum Neural Coding) and Substrato 6178 (Quantum Genomic Transfer Learning).
+- **GECC Full Simulation**: Implement Substrato 6160 GECC full simulation.
+- **ARKHE Ω-TEMP v5.1.0 & v4.0**: Add canonical test scripts and features for v4.0 and v5.1.0.
+- **UNIX Substrate Expansion**: Implement UNIX SUBSTRATE EXPANSION 6062 in Rust framework.
+- **Delta Ontology Operationalization**: Implement Substrates 190-193.
+- **Enterprise Features**: Integration with Federation, Quantum hardware, Advanced Copula, multi-tenant dashboards, and more.
+
+## 📦 Geração de Instalável (Inno Setup)
+Este repositório foi organizado para suportar a geração de um instalador Windows via [Inno Setup](https://github.com/jrsoftware/issrc).
+O script do Inno Setup está localizado em `installer/arkhe_os.iss`.
+
+Para compilar o instalador:
+1. Instale o Inno Setup.
+2. Abra `installer/arkhe_os.iss` na IDE do Inno Setup.
+3. Clique em "Compile" para gerar o instalador `arkhe_os_setup.exe` na pasta `Output`.
+
 ## 🧪 Exemplo Rápido: Predição de Resistência com QNC
 ```python
 from arkhe_qnc import GenomicQNC, QNCConfig
@@ -130,3 +152,12 @@ Este projeto é distribuído sob a licença **MIT**. Se usar em pesquisa acadêm
 
 ---
 *ARKHE Ω-TEMP v6.7.0 • Substratos 6061, 6160-6180 • Código aberto, ciência aberta, verdade verificável.*
+### Enterprise Banking — Substrato 200
+- **Core Settlement**: Liquidação interbancária com consenso MAC + PQC e rejeição baseada em $\Phi_C$.
+- **Fraud Detection**: Isolation Forest com peso contextual de $\Phi_C$ para detecção de anomalias financeiras.
+- **Compliance Automation**: Geração e assinatura PQC de relatórios regulatórios (BACEN, SEC, BCBS, CVM).
+- **Quantum-Safe Custody**: Guarda de ativos protegidos por HSM e testemunhos quânticos EPR.
+- **RTGS**: Liquidação bruta em tempo real com provas de integridade quântica.
+- **Trade Finance**: Smart contracts para comércio exterior com privacidade diferencial.
+- **CICS Bridge**: Conectividade legada com mainframes IBM z/OS via Java.
+- **Edge ATM Fraud Detector**: TinyML em C++(Arduino) para análise de fraudes em caixas eletrônicos físicos.

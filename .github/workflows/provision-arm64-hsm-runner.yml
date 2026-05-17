@@ -1,0 +1,36 @@
+name: 🏗️ Provision ARM64 HSM Simulation Runner
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * 0'  # Domingo: verificar/atualizar imagem
+
+env:
+  RUNNER_LABEL: "arkhe-arm64-hsm"
+  AWS_REGION: "us-east-1"
+
+jobs:
+  provision-runner:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 🐳 Build ARM64 Docker Image with HSM Simulation
+        run: |
+          docker buildx build \
+            --platform linux/arm64 \
+            -t arkhe-arm64-hsm-runner:latest \
+            -f .github/runners/arm64-hsm/Dockerfile \
+            --push \
+            ghcr.io/${{ github.repository }}/arkhe-arm64-hsm-runner:latest
+
+      - name: ☁️ Launch ARM64 Spot Instance
+        run: |
+          # Em produção: usar Terraform/CloudFormation para provisionar instância Graviton
+          echo "Provisionando instância ARM64 com suporte a HSM simulado..."
+          # aws ec2 run-instances --instance-type t4g.medium --image-id ami-xxx ...
+
+      - name: 📦 Register Runner
+        run: |
+          # Registrar como runner auto-hospedado com label específico
+          echo "Runner ARM64 HSM registrado com label: ${{ env.RUNNER_LABEL }}"

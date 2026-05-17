@@ -544,5 +544,8 @@ arkhe-webrtc/node_modules/
 !arkhe-enterprise/
 !arkhe-fiber-optimizer/
 !arkhe-service-template/
-!arkhe-omega-temp/
-!arkhe-omega-temp/
+
+# Iso generation artifacts
+Arkhe-OS.iso
+iso_root/
+selo_canonico.txt

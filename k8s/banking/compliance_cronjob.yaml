@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: arkhe-banking-compliance
+  namespace: arkhe-production
+spec:
+  schedule: "0 0 * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: banking
+            component: compliance
+        spec:
+          containers:
+          - name: compliance
+            image: arkhe/banking-compliance:latest
+          restartPolicy: OnFailure

@@ -1,0 +1,166 @@
+{
+  "metadata": {
+    "version": "198-F.2.0",
+    "total_genes": 58,
+    "last_updated": "2026-05-16",
+    "sources": [
+      "Allen Brain Atlas",
+      "Human Protein Atlas",
+      "GTEx Portal",
+      "PsychENCODE",
+      "Single-cell RNA-Seq meta-analyses"
+    ],
+    "calibration_method": "RNA-Seq weighted meta-analysis",
+    "confidence_threshold": 0.75
+  },
+  "gene_categories": {
+    "immediate_early_genes": {
+      "description": "Genes de resposta rápida à ativação neuronal",
+      "genes": ["FOS", "FOSB", "JUN", "JUNB", "EGR1", "EGR2", "EGR3", "EGR4", "NR4A1", "NR4A2", "ARC", "HOMER1"]
+    },
+    "plasticity_hub": {
+      "description": "Reguladores centrais de plasticidade sináptica",
+      "genes": ["CREB1", "CREBBP", "BDNF", "NTRK2", "CAMK2A", "SYN1", "DLG4", "SHANK3"]
+    },
+    "neurogenesis_markers": {
+      "description": "Marcadores de proliferação e diferenciação neural",
+      "genes": ["ASCL1", "NEUROD1", "DCX", "PSA-NCAM", "SOX2", "PAX6", "HES1", "NOTCH1"]
+    },
+    "inflammatory_response": {
+      "description": "Genes de resposta imune e inflamatória no SNC",
+      "genes": ["TNF", "IL1B", "IL6", "CX3CR1", "AIF1", "GFAP", "SERPINA3N", "C1QA"]
+    },
+    "stress_anxiety_modulators": {
+      "description": "Reguladores de resposta ao estresse e ansiedade",
+      "genes": ["RELN", "NR3C1", "FKBP5", "SLC6A4", "CRH", "NPY", "GAD1", "GAD2"]
+    },
+    "circuit_formation": {
+      "description": "Genes envolvidos em formação e refinamento de circuitos",
+      "genes": ["SEMA3A", "ROBO1", "DCC", "NTN1", "EPHA4", "EFNB2", "CADM1", "CNTNAP2"]
+    },
+    "metabolic_support": {
+      "description": "Suporte metabólico para atividade neuronal sustentada",
+      "genes": ["PGC1A", "NRF1", "TFAM", "SLC2A1", "LDHA", "COX4I1", "ATP5A1"]
+    }
+  },
+  "semantic_gene_map_v2": {
+    "memory_consolidation": {
+      "target_genes": {
+        "CREB1": 0.95, "FOS": 0.88, "EGR1": 0.85, "BDNF": 0.82, "ARC": 0.78,
+        "CAMK2A": 0.75, "SYN1": 0.70, "DLG4": 0.68, "HOMER1": 0.65, "NR4A1": 0.60
+      },
+      "temporal_profile": {
+        "early_phase_min": [0, 30],
+        "late_phase_hours": [2, 8],
+        "expected_duration_hours": 24
+      },
+      "cell_type_weights": {
+        "excitatory_neurons": 0.7,
+        "inhibitory_neurons": 0.2,
+        "astrocytes": 0.1
+      },
+      "validation_criteria": {
+        "min_correlation_with_behavior": 0.7,
+        "required_cell_types": ["excitatory_neurons"],
+        "min_fold_change": 1.5
+      }
+    },
+    "neurogenesis_induction": {
+      "target_genes": {
+        "ASCL1": 0.95, "NEUROD1": 0.92, "DCX": 0.90, "BDNF": 0.85, "SOX2": 0.70,
+        "PAX6": 0.65, "HES1": 0.50, "NOTCH1": 0.40, "FOS": 0.35, "EGR1": 0.30
+      },
+      "temporal_profile": {
+        "proliferation_phase_days": [0, 3],
+        "differentiation_phase_days": [3, 14],
+        "maturation_phase_days": [14, 28]
+      },
+      "cell_type_weights": {
+        "neural_progenitors": 0.6,
+        "immature_neurons": 0.3,
+        "astrocytes": 0.1
+      },
+      "validation_criteria": {
+        "min_dcx_positive_cells_percent": 30,
+        "required_morphology": "bipolar_to_multipolar_transition",
+        "min_brdU_incorporation": 0.2
+      }
+    },
+    "anxiety_reduction": {
+      "target_genes": {
+        "RELN": 0.85, "BDNF": 0.75, "NPY": 0.70, "GAD1": 0.68, "GAD2": 0.65,
+        "SLC6A4": 0.60, "NR3C1": 0.55, "FKBP5": 0.45, "FOS": 0.35, "EGR1": 0.30
+      },
+      "temporal_profile": {
+        "acute_response_min": [0, 60],
+        "sustained_effect_hours": [2, 24]
+      },
+      "cell_type_weights": {
+        "inhibitory_neurons": 0.5,
+        "excitatory_neurons": 0.3,
+        "astrocytes": 0.2
+      },
+      "validation_criteria": {
+        "behavioral_correlate": "increased_open_arm_time_in_elevated_plus_maze",
+        "min_effect_size_cohens_d": 0.5,
+        "c_fos_reduction_in_amygdala": 0.3
+      }
+    },
+    "inflammation_suppression": {
+      "target_genes": {
+        "IL10": 0.90, "TGFB1": 0.85, "BDNF": 0.75, "RELN": 0.65,
+        "CX3CR1": 0.60, "AIF1": 0.40, "TNF": 0.20, "IL1B": 0.15, "IL6": 0.10
+      },
+      "temporal_profile": {
+        "acute_phase_hours": [0, 6],
+        "resolution_phase_days": [1, 7]
+      },
+      "cell_type_weights": {
+        "microglia": 0.5,
+        "astrocytes": 0.3,
+        "neurons": 0.2
+      },
+      "validation_criteria": {
+        "microglial_activation_reduction_percent": 40,
+        "cytokine_profile_shift": "pro_to_anti_inflammatory",
+        "min_iba1_morphology_change": 0.3
+      }
+    },
+    "circuit_refinement": {
+      "target_genes": {
+        "SEMA3A": 0.88, "ROBO1": 0.85, "DCC": 0.82, "EPHA4": 0.78,
+        "CADM1": 0.75, "CNTNAP2": 0.70, "DLG4": 0.68, "SHANK3": 0.65,
+        "FOS": 0.40, "EGR1": 0.35
+      },
+      "temporal_profile": {
+        "guidance_phase_days": [0, 5],
+        "synapse_formation_days": [5, 14],
+        "pruning_phase_days": [14, 30]
+      },
+      "cell_type_weights": {
+        "excitatory_neurons": 0.6,
+        "inhibitory_neurons": 0.2,
+        "oligodendrocytes": 0.2
+      }
+    }
+  },
+  "cross_references": {
+    "prompt_synonyms": {
+      "memory_consolidation": ["strengthen memory", "stabilize engram", "enhance recall"],
+      "neurogenesis_induction": ["generate new neurons", "promote neural differentiation", "activate stem cells"],
+      "anxiety_reduction": ["calm neural circuits", "reduce stress response", "promote resilience"]
+    },
+    "gene_aliases": {
+      "CREB1": ["CREB", "cAMP response element-binding protein 1"],
+      "BDNF": ["Brain-derived neurotrophic factor", "ABD"],
+      "DCX": ["Doublecortin", "DCX1"],
+      "RELN": ["Reelin", "RL"],
+      "ASCL1": ["Mash1", "Achaete-scute homolog 1"]
+    },
+    "pathway_mappings": {
+      "CREB1": ["cAMP signaling", "synaptic plasticity", "memory formation"],
+      "BDNF": ["TrkB signaling", "neuronal survival", "LTP induction"],
+      "ASCL1": ["proneural differentiation", "cell cycle exit", "neuronal commitment"]
+    }
+  }
+}

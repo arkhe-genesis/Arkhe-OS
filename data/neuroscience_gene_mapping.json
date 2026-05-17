@@ -1,0 +1,334 @@
+{
+  "metadata": {
+    "version": "1.1.0",
+    "last_updated": "2026-05-16",
+    "source": "Literatura de neurociência experimental (2020-2026)",
+    "confidence_threshold": 0.75,
+    "review_status": "peer_reviewed"
+  },
+  "gene_annotations": {
+    "CREB": {
+      "full_name": "cAMP Response Element-Binding Protein",
+      "function": "Transcription factor hub for synaptic plasticity and memory consolidation",
+      "key_references": [
+        "Silva et al., Science 1998 (CREB knockout impairs LTP)",
+        "Kandel, Neuron 2001 (CREB in memory storage)",
+        "Carlezon et al., Nat Rev Neurosci 2005 (CREB in reward)"
+      ],
+      "expression_dynamics": {
+        "induction_time_min": 30,
+        "peak_time_hours": 2,
+        "half_life_hours": 4.0,
+        "cell_types": ["excitatory_neurons", "inhibitory_neurons"]
+      }
+    },
+    "FOS": {
+      "full_name": "Fos Proto-Oncogene (c-Fos)",
+      "function": "Immediate early gene marker of neuronal activation",
+      "key_references": [
+        "Herdegen & Leah, Brain Res Rev 1998 (IEG review)",
+        "Ramirez et al., Science 2013 (FOS in engram cells)",
+        "Tonegawa et al., Nat Rev Neurosci 2015 (memory engrams)"
+      ],
+      "expression_dynamics": {
+        "induction_time_min": 15,
+        "peak_time_hours": 1,
+        "half_life_hours": 0.5,
+        "cell_types": ["all_neuronal"]
+      }
+    },
+    "EGR1": {
+      "full_name": "Early Growth Response 1 (Zif268)",
+      "function": "IEG for memory consolidation and synaptic plasticity",
+      "key_references": [
+        "Jones et al., J Neurosci 2001 (EGR1 in LTP)",
+        "Bozon et al., J Neurosci 2003 (EGR1 in memory)"
+      ],
+      "expression_dynamics": {
+        "induction_time_min": 20,
+        "peak_time_hours": 1.5,
+        "half_life_hours": 1.0,
+        "cell_types": ["excitatory_neurons"]
+      }
+    },
+    "BDNF": {
+      "full_name": "Brain-Derived Neurotrophic Factor",
+      "function": "Neurotrophin for neuronal survival, differentiation, and plasticity",
+      "key_references": [
+        "Huang & Reichardt, Annu Rev Neurosci 2001 (BDNF signaling)",
+        "Lu et al., Nat Rev Neurosci 2013 (BDNF in plasticity)",
+        "Park & Poo, Nat Rev Neurosci 2013 (BDNF in development)"
+      ],
+      "expression_dynamics": {
+        "induction_time_min": 60,
+        "peak_time_hours": 4,
+        "half_life_hours": 6.0,
+        "cell_types": ["excitatory_neurons", "astrocytes"]
+      }
+    },
+    "ARC": {
+      "full_name": "Activity-Regulated Cytoskeleton-associated Protein",
+      "function": "Regulates AMPA receptor endocytosis for synaptic scaling",
+      "key_references": [
+        "Chowdhury et al., Neuron 2006 (ARC in AMPA trafficking)",
+        "Shepherd & Bear, Curr Opin Neurobiol 2011 (ARC review)"
+      ],
+      "expression_dynamics": {
+        "induction_time_min": 25,
+        "peak_time_hours": 2,
+        "half_life_hours": 1.5,
+        "cell_types": ["excitatory_neurons"]
+      }
+    },
+    "ASCL1": {
+      "full_name": "Achaete-Scute Family BHLH Transcription Factor 1",
+      "function": "Master regulator of neurogenesis and neuronal differentiation",
+      "key_references": [
+        "Bertrand et al., Nat Rev Neurosci 2002 (proneural genes)",
+        "Castro et al., Neuron 2011 (ASCL1 in reprogramming)"
+      ],
+      "expression_dynamics": {
+        "induction_time_min": 120,
+        "peak_time_hours": 8,
+        "half_life_hours": 3.0,
+        "cell_types": ["neural_progenitors"]
+      }
+    },
+    "DCX": {
+      "full_name": "Doublecortin",
+      "function": "Microtubule-associated protein marker of neuroblasts",
+      "key_references": [
+        "Gleeson et al., Neuron 1999 (DCX in migration)",
+        "Zhao et al., Cell Stem Cell 2008 (adult neurogenesis)"
+      ],
+      "expression_dynamics": {
+        "induction_time_min": 240,
+        "peak_time_hours": 24,
+        "half_life_hours": 12.0,
+        "cell_types": ["neuroblasts", "immature_neurons"]
+      }
+    },
+    "RELN": {
+      "full_name": "Reelin",
+      "function": "Extracellular matrix protein modulating synaptic plasticity and circuit formation",
+      "key_references": [
+        "Herz & Chen, Nat Rev Neurosci 2006 (Reelin signaling)",
+        "Rogers et al., J Neurosci 2011 (Reelin in anxiety)"
+      ],
+      "expression_dynamics": {
+        "induction_time_min": 90,
+        "peak_time_hours": 6,
+        "half_life_hours": 8.0,
+        "cell_types": ["interneurons", "astrocytes"]
+      }
+    },
+    "NR4A1": {
+      "full_name": "Nuclear Receptor Subfamily 4 Group A Member 1 (Nur77)",
+      "function": "Orphan nuclear receptor regulating stress response and apoptosis",
+      "key_references": [
+        "Maxwell & Muscat, Mol Endocrinol 2006 (NR4A review)",
+        "Li et al., J Neurosci 2012 (NR4A1 in stress)"
+      ],
+      "expression_dynamics": {
+        "induction_time_min": 45,
+        "peak_time_hours": 3,
+        "half_life_hours": 2.0,
+        "cell_types": ["excitatory_neurons", "microglia"]
+      }
+    },
+    "SOX2": {
+      "full_name": "SRY-Box Transcription Factor 2",
+      "function": "Pluripotency factor maintaining neural stem cell identity",
+      "key_references": [
+        "Graham et al., Development 2003 (SOX2 in neural development)",
+        "Sarkar & Hochdinger, Cell Stem Cell 2013 (SOX2 in reprogramming)"
+      ],
+      "expression_dynamics": {
+        "induction_time_min": 180,
+        "peak_time_hours": 12,
+        "half_life_hours": 8.0,
+        "cell_types": ["neural_stem_cells", "progenitors"]
+      }
+    }
+  },
+  "semantic_gene_map": {
+    "memory_consolidation": {
+      "target_genes": {
+        "CREB": 0.95,
+        "FOS": 0.85,
+        "EGR1": 0.80,
+        "BDNF": 0.75,
+        "ARC": 0.70
+      },
+      "temporal_profile": {
+        "early_phase_min": [0, 60],
+        "late_phase_hours": [2, 8],
+        "expected_duration_hours": 24
+      },
+      "validation_criteria": {
+        "min_correlation_with_behavior": 0.7,
+        "required_cell_types": ["excitatory_neurons"]
+      }
+    },
+    "memory_recall": {
+      "target_genes": {
+        "FOS": 0.90,
+        "ARC": 0.85,
+        "EGR1": 0.75,
+        "CREB": 0.60
+      },
+      "temporal_profile": {
+        "early_phase_min": [0, 30],
+        "peak_phase_min": [30, 90],
+        "expected_duration_hours": 4
+      }
+    },
+    "synaptic_plasticity_enhancement": {
+      "target_genes": {
+        "CREB": 0.90,
+        "BDNF": 0.85,
+        "ARC": 0.75,
+        "FOS": 0.70,
+        "RELN": 0.60
+      },
+      "temporal_profile": {
+        "induction_window_hours": [0, 6],
+        "maintenance_window_hours": [6, 48]
+      }
+    },
+    "neurogenesis_induction": {
+      "target_genes": {
+        "ASCL1": 0.95,
+        "DCX": 0.90,
+        "BDNF": 0.80,
+        "CREB": 0.60,
+        "SOX2": 0.40
+      },
+      "temporal_profile": {
+        "proliferation_phase_days": [0, 3],
+        "differentiation_phase_days": [3, 14],
+        "maturation_phase_days": [14, 28]
+      },
+      "validation_criteria": {
+        "min_dcx_positive_cells_percent": 30,
+        "required_morphology": "bipolar_to_multipolar_transition"
+      }
+    },
+    "neuronal_differentiation": {
+      "target_genes": {
+        "DCX": 0.90,
+        "NEUROD1": 0.85,
+        "BDNF": 0.70,
+        "SOX2": 0.30,
+        "ASCL1": 0.50
+      },
+      "temporal_profile": {
+        "commitment_window_hours": [0, 12],
+        "maturation_window_days": [1, 7]
+      }
+    },
+    "pluripotency_maintenance": {
+      "target_genes": {
+        "SOX2": 0.95,
+        "OCT4": 0.90,
+        "NANOG": 0.85,
+        "ASCL1": 0.10,
+        "DCX": 0.05
+      },
+      "validation_criteria": {
+        "max_differentiation_marker_expression": 0.2,
+        "required_colony_morphology": "compact_undifferentiated"
+      }
+    },
+    "anxiety_reduction": {
+      "target_genes": {
+        "RELN": 0.80,
+        "BDNF": 0.70,
+        "FOS": 0.40,
+        "NR4A1": 0.50
+      },
+      "temporal_profile": {
+        "acute_response_min": [0, 60],
+        "sustained_effect_hours": [2, 24]
+      },
+      "validation_criteria": {
+        "behavioral_correlate": "increased_open_arm_time_in_elevated_plus_maze",
+        "min_effect_size_cohens_d": 0.5
+      }
+    },
+    "inflammation_suppression": {
+      "target_genes": {
+        "BDNF": 0.75,
+        "RELN": 0.60,
+        "FOS": 0.30,
+        "NR4A1": 0.40
+      },
+      "validation_criteria": {
+        "microglial_activation_reduction_percent": 40,
+        "cytokine_profile_shift": "pro_to_anti_inflammatory"
+      }
+    },
+    "injury_response": {
+      "target_genes": {
+        "FOS": 0.90,
+        "EGR1": 0.85,
+        "BDNF": 0.80,
+        "ARC": 0.60,
+        "NR4A1": 0.70
+      },
+      "temporal_profile": {
+        "immediate_response_min": [0, 30],
+        "repair_phase_hours": [6, 72],
+        "resolution_phase_days": [3, 14]
+      }
+    },
+    "spatial_clustering": {
+      "target_genes": {
+        "FOS": 0.75,
+        "EGR1": 0.65,
+        "CREB": 0.55,
+        "BDNF": 0.50
+      },
+      "spatial_criteria": {
+        "max_inter_cell_distance_um": 50,
+        "min_cluster_density_cells_per_mm2": 100
+      }
+    },
+    "activity_synchronization": {
+      "target_genes": {
+        "CREB": 0.85,
+        "BDNF": 0.80,
+        "FOS": 0.70
+      },
+      "temporal_criteria": {
+        "synchronization_window_ms": [0, 50],
+        "sustained_coherence_min": 10
+      }
+    },
+    "directed_migration": {
+      "target_genes": {
+        "DCX": 0.85,
+        "BDNF": 0.75,
+        "FOS": 0.60
+      },
+      "spatial_criteria": {
+        "chemotactic_gradient_sensitivity": 0.1,
+        "migration_speed_um_per_hour": 20
+      }
+    }
+  },
+  "cross_references": {
+    "prompt_synonyms": {
+      "consolidate memory": ["memory consolidation", "strengthen memory", "stabilize engram"],
+      "induce neurogenesis": ["promote neurogenesis", "generate new neurons", "neural stem cell activation"],
+      "silence anxiety": ["reduce anxiety", "anxiolytic effect", "calm neural circuits"]
+    },
+    "gene_aliases": {
+      "CREB": ["CREB1", "cAMP response element-binding protein 1"],
+      "FOS": ["c-Fos", "Fos proto-oncogene"],
+      "EGR1": ["Zif268", "NGFI-A", "Krox-24"],
+      "BDNF": ["Brain-derived neurotrophic factor"],
+      "ARC": ["Arg3.1", "Activity-regulated cytoskeleton-associated protein"]
+    }
+  }
+}
