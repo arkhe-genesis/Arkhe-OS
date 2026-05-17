@@ -270,14 +270,10 @@ class UltimateProductionTrial:
         return final_report
 
 if __name__ == "__main__":
-    # Remove default logging prints if any, and just print the required banner
-    class MockTemporalChain:
-        async def anchor_event(self, event_type, payload):
-            return f"temporal_seal_{event_type}_{time.time()}"
-    class MockPhiBus:
-        async def publish_metric(self, name, val): pass
+    from arkhe.chain.temporal_chain import TemporalChain
+    from arkhe.consensus.phi_bus import PhiBusClient
 
-    orchestrator = UniversalCathedralOrchestrator(MockTemporalChain(), MockPhiBus())
+    orchestrator = UniversalCathedralOrchestrator(TemporalChain(), PhiBusClient())
     trial = UltimateProductionTrial(orchestrator)
 
     # Python 3.12 compatibility

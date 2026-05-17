@@ -17,35 +17,17 @@ from typing import Dict, Any, Optional
 # Emulação do pacote arkhe na raiz para este contexto
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-try:
-    from arkhe.chain.temporal_chain import TemporalChain
-    from arkhe.chain.inventory import Inventory
-    from arkhe.security.threat_database import ThreatDatabase, Finding, AttackPath
-    from arkhe.security.guardian_attractor import GuardianAttractor
-    from arkhe.orchestrator.fleet_orchestrator import FleetOrchestrator
+from arkhe.chain.temporal_chain import TemporalChain
+from arkhe.chain.inventory import Inventory
+from arkhe.security.threat_database import ThreatDatabase, Finding, AttackPath
+from arkhe.security.guardian_attractor import GuardianAttractor
+from arkhe.orchestrator.fleet_orchestrator import FleetOrchestrator
 
-    # Load 9008 substrate dynamically
-    spec = importlib.util.spec_from_file_location("ma_s2_engine", os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "substrates", "9008_ma_s2", "ma_s2_engine.py")))
-    ma_s2_engine_module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(ma_s2_engine_module)
-    MA_S2_Engine = ma_s2_engine_module.MA_S2_Engine
-
-except Exception as e:
-    logging.warning(f"Failed to import core modules. Proceeding with mocks: {e}")
-    # Mock fallback classes for testing isolation if needed
-    class TemporalChain:
-        async def anchor_event(self, *args, **kwargs): return "mock_anchor"
-    class Inventory:
-        async def build_sbom(self, *args, **kwargs): return "mock_sbom"
-        async def reconcile_runtime(self, *args, **kwargs): return {"drift_detected": False}
-    class ThreatDatabase:
-        pass
-    class GuardianAttractor:
-        def __init__(self, db=None): pass
-    class FleetOrchestrator:
-        def __init__(self, tc=None): pass
-    class MA_S2_Engine:
-        def __init__(self, *args): pass
+# Load 9008 substrate dynamically
+spec = importlib.util.spec_from_file_location("ma_s2_engine", os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "substrates", "9008_ma_s2", "ma_s2_engine.py")))
+ma_s2_engine_module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(ma_s2_engine_module)
+MA_S2_Engine = ma_s2_engine_module.MA_S2_Engine
 
 try:
     from .tools import register_tools

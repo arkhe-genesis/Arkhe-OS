@@ -250,9 +250,7 @@ class HSMProductionSigner:
     async def _sign_with_hsm(self, data_hash: bytes) -> bytes:
         """Executa assinatura dentro do HSM (chave nunca sai do hardware)."""
         if not HSM_AVAILABLE or not self._hsm_session:
-            # Modo simulado: retornar hash "assinado"
-            logger.warning("⚠️  Assinatura simulada (HSM não disponível)")
-            return hashlib.sha3_256(data_hash + self.hsm_config.key_label.encode()).digest()
+            raise RuntimeError("HSM and PyKCS11 are required for PQC signing but are not available.")
 
         try:
             # Encontrar chave privada no HSM
@@ -333,14 +331,11 @@ class HSMProductionSigner:
         segment_hash = hashlib.sha3_256(segment_data).digest()
         signature = bytes.fromhex(signature_hex)
 
-        if PQC_AVAILABLE:
-            # Verificação real com liboqs
-            verifier = PQCSignature(self.algorithm.value, public_key=public_key)
-            return verifier.verify(segment_hash, signature)
-        else:
-            # Modo simulado
-            expected = hashlib.sha3_256(segment_hash + public_key).digest()
-            return signature == expected
+        if not PQC_AVAILABLE:
+            raise RuntimeError("liboqs is required for PQC verification but is not available.")
+
+        verifier = PQCSignature(self.algorithm.value, public_key=public_key)
+        return verifier.verify(segment_hash, signature)
 
     async def rotate_key(
         self,
@@ -358,8 +353,7 @@ class HSMProductionSigner:
             Dict com IDs das chaves antiga e nova
         """
         if not HSM_AVAILABLE:
-            logger.warning("⚠️  Rotação de chave simulada (HSM não disponível)")
-            return {"old_key": self.hsm_config.key_label, "new_key": "simulated_new_key"}
+            raise RuntimeError("HSM is required for key rotation but is not available.")
 
         # Gerar novo par de chaves no HSM
         new_key_label = new_key_label or f"{self.hsm_config.key_label}-v{int(time.time())}"

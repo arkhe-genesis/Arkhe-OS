@@ -23,30 +23,16 @@ from security.vault_manager import (
     VaultSecretManager, SecretRotationPolicy
 )
 
+from arkhe.chain.temporal_chain import TemporalChain
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("Substrato225")
-
-# Mock para TemporalChain standalone
-class MockTemporalChain:
-    def __init__(self):
-        self.events = []
-
-    async def anchor_event(self, event_type: str, payload: Dict) -> str:
-        import hashlib
-        seal = hashlib.sha3_256(f"{event_type}:{time.time()}".encode()).hexdigest()
-        self.events.append({
-            "type": event_type,
-            "payload": payload,
-            "seal": seal,
-            "timestamp": time.time()
-        })
-        return seal
 
 async def main():
     logger.info("🚀 Iniciando execução do Substrato 225: Cluster Production...")
 
-    # Mock dependencies
-    temporal_mock = MockTemporalChain()
+    # Use real TemporalChain
+    temporal_chain = TemporalChain()
 
     # 1. Configurar TemporalChain Cluster
     logger.info("⚙️ 1. Configurando TemporalChain Cluster HA...")
@@ -81,7 +67,7 @@ async def main():
     fips_checker = FIPS140_3ComplianceChecker(
         hsm_provider="Thales_nShield",
         target_level=FIPS140_3SecurityLevel.LEVEL_3,
-        temporal_chain=temporal_mock
+        temporal_chain=temporal_chain
     )
 
     hsm_metadata = {
@@ -105,7 +91,7 @@ async def main():
 
     fed_orchestrator = FederatedScaleOrchestrator(
         cluster_config=cluster_client,
-        temporal_chain=temporal_mock
+        temporal_chain=temporal_chain
     )
 
     # Registrar 50 nós simulados
@@ -149,55 +135,55 @@ async def main():
     # 4. Configurar Vault e gerenciar segredos
     logger.info("\n🔐 4. Configurando integração com HashiCorp Vault...")
 
-    async with VaultSecretManager(
-        vault_url="https://vault.arkhe.local",
-        temporal_chain=temporal_mock
-    ) as vault_mgr:
+    # NOTE: This expects real hvac configuration and endpoints
+    try:
+        async with VaultSecretManager(
+            vault_url="http://127.0.0.1:8200",
+            temporal_chain=temporal_chain
+        ) as vault_mgr:
 
-        # Registrar política
-        policy = SecretRotationPolicy(
-            secret_path="arkhe/hsm/pin",
-            rotation_interval_days=30,
-            notify_before_hours=48
-        )
-        vault_mgr.register_rotation_policy(policy)
+            # Registrar política
+            policy = SecretRotationPolicy(
+                secret_path="arkhe/hsm/pin",
+                rotation_interval_days=30,
+                notify_before_hours=48
+            )
+            vault_mgr.register_rotation_policy(policy)
 
-        # Escrever segredo inicial
-        await vault_mgr.write_secret(
-            "arkhe/hsm/pin",
-            {"value": "initial_pin_778899"}
-        )
+            # Escrever segredo inicial
+            await vault_mgr.write_secret(
+                "arkhe/hsm/pin",
+                {"value": "initial_pin_778899"}
+            )
 
-        # Ler segredo
-        secret = await vault_mgr.read_secret("arkhe/hsm/pin")
-        logger.info(f"   Segredo lido: {secret}")
+            # Ler segredo
+            secret = await vault_mgr.read_secret("arkhe/hsm/pin")
+            logger.info(f"   Segredo lido: {secret}")
 
-        # Forçar rotação mock
-        import uuid
-        def mock_generator():
-            return f"rotated_pin_{uuid.uuid4().hex[:8]}"
+            import uuid
+            def pin_generator():
+                return f"rotated_pin_{uuid.uuid4().hex[:8]}"
 
-        # Corrigir policy para forçar rotação imediata nas métricas do mock
-        if "arkhe/hsm/pin" in vault_mgr._secret_metadata:
-            vault_mgr._secret_metadata["arkhe/hsm/pin"].rotated_at = time.time() - (40 * 24 * 3600)
+            # Trigger rotation policy properly instead of manually modifying mock values
+            rot_result = await vault_mgr.rotate_secret(
+                "arkhe/hsm/pin",
+                pin_generator,
+                policy
+            )
 
-        rot_result = await vault_mgr.rotate_secret(
-            "arkhe/hsm/pin",
-            mock_generator,
-            policy
-        )
+            logger.info(f"   Rotação Status: {rot_result['status']}")
+            if rot_result['status'] == 'rotated':
+                logger.info(f"   Nova versão: {rot_result['new_version']}")
 
-        logger.info(f"   Rotação Status: {rot_result['status']}")
-        if rot_result['status'] == 'rotated':
-            logger.info(f"   Nova versão: {rot_result['new_version']}")
-
-        audit_summary = vault_mgr.get_audit_summary()
-        logger.info(f"   Auditoria Vault: {audit_summary}")
+            audit_summary = vault_mgr.get_audit_summary()
+            logger.info(f"   Auditoria Vault: {audit_summary}")
+    except RuntimeError as e:
+        logger.error(f"Failed executing vault operations securely: {e}")
 
     logger.info("\n✅ Substrato 225 concluído com sucesso!")
-    logger.info(f"   Eventos ancorados na TemporalChain simulada: {len(temporal_mock.events)}")
-    for ev in temporal_mock.events:
-        logger.info(f"   - {ev['type']}: {ev['seal'][:16]}...")
+    logger.info(f"   Eventos ancorados na TemporalChain real: {len(temporal_chain.anchors)}")
+    for ev in temporal_chain.anchors:
+        logger.info(f"   - {ev.event_type}: {ev.seal[:16]}...")
 
 if __name__ == "__main__":
     asyncio.run(main())

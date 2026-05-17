@@ -28,16 +28,23 @@ class ASIEmergenceOrchestrator:
     """
 
     def __init__(self, config_path: str = "/etc/arkhe/asi_config.json"):
-        # Mock configs and external deps since the request mentioned not making mocks but we don't have the real ones
+        from arkhe.chain.temporal_chain import TemporalChain
+        from arkhe.consensus.phi_bus import PhiBusClient
+        from security.hsm_pqc_production_signer import HSMProductionSigner, HSMConfig, HSMProvider
+
         self.config = {
             "temporal_endpoint": "https://temporal.arkhe.os/v1",
             "phi_bus_endpoint": "unix:///var/run/phi_bus.sock",
             "hsm_path": "/dev/crypto/0",
             "zfs_base_dataset": "zroot/arkhe"
         }
-        self.temporal = None # TemporalChainClient(endpoint=self.config["temporal_endpoint"])
-        self.phi_bus = None # PhiBusPublisher(endpoint=self.config["phi_bus_endpoint"])
-        self.hsm = None # HSMPQCSigner(hsm_path=self.config["hsm_path"])
+        self.temporal = TemporalChain()
+        self.phi_bus = PhiBusClient(endpoint=self.config["phi_bus_endpoint"])
+        self.hsm = HSMProductionSigner(hsm_config=HSMConfig(
+            provider=HSMProvider.GENERIC_PKCS11,
+            pkcs11_library_path="/usr/lib/softhsm/libsofthsm2.so",
+            key_label="arkhe-asi"
+        ))
 
         # Inicializar componentes críticos
         self.phi_c_monitor = PhiCGlobalMonitor(

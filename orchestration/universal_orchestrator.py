@@ -168,7 +168,7 @@ class UniversalCathedralOrchestrator:
             tool_id="deployment_generate_iss_template",
             name="Generate ISS Template",
             description="Gera script .iss para compilação",
-            handler=self.deployment.generate_iss_template,
+            handler=self.deployment.generate_script_template,
             agent_owner="deployment_sentinel",
             confidence_required=0.7,
             token_cost_estimate=5
