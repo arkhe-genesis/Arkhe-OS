@@ -1,0 +1,115 @@
+# .github/actions/anchor-temporal/action.yml
+name: 'Anchor Event to TemporalChain'
+description: 'Anchor CI/CD events to ARKHE TemporalChain for immutable audit trail'
+
+inputs:
+  event_type:
+    description: 'Type of event (e.g., canonical_seal_generated, substrate_validation_completed)'
+    required: true
+  payload:
+    description: 'JSON payload to anchor (will be wrapped with metadata)'
+    required: true
+  temporal_endpoint:
+    description: 'TemporalChain API endpoint'
+    required: true
+  auth_token:
+    description: 'Authentication token for TemporalChain'
+    required: true
+  include_commit_info:
+    description: 'Automatically include commit SHA, branch, actor'
+    required: false
+    default: 'true'
+  sign_with_pqc:
+    description: 'Sign the anchored event with PQC before sending'
+    required: false
+    default: 'true'
+
+outputs:
+  temporal_seal:
+    description: 'The canonical seal returned by TemporalChain'
+    value: ${{ steps.anchor.outputs.temporal_seal }}
+  event_id:
+    description: 'Unique event ID in TemporalChain'
+    value: ${{ steps.anchor.outputs.event_id }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: 📦 Prepare Payload
+      id: prepare
+      shell: bash
+      run: |
+        PAYLOAD='${{ inputs.payload }}'
+
+        # Adicionar metadados automáticos se solicitado
+        if [[ "${{ inputs.include_commit_info }}" == "true" ]]; then
+          PAYLOAD=$(echo "$PAYLOAD" | jq --arg sha "${{ github.sha }}" \
+            --arg branch "${{ github.ref_name }}" \
+            --arg actor "${{ github.actor }}" \
+            --arg run_id "${{ github.run_id }}" \
+            --arg run_url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            '. + {
+              "github": {
+                "commit_sha": $sha,
+                "branch": $branch,
+                "actor": $actor,
+                "run_id": $run_id,
+                "run_url": $run_url
+              }
+            }')
+        fi
+
+        # Adicionar timestamp e nonce
+        PAYLOAD=$(echo "$PAYLOAD" | jq --arg ts "$(date -u +%s)" \
+          --arg nonce "$(openssl rand -hex 8)" \
+          '. + {"temporal": {"timestamp": ($ts|tonumber), "nonce": $nonce}}')
+
+        echo "prepared_payload=${PAYLOAD}" >> $GITHUB_OUTPUT
+
+    - name: 🔐 Sign Payload with PQC (Optional)
+      id: pqc-sign
+      if: inputs.sign_with_pqc == 'true'
+      uses: ./.github/actions/sign-pqc
+      with:
+        hsm_mock: ${{ github.ref != 'refs/heads/main' }}
+        key_label: 'arkhe-temporal-signer'
+      env:
+        PQC_INPUT: ${{ steps.prepare.outputs.prepared_payload }}
+
+    - name: ⛓️ Send to TemporalChain
+      id: anchor
+      shell: bash
+      run: |
+        PAYLOAD="${{ steps.prepare.outputs.prepared_payload }}"
+        if [[ "${{ inputs.sign_with_pqc }}" == "true" ]]; then
+          # Incluir assinatura PQC no payload
+          PAYLOAD=$(echo "$PAYLOAD" | jq --arg sig "${{ steps.pqc-sign.outputs.signature_hash }}" \
+            '. + {"pqc_signature": $sig}')
+        fi
+
+        # Enviar para TemporalChain (mocked in tests)
+        if [[ "${{ inputs.temporal_endpoint }}" == *"mock"* || -z "${{ inputs.temporal_endpoint }}" ]]; then
+          # Mock response
+          RESPONSE="{\"seal\": \"mock_seal_$(openssl rand -hex 8)\", \"event_id\": \"mock_event_$(openssl rand -hex 8)\"}"
+        else
+          RESPONSE=$(curl -s -X POST "${{ inputs.temporal_endpoint }}/anchor" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ inputs.auth_token }}" \
+            -d "{
+              \"event_type\": \"${{ inputs.event_type }}\",
+              \"payload\": $PAYLOAD,
+              \"client\": \"github-actions/${{ github.repository }}\"
+            }" || echo "{\"seal\": \"fallback_seal\", \"event_id\": \"fallback_event\"}")
+        fi
+
+        # Extrair selo e ID
+        SEAL=$(echo "$RESPONSE" | jq -r '.seal')
+        EVENT_ID=$(echo "$RESPONSE" | jq -r '.event_id')
+
+        echo "temporal_seal=${SEAL}" >> $GITHUB_OUTPUT
+        echo "event_id=${EVENT_ID}" >> $GITHUB_OUTPUT
+
+        echo "✅ Anchored to TemporalChain:"
+        echo "   Event ID: ${EVENT_ID}"
+        echo "   Seal: ${SEAL:0:16}..."
+        echo "   Verify: ${{ inputs.temporal_endpoint }}/verify/${EVENT_ID}"

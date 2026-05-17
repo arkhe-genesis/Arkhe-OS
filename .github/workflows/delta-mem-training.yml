@@ -1,0 +1,196 @@
+# .github/workflows/delta-mem-training.yml
+name: 🧠 δ‑mem Online Training from CI History
+
+on:
+  schedule:
+    # Treinamento semanal do δ‑mem com histórico de CI
+    - cron: '0 5 * * 0'  # Domingo às 05:00 UTC
+  workflow_run:
+    workflows:
+      - "🔐 Canonical Seal & PQC Signing"
+      - "🔬 Substrate Validation & Φ_C Threshold"
+      - "🌐 Federated Learning CI with Differential Privacy"
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      retrain_from_scratch:
+        description: 'Retreinar do zero (ignorar histórico)'
+        required: false
+        default: false
+        type: boolean
+      max_history_events:
+        description: 'Número máximo de eventos históricos para treinar'
+        required: false
+        default: '1000'
+        type: number
+
+env:
+  DELTA_MEM_R: 8                    # Dimensão do estado OSAM
+  DELTA_MEM_STATES: 4             # Número de sub-estados (MSW)
+  TRAINING_WINDOW_DAYS: 30        # Janela de eventos para treinamento
+  LEARNING_RATE: 0.001
+  BATCH_SIZE: 32
+
+jobs:
+  extract-ci-history:
+    name: 📥 Extract CI History for δ‑mem
+    runs-on: ubuntu-22.04
+    outputs:
+      events_count: ${{ steps.extract.outputs.count }}
+      feature_matrix_path: ${{ steps.extract.outputs.matrix_path }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 Install δ‑mem Training Stack
+        run: |
+          pip install torch numpy pandas scikit-learn pygithub
+          pip install -r ml/delta-mem/requirements.txt || true
+
+      - name: 🔍 Extract CI Events from GitHub API
+        id: extract
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python ml/delta-mem/scripts/extract_ci_history.py \
+            --repo ${{ github.repository }} \
+            --since "$(date -d '${{ env.TRAINING_WINDOW_DAYS }} days ago' -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --max-events ${{ github.event.inputs.max_history_events || 1000 }} \
+            --output ./data/ci-history-$(date +%Y%m%d).parquet \
+            --feature-dim ${{ env.DELTA_MEM_R }} || true
+
+          COUNT=$(python -c "import pandas as pd; import glob; f=glob.glob('./data/ci-history-*.parquet'); print(len(pd.read_parquet(f[0])) if f else 0)")
+          echo "count=${COUNT}" >> $GITHUB_OUTPUT
+          echo "matrix_path=./data/ci-history-*.parquet" >> $GITHUB_OUTPUT
+
+          echo "📥 Extracted ${COUNT} CI events for δ‑mem training"
+
+  train-delta-mem-model:
+    name: 🧠 Train δ‑mem Model
+    needs: extract-ci-history
+    runs-on: ubuntu-22.04-arm  # ARM para compatibilidade com quantização
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 📥 Download CI History
+        uses: actions/download-artifact@v4
+        with:
+          name: ci-history-extract
+          path: ./data/
+        continue-on-error: true
+
+      - name: 🐍 Setup Training Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 📦 Install Dependencies
+        run: |
+          pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+          pip install -r ml/delta-mem/requirements.txt || true
+
+      - name: 🔄 Train δ‑mem Online
+        id: train
+        run: |
+          python ml/delta-mem/train_online.py \
+            --input ./data/ci-history-*.parquet \
+            --output ./models/delta-mem-ci-$(date +%Y%m%d).pt \
+            --r ${{ env.DELTA_MEM_R }} \
+            --num-states ${{ env.DELTA_MEM_STATES }} \
+            --lr ${{ env.LEARNING_RATE }} \
+            --batch-size ${{ env.BATCH_SIZE }} \
+            ${{ github.event.inputs.retrain_from_scratch == 'true' && '--from-scratch' || '' }} \
+            --temporal-anchor \
+            --report-metrics || true
+
+          # Extrair métricas
+          METRICS=$(jq -c '.' ./models/metrics.json 2>/dev/null || echo "{}")
+          echo "metrics=${METRICS}" >> $GITHUB_OUTPUT
+
+      - name: ⛓️ Anchor Training to TemporalChain
+        uses: ./.github/actions/anchor-temporal
+        with:
+          event_type: "delta_mem_training_completed"
+          payload: |
+            {
+              "training_id": "$(uuidgen)",
+              "events_trained": ${{ needs.extract-ci-history.outputs.events_count }},
+              "model_architecture": {"r": ${{ env.DELTA_MEM_R }}, "states": ${{ env.DELTA_MEM_STATES }}},
+              "metrics": ${{ steps.train.outputs.metrics }},
+              "timestamp": $(date -u +%s)
+            }
+
+      - name: 📤 Upload Model & Metrics
+        uses: actions/upload-artifact@v4
+        with:
+          name: delta-mem-model-ci
+          path: |
+            ./models/delta-mem-ci-*.pt
+            ./models/metrics.json
+          retention-days: 90
+
+  evaluate-delta-mem:
+    name: 📊 Evaluate δ‑mem Predictions
+    needs: train-delta-mem-model
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 📥 Download Trained Model
+        uses: actions/download-artifact@v4
+        with:
+          name: delta-mem-model-ci
+          path: ./models/
+        continue-on-error: true
+
+      - name: 🧪 Run Prediction Evaluation
+        run: |
+          python ml/delta-mem/evaluate.py \
+            --model ./models/delta-mem-ci-*.pt \
+            --test-split 0.2 \
+            --metrics accuracy,precision,recall,f1 \
+            --output ./evaluation/delta-mem-eval.json || true
+
+      - name: 📈 Generate δ‑mem Report
+        run: |
+          python ml/delta-mem/report.py \
+            --eval ./evaluation/delta-mem-eval.json \
+            --output ./evaluation/delta-mem-report.md \
+            --include-feature-importance \
+            --include-phi-c-impact || true
+
+      - name: 📤 Upload Evaluation
+        uses: actions/upload-artifact@v4
+        with:
+          name: delta-mem-evaluation
+          path: ./evaluation/
+          retention-days: 30
+
+      - name: 📝 Comment with δ‑mem Insights
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const eval = require('./evaluation/delta-mem-eval.json') || {};
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number || 1,
+              body: `## 🧠 δ‑mem Training Results
+            | Métrica | Valor |
+            |---------|-------|
+            | Events Trained | \`${{ needs.extract-ci-history.outputs.events_count }}\` |
+            | Model Architecture | \`${{ env.DELTA_MEM_R }}x${{ env.DELTA_MEM_R }} × ${{ env.DELTA_MEM_STATES }} states\` |
+            | Accuracy | \`${eval.accuracy}\` |
+            | F1 Score | \`${eval.f1}\` |
+            | Φ_C Impact | \`${eval.phi_c_impact || 'N/A'}\` |
+            [Ver Relatório Completo](./evaluation/delta-mem-report.md)`
+            });

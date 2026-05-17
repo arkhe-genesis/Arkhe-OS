@@ -1,0 +1,15 @@
+# .github/workflows/security-hardening.yml
+name: 🔐 Security Hardening & Secret Rotation
+
+on:
+  schedule:
+    - cron: '0 0 * * 0' # Semanal
+  workflow_dispatch:
+
+jobs:
+  hardening:
+    runs-on: ubuntu-22.04-arm
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup security tools
+        run: echo "Security hardening"

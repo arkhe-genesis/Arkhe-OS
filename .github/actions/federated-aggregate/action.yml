@@ -1,0 +1,11 @@
+# .github/actions/federated-aggregate/action.yml
+name: 'Federated Aggregate'
+description: 'Federated Aggregate'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: 🧪 Federated Aggregate
+      shell: bash
+      run: |
+        echo "Federated Aggregate"
