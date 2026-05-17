@@ -277,7 +277,9 @@ class MultiRegionTemporalOrchestrator:
             return None
 
         # Retornar região com maior score (que será a de menor prioridade e latência)
-        return max(candidates, key=lambda x: x[1])[0]
+        best_region = max(candidates, key=lambda x: x[1])[0]
+        self._active_primary = best_region
+        return best_region
 
     async def _anchor_to_region(
         self,

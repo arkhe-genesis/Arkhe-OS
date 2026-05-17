@@ -45,6 +45,7 @@ async def test_multiregion_orchestrator(mock_temporal, mock_phi_bus):
     assert result.primary_region == "us-east-1"
     assert len(result.confirmed_regions) == 2
     assert result.total_confirmations == 2
+    assert orchestrator._active_primary == "us-east-1"
 
 @pytest.mark.asyncio
 async def test_cmvp_audit(mock_temporal, mock_phi_bus):

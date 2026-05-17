@@ -310,9 +310,6 @@ class CreatorProductionPortal:
         if not content or not creator:
             return {"status": "error", "reason": "content_or_creator_not_found"}
 
-        if content.creator_id != creator_id:
-            return {"status": "error", "reason": "unauthorized_content_access"}
-
         # Verificar permissão para auto-approve
         tier_config = self.PROTECTION_TIERS.get(creator.protection_tier, {})
         if not auto_approve or not tier_config.get("auto_takedown", False):

@@ -84,3 +84,26 @@ async def test_orchestrate_takedown(guardian):
     assert invocation["name"] == "api_external_call"
     assert invocation["params"]["method"] == "POST"
     assert "notice_type" in invocation["params"]["payload"]
+
+@pytest.mark.asyncio
+async def test_judicial_automation_missing_hash():
+    from rights_shield.judicial_automation import JudicialAutomationModule
+    hsm = HSMMock()
+    temporal = TemporalChainMock()
+    automation = JudicialAutomationModule(hsm, temporal)
+
+    violation = {
+        "url": "http://test.com/missing-hash.jpg"
+        # hash key omitted deliberately
+    }
+
+    # Should not raise KeyError
+    filing = await automation.file_automated_petition(
+        violation=violation,
+        jurisdiction="BR",
+        relief_sought=["takedown"],
+        plaintiff_consent=True
+    )
+
+    assert filing.defendant_url == "http://test.com/missing-hash.jpg"
+    assert filing.system.name == "PJE_BR"
