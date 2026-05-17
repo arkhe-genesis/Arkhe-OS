@@ -142,6 +142,8 @@ resolve_arkhe_path(const char *p9_path, char *out_path, size_t out_size)
                 return -1;
             }
             *last_slash = '/';
+            size_t resolved_len = strlen(resolved);
+            snprintf(resolved + resolved_len, sizeof(resolved) - resolved_len, "%s", last_slash);
         } else {
             return -1;
         }
