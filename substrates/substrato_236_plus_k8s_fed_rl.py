@@ -87,7 +87,7 @@ class KubernetesMetricsClient:
             values = []
             for item in metrics.get("items", []):
                 pod_name = item.get("describedObject", {}).get("name", "")
-                if self.deployment_name in pod_name:
+                if pod_name.startswith(f"{self.deployment_name}-"):
                     value = item.get("metric", {}).get("value", "0")
                     values.append(self._parse_quantity(value))
             return sum(values) / len(values) if values else None

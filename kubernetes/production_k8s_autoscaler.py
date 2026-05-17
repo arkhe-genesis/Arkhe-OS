@@ -112,7 +112,7 @@ class KubernetesProductionAutoscaler:
             # Filtrar apenas os pods do deployment
             cpu_values = []
             for item in cpu_metric.get("items", []):
-                if self.deployment_name in item["metadata"]["name"]:
+                if item["metadata"]["name"].startswith(f"{self.deployment_name}-"):
                     for container in item["containers"]:
                         cpu_str = container["usage"]["cpu"]
                         # Converter "500m" para 0.5
