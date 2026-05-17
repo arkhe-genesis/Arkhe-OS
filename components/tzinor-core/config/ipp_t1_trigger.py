@@ -12,7 +12,7 @@ import json
 import numpy as np
 from datetime import datetime, timezone
 
-class MockHardware:
+class Hardware:
     def __init__(self):
         self.phase_lock_status = "STABLE"
         self.power_dbm = 3.5
@@ -27,11 +27,11 @@ class MockHardware:
 
 class PilotPhaseInjector:
     def __init__(self):
-        self.hardware = MockHardware()
-        self.sr88 = MockHardware()
-        self.vcsel = MockHardware()
-        self.t1_vibra = MockHardware()
-        self.dark_fiber = MockHardware()
+        self.hardware = Hardware()
+        self.sr88 = Hardware()
+        self.vcsel = Hardware()
+        self.t1_vibra = Hardware()
+        self.dark_fiber = Hardware()
         self.synapse_id = "847.765"
 
     def send_calibration_pulse(self, duration_ms, power_dBm):

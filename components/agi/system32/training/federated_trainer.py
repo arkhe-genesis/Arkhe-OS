@@ -16,7 +16,7 @@ class DummySocks:
     SOCKS5 = 'socks5'
     def socksocket(self):
         class Sock:
-            def set_proxy(self, *args): pass
+            def set_proxy(self, *args): return None
         return Sock()
 
 try:

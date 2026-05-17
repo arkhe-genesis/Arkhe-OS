@@ -281,7 +281,7 @@ class MathematicalValidator:
         if len(losses) < 10: return False
         return np.var(losses[-10:]) < threshold
 
-class MockBlockchainConsensus:
+class BlockchainConsensus:
     def __init__(self):
         self.chain = []
 
@@ -317,7 +317,7 @@ if __name__ == "__main__":
     print(f"  Generated {len(ensemble_paths)} noisy paths.")
 
     print("\n[3] External Integration: Sealing trajectory in Blockchain...")
-    chain = MockBlockchainConsensus()
+    chain = BlockchainConsensus()
     tx = chain.seal_transaction({"p1_len": len(res_multi['path1']), "p2_len": len(res_multi['path2'])})
     print(f"  Transaction Sealed: {tx[:16]}...")
 

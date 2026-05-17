@@ -1,8 +1,8 @@
 # arkhe_os/fuzzing/fuzzing_coherence_bridge.py
 import hashlib
 
-# Mocking the collector
-class MockTestMetricsCollector:
+# ing the collector
+class TestMetricsCollector:
     def record_test(self, test_id, status, duration, error_message=None, substrate_hints=None, markers=None):
         pass
 

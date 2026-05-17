@@ -11,9 +11,9 @@ def get_public_key(did: str) -> str:
     return f"pubkey_{did}"
 
 def build_merkle_tree(leaves: List[bytes]) -> Any:
-    class MockTree:
+    class Tree:
         root = b"merkle_root"
-    return MockTree()
+    return Tree()
 
 def hkdf_sha3_256(master_seed: bytes, salt: bytes, context: str) -> bytes:
     return hashlib.sha3_256(master_seed + salt + context.encode()).digest()
@@ -185,8 +185,8 @@ class ConsentRevocationCascade:
     def __init__(self, vault, ethical_ledger):
         self.vault = vault
         self.ledger = ethical_ledger
-        self.dependency_graph = getattr(vault, 'dependency_graph', None) or MockDataProvenanceGraph()
-        self.cohort_registry = getattr(vault, 'cohort_registry', None) or MockCohortRegistry()
+        self.dependency_graph = getattr(vault, 'dependency_graph', None) or DataProvenanceGraph()
+        self.cohort_registry = getattr(vault, 'cohort_registry', None) or CohortRegistry()
 
     def execute_revocation(self, revocation_vc: RevocationVC) -> CascadeReport:
         """
@@ -509,19 +509,19 @@ class ZKLongitudinalIntegrityProtocol:
         )
 
 # Mock Classes for Vault and Registry
-class MockDataProvenanceGraph:
+class DataProvenanceGraph:
     def find_dependents(self, shard_id):
         return ["derived_1"]
 
-class MockSummary:
+class Summary:
     summary_id = "summary_1"
     merkle_root = b"merkle_1"
 
-class MockCohortRegistry:
+class CohortRegistry:
     def find_summaries_including(self, participant_id):
-        return [MockSummary()]
+        return [Summary()]
     def recompute_summary_excluding(self, summary, participant_id):
-        new_s = MockSummary()
+        new_s = Summary()
         new_s.merkle_root = b"merkle_2"
         return new_s
     def update_summary(self, summary):

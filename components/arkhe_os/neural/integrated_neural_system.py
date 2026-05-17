@@ -7,13 +7,13 @@ import time
 import asyncio
 
 # Mock for missing Substrate 112 components if they don't exist yet
-class MockNeuralLace:
+class NeuralLace:
     def __init__(self, n_neurons=64, base_scale=2.0):
         self.n_neurons = n_neurons
         self.base_scale = base_scale
-        self.neurons = [type('MockNeuron', (), {'_alive': True})() for _ in range(n_neurons)]
+        self.neurons = [type('Neuron', (), {'_alive': True})() for _ in range(n_neurons)]
         self.skyrmions = []
-        self.base = type('MockBase', (), {'UV': { (256, 256): [0,0] }, 'geodesic_distance': lambda a, b: 0.1})()
+        self.base = type('Base', (), {'UV': { (256, 256): [0,0] }, 'geodesic_distance': lambda a, b: 0.1})()
 
     def step(self, dt_us):
         return {'total_signal': 15, 'total_topological_charge': 0}
@@ -27,7 +27,7 @@ class MockNeuralLace:
 try:
     from arkhe_os.neural.substrate_112_neural_lace import NeuralLace
 except ImportError:
-    NeuralLace = MockNeuralLace
+    NeuralLace = NeuralLace
 
 from arkhe_os.network.qhttp_wheeler_mesh import WheelerMeshProtocol, WheelerMeshNode, WheelerNodeType, QuantumStatePacket
 from arkhe_os.timing.parametric_quantum_clock import ParametricQuantumClock

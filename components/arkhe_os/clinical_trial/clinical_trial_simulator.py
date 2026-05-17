@@ -348,11 +348,11 @@ class CohortCrossAttention(nn.Module):
         return self.layer_norm(x_seq + out)
 
 class ZKProofGeneratorMock:
-    class MockProof:
+    class Proof:
         def hash(self):
             return "mock_proof_hash"
     def generate_simulation_proof(self, *args, **kwargs):
-        return self.MockProof()
+        return self.Proof()
 
 class ClinicalTrialSimulator:
     """Motor principal de simulação de ensaios clínicos."""

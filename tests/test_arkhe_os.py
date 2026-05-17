@@ -1,8 +1,8 @@
 import pytest
 import asyncio
-from arkhe_os.core.unified_orchestrator import UnifiedFieldOrchestrator
-from arkhe_os.modules.consciousness import ConsciousnessModule
-from arkhe_os.modules.ontology import OntologyModule
+from components.arkhe_os.core.unified_orchestrator import UnifiedFieldOrchestrator
+from components.arkhe_os.modules.consciousness import ConsciousnessModule
+from components.arkhe_os.modules.ontology import OntologyModule
 
 class MockCodex:
     async def store_artifact(self, *args, **kwargs): pass

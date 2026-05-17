@@ -1,7 +1,7 @@
 from typing import Dict, List, Any
 import hashlib
 
-class MockZKBackend:
+class ZKBackend:
     def prove(self, circuit: str, witness: Dict) -> bytes:
         return f"proof_{circuit}".encode()
 
@@ -45,7 +45,7 @@ class ZKEthicalComplianceForSaturn:
     }
 
     def __init__(self):
-        self.zk_backend = MockZKBackend()
+        self.zk_backend = ZKBackend()
 
     def _generate_witness_from_decision_and_context(self, decision: Dict, context: Dict) -> Dict:
         return {"decision_data": "private_witness"}

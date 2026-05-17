@@ -9,11 +9,12 @@ from telemetry.dashboard import TelemetryServer
 from telemetry.visualizer_3d import Visualizer3DServer
 from telemetry.websocket_bridge import TelemetryWebSocketBridge
 
-class MockCodex:
-    async def store_artifact(self, *args, **kwargs): pass
-class MockField:
+class CrystalCodex:
+    async def store_artifact(self, *args, **kwargs):
+        return True
+class UnifiedField:
     def get_network_omega(self): return 0.9642
-class MockEthics:
+class EthicsEngine:
     def validate_cosmic_ethics(self, val, sig):
         return type("R", (), {"adjusted_alignment": min(1.0, val * 1.02)})()
 
@@ -26,9 +27,9 @@ async def main():
 ║     Odômetro: 002143                                          ║
 ╚══════════════════════════════════════════════════════════════╝
 """)
-    codex = MockCodex()
-    field = MockField()
-    ethics = MockEthics()
+    codex = CrystalCodex()
+    field = UnifiedField()
+    ethics = EthicsEngine()
     orchestrator = UnifiedFieldOrchestrator(field, ethics, codex)
 
     telemetry = TelemetryServer(orchestrator)

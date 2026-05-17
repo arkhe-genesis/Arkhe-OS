@@ -10,7 +10,7 @@ class SyncPackage:
     metadata: Dict[str, Any]
     total_size_bytes: int
 
-class MockLedger:
+class Ledger:
     def compute_global_merkle_root(self) -> str:
         return "mock_merkle_root"
     def generate_crdt_patches(self, since_timestamp: float, compression_level: str, max_patch_size_mb: float) -> List[str]:
@@ -18,7 +18,7 @@ class MockLedger:
     def verify_merkle_root(self, root: str) -> bool:
         return True
 
-class MockState:
+class State:
     def apply_crdt_patch(self, patch: str, conflict_resolution: str):
         pass
 
@@ -26,8 +26,8 @@ class SovereignMirrorLight:
     """Sincronização leve para zonas externas com largura de banda limitada."""
 
     def __init__(self):
-        self.ledger = MockLedger()
-        self.local_state = MockState()
+        self.ledger = Ledger()
+        self.local_state = State()
         self.last_sync_timestamp = {"Jovian": 0.0, "Belt": 0.0}
 
     def generate_daily_sync_package(self, zone: str) -> SyncPackage:

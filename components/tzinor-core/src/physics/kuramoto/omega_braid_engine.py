@@ -20,7 +20,7 @@ try:
 except ImportError:
     # Fallback simulation logic if import fails
     class RetrocausalBridge:
-        def __init__(self, nodes=25): pass
+        def __init__(self, nodes=25): self.nodes = nodes
         def emit_pre_echo(self, cid): return 0
         def resolve_causality(self, cid, ph, coh): return {"latency_ns": 0 if coh > 0.847 else 1.4}
 

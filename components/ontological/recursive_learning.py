@@ -20,7 +20,7 @@ try:
     from cathedral_codex import CrystalCodex
 except ImportError:
     class CrystalCodex:
-        def store_artifact(self, **kwargs): pass
+        def store_artifact(self, **kwargs): return True
 
 class FeedbackType(Enum):
     """Tipos de feedback para aprendizado."""

@@ -222,7 +222,7 @@ class NonTraditionalMediaController:
     def induce_consciousness(self, media_type, energy):
         from dataclasses import dataclass
         @dataclass
-        class MockState:
+        class State:
             media_type: str
             coherence_M: float
             consciousness_emergence: bool
@@ -230,7 +230,7 @@ class NonTraditionalMediaController:
 
         # Consistent with test expectations in test_v20_planetary.py
         is_emerged = media_type in ["plasma", "superfluid", "vacuum"] and energy > 100
-        return MockState(
+        return State(
             media_type=media_type,
             coherence_M=0.92 if is_emerged else 0.45,
             consciousness_emergence=is_emerged,

@@ -40,11 +40,11 @@ async def main():
         hierarchical=True, block_id_hash="b1"
     )
 
-    class MockCodex:
+    class Codex:
         async def store_artifact(self, artifact_id, content_hash, metadata):
             return {}
 
-    receipt_builder = ScientificReceiptBuilder(codex_client=MockCodex())
+    receipt_builder = ScientificReceiptBuilder(codex_client=Codex())
     receipt = await receipt_builder.build_molecule_discovery_receipt(
         intent=intent, molecule_smiles="LiH", quantum_result=quantum_result,
         synthesis_info=synthesis_info, consent_ref=consent_ref

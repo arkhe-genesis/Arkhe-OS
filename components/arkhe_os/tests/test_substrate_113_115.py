@@ -11,7 +11,7 @@ from arkhe_os.network.qhttp_wheeler_mesh import WheelerMeshProtocol, WheelerMesh
 from arkhe_os.timing.parametric_quantum_clock import ParametricQuantumClock
 from arkhe_os.interface.magnon_photon_transducer import MagnonPhotonTransducer, TransducerConfig, TransductionDirection
 
-class MockBaseMetric:
+class BaseMetric:
     def geodesic_distance(self, a, b):
         return np.linalg.norm(a - b)
 
@@ -21,7 +21,7 @@ async def test_wheeler_mesh_protocol():
     print("🔗 [Teste 1] Wheeler Mesh Protocol (qhttp://)...")
 
     # Criar base métrica quasicristalina
-    base = MockBaseMetric()
+    base = BaseMetric()
 
     # Criar nós
     node_a = WheelerMeshNode(

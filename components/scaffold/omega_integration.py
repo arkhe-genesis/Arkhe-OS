@@ -9,7 +9,7 @@ except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
     from core.omega_transducer import OmegaTransducer
 
-class MockPygfxScaffold:
+class PygfxScaffold:
     """Mock Pygfx scaffold for integration testing."""
     def __init__(self, **kwargs):
         self.state = {'kappa': kwargs.get('kappa', 0.75), 'coherence': 0.5}
@@ -39,7 +39,7 @@ class OmegaEnabledScaffold:
     def __init__(self, transducer_config: dict, scaffold_params: dict):
         self.transducer = OmegaTransducer(**transducer_config)
         # Integration with Pygfx scaffold mock
-        self.scaffold = MockPygfxScaffold(**scaffold_params)
+        self.scaffold = PygfxScaffold(**scaffold_params)
         self.perception_history = []
 
     def perceive_and_adjust(self, sensor_input: np.ndarray) -> dict:

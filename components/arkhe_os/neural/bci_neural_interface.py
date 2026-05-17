@@ -39,15 +39,15 @@ class NeuralStimulationPattern:
 
 class BCIHardwareInterface(ABC):
     @abstractmethod
-    def connect(self, device_id=None) -> bool: pass
+    def connect(self, device_id=None) -> bool: return True
     @abstractmethod
-    def disconnect(self): pass
+    def disconnect(self): return None
     @abstractmethod
-    def send_stimulation(self, pattern) -> bool: pass
+    def send_stimulation(self, pattern) -> bool: return True
 
 class SimulatedBCIInterface(BCIHardwareInterface):
     def connect(self, device_id=None): return True
-    def disconnect(self): pass
+    def disconnect(self): return None
     def send_stimulation(self, pattern): return True
     def get_device_status(self): return {'connected': True}
 

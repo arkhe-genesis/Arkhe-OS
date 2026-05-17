@@ -4,11 +4,11 @@ from arkhe_os.patient_vault.patient_data_vault import PatientDataVault as RedoxD
 from arkhe_os.cross_species.coherence_mapper import CrossSpeciesMapper
 
 def test_clinical_trial_simulator():
-    class MockMetaLearner:
+    class MetaLearner:
         def calibrate_trial_predictions(self, raw_results, historical_data):
             return raw_results
 
-    meta_learner = MockMetaLearner()
+    meta_learner = MetaLearner()
     simulator = ClinicalTrialSimulator("dummy_path", meta_learner, "dummy_db_path")
 
     cohort = CohortDefinition(

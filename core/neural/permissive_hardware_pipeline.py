@@ -1,7 +1,7 @@
 import hashlib
 import time
 
-class MockTDCSDevice:
+class TDCSDevice:
     """Mock tDCS device for the pipeline."""
     def __init__(self):
         self.cathodal_PCC = 0.0

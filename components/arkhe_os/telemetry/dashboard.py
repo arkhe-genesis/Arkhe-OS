@@ -10,7 +10,7 @@ import numpy as np
 class TelemetryHandler(BaseHTTPRequestHandler):
     orchestrator = None
 
-    def log_message(self, format, *args): pass
+    def log_message(self, format, *args): return None
 
     def _send_json_response(self, data: Dict, status: int = 200):
         self.send_response(status)

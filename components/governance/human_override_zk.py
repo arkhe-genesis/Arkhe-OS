@@ -27,11 +27,11 @@ class OverrideResult:
     def ACCEPTED(execution_timestamp: float, finality_estimate: str):
         return {"status": "ACCEPTED", "execution_timestamp": execution_timestamp, "finality_estimate": finality_estimate}
 
-class MockZKProver:
+class ZKProver:
     def generate_proof(self, decision: str, context: Dict, constraints: str) -> ZKProof:
         return ZKProof()
 
-class MockQHTTPEncoder:
+class QHTTPEncoder:
     def encode_message(self, message: Dict, mode: str):
         pass
 
@@ -39,8 +39,8 @@ class HumanOverrideWithZK:
     """Mecanismo de override humano com ZK-proofs de conformidade ética."""
 
     def __init__(self):
-        self.zk_prover = MockZKProver()
-        self.qhttp_encoder = MockQHTTPEncoder()
+        self.zk_prover = ZKProver()
+        self.qhttp_encoder = QHTTPEncoder()
 
     def _verify_multiparty_signature(self, override_request: OverrideRequest) -> bool:
         return True

@@ -23,7 +23,7 @@ def broadcast_trial_halt(vc: Any):
     pass
 
 def load_trial_protocol(trial_did: str) -> Any:
-    class MockProtocol:
+    class Protocol:
         safety_boundaries = {
             "max_sites_with_epsilon_breach": 2,
             "max_sites_with_sae": 2
@@ -33,7 +33,7 @@ def load_trial_protocol(trial_did: str) -> Any:
             targetPhase: float = np.pi
             currentRangeMa: List[float] = field(default_factory=lambda: [0.5, 1.5])
         intervention = Intervention()
-    return MockProtocol()
+    return Protocol()
 
 def verify_zk_site_integrity(proof: bytes) -> bool:
     return True
@@ -42,10 +42,10 @@ def aggregate_zk_proofs(proofs: List[bytes]) -> bytes:
     return b"aggregated_proof"
 
 def verify_aggregated_proof(proof: bytes, public_inputs: Dict[str, Any]) -> Any:
-    class MockResult:
+    class Result:
         effect_size = 0.5
         effect_size_commitment = b"es_commit"
-    return MockResult()
+    return Result()
 
 def normalize_angle(angle: float) -> float:
     return angle % (2 * np.pi)

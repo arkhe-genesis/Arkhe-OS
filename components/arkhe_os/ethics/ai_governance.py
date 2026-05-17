@@ -13,17 +13,17 @@ import numpy as np
 import math
 
 class ZKProofGeneratorMock:
-    class MockProof:
+    class Proof:
         def __init__(self, data: str):
             self.data = data
         def hash(self) -> str:
             return hashlib.sha256(self.data.encode()).hexdigest()
 
     def generate_fairness_proof(self, *args, **kwargs):
-        return self.MockProof("mock_fairness_proof_" + str(kwargs.get('model_id', '')))
+        return self.Proof("mock_fairness_proof_" + str(kwargs.get('model_id', '')))
 
     def generate_explainability_proof(self, *args, **kwargs):
-        return self.MockProof("mock_explainability_proof_" + str(kwargs.get('model_id', '')))
+        return self.Proof("mock_explainability_proof_" + str(kwargs.get('model_id', '')))
 
     def verify_proof(self, proof_hash: str, expected_condition: str) -> bool:
         return True

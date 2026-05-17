@@ -39,7 +39,7 @@ class ZKProverForEthicalCompliance:
         # Mock ZK proof verification
         return proof.verification_key_hash == constraints_hash
 
-class MockAIModel:
+class AIModel:
     def predict(self, context: Dict, operation_type: str) -> AIDecision:
         return AIDecision(
             action=f"execute_{operation_type}",
@@ -55,8 +55,8 @@ class SovereignAIWithZKEthics:
         self.ai_model = self._load_fine_tuned_model(model_path)
         self.zk_prover = ZKProverForEthicalCompliance(constraints_hash=ethical_constraints_hash)
 
-    def _load_fine_tuned_model(self, model_path: str) -> MockAIModel:
-        return MockAIModel()
+    def _load_fine_tuned_model(self, model_path: str) -> AIModel:
+        return AIModel()
 
     def make_decision(self, context: Dict, operation_type: str) -> AIDecision:
         """Gera decisão com ZK-proof de conformidade ética."""

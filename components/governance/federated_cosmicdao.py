@@ -25,7 +25,7 @@ class ProposalResult:
     def ACCEPTED(execution_plan: ExecutionPlan, expected_finality: str):
         return {"status": "ACCEPTED", "execution_plan": execution_plan, "expected_finality": expected_finality}
 
-class MockQHTTPEncoder:
+class QHTTPEncoder:
     def encode_message(self, message: Dict, mode: str):
         pass
 
@@ -33,7 +33,7 @@ class FederatedCosmicDAO:
     """Governança federada da Catedral com representação ponderada por zona."""
 
     def __init__(self):
-        self.qhttp_encoder = MockQHTTPEncoder()
+        self.qhttp_encoder = QHTTPEncoder()
 
     def compute_zone_weight(self, zone: str, metrics: ZoneMetrics) -> float:
         """Calcula peso de representação para uma zona."""

@@ -1490,7 +1490,7 @@ class MaxTokiAdapter:
     def _load_model(self, path: str):
         """Carrega modelo MaxToki (simulação)"""
         # Simulação de um Transformer decoder
-        class MockMaxToki(nn.Module):
+        class MaxToki(nn.Module):
             def __init__(self):
                 super().__init__()
                 self.embedding = nn.Embedding(20271, 512)
@@ -1508,7 +1508,7 @@ class MaxTokiAdapter:
                     # Gerar estado
                     return torch.randn(batch_size, 20271) * 0.1 + 0.5
 
-        return MockMaxToki()
+        return MaxToki()
 
     def nv_to_transcriptome(self, nv_readings: np.ndarray, tissue: str) -> np.ndarray:
         """

@@ -300,12 +300,18 @@ class DataIntegrityZKProof:
     proof: bytes
 
 class ZKCircuit:
-    def add_private_input(self, name, value): pass
-    def add_public_input(self, name, value): pass
-    def assert_greater_than_or_equal(self, a, b): pass
-    def assert_less_than_or_equal(self, a, b): pass
-    def assert_merkle_root_equals(self, a, b): pass
-    def assert_monotonic_timestamps(self, a): pass
+    def add_private_input(self, name, value):
+        return None
+    def add_public_input(self, name, value):
+        return None
+    def assert_greater_than_or_equal(self, a, b):
+        return None
+    def assert_less_than_or_equal(self, a, b):
+        return None
+    def assert_merkle_root_equals(self, a, b):
+        return None
+    def assert_monotonic_timestamps(self, a):
+        return None
 
 def generate_stark_proof(circuit): return b"proof"
 STARK_VK_PROTOCOL_ADHERENCE = "vk"

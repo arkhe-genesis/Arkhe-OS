@@ -4,7 +4,7 @@ import numpy as np
 from typing import Dict, List, Optional, Callable
 from dataclasses import dataclass
 
-class MockEvent:
+class Event:
     def __init__(self, kind, pubkey, created_at, tags, content):
         self.kind = kind
         self.pubkey = pubkey
@@ -14,7 +14,7 @@ class MockEvent:
     def sign(self, privkey):
         pass
 
-class MockPrivateKey:
+class PrivateKey:
     def __init__(self, nsec):
         self.public_key = type("PubKey", (), {"hex": lambda: "pubkey_hex"})()
     @classmethod
@@ -25,9 +25,9 @@ try:
     from nostr.event import Event, EventKind
     from nostr.key import PrivateKey
 except ImportError:
-    Event = MockEvent
+    Event = Event
     EventKind = type("EventKind", (), {"CUSTOM": 9002})
-    PrivateKey = MockPrivateKey
+    PrivateKey = PrivateKey
 
 @dataclass
 class RunnerCoherenceState:

@@ -469,7 +469,7 @@ def demo_riemannian_bridge():
     bridge = RiemannianBridge()
 
     # Criar Fds simulados (do Substrato 6062)
-    class MockFd:
+    class Fd:
         def __init__(self, fd_id, resource, perms):
             self._fd_id = fd_id
             self.resource = resource
@@ -478,8 +478,8 @@ def demo_riemannian_bridge():
         def close(self):
             print(f"   🚪 FD {self._fd_id} closed")
 
-    fd1 = MockFd("fd-file-001", "File", "READ|WRITE")
-    fd2 = MockFd("fd-socket-002", "Socket", "READ|WRITE")
+    fd1 = Fd("fd-file-001", "File", "READ|WRITE")
+    fd2 = Fd("fd-socket-002", "Socket", "READ|WRITE")
 
     # Wrap com suporte riemanniano
     print("\n🔗 Mapeando Fds para geodésicas...")

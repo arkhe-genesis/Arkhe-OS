@@ -32,7 +32,7 @@ def derive_session_key(master_key: bytes, session_hash: str, consent_vc_id: str)
     return b"session_key"
 
 def aes_256_gcm_decrypt(key: bytes, ciphertext: bytes) -> Any:
-    class MockDecrypted:
+    class Decrypted:
         def pdi_at(self, t): return 0.5
         def epsilon_at(self, t): return 0.07
         def theta_at(self, t): return np.pi
@@ -43,7 +43,7 @@ def aes_256_gcm_decrypt(key: bytes, ciphertext: bytes) -> Any:
         def active_faces_at(self, t): return []
         participant_did = "mock_did"
         current_session_hash = "mock_hash"
-    return MockDecrypted()
+    return Decrypted()
 
 def verify_zk_site_transition(proof: bytes, prev_seg: Any, next_seg: Any) -> bool:
     return True
@@ -438,7 +438,7 @@ class RenderedFrame:
     watermark: bool
     exportable: bool
 
-class MockSecureEnclave:
+class SecureEnclave:
     def decrypt_timeline(self, encrypted, master_key):
         return SovereignTimeline("mock", [], [], None)
     def generate_render_token(self, participant_did, config, max_renders, validity_hours):

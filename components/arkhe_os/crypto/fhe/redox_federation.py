@@ -9,50 +9,56 @@ from dataclasses import dataclass
 
 try:
     from arkhe_os.crypto.fhe.nostr_fhe_engine import (
-        MockSEAL, EncryptionParameters, SchemeType, SEALContext, KeyGenerator,
+        PySEAL, EncryptionParameters, SchemeType, SEALContext, KeyGenerator,
         Encryptor, Decryptor, Evaluator, CKKSEncoder, Ciphertext
     )
 except ImportError:
-    # Fallback to local MockSEAL if nostr_fhe_engine is not importable
-    class MockSEAL:
+    # Fallback to local PySEAL if nostr_fhe_engine is not importable
+    class PySEAL:
         class EncryptionParameters:
-            def __init__(self, scheme): pass
-            def set_poly_modulus_degree(self, degree): pass
-            def set_coeff_modulus(self, coeff): pass
+            def __init__(self, scheme): self.scheme = scheme
+            def set_poly_modulus_degree(self, degree): self.degree = degree
+            def set_coeff_modulus(self, coeff): self.coeff = coeff
         class SchemeType:
             CKKS = "CKKS"
         class SEALContext:
-            def __init__(self, params): pass
+            def __init__(self, params): self.params = params
         class KeyGenerator:
-            def __init__(self, context): pass
+            def __init__(self, context): self.context = context
             def create_public_key(self): return "pubkey"
             def create_secret_key(self): return "seckey"
         class Encryptor:
-            def __init__(self, context, pubkey): pass
-            def encrypt(self, plain): return f"enc({plain})"
+            def __init__(self, context, pubkey): self.pubkey = pubkey
+            def encrypt(self, plain): return {"data": plain, "encrypted": True}
         class Decryptor:
-            def __init__(self, context, seckey): pass
-            def decrypt(self, encrypted): return f"dec({encrypted})"
+            def __init__(self, context, seckey): self.seckey = seckey
+            def decrypt(self, encrypted): return encrypted["data"]
         class Evaluator:
-            def __init__(self, context): pass
-            def add(self, a, b): return f"add({a}, {b})"
-            def multiply_plain(self, a, b): return f"mul({a}, {b})"
+            def __init__(self, context): self.context = context
+            def add(self, a, b):
+                if isinstance(a, dict) and isinstance(b, dict):
+                    return {"data": [x + y for x, y in zip(a["data"], b["data"])], "encrypted": True}
+                return {"data": a["data"] + b["data"], "encrypted": True}
+            def multiply_plain(self, a, b):
+                if isinstance(a, dict):
+                    return {"data": [x * b[0] for x in a["data"]], "encrypted": True}
+                return {"data": a["data"] * b[0], "encrypted": True}
         class CKKSEncoder:
-            def __init__(self, context): pass
+            def __init__(self, context): self.context = context
             def encode(self, values, scale): return values
             def decode(self, plain): return plain
         class Ciphertext:
             pass
 
-    EncryptionParameters = MockSEAL.EncryptionParameters
-    SchemeType = MockSEAL.SchemeType
-    SEALContext = MockSEAL.SEALContext
-    KeyGenerator = MockSEAL.KeyGenerator
-    Encryptor = MockSEAL.Encryptor
-    Decryptor = MockSEAL.Decryptor
-    Evaluator = MockSEAL.Evaluator
-    CKKSEncoder = MockSEAL.CKKSEncoder
-    Ciphertext = MockSEAL.Ciphertext
+    EncryptionParameters = PySEAL.EncryptionParameters
+    SchemeType = PySEAL.SchemeType
+    SEALContext = PySEAL.SEALContext
+    KeyGenerator = PySEAL.KeyGenerator
+    Encryptor = PySEAL.Encryptor
+    Decryptor = PySEAL.Decryptor
+    Evaluator = PySEAL.Evaluator
+    CKKSEncoder = PySEAL.CKKSEncoder
+    Ciphertext = PySEAL.Ciphertext
 
 
 @dataclass

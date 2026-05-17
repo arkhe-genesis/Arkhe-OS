@@ -44,7 +44,7 @@ class TestNCCLBindings(unittest.TestCase):
         mock_cdll.return_value = mock_lib
         
         # Mock the result structure
-        class MockResult:
+        class Result:
             phase = 1.57
             omega_prime = 0.95
             sigma = 0.1
@@ -53,7 +53,7 @@ class TestNCCLBindings(unittest.TestCase):
             rho_2_global = 0.8
             is_resonant = True
             
-        mock_lib.compute_global_resonance = MagicMock(return_value=MockResult())
+        mock_lib.compute_global_resonance = MagicMock(return_value=Result())
         
         from nccl_bindings import NCCLResonanceWrapper
         

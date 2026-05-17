@@ -485,12 +485,12 @@ def demo_retrocausal_integration():
     # Mock do ConsistencyOracle (do Substrato 5034)
     def mock_consistency_checker(msg):
         """Mock do ConsistencyOracle para testes."""
-        class MockReport:
+        class Report:
             def __init__(self):
                 self.score = 0.995
                 self.paradox_type = None
                 self.consistent = True
-        return MockReport()
+        return Report()
 
     # Inicializar canal retrocausal
     retro_channel = RetrocausalChannel(
@@ -502,7 +502,7 @@ def demo_retrocausal_integration():
     retro_manager = RetrocausalFdManager(retro_channel)
 
     # Criar Fds simulados (do Substrato 6062)
-    class MockFd:
+    class Fd:
         def __init__(self, fd_id, resource, perms):
             self._fd_id = fd_id
             self.resource = resource
@@ -516,7 +516,7 @@ def demo_retrocausal_integration():
         def read(self) -> bytes:
             return self._data
 
-    fd1 = MockFd("fd-retro-001", "File", "READ|WRITE")
+    fd1 = Fd("fd-retro-001", "File", "READ|WRITE")
 
     # Wrap com suporte retrocausal
     print("\n🔗 Integrando Fd com canal retrocausal...")

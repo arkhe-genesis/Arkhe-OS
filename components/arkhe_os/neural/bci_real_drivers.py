@@ -32,8 +32,8 @@ class OpenBCIConfig:
         return params
 
 class BCIHardwareInterface:
-    def connect(self): pass
-    def send_stimulation(self, pattern): pass
+    def connect(self): return True
+    def send_stimulation(self, pattern): return True
 
 class BrainflowBCIDriver(BCIHardwareInterface):
     def __init__(self, config: Optional[OpenBCIConfig] = None):

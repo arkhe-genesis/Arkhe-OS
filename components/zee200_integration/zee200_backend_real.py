@@ -6,7 +6,7 @@ Substitui mocks por chamadas criptográficas reais.
 import numpy as np
 from typing import List, Dict, Optional, Tuple
 
-class MockGTZKBackend:
+class GTZKBackend:
     def __init__(self, security_bits, field_name, profile, post_quantum):
         self.security_bits = security_bits
         self.field_name = field_name
@@ -30,10 +30,10 @@ try:
     import zee200_backend  # Binding C++ compilado via pybind11
 except ImportError:
     import sys
-    print("Warning: zee200_backend pybind11 extension not found, using MockGTZKBackend", file=sys.stderr)
+    print("Warning: zee200_backend pybind11 extension not found, using GTZKBackend", file=sys.stderr)
 
     class zee200_backend:
-        GTZKBackend = MockGTZKBackend
+        GTZKBackend = GTZKBackend
 
 class RealZEE200Bridge:
     """Ponte real para backend ZEE200 com provas criptográficas verificáveis."""

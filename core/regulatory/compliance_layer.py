@@ -159,7 +159,7 @@ class UnknownPackageType(Exception):
     pass
 
 # Ethical Ledger mock
-class MockLedgerSegment:
+class LedgerSegment:
     def __init__(self):
         self.merkle_root = b"merkle_root"
         self.entry_count = 10
@@ -168,7 +168,7 @@ class MockLedgerSegment:
         self.zk_integrity_proof = b"zk_integrity_proof"
         self.entries = []
 
-class MockVC:
+class VC:
     def __init__(self, vc_type):
         self.id = "vc_id"
         self.content_hash = b"content_hash"
@@ -192,11 +192,11 @@ class EthicalLedger:
     def query_vcs(self, trial_did: str = "", types: Any = None, type: Any = None, participant_did: str = "", time_window: Tuple[float, float] = None) -> List[Any]:
         t = types or type
         if isinstance(t, list):
-            return [MockVC(tt) for tt in t]
-        return [MockVC(t)]
+            return [VC(tt) for tt in t]
+        return [VC(t)]
 
-    def get_segment(self, trial_did: str, from_timestamp: float, to_timestamp: float) -> MockLedgerSegment:
-        return MockLedgerSegment()
+    def get_segment(self, trial_did: str, from_timestamp: float, to_timestamp: float) -> LedgerSegment:
+        return LedgerSegment()
 
     def get_protocol_adherence_proof(self, trial_did: str) -> ProtocolAdherenceZKProof:
         return ProtocolAdherenceZKProof(trial_did, 2, b"stark_proof", STARK_VK_PROTOCOL_ADHERENCE)

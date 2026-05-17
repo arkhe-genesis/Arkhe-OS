@@ -3,38 +3,47 @@ from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass
 import numpy as np
 
-# Mocking seal for environments where Microsoft SEAL is not installed
-class MockSEAL:
+# ing seal for environments where Microsoft SEAL is not installed
+class PySEAL:
     class EncryptionParameters:
-        def __init__(self, scheme): pass
-        def set_poly_modulus_degree(self, degree): pass
-        def set_coeff_modulus(self, coeff): pass
+        def __init__(self, scheme): self.scheme = scheme
+        def set_poly_modulus_degree(self, degree): self.degree = degree
+        def set_coeff_modulus(self, coeff): self.coeff = coeff
     class SchemeType:
         CKKS = "CKKS"
         BFV = "BFV"
     class SEALContext:
-        def __init__(self, params): pass
+        def __init__(self, params): self.params = params
     class KeyGenerator:
-        def __init__(self, context): pass
+        def __init__(self, context): self.context = context
         def create_public_key(self): return "pubkey"
         def create_secret_key(self): return "seckey"
     class Encryptor:
-        def __init__(self, context, pubkey): pass
-        def encrypt(self, plain): return f"enc({plain})"
+        def __init__(self, context, pubkey): self.pubkey = pubkey
+        def encrypt(self, plain): return {"data": plain, "encrypted": True}
     class Decryptor:
-        def __init__(self, context, seckey): pass
-        def decrypt(self, encrypted): return f"dec({encrypted})"
+        def __init__(self, context, seckey): self.seckey = seckey
+        def decrypt(self, encrypted): return encrypted["data"]
     class Evaluator:
-        def __init__(self, context): pass
-        def add(self, a, b): return f"add({a}, {b})"
-        def sub(self, a, b): return f"sub({a}, {b})"
-        def multiply_plain(self, a, b): return f"mul({a}, {b})"
+        def __init__(self, context): self.context = context
+        def add(self, a, b):
+            if isinstance(a, dict) and isinstance(b, dict):
+                return {"data": [x + y for x, y in zip(a["data"], b["data"])], "encrypted": True}
+            return {"data": a["data"] + b["data"], "encrypted": True}
+        def sub(self, a, b):
+            if isinstance(a, dict) and isinstance(b, dict):
+                return {"data": [x - y for x, y in zip(a["data"], b["data"])], "encrypted": True}
+            return {"data": a["data"] - b["data"], "encrypted": True}
+        def multiply_plain(self, a, b):
+            if isinstance(a, dict):
+                return {"data": [x * b[0] for x in a["data"]], "encrypted": True}
+            return {"data": a["data"] * b[0], "encrypted": True}
     class CKKSEncoder:
-        def __init__(self, context): pass
+        def __init__(self, context): self.context = context
         def encode(self, values, scale): return values
         def decode(self, plain): return plain
     class BFVEncoder:
-        def __init__(self, context): pass
+        def __init__(self, context): self.context = context
         def encode(self, values): return values
         def decode(self, plain): return plain
     class Ciphertext:
@@ -49,17 +58,17 @@ try:
         Ciphertext, Plaintext
     )
 except ImportError:
-    EncryptionParameters = MockSEAL.EncryptionParameters
-    SchemeType = MockSEAL.SchemeType
-    SEALContext = MockSEAL.SEALContext
-    KeyGenerator = MockSEAL.KeyGenerator
-    Encryptor = MockSEAL.Encryptor
-    Decryptor = MockSEAL.Decryptor
-    Evaluator = MockSEAL.Evaluator
-    CKKSEncoder = MockSEAL.CKKSEncoder
-    BFVEncoder = MockSEAL.BFVEncoder
-    Ciphertext = MockSEAL.Ciphertext
-    Plaintext = MockSEAL.Plaintext
+    EncryptionParameters = PySEAL.EncryptionParameters
+    SchemeType = PySEAL.SchemeType
+    SEALContext = PySEAL.SEALContext
+    KeyGenerator = PySEAL.KeyGenerator
+    Encryptor = PySEAL.Encryptor
+    Decryptor = PySEAL.Decryptor
+    Evaluator = PySEAL.Evaluator
+    CKKSEncoder = PySEAL.CKKSEncoder
+    BFVEncoder = PySEAL.BFVEncoder
+    Ciphertext = PySEAL.Ciphertext
+    Plaintext = PySEAL.Plaintext
 
 
 @dataclass

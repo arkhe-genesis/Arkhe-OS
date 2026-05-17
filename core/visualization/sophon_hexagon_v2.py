@@ -6,16 +6,16 @@ class SophonHexagonConfig:
     def __init__(self):
         self.coherence_threshold = 0.75
 
-class MockDevice:
-    class MockQueue:
+class Device:
+    class Queue:
         def write_buffer(self, buffer, offset, data):
             pass
     def __init__(self):
-        self.queue = self.MockQueue()
+        self.queue = self.Queue()
 
-class MockRenderer:
+class Renderer:
     def __init__(self):
-        self.device = MockDevice()
+        self.device = Device()
 
 class SophonHexagonEngine:
     def __init__(self, config: Optional[SophonHexagonConfig] = None,
@@ -30,7 +30,7 @@ class SophonHexagonEngine:
         self.uniform_data = [0.0] * 64
         self.uniform_buffer = None
         self.uniform_buffer_dirty = False
-        self.renderer = MockRenderer()
+        self.renderer = Renderer()
 
         if bidirectional_ui:
             from core.visualization.bidirectional_ui import BidirectionalUI

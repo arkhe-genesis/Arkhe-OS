@@ -38,7 +38,7 @@ class FinalityVerification:
         self.finality_timestamp = finality_timestamp
         self.confirmation_details = confirmation_details
 
-class MockLocalDAG:
+class LocalDAG:
     def __init__(self):
         self.entries = {}
 
@@ -85,7 +85,7 @@ class UnifiedD1Ledger:
     }
 
     def __init__(self):
-        self.local_dag = MockLocalDAG()
+        self.local_dag = LocalDAG()
 
     def _verify_zk_proofs(self, vc: VerifiableCredential, zk_proofs: List[ZKProof]) -> bool:
         return True

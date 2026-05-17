@@ -206,15 +206,15 @@ class PatientKeyManager:
 
 
 class ZKProofGeneratorMock:
-    class MockProof:
+    class Proof:
         def hash(self):
             return "mock_zk_proof"
     def generate_consent_proof(self, *args, **kwargs):
-        return self.MockProof()
+        return self.Proof()
     def verify_access_proof(self, *args, **kwargs):
         return True
     def generate_access_request_proof(self, *args, **kwargs):
-        return self.MockProof()
+        return self.Proof()
 
 class ConsentManager:
     """Gerenciador de consentimentos com ZK-proofs e audit trail."""
@@ -312,7 +312,7 @@ class ConsentManager:
         # Verificar que a revogação é assinada pelo paciente
         revocation_hash = hashlib.sha256(f"{consent_id}:{reason}:{datetime.now()}".encode()).hexdigest()
         signature = patient_key_manager.sign_consent(  # Reusar método de assinatura
-            type('MockConsent', (), {'to_hash': lambda self: revocation_hash})()
+            type('Consent', (), {'to_hash': lambda self: revocation_hash})()
         )
 
         # Atualizar status e registrar

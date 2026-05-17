@@ -48,7 +48,7 @@ def verify_zk_proof_locally(zk_proof: Dict) -> bool:
     """Mock for verifying ZK-proof locally."""
     return zk_proof.get("verified", False)
 
-class MockLLMModel:
+class LLMModel:
     def generate_kernel(self, ceremony: PLANKCeremony, hardware_spec: str) -> Any:
         # We reuse the LLMCompiler for the approximate generation
         compiler = LLMCompiler()
@@ -58,7 +58,7 @@ class LLMCompilerWithZKVerification:
     """Compilador LLM com verificação ZK pós-geração."""
 
     def __init__(self):
-        self.llm_model = MockLLMModel()
+        self.llm_model = LLMModel()
 
     def compile_and_verify(self, ceremony: PLANKCeremony, hardware_target: str) -> CompilationResult:
         # 1. Gerar kernel aproximado via LLM

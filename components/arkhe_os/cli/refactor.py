@@ -4,10 +4,10 @@ import argparse
 import json
 from pathlib import Path
 from arkhe_os.refactoring.auto_refactor_engine import CoherenceAwareRefactorEngine
-# Mocking LFIRMapper here as it might not be fully implemented in this repo
-class MockLFIRMapper:
+# ing LFIRMapper here as it might not be fully implemented in this repo
+class LFIRMapper:
     def parse_file(self, filepath):
-        class MockNode:
+        class Node:
             def __init__(self, name="mock_func", coherence=1.0, complexity=5, num_params=2, docstring=True, line_start=1, line_end=10):
                 self.name = name
                 self.coherence = coherence
@@ -23,12 +23,12 @@ class MockLFIRMapper:
             def apply_refactoring(self, cand):
                 pass
 
-        class MockLFIR:
-            nodes = [MockNode()]
+        class LFIR:
+            nodes = [Node()]
             def get_node(self, node_id):
                 return self.nodes[0]
 
-        return MockLFIR()
+        return LFIR()
 
 def main():
     parser = argparse.ArgumentParser(description="ARKHE Auto-Refactor Engine")
@@ -51,7 +51,7 @@ def main():
         from arkhe_os.parser.lfir_mapper import LFIRMapper
         lfir_mapper = LFIRMapper()
     except ImportError:
-        lfir_mapper = MockLFIRMapper()
+        lfir_mapper = LFIRMapper()
 
     engine = CoherenceAwareRefactorEngine(lfir_mapper, test_results)
 
