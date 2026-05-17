@@ -85,8 +85,7 @@ jobs:
               "framework": "${{ matrix.framework }}",
               "coverage_percent": ${{ steps.check.outputs.coverage }},
               "critical_gaps": ${{ steps.check.outputs.critical_gaps }},
-              "auto_remediation": "${{ github.event.inputs.auto_remediate }}",
-              "timestamp": $(date -u +%s)
+              "auto_remediation": "${{ github.event.inputs.auto_remediate }}"
             }
           temporal_endpoint: ${{ secrets.TEMPORAL_CHAIN_PROD_ENDPOINT }}
           client_cert: ${{ secrets.TEMPORAL_CLIENT_CERT }}
