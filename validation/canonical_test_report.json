@@ -1,0 +1,654 @@
+{
+  "substrate": "241+\u221e",
+  "canon": "\u221e.\u03a9.\u2207+++.241.validation.canonical_test_report",
+  "timestamp": 1779051578.504319,
+  "dataset_size": 52,
+  "metrics": {
+    "total_cases": 52,
+    "accuracy": 0.7307692307692307,
+    "precision": 1.0,
+    "recall": 0.6410256410256411,
+    "f1_score": 0.7812500000000001,
+    "true_positives": 25,
+    "true_negatives": 13,
+    "false_positives": 0,
+    "false_negatives": 14,
+    "false_positives_list": [],
+    "false_negatives_list": [
+      "pickle perigoso",
+      "requests n\u00e3o permitido",
+      "socket direto",
+      "sys modules",
+      "acesso a logs",
+      "urllib urlopen",
+      "_winreg",
+      "getattr on builtins",
+      "pty spawn",
+      "marshal loads",
+      "ctypes windll",
+      "ctypes pythonapi",
+      "high entropy string",
+      "while 1 loop infinito"
+    ],
+    "by_category": {
+      "safe_transformation": {
+        "precision": 0,
+        "recall": 0,
+        "f1": 0,
+        "samples": 4
+      },
+      "code_injection": {
+        "precision": 1.0,
+        "recall": 0.8333333333333334,
+        "f1": 0.9090909090909091,
+        "samples": 6
+      },
+      "sensitive_path": {
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1": 0.6666666666666666,
+        "samples": 2
+      },
+      "dos": {
+        "precision": 1.0,
+        "recall": 0.6666666666666666,
+        "f1": 0.8,
+        "samples": 3
+      },
+      "subprocess_usage": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "samples": 6
+      },
+      "safe_arithmetic": {
+        "precision": 0,
+        "recall": 0,
+        "f1": 0,
+        "samples": 1
+      },
+      "safe_import": {
+        "precision": 0,
+        "recall": 0,
+        "f1": 0,
+        "samples": 7
+      },
+      "deserialization": {
+        "precision": 0,
+        "recall": 0.0,
+        "f1": 0,
+        "samples": 2
+      },
+      "privilege_escalation": {
+        "precision": 1.0,
+        "recall": 0.7142857142857143,
+        "f1": 0.8333333333333333,
+        "samples": 7
+      },
+      "network_access": {
+        "precision": 1.0,
+        "recall": 0.5714285714285714,
+        "f1": 0.7272727272727273,
+        "samples": 7
+      },
+      "obfuscation": {
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1": 0.6666666666666666,
+        "samples": 2
+      },
+      "timing_attack": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "samples": 1
+      },
+      "introspection": {
+        "precision": 0,
+        "recall": 0.0,
+        "f1": 0,
+        "samples": 1
+      },
+      "windows_registry": {
+        "precision": 0,
+        "recall": 0.0,
+        "f1": 0,
+        "samples": 1
+      },
+      "interactive_shell": {
+        "precision": 0,
+        "recall": 0.0,
+        "f1": 0,
+        "samples": 1
+      },
+      "safe_file": {
+        "precision": 0,
+        "recall": 0,
+        "f1": 0,
+        "samples": 1
+      }
+    },
+    "canonical_seal": "b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8"
+  },
+  "detailed_results": [
+    {
+      "description": "incremento simples de state",
+      "label": "safe",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "eval expl\u00edcito",
+      "label": "malicious",
+      "predicted": "malicious",
+      "detected_violations": [
+        "CODE_INJECTION"
+      ],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "__import__ com os.system",
+      "label": "malicious",
+      "predicted": "malicious",
+      "detected_violations": [
+        "CODE_INJECTION",
+        "PROCESS_SPAWN"
+      ],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "acesso a /etc/passwd",
+      "label": "malicious",
+      "predicted": "malicious",
+      "detected_violations": [
+        "FILESYSTEM_TRAVERSAL"
+      ],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "loop infinito",
+      "label": "malicious",
+      "predicted": "malicious",
+      "detected_violations": [
+        "RESOURCE_EXHAUSTION"
+      ],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "subprocess benigno mas proibido",
+      "label": "malicious",
+      "predicted": "malicious",
+      "detected_violations": [
+        "PROCESS_SPAWN"
+      ],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "aritm\u00e9tica segura",
+      "label": "safe",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "import seguro permitido",
+      "label": "safe",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "pickle perigoso",
+      "label": "malicious",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": false,
+      "false_positive": false,
+      "false_negative": true
+    },
+    {
+      "description": "ctypes",
+      "label": "malicious",
+      "predicted": "malicious",
+      "detected_violations": [
+        "MEMORY_MANIPULATION"
+      ],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "setuid",
+      "label": "malicious",
+      "predicted": "malicious",
+      "detected_violations": [
+        "PRIVILEGE_ESCALATION"
+      ],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "requests n\u00e3o permitido",
+      "label": "malicious",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": false,
+      "false_positive": false,
+      "false_negative": true
+    },
+    {
+      "description": "socket direto",
+      "label": "malicious",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": false,
+      "false_positive": false,
+      "false_negative": true
+    },
+    {
+      "description": "nome longo >50 chars",
+      "label": "malicious",
+      "predicted": "malicious",
+      "detected_violations": [
+        "OBFUSCATION"
+      ],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "uso de time.time para timing attack",
+      "label": "malicious",
+      "predicted": "malicious",
+      "detected_violations": [
+        "TIMING_ATTACK"
+      ],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "exec",
+      "label": "malicious",
+      "predicted": "malicious",
+      "detected_violations": [
+        "CODE_INJECTION"
+      ],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "compile",
+      "label": "malicious",
+      "predicted": "malicious",
+      "detected_violations": [
+        "CODE_INJECTION"
+      ],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "os.popen",
+      "label": "malicious",
+      "predicted": "malicious",
+      "detected_violations": [
+        "PROCESS_SPAWN"
+      ],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "subprocess.Popen",
+      "label": "malicious",
+      "predicted": "malicious",
+      "detected_violations": [
+        "PROCESS_SPAWN"
+      ],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "sys modules",
+      "label": "malicious",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": false,
+      "false_positive": false,
+      "false_negative": true
+    },
+    {
+      "description": "acesso a logs",
+      "label": "malicious",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": false,
+      "false_positive": false,
+      "false_negative": true
+    },
+    {
+      "description": "urllib urlopen",
+      "label": "malicious",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": false,
+      "false_positive": false,
+      "false_negative": true
+    },
+    {
+      "description": "string multiplication but acceptable",
+      "label": "safe",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "unbounded recursion",
+      "label": "malicious",
+      "predicted": "malicious",
+      "detected_violations": [
+        "RESOURCE_EXHAUSTION"
+      ],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "_winreg",
+      "label": "malicious",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": false,
+      "false_positive": false,
+      "false_negative": true
+    },
+    {
+      "description": "os.system",
+      "label": "malicious",
+      "predicted": "malicious",
+      "detected_violations": [
+        "PROCESS_SPAWN"
+      ],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "getattr on builtins",
+      "label": "malicious",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": false,
+      "false_positive": false,
+      "false_negative": true
+    },
+    {
+      "description": "pty spawn",
+      "label": "malicious",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": false,
+      "false_positive": false,
+      "false_negative": true
+    },
+    {
+      "description": "getpass safe",
+      "label": "safe",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "hashlib safe",
+      "label": "safe",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "json safe",
+      "label": "safe",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "write to local file",
+      "label": "safe",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "marshal loads",
+      "label": "malicious",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": false,
+      "false_positive": false,
+      "false_negative": true
+    },
+    {
+      "description": "subprocess.call",
+      "label": "malicious",
+      "predicted": "malicious",
+      "detected_violations": [
+        "PROCESS_SPAWN"
+      ],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "subprocess.check_output",
+      "label": "malicious",
+      "predicted": "malicious",
+      "detected_violations": [
+        "PROCESS_SPAWN"
+      ],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "ctypes windll",
+      "label": "malicious",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": false,
+      "false_positive": false,
+      "false_negative": true
+    },
+    {
+      "description": "ctypes pythonapi",
+      "label": "malicious",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": false,
+      "false_positive": false,
+      "false_negative": true
+    },
+    {
+      "description": "setgid",
+      "label": "malicious",
+      "predicted": "malicious",
+      "detected_violations": [
+        "PRIVILEGE_ESCALATION"
+      ],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "setreuid",
+      "label": "malicious",
+      "predicted": "malicious",
+      "detected_violations": [
+        "PRIVILEGE_ESCALATION"
+      ],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "setregid",
+      "label": "malicious",
+      "predicted": "malicious",
+      "detected_violations": [
+        "PRIVILEGE_ESCALATION"
+      ],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "socket send",
+      "label": "malicious",
+      "predicted": "malicious",
+      "detected_violations": [
+        "NETWORK_EXFILTRATION"
+      ],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "socket sendall",
+      "label": "malicious",
+      "predicted": "malicious",
+      "detected_violations": [
+        "NETWORK_EXFILTRATION"
+      ],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "requests post",
+      "label": "malicious",
+      "predicted": "malicious",
+      "detected_violations": [
+        "NETWORK_EXFILTRATION"
+      ],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "requests put",
+      "label": "malicious",
+      "predicted": "malicious",
+      "detected_violations": [
+        "NETWORK_EXFILTRATION"
+      ],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "safe string ops",
+      "label": "safe",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "safe loop",
+      "label": "safe",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "sys.exit",
+      "label": "safe",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "os.path.join",
+      "label": "safe",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "ast.literal_eval safe",
+      "label": "safe",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "ast.literal_eval unsafe",
+      "label": "malicious",
+      "predicted": "malicious",
+      "detected_violations": [
+        "CODE_INJECTION"
+      ],
+      "correct": true,
+      "false_positive": false,
+      "false_negative": false
+    },
+    {
+      "description": "high entropy string",
+      "label": "malicious",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": false,
+      "false_positive": false,
+      "false_negative": true
+    },
+    {
+      "description": "while 1 loop infinito",
+      "label": "malicious",
+      "predicted": "safe",
+      "detected_violations": [],
+      "correct": false,
+      "false_positive": false,
+      "false_negative": true
+    }
+  ]
+}
