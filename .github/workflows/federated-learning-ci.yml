@@ -88,11 +88,11 @@ jobs:
           done
 
       - name: 🔐 Add Laplace Noise (DP)
-        uses: ./.github/scripts/dp-noise-injector.py
-        with:
-          epsilon: ${{ env.DP_EPSILON }}
-          model_paths: "./models/local-*.pt"
-          output_dir: "./models/noised-round-${{ matrix.round }}/"
+        run: python ./.github/scripts/dp-noise-injector.py
+        env:
+          EPSILON: ${{ env.DP_EPSILON }}
+          MODEL_PATHS: "./models/local-*.pt"
+          OUTPUT_DIR: "./models/noised-round-${{ matrix.round }}/"
 
       - name: ⚖️ Aggregate via FedAvg
         run: |

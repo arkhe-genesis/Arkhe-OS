@@ -122,16 +122,18 @@ jobs:
             --junitxml=results-${{ matrix.substrate }}.xml \
             --phi-c-threshold=${{ matrix.phi_c_threshold }} \
             --temporal-anchor=${{ secrets.TEMPORAL_CHAIN_ENDPOINT }} \
-            -v || true
+            -v
 
-          # Extrair Φ_C calculado
+          # Extrair Φ_C e coverage calculados
           PHI_C=$(jq -r '.phi_c' coverage-${{ matrix.substrate }}.json 2>/dev/null || echo "0.0")
+          COVERAGE=$(jq '.totals.percent_covered' coverage-${{ matrix.substrate }}.json 2>/dev/null || echo "null")
           echo "phi_c=${PHI_C}" >> $GITHUB_OUTPUT
+          echo "coverage=${COVERAGE}" >> $GITHUB_OUTPUT
 
           # Fail se abaixo do threshold
           if (( $(echo "$PHI_C < ${{ matrix.phi_c_threshold }}" | bc -l) )); then
             echo "❌ Φ_C ${PHI_C} abaixo do threshold ${{ matrix.phi_c_threshold }}"
-            # exit 1 disabled to prevent failure
+            exit 1
           fi
           echo "✅ Φ_C ${PHI_C} ≥ threshold ${{ matrix.phi_c_threshold }}"
 
@@ -147,7 +149,7 @@ jobs:
               "threshold": "${{ matrix.phi_c_threshold }}",
               "commit": "${{ github.sha }}",
               "tests_passed": ${{ job.status == 'success' }},
-              "coverage": $(jq '.totals.percent_covered' coverage-${{ matrix.substrate }}.json 2>/dev/null || echo "null")
+              "coverage": ${{ steps.tests.outputs.coverage || 'null' }}
             }
           temporal_endpoint: ${{ secrets.TEMPORAL_CHAIN_ENDPOINT }}
           auth_token: ${{ secrets.TEMPORAL_AUTH_TOKEN }}
