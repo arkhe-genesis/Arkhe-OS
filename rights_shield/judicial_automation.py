@@ -91,7 +91,7 @@ class JudicialAutomationModule:
 
         # Gerar ID único da petição
         filing_id = hashlib.sha3_256(
-            f"{violation['url']}:{violation['hash']}:{time.time()}".encode()
+            f"{violation['url']}:{violation.get('hash', '')}:{time.time()}".encode()
         ).hexdigest()[:12]
 
         # Preparar evidências da TemporalChain
