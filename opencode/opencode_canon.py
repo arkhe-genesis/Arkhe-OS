@@ -130,7 +130,7 @@ class OpenCodeCanonicalTool:
         3. Capturar saída e métricas
         4. Ancorar resultado na TemporalChain
         """
-        prompt = parameters.get("prompt")
+        prompt = parameters.get("prompt", "")
         working_dir = parameters.get("working_dir", ".")
 
         start_time = time.time()
