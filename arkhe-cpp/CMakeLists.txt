@@ -8,3 +8,6 @@ include_directories(include)
 
 add_library(toom_forge src/toom_forge.cpp src/toom_interpolation.cpp)
 add_executable(test_toom src/toom_forge.cpp src/toom_interpolation.cpp)
+
+add_executable(test_arkhe ../tests/test_arkhe_unbuildable_secure.cpp src/arkhe_unbuildable_secure.cpp)
+target_link_libraries(test_arkhe dl)
