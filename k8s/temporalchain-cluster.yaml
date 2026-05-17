@@ -1,0 +1,125 @@
+# k8s/temporalchain-cluster.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: arkhe-temporal
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: temporalchain-nodes
+  namespace: arkhe-temporal
+spec:
+  serviceName: temporalchain
+  replicas: 7  # 2f+1 para tolerar f=3 nós Byzantine
+  selector:
+    matchLabels:
+      app: temporalchain
+  template:
+    metadata:
+      labels:
+        app: temporalchain
+        role: validator
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values: ["temporalchain"]
+            topologyKey: "kubernetes.io/hostname"
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: topology.kubernetes.io/region
+                operator: In
+                values: ["us-east-1", "eu-west-1", "sa-east-1"]
+      containers:
+      - name: temporalchain
+        image: arkhe/temporalchain:v225-cluster
+        ports:
+        - containerPort: 50051  # gRPC
+        - containerPort: 8080   # HTTP API
+        env:
+        - name: NODE_ROLE
+          value: "validator"
+        - name: CONSENSUS_ALGO
+          value: "hotstuff_bft"
+        - name: CLUSTER_ID
+          valueFrom:
+            configMapKeyRef:
+              name: temporalchain-config
+              key: cluster_id
+        - name: TLS_CERT
+          valueFrom:
+            secretKeyRef:
+              name: temporalchain-tls
+              key: cert.pem
+        - name: TLS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: temporalchain-tls
+              key: key.pem
+        volumeMounts:
+        - name: data
+          mountPath: /var/arkhe/temporal
+        - name: secrets
+          mountPath: /etc/arkhe/secrets
+          readOnly: true
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: "arkhe-ssd-premium"
+      resources:
+        requests:
+          storage: 100Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: temporalchain-primary
+  namespace: arkhe-temporal
+spec:
+  selector:
+    app: temporalchain
+    role: primary
+  ports:
+  - port: 443
+    targetPort: 50051
+    name: grpc
+  - port: 80
+    targetPort: 8080
+    name: http
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: temporalchain-global
+  namespace: arkhe-temporal
+spec:
+  selector:
+    app: temporalchain
+  ports:
+  - port: 443
+    targetPort: 50051
+    name: grpc
+  type: LoadBalancer
+  externalTrafficPolicy: Local  # Preserva IP do cliente para geo-routing
