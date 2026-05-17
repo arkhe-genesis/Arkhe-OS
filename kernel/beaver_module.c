@@ -41,6 +41,7 @@ static TAILQ_HEAD(, beaver_execution) beaver_executions =
 
 static struct mtx beaver_lock;
 static uint64_t beaver_counter = 0;
+static uint64_t beaver_list_length = 0;
 static SYSCTL_NODE(_kern, OID_AUTO, beaver, CTLFLAG_RD, 0, "ARKHE BEAVer");
 
 /* Sysctl para leitura de estatísticas */
@@ -111,13 +112,15 @@ beaver_register_execution(const uint8_t *prompt, size_t prompt_len,
                 sizeof(exec->jail_name));
 
     TAILQ_INSERT_TAIL(&beaver_executions, exec, entries);
+    beaver_list_length++;
 
     /* Limitar tamanho da lista */
-    while (beaver_counter > BEAVER_MAX_EXECUTIONS) {
+    while (beaver_list_length > BEAVER_MAX_EXECUTIONS) {
         struct beaver_execution *oldest = TAILQ_FIRST(&beaver_executions);
         if (oldest) {
             TAILQ_REMOVE(&beaver_executions, oldest, entries);
             free(oldest, M_BEAVer);
+            beaver_list_length--;
         }
     }
     mtx_unlock(&beaver_lock);
