@@ -87,6 +87,9 @@ class ServerDrivenUIRenderer:
 
     async def execute_action(self, action_tool_id: str, params: Dict) -> Dict:
         """Executa uma ação de UI via Tool Calling System."""
+        if not action_tool_id.startswith("sdui_"):
+            raise ValueError("Unauthorized tool execution")
+
         from tool_calling.canonical_tool_system import ToolCallRequest
         req = ToolCallRequest(
             call_id=hashlib.sha3_256(f"ui_action:{action_tool_id}:{time.time()}".encode()).hexdigest()[:12],
@@ -202,6 +205,7 @@ class DIContainer:
                         bound.arguments[name] = self.resolve(param.annotation)
                     except KeyError:
                         pass  # não registrada, ignora
+            bound.apply_defaults()
             return await func(*bound.args, **bound.kwargs)
         return wrapper
 
