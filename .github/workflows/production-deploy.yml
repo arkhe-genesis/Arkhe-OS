@@ -1,0 +1,15 @@
+# .github/workflows/production-deploy.yml
+name: 🚀 Production Deploy
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy
+        run: echo "Deploying to production"

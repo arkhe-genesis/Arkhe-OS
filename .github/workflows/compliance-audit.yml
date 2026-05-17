@@ -1,0 +1,101 @@
+name: ⚖️ Regulatory Compliance Audit (Expanded)
+
+on:
+  push:
+    paths:
+      - 'compliance/**'
+      - 'arkhe/**'
+      - '.github/workflows/compliance-audit.yml'
+  schedule:
+    - cron: '0 6 1 * *'  # Mensal
+  workflow_dispatch:
+    inputs:
+      frameworks:
+        description: 'Frameworks a auditar (comma-separated)'
+        required: false
+        default: 'ANPD,CCPA,PIPL,LGPD,GDPR'
+        type: string
+      auto_remediate:
+        description: 'Tentar correção automática de controles'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  expanded-compliance-audit:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        framework: ${{ fromJson(format('["{0}"]', join(github.event.inputs.frameworks != '' && github.event.inputs.frameworks || 'ANPD,CCPA,PIPL', ','), '","'))) }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: 📦 Install Compliance Tools
+        run: |
+          pip install semgrep bandit safety
+
+      - name: 🔍 Run Auto-Mapping Compliance Check
+        id: check
+        run: |
+          python compliance/frameworks/registry.py \
+            --codebase ./arkhe \
+            --frameworks ${{ matrix.framework }} \
+            --output ./audit/${{ matrix.framework }}/mapping-report.json \
+            --temporal-anchor \
+            --phi-c-metrics
+
+          # Extrair métricas
+          COVERAGE=$(jq -r '.coverage' ./audit/${{ matrix.framework }}/mapping-report.json || echo 0)
+          CRITICAL_GAPS=$(jq '[.implemented_controls[] | select(.severity=="critical")] | length' ./audit/${{ matrix.framework }}/mapping-report.json || echo 0)
+
+          echo "coverage=${COVERAGE}" >> $GITHUB_OUTPUT
+          echo "critical_gaps=${CRITICAL_GAPS}" >> $GITHUB_OUTPUT
+
+          # Fail se cobertura < 80% para frameworks críticos
+          if (( $(echo "$COVERAGE < 80" | bc -l) )) && [[ "${{ matrix.framework }}" =~ ^(ANPD|PIPL|GDPR)$ ]]; then
+            echo "❌ Cobertura insuficiente para ${{ matrix.framework }}: ${COVERAGE}%"
+            exit 1
+          fi
+
+      - name: 🤖 Auto-Remediation (Optional)
+        if: github.event.inputs.auto_remediate == 'true'
+        run: |
+          python compliance/remediation/auto_fix.py \
+            --report ./audit/${{ matrix.framework }}/mapping-report.json \
+            --framework ${{ matrix.framework }} \
+            --dry-run false \
+            --create-pr true \
+            --pr-branch "fix/${{ matrix.framework }}-compliance-$(date +%Y%m%d)"
+
+      - name: ⛓️ Anchor to TemporalChain
+        uses: ./.github/actions/anchor-temporal
+        with:
+          event_type: "compliance_audit_expanded"
+          payload: |
+            {
+              "framework": "${{ matrix.framework }}",
+              "coverage_percent": ${{ steps.check.outputs.coverage }},
+              "critical_gaps": ${{ steps.check.outputs.critical_gaps }},
+              "auto_remediation": "${{ github.event.inputs.auto_remediate }}",
+              "timestamp": $(date -u +%s)
+            }
+          temporal_endpoint: ${{ secrets.TEMPORAL_CHAIN_PROD_ENDPOINT }}
+          client_cert: ${{ secrets.TEMPORAL_CLIENT_CERT }}
+          client_key: ${{ secrets.TEMPORAL_CLIENT_KEY }}
+          ca_cert: ${{ secrets.TEMPORAL_CA_CERT }}
+
+      - name: 📤 Upload Audit Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: compliance-${{ matrix.framework }}-${{ github.sha }}
+          path: ./audit/${{ matrix.framework }}/
+          retention-days: 2555

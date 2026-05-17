@@ -8,7 +8,9 @@ exposta via Tool Calling universal com todos os padrões de resiliência.
 import asyncio, hashlib, json, time, uuid
 from typing import Dict, Any, Optional
 from dataclasses import dataclass, field
-from enum import Enum, auto
+from enum import Enum
+from enum import auto
+from substrato_214_installer_cathedral import InnoSetupTool
 from collections import deque
 
 import logging
@@ -113,6 +115,7 @@ class CathedralDomain(Enum):
     FEDERATION = "federation"
     OBSERVABILITY = "observability"
     BUSINESS = "business"
+    DEPLOYMENT = "deployment"
 
 class UniversalCathedralOrchestrator:
     """
@@ -131,7 +134,10 @@ class UniversalCathedralOrchestrator:
         self.observability = ArkheObservability()
 
         # Inicializar δ‑mem e tool system
-        self.delta_mem = ArkheDeltaMemoryWrapper(backbone_model=None)  # backbone real injetado depois
+        self.delta_mem = ArkheDeltaMemoryWrapper(backbone_model=None)
+        self.deployment = InnoSetupTool(temporal=temporal_chain, delta_mem=self.delta_mem)
+
+        # Inicializar δ‑mem e tool system
         self.tool_system = CanonicalToolCallingSystem(
             temporal=temporal_chain, phi_bus=phi_bus, delta_mem=self.delta_mem,
             observability=self.observability
@@ -146,7 +152,27 @@ class UniversalCathedralOrchestrator:
 
     def _register_all_tools(self):
         """Registra cada operação de domínio como uma ferramenta idempotente e segura."""
-
+        # Deployment (Substrato 214)
+        self.tool_system.register_tool(ToolDefinition(
+            tool_id="deployment_compile_installer",
+            name="Compile Installer",
+            description="Compila instalador Windows via Inno Setup",
+            handler=self.deployment.compile_installer,
+            agent_owner="deployment_sentinel",
+            confidence_required=0.85,
+            token_cost_estimate=50,
+            idempotent=True,
+            max_concurrent=1
+        ))
+        self.tool_system.register_tool(ToolDefinition(
+            tool_id="deployment_generate_iss_template",
+            name="Generate ISS Template",
+            description="Gera script .iss para compilação",
+            handler=self.deployment.generate_iss_template,
+            agent_owner="deployment_sentinel",
+            confidence_required=0.7,
+            token_cost_estimate=5
+        ))
         # Segurança
         self.tool_system.register_tool(ToolDefinition(
             tool_id="security_validate_fl_epsilon",

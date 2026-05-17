@@ -1,0 +1,125 @@
+name: 🧠 δ‑mem Training (Optimized for CI)
+
+on:
+  schedule:
+    - cron: '0 5 * * 0'  # Semanal
+  workflow_dispatch:
+    inputs:
+      quantization:
+        description: 'Nível de quantização'
+        required: false
+        default: 'int8'
+        type: choice
+        options: ['none', 'fp16', 'int8']
+      use_incremental:
+        description: 'Usar incremental learning'
+        required: false
+        default: true
+        type: boolean
+      cache_features:
+        description: 'Habilitar cache de features'
+        required: false
+        default: true
+        type: boolean
+
+env:
+  DELTA_MEM_R: 8
+  DELTA_MEM_STATES: 4
+  QUANTIZATION: ${{ github.event.inputs.quantization || 'int8' }}
+  USE_INCREMENTAL: ${{ github.event.inputs.use_incremental || 'true' }}
+  CACHE_FEATURES: ${{ github.event.inputs.cache_features || 'true' }}
+
+jobs:
+  optimized-delta-mem-training:
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        runner: ['ubuntu-latest', 'gpu-runner']  # gpu-runner tem NVIDIA T4
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 🐍 Setup Python + Dependencies
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: 📦 Install Optimized Stack
+        run: |
+          pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+          pip install onnxruntime onnx numpy pandas
+          pip install -r ml/delta-mem/requirements.txt || true
+
+      - name: 📥 Load/Generate Training Data
+        id: data
+        run: |
+          python ml/delta-mem/scripts/extract_ci_history.py \
+            --repo ${{ github.repository }} \
+            --since "30 days ago" \
+            --output ./data/ci-history.parquet || true
+
+          echo "data_path=./data/ci-history.parquet" >> $GITHUB_OUTPUT
+
+      - name: 🔄 Train with Optimizations
+        id: train
+        run: |
+          python ml/delta_mem/optimizations.py \
+            --model-path ./models/delta-mem-base.pt \
+            --output-path ./models/delta-mem-ci.pt \
+            --training-data ${{ steps.data.outputs.data_path }} \
+            --quantization ${{ env.QUANTIZATION }} \
+            --incremental ${{ env.USE_INCREMENTAL }} \
+            --cache-features ${{ env.CACHE_FEATURES }} \
+            --temporal-anchor \
+            --report-metrics || true
+
+          # Extrair métricas de performance
+          LATENCY=$(jq -r '.avg_inference_latency_ms' ./models/metrics.json || echo 0)
+          CACHE_HIT=$(jq -r '.cache_hit_rate' ./models/metrics.json || echo 0)
+          SIZE_REDUCTION=$(jq -r '.model_size_reduction_percent' ./models/metrics.json || echo 0)
+
+          echo "latency_ms=${LATENCY}" >> $GITHUB_OUTPUT
+          echo "cache_hit_rate=${CACHE_HIT}" >> $GITHUB_OUTPUT
+          echo "size_reduction=${SIZE_REDUCTION}" >> $GITHUB_OUTPUT
+
+      - name: ⚡ Benchmark Inference Speed
+        run: |
+          python ml/delta_mem/benchmark.py \
+            --model ./models/delta-mem-ci.pt \
+            --samples 100 \
+            --output ./benchmarks/inference-benchmark.json || true
+
+          # Exibir resultados no summary
+          echo "## ⚡ Inference Benchmark" >> $GITHUB_STEP_SUMMARY
+          jq -r '"• Latency P50: \(.p50_ms)ms\n• Latency P99: \(.p99_ms)ms\n• Throughput: \(.throughput_rps) req/s"' \
+            ./benchmarks/inference-benchmark.json >> $GITHUB_STEP_SUMMARY || true
+
+      - name: ⛓️ Anchor to TemporalChain
+        uses: ./.github/actions/anchor-temporal
+        with:
+          event_type: "delta_mem_training_optimized"
+          payload: |
+            {
+              "quantization": "${{ env.QUANTIZATION }}",
+              "incremental_learning": ${{ env.USE_INCREMENTAL == 'true' }},
+              "cache_enabled": ${{ env.CACHE_FEATURES == 'true' }},
+              "inference_latency_ms": ${{ steps.train.outputs.latency_ms }},
+              "cache_hit_rate": ${{ steps.train.outputs.cache_hit_rate }},
+              "model_size_reduction": ${{ steps.train.outputs.size_reduction }},
+              "runner": "${{ matrix.runner }}",
+              "timestamp": $(date -u +%s)
+            }
+          temporal_endpoint: ${{ secrets.TEMPORAL_CHAIN_PROD_ENDPOINT }}
+          client_cert: ${{ secrets.TEMPORAL_CLIENT_CERT }}
+          client_key: ${{ secrets.TEMPORAL_CLIENT_KEY }}
+          ca_cert: ${{ secrets.TEMPORAL_CA_CERT }}
+
+      - name: 📤 Upload Optimized Model
+        uses: actions/upload-artifact@v4
+        with:
+          name: delta-mem-optimized-${{ matrix.runner }}-${{ github.sha }}
+          path: |
+            ./models/delta-mem-ci.pt
+            ./models/metrics.json
+            ./benchmarks/
+          retention-days: 90

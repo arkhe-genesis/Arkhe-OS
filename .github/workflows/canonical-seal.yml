@@ -1,0 +1,166 @@
+# .github/workflows/canonical-seal.yml
+name: 🔐 Canonical Seal & PQC Signing
+
+on:
+  push:
+    branches: [ main, canon/* ]
+    tags: [ 'v*', 'canon-*' ]
+  pull_request:
+    branches: [ main ]
+    types: [ labeled ]
+  workflow_dispatch:
+    inputs:
+      force_seal:
+        description: 'Forçar geração de novo selo canônico'
+        required: false
+        default: 'false'
+        type: boolean
+
+env:
+  ARKHE_CANON: "∞.Ω.∇+++"
+  PHI_C_THRESHOLD: 0.9999
+  DP_EPSILON_MIN: 2.0
+  PQC_ALGORITHM: "CRYSTALS-Dilithium3"
+
+jobs:
+  generate-canonical-seal:
+    name: 🏛️ Generate Canonical Seal
+    runs-on: ubuntu-22.04-arm  # ARM para compatibilidade com HSM simulação
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+
+    steps:
+      - name: 📦 Checkout ARKHE OS
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: 🔐 Setup PQC Environment
+        uses: ./.github/actions/sign-pqc
+        with:
+          algorithm: ${{ env.PQC_ALGORITHM }}
+          hsm_mock: ${{ github.ref != 'refs/heads/main' }}
+          key_label: "arkhe-ci-sealer"
+
+      - name: 🧮 Compute Φ_C Coherence
+        uses: ./.github/actions/compute-phi-c
+        with:
+          threshold: ${{ env.PHI_C_THRESHOLD }}
+          metrics_path: "./metrics/phi-c-report.json"
+          fail_below_threshold: true
+
+      - name: 📜 Generate Canonical Seal
+        id: seal
+        run: |
+          # Combinar: commit hash + Φ_C + timestamp + PQC pubkey hash
+          COMMIT_HASH=$(git rev-parse HEAD)
+          PHI_C=$(jq -r '.global_phi_c' ./metrics/phi-c-report.json)
+          TIMESTAMP=$(date -u +%s)
+          PUBKEY_HASH=$(openssl pkey -pubin -in $PQC_PUBKEY -outform DER | sha3-256sum | cut -d' ' -f1)
+
+          # Selo canônico: SHA3-256(commit || phi_c || timestamp || pubkey)
+          CANONICAL_SEAL=$(echo -n "${COMMIT_HASH}${PHI_C}${TIMESTAMP}${PUBKEY_HASH}" | sha3-256sum | cut -d' ' -f1)
+
+          echo "canonical_seal=${CANONICAL_SEAL}" >> $GITHUB_OUTPUT
+          echo "🔐 Selo Canônico: ${CANONICAL_SEAL}"
+
+          # Assinar o selo com PQC
+          echo "${CANONICAL_SEAL}" | ./scripts/sign-pqc --key $PQC_PRIVKEY --out seal.sig
+
+          # Registrar artefatos
+          mkdir -p artifacts/seal
+          echo "$CANONICAL_SEAL" > artifacts/seal/seal.txt
+          cp seal.sig artifacts/seal/seal.sig
+          cp ./metrics/phi-c-report.json artifacts/seal/
+
+      - name: ⛓️ Anchor to TemporalChain
+        uses: ./.github/actions/anchor-temporal
+        with:
+          event_type: "canonical_seal_generated"
+          payload: |
+            {
+              "commit": "${{ github.sha }}",
+              "seal": "${{ steps.seal.outputs.canonical_seal }}",
+              "phi_c": "${{ env.PHI_C_THRESHOLD }}",
+              "pqc_algorithm": "${{ env.PQC_ALGORITHM }}",
+              "timestamp": $(date -u +%s)
+            }
+          temporal_endpoint: ${{ secrets.TEMPORAL_CHAIN_ENDPOINT }}
+          auth_token: ${{ secrets.TEMPORAL_AUTH_TOKEN }}
+
+      - name: 📤 Upload Seal Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-seal-${{ github.sha }}
+          path: artifacts/seal/
+          retention-days: 90
+
+      - name: 🏷️ Create Attestation (SLSA L3)
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: 'artifacts/seal/seal.txt'
+          push-to-registry: false
+
+  validate-substrate-integrity:
+    name: 🔍 Validate Substrate Integrity
+    needs: generate-canonical-seal
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        substrate: [198, 199.3, 206, 212, 214, 215, 217, 218]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 🧪 Run Substrate Validation
+        uses: ./.github/actions/validate-substrate
+        with:
+          substrate_id: ${{ matrix.substrate }}
+          test_suite: "canonical"
+          phi_c_threshold: ${{ env.PHI_C_THRESHOLD }}
+
+      - name: 📊 Report Φ_C Metrics
+        run: |
+          echo "## Φ_C Report for Substrate ${{ matrix.substrate }}" >> $GITHUB_STEP_SUMMARY
+          jq '.phi_c' ./substrates/${{ matrix.substrate }}/metrics.json >> $GITHUB_STEP_SUMMARY
+
+  publish-canonical-release:
+    name: 🚀 Publish Canonical Release
+    needs: [generate-canonical-seal, validate-substrate-integrity]
+    if: github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'canon:')
+    runs-on: ubuntu-22.04
+    environment: production-canonical
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 📦 Download Seal Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: canonical-seal-${{ github.sha }}
+          path: ./release/seal/
+
+      - name: 🏷️ Create Canonical Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "canon-$(date +%Y%m%d)-${{ github.sha }}" \
+            --title "ARKHE Canon $(date +%Y-%m-%d)" \
+            --notes "Selo: $(cat ./release/seal/seal.txt)" \
+            --verify-tag \
+            ./release/seal/*
+
+      - name: 🔔 Notify Federation
+        run: |
+          # Notificar nós federados sobre novo selo canônico
+          curl -X POST ${{ secrets.FEDERATION_WEBHOOK }} \
+            -H "Content-Type: application/json" \
+            -d '{
+              "event": "canonical_release",
+              "seal": "'"$(cat ./release/seal/seal.txt)"'",
+              "commit": "'"${{ github.sha }}"'",
+              "phi_c": "'"${{ env.PHI_C_THRESHOLD }}"'"
+            }'

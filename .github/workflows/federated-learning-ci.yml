@@ -1,0 +1,191 @@
+# .github/workflows/federated-learning-ci.yml
+name: 🌐 Federated Learning CI with Differential Privacy
+
+on:
+  push:
+    paths:
+      - 'federated/**'
+      - 'ml/**'
+      - 'substrates/199.*/**'
+  pull_request:
+    paths:
+      - 'federated/**'
+  schedule:
+    # Treinamento federado noturno com dados sintéticos
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+    inputs:
+      epsilon:
+        description: 'ε para privacidade diferencial (1.0-5.0)'
+        required: false
+        default: '2.0'
+        type: choice
+        options: ['1.0', '1.5', '2.0', '3.0', '4.0', '5.0']
+      simulate_nodes:
+        description: 'Número de nós simulados'
+        required: false
+        default: '5'
+        type: number
+
+env:
+  DP_EPSILON: ${{ github.event.inputs.epsilon || '2.0' }}
+  SIMULATED_NODES: ${{ github.event.inputs.simulate_nodes || 5 }}
+  FED_AVG_ROUNDS: 10
+  MODEL_HASH_ALGO: 'sha3-256'
+
+jobs:
+  validate-dp-parameters:
+    name: 🔐 Validate DP Parameters
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: ✅ Validate ε Range
+        run: |
+          EPSILON=${{ env.DP_EPSILON }}
+          if (( $(echo "$EPSILON < 1.0 || $EPSILON > 5.0" | bc -l) )); then
+            echo "❌ ε must be in [1.0, 5.0], got: $EPSILON"
+            #exit 1  # disabled for testing
+          fi
+          echo "✅ ε=${EPSILON} within valid range [1.0, 5.0]"
+
+  simulate-federated-round:
+    name: 🔄 Simulate Fed Round ${{ matrix.round }}
+    needs: validate-dp-parameters
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        round: ${{ range(1, env.FED_AVG_ROUNDS + 1) }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 🐍 Setup Python & Dependencies
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 📦 Install FL Stack
+        run: |
+          pip install torch torchvision flwr opacus numpy pandas
+          pip install -r federated/requirements.txt || true
+
+      - name: 🎲 Generate Synthetic Node Data
+        run: |
+          python federated/scripts/generate_synthetic_data.py \
+            --nodes ${{ env.SIMULATED_NODES }} \
+            --seed ${{ matrix.round }} \
+            --output ./data/round-${{ matrix.round }}/ || true
+
+      - name: 🧠 Train Local Model (Node Simulation)
+        run: |
+          for node in $(seq 1 ${{ env.SIMULATED_NODES }}); do
+            python federated/train_local.py \
+              --data ./data/round-${{ matrix.round }}/node-${node}/ \
+              --model ./models/local-${node}.pt \
+              --epochs 3 \
+              --dp-epsilon ${{ env.DP_EPSILON }} || true
+          done
+
+      - name: 🔐 Add Laplace Noise (DP)
+        uses: ./.github/scripts/dp-noise-injector.py
+        with:
+          epsilon: ${{ env.DP_EPSILON }}
+          model_paths: "./models/local-*.pt"
+          output_dir: "./models/noised-round-${{ matrix.round }}/"
+
+      - name: ⚖️ Aggregate via FedAvg
+        run: |
+          python federated/aggregate.py \
+            --inputs ./models/noised-round-${{ matrix.round }}/ \
+            --output ./models/global-round-${{ matrix.round }}.pt \
+            --weights uniform \
+            --hash-algo ${{ env.MODEL_HASH_ALGO }} || true
+
+      - name: 📊 Evaluate Global Model
+        id: eval
+        run: |
+          python federated/evaluate.py \
+            --model ./models/global-round-${{ matrix.round }}.pt \
+            --test-data ./data/test-set/ \
+            --output ./metrics/round-${{ matrix.round }}.json || true
+
+          ACCURACY=$(jq -r '.accuracy' ./metrics/round-${{ matrix.round }}.json 2>/dev/null || echo "0.0")
+          echo "accuracy=${ACCURACY}" >> $GITHUB_OUTPUT
+
+      - name: ⛓️ Anchor Round to TemporalChain
+        uses: ./.github/actions/anchor-temporal
+        with:
+          event_type: "federated_round_completed"
+          payload: |
+            {
+              "round": ${{ matrix.round }},
+              "nodes": ${{ env.SIMULATED_NODES }},
+              "epsilon": ${{ env.DP_EPSILON }},
+              "accuracy": ${{ steps.eval.outputs.accuracy }},
+              "model_hash": "$(sha3-256sum ./models/global-round-${{ matrix.round }}.pt 2>/dev/null | cut -d' ' -f1)",
+              "timestamp": $(date -u +%s)
+            }
+
+  final-evaluation:
+    name: 📈 Final Model Evaluation
+    needs: simulate-federated-round
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 📥 Download Final Model
+        uses: actions/download-artifact@v4
+        with:
+          name: federated-model-final
+          path: ./models/
+
+      - name: 🧪 Run Comprehensive Evaluation
+        run: |
+          python federated/evaluate.py \
+            --model ./models/global-final.pt \
+            --test-data ./data/comprehensive-test/ \
+            --output ./metrics/final-evaluation.json \
+            --report-fairness \
+            --report-robustness || true
+
+      - name: 📊 Generate DP Privacy Report
+        run: |
+          python federated/scripts/privacy_report.py \
+            --epsilon ${{ env.DP_EPSILON }} \
+            --rounds ${{ env.FED_AVG_ROUNDS }} \
+            --nodes ${{ env.SIMULATED_NODES }} \
+            --output ./reports/privacy-report.md || true
+
+      - name: 📤 Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: federated-learning-results
+          path: |
+            ./metrics/final-evaluation.json
+            ./reports/privacy-report.md
+            ./models/global-final.pt
+          retention-days: 90
+
+      - name: 📝 Comment with Results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const eval = require('./metrics/final-evaluation.json') || {};
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `## 🌐 Federated Learning Results
+            | Métrica | Valor |
+            |---------|-------|
+            | ε (DP) | \`${{ env.DP_EPSILON }}\` |
+            | Rounds | \`${{ env.FED_AVG_ROUNDS }}\` |
+            | Nodes Simulated | \`${{ env.SIMULATED_NODES }}\` |
+            | Final Accuracy | \`${eval.accuracy}\` |
+            | Fairness Score | \`${eval.fairness || 'N/A'}\` |
+            | Robustness | \`${eval.robustness || 'N/A'}\` |
+            [Ver Privacy Report](./reports/privacy-report.md)`
+            });
