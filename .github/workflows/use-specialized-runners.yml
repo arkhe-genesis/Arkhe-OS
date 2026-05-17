@@ -1,0 +1,18 @@
+# Trecho de workflow que usa runners especializados
+name: Use Specialized Runners Example
+on: [workflow_dispatch]
+jobs:
+  hsm-intensive-tests:
+    runs-on: [self-hosted, arkhe-arm64-hsm]
+    steps:
+      - run: echo "Executando em ARM64 com HSM simulado"
+
+  gpu-training:
+    runs-on: [self-hosted, arkhe-gpu-a100]
+    steps:
+      - run: nvidia-smi && echo "Treinamento δ‑mem acelerado"
+
+  air-gapped-security-audit:
+    runs-on: [self-hosted, arkhe-air-gapped]
+    steps:
+      - run: echo "Ambiente isolado para auditoria de segurança crítica"

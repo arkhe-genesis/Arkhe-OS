@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARKHE Ω‑TEMP — Unified Metrics Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --arkhe-gold: #D4AF37;
+            --arkhe-dark: #0a0a0f;
+            --arkhe-gray: #1a1a2e;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --critical: #ef4444;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--arkhe-dark);
+            color: #e5e5e5;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--arkhe-gray);
+            margin-bottom: 2rem;
+        }
+        .header h1 {
+            color: var(--arkhe-gold);
+            margin: 0;
+        }
+        .token {
+            font-family: monospace;
+            background: var(--arkhe-gray);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+        .card {
+            background: var(--arkhe-gray);
+            border-radius: 8px;
+            padding: 1.5rem;
+            border: 1px solid #333;
+        }
+        .card h3 {
+            margin-top: 0;
+            color: var(--arkhe-gold);
+            border-bottom: 1px solid #444;
+            padding-bottom: 0.5rem;
+        }
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 1rem 0;
+        }
+        .metric-value.critical { color: var(--critical); }
+        .metric-value.warning { color: var(--warning); }
+        .metric-value.success { color: var(--success); }
+        .alert {
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+        }
+        .alert.critical { background: rgba(239, 68, 68, 0.1); border-left: 4px solid var(--critical); }
+        .alert.warning { background: rgba(245, 158, 11, 0.1); border-left: 4px solid var(--warning); }
+        canvas {
+            max-height: 300px;
+        }
+        .refresh {
+            background: var(--arkhe-gold);
+            color: var(--arkhe-dark);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .refresh:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏛️ ARKHE Ω‑TEMP v∞.Ω</h1>
+        <div>
+            <span class="token">orcid:0009-0005-2697-4668</span>
+            <button class="refresh" onclick="refreshDashboard()">↻ Refresh</button>
+        </div>
+    </div>
+
+    <div class="grid">
+        <!-- Φ_C Global -->
+        <div class="card">
+            <h3>📈 Φ_C Global</h3>
+            <div id="phi-c-value" class="metric-value">—</div>
+            <canvas id="phi-c-chart"></canvas>
+        </div>
+
+        <!-- Compliance Status -->
+        <div class="card">
+            <h3>⚖️ Compliance por Framework</h3>
+            <div id="compliance-list"></div>
+        </div>
+
+        <!-- DP ε Usage -->
+        <div class="card">
+            <h3>🔐 DP ε por Workflow</h3>
+            <canvas id="dp-epsilon-chart"></canvas>
+        </div>
+
+        <!-- Recent Alerts -->
+        <div class="card">
+            <h3>🚨 Alertas Recentes</h3>
+            <div id="alerts-list"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api/dashboard';
+        let phiCChart, dpEpsilonChart;
+
+        async function fetchDashboard() {
+            const response = await fetch(`${API_BASE}?range=24&granularity=15`);
+            return await response.json();
+        }
+
+        function renderPhiCChart(data) {
+            const ctx = document.getElementById('phi-c-chart').getContext('2d');
+            const labels = data.map(d => new Date(d.timestamp * 1000).toLocaleTimeString());
+            const values = data.map(d => d.value);
+
+            if (phiCChart) phiCChart.destroy();
+            phiCChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Φ_C',
+                        data: values,
+                        borderColor: '#D4AF37',
+                        backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { min: 0.999, max: 1.0, ticks: { stepSize: 0.0001 } }
+                    }
+                }
+            });
+        }
+
+        function renderCompliance(data) {
+            const container = document.getElementById('compliance-list');
+            container.innerHTML = '';
+
+            Object.entries(data).forEach(([framework, info]) => {
+                const statusClass = info.status === 'compliant' ? 'success' : 'critical';
+                const emoji = info.status === 'compliant' ? '✅' : '❌';
+                const trend = info.trend === 'rising' ? '📈' : info.trend === 'falling' ? '📉' : '➡️';
+
+                container.innerHTML += `
+                    <div style="margin: 0.5rem 0; padding: 0.5rem; background: rgba(255,255,255,0.05); border-radius: 4px;">
+                        <strong>${emoji} ${framework.toUpperCase()}</strong><br>
+                        Cobertura: <span class="metric-value ${statusClass}" style="font-size:1.2rem;margin:0.25rem 0">${info.current_coverage.toFixed(1)}%</span><br>
+                        Tendência: ${trend} ${info.trend}
+                    </div>
+                `;
+            });
+        }
+
+        function renderAlerts(alerts) {
+            const container = document.getElementById('alerts-list');
+            if (alerts.length === 0) {
+                container.innerHTML = '<p style="color:#888">Nenhum alerta ativo ✅</p>';
+                return;
+            }
+
+            container.innerHTML = alerts.map(alert => `
+                <div class="alert ${alert.severity}">
+                    <strong>${alert.severity.toUpperCase()}</strong>: ${alert.message}<br>
+                    <small>${new Date(alert.timestamp * 1000).toLocaleString()}</small>
+                </div>
+            `).join('');
+        }
+
+        async function refreshDashboard() {
+            try {
+                const data = await fetchDashboard();
+
+                // Φ_C Global
+                const phiCValue = document.getElementById('phi-c-value');
+                const currentPhi = data.summary?.global_phi_c?.current;
+                if (currentPhi) {
+                    phiCValue.textContent = currentPhi.toFixed(6);
+                    phiCValue.className = `metric-value ${
+                        currentPhi < 0.9999 ? 'critical' :
+                        currentPhi < 0.99995 ? 'warning' : 'success'
+                    }`;
+                }
+
+                if (data.charts?.phi_c_global) {
+                    renderPhiCChart(data.charts.phi_c_global);
+                }
+
+                // Compliance
+                if (data.summary?.compliance_by_framework) {
+                    renderCompliance(data.summary.compliance_by_framework);
+                }
+
+                // Alerts
+                if (data.alerts) {
+                    renderAlerts(data.alerts);
+                }
+
+            } catch (error) {
+                console.error('Failed to load dashboard:', error);
+            }
+        }
+
+        // Auto-refresh a cada 60 segundos
+        setInterval(refreshDashboard, 60000);
+
+        // Carregar ao iniciar
+        document.addEventListener('DOMContentLoaded', refreshDashboard);
+    </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+# ARM64 HSM Simulation Runner
+FROM arm64v8/ubuntu:22.04
+
+RUN apt-get update && apt-get install -y \
+    python3.11 python3.11-dev python3.11-venv \
+    liboqs-dev libssl-dev softhsm2 \
+    curl git build-essential
+
+# Instalar simulador HSM leve (SoftHSM2) para testes PQC
+RUN softhsm2-util --init-token --slot 0 --label "arkhe-hsm" --pin 1234 --so-pin 5678
+
+# Configurar bibliotecas PQC
+RUN pip3.11 install liboqs-python pykcs11
+
+# Labels para GitHub Actions
+LABEL org.opencontainers.image.source="https://github.com/arkhe-os/arkhe"
+LABEL runner.type="arm64-hsm"
