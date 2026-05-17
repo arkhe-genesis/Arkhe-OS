@@ -71,8 +71,7 @@ class ConstitutionalSelfAmendment:
         proposer_id: str,
         proposal_text: str,
         rationale: str,
-        affected_principles: List[str],
-        quorum_required: float = QUORUM_PERCENTAGE
+        affected_principles: List[str]
     ) -> ConstitutionalAmendment:
         """Propõe nova emenda constitucional."""
         # Validar proponente (deve ser agente autorizado com Φ_C alto)
@@ -100,7 +99,7 @@ class ConstitutionalSelfAmendment:
             status=AmendmentStatus.PROPOSED,
             phi_c_consensus=0.0,
             agent_votes={},
-            quorum_required=quorum_required,
+            quorum_required=ConstitutionalSelfAmendment.QUORUM_PERCENTAGE,
             quorum_reached=False,
             pqc_signature=pqc_signature
         )
