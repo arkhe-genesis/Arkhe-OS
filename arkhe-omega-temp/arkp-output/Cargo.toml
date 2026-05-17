@@ -1,9 +1,0 @@
-[package]
-name = "arkp-output"
-version.workspace = true
-edition.workspace = true
-
-[dependencies]
-colored.workspace = true
-serde.workspace = true
-serde_json.workspace = true

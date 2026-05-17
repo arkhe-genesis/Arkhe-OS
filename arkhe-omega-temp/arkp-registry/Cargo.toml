@@ -1,6 +1,0 @@
-[package]
-name = "arkp-registry"
-version.workspace = true
-edition.workspace = true
-
-[dependencies]

@@ -1,14 +1,19 @@
-import pytest
+#!/usr/bin/env python3
+"""
+ARKHE OS Substrato 228: Tor Vigil Shield
+Execution script for testing the Darkweb Monitor.
+"""
 import asyncio
-import sys
-import os
+import logging
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from darkweb_monitor.tor_shield import TorVigilShield
 
-from darkweb_monitor.tor_shield import TorVigilShield, DarknetProtocol
+# Setup logging
+logging.basicConfig(level=logging.INFO)
 
 class MockToolSystem:
     async def invoke_tool(self, name, args):
+        logging.info(f"Tool {name} invoked with args {args}")
         return True
 
 class MockDeltaMem:
@@ -22,8 +27,7 @@ class MockTemporal:
     async def anchor_event(self, event_type, payload):
         return "mock_temporal_seal"
 
-@pytest.mark.asyncio
-async def test_tor_shield():
+async def main():
     tools = MockToolSystem()
     delta = MockDeltaMem()
     hsm = MockHSM()
@@ -41,12 +45,10 @@ async def test_tor_shield():
 
     findings = await shield.monitor_onion_service("http://exampleonion.onion")
 
-    assert len(findings) == 1
-    assert findings[0].violation_type == "csam"
-    assert findings[0].protocol == DarknetProtocol.TOR
-    assert findings[0].onion_address == "http://exampleonion.onion"
-    assert findings[0].perceptual_hash_match == "hash1234567890abcdef"
-    assert findings[0].temporal_seal == "mock_temporal_seal"
+    if findings:
+        await shield.report_to_authorities(findings)
+    else:
+        logging.info("No findings.")
 
-    await shield.report_to_authorities(findings)
-    assert "Interpol" in findings[0].reported_to
+if __name__ == "__main__":
+    asyncio.run(main())

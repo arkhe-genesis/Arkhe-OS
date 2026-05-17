@@ -1,7 +1,0 @@
-[package]
-name = "arkp-docs"
-version.workspace = true
-edition.workspace = true
-
-[dependencies]
-arkp-core = { path = "../arkp-core" }
