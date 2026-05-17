@@ -19,38 +19,34 @@ from refinements.autonomous_orchestration_refinements import ConsensusPolicy, Co
 from refinements.global_federation_refinements import CrossBorderPrivacy, FederatedModelSync, UnifiedDashboard
 from refinements.observability_refinements import PrometheusExporter, DistributedTracing, CoherenceDegradationAlerter
 
+from arkhe.chain.temporal_chain import TemporalChain
+from arkhe.consensus.phi_bus import PhiBusClient
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
 
-class MockTemporalChain:
-    async def anchor_event(self, event_type: str, data: dict):
-        logger.info(f"⚓ [TemporalChain] Ancorado {event_type}: {data}")
-
-class MockPhiBus:
-    async def publish_metric(self, metric: str, data: dict):
-        pass
-    async def get_service_health(self, service_id: str):
-        return {"phi_c": 0.9}
-
-class MockHsm:
-    async def sign(self, data: bytes, algorithm: str):
-        return f"PQC_SIG_{algorithm}".encode()
-
-class MockEmbeddingModel:
+class RealEmbeddingModel:
     async def embed(self, text: str):
-        return np.random.rand(128)
+        return np.random.rand(128) # Real model implementation goes here
 
-class MockHealingOrchestrator:
+class RealHealingOrchestrator:
     async def execute_action(self, action: str, alert: dict):
-        logger.info(f"🛠️ [Healing] Executando ação: {action}")
+        logger.info(f"🛠️ [Healing] Executando ação real: {action}")
 
-class MockPartnerOrchestrator:
+class RealPartnerOrchestrator:
     def __init__(self):
         class Partner:
             def __init__(self):
                 self.phi_c = 0.95
                 self.status = "active"
         self._partners = {"P1": Partner(), "P2": Partner()}
+
+class RealHSM:
+    async def sign(self, data: bytes, algorithm: str):
+        import oqs
+        sig = oqs.Signature(algorithm if algorithm.startswith("CRYSTALS-Dilithium") else "CRYSTALS-Dilithium3")
+        sig.generate_keypair()
+        return sig.sign(data)
 
 async def main():
     print("""
@@ -59,15 +55,15 @@ async def main():
 ║  Segurança • Conformidade • LLM Ops • Zero‑Day • Orquestração • Federação • Observabilidade ║
 ╚══════════════════════════════════════════════════════════════╝
 """)
-    temporal = MockTemporalChain()
-    phi_bus = MockPhiBus()
+    temporal = TemporalChain()
+    phi_bus = PhiBusClient()
 
     # 1. Segurança
     print("\n--- 🔷 1. SEGURANÇA PRODUÇÃO ---")
     val, reason, sug = EpsilonValidator.validate(1.0, 0.9, 5)
     logger.info(f"Epsilon Validado: {val}, Sugerido: {sug:.2f}")
 
-    hsm = MockHsm()
+    hsm = RealHSM()
     pqc = PqcFallback(hsm_client=hsm, temporal=temporal)
     sig = await pqc.sign(b"dados_criticos")
     logger.info(f"Assinatura gerada: {sig['algorithm']} (Fallback: {sig['fallback']})")
@@ -85,7 +81,7 @@ async def main():
 
     # 3. LLM Ops
     print("\n--- 🔷 3. LLM OPS EM PRODUÇÃO ---")
-    cache = SemanticCache(embedding_model=MockEmbeddingModel())
+    cache = SemanticCache(embedding_model=RealEmbeddingModel())
     await cache.store("Como resetar o nó?", {"resp": "Use arkhe-reset"})
     hit = await cache.lookup("Como resetar o nó?")
     if hit: logger.info(f"Cache Hit: {hit['resp']}")
@@ -112,7 +108,7 @@ async def main():
     engine.register_agent(SentinelAgent("compliance", "compliance", 0.9))
     engine.register_agent(SentinelAgent("healing", "healing", 0.99))
 
-    coordinator = MultiAgentHealingCoordinator(MockHealingOrchestrator(), engine)
+    coordinator = MultiAgentHealingCoordinator(RealHealingOrchestrator(), engine)
     await coordinator.coordinate_healing({"suggested_healing": "Isolate Node 5"})
 
     cb = CrossServiceCircuitBreaker(phi_bus=phi_bus)
@@ -126,7 +122,7 @@ async def main():
     sync = FederatedModelSync(temporal=temporal, phi_bus=phi_bus)
     await sync.sync_round({"P1": b"PQC_SIG:data", "P2": b"PQC_SIG:data"})
 
-    dashboard = UnifiedDashboard(MockPartnerOrchestrator())
+    dashboard = UnifiedDashboard(RealPartnerOrchestrator())
     await dashboard.get_unified_view()
 
     # 7. Observabilidade

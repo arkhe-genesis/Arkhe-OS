@@ -112,12 +112,8 @@ class TemporalChainProductionClient:
 
             return signature.hex()
 
-        except Exception:
-            # Fallback para desenvolvimento: hash SHA3-256
-            logger.warning("⚠️  liboqs não disponível — usando fallback SHA3-256")
-            return hashlib.sha3_256(
-                json.dumps(payload, sort_keys=True).encode()
-            ).hexdigest()
+        except ImportError:
+            raise RuntimeError("liboqs is required for PQC signing but is not installed.")
 
     async def anchor_event(
         self,
@@ -159,16 +155,6 @@ class TemporalChainProductionClient:
         # Assinar com PQC
         pqc_signature = await self._sign_payload_pqc(enriched_payload)
         enriched_payload["_pqc_signature"] = pqc_signature
-
-        # Mock behavior when endpoint is a mock URL
-        if "mock" in self.config.endpoint or "test" in self.config.endpoint:
-            await asyncio.sleep(0.01)
-            return {
-                "status": "anchored",
-                "seal": hashlib.sha3_256(json.dumps(enriched_payload, sort_keys=True).encode()).hexdigest(),
-                "event_id": f"evt_{int(time.time()*1000)}",
-                "latency_ms": 15
-            }
 
         # Enviar com retry exponencial
         last_error = None
@@ -240,9 +226,6 @@ class TemporalChainProductionClient:
 
     async def verify_seal(self, seal: str, event_id: str) -> bool:
         """Verifica selo temporal via endpoint público de verificação."""
-        if "mock" in self.config.endpoint or "test" in self.config.endpoint:
-            return True
-
         try:
             async with self._session.get(
                 f"{self.config.endpoint}/verify/{event_id}",
