@@ -10,13 +10,14 @@ fn test_insert_and_get_token() -> Result<()> {
     });
     let payload_string = serde_json::to_string(&payload).unwrap();
     let header = canonical_hash(payload_string.as_bytes());
+    let ts = now_timestamp();
     let token = CanonicalToken {
         header: header.clone(),
         identity: "test_identity".into(),
         semantics: "test_semantics".into(),
         payload_json: payload_string,
-        seal: canonical_hash(format!("{}:test_identity:{}", header, now_timestamp()).as_bytes()),
-        timestamp: now_timestamp(),
+        seal: canonical_hash(format!("{}:test_identity:{}", header, ts).as_bytes()),
+        timestamp: ts,
     };
     store.insert_token(&token)?;
 

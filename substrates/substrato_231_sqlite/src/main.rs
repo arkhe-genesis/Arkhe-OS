@@ -3,7 +3,7 @@ use substrato_231_sqlite::{ArkheStore, CanonicalToken, VerifiedProposition, Evid
 
 fn main() -> Result<()> {
     println!("🏛️ ARKHE SQLite Canonical Store — Substrato 231");
-    let store = ArkheStore::new("/tmp/agi-brasil.db")?;
+    let store = ArkheStore::new("agi-brasil.db")?;
 
     // 1. Criar e armazenar um Token Arkhe
     let payload = serde_json::json!({
@@ -13,13 +13,14 @@ fn main() -> Result<()> {
     });
     let payload_string = serde_json::to_string(&payload).unwrap();
     let header = canonical_hash(payload_string.as_bytes());
+    let ts = now_timestamp();
     let token = CanonicalToken {
         header: header.clone(),
         identity: "cosmic_ear_001".into(),
         semantics: "signal_collected".into(),
         payload_json: payload_string,
-        seal: canonical_hash(format!("{}:cosmic_ear_001:{}", header, now_timestamp()).as_bytes()),
-        timestamp: now_timestamp(),
+        seal: canonical_hash(format!("{}:cosmic_ear_001:{}", header, ts).as_bytes()),
+        timestamp: ts,
     };
     store.insert_token(&token)?;
     println!("✅ Token armazenado: {}", token.seal);
