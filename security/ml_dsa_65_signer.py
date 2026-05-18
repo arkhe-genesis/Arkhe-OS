@@ -36,7 +36,7 @@ class MLDSA65Signer:
     ):
         self.lib_path = pkcs11_lib or os.getenv("ARKHE_PKCS11_LIB", "/usr/lib/fips204/pkcs11.so")
         self.token_label = token_label or os.getenv("ARKHE_HSM_TOKEN", "ARKHE_HSM")
-        self.user_pin = user_pin or os.getenv("ARKHE_HSM_PIN", "1234")
+        self.user_pin = user_pin or os.getenv("ARKHE_HSM_PIN")
         self.key_label = key_label or os.getenv("ARKHE_HSM_KEY_LABEL", "substrate_signer_ml_dsa_65")
         self.mechanism_name = mechanism
         self.mechanism_config = SUPPORTED_MECHANISMS.get(mechanism)
@@ -143,10 +143,11 @@ class MLDSA65Signer:
             return self._public_key.verify(data, signature, mechanism=mech)
 
         except Exception as e:
-            raise RuntimeError(
-                f"Falha CRÍTICA ao verificar com ML-DSA-65: {e}. "
+            logger.error(
+                f"Falha ao verificar com ML-DSA-65: {e}. "
                 f"Operação REJEITADA."
             )
+            return False
 
     def close(self):
         if self._session:

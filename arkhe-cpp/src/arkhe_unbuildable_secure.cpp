@@ -113,6 +113,12 @@ struct CK_FUNCTION_LIST {
     CK_RV (*C_Sign)(CK_SESSION_HANDLE hSession, CK_BYTE_PTR pData, CK_ULONG ulDataLen, CK_BYTE_PTR pSignature, CK_ULONG_PTR pulSignatureLen);
 };
 
+// ------------------------------------------------------------
+// Forward declaration for sha3_256_hex (defined later in file)
+namespace {
+    std::string sha3_256_hex(const std::string& input);
+}
+// ------------------------------------------------------------
 namespace arkhe::secure {
 namespace {
 
@@ -236,13 +242,12 @@ Pkcs11Session open_session(const HsmConfig& hsm) {
 }
 
 std::vector<unsigned char> prepare_digest_like_buffer(const std::string& payload, const std::string& mechanism) {
-    std::vector<unsigned char> bytes(message_buffer_size(mechanism));
-    std::size_t n = std::min<std::size_t>(bytes.size(), payload.size());
-    for (std::size_t i = 0; i < n; ++i) {
-        bytes[i] = static_cast<unsigned char>(payload[i]);
-    }
-    for (std::size_t i = n; i < bytes.size(); ++i) {
-        bytes[i] = static_cast<unsigned char>((i * 31u) & 0xffu);
+    std::string hex_digest = sha3_256_hex(payload);
+    std::vector<unsigned char> bytes;
+    for (size_t i = 0; i < hex_digest.length(); i += 2) {
+        std::string byteString = hex_digest.substr(i, 2);
+        unsigned char byte = static_cast<unsigned char>(strtol(byteString.c_str(), nullptr, 16));
+        bytes.push_back(byte);
     }
     return bytes;
 }
@@ -470,8 +475,7 @@ AstValidationResult SecureRecursiveSubstrate::validate_transformation_ast(const 
 }
 
 std::string SecureRecursiveSubstrate::sign_transformation(const std::string& code) const {
-    auto payload = code + ":" + hsm_.key_label + ":" + std::to_string(
-        std::chrono::system_clock::now().time_since_epoch().count());
+    auto payload = code + ":" + hsm_.key_label;
 
     if (hsm_available_) {
         try {
@@ -489,12 +493,19 @@ std::string SecureRecursiveSubstrate::sign_transformation(const std::string& cod
 
 bool SecureRecursiveSubstrate::verify_signature(const std::string& code, const std::string& signature) const {
     if (signature.rfind("pkcs11:", 0) == 0) {
-        return signature.size() > 50;
+        // In a real HSM, this should invoke C_Verify.
+        // For now, if HSM is available, we check if the signature matches sign_transformation output.
+        if (hsm_available_) {
+            try {
+                return signature == sign_transformation(code);
+            } catch (...) {
+                return false;
+            }
+        }
+        return false;
     }
     if (signature.rfind("software:", 0) == 0) {
-        // For tests, signature varies by timestamp, just check length
-        return signature.size() > 50;
-
+        return signature == sign_transformation(code);
     }
     return false;
 }
@@ -566,6 +577,10 @@ bool SecureRecursiveSubstrate::verify_integrity() const {
         if (!verify_signature(state_.last_transformation, state_.last_signature)) {
             return false;
         }
+    }
+    // We enforce that a signature MUST exist if generation > 0
+    if (state_.generation > 0 && (state_.last_transformation.empty() || state_.last_signature.empty())) {
+        return false;
     }
     return true;
 }
