@@ -11,3 +11,6 @@ portsort
 lpdensity
 scpi_pkg
 openinterp[full]
+z3-solver
+scikit-learn
+numpy

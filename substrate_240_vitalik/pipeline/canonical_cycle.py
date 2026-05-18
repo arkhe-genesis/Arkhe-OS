@@ -4,14 +4,15 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from substrate_240_vitalik.lean_bridge.lean_to_beaver import LeanToBeaver
+from substrate_240_vitalik.assembly_verifier.smt_verifier import SMTAssemblyVerifier
 import logging
 
 logging.basicConfig(level=logging.INFO)
 
-def verify_equiv(assembly_code, proof):
-    # Em uma implementação real, isso chamaria o assembly_verifier (smt_reducer)
-    print(f"Verificando equivalência do assembly com a prova Lean...")
-    return True
+def verify_equiv(assembly_code, lang, spec_code, spec_lang):
+    verifier = SMTAssemblyVerifier()
+    return verifier.verify_equivalence(assembly_code, lang, spec_code, spec_lang)
+
 
 def seal(intent, assembly_code, proof):
     class DummyToken:
@@ -38,8 +39,9 @@ converter = LeanToBeaver()
 proof = converter.convert(lean_spec)
 
 if proof:
-    is_valid = verify_equiv(assembly_code, proof)
+    wasm_code = 'i32.const 100\ni32.const 0\ni32.add'
+    is_valid = verify_equiv(assembly_code, 'EVM', wasm_code, 'WASM')
     if is_valid:
         token = seal(intent, assembly_code, proof)
-        print(f"Token Arkhe: {token.header}")
-        print(f"Selo de Verificação: {token.seal}")
+        print(f'Token Arkhe: {token.header}')
+        print(f'Selo de Verificação: {token.seal}')
