@@ -1,0 +1,109 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "ARKHE Φ_C Composite Monitor — Substrato 202",
+    "tags": ["arkhe", "phi_c", "substrate_202"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "title": "Φ_C Composto Global",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "arkhe_phi_c_composite",
+            "legendFormat": "Global Φ_C"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "thresholds"},
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "yellow", "value": 0.95},
+                {"color": "green", "value": 0.99}
+              ]
+            },
+            "min": 0,
+            "max": 1,
+            "unit": "percentunit"
+          }
+        },
+        "gridPos": {"h": 8, "w": 6, "x": 0, "y": 0}
+      },
+      {
+        "title": "Φ_C por Camada",
+        "type": "timeseries",
+        "targets": [
+          {"expr": "arkhe_phi_c_layer{layer=\"mainframe_acid\"}", "legendFormat": "Mainframe ACID"},
+          {"expr": "arkhe_phi_c_layer{layer=\"beaver_logic\"}", "legendFormat": "BEAVER Logic"},
+          {"expr": "arkhe_phi_c_layer{layer=\"token_arkhe\"}", "legendFormat": "Token Arkhe"},
+          {"expr": "arkhe_phi_c_layer{layer=\"temporal_chain\"}", "legendFormat": "TemporalChain"}
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "palette-classic"},
+            "min": 0,
+            "max": 1,
+            "unit": "percentunit"
+          }
+        },
+        "gridPos": {"h": 8, "w": 18, "x": 6, "y": 0}
+      },
+      {
+        "title": "Score de Divergência",
+        "type": "gauge",
+        "targets": [
+          {"expr": "arkhe_phi_c_divergence_score", "legendFormat": "Divergence"}
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "thresholds"},
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": 0},
+                {"color": "yellow", "value": 0.05},
+                {"color": "red", "value": 0.1}
+              ]
+            },
+            "min": 0,
+            "max": 1,
+            "unit": "percentunit"
+          }
+        },
+        "gridPos": {"h": 8, "w": 6, "x": 0, "y": 8}
+      },
+      {
+        "title": "Alertas por Nível",
+        "type": "bargauge",
+        "targets": [
+          {"expr": "sum by (alert_level) (arkhe_phi_c_alerts)", "legendFormat": "{{alert_level}}"}
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "palette-classic"}
+          }
+        },
+        "gridPos": {"h": 8, "w": 18, "x": 6, "y": 8}
+      },
+      {
+        "title": "Latência por Camada (ms)",
+        "type": "heatmap",
+        "targets": [
+          {"expr": "arkhe_layer_latency_ms", "legendFormat": "{{layer}}"}
+        ],
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 16}
+      },
+      {
+        "title": "Eventos TemporalChain",
+        "type": "logs",
+        "targets": [
+          {"expr": "arkhe_temporal_chain_events", "legendFormat": "{{event_type}}"}
+        ],
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 24}
+      }
+    ],
+    "time": {"from": "now-1h", "to": "now"},
+    "refresh": "30s"
+  }
+}

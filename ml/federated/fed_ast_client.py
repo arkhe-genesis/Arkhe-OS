@@ -74,6 +74,8 @@ class FederatedASTClient:
         rule_updates = {}
         sample_counts = {}
 
+        initial_conf = {rid: r.confidence_score for rid, r in self.rule_learner._rules.items()}
+
         for sample in self.dataset:
             code = sample["code"]
             label = sample["label"]
@@ -91,13 +93,18 @@ class FederatedASTClient:
                 self.rule_learner.record_learning_feedback(
                     code, validation_result=True, human_feedback=True, rule_id=rule_id
                 )
+            elif label == "safe" and not is_safe:
+                # penalize false positive
+                self.rule_learner.record_learning_feedback(
+                    code, validation_result=False, human_feedback=False, rule_id=rule_id
+                )
             # etc.
 
         # Extrair deltas de confiança das regras atualizadas (simplificado)
         for rid, rule in self.rule_learner._rules.items():
             # Supomos que o confidence antes da época estava armazenado
             # Here we just mock it for simulation purposes
-            old_conf = 0.5 # before update
+            old_conf = initial_conf.get(rid, 0.5) # before update
             new_conf = rule.confidence_score
             delta = new_conf - old_conf
             if abs(delta) > 1e-6:

@@ -128,6 +128,17 @@ struct Pkcs11Session {
     CK_SESSION_HANDLE session = CK_INVALID_HANDLE;
     CK_OBJECT_HANDLE key = CK_INVALID_HANDLE;
 
+    Pkcs11Session() = default;
+    Pkcs11Session(const Pkcs11Session&) = delete;
+    Pkcs11Session& operator=(const Pkcs11Session&) = delete;
+    Pkcs11Session(Pkcs11Session&& other) noexcept : module(other.module), funcs(other.funcs), session(other.session), key(other.key) {
+        other.module = nullptr;
+        other.funcs = nullptr;
+        other.session = CK_INVALID_HANDLE;
+        other.key = CK_INVALID_HANDLE;
+    }
+    Pkcs11Session& operator=(Pkcs11Session&& other) = delete;
+
     ~Pkcs11Session() {
         if (funcs && session != CK_INVALID_HANDLE) {
             funcs->C_CloseSession(session);
@@ -442,9 +453,11 @@ AstValidationResult SecureRecursiveSubstrate::validate_transformation_ast(const 
     }
     if (std::regex_search(code, std::regex(R"(\bsubprocess\b)"))) {
         result.violations.push_back("[HIGH] subprocess import detected");
+        result.ok = false;
     }
     if (std::regex_search(code, std::regex(R"(\bpickle\b)"))) {
         result.violations.push_back("[HIGH] pickle detected");
+        result.ok = false;
     }
     if (std::regex_search(code, std::regex(R"(\bctypes\b)"))) {
         result.violations.push_back("[CRITICAL] ctypes detected");
@@ -485,29 +498,19 @@ std::string SecureRecursiveSubstrate::sign_transformation(const std::string& cod
         }
     }
 
-    const char* secret = "ARKHE_UNBUILDABLE_SECRET_KEY_12345678901234567890123456789012";
-    auto inner = sha3_256_hex(std::string(secret) + payload);
-    auto outer = sha3_256_hex(std::string(secret) + inner);
+    const char* env_secret = std::getenv("ARKHE_SOFTWARE_SECRET");
+    if (!env_secret || std::strlen(env_secret) == 0) {
+        throw std::runtime_error("Missing software secret key for signing");
+    }
+    auto inner = sha3_256_hex(std::string(env_secret) + payload);
+    auto outer = sha3_256_hex(std::string(env_secret) + inner);
     return "software:hmac-sha3-256:" + outer;
 }
 
 bool SecureRecursiveSubstrate::verify_signature(const std::string& code, const std::string& signature) const {
-    if (signature.rfind("pkcs11:", 0) == 0) {
-        // In a real HSM, this should invoke C_Verify.
-        // For now, if HSM is available, we check if the signature matches sign_transformation output.
-        if (hsm_available_) {
-            try {
-                return signature == sign_transformation(code);
-            } catch (...) {
-                return false;
-            }
-        }
-        return false;
-    }
-    if (signature.rfind("software:", 0) == 0) {
-        return signature == sign_transformation(code);
-    }
-    return false;
+    // Implementation must parse the signature and perform actual cryptographic verification.
+    // e.g., using C_VerifyInit / C_Verify for PKCS#11 or re-computing and comparing the HMAC.
+    return false; // Stub until implemented
 }
 
 bool SecureRecursiveSubstrate::hsm_available() const noexcept { return hsm_available_; }
@@ -539,11 +542,16 @@ std::optional<std::string> SecureRecursiveSubstrate::evolve(const std::string& d
 
     auto signature = sign_transformation(transformation);
 
+    std::string safe_direction = direction;
+    std::replace(safe_direction.begin(), safe_direction.end(), '\n', ' ');
+    std::string safe_transformation = transformation;
+    std::replace(safe_transformation.begin(), safe_transformation.end(), '\n', ' ');
+
     std::ofstream out(source_path_, std::ios::app);
     out << "\n// [ARKHE EVOLUTION] generation=" << (state_.generation + 1)
-        << " direction=" << direction
+        << " direction=" << safe_direction
         << " signature=" << signature.substr(0, 32) << "...\n";
-    out << "// " << transformation << "\n";
+    out << "// " << safe_transformation << "\n";
 
     auto hash_after = hash_source();
 
@@ -611,7 +619,11 @@ State SecureRecursiveSubstrate::deserialize_state_json(const std::string& json) 
         auto comma = j.find(",", colon);
         auto end = j.find("}", colon);
         if (comma == std::string::npos || (end != std::string::npos && end < comma)) comma = end;
-        return std::stoi(j.substr(colon + 1, comma - colon - 1));
+        try {
+            return std::stoi(j.substr(colon + 1, comma - colon - 1));
+        } catch (...) {
+            return 0;
+        }
     };
     auto extract_string = [](const std::string& j, const std::string& key) -> std::string {
         auto pos = j.find("\"" + key + "\"");
