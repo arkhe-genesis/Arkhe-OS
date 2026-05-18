@@ -225,7 +225,7 @@ class InterLayerHashValidator:
         if not ch.verify_integrity():
             return False, "Invalid payload_hash format"
 
-        valid_layers = ["mainframe_acid", "beaver_logic", "token_arkhe_intention", "temporalchain_meta"]
+        valid_layers = ["mainframe_acid", "beaver_logic", "token_arkhe_intention", "temporalchain_meta", "external_auditors", "regulatory_systems"]
         if ch.producer_layer not in valid_layers:
             return False, f"Invalid producer_layer: {ch.producer_layer}"
         if not all(c in valid_layers for c in ch.consumer_layers):

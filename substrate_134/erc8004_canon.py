@@ -38,7 +38,7 @@ class ERC8004_Identity:
     phi_c_score: float = 0.95
 
     def to_canonical_bytes(self) -> bytes:
-        payload = f"{self.identity_id}:{self.primary_address}:{self.chain_protocol.value}:{json.dumps({k.value: v for k, v in self.associated_addresses.items()}, sort_keys=True)}:{self.metadata_hash}:{self.pqc_public_key}:{self.created_at}:{self.last_updated}:{self.phi_c_score}"
+        payload = f"{self.identity_id}:{self.primary_address}:{self.chain_protocol.value}:{json.dumps({k.value: v for k, v in self.associated_addresses.items()}, sort_keys=True)}:{self.metadata_hash}:{self.pqc_public_key}:{self.created_at}:{self.phi_c_score}"
         return payload.encode()
 
     def compute_identity_hash(self) -> str:

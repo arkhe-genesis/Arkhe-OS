@@ -152,7 +152,8 @@ class TokenArkheSigner:
         return hashlib.sha3_256(f"{message}:{self.pqc_key_label}:{time.time()}".encode()).hexdigest()
 
     async def sign_intention(self, logic_proof: LOGIC_PROOF_HASH, action_type: str = "payment", x402_proof: Optional[str] = None, erc8183_proof: Optional[str] = None) -> INTENTION_SEAL:
-        phi_c = 0.92 + (hash(logic_proof.compute_hash()) % 100) / 1000
+        deterministic_val = int(hashlib.sha256(logic_proof.compute_hash().encode()).hexdigest(), 16)
+        phi_c = 0.92 + (deterministic_val % 100) / 1000
 
         intention_payload = f"{logic_proof.compute_hash()}:{self.agent_id}:{action_type}"
         pqc_signature = self._mock_pqc_sign(intention_payload)
@@ -179,7 +180,8 @@ class TemporalChainAnchor:
     async def anchor_meta_verification(self, intention_seal: INTENTION_SEAL, cross_chain_anchor: Optional[str] = None) -> META_VERIFICATION_SEAL:
         self.block_height += 1
 
-        global_phi_c = 0.999 + (hash(intention_seal.compute_seal()) % 1000) / 100000
+        deterministic_val = int(hashlib.sha256(intention_seal.compute_seal().encode()).hexdigest(), 16)
+        global_phi_c = 0.999 + (deterministic_val % 1000) / 100000
         guardian_approval = global_phi_c >= 0.999
 
         meta_seal = META_VERIFICATION_SEAL(
