@@ -84,7 +84,7 @@ class PQCSigner:
 
     @classmethod
     def sign(cls, message, key_label='substrate_signer'):
-        payload = f'{message}:{key_label}:{time.time()}'
+        payload = f'{message}:{key_label}'
         return hmac.new(cls.SECRET_KEY, payload.encode(), hashlib.sha3_256).hexdigest()
 
     @classmethod
@@ -218,27 +218,45 @@ class RollbackManager:
         return True
 
 class TemporalChainAnchor:
-    CHAIN_FILE = Path('/tmp/unbuildable_temporalchain.json')
+    CHAIN_FILE = Path('/tmp/unbuildable_temporalchain.jsonl')
 
     def __init__(self):
         if not self.CHAIN_FILE.exists():
-            self.CHAIN_FILE.write_text('[]')
+            self.CHAIN_FILE.touch()
 
     def anchor(self, record):
-        chain = json.loads(self.CHAIN_FILE.read_text())
-        prev_hash = chain[-1]['hash'] if chain else '0' * 64
+        prev_hash = '0' * 64
+        index = 0
+        if self.CHAIN_FILE.exists() and self.CHAIN_FILE.stat().st_size > 0:
+            with open(self.CHAIN_FILE, 'r') as f:
+                # O(1) memory instead of reading entire file
+                for line in f:
+                    if line.strip():
+                        try:
+                            last_block = json.loads(line)
+                            prev_hash = last_block['hash']
+                            index = last_block['index'] + 1
+                        except json.JSONDecodeError:
+                            pass
         payload = json.dumps(asdict(record), sort_keys=True)
-        block = {'index': len(chain), 'timestamp': time.time(), 'record': asdict(record), 'prev_hash': prev_hash, 'hash': sha3_256_hex(f'{prev_hash}{payload}{time.time()}'.encode())}
-        chain.append(block)
-        self.CHAIN_FILE.write_text(json.dumps(chain, indent=2))
+        ts = time.time()
+        block_hash = sha3_256_hex(f'{prev_hash}{payload}{ts}'.encode())
+        block = {'index': index, 'timestamp': ts, 'record': asdict(record), 'prev_hash': prev_hash, 'hash': block_hash}
+        with open(self.CHAIN_FILE, 'a') as f:
+            f.write(json.dumps(block) + '\n')
         logger.info(f"[TemporalChain] Ancorado: {block['hash'][:16]}...")
         return block['hash']
 
     def verify_chain(self):
-        chain = json.loads(self.CHAIN_FILE.read_text())
-        for i in range(1, len(chain)):
-            if chain[i]['prev_hash'] != chain[i - 1]['hash']:
-                return False
+        prev_hash = None
+        with open(self.CHAIN_FILE, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if not line: continue
+                block = json.loads(line)
+                if prev_hash is not None and block['prev_hash'] != prev_hash:
+                    return False
+                prev_hash = block['hash']
         return True
 
 class RecursiveSubstrateSecure:
@@ -351,7 +369,7 @@ class RecursiveSubstrateSecure:
             logger.error('[Integrity] Hash mismatch')
             return False
         if self.state.last_transformation and self.state.last_signature:
-            if False:
+            if not self.signer.verify(self.state.last_transformation, self.state.last_signature):
                 logger.error('[Integrity] Assinatura PQC invalida')
                 return False
         backups = list(self.backup.backup_dir.glob('*.bak'))
