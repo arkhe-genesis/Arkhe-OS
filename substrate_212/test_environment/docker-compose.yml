@@ -1,0 +1,105 @@
+version: '3.8'
+
+services:
+  # COBOL Parser Service
+  cobol-parser:
+    build:
+      context: .
+      dockerfile: Dockerfile.cobol-parser
+    container_name: arkhe-cobol-parser
+    environment:
+      - ARKHE_ENV=test
+      - PHI_BUS_URL=http://phi-bus:8081
+      - TEMPORAL_CHAIN_URL=http://temporal-chain:8082
+      - COPYBOOK_REGISTRY_PATH=/app/copybooks
+    volumes:
+      - ./sample_programs:/app/sample_programs:ro
+      - ./copybooks:/app/copybooks:ro
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    depends_on:
+      - phi-bus
+      - temporal-chain
+
+  # Verifier's Loop Orchestrator
+  verifier-loop:
+    build:
+      context: ../substrate_202/reference_impl
+      dockerfile: Dockerfile
+    container_name: arkhe-verifier-loop
+    environment:
+      - ARKHE_ENV=test
+      - PHI_BUS_URL=http://phi-bus:8081
+      - TEMPORAL_CHAIN_URL=http://temporal-chain:8082
+    ports:
+      - "8083:8083"
+    depends_on:
+      - phi-bus
+      - temporal-chain
+
+  # ERC-8004 Contract Deployer (optional)
+  erc8004-deployer:
+    build:
+      context: ../substrate_134
+      dockerfile: Dockerfile
+    container_name: arkhe-erc8004-deployer
+    environment:
+      - ARKHE_ENV=test
+      - ETHERS_PROVIDER_URL=${SEPOLIA_RPC_URL:-https://sepolia.infura.io/v3/demo}
+      - PRIVATE_KEY=${TEST_PRIVATE_KEY:-0x0000000000000000000000000000000000000000000000000000000000000001}
+      - CONTRACT_ADDRESS=${ERC8004_CONTRACT_ADDRESS:-}
+    volumes:
+      - ./deploy_config:/app/config
+    depends_on:
+      - cobol-parser
+
+  # Φ_C Composite Dashboard (Grafana + Prometheus)
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    container_name: arkhe-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+
+  grafana:
+    image: grafana/grafana:10.0.0
+    container_name: arkhe-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+
+  # Supporting services
+  phi-bus:
+    image: arkhe/phi-bus:test
+    container_name: arkhe-phi-bus
+    ports:
+      - "8081:8081"
+
+  temporal-chain:
+    image: arkhe/temporal-chain:test
+    container_name: arkhe-temporal-chain
+    ports:
+      - "8082:8082"
+
+volumes:
+  prometheus-data:
+  grafana-data:
