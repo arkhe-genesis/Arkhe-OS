@@ -15,6 +15,7 @@ contract ArkheIdentity {
 
     mapping(address => Identity) public identities;
     mapping(string => address) public orcidToAddress;
+    mapping(address => bool) public authorizedCallers;
 
     event IdentityRegistered(address indexed agent, string orcid);
     event ReputationUpdated(address indexed agent, uint256 newReputation);
@@ -23,6 +24,20 @@ contract ArkheIdentity {
     modifier onlyRegistered() {
         require(identities[msg.sender].isActive, "Identity not registered or inactive");
         _;
+    }
+
+    modifier onlyAuthorized() {
+        require(authorizedCallers[msg.sender], "Caller is not authorized");
+        _;
+    }
+
+    constructor() {
+        // Deployer is initially authorized
+        authorizedCallers[msg.sender] = true;
+    }
+
+    function setAuthorizedCaller(address caller, bool isAuthorized) external onlyAuthorized {
+        authorizedCallers[caller] = isAuthorized;
     }
 
     function registerIdentity(string calldata orcid, bytes calldata pqcPublicKey) external {
@@ -40,8 +55,7 @@ contract ArkheIdentity {
         emit IdentityRegistered(msg.sender, orcid);
     }
 
-    function updateReputation(address agent, uint256 delta, bool positive) external {
-        // In a real system, this should be restricted to authorized contracts (e.g. Governance or Bridge)
+    function updateReputation(address agent, uint256 delta, bool positive) external onlyAuthorized {
         require(identities[agent].isActive, "Agent not active");
 
         if (positive) {

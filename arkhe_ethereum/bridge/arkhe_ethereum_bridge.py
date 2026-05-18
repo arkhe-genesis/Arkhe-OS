@@ -38,6 +38,8 @@ class ArkheEthereumBridge:
         return receipt
 
     def register_identity_on_chain(self, orcid: str, pqc_public_key: bytes):
+        if not self.account:
+            raise Exception("No private key provided for transaction signing.")
         tx = self.identity_contract.functions.registerIdentity(
             orcid, pqc_public_key
         ).build_transaction({
@@ -48,6 +50,8 @@ class ArkheEthereumBridge:
         return self._send_transaction(tx)
 
     def anchor_seal_to_ethereum(self, seal_hash: bytes, phi_c_score: int, metadata_uri: str):
+        if not self.account:
+            raise Exception("No private key provided for transaction signing.")
         # seal_hash must be exactly 32 bytes for bytes32
         tx = self.bridge_contract.functions.anchorSeal(
             seal_hash, phi_c_score, metadata_uri
@@ -69,7 +73,7 @@ class ArkheEthereumBridge:
                 phi_c_score = event.get('phi_c_score')
                 metadata_uri = event.get('metadata_uri')
 
-                receipt = self.anchor_seal_to_ethereum(seal_hash, phi_c_score, metadata_uri)
+                receipt = await asyncio.to_thread(self.anchor_seal_to_ethereum, seal_hash, phi_c_score, metadata_uri)
                 print(f"Anchored seal {seal_hash.hex()} to Ethereum! Tx Hash: {receipt.transactionHash.hex()}")
             except Exception as e:
                 print(f"Failed to anchor event: {e}")
