@@ -70,13 +70,17 @@ class LanguageExecutor:
         with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
             f.write(code)
             f.flush()
-            result = subprocess.run(
-                ['python3', f.name],
-                capture_output=True,
-                text=True,
-                timeout=10
-            )
-            os.unlink(f.name)
+            try:
+                result = subprocess.run(
+                    ['python3', f.name],
+                    capture_output=True,
+                    text=True,
+                    timeout=10
+                )
+            except subprocess.TimeoutExpired:
+                return None
+            finally:
+                os.unlink(f.name)
             # Extrair selo do stdout (formato: "ARKHE_SEAL: <hex>")
             for line in result.stdout.split('\n'):
                 if 'ARKHE_SEAL:' in line:
