@@ -1,0 +1,135 @@
+// consensus_protocol.proto
+// Canon: ∞.Ω.∇+++.237.consensus.protocol
+// Cross-platform gRPC interface for federated consensus
+
+syntax = "proto3";
+package arkhe.consensus.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// === Tipos fundamentais ===
+
+message OrganizationIdentity {
+  string org_id = 1;                    // UUID único
+  string org_name = 2;                  // Nome legível
+  bytes public_key_pqc = 3;             // Chave pública PQC (Dilithium3)
+  float phi_c_reputation = 4;           // Reputação baseada em histórico Φ_C [0.0-1.0]
+  float stake_weight = 5;               // Peso de voto baseado em stake
+  google.protobuf.Timestamp joined_at = 6;
+  google.protobuf.Timestamp last_heartbeat = 7;
+  bool is_active = 8;
+}
+
+message FederatedProposal {
+  string proposal_id = 1;               // UUID único
+  string proposal_type = 2;             // "grammar_registration", "security_rule", etc.
+  string proposer_org_id = 3;           // Organização proponente
+  bytes content_hash = 4;               // SHA3-256 do conteúdo
+  map<string, string> content_metadata = 5;  // Metadados públicos
+  bytes pqc_signature = 6;              // Assinatura PQC do proponente
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp voting_deadline = 8;
+  string status = 9;                    // pending/approved/rejected/expired
+}
+
+message FederatedVote {
+  string vote_id = 1;
+  string proposal_id = 2;
+  string voter_org_id = 3;
+  bool vote_value = 4;                  // true=aprovar, false=rejeitar
+  float vote_weight = 5;                // Peso calculado: phi_c_reputation * stake_weight
+  string justification = 6;
+  bytes pqc_signature = 7;
+  google.protobuf.Timestamp timestamp = 8;
+}
+
+message ConsensusResult {
+  string proposal_id = 1;
+  string final_status = 2;              // approved/rejected
+  int32 total_votes = 3;
+  float approved_weight = 4;
+  float rejected_weight = 5;
+  float consensus_threshold = 6;
+  bool reached_consensus = 7;
+  bytes pqc_aggregate_signature = 8;    // Assinatura agregada do resultado
+  google.protobuf.Timestamp finalized_at = 9;
+  string temporal_chain_seal = 10;      // Selo de ancoragem na TemporalChain
+}
+
+// === Serviço gRPC para consenso federado ===
+
+service FederatedConsensusService {
+  // Submeter nova proposta para consenso
+  rpc SubmitProposal(SubmitProposalRequest) returns (SubmitProposalResponse);
+
+  // Votar em proposta ativa
+  rpc SubmitVote(SubmitVoteRequest) returns (SubmitVoteResponse);
+
+  // Consultar status de consenso
+  rpc GetConsensusStatus(GetConsensusStatusRequest) returns (GetConsensusStatusResponse);
+
+  // Registrar identidade da organização no consenso
+  rpc RegisterOrganization(RegisterOrganizationRequest) returns (RegisterOrganizationResponse);
+
+  // Stream de atualizações de consenso em tempo real
+  rpc StreamConsensusUpdates(StreamUpdatesRequest) returns (stream ConsensusUpdate);
+}
+
+message SubmitProposalRequest {
+  FederatedProposal proposal = 1;
+  OrganizationIdentity proposer_identity = 2;
+}
+
+message SubmitProposalResponse {
+  bool success = 1;
+  string proposal_id = 2;
+  string error_message = 3;
+}
+
+message SubmitVoteRequest {
+  FederatedVote vote = 1;
+  OrganizationIdentity voter_identity = 2;
+}
+
+message SubmitVoteResponse {
+  bool success = 1;
+  string vote_id = 2;
+  string error_message = 3;
+}
+
+message GetConsensusStatusRequest {
+  string proposal_id = 1;
+  OrganizationIdentity requester_identity = 2;
+}
+
+message GetConsensusStatusResponse {
+  bool found = 1;
+  ConsensusResult result = 2;
+  repeated FederatedVote votes = 3;  // Votos públicos (sem assinaturas)
+}
+
+message RegisterOrganizationRequest {
+  OrganizationIdentity identity = 1;
+  bytes pqc_signature = 2;  // Auto-assinatura da identidade
+}
+
+message RegisterOrganizationResponse {
+  bool success = 1;
+  string org_id = 2;
+  float initial_reputation = 3;
+}
+
+message StreamUpdatesRequest {
+  OrganizationIdentity subscriber_identity = 1;
+  repeated string proposal_types_filter = 2;  // Opcional: filtrar por tipo
+}
+
+message ConsensusUpdate {
+  oneof update_type {
+    FederatedProposal new_proposal = 1;
+    FederatedVote new_vote = 2;
+    ConsensusResult finalized_result = 3;
+    OrganizationIdentity org_status_change = 4;
+  }
+  google.protobuf.Timestamp timestamp = 5;
+}
