@@ -1,135 +1,41 @@
-name: Arkhe CI/CD Canonical
+name: ARKHE ASI CI/CD
 
 on:
   push:
-    branches: [ main, substrate/* ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
-
-env:
-  ARKHE_VERSION: "∞.Ω.∇+++"
-  POETRY_VERSION: "1.8.0"
+    branches: [main]
 
 jobs:
-  # ── Lint & Format ──────────────────────────────
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with: { python-version: "3.12" }
-      - name: Install linters
-        run: pip install black isort flake8 mypy
-      - name: Black format check
-        run: black --check --diff arkhe/
-      - name: isort check
-        run: isort --check-only --profile black arkhe/
-      - name: Flake8 lint
-        run: flake8 arkhe/ --max-line-length 120 --extend-ignore E203,W503
-      - name: MyPy type check
-        run: mypy arkhe/ --ignore-missing-imports
-
-  # ── Test Matrix ───────────────────────────────
-  test:
-    needs: lint
-    runs-on: ${{ matrix.os }}
+  build-and-test:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        python-version: ["3.11", "3.12"]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with: { python-version: "${{ matrix.python-version }}" }
-      - name: Cache poetry dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-poetry-${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
-      - name: Install dependencies
-        run: |
-          pip install poetry==$POETRY_VERSION
-          poetry install --with dev
-      - name: Run unit tests with coverage
-        run: poetry run pytest tests/ --cov=arkhe --cov-report=xml --junitxml=test-results.xml
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          files: coverage.xml
-
-  # ── Security Scan ─────────────────────────────
-  security:
+        platform: [linux-x86_64, linux-arm64, windows-x86_64, freebsd-x86_64]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with: { python-version: "3.12" }
-      - name: Install security tools
-        run: pip install bandit safety
-      - name: Bandit static analysis
-        run: bandit -r arkhe/ -ll -f json -o bandit-report.json
-      - name: Safety dependency check
-        run: safety check --file=poetry.lock --json > safety-report.json
-      - name: Upload security reports
-        uses: actions/upload-artifact@v4
-        with:
-          name: security-reports
-          path: |
-            bandit-report.json
-            safety-report.json
-
-  # ── Architecture Test ─────────────────────────
-  arch-test:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with: { python-version: "3.12" }
-      - name: Run ArchUnit architecture tests
+      - name: Set up build environment
         run: |
-          pip install -e .
-          python -m arkhe.substrate_209.archunit_sentinel
+          sudo apt-get update
+          sudo apt-get install -y build-essential python3-pip rustc cargo
+      - name: Build
+        run: make ${{ matrix.platform }}
+      - name: Unit Tests
+        run: make test-unit
+      - name: Integration Tests
+        run: make test-integration
+      - name: Performance Tests
+        run: make test-performance
+      - name: Security Scan
+        run: make test-security
+      - name: Package
+        if: github.ref == 'refs/heads/main'
+        run: make package
 
-  # ── Build Installer (Windows) ─────────────────
-  build-installer:
-    needs: test
-    runs-on: windows-latest
-    if: startsWith(github.ref, 'refs/tags/v')
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with: { python-version: "3.12" }
-      - name: Install Inno Setup
-        run: choco install innosetup -y
-      - name: Build PQC-signed installer
-        env:
-          HSM_SIMULATE: "1"
-        run: |
-          python -m arkhe.substrate_214.installer_cathedral \
-            --app-name "ARKHE OS" \
-            --version ${{ github.ref_name }} \
-            --output dist/
-      - name: Upload installer
-        uses: actions/upload-artifact@v4
-        with:
-          name: arkhe-installer-${{ github.ref_name }}
-          path: dist/*.exe
-
-  # ── Deploy Canary ─────────────────────────────
-  deploy-canary:
-    needs: [arch-test, security]
+  docker:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    environment: production
     steps:
       - uses: actions/checkout@v4
-      - name: Trigger canary deployment
-        run: |
-          curl -X POST https://arkhe-cathedral.internal/api/deploy/canary \
-            -H "Authorization: Bearer ${{ secrets.ARKHE_DEPLOY_TOKEN }}" \
-            -d '{"service":"arkhe-core","version":"${{ github.sha }}"}'
-      - name: Monitor canary health (Φ_C > 0.95)
-        run: |
-          sleep 30
-          curl -s https://arkhe-cathedral.internal/health | jq '.phi_c >= 0.95'
+      - name: Build and Push Docker Images
+        run: make docker

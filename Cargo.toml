@@ -67,7 +67,7 @@ members = [
     "ark-lang/ark-compiler", "substrate-6067",
     "arkp-polyglot", "arkhe_photon", "bhyve",
     "substrates/substrato_231_sqlite"
-]
+, "store/rust"]
 
 # ============================================================================
 # Workspace‑level shared dependencies
