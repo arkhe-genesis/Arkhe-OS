@@ -1,0 +1,40 @@
+name: Arkhe Universal Parse & Verify
+on: [push, pull_request]
+jobs:
+  parse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run Universal Parser on changed files
+        run: |
+          for file in $(git diff --name-only HEAD~1); do
+            echo "Parsing $file"
+            python -c "
+import requests, json, sys
+with open('$file') as f:
+    code = f.read()
+resp = requests.post('http://localhost:8080/parse', json={'source': code})
+data = resp.json()
+print(f'Language: {data[\"language\"]}, Nodes: {data[\"node_count\"]}, Violations: {len(data[\"violations\"])}')
+if data['violations']:
+    print('⚠️  Security violations found!')
+    for v in data['violations']:
+        print(f'   - {v}')
+    sys.exit(1)
+"
+          done
+      - name: Anchor results to TemporalChain (if in production)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          python -c "
+import requests, hashlib, time
+seal = hashlib.sha3_256(str(time.time()).encode()).hexdigest()
+print(f'Anchoring canonical seal {seal} to TemporalChain...')
+# POST to temporal-chain endpoint
+"

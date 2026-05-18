@@ -1,0 +1,74 @@
+{
+  "arkhe_manifest": {
+    "version": "∞.Ω.∇+++.212-KM.kernel_module",
+    "substrate_id": "212-KM",
+    "parent_substrate": "212-K",
+    "canonical_seal": "bfbc03900123006c35442cf12f2d0189b0496856d8eb3e23fbbbbe4e46cbf31e",
+    "kernel_module_seal": "9399b8096ec98e972c0a1410e62d665f40f498598521cc4aa408181f1988e852",
+    "timestamp": 1779074627.8238606,
+    "orcid": "0009-0005-2697-4668",
+    "linux_version": "6.8",
+    "module_format": ".ko (loadable kernel module)",
+    "compilation": {
+      "toolchain": "GCC + Kbuild",
+      "command": "make -C /lib/modules/$(uname -r)/build M=$(pwd) modules",
+      "installation": "sudo insmod arkhe_cobol_parser.ko"
+    }
+  },
+  "kernel_module_specification": {
+    "device_node": "/dev/arkhe_cobol",
+    "device_type": "character device",
+    "major_number": "dynamic (allocated by alloc_chrdev_region)",
+    "minor_number": 0,
+    "class": "/sys/class/arkhe/",
+    "ioctl_base": "0xA2",
+    "ioctl_commands": 12,
+    "memory_model": {
+      "total_pages": 4096,
+      "page_size": "4 KB",
+      "kernel_space": "16 MB",
+      "virtual_base": "0xFFFF0000",
+      "allocation_strategy": "first-fit from free pool"
+    }
+  },
+  "security_model": {
+    "ring_isolation": "4 privilege levels (RING0-RING3)",
+    "syscall_validation": "RING3 blocked from COBOL_PARSE without escalation",
+    "memory_protection": "RWX permissions per page, per PID",
+    "interrupt_security": "Critical violations trigger Φ_C degradation (-0.05)",
+    "bus_isolation": "Channel namespacing per substrate"
+  },
+  "components_delivered": [
+    "arkhe_cobol_parser.h — Kernel header with structures and ioctl definitions",
+    "arkhe_cobol_parser.c — Main kernel module implementation (756 lines)",
+    "Makefile — Kbuild configuration for Linux 6.8",
+    "install_cathedral.sh — Automated installation script",
+    "test_kernel_parser.c — User-space test suite (6 tests)",
+    "README.md — Complete documentation"
+  ],
+  "build_requirements": [
+    "Linux kernel headers for running kernel",
+    "GCC compiler",
+    "make utility",
+    "Root privileges for insmod/rmmod"
+  ],
+  "test_coverage": {
+    "user_space_tests": 6,
+    "test_scenarios": [
+      "Basic COBOL parse with program ID extraction",
+      "CICS transaction extraction (READ, WRITEQ TD, RETURN)",
+      "Security violation scan (ALTER, GOTO DEPENDING ON, CICS audit)",
+      "Permission denial for RING3 callers",
+      "Kernel statistics retrieval",
+      "Bus V3 publish/consume round-trip"
+    ]
+  },
+  "next_steps": [
+    "Compile on target Linux 6.8 system",
+    "Load with insmod and verify dmesg output",
+    "Run test_kernel_parser as root",
+    "Integrate with Substrate Bus V3 driver",
+    "Implement IRQ handler with request_irq()",
+    "Add kprobe for real-time Φ_C monitoring"
+  ]
+}

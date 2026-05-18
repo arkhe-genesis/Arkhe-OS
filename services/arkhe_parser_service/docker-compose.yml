@@ -1,0 +1,34 @@
+version: '3.8'
+services:
+  parser:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - ENERGY_ORACLE_ENDPOINT=http://energy-oracle:8085
+      - FEDERATED_AGGREGATOR_URL=http://fed-aggregator:8086
+    volumes:
+      - ./grammars:/app/grammars:ro
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+
+  grafana:
+    image: grafana/grafana:10.0.0
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./monitoring/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - grafana_data:/var/lib/grafana
+
+volumes:
+  prometheus_data:
+  grafana_data:
