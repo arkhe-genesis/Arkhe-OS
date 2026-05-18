@@ -25,6 +25,9 @@ class AgentComplianceRegistry:
 
     def register_agent(self, identity_id: str, controller_age: int, jurisdiction: str,
                        licenses: List[str] = None, spending_limit_daily: float = 100.0):
+        if self.identity_registry.get_identity_canon_struct(identity_id) is None:
+            raise ValueError(f"Identity not found: {identity_id}")
+
         record = AgentComplianceRecord(
             identity_id=identity_id,
             controller_age=controller_age,
