@@ -38,7 +38,14 @@ function Set-ArkheSIEMConfig {
 
     foreach ($key in $props.Keys) {
         if ($props[$key] -ne $null) {
-            Set-ItemProperty -Path $configPath -Name $key -Value $props[$key] -Force
+            if ($key -eq "SplunkHECToken") {
+                # Store token securely using DPAPI / SecureString representation
+                $secureToken = ConvertTo-SecureString -String $props[$key] -AsPlainText -Force
+                $encryptedToken = ConvertFrom-SecureString -SecureString $secureToken
+                Set-ItemProperty -Path $configPath -Name $key -Value $encryptedToken -Force
+            } else {
+                Set-ItemProperty -Path $configPath -Name $key -Value $props[$key] -Force
+            }
         }
     }
 
@@ -64,8 +71,14 @@ function Test-ArkheSIEMConnection {
 
     if ($Target -in @("Splunk", "Both") -and $config.SplunkHECUrl) {
         try {
+            $encryptedToken = $config.SplunkHECToken
+            $secureToken = ConvertTo-SecureString -String $encryptedToken
+            $bstr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureToken)
+            $plaintextToken = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($bstr)
+            [System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($bstr)
+
             $response = Invoke-WebRequest -Uri "$($config.SplunkHECUrl)/services/collector/health" `
-                -Headers @{"Authorization" = "Splunk $($config.SplunkHECToken)"} `
+                -Headers @{"Authorization" = "Splunk $plaintextToken"} `
                 -TimeoutSec 10 -UseBasicParsing -ErrorAction Stop
             $results["Splunk"] = $response.StatusCode -eq 200
         } catch {

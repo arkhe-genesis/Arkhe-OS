@@ -241,7 +241,7 @@ class MLConfigOptimizer:
             logger.warning("⚠️  ML libraries not available; using heuristic optimization")
             return False
 
-        X, y = self.data_collector.get_training_dataset()
+        X, y = await asyncio.to_thread(self.data_collector.get_training_dataset)
         if len(X) < 100:
             logger.warning(f"⚠️  Insufficient training data: {len(X)} samples")
             return False
@@ -254,8 +254,9 @@ class MLConfigOptimizer:
                 random_state=42,
                 n_jobs=-1
             )
-            self._model.fit(X, y)
-            logger.info(f"✅ Model trained: R² = {self._model.score(X, y):.3f}")
+            await asyncio.to_thread(self._model.fit, X, y)
+            score = await asyncio.to_thread(self._model.score, X, y)
+            logger.info(f"✅ Model trained: R² = {score:.3f}")
             return True
         else:
             # Incremental update (mock: em produção, usar partial_fit)
@@ -382,13 +383,14 @@ class MLConfigOptimizer:
             new_phi_c = self._measure_current_phi_c()  # Mock function
 
             # Registrar histórico
+            phi_c_before_val = self._measure_current_phi_c()
             history = OptimizationHistory(
                 recommendation=recommendation,
                 applied=True,
                 applied_timestamp=time.time(),
-                phi_c_before=self._measure_current_phi_c(),  # Mock
+                phi_c_before=phi_c_before_val,
                 phi_c_after=new_phi_c,
-                actual_phi_c_delta=(new_phi_c or 0) - recommendation.phi_c_before,
+                actual_phi_c_delta=(new_phi_c or 0) - (phi_c_before_val or 0),
                 rollback_triggered=False,
                 temporal_chain_seal=None
             )

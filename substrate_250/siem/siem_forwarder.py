@@ -162,7 +162,7 @@ class SIEMForwarder:
         self.config = config
         self._buffer: List[ArkheEvent] = []
         self._session: Optional[aiohttp.ClientSession] = None
-        self._qradar_socket: Optional[ssl.SSLSocket] = None
+        self._qradar_writer: Optional[asyncio.StreamWriter] = None
         self._forwarding_stats = {
             "total_events": 0,
             "forwarded_splunk": 0,
@@ -187,8 +187,9 @@ class SIEMForwarder:
         await self._flush_buffer()
         if self._session:
             await self._session.close()
-        if self._qradar_socket:
-            self._qradar_socket.close()
+        if self._qradar_writer:
+            self._qradar_writer.close()
+            await self._qradar_writer.wait_closed()
 
     def _init_qradar_tls(self):
         """Inicializa conexão TLS para QRadar."""
@@ -323,22 +324,28 @@ class SIEMForwarder:
 
         for attempt in range(self.config.retry_attempts):
             try:
-                # Estabelecer conexão se necessário
-                if not self._qradar_socket:
-                    self._qradar_socket = self._qradar_context.wrap_socket(
-                        None,  # Em produção: criar socket TCP primeiro
-                        server_hostname=self.config.qradar_host
+                # Estabelecer conexão se necessário (usando asyncio para evitar blocking I/O)
+                if not self._qradar_writer:
+                    reader, writer = await asyncio.open_connection(
+                        self.config.qradar_host, self.config.qradar_port, ssl=self._qradar_context, server_hostname=self.config.qradar_host
                     )
-                    self._qradar_socket.connect((self.config.qradar_host, self.config.qradar_port))
+                    self._qradar_writer = writer
 
                 # Enviar mensagem CEF
-                self._qradar_socket.sendall(cef_message.encode('utf-8'))
+                self._qradar_writer.write(cef_message.encode('utf-8'))
+                await self._qradar_writer.drain()
                 logger.debug(f"✅ QRadar: Event {event.event_id} forwarded")
                 return True
 
             except Exception as e:
                 logger.warning(f"⚠️ QRadar attempt {attempt+1} failed: {e}")
-                self._qradar_socket = None  # Reset para reconexão
+                if self._qradar_writer:
+                    self._qradar_writer.close()
+                    try:
+                        await self._qradar_writer.wait_closed()
+                    except Exception:
+                        pass
+                self._qradar_writer = None  # Reset para reconexão
                 if attempt < self.config.retry_attempts - 1:
                     await asyncio.sleep(self.config.retry_delay_seconds)
 
