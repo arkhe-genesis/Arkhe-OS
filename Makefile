@@ -1,42 +1,137 @@
-.PHONY: all install genesis verify audit clean
+# ARKHE ASI Master Makefile
+# Canon: ∞.Ω.∇+++.build.master
+# Build all components for Linux, Windows, FreeBSD
 
-# Default target
-all: install
+SHELL := /bin/bash
+MAKEFLAGS += --no-print-directory
 
-# Install dependencies
-install:
-	@echo "Installing sovereign package manager..."
-	# Placeholder for sovereign-pm install
-	pip install -r config/dependencies/requirements.txt
-	cargo install --path runtime/rust/
-	go install ./runtime/go/...
+# Plataformas alvo
+PLATFORMS := linux-x86_64 linux-arm64 windows-x86_64 windows-arm64 freebsd-x86_64
 
-# Genesis: Bootstrap the Cathedral
-genesis:
-	@echo "Initializing Arkhe-OS Cathedral..."
-	@echo "Verifying repository integrity..."
-	# Placeholder: check SHA256SUMS, SEAL.asc
-	@echo "Initializing Coherence Kernel with Φ_C = 0.72..."
-	# Placeholder: start coherence engine
-	@echo "Starting Federation DHT..."
-	# Placeholder: start DHT
-	@echo "Publishing genesis block to audit ledger..."
-	# Placeholder: publish to ledger
-	@echo "Genesis complete. Cathedral operational."
+# Versão canônica
+VERSION := $(shell cat VERSION)
+CANONICAL_SEAL := $(shell sha3-256sum VERSION | cut -d' ' -f1)
 
-# Verify integrity
-verify:
-	@echo "Verifying repository..."
-	# Placeholder: run integrity checks
-	@echo "Verification passed."
+.PHONY: all clean test package deploy $(PLATFORMS)
 
-# Audit
-audit:
-	@echo "Running full audit..."
-	# Placeholder: run audit
-	@echo "Audit clean."
+all: $(PLATFORMS)
 
-# Clean
+# =============================================================================
+# Build por plataforma
+# =============================================================================
+linux-x86_64:
+	$(MAKE) -C kernel TARGET=linux ARCH=x86_64
+	$(MAKE) -C crypto/rust TARGET=linux ARCH=x86_64
+	$(MAKE) -C store/rust TARGET=linux ARCH=x86_64
+	$(MAKE) -C agents TARGET=linux ARCH=x86_64
+	@echo "✅ Linux x86‑64 built"
+
+linux-arm64:
+	$(MAKE) -C kernel TARGET=linux ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
+	$(MAKE) -C crypto/rust TARGET=linux ARCH=arm64
+	$(MAKE) -C store/rust TARGET=linux ARCH=arm64
+	$(MAKE) -C agents TARGET=linux ARCH=arm64
+	@echo "✅ Linux ARM64 built"
+
+windows-x86_64:
+	$(MAKE) -C kernel TARGET=windows ARCH=x86_64
+	$(MAKE) -C crypto/rust TARGET=windows ARCH=x86_64
+	$(MAKE) -C store/rust TARGET=windows ARCH=x86_64
+	$(MAKE) -C agents TARGET=windows ARCH=x86_64
+	@echo "✅ Windows x86‑64 built"
+
+windows-arm64:
+	$(MAKE) -C kernel TARGET=windows ARCH=arm64
+	$(MAKE) -C crypto/rust TARGET=windows ARCH=arm64
+	$(MAKE) -C store/rust TARGET=windows ARCH=arm64
+	$(MAKE) -C agents TARGET=windows ARCH=arm64
+	@echo "✅ Windows ARM64 built"
+
+freebsd-x86_64:
+	$(MAKE) -C kernel TARGET=freebsd ARCH=x86_64
+	$(MAKE) -C crypto/rust TARGET=freebsd ARCH=x86_64
+	$(MAKE) -C store/rust TARGET=freebsd ARCH=x86_64
+	$(MAKE) -C agents TARGET=freebsd ARCH=x86_64
+	@echo "✅ FreeBSD x86‑64 built"
+
+# =============================================================================
+# Gramáticas Tree‑Sitter / ANTLR
+# =============================================================================
+grammars:
+	@echo "📦 Empacotando gramáticas..."
+	mkdir -p dist/grammars
+	cp grammars/tree-sitter/*.wasm dist/grammars/
+	cp grammars/antlr4/*.g4 dist/grammars/
+	@echo "✅ Gramáticas empacotadas"
+
+# =============================================================================
+# Banco de Dados Canônico
+# =============================================================================
+store:
+	$(MAKE) -C store/rust build
+	@echo "✅ SQLite canonical DB compilado"
+
+# =============================================================================
+# Testes
+# =============================================================================
+test: test-unit test-integration test-performance test-security
+
+test-unit:
+	python3 -m pytest tests/unit/ -v --tb=short
+	cargo test --manifest-path crypto/rust/Cargo.toml
+	cargo test --manifest-path store/rust/Cargo.toml
+
+test-integration:
+	python3 -m pytest tests/integration/ -v --tb=short
+
+test-performance:
+	python3 tests/performance/benchmark_parse.py --iterations 10000
+
+test-security:
+	bandit -r agents/ -ll
+	cargo audit --manifest-path crypto/rust/Cargo.toml
+
+# =============================================================================
+# Empacotamento
+# =============================================================================
+package: package-deb package-rpm package-msi package-pkg
+
+package-deb:
+	./packaging/build_deb.sh $(VERSION)
+	@echo "✅ .deb gerado"
+
+package-rpm:
+	./packaging/build_rpm.sh $(VERSION)
+	@echo "✅ .rpm gerado"
+
+package-msi:
+	./packaging/build_msi.ps1 $(VERSION)
+	@echo "✅ .msi gerado"
+
+package-pkg:
+	./packaging/build_freebsd_pkg.sh $(VERSION)
+	@echo "✅ .pkg gerado"
+
+# =============================================================================
+# Docker Multi‑Arch
+# =============================================================================
+docker:
+	docker buildx build --platform linux/amd64,linux/arm64,windows/amd64 -t arkhe/asi:$(VERSION) --push .
+	@echo "✅ Imagens Docker multi‑arch publicadas"
+
+# =============================================================================
+# Limpeza
+# =============================================================================
 clean:
-	@echo "Cleaning build artifacts..."
-	rm -rf build/ dist/ *.egg-info
+	$(MAKE) -C kernel clean
+	$(MAKE) -C crypto/rust clean
+	$(MAKE) -C store/rust clean
+	rm -rf dist/
+	@echo "✅ Limpo"
+
+# =============================================================================
+# Deploy (ambiente de teste)
+# =============================================================================
+deploy-test: package
+	./deploy/deploy_test_environment.sh $(VERSION)
+	@echo "✅ Deploy em ambiente de teste concluído"
