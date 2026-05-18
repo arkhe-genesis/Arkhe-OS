@@ -1,0 +1,119 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "ARKHE Uni‑Kernel Polyglot — Parse Metrics",
+    "tags": ["arkhe", "uni-kernel", "polyglot", "substrate_216"],
+    "timezone": "browser",
+    "refresh": "30s",
+    "panels": [
+      {
+        "title": "Φ_C Composto por Linguagem",
+        "type": "bargauge",
+        "targets": [
+          {
+            "expr": "avg by (language) (arkhe_uni_phi_c_score)",
+            "legendFormat": "{{language}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "thresholds"},
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "yellow", "value": 0.85},
+                {"color": "green", "value": 0.95}
+              ]
+            },
+            "min": 0,
+            "max": 1,
+            "unit": "percentunit"
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+      },
+      {
+        "title": "Tempo de Parse por Linguagem (ms)",
+        "type": "timeseries",
+        "targets": [
+          {"expr": "histogram_quantile(0.95, sum by (language, le) (rate(arkhe_uni_parse_duration_seconds_bucket[5m]))) * 1000", "legendFormat": "p95 {{language}}"},
+          {"expr": "histogram_quantile(0.50, sum by (language, le) (rate(arkhe_uni_parse_duration_seconds_bucket[5m]))) * 1000", "legendFormat": "p50 {{language}}"}
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "palette-classic"},
+            "unit": "ms"
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+      },
+      {
+        "title": "Violações de Segurança por Tipo",
+        "type": "piechart",
+        "targets": [
+          {"expr": "sum by (violation_type) (arkhe_uni_security_violations_total)", "legendFormat": "{{violation_type}}"}
+        ],
+        "gridPos": {"h": 8, "w": 8, "x": 0, "y": 8}
+      },
+      {
+        "title": "Tokens Gerados por Linguagem",
+        "type": "bargauge",
+        "targets": [
+          {"expr": "sum by (language) (arkhe_uni_tokens_generated_total)", "legendFormat": "{{language}}"}
+        ],
+        "gridPos": {"h": 8, "w": 8, "x": 8, "y": 8}
+      },
+      {
+        "title": "Taxa de Sucesso de Parse",
+        "type": "gauge",
+        "targets": [
+          {"expr": "sum(rate(arkhe_uni_parse_success_total[5m])) / sum(rate(arkhe_uni_parse_attempts_total[5m]))", "legendFormat": "Success Rate"}
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "thresholds"},
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "yellow", "value": 0.95},
+                {"color": "green", "value": 0.99}
+              ]
+            },
+            "min": 0,
+            "max": 1,
+            "unit": "percentunit"
+          }
+        },
+        "gridPos": {"h": 8, "w": 8, "x": 16, "y": 8}
+      },
+      {
+        "title": "Métricas de Kernel",
+        "type": "stat",
+        "targets": [
+          {"expr": "arkhe_uni_kernel_phi_c", "legendFormat": "Kernel Φ_C"},
+          {"expr": "arkhe_uni_registered_languages", "legendFormat": "Languages Registered"},
+          {"expr": "arkhe_uni_total_parses", "legendFormat": "Total Parses"}
+        ],
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 16}
+      },
+      {
+        "title": "Bus V3 Messages",
+        "type": "timeseries",
+        "targets": [
+          {"expr": "rate(arkhe_uni_bus_messages_published_total[5m])", "legendFormat": "Published"},
+          {"expr": "rate(arkhe_uni_bus_messages_consumed_total[5m])", "legendFormat": "Consumed"}
+        ],
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 24}
+      },
+      {
+        "title": "Logs de Eventos",
+        "type": "logs",
+        "targets": [
+          {"expr": "arkhe_uni_kernel_events", "legendFormat": "{{event_type}}"}
+        ],
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 32}
+      }
+    ],
+    "time": {"from": "now-1h", "to": "now"}
+  }
+}
