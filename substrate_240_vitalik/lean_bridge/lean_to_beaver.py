@@ -70,7 +70,7 @@ class Lean4Parser:
 
     IMPORT_PATTERN = re.compile(r'import\s+([^\n]+)')
 
-    TACTIC_PATTERN = re.compile(r'\b(rfl|simp|rw|apply|exact|intro|cases|induction|have|calc|ring|linarith|omega|nlinarith|positivity|refine)\b')
+    TACTIC_PATTERN = re.compile(r'\b(rfl|simp|rw|apply|exact|intro|cases|induction|have|calc|ring|linarith|omega|nlinarith|positivity|refine|rcases|sorry|admit)\b')
 
     def parse(self, lean_source: str) -> Optional[LeanTheorem]:
         """Parseia um arquivo .lean e extrai o primeiro teorema encontrado."""
