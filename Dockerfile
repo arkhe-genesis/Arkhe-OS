@@ -12,14 +12,15 @@ WORKDIR /build
 COPY . .
 
 # Compilar para a plataforma alvo
-RUN make TARGET=$(echo $TARGETPLATFORM | sed 's/\//-/g')
+RUN TARGET=$(echo $TARGETPLATFORM | sed 's/\//-/g') && make TARGET=$TARGET && \
+    mkdir -p /build/out && cp -r /build/dist/$TARGET/* /build/out/
 
 # Estágio final mínimo
 FROM --platform=$TARGETPLATFORM alpine:3.20
 
 RUN apk add --no-cache python3 libstdc++
 
-COPY --from=builder /build/dist/ /opt/arkhe/
+COPY --from=builder /build/out/ /opt/arkhe/
 COPY --from=builder /build/etc/ /etc/arkhe/
 
 EXPOSE 5000 8080

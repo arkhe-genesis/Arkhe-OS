@@ -46,9 +46,9 @@ cat > ${DEB_DIR}/DEBIAN/postinst <<'EOF'
 #!/bin/bash
 depmod -a
 modprobe arkhe_uni 2>/dev/null || true
-systemctl daemon-reload
-systemctl enable arkhe-agi.service
-systemctl start arkhe-agi.service
+systemctl daemon-reload || true
+systemctl enable arkhe-agi.service || true
+systemctl start arkhe-agi.service || true
 EOF
 chmod 755 ${DEB_DIR}/DEBIAN/postinst
 
