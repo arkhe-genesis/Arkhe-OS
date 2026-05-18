@@ -39,10 +39,9 @@ converter = LeanToBeaver()
 proof = converter.convert(lean_spec)
 
 if proof:
-    evm_code = 'PUSH1 0x64\nPUSH1 0x00\nADD'
     wasm_code = 'i32.const 100\ni32.const 0\ni32.add'
-    is_valid = verify_equiv(evm_code, 'EVM', wasm_code, 'WASM')
+    is_valid = verify_equiv(assembly_code, 'EVM', wasm_code, 'WASM')
     if is_valid:
-        token = seal(intent, evm_code, proof)
+        token = seal(intent, assembly_code, proof)
         print(f'Token Arkhe: {token.header}')
         print(f'Selo de Verificação: {token.seal}')

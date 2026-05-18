@@ -47,7 +47,7 @@ class SMTAssemblyVerifier:
             if not parts:
                 continue
             opcode = parts[0]
-            if opcode.startswith('PUSH'):
+            if opcode.startswith('PUSH') and len(parts) > 1:
                 val = int(parts[1], 16)
                 stack.append(val)
             elif opcode == 'ADD':
