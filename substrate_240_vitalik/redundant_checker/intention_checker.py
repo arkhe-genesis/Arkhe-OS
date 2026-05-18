@@ -36,15 +36,50 @@ class RedundantIntentionChecker:
 
         # Verificar coerência
         first_result = None
+        discrepancy = False
+        results_list = list(results.values())
+
         for lang, res in results.items():
             if first_result is None:
                 first_result = res
             elif res != first_result:
-                logger.warning(f"⚠️ Discrepância detectada! {lang} retornou {res}, esperado {first_result}")
+                discrepancy = True
+                break
+
+        if discrepancy:
+            logger.warning(f"⚠️ Discrepância detectada!")
+            # Auto-repair mode: majority voting
+            repaired_result = self.auto_repair(results)
+            if repaired_result is not None:
+                logger.info(f"🔧 Auto-repair applied. Consenso estabelecido em: {repaired_result}")
+                return True
+            else:
+                logger.error("❌ Falha no auto-repair: Não foi possível alcançar consenso.")
                 return False
 
         logger.info("✅ Intenção coerente em todas as implementações.")
         return True
+
+    def auto_repair(self, results: Dict[str, Any]) -> Any:
+        from collections import Counter
+        # Filter out None results
+        valid_results = [res for res in results.values() if res is not None]
+        if not valid_results:
+            return None
+
+        # Count occurrences of each result
+        # To make things hashable for Counter, we might need to cast to str
+        # For simplicity, assuming results are primitive types
+        try:
+            counter = Counter(valid_results)
+            most_common = counter.most_common(1)[0]
+            # If the most common result has at least 2 votes (or is the only valid result if len==1)
+            if most_common[1] >= max(2, len(valid_results) // 2):
+                 return most_common[0]
+        except TypeError:
+            pass
+
+        return None
 
 # Exemplo de uso
 def py_transfer(amount: int): return amount * 2
@@ -58,3 +93,9 @@ if __name__ == "__main__":
     checker.register_implementation("Solidity", sol_transfer)
 
     checker.check_intention("transferir 100 USDC", {"amount": 100})
+
+def wasm_transfer_buggy(amount: int): return amount * 3 # Buggy implementation to trigger auto-repair
+
+if __name__ == "__main__":
+    checker.register_implementation("WASM_Buggy", wasm_transfer_buggy)
+    checker.check_intention("transferir 100 USDC com bug WASM", {"amount": 100})
