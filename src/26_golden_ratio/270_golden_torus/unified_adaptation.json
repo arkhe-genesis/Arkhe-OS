@@ -1,0 +1,57 @@
+{
+  "topologies": {
+    "mycelium": {
+      "num_nodes": 144,
+      "num_gaps": 2154,
+      "adaptation_score": 1.0,
+      "spectral_density": 1.618033988749895,
+      "resonance_modes": [
+        0.6180339887498948,
+        1.0,
+        1.618033988749895,
+        2.618033988749895
+      ]
+    },
+    "synaptic": {
+      "num_nodes": 89,
+      "num_gaps": 2315,
+      "adaptation_score": 1.0,
+      "spectral_density": 1.618033988749895,
+      "resonance_modes": [
+        0.6180339887498948,
+        1.0,
+        1.618033988749895,
+        2.618033988749895
+      ]
+    },
+    "quantum_vacuum": {
+      "num_nodes": 233,
+      "num_gaps": 10156,
+      "adaptation_score": 1.0,
+      "spectral_density": 1.618033988749895,
+      "resonance_modes": [
+        0.6180339887498948,
+        1.0,
+        1.618033988749895,
+        2.618033988749895
+      ]
+    },
+    "relay_memory": {
+      "num_nodes": 55,
+      "num_gaps": 145,
+      "adaptation_score": 1.0,
+      "spectral_density": 1.618033988749895,
+      "resonance_modes": [
+        0.6180339887498948,
+        1.0,
+        1.618033988749895,
+        2.618033988749895
+      ]
+    }
+  },
+  "metrics": {
+    "unified_adaptation_score": 1.0,
+    "phi": 1.618033988749895,
+    "timestamp": 1779165810.4265838
+  }
+}
