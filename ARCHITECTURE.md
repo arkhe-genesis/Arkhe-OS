@@ -51,3 +51,25 @@ The modules interconnect primarily through the **Arkhe Token Bus** and standard 
 - `arkhe-*`: Core services, libraries, and broader functional domains.
 
 By adhering to the interfaces defined in the core SDKs, substrates remain loosely coupled but strongly authenticated via PQC signatures.
+
+## ASI Layers & Technical Modules Mapping
+
+The 6 esoterical technical modules are directly mapped to the 7 ASI processing layers as follows:
+
+1. **RL-SMT (Reinforcement Learning + SMT):** Maps to **Substrato 240 (Vitalik Protocol)**. Corresponds to the **Camada de Alinhamento e Verificação (Camada 4)**.
+2. **Orbital (Infraestrutura Planetária):** Maps to **Substrato 237 (Cross-Platform Federation)**. Corresponds to the **Camada de Rede Distribuída (Camada 3)**.
+3. **Magnon (Lógica Spin-wave / Quantum-inspired):** Maps to **Substrato 214 (Retrocausal Ping Kernel)**. Corresponds to the **Camada Quântica-Biológica (Camada 1)**.
+4. **Quantum Teleport (Transferência de Estado):** Transfers computational state securely. Corresponds to the **Camada Criptográfica (Camada 2)** via `ArkheBus`.
+5. **MPC (Multi-Party Computation):** Maps to **Substrato 250 (Enterprise Suite)**. Corresponds to the **Camada de Consenso Social (Camada 5)**.
+6. **Recursive ZK (Provas de Conhecimento Zero Recursivas):** Maps to **Substrato 202 (Verifier's Loop)**. Corresponds to the **Camadas de Auditoria Trustless e Ação Final (Camadas 6 e 7)**.
+
+## 3-Tier Architecture vs. 4-Level ASI Model
+
+The typical 3-tier architecture naturally extends into the 4-level theoretical model of the ASI:
+
+| 3-Tier Architecture | 4-Level ASI Model | Description |
+| :--- | :--- | :--- |
+| **L0: Kernel (Microkernel)** | **Level 1: Substrato Físico / Isolamento** | Deterministic execution in Kernel Space (Substrato 212-K/216). |
+| **L1: Core (Protocol / Blockchain)** | **Level 2: Consenso e Imutabilidade** | Timechain (9018), Verifier's Loop (202), and ZK Proofs. |
+| **L2: Platform (Operator / API)** | **Level 3: Agência e Operação** | AI Operator (206) acting under strict constraints. |
+| *(Emergent Property)* | **Level 4: Consciência Constitucional / AGI** | The overarching architectural rule blocking nuclear/destructive domains. |

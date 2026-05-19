@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
-Módulo LLM Ops Core em Produção
+Módulo LLM Ops Core em Produção (Substrato 206 / AI Operator)
 Implementa otimização de batching (Dynamic Batching), Cache Semântico para RAG
 e guardrails em tempo real para prevenção de alucinações e vazamento de PII.
+Conecta o AI operator ao Substrato 206 da Catedral.
 """
 
 import asyncio

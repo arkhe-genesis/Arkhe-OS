@@ -1,5 +1,7 @@
 // ============================================================================
 // ARKHE Microkernel — WASM/WASI Runtime para Bare Metal
+// Integra o ambiente isolado do microkernel (Rust/WASM/PQC) ao Substrato 212-K (Kernel Parser)
+// e ao Substrato 216 (Uni-Kernel Polyglot) para execução determinística no espaço de kernel.
 // ============================================================================
 #![no_std]
 #![no_main]
