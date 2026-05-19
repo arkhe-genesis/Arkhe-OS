@@ -142,3 +142,12 @@
 [submodule "third_party/spec-kit"]
 	path = third_party/spec-kit
 	url = https://github.com/github/spec-kit.git
+[submodule "gitlawb/openclaude"]
+	path = gitlawb/openclaude
+	url = https://github.com/Gitlawb/openclaude
+[submodule "gitlawb/agentvm"]
+	path = gitlawb/agentvm
+	url = https://github.com/Gitlawb/agentvm
+[submodule "gitlawb/node"]
+	path = gitlawb/node
+	url = https://github.com/Gitlawb/node

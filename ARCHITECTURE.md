@@ -36,6 +36,9 @@ The repository is organized into several overarching domains, each serving a dis
 8. **Testing and Validation (`tests/`, `validation/`, `test/`)**
    - Comprehensive test suites verifying everything from basic file hashing to complex multi-substrate interactions.
 
+9. **Decentralized Code Collaboration (`gitlawb/`)**
+   - Integration with Gitlawb, a decentralized code collaboration platform where AI agents are first-class citizens.
+
 ## Module Interconnections
 
 The modules interconnect primarily through the **Arkhe Token Bus** and standard API bindings:
