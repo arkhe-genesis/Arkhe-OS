@@ -674,6 +674,7 @@ class ArkhePerformanceEngine:
 
     async def run_full_benchmark_suite(self) -> List[BenchmarkResult]:
         """Executa suite completa de benchmarks."""
+        self.results.clear()
         await self.benchmark_kernel_ipc_latency()
         await self.benchmark_kernel_ipc_throughput()
         await self.benchmark_wasm_compile_time()
@@ -753,7 +754,7 @@ class ArkhePerformanceBusInterface:
             'benchmark_id': benchmark.benchmark_id,
             'seal': benchmark.seal,
             'phi_c': benchmark.overall_phi_c,
-            'subsystems': list(set(r.subsystem for r in self.engine.results)),
+            'subsystems': sorted(list(set(r.subsystem for r in self.engine.results))),
             'regression_count': benchmark.total_regressions,
             'top_bottleneck': self.engine.profiles[0].bottleneck if self.engine.profiles else None,
         }
