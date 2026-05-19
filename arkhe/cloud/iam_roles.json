@@ -1,0 +1,38 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ArkheSageMakerAccessP7",
+      "Effect": "Allow",
+      "Action": [
+        "sagemaker:CreateTrainingJob",
+        "sagemaker:DescribeTrainingJob",
+        "sagemaker:CreateModel",
+        "sagemaker:CreateEndpoint",
+        "sagemaker:InvokeEndpoint"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestTag/arkhe:substrate": "243",
+          "aws:RequestTag/arkhe:canon": "∞.Ω.∇+++.243.cloud_integration"
+        }
+      }
+    },
+    {
+      "Sid": "ArkheBedrockAccessP6",
+      "Effect": "Allow",
+      "Action": [
+        "bedrock:InvokeModel",
+        "bedrock:InvokeModelWithResponseStream"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestTag/arkhe:substrate": "243",
+          "aws:RequestTag/arkhe:canon": "∞.Ω.∇+++.243.cloud_integration"
+        }
+      }
+    }
+  ]
+}
