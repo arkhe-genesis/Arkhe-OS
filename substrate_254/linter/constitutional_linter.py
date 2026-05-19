@@ -113,7 +113,8 @@ class P1FormalVerificationRule:
                 if is_critical:
                     # Check for formal spec in docstring or comments
                     has_spec = False
-                    if node.docs and any(kw in node.docs.value for kw in P1FormalVerificationRule.SPEC_KEYWORDS):
+                    docstring = node.get_docstring()
+                    if docstring and any(kw in docstring for kw in P1FormalVerificationRule.SPEC_KEYWORDS):
                         has_spec = True
 
                     # Check for linked Lean/Coq proof file
@@ -409,6 +410,11 @@ def main():
             if report.temporal_chain_seal:
                 print(f"🔗 Anchoring to TemporalChain: {report.temporal_chain_seal[:16]}...")
                 # In production: POST to TemporalChain endpoint
+
+    # Exit with non-zero status code if compliance failed
+    if not all(r.constitutional_compliance for r in reports):
+        import sys
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
