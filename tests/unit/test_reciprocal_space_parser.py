@@ -6,10 +6,10 @@ import pytest
 import numpy as np
 from pathlib import Path
 
-from arkhe_os.parser.reciprocal_space_parser import ReciprocalSpaceParser
-from arkhe_os.parser.atomic_structure import AtomicStructure
-from arkhe_os.parser.rsp_model import ReciprocalSpaceNN
-from conftest import requires_gpu
+from src.arkhe_os.parser.reciprocal_space_parser import ReciprocalSpaceParser
+from src.arkhe_os.parser.atomic_structure import AtomicStructure
+from src.arkhe_os.parser.rsp_model import ReciprocalSpaceNN
+from tests.conftest import requires_gpu
 
 def test_parser_initialization_cross_platform(platform_info):
     """Test parser initialization on all platforms."""
