@@ -424,6 +424,14 @@ class PhiCGlobalOptimizer:
                                     max_rounds: int = 50,
                                     tolerance: float = 1e-4) -> Dict[str, Any]:
         target = target or self.mesh.config.target_phi_c
+        if max_rounds <= 0:
+            current_phi, _ = self.mesh.get_global_phi_c()
+            return {
+                "converged": False,
+                "rounds": self._round,
+                "final_phi_c": current_phi,
+                "reason": "max_rounds",
+            }
         for _ in range(max_rounds):
             record = self.optimize_step()
             if record["new_global_phi_c"] >= target:
