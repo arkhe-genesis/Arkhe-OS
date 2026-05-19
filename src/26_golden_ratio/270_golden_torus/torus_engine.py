@@ -34,6 +34,8 @@ class GoldenTorusEngine:
 
     def _generate_golden_spiral_nodes(self, num_nodes: int, topology_type: str) -> List[Node]:
         """Generates nodes using golden spiral placement on a sphere mapping to torus logic."""
+        if num_nodes <= 0:
+            return []
         nodes = []
         golden_angle = math.pi * (3 - math.sqrt(5))
         for i in range(num_nodes):
