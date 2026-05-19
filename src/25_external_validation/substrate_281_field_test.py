@@ -1,23 +1,24 @@
 #!/usr/bin/env python3
 """
 Substrato 281 — Operation Continental Mind: Field Test
-Ativação real da malha Arkhe com Gemini 21.05 + TF‑QKD + Multi‑Region Edge
+Ativação real da malha Arkhe com Gemini 21.05 + TF-QKD + Multi-Region Edge
+Canonical Version: 281-CANON
 """
 
-import hashlib, json, time, math, random
+import hashlib
+import json
+import time
+import math
+import random
 from typing import Dict, List, Tuple
 
-# =============================================================================
-# SIMULAÇÃO DOS SUBSISTEMAS (mock das classes dos substratos anteriores)
-# =============================================================================
-
 class TFQKDNode:
-    """Mock do TF‑QKD (Substrato 279.4)"""
+    """Mock do TF-QKD (Substrato 279.4)"""
     def __init__(self, node_id: str):
         self.node_id = node_id
     def exchange(self) -> Dict:
         qber = random.uniform(0, 0.05)
-        phi_c = (1.0 - qber) * 0.5  # penalidade de alcance
+        phi_c = (1.0 - qber) * 0.5
         key = hashlib.sha3_256(f"{self.node_id}:{time.time()}".encode()).hexdigest()
         return {"status": "success", "key": key[:32], "qber": qber, "phi_c": phi_c}
 
@@ -48,10 +49,6 @@ class TemporalChain:
     def anchor(event: Dict) -> str:
         return hashlib.sha3_256(json.dumps(event, sort_keys=True).encode()).hexdigest()
 
-# =============================================================================
-# TESTE DE CAMPO PRINCIPAL
-# =============================================================================
-
 class OperationContinentalMind:
     def __init__(self):
         self.gemini = GeminiCore()
@@ -62,6 +59,8 @@ class OperationContinentalMind:
             "AFR": EdgeRegion("AFR", "África"),
             "ASI": EdgeRegion("ASI", "Ásia"),
             "OCE": EdgeRegion("OCE", "Oceania"),
+            "MEA": EdgeRegion("MEA", "Oriente Médio"),
+            "ANT": EdgeRegion("ANT", "Antártida"),
         }
         self.qkd_links: Dict[str, TFQKDNode] = {
             code: TFQKDNode(f"TF-{code}") for code in self.regions
@@ -81,8 +80,8 @@ class OperationContinentalMind:
         self.temporal_seals.append(TemporalChain.anchor({"phase": "gemini_activation", **gem_activation}))
         print(f"   Estado: {gem_activation['state']} | Φ_C = {gem_activation['phi_c']}")
 
-        # 2. Enlaces TF‑QKD para cada continente
-        print("\n🔷 FASE 2: Estabelecimento de Enlaces TF‑QKD Intercontinentais")
+        # 2. Enlaces TF-QKD para cada continente
+        print("\n🔷 FASE 2: Estabelecimento de Enlaces TF-QKD Intercontinentais")
         qkd_sessions = {}
         for code, node in self.qkd_links.items():
             session = node.exchange()
@@ -91,7 +90,7 @@ class OperationContinentalMind:
             print(f"   {code} ({self.regions[code].name}): QBER={session['qber']:.4f} | Φ_C={session['phi_c']:.4f} | Chave={session['key'][:16]}...")
 
         # 3. Deploy de funções de borda em cada região
-        print("\n🔷 FASE 3: Deploy de Funções Constitucionais Multi‑Região")
+        print("\n🔷 FASE 3: Deploy de Funções Constitucionais Multi-Região")
         for code, region in self.regions.items():
             deploy_result = region.deploy()
             self.temporal_seals.append(TemporalChain.anchor({"phase": "edge_deploy", "region": code, **deploy_result}))
@@ -102,12 +101,11 @@ class OperationContinentalMind:
         total_packets = 0
         total_violations = 0
         for code, region in self.regions.items():
-            # Simular tráfego: 5% de pacotes violados aleatoriamente
             packets = 1000
             violations = int(packets * random.uniform(0.02, 0.08))
             total_packets += packets
             total_violations += violations
-            region.phi_c = max(0.577553, region.phi_c - violations * 0.0001)  # desgaste mínimo
+            region.phi_c = max(0.577553, region.phi_c - violations * 0.0001)
             traffic_seal = TemporalChain.anchor({
                 "phase": "traffic_test",
                 "region": code,
@@ -116,7 +114,7 @@ class OperationContinentalMind:
                 "phi_c_after": region.phi_c
             })
             self.temporal_seals.append(traffic_seal)
-            print(f"   {code}: {packets} pacotes → {violations} violações detectadas e descartadas | Φ_C pós‑tráfego: {region.phi_c:.4f}")
+            print(f"   {code}: {packets} pacotes → {violations} violações detectadas e descartadas | Φ_C pós-tráfego: {region.phi_c:.4f}")
 
         # 5. Verificação final de invariantes
         print("\n🔷 FASE 5: Verificação Global de Invariantes Constitucionais")
@@ -151,7 +149,7 @@ class OperationContinentalMind:
                 "gap": all_gap
             },
             "qkd_sessions": {c: {"qber": s["qber"], "phi_c": s["phi_c"]} for c, s in qkd_sessions.items()},
-            "final_seals": self.temporal_seals[-5:]  # últimos 5 selos
+            "final_seals": self.temporal_seals[-5:]
         }
         final_seal = TemporalChain.anchor(report)
         self.temporal_seals.append(final_seal)
