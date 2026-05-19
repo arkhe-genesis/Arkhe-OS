@@ -26,10 +26,29 @@ class CloudIntegration:
         self.session = boto3.Session(region_name=region)
         self.sagemaker = self.session.client("sagemaker")
         self.bedrock = self.session.client("bedrock-runtime")
+
+        # Placeholders para novos provedores
+        self.gcp_vertex = None  # Google Cloud Vertex AI
+        self.huawei_modelarts = None  # Huawei Cloud ModelArts
+
         self.kms = ArkheKMS()
         self.bus = ArkheBus()
         self.temporal = TemporalChain()
         self.region = region
+
+    # ── GCP Integration (Placeholder) ──
+    async def invoke_gcp_model(self, model_id: str, prompt: str) -> dict:
+        """Invoca modelo no Google Cloud (Vertex AI) via wrapper canônico."""
+        logger.info(f"🌐 GCP Integration: Invoking {model_id}")
+        # Implementação futura seguindo padrões P1-P7
+        return {"provider": "gcp", "status": "placeholder", "phi_c": 0.9}
+
+    # ── Huawei Cloud Integration (Placeholder) ──
+    async def invoke_huawei_model(self, model_id: str, prompt: str) -> dict:
+        """Invoca modelo no Huawei Cloud (ModelArts) via wrapper canônico."""
+        logger.info(f"🌐 Huawei Cloud Integration: Invoking {model_id}")
+        # Implementação futura seguindo padrões P1-P7
+        return {"provider": "huawei", "status": "placeholder", "phi_c": 0.9}
 
     # ── SageMaker Integration ──
     async def start_training_job(self, job_name: str, config: dict) -> dict:
