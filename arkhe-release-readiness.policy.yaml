@@ -40,6 +40,10 @@ network:
     host: "*"
     description: "Block all exfiltration"
 process:
+  - name: "bash"
+    action: allow
+  - name: "sh"
+    action: allow
   - name: "python"
     action: allow
   - name: "python3"
