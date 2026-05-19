@@ -263,7 +263,14 @@ class ArkheGlobalConstitution:
                     "has_parallel": parallel != "Não mapeado",
                     "principles": article.principles
                 }
-        all_have_parallel = all(r["has_parallel"] for r in results.values())
+            else:
+                results[num] = {
+                    "title": "Artigo não encontrado",
+                    "national_parallel": "Não mapeado",
+                    "has_parallel": False,
+                    "principles": []
+                }
+        all_have_parallel = bool(results) and all(r["has_parallel"] for r in results.values())
         return {
             "country": country,
             "articles_validated": results,
