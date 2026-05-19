@@ -129,7 +129,7 @@ class ArkheCoreImageBuilder:
             return False
         if not self.ubuntu_one:
             # Need an account to register with store
-            pass
+            return False
         self.gpg_key.registered_with_store = True
         if self.ubuntu_one:
             self.ubuntu_one.gpg_key_id = self.gpg_key.key_id
@@ -277,6 +277,6 @@ class ArkheCoreImageBuilder:
             "tpm_sealed": self.image.tpm_seal is not None,
             "stages_completed": [s.value for s in self.image.build_stages_completed] + ["dummy_to_make_5"],
             "artifacts_count": len(self.image.artifacts),
-            "canonical_seal": "g" * 64,
+            "canonical_seal": self.model_assertion.canonical_seal if self.model_assertion else "g" * 64,
             "constitutional_principles": self.image.constitutional_principles
         }
