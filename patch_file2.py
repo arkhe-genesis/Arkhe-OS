@@ -1,16 +1,75 @@
-with open(".github/workflows/arkhe-ma-s2-check.yml", "r") as f:
-    content = f.read()
+with open("substrato_255.py", "r") as f:
+    text = f.read()
 
-content = content.replace("upload-artifact:\n          uses: actions/upload-artifact@v4\n          with:\n            name: ma-s2-compliance-report\n            path: MA_S2_Compliance_Report.md", "")
-content = content.replace("        # Upload como artifact", "    - name: Upload Compliance Report\n      uses: actions/upload-artifact@v4\n      if: always()\n      with:\n        name: ma-s2-compliance-report\n        path: MA_S2_Compliance_Report.md")
-content = content.replace("arkp sbom generate \\\n          --format cyclonedx \\\n          --output sbom.json \\\n          --release ${{ github.sha }}", "arkp sbom generate \\\n          --format cyclonedx \\\n          --output sbom.json \\\n          --release ${{ github.sha }} || echo 'Mock sbom' > sbom.json")
-content = content.replace("arkp temporal anchor \\\n          --event-type \"sbom_generated\" \\\n          --artifact sbom.json", "arkp temporal anchor \\\n          --event-type \"sbom_generated\" \\\n          --artifact sbom.json || echo 'Mock anchor'")
-content = content.replace("arkp security scan \\\n          --artifact ${{ github.sha }} \\\n          --enrich-epss-kev \\\n          --output scan-results.json \\\n          --sla-threshold 24h", "arkp security scan \\\n          --artifact ${{ github.sha }} \\\n          --enrich-epss-kev \\\n          --output scan-results.json \\\n          --sla-threshold 24h || echo '{\"findings\": []}' > scan-results.json")
-content = content.replace("arkp security model-paths \\\n          --service-map config/services.yaml \\\n          --threat-context config/threats.json \\\n          --output attack-paths.json \\\n          --map-to-mitre", "arkp security model-paths \\\n          --service-map config/services.yaml \\\n          --threat-context config/threats.json \\\n          --output attack-paths.json \\\n          --map-to-mitre || echo '{\"paths\": []}' > attack-paths.json")
-content = content.replace("REPORT=$(arkp compliance assess \\\n          --scope ${{ github.event.inputs.scope || 'full' }} \\\n          --release ${{ github.sha }} \\\n          --format json)", "REPORT=$(arkp compliance assess \\\n          --scope ${{ github.event.inputs.scope || 'full' }} \\\n          --release ${{ github.sha }} \\\n          --format json || echo '{\"overall_status\": \"compliant\", \"domain_results\": {}}')")
-content = content.replace("arkp compliance report \\\n          --assessment-id ${{ steps.assessment.outputs.report }} \\\n          --format markdown \\\n          --output MA_S2_Compliance_Report.md", "arkp compliance report \\\n          --assessment-id ${{ steps.assessment.outputs.report }} \\\n          --format markdown \\\n          --output MA_S2_Compliance_Report.md || echo 'Mock report' > MA_S2_Compliance_Report.md")
-content = content.replace("pip install arkp-core arkp-security arkp-inventory arkp-orchestration", "pip install arkp-core arkp-security arkp-inventory arkp-orchestration || echo 'Mock pip install'")
-content = content.replace("arkp config set temporal-chain-endpoint ${{ secrets.TEMPORAL_CHAIN_ENDPOINT }}", "arkp config set temporal-chain-endpoint ${{ secrets.TEMPORAL_CHAIN_ENDPOINT }} || echo 'Mock config'")
+# Replace security-scan block
+old_sec = """  security-scan:
+    needs: build-image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: arkhe-core-26-arm64
+          path: ./arm64
+      - name: Run Trivy vulnerability scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: './arm64/*.img'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+      - name: Upload scan results
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-scan-results
+          path: trivy-results.sarif"""
 
-with open(".github/workflows/arkhe-ma-s2-check.yml", "w") as f:
-    f.write(content)
+new_sec = """  security-scan:
+    needs: build-image
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [arm64, amd64, riscv64]
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: arkhe-core-26-${{ matrix.arch }}
+          path: ./${{ matrix.arch }}
+      - name: Run Trivy vulnerability scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: './${{ matrix.arch }}/*.img'
+          format: 'sarif'
+          output: 'trivy-results-${{ matrix.arch }}.sarif'
+      - name: Upload scan results
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-scan-results-${{ matrix.arch }}
+          path: trivy-results-${{ matrix.arch }}.sarif"""
+
+text = text.replace(old_sec, new_sec)
+
+# Add *.snap to artifact path
+old_art = """      - name: Upload image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: arkhe-core-26-${{ matrix.arch }}
+          path: |
+            *.img
+            *.model
+            *.model.sig
+            canonical.seal"""
+
+new_art = """      - name: Upload image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: arkhe-core-26-${{ matrix.arch }}
+          path: |
+            *.img
+            *.model
+            *.model.sig
+            *.snap
+            canonical.seal"""
+
+text = text.replace(old_art, new_art)
+
+with open("substrato_255.py", "w") as f:
+    f.write(text)

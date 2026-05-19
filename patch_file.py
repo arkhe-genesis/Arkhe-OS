@@ -1,27 +1,23 @@
-with open(".github/workflows/arkhe-ma-s2-check.yml", "r") as f:
+with open("substrato_255.py", "r") as f:
     lines = f.readlines()
 
 new_lines = []
+skip = False
 for i, line in enumerate(lines):
-    if line.strip() == "upload-artifact:":
-        pass
-    elif i >= 1 and lines[i-1].strip() == "upload-artifact:":
-        pass
-    elif i >= 2 and lines[i-2].strip() == "upload-artifact:":
-        pass
-    elif i >= 3 and lines[i-3].strip() == "upload-artifact:":
-        pass
-    elif i >= 4 and lines[i-4].strip() == "upload-artifact:":
-        pass
-    elif line.strip() == "# Upload como artifact":
-        new_lines.append("    - name: Upload Compliance Report\n")
-        new_lines.append("      uses: actions/upload-artifact@v4\n")
-        new_lines.append("      if: always()\n")
-        new_lines.append("      with:\n")
-        new_lines.append("        name: ma-s2-compliance-report\n")
-        new_lines.append("        path: MA_S2_Compliance_Report.md\n")
-    else:
+    # Fix security-scan
+    if "  security-scan:" in line:
         new_lines.append(line)
+        new_lines.append(lines[i+1])
+        new_lines.append(lines[i+2])
+        new_lines.append("    strategy:\n")
+        new_lines.append("      matrix:\n")
+        new_lines.append("        arch: [arm64, amd64, riscv64]\n")
+        continue
 
-with open(".github/workflows/arkhe-ma-s2-check.yml", "w") as f:
-    f.writelines(new_lines)
+    # Remove the old hardcoded arch stuff
+    if "    steps:" in lines[i-1] and "security-scan:" in lines[i-4]:
+        # we are at `- uses: actions/download-artifact@v4` inside security-scan
+        pass
+
+    new_lines.append(line)
+
