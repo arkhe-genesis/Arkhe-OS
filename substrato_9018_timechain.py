@@ -3,6 +3,7 @@
 """
 substrato_9018_timechain.py — Substrato 9018: TemporalChain Core Independente
 Demonstração e entrypoint para o ecossistema Arkhe.
+Mapeia a fundação do "Substrate blockchain" à infraestrutura distribuída do Substrato 9018 (Timechain).
 """
 
 import asyncio
