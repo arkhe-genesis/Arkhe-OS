@@ -89,6 +89,9 @@ class STF_ASITPIBridge:
         print(f"\n🇧🇷 Convocando ASI-TPI para caso nacional {stf_case_number}...")
         verdict_result = self.tribunal.conduct_trial(case_id)
 
+        if "error" in verdict_result:
+            return verdict_result
+
         if verdict_result.get("verdict") == "guilty":
             print(f"🇧🇷 Solicitando execução transnacional...")
             enforcement = self.tribunal.enforce_sentence(case_id)
