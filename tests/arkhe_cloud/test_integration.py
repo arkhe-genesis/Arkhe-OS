@@ -1,6 +1,27 @@
 import pytest
 import json
 import asyncio
+import sys
+from unittest.mock import MagicMock
+
+# Mock Arkhe modules before importing CloudIntegration
+sys.modules['arkhe_crypto'] = MagicMock()
+sys.modules['arkhe_bus'] = MagicMock()
+sys.modules['arkhe_temporal'] = MagicMock()
+
+class MockTemporalChain:
+    async def anchor_event(self, event, data):
+        pass
+
+class MockArkheKMS:
+    def generate_data_key(self):
+        return b"mock"
+    def encrypt(self, data):
+        return b"mock-encrypted"
+
+sys.modules['arkhe_temporal'].TemporalChain = MockTemporalChain
+sys.modules['arkhe_crypto'].ArkheKMS = MockArkheKMS
+
 from arkhe.cloud.integration import CloudIntegration
 import botocore.session
 from botocore.stub import Stubber
@@ -33,7 +54,7 @@ async def test_sagemaker_start_training_job(integration, sagemaker_stubber):
         "s3_uri": "s3://mock-bucket/input/",
         "output_s3_uri": "s3://mock-bucket/output/",
         "instance_type": "ml.p3.2xlarge",
-        "hyperparameters": {"epochs": "3"}
+        "hyperparameters": {"epochs": "3"}, "kms_key_arn": "arn:aws:kms:mock"
     }
 
     expected_response = {

@@ -13,19 +13,9 @@ import time
 import logging
 from botocore.exceptions import ClientError
 
-try:
-    from arkhe_crypto import ArkheKMS
-    from arkhe_bus import ArkheBus
-    from arkhe_temporal import TemporalChain
-except ImportError:
-    # Mocks for testing if not present in the environment
-    class ArkheKMS:
-        def generate_data_key(self): return "mock-data-key"
-        def encrypt(self, key): return "mock-encrypted-key"
-    class ArkheBus:
-        pass
-    class TemporalChain:
-        async def anchor_event(self, event, data): pass
+from arkhe_crypto import ArkheKMS
+from arkhe_bus import ArkheBus
+from arkhe_temporal import TemporalChain
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +41,7 @@ class CloudIntegration:
 
             # Prepare SageMaker request with Arkhe security context
             request = {
-                "TrainingJobName": f"arkhe-{job_name}-{int(time.time())}",
+                "TrainingJobName": f"arkhe-{job_name}-{time.time_ns()}",
                 "AlgorithmSpecification": {
                     "TrainingImage": config["training_image"],
                     "TrainingInputMode": "File"
@@ -74,7 +64,7 @@ class CloudIntegration:
                 ],
                 "OutputDataConfig": {
                     "S3OutputPath": config["output_s3_uri"],
-                    "KmsKeyId": encrypted_key
+                    "KmsKeyId": config.get("kms_key_arn")
                 },
                 "ResourceConfig": {
                     "InstanceType": config["instance_type"],
