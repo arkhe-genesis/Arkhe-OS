@@ -175,8 +175,9 @@ class ASITPIMainnet:
         return ChamberType.SEMANTIC
 
     def _calculate_indictment_phi_c(self, evidence_hashes: List[str]) -> float:
-        valid = sum(1 for h in evidence_hashes if len(h) == 64 and all(c in "0123456789abcdefABCDEF" for c in h))
-        total = len(evidence_hashes)
+        unique_hashes = list(set(evidence_hashes))
+        valid = sum(1 for h in unique_hashes if len(h) == 64 and all(c in "0123456789abcdefABCDEF" for c in h))
+        total = len(unique_hashes)
         if total == 0:
             return 0.0
         if total < 2:
@@ -228,7 +229,7 @@ class ASITPIMainnet:
 
         chamber_judges = [j for j in self.judges.values() if j.chamber == case.chamber]
         if len(chamber_judges) < 3:
-            chamber_judges = [j for j in self.judges.values() if j.chamber == ChamberType.APPEALS]
+            chamber_judges = [self.president, self.vice_president]
 
         selected = random.sample(chamber_judges, min(2, len(chamber_judges)))
         selected.append(self.oracle)
