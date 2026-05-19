@@ -1,0 +1,183 @@
+# platform_config.yaml — Canon: ∞.Ω.∇+++.256.platform_config
+# Canonical configuration for multi-platform Arkhe-Core builds
+
+platforms:
+  # ── ARM64 Family ──
+  arm64:
+    architectures:
+      - name: raspberry-pi-4
+        gadget: pi
+        kernel: pi-kernel
+        base: core26
+        image_size: 8G
+        bootloader: u-boot
+        device_tree: bcm2711-rpi-4-b.dtb
+        tpm_support: true
+        tpm_version: "2.0"
+        qemu_emulation: false
+
+      - name: raspberry-pi-5
+        gadget: pi
+        kernel: pi-kernel
+        base: core26
+        image_size: 8G
+        bootloader: u-boot
+        device_tree: bcm2712-rpi-5-b.dtb
+        tpm_support: true
+        tpm_version: "2.0"
+        qemu_emulation: false
+
+      - name: generic-arm64
+        gadget: generic-arm64
+        kernel: generic-arm64
+        base: core26
+        image_size: 10G
+        bootloader: grub-efi
+        tpm_support: true
+        tpm_version: "2.0"
+        qemu_emulation: true
+
+  # ── x86_64 Family ──
+  amd64:
+    architectures:
+      - name: generic-pc
+        gadget: pc
+        kernel: pc-kernel
+        base: core26
+        image_size: 10G
+        bootloader: grub-pc
+        tpm_support: true
+        tpm_version: "2.0"
+        qemu_emulation: false
+
+      - name: qemu-x86_64
+        gadget: pc
+        kernel: pc-kernel
+        base: core26
+        image_size: 10G
+        bootloader: grub-pc
+        tpm_support: true
+        tpm_version: "2.0"
+        tpm_type: emulated
+        qemu_emulation: true
+        qemu_args: >
+          -cpu max -machine q35
+          -device tpm-tis,tpmdev=tpm0
+          -object tpm-emulator,id=tpm0
+
+  # ── RISC-V Family ──
+  riscv64:
+    architectures:
+      - name: qemu-riscv64
+        gadget: generic-riscv64
+        kernel: generic-riscv64
+        base: core26
+        image_size: 8G
+        bootloader: u-boot
+        tpm_support: false
+        qemu_emulation: true
+        qemu_args: >
+          -cpu rv64 -machine virt -bios default
+
+      - name: generic-riscv64
+        gadget: generic-riscv64
+        kernel: generic-riscv64
+        base: core26
+        image_size: 8G
+        bootloader: u-boot
+        tpm_support: false
+        qemu_emulation: false
+
+  # ── LoongArch Family ──
+  loongarch64:
+    architectures:
+      - name: qemu-loongarch64
+        gadget: generic-loongarch64
+        kernel: generic-loongarch64
+        base: core26
+        image_size: 8G
+        bootloader: u-boot
+        tpm_support: false
+        qemu_emulation: true
+        qemu_args: >
+          -cpu loongarch64 -machine virt
+
+  # ── IBM Z/Mainframe Family ──
+  s390x:
+    architectures:
+      - name: ibm-z14
+        gadget: s390x-gadget
+        kernel: s390x-kernel
+        base: core26
+        image_size: 16G
+        bootloader: zipl
+        tpm_support: true
+        tpm_version: "2.0"
+        tpm_type: hardware
+        crypto_express: true
+        qemu_emulation: false
+
+# ── Canonical Snap IDs by Architecture ──
+canonical_snap_ids:
+  arm64:
+    pi: "YbGa9O3dAXl88YLI6Y1bGG74pwBxZyKg"
+    pi-kernel: "jeIuP6tfFrvAdic8DMWqHmoaoukAPNbJ"
+    core26: "CORE26_ARM64_SNAP_ID"
+
+  amd64:
+    pc: "PC_GADGET_SNAP_ID"
+    pc-kernel: "PC_KERNEL_SNAP_ID"
+    core26: "CORE26_AMD64_SNAP_ID"
+
+  riscv64:
+    generic-riscv64: "RISCV64_GADGET_SNAP_ID"
+    generic-riscv64-kernel: "RISCV64_KERNEL_SNAP_ID"
+    core26: "CORE26_RISCV64_SNAP_ID"
+
+  loongarch64:
+    generic-loongarch64: "LOONGARCH64_GADGET_SNAP_ID"
+    generic-loongarch64-kernel: "LOONGARCH64_KERNEL_SNAP_ID"
+    core26: "CORE26_LOONGARCH64_SNAP_ID"
+
+  s390x:
+    s390x-gadget: "S390X_GADGET_SNAP_ID"
+    s390x-kernel: "S390X_KERNEL_SNAP_ID"
+    core26: "CORE26_S390X_SNAP_ID"
+
+# ── Arkhe Snap IDs (cross-architecture) ──
+arkhe_snap_ids:
+  arkhe-enforcement: "ARKHE_ENFORCEMENT_SNAP_ID"
+  temporal-anchor: "TEMPORAL_ANCHOR_SNAP_ID"
+  pqc-revocation: "PQC_REVOCATION_SNAP_ID"
+
+# ── Constitutional Principles Enforcement by Platform ──
+constitutional_enforcement:
+  P1_verification:
+    all_platforms: true
+    additional_checks:
+      arm64: ["device_tree_signature", "bootloader_integrity"]
+      amd64: ["secure_boot_verification", "measured_boot_pcr"]
+      riscv64: ["u-boot_signature", "dtb_integrity"]
+      loongarch64: ["u-boot_signature"]
+      s390x: ["zipl_signature", "crypto_express_attestation"]
+
+  P3_sovereign_gap:
+    phi_c_cap: 0.9999
+    novelty_injection: true
+    platform_overrides:
+      riscv64: { phi_c_cap: 0.9995 }
+      loongarch64: { phi_c_cap: 0.9995 }
+      s390x: { phi_c_cap: 0.9999 }
+
+  P6_transparency:
+    audit_logging: true
+    temporal_chain_anchor: true
+    platform_overrides:
+      qemu_emulation: { anchor_frequency: "every_build" }
+
+  P7_energy:
+    budget_enforcement: true
+    platform_overrides:
+      raspberry-pi-4: { max_cpu_percent: 70, max_memory_mb: 2048 }
+      raspberry-pi-5: { max_cpu_percent: 80, max_memory_mb: 4096 }
+      ibm-z14: { max_cpu_percent: 90, max_memory_mb: 65536 }

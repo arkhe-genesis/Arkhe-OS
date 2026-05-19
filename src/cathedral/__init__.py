@@ -1,0 +1,3 @@
+"""
+Cathedral Subsystem.
+"""
