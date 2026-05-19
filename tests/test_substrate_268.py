@@ -226,7 +226,9 @@ class ArkheIntegrationBenchmark:
             raise TypeError(f"Object of type {type(obj).__name__} is not JSON serializable")
         data = {'canonical_report': asdict(report), 'interactions': [asdict(r) for r in self.interaction_results], 'stress_tests': [asdict(r) for r in self.stress_results]}
         # Ensure the directory exists
-        os.makedirs(os.path.dirname(path), exist_ok=True)
+        dirname = os.path.dirname(path)
+        if dirname:
+            os.makedirs(dirname, exist_ok=True)
         with open(path, 'w') as f:
             json.dump(data, f, indent=2, ensure_ascii=False, default=json_encoder)
 

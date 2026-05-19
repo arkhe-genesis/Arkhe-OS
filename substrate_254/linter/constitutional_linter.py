@@ -88,7 +88,7 @@ class LinterReport:
 class P1FormalVerificationRule:
     """P1: Verificação Formal — Every critical function must have formal spec."""
 
-    CRITICAL_DECORATORS = ["@critical", "@verified", "@formal_spec"]
+    CRITICAL_DECORATORS = ["critical", "verified", "formal_spec"]
     SPEC_KEYWORDS = ["spec:", "lemma", "theorem", "proof", "ensures", "requires"]
 
     @staticmethod

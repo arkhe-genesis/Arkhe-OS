@@ -92,7 +92,7 @@ class SimulationReport:
     def to_dict(self) -> Dict:
         return {
             **asdict(self),
-            "failure_events": [asdict(e) for e in self.failure_events]
+            "failure_events": [{**asdict(e), "failure_type": e.failure_type.value} for e in self.failure_events]
         }
 
 # =============================================================================
