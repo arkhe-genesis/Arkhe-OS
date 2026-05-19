@@ -158,7 +158,7 @@ class AGITribunal:
             penalties.append("reparação de vaso conceitual: restaurar definições originais na TemporalChain")
         if "Stolen Concept" in str(charges):
             penalties.append("restrição de agência: Φ_C máximo reduzido a 0.8 por 6 meses")
-        if "Sovereign Gap Assault" in str(charges):
+        if "Ataque ao Gap Soberano" in str(charges):
             penalties.append("revogação de chave PQC e confinamento em sandbox")
 
         return {
