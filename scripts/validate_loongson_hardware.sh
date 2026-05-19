@@ -153,7 +153,7 @@ print(f'   Canonical Seal: {canonical_seal[:32]}...')
 # 7. Ancorar na TemporalChain
 echo "🔗 Anchoring validation to TemporalChain..."
 if [ -f "loongson-validation-report.json" ]; then
-    curl -s -X POST "${TEMPORAL_CHAIN_ENDPOINT:-https://temporal.arkhe.org/v1/anchor}/anchor" \
+    curl -s -X POST "${TEMPORAL_CHAIN_ENDPOINT:-https://temporal.arkhe.org/v1}/anchor" \
         -H "Authorization: Bearer ${TEMPORAL_CHAIN_API_KEY:-mock-token}" \
         -H "Content-Type: application/json" \
         -d @loongson-validation-report.json \

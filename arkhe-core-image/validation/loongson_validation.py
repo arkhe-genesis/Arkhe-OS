@@ -141,7 +141,11 @@ class LoongsonValidator:
                 # Verificar hash SHA3-256
                 with open(initramfs_path, "rb") as f:
                     actual_hash = hashlib.sha3_256(f.read()).hexdigest()
-                # Em produção: comparar com hash esperado do manifesto
+                # Comparar com hash esperado do manifesto ancorado
+                expected_hash = os.environ.get("ARKHE_EXPECTED_INITRAMFS_HASH")
+                if expected_hash:
+                    return actual_hash == expected_hash
+                # Fallback to mock behavior if environment does not specify
                 return len(actual_hash) == 64  # Mock
             return False
         except Exception:
