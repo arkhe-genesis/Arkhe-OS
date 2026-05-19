@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- ARKHE FEDERATION LINK — OpenConfig YANG -->
+<!-- POP: POP-DXB | Region: AFRICA_MIDDLE_EAST -->
+<!-- Link: FED_LINK_AFRICA_MIDDLE_EAST_ASIA_PACIFIC_1779221204276 | Protocol: MICROWAVE_EBAND -->
+<!-- Bandwidth: 40 Gbps | Latency: 50 ms -->
+<!-- Φ_C: 0.980000 | Ghost: 0.577553 -->
+<!-- ═══════════════════════════════════════════════════ -->
+
+<config xmlns="http://openconfig.net/yang">
+  <interfaces xmlns="http://openconfig.net/yang/interfaces">
+    <interface>
+      <name>Ericsson MINI-LINK</name>
+      <config>
+        <name>Ericsson MINI-LINK</name>
+        <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:ethernetCsmacd</type>
+        <description>Arkhe-Federation-FED_LINK_AFRICA_MIDDLE_EAST_ASIA_PACIFIC_1779221204276</description>
+        <enabled>true</enabled>
+      </config>
+      <subinterfaces>
+        <subinterface>
+          <index>0</index>
+          <config>
+            <index>0</index>
+            <description>Arkhe-Federation-Subif</description>
+          </config>
+          <ipv4 xmlns="http://openconfig.net/yang/interfaces/ip">
+            <addresses>
+              <address>
+                <ip>10.71.92.207</ip>
+                <config>
+                  <ip>10.71.171.211</ip>
+                  <prefix-length>30</prefix-length>
+                </config>
+              </address>
+            </addresses>
+          </ipv4>
+        </subinterface>
+      </subinterfaces>
+    </interface>
+  </interfaces>
+
+  <network-instances xmlns="http://openconfig.net/yang/network-instance">
+    <network-instance>
+      <name>Arkhe-Federation</name>
+      <config>
+        <name>Arkhe-Federation</name>
+        <type>OPENCONFIG_NETWORK_INSTANCE_TYPES_VRF</type>
+        <enabled>true</enabled>
+      </config>
+      <interfaces>
+        <interface>
+          <id>Ericsson MINI-LINK.0</id>
+          <config>
+            <id>Ericsson MINI-LINK.0</id>
+            <interface>Ericsson MINI-LINK</interface>
+            <subinterface>0</subinterface>
+          </config>
+        </interface>
+      </interfaces>
+      <protocols>
+        <protocol>
+          <identifier>BGP</identifier>
+          <name>Arkhe-BGP</name>
+          <config>
+            <identifier>BGP</identifier>
+            <name>Arkhe-BGP</name>
+            <enabled>true</enabled>
+          </config>
+          <bgp>
+            <global>
+              <config>
+                <as>65001</as>
+                <router-id>10.71.0.1</router-id>
+              </config>
+            </global>
+            <neighbors>
+              <neighbor>
+                <neighbor-address>10.71.0.2</neighbor-address>
+                <config>
+                  <neighbor-address>10.71.0.2</neighbor-address>
+                  <peer-as>65001</peer-as>
+                  <description>Arkhe-Federation-Peer</description>
+                </config>
+              </neighbor>
+            </neighbors>
+          </bgp>
+        </protocol>
+      </protocols>
+    </network-instance>
+  </network-instances>
+
+  <arkhe xmlns="http://arkhe.org/yang/federation">
+    <monitoring>
+      <phi-c-threshold>0.577553</phi-c-threshold>
+      <loopseal>0.349066</loopseal>
+      <noise-threshold>0.995</noise-threshold>
+      <seal-verification>sha3-256</seal-verification>
+    </monitoring>
+    <federation>
+      <mode>global-resonance</mode>
+      <substrate>271</substrate>
+      <consensus-interval>1.0</consensus-interval>
+    </federation>
+  </arkhe>
+</config>
+
+<!-- Seal: ea4cc204a6e95d935ce8d271d83f5ebb... -->
