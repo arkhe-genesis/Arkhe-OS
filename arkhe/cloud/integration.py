@@ -62,10 +62,10 @@ class CloudIntegration:
                         "RecordWrapperType": "RecordIO"
                     }
                 ],
-                "OutputDataConfig": {
+                "OutputDataConfig": {k: v for k, v in {
                     "S3OutputPath": config["output_s3_uri"],
                     "KmsKeyId": config.get("kms_key_arn")
-                },
+                }.items() if v is not None},
                 "ResourceConfig": {
                     "InstanceType": config["instance_type"],
                     "InstanceCount": 1,
