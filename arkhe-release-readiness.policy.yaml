@@ -1,0 +1,52 @@
+version: "1.0"
+name: "arkhe-release-readiness"
+description: "P1-P7 guardrails mapped to OpenShell for Android/iOS/FIPS validation"
+filesystem:
+  - path: "/"
+    read: true
+    write: true
+network:
+  - action: allow
+    host: "github.com"
+    port: 443
+    protocol: tcp
+    description: "Read-only access to GitHub"
+  - action: allow
+    host: "api.github.com"
+    port: 443
+    protocol: tcp
+    description: "Read-only access to GitHub API"
+  - action: allow
+    host: "objects.githubusercontent.com"
+    port: 443
+    protocol: tcp
+    description: "GitHub LFS/Releases downloads"
+  - action: allow
+    host: "services.gradle.org"
+    port: 443
+    protocol: tcp
+    description: "Gradle downloads"
+  - action: allow
+    host: "repo.maven.apache.org"
+    port: 443
+    protocol: tcp
+    description: "Maven Central"
+  - action: allow
+    host: "dl.google.com"
+    port: 443
+    protocol: tcp
+    description: "Google Maven (Android)"
+  - action: deny
+    host: "*"
+    description: "Block all exfiltration"
+process:
+  - name: "python"
+    action: allow
+  - name: "python3"
+    action: allow
+  - name: "gradle"
+    action: allow
+  - name: "gradlew"
+    action: allow
+  - name: "java"
+    action: allow
