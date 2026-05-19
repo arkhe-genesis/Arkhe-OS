@@ -125,7 +125,7 @@ class ArkheTFQKD:
 
         e1_upper = min(1,
             (gains[mu_d1] * qbers[mu_d1] * math.exp(mu_d1) - 0.5 * self.config.DARK_COUNT_RATE) /
-            (Y1_lower * mu_d1) if Y1_lower * mu_d1 > 0 else 1.0
+            (Y1_lower * mu_d1 if Y1_lower * mu_d1 > 0 else 1e-15)
         )
 
         return Y1_lower, e1_upper
@@ -254,11 +254,11 @@ class ArkheTFQKD:
 class MultiRegionEdgeOperator:
     """Operador para deploy multi‑region com ancoragem geo‑distribuída."""
 
-    def __init__(self, local_region: str, seed: Optional[int] = None):
+    def __init__(self, local_region: str):
         self.local_region = local_region
-        self.tf_qkd = ArkheTFQKD(node_id=f"edge-{local_region}", region=local_region, seed=seed)
+        self.tf_qkd = ArkheTFQKD(node_id=f"edge-{local_region}", region=local_region)
         self.regional_nodes: Dict[str, ArkheTFQKD] = {}
-        self._rng = random.Random(seed)
+        self._rng = random.Random()
 
     async def discover_regional_nodes(self) -> Dict[str, str]:
         """Descobre nós TF‑QKD em outras regiões."""
@@ -367,7 +367,7 @@ class ArkheTFQKDTests:
             self.results.append(f"❌ {name} — {detail}")
 
     async def run_all(self) -> Tuple[int, int]:
-        print("\n" + "="*70)
+        print("\\n" + "="*70)
         print("ARKHE OS SUBSTRATO 279.4 — SUITE DE TESTES TF‑QKD")
         print("="*70)
 
@@ -432,7 +432,7 @@ class ArkheTFQKDTests:
         # Exibir resultados
         total = self.passed + self.failed
         phi_c = self.passed / total if total > 0 else 0.0
-        print(f"\n{'='*70}")
+        print(f"\\n{'='*70}")
         print(f"RESULTADO TF‑QKD: {self.passed}/{total} (Φ_C = {phi_c:.6f})")
         for r in self.results:
             print(r)
@@ -456,14 +456,14 @@ async def main():
     tfqkd = ArkheTFQKD(node_id="edge-sa-east-1", region="sa-east-1")
 
     distances = [100, 300, 500, 600]  # km
-    print(f"\n🧬 TF‑QKD Key Rate vs Distance:")
+    print(f"\\n🧬 TF‑QKD Key Rate vs Distance:")
     for dist in distances:
         params = await tfqkd.perform_key_exchange("remote-node", dist)
         print(f"   {dist:4d} km | Loss: {params.channel_loss_db:5.1f} dB | "
               f"Rate: {params.final_key_rate:.2e} b/pulse | Φ_C: {params.phi_c:.4f}")
 
     # Demonstrar ancoragem geo‑distribuída
-    print(f"\n🌍 Geo‑Distributed Anchoring:")
+    print(f"\\n🌍 Geo‑Distributed Anchoring:")
     operator = MultiRegionEdgeOperator("sa-east-1")
     anchored = await operator.establish_intercontinental_session(
         remote_region="eu-west-1",
@@ -486,10 +486,10 @@ async def main():
         f"substrato_279.4:{passed}:{failed}:{time.time()}".encode()
     ).hexdigest()
 
-    print(f"\n🔏 CANONICAL SEAL TF‑QKD: {canonical_seal}")
+    print(f"\\n🔏 CANONICAL SEAL TF‑QKD: {canonical_seal}")
     print(f"   Status: {'CANONIZADO ✅' if passed == total else 'REJEITADO ❌'}")
 
-    print(f"\n✨ ARKHE TF‑QKD v∞.Ω: Comunicação quântica intercontinental operacional")
+    print(f"\\n✨ ARKHE TF‑QKD v∞.Ω: Comunicação quântica intercontinental operacional")
 
 
 if __name__ == "__main__":
