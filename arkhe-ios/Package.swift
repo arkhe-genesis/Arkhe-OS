@@ -18,12 +18,14 @@ let package = Package(
         ),
     ],
     dependencies: [
+        .package(path: "../arkhe-core-shared"),
         .package(url: "https://github.com/apple/swift-crypto", from: "3.0.0"),
     ],
     targets: [
         .target(
             name: "ArkheCore",
             dependencies: [
+                .product(name: "ArkheCoreShared", package: "arkhe-core-shared"),
                 .product(name: "Crypto", package: "swift-crypto"),
             ],
             path: "Sources/ArkheCore",
@@ -31,6 +33,11 @@ let package = Package(
                 .define("ARKHE_CANON", .when(configuration: .release)),
                 .define("ARKHE_SUBSTRATE_246"),
             ]
+        ),
+        .testTarget(
+            name: "ArkheCoreTests",
+            dependencies: ["ArkheCore"],
+            path: "Tests/ArkheCoreTests"
         ),
     ]
 )

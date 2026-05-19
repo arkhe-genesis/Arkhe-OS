@@ -152,15 +152,15 @@ class FIPSLabCertificationManager private constructor(private val context: Conte
         val payload = mapOf(
             "module" to moduleSpec.name,
             "version" to moduleSpec.version,
-            "evidence_count" to evidenceHashes.size.toString(),
+            "evidence_count" to evidenceHashes.size,
             "lab_id" to labId,
-            "timestamp" to System.currentTimeMillis().toString()
+            "timestamp" to System.currentTimeMillis()
         )
         return arkheCore.generateCanonicalSeal("fips_lab_submission", payload)
     }
 
     private fun sha3_256(input: String): String {
-        return MessageDigest.getInstance("SHA-256")
+        return MessageDigest.getInstance("SHA3-256")
             .digest(input.toByteArray())
             .joinToString("") { "%02x".format(it) }
     }
