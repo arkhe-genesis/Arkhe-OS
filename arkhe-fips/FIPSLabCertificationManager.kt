@@ -80,9 +80,9 @@ class FIPSLabCertificationManager private constructor(private val context: Conte
             payload = mapOf(
                 "module" to moduleName,
                 "version" to moduleSpec.version,
-                "target_level" to moduleSpec.targetLevel.value.toString(),
+                "target_level" to moduleSpec.targetLevel.value,
                 "lab_id" to labId,
-                "timestamp" to System.currentTimeMillis().toString()
+                "timestamp" to System.currentTimeMillis()
             )
         )
 
@@ -97,7 +97,7 @@ class FIPSLabCertificationManager private constructor(private val context: Conte
             submissionDate = System.currentTimeMillis(),
             labId = labId,
             evidenceHashes = evidenceHashes,
-            temporalAnchor = submissionSeal,
+            temporalAnchor = prepAnchor.seal,
             status = SubmissionStatus.SUBMITTED
         )
     }
@@ -152,9 +152,9 @@ class FIPSLabCertificationManager private constructor(private val context: Conte
         val payload = mapOf(
             "module" to moduleSpec.name,
             "version" to moduleSpec.version,
-            "evidence_count" to evidenceHashes.size.toString(),
+            "evidence_count" to evidenceHashes.size,
             "lab_id" to labId,
-            "timestamp" to System.currentTimeMillis().toString()
+            "timestamp" to System.currentTimeMillis()
         )
         return arkheCore.generateCanonicalSeal("fips_lab_submission", payload)
     }
@@ -176,7 +176,7 @@ class FIPSLabCertificationManager private constructor(private val context: Conte
                 payload = mapOf(
                     "reason" to "lab_not_accredited",
                     "lab_id" to submission.labId,
-                    "timestamp" to System.currentTimeMillis().toString()
+                    "timestamp" to System.currentTimeMillis()
                 )
             )
             return false
@@ -193,7 +193,7 @@ class FIPSLabCertificationManager private constructor(private val context: Conte
                 "module" to submission.moduleName,
                 "lab_id" to submission.labId,
                 "submission_seal" to submission.temporalAnchor,
-                "timestamp" to System.currentTimeMillis().toString()
+                "timestamp" to System.currentTimeMillis()
             )
         )
 

@@ -5,8 +5,6 @@ import android.content.Context
 import kotlinx.coroutines.*
 import org.arkhe.android.core.ArkheCore
 import org.arkhe.android.core.ConstitutionalPrinciple
-import org.arkhe.android.core.ArkheMessage
-import org.arkhe.android.core.MessageSemantics
 import java.util.*
 
 /**
@@ -79,7 +77,7 @@ class PhiCAnalyticsCollector private constructor(private val context: Context) {
             phiCScore = phiCScore,
             constitutionalCompliance = constitutionalCompliance,
             energyImpact = energyImpact,
-            sdkVersion = "246.1.0", // BuildConfig.SDK_VERSION in real implementation
+            sdkVersion = "246.1.0", // mock BuildConfig.SDK_VERSION
             platform = "android",
             osVersion = android.os.Build.VERSION.RELEASE,
             appCategory = appCategory?.takeIf { it.isNotBlank() },
@@ -104,9 +102,9 @@ class PhiCAnalyticsCollector private constructor(private val context: Context) {
             payload = mapOf(
                 "component" to component,
                 "phi_c_range" to "${phiCScore.coerceIn(0f, 1f)}",
-                "compliance_rate" to (constitutionalCompliance.values.count { it }.toDouble() /
-                                   constitutionalCompliance.size).toString(),
-                "timestamp" to System.currentTimeMillis().toString()
+                "compliance_rate" to constitutionalCompliance.values.count { it }.toDouble() /
+                                   constitutionalCompliance.size,
+                "timestamp" to System.currentTimeMillis()
             )
         )
     }
@@ -142,7 +140,7 @@ class PhiCAnalyticsCollector private constructor(private val context: Context) {
         // Send via Token Arkhe Bus to analytics backend
         arkheCore.sendArkheMessage(
             identity = "phi_c_analytics_collector",
-            semantics = MessageSemantics.PROPOSITION,
+            semantics = org.arkhe.android.core.MessageSemantics.PROPOSITION,
             payload = mapOf(
                 "action" to "aggregate_metrics",
                 "event" to mapOf(
@@ -179,10 +177,10 @@ class PhiCAnalyticsCollector private constructor(private val context: Context) {
         val reportSeal = arkheCore.anchorToTemporalChain(
             eventType = "adoption_report_generated",
             payload = mapOf(
-                "start_date" to startDate.toString(),
-                "end_date" to endDate.toString(),
-                "app_category" to (appCategory ?: ""),
-                "timestamp" to System.currentTimeMillis().toString()
+                "start_date" to startDate,
+                "end_date" to endDate,
+                "app_category" to appCategory,
+                "timestamp" to System.currentTimeMillis()
             )
         ).seal
 

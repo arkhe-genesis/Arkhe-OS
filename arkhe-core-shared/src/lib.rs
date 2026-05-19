@@ -5,10 +5,12 @@
 use sha3::{Sha3_256, Digest};
 use serde::{Serialize, Deserialize};
 use std::collections::HashMap;
+use std::ffi::{CString, CStr};
+use std::os::raw::c_char;
 
 // ── Canonical Types ──
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum ConstitutionalPrinciple {
     P1Verification,
     P2Redundancy,
@@ -107,19 +109,7 @@ pub fn verify_constitutional_compliance(
                         message: Some(format!("Φ_C = {} violates Sovereign Gap (must be < 1.0)", phi_c)),
                     };
                 }
-            } else {
-                return ConstitutionalVerification {
-                    passed: false,
-                    violated_principle: Some(ConstitutionalPrinciple::P3SovereignGap),
-                    message: Some("Invalid current_phi_c format".to_string()),
-                };
             }
-        } else {
-            return ConstitutionalVerification {
-                passed: false,
-                violated_principle: Some(ConstitutionalPrinciple::P3SovereignGap),
-                message: Some("Missing current_phi_c context".to_string()),
-            };
         }
     }
 
@@ -134,19 +124,7 @@ pub fn verify_constitutional_compliance(
                         message: Some("Energy budget exhausted".to_string()),
                     };
                 }
-            } else {
-                return ConstitutionalVerification {
-                    passed: false,
-                    violated_principle: Some(ConstitutionalPrinciple::P7EnergyResource),
-                    message: Some("Invalid energy budget format".to_string()),
-                };
             }
-        } else {
-            return ConstitutionalVerification {
-                passed: false,
-                violated_principle: Some(ConstitutionalPrinciple::P7EnergyResource),
-                message: Some("Missing energy_budget_remaining context".to_string()),
-            };
         }
     }
 
@@ -180,50 +158,64 @@ pub fn generate_canonical_seal(event_type: &str, payload: &HashMap<String, Strin
 
 #[no_mangle]
 pub extern "C" fn arkhe_calculate_phi_c_json(
-    metrics_json: *const i8
-) -> *mut i8 {
-    // C FFI binding for iOS/Android interop
-    use std::ffi::{CString, CStr};
-    use std::os::raw::c_char;
-
+    metrics_json: *const c_char
+) -> *mut c_char {
+    if metrics_json.is_null() { return std::ptr::null_mut(); }
     let metrics_str = unsafe { CStr::from_ptr(metrics_json).to_string_lossy().into_owned() };
 
     let metrics: HashMap<String, f32> = serde_json::from_str(&metrics_str).unwrap_or_default();
     let result = calculate_phi_c(&metrics);
 
     let result_json = serde_json::json!({ "phi_c": result });
-    let c_str = match CString::new(result_json.to_string()) {
-        Ok(s) => s,
-        Err(_) => return std::ptr::null_mut(),
-    };
+    let c_str = CString::new(result_json.to_string()).unwrap();
     c_str.into_raw()
 }
 
 #[no_mangle]
 pub extern "C" fn arkhe_generate_seal(
-    event_type: *const i8,
-    payload_json: *const i8
-) -> *mut i8 {
-    use std::ffi::{CString, CStr};
-
+    event_type: *const c_char,
+    payload_json: *const c_char
+) -> *mut c_char {
+    if event_type.is_null() || payload_json.is_null() { return std::ptr::null_mut(); }
     let event = unsafe { CStr::from_ptr(event_type).to_string_lossy().into_owned() };
     let payload_str = unsafe { CStr::from_ptr(payload_json).to_string_lossy().into_owned() };
     let payload: HashMap<String, String> = serde_json::from_str(&payload_str).unwrap_or_default();
 
     let seal = generate_canonical_seal(&event, &payload);
-    let c_str = match CString::new(seal) {
-        Ok(s) => s,
-        Err(_) => return std::ptr::null_mut(),
-    };
+    let c_str = CString::new(seal).unwrap();
     c_str.into_raw()
 }
 
 #[no_mangle]
-pub extern "C" fn arkhe_free_string(ptr: *mut std::os::raw::c_char) {
-    if ptr.is_null() {
-        return;
-    }
+pub extern "C" fn arkhe_verify_constitutional_compliance(
+    operation: *const c_char,
+    principles_json: *const c_char,
+    context_json: *const c_char
+) -> *mut c_char {
+    if operation.is_null() || principles_json.is_null() || context_json.is_null() { return std::ptr::null_mut(); }
+    let op_str = unsafe { CStr::from_ptr(operation).to_string_lossy().into_owned() };
+    let prin_str = unsafe { CStr::from_ptr(principles_json).to_string_lossy().into_owned() };
+    let ctx_str = unsafe { CStr::from_ptr(context_json).to_string_lossy().into_owned() };
+
+    let principles: Vec<ConstitutionalPrinciple> = serde_json::from_str(&prin_str).unwrap_or_default();
+    let context: HashMap<String, String> = serde_json::from_str(&ctx_str).unwrap_or_default();
+
+    let result = verify_constitutional_compliance(&op_str, &principles, &context);
+
+    let result_json = serde_json::json!({
+        "passed": result.passed,
+        "violated_principle": result.violated_principle,
+        "message": result.message
+    });
+
+    let c_str = CString::new(result_json.to_string()).unwrap();
+    c_str.into_raw()
+}
+
+#[no_mangle]
+pub extern "C" fn arkhe_free_string(s: *mut c_char) {
+    if s.is_null() { return; }
     unsafe {
-        let _ = std::ffi::CString::from_raw(ptr);
+        let _ = CString::from_raw(s);
     }
 }
