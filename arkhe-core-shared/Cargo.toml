@@ -1,0 +1,13 @@
+[package]
+name = "arkhe-core-shared"
+version = "246.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["staticlib", "cdylib"]
+
+[dependencies]
+sha3 = "0.10.8"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+hex = "0.4"
