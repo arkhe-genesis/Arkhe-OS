@@ -231,7 +231,7 @@ class ConceptHollowingGuard:
             "hollowing_status": vessel["hollowing_status"],
             "hollowing_score": vessel["hollowing_score"],
             "integrity": max(0.0, 1.0 - vessel["hollowing_score"]),
-            "p9_status": "PASS" if vessel["hollowing_status"] == "intact" else "FAIL"
+            "p9_status": "PASS" if vessel["hollowing_status"] in ("intact", "restored") else "FAIL"
         }
 
     def restore_vessel(self, concept: str) -> Dict:
