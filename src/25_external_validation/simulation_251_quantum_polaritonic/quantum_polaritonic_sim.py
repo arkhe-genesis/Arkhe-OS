@@ -56,7 +56,7 @@ class QuantumPolaritonicSimulator:
 
     def _encode_input(self, char: str) -> float:
         """Codifica caractere em amplitude de probabilidade (simulado)."""
-        return float(hash(char) % 100 / 100.0)
+        return float(ord(char) % 100 / 100.0)
 
     def _generate_optical_seal(self, state: np.ndarray) -> str:
         """Gera selo canônico baseado no padrão de interferência óptica."""
