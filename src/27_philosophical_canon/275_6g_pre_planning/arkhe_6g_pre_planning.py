@@ -110,16 +110,18 @@ class Arkhe6GPrePlanning:
 
         # Camada 1: Radio Access (THz + RIS)
         for i in range(5):
+            freq = random.choice(list(G6Frequency))
+            ris = random.randint(1000, 10000)
             cell = G6Cell(
                 cell_id=f"6G-CELL-{i:03d}",
-                frequency_band=random.choice(list(G6Frequency)),
-                ris_elements=random.randint(1000, 10000),
+                frequency_band=freq,
+                ris_elements=ris,
                 lux1_nodes=random.randint(10, 100),
                 phi_c_target=self.PHI_C_MIN_RADIO + random.random() * 0.02,
                 latency_target_ms=self.LATENCY_RADIO_MS,
                 devices_capacity=self.DEVICES_PER_KM2,
                 constitutional_enforced=True,
-                seal=self._generate_seal(f"CELL_{i:03d}", {"frequency": random.choice(list(G6Frequency)).name, "ris": 1000})
+                seal=self._generate_seal(f"CELL_{i:03d}", {"frequency": freq.name, "ris": ris})
             )
             self.cells[cell.cell_id] = cell
 
@@ -227,7 +229,7 @@ class Arkhe6GPrePlanning:
         seal = self._generate_seal("ORCHESTRATOR", {
             "phi_c": phi_c, "routing": routing, "traffic": traffic_load, "noise": noise_level
         })
-        self.seals[f"ORCH_{int(time.time()*1000)}"] = seal
+        self.seals[f"ORCH_{time.time_ns()}"] = seal
 
         return {
             "phi_c": round(phi_c, 6),
