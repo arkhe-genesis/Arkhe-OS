@@ -69,8 +69,10 @@ class ArkhePlayServices private constructor(private val context: Context) {
             val signatureValid = verifyJwsSignature(jwsResult)
 
             // Parse CTS profile match and basic integrity
-            val ctsProfileMatch = jwsResult.contains("\"ctsProfileMatch\":true")
-            val basicIntegrity = jwsResult.contains("\"basicIntegrity\":true")
+            val parts = jwsResult.split(".")
+            val payloadJson = if (parts.size >= 2) String(android.util.Base64.decode(parts[1], android.util.Base64.URL_SAFE)) else ""
+            val ctsProfileMatch = payloadJson.contains("\"ctsProfileMatch\":true")
+            val basicIntegrity = payloadJson.contains("\"basicIntegrity\":true")
 
             // Calculate constitutional trust score
             val trustScore = when {
@@ -221,6 +223,6 @@ class ArkhePlayServices private constructor(private val context: Context) {
     private fun sha3_256(input: String): String {
         return MessageDigest.getInstance("SHA3-256")
             .digest(input.toByteArray())
-            .joinToString("") { "%02x".format(it) }
+            .joinToString("") { "%02x".format(it.toInt() and 0xFF) }
     }
 }

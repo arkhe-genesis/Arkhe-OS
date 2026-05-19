@@ -160,6 +160,7 @@ pub fn generate_canonical_seal(event_type: &str, payload: &HashMap<String, Strin
 pub extern "C" fn arkhe_calculate_phi_c_json(
     metrics_json: *const c_char
 ) -> *mut c_char {
+    if metrics_json.is_null() { return std::ptr::null_mut(); }
     let metrics_str = unsafe { CStr::from_ptr(metrics_json).to_string_lossy().into_owned() };
 
     let metrics: HashMap<String, f32> = serde_json::from_str(&metrics_str).unwrap_or_default();
@@ -175,6 +176,7 @@ pub extern "C" fn arkhe_generate_seal(
     event_type: *const c_char,
     payload_json: *const c_char
 ) -> *mut c_char {
+    if event_type.is_null() || payload_json.is_null() { return std::ptr::null_mut(); }
     let event = unsafe { CStr::from_ptr(event_type).to_string_lossy().into_owned() };
     let payload_str = unsafe { CStr::from_ptr(payload_json).to_string_lossy().into_owned() };
     let payload: HashMap<String, String> = serde_json::from_str(&payload_str).unwrap_or_default();
@@ -190,6 +192,7 @@ pub extern "C" fn arkhe_verify_constitutional_compliance(
     principles_json: *const c_char,
     context_json: *const c_char
 ) -> *mut c_char {
+    if operation.is_null() || principles_json.is_null() || context_json.is_null() { return std::ptr::null_mut(); }
     let op_str = unsafe { CStr::from_ptr(operation).to_string_lossy().into_owned() };
     let prin_str = unsafe { CStr::from_ptr(principles_json).to_string_lossy().into_owned() };
     let ctx_str = unsafe { CStr::from_ptr(context_json).to_string_lossy().into_owned() };
