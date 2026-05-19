@@ -54,7 +54,7 @@ class VerificationRule:
             field = cond["field"]
             db = cond["database"]
             value = getattr(allegation, field, None) or getattr(allegation, 'texto', str(allegation))
-            return True
+            return self._check_database(value, db)
 
         # {"type": "pattern_match", "pattern": r"^\d+\.\d+$", "field": "dosage"}
         elif cond.get("type") == "pattern_match":

@@ -436,7 +436,7 @@ class ArkheIntegrationBenchmark:
             'stress_tests': [asdict(r) for r in self.stress_results],
         }
         with open(path, 'w') as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
+            json.dump(data, f, indent=2, ensure_ascii=False, default=lambda x: x.name if isinstance(x, Enum) else str(x))
 
 
 # ── Execução Principal ──
