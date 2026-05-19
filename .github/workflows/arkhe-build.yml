@@ -112,7 +112,7 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.ARKHE_GPG_PASSPHRASE }}
         run: |
           echo "$GPG_PRIVATE_KEY" | gpg --dearmor > /tmp/arkhe-key.gpg
-          echo "$GPG_PASSPHRASE" | gpg --import --batch --yes /tmp/arkhe-key.gpg
+          echo "$GPG_PASSPHRASE" | gpg --batch --yes --pinentry-mode loopback --passphrase-fd 0 --import /tmp/arkhe-key.gpg
           snap sign arkhe-model-${{ matrix.architecture }}.json --key-name arkhe-image-key             > arkhe-model-${{ matrix.architecture }}.model
       - name: Compile image
         run: |
@@ -142,8 +142,8 @@ jobs:
           report = {
               'architecture': '${{ matrix.architecture }}',
               'platform': '${{ matrix.platform }}',
-              'grade': '${{ github.event.inputs.grade || "dangerous" }',
-              'timestamp': ${{ github.event.head_commit.timestamp }},
+              'grade': '${{ github.event.inputs.grade || 'dangerous' }}',
+              'timestamp': '${{ github.event.head_commit.timestamp || github.event.repository.updated_at }}',
               'canonical_seal': hashlib.sha3_256(b'build_${{ matrix.architecture }}').hexdigest()
           }
           with open('build-report-${{ matrix.architecture }}.json', 'w') as f:

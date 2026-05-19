@@ -28,7 +28,7 @@ sync
 
 echo ""
 echo "[3/6] Verifying flash..."
-DEVICE_HASH=$(sudo dd if="${TARGET_DEVICE}" bs=1M count=$(($(stat -c%s "${IMAGE_PATH}") / 1048576)) 2>/dev/null | sha3sum -a 256 | awk '{print $1}')
+DEVICE_HASH=$(sudo head -c $(stat -c%s "${IMAGE_PATH}") "${TARGET_DEVICE}" | sha3sum -a 256 | awk '{print $1}')
 if [[ "${IMAGE_HASH}" == "${DEVICE_HASH}" ]]; then
     echo "  ✅ Flash verification PASS"
     FLASH_VERIFY="true"
