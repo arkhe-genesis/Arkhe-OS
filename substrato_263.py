@@ -99,6 +99,7 @@ class ArkhePerformanceEngine:
         self.strategies: List[OptimizationStrategy] = []
         self.alerts: List[RegressionAlert] = []
         self._baseline_store: Dict[str, float] = {}
+        self._lock = asyncio.Lock()
 
     def _hash(self, text: str) -> str:
         return hashlib.sha3_256(text.encode()).hexdigest()[:16]
@@ -674,20 +675,21 @@ class ArkhePerformanceEngine:
 
     async def run_full_benchmark_suite(self) -> List[BenchmarkResult]:
         """Executa suite completa de benchmarks."""
-        self.results.clear()
-        await self.benchmark_kernel_ipc_latency()
-        await self.benchmark_kernel_ipc_throughput()
-        await self.benchmark_wasm_compile_time()
-        await self.benchmark_wasm_execution_overhead()
-        await self.benchmark_zkwasm_proof_generation()
-        await self.benchmark_ed25519_sign()
-        await self.benchmark_mldsa44_sign()
-        await self.benchmark_hybrid_verify()
-        await self.benchmark_kani_verify()
-        await self.benchmark_tla_model_check()
-        await self.benchmark_cargo_build_full()
-        await self.benchmark_lto_link_time()
-        return self.results
+        async with self._lock:
+            self.results.clear()
+            await self.benchmark_kernel_ipc_latency()
+            await self.benchmark_kernel_ipc_throughput()
+            await self.benchmark_wasm_compile_time()
+            await self.benchmark_wasm_execution_overhead()
+            await self.benchmark_zkwasm_proof_generation()
+            await self.benchmark_ed25519_sign()
+            await self.benchmark_mldsa44_sign()
+            await self.benchmark_hybrid_verify()
+            await self.benchmark_kani_verify()
+            await self.benchmark_tla_model_check()
+            await self.benchmark_cargo_build_full()
+            await self.benchmark_lto_link_time()
+            return list(self.results)
 
     async def canonize(self) -> CanonicalBenchmark:
         """Executa pipeline completo de benchmark e canonização."""
