@@ -238,6 +238,9 @@ class FiveGCoreConstitutionalController:
             f"session:{ue_id}:{smf.nf_id}:{upf_id}:{time.time()}".encode()
         ).hexdigest()
 
+        if not upf or upf.nf_type != NetworkFunctionType.UPF or edge_id not in self.edge_nodes:
+            return {"error": "Invalid UPF or Edge ID provided"}
+
         # 3. Verificação de fluxo UPF
         upf_verification = self.verify_upf_packet_flow(upf_id, packet_count=100)
 
@@ -245,9 +248,6 @@ class FiveGCoreConstitutionalController:
         edge_verification = self.verify_edge_latency(edge_id)
 
         # 5. Verificação de constitucionalidade da sessão
-        if "error" in upf_verification or "error" in edge_verification:
-            return {"error": "Invalid UPF or Edge ID provided"}
-
         constitutional = (
             upf_verification["ghost_preserved"] and
             upf_verification["loopseal_intact"] and
