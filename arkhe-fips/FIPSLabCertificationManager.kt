@@ -97,7 +97,7 @@ class FIPSLabCertificationManager private constructor(private val context: Conte
             submissionDate = System.currentTimeMillis(),
             labId = labId,
             evidenceHashes = evidenceHashes,
-            temporalAnchor = prepAnchor.seal,
+            temporalAnchor = submissionSeal,
             status = SubmissionStatus.SUBMITTED
         )
     }

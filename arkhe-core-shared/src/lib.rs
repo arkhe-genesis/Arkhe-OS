@@ -107,7 +107,19 @@ pub fn verify_constitutional_compliance(
                         message: Some(format!("Φ_C = {} violates Sovereign Gap (must be < 1.0)", phi_c)),
                     };
                 }
+            } else {
+                return ConstitutionalVerification {
+                    passed: false,
+                    violated_principle: Some(ConstitutionalPrinciple::P3SovereignGap),
+                    message: Some("Invalid current_phi_c format".to_string()),
+                };
             }
+        } else {
+            return ConstitutionalVerification {
+                passed: false,
+                violated_principle: Some(ConstitutionalPrinciple::P3SovereignGap),
+                message: Some("Missing current_phi_c context".to_string()),
+            };
         }
     }
 
@@ -122,7 +134,19 @@ pub fn verify_constitutional_compliance(
                         message: Some("Energy budget exhausted".to_string()),
                     };
                 }
+            } else {
+                return ConstitutionalVerification {
+                    passed: false,
+                    violated_principle: Some(ConstitutionalPrinciple::P7EnergyResource),
+                    message: Some("Invalid energy budget format".to_string()),
+                };
             }
+        } else {
+            return ConstitutionalVerification {
+                passed: false,
+                violated_principle: Some(ConstitutionalPrinciple::P7EnergyResource),
+                message: Some("Missing energy_budget_remaining context".to_string()),
+            };
         }
     }
 
@@ -168,7 +192,10 @@ pub extern "C" fn arkhe_calculate_phi_c_json(
     let result = calculate_phi_c(&metrics);
 
     let result_json = serde_json::json!({ "phi_c": result });
-    let c_str = CString::new(result_json.to_string()).unwrap();
+    let c_str = match CString::new(result_json.to_string()) {
+        Ok(s) => s,
+        Err(_) => return std::ptr::null_mut(),
+    };
     c_str.into_raw()
 }
 
@@ -184,6 +211,19 @@ pub extern "C" fn arkhe_generate_seal(
     let payload: HashMap<String, String> = serde_json::from_str(&payload_str).unwrap_or_default();
 
     let seal = generate_canonical_seal(&event, &payload);
-    let c_str = CString::new(seal).unwrap();
+    let c_str = match CString::new(seal) {
+        Ok(s) => s,
+        Err(_) => return std::ptr::null_mut(),
+    };
     c_str.into_raw()
+}
+
+#[no_mangle]
+pub extern "C" fn arkhe_free_string(ptr: *mut i8) {
+    if ptr.is_null() {
+        return;
+    }
+    unsafe {
+        let _ = std::ffi::CString::from_raw(ptr);
+    }
 }

@@ -31,7 +31,7 @@ import ArkheCoreShared  // Rust core via Swift Package Manager
         }
 
         let resultJSON = arkhe_calculate_phi_c_json(metricsStr)
-        defer { free(resultJSON) }
+        defer { arkhe_free_string(resultJSON) }
 
         let resultStr = String(cString: resultJSON)
         guard let resultData = resultStr.data(using: .utf8),
@@ -100,7 +100,7 @@ import ArkheCoreShared  // Rust core via Swift Package Manager
         }
 
         let sealC = arkhe_generate_seal(eventTypeC, payloadC)
-        defer { free(sealC) }
+        defer { arkhe_free_string(sealC) }
 
         return String(cString: sealC)
     }
