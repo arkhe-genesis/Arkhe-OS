@@ -1,0 +1,197 @@
+# .github/workflows/arkhe-build.yml
+# Canon: ∞.Ω.∇+++.256.gha_pipeline
+# CI/CD pipeline for Arkhe-Core Image multi-architecture build
+
+name: Arkhe-Core Canonical Build
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'arkhe-core-image/**'
+      - '.github/workflows/arkhe-build.yml'
+      - 'snaps/**'
+      - 'tests/**'
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ published ]
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      architecture:
+        description: 'Target architecture'
+        required: true
+        default: 'arm64'
+        type: choice
+        options: [ arm64, amd64, riscv64, loongarch64, s390x ]
+      grade:
+        description: 'Model grade'
+        required: true
+        default: 'dangerous'
+        type: choice
+        options: [ dangerous, signed ]
+
+env:
+  ARKHE_CANON: "∞.Ω.∇+++.256.gha_pipeline"
+  PYTHON_VERSION: '3.12'
+  SNAPCRAFT_CHANNEL: 'edge'
+  UBUNTU_IMAGE_CHANNEL: 'edge'
+
+jobs:
+  validate:
+    name: Validate & Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+      - run: pip install -r requirements-dev.txt
+      - run: flake8 arkhe-core-image/ --max-line-length=120
+      - run: black --check arkhe-core-image/
+      - run: pytest tests/ -v --tb=short --junitxml=test-results.xml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: validation-report
+          path: test-results.xml
+          retention-days: 7
+
+  build:
+    name: Build ${{ matrix.architecture }} (${{ matrix.platform }})
+    runs-on: ${{ matrix.runner }}
+    needs: validate
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - architecture: arm64
+            platform: raspberry-pi-4
+            runner: ubuntu-latest
+            snap_arch: arm64
+          - architecture: arm64
+            platform: raspberry-pi-5
+            runner: ubuntu-latest
+            snap_arch: arm64
+          - architecture: amd64
+            platform: generic-pc
+            runner: ubuntu-latest
+            snap_arch: amd64
+          - architecture: riscv64
+            platform: qemu-riscv64
+            runner: ubuntu-latest
+            snap_arch: riscv64
+          - architecture: loongarch64
+            platform: qemu-loongarch64
+            runner: ubuntu-latest
+            snap_arch: loongarch64
+          - architecture: s390x
+            platform: ibm-z14
+            runner: ubuntu-latest
+            snap_arch: s390x
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y snapd ubuntu-image qemu-user-static
+          sudo snap install snapcraft --classic --channel=${{ env.SNAPCRAFT_CHANNEL }}
+      - name: Generate model assertion
+        run: |
+          python3 arkhe-core-image/generate_model_assertion.py             --developer-id "${{ secrets.ARKHE_DEVELOPER_ID }}"             --output arkhe-model-${{ matrix.architecture }}.json             --grade "${{ github.event.inputs.grade || 'dangerous' }}"             --architecture "${{ matrix.architecture }}"             --platform "${{ matrix.platform }}"
+      - name: Sign model assertion
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.ARKHE_GPG_PRIVATE_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.ARKHE_GPG_PASSPHRASE }}
+        run: |
+          echo "$GPG_PRIVATE_KEY" | gpg --dearmor > /tmp/arkhe-key.gpg
+          echo "$GPG_PASSPHRASE" | gpg --import --batch --yes /tmp/arkhe-key.gpg
+          snap sign arkhe-model-${{ matrix.architecture }}.json --key-name arkhe-image-key             > arkhe-model-${{ matrix.architecture }}.model
+      - name: Compile image
+        run: |
+          ubuntu-image snap arkhe-model-${{ matrix.architecture }}.model             --output arkhe-core-26-${{ matrix.architecture }}.img             --allow-snapd-kernel-mismatch             --validation=ignore             --image-size 8G
+      - name: Run test suite
+        run: |
+          pytest tests/ -v --tb=short             --junitxml=test-results-${{ matrix.architecture }}.xml
+      - name: Verify constitutional compliance
+        run: |
+          python3 -c "
+          from arkhe_core_image.verification import ConstitutionalVerifier
+          verifier = ConstitutionalVerifier()
+          result = verifier.verify_image(
+              image_path='arkhe-core-26-${{ matrix.architecture }}.img',
+              model_path='arkhe-model-${{ matrix.architecture }}.model'
+          )
+          critical = ['P1', 'P3', 'P6']
+          if any(not result['constitutional_compliance'].get(p, False) for p in critical):
+              print('❌ Critical constitutional principles violated')
+              exit(1)
+          print('✅ Constitutional compliance verified')
+          "
+      - name: Generate build report
+        run: |
+          python3 -c "
+          import hashlib, json
+          report = {
+              'architecture': '${{ matrix.architecture }}',
+              'platform': '${{ matrix.platform }}',
+              'grade': '${{ github.event.inputs.grade || "dangerous" }',
+              'timestamp': ${{ github.event.head_commit.timestamp }},
+              'canonical_seal': hashlib.sha3_256(b'build_${{ matrix.architecture }}').hexdigest()
+          }
+          with open('build-report-${{ matrix.architecture }}.json', 'w') as f:
+              json.dump(report, f, indent=2)
+          "
+      - name: Upload artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: arkhe-core-${{ matrix.architecture }}-${{ github.run_number }}
+          path: |
+            arkhe-core-26-${{ matrix.architecture }}.img
+            arkhe-model-${{ matrix.architecture }}.model
+            build-report-${{ matrix.architecture }}.json
+            test-results-${{ matrix.architecture }}.xml
+          retention-days: 30
+
+  consolidate:
+    name: Consolidate Build Results
+    runs-on: ubuntu-latest
+    needs: build
+    if: always()
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+          pattern: arkhe-core-*
+          merge-multiple: true
+      - name: Generate consolidated report
+        run: |
+          python3 -c "
+          import json, hashlib, glob
+          reports = []
+          for f in glob.glob('artifacts/**/build-report-*.json'):
+              with open(f) as fh: reports.append(json.load(fh))
+          consolidated = {
+              'canon': '${{ env.ARKHE_CANON }}',
+              'workflow_run': '${{ github.run_id }}',
+              'total_builds': len(reports),
+              'successful_builds': sum(1 for r in reports if r.get('success', True)),
+              'architectures': [r['architecture'] for r in reports],
+              'canonical_seal': hashlib.sha3_256(json.dumps(reports, sort_keys=True).encode()).hexdigest()
+          }
+          with open('consolidated-report.json', 'w') as f:
+              json.dump(consolidated, f, indent=2)
+          "
+      - uses: actions/upload-artifact@v4
+        with:
+          name: consolidated-report
+          path: consolidated-report.json
+          retention-days: 90
