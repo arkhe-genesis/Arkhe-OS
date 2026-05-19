@@ -219,7 +219,7 @@ pub extern "C" fn arkhe_generate_seal(
 }
 
 #[no_mangle]
-pub extern "C" fn arkhe_free_string(ptr: *mut i8) {
+pub extern "C" fn arkhe_free_string(ptr: *mut std::os::raw::c_char) {
     if ptr.is_null() {
         return;
     }
