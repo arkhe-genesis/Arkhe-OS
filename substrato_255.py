@@ -383,27 +383,31 @@ jobs:
             *.img
             *.model
             *.model.sig
+            *.snap
             canonical.seal
 
   security-scan:
     needs: build-image
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [arm64, amd64, riscv64]
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: arkhe-core-26-arm64
-          path: ./arm64
+          name: arkhe-core-26-${{ matrix.arch }}
+          path: ./${{ matrix.arch }}
       - name: Run Trivy vulnerability scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: './arm64/*.img'
+          image-ref: './${{ matrix.arch }}/*.img'
           format: 'sarif'
-          output: 'trivy-results.sarif'
+          output: 'trivy-results-${{ matrix.arch }}.sarif'
       - name: Upload scan results
         uses: actions/upload-artifact@v4
         with:
-          name: security-scan-results
-          path: trivy-results.sarif
+          name: security-scan-results-${{ matrix.arch }}
+          path: trivy-results-${{ matrix.arch }}.sarif
 
   publish:
     if: startsWith(github.ref, 'refs/tags/v')
