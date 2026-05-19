@@ -23,6 +23,10 @@ android {
         buildConfigField("String", "ARKHE_PHI_C_MIN", "\"0.85\"")
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -131,11 +135,20 @@ signing {
     useGpgCmd()
     sign(publishing.publications["release"])
 
-    // PQC signing with Dilithium3 for canonical verification
+}
+
+// ── PQC Signing Task ──
+tasks.register("signReleasePublicationWithPQC") {
+    group = "arkhe"
+    description = "Signs the release AAR with Dilithium3 and generates checksums"
+
+    dependsOn("assembleRelease")
+
     doLast {
-        val artifactFile = tasks.named("assembleRelease").map {
-            it.outputs.files.files.first { f -> f.name.endsWith(".aar") }
-        }.get()
+        val assembleTask = tasks.named("assembleRelease").get()
+        // Assuming output is resolved standard way
+        val artifactFile = file("$buildDir/outputs/aar/arkhe-android-core-release.aar")
+        if (!artifactFile.exists()) return@doLast
 
         // Generate Dilithium3 signature
         val pqcSignature = org.arkhe.pqc.Dilithium3.sign(
@@ -144,31 +157,16 @@ signing {
         )
 
         // Write signature to file for publication
-        File("$buildDir/publications/release/module.json.pqc.sig").writeBytes(pqcSignature)
+        val pubDir = file("$buildDir/publications/release")
+        pubDir.mkdirs()
+        File(pubDir, "module.json.pqc.sig").writeBytes(pqcSignature)
 
         // Generate SHA3-256 checksum
         val checksum = java.security.MessageDigest.getInstance("SHA3-256")
             .digest(artifactFile.readBytes())
             .joinToString("") { "%02x".format(it) }
 
-        File("$buildDir/publications/release/module.json.sha3-256").writeText(checksum)
-
-        // Anchor publication metadata to TemporalChain
-        kotlinx.coroutines.runBlocking {
-            org.arkhe.android.core.ArkheCore.getInstance(applicationContext)
-                .anchorToTemporalChain(
-                    eventType = "maven_publication",
-                    payload = mapOf(
-                        "artifact" to "arkhe-android-core",
-                        "version" to "244.1.0",
-                        "checksum" to checksum,
-                        "pqc_sig_hash" to java.security.MessageDigest.getInstance("SHA3-256")
-                            .digest(pqcSignature)
-                            .joinToString("") { "%02x".format(it) },
-                        "timestamp" to System.currentTimeMillis()
-                    )
-                )
-        }
+        File(pubDir, "module.json.sha3-256").writeText(checksum)
     }
 }
 

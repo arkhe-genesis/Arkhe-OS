@@ -84,7 +84,7 @@ def execute_kat_tests():
 
     return results
 
-def collect_evidence_hashes():
+def collect_evidence_hashes(kat_results):
     """Collects SHA3-256 hashes of all evidence artifacts."""
     evidence_hashes = {}
 
@@ -102,7 +102,7 @@ def collect_evidence_hashes():
 
     # Hash test results
     evidence_hashes["test_results:kat"] = hashlib.sha3_256(
-        json.dumps(execute_kat_tests(), sort_keys=True).encode()
+        json.dumps(kat_results, sort_keys=True).encode()
     ).hexdigest()
 
     # Hash security policy
@@ -128,7 +128,7 @@ def main():
 
     # 3. Collect evidence hashes
     print("📦 Collecting evidence hashes...")
-    evidence_hashes = collect_evidence_hashes()
+    evidence_hashes = collect_evidence_hashes(kat_results)
 
     # 4. Assemble evidence package
     evidence_package = {
