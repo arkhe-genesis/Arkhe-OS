@@ -116,9 +116,10 @@ class ArkheQKD:
 
         # Sifração
         sifted_key = self.sift_key(sender_bits, sender_basis, receiver_basis, receiver_measurements)
+        sifted_sender = [s_bit for s_bit, s_b, r_b in zip(sender_bits, sender_basis, receiver_basis) if s_b == r_b]
 
         # Estimação de erro
-        qber = self.estimate_qber(sender_bits[:len(sifted_key)], sifted_key)
+        qber = self.estimate_qber(sifted_sender, sifted_key)
 
         # Amplificação de privacidade
         final_key = self.privacy_amplification(sifted_key)
