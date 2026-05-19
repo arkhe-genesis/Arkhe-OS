@@ -42,6 +42,8 @@ class ExpandedHealingAction(Enum):
     APPLY_SECURITY_PATCH = "apply_security_patch"       # Aplicar patch de segurança crítico
     ENABLE_RATE_LIMITING = "enable_rate_limiting"       # Ativar rate limiting emergencial
     TRIGGER_BACKUP_RECOVERY = "trigger_backup_recovery" # Acionar recuperação de backup
+    FEDERATED_LEARNING_SYNC = "federated_learning_sync" # Sincronização de aprendizado federado
+    AUTO_HEALING_REFINEMENT = "auto_healing_refinement" # Refinamento de auto-healing avançado
 
 class ExpandedHealingOrchestrator:
     """
@@ -203,7 +205,28 @@ class ExpandedHealingOrchestrator:
             ExpandedHealingAction.APPLY_SECURITY_PATCH: self._apply_security_patch,
             ExpandedHealingAction.ENABLE_RATE_LIMITING: self._enable_rate_limiting,
             ExpandedHealingAction.TRIGGER_BACKUP_RECOVERY: self._trigger_backup_recovery,
+            ExpandedHealingAction.FEDERATED_LEARNING_SYNC: self._federated_learning_sync,
+            ExpandedHealingAction.AUTO_HEALING_REFINEMENT: self._auto_healing_refinement,
         }
+
+    async def _federated_learning_sync(self, anomaly_alert: Dict) -> bool:
+        """Sincroniza modelos de aprendizado federado entre agentes para propagar auto-healing."""
+        logger.info("🧠 Sincronizando aprendizado federado para propagação de cura...")
+        # Mock: propagação via ArkheBus
+        if self.phi_bus:
+            await self.phi_bus.publish_metric("federated_healing_sync", {
+                "alert_type": anomaly_alert.get("type"),
+                "phi_c_gain": 0.05
+            })
+        await asyncio.sleep(0.4)
+        return True
+
+    async def _auto_healing_refinement(self, anomaly_alert: Dict) -> bool:
+        """Refina protocolos de auto-healing baseado em feedback histórico."""
+        logger.info("⚙️ Refinando protocolos de auto-healing avançado...")
+        # Mock: ajuste de thresholds
+        await asyncio.sleep(0.3)
+        return True
 
     async def _scale_up_resources(self, anomaly_alert: Dict) -> bool:
         """Aumenta recursos (CPU/memória) via Kubernetes."""
