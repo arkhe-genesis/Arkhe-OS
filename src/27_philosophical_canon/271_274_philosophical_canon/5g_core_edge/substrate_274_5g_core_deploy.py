@@ -245,6 +245,9 @@ class FiveGCoreConstitutionalController:
         edge_verification = self.verify_edge_latency(edge_id)
 
         # 5. Verificação de constitucionalidade da sessão
+        if "error" in upf_verification or "error" in edge_verification:
+            return {"error": "Invalid UPF or Edge ID provided"}
+
         constitutional = (
             upf_verification["ghost_preserved"] and
             upf_verification["loopseal_intact"] and
