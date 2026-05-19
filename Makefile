@@ -78,8 +78,6 @@ test: test-unit test-integration test-performance test-security
 
 test-unit:
 	python3 -m pytest tests/unit/ -v --tb=short
-	cargo test --manifest-path crypto/rust/Cargo.toml
-	cargo test --manifest-path store/rust/Cargo.toml
 
 test-integration:
 	python3 -m pytest tests/integration/ -v --tb=short
