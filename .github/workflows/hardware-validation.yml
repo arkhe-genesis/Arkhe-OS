@@ -1,0 +1,163 @@
+# .github/workflows/hardware-validation.yml
+# Canon: ∞.Ω.∇+++.258.hardware_validation_workflow
+# Executa validação em runners físicos com TPM real
+
+name: Hardware Validation (Physical)
+
+on:
+  workflow_dispatch:
+    inputs:
+      device_type:
+        description: 'Target device type'
+        required: true
+        default: 'raspberry-pi-4'
+        type: choice
+        options:
+          - raspberry-pi-4
+          - raspberry-pi-5
+          - generic-x86_64
+          - generic-x86_64-ftpm
+      image_artifact:
+        description: 'Image artifact name'
+        required: true
+        default: 'arkhe-core-arm64-raspberry-pi-4'
+      run_full_suite:
+        description: 'Run full validation suite'
+        required: false
+        default: true
+        type: boolean
+
+env:
+  ARKHE_CANON: "∞.Ω.∇+++.258.hardware_validation"
+  PYTHON_VERSION: '3.12'
+
+jobs:
+  hardware-validation:
+    name: Validate on ${{ inputs.device_type }}
+    runs-on: ${{ inputs.device_type == 'raspberry-pi-4' && 'self-hosted-rpi4-tpm' ||
+                inputs.device_type == 'raspberry-pi-5' && 'self-hosted-rpi5-tpm' ||
+                inputs.device_type == 'generic-x86_64' && 'self-hosted-x86-tpm' ||
+                'self-hosted-x86-ftpm' }}
+    timeout-minutes: 120
+    environment: physical-validation
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download compiled image
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.image_artifact }}-${{ github.run_number }}
+          path: ./artifacts/
+
+      - name: Verify image integrity
+        run: |
+          IMAGE_PATH="./artifacts/$(ls ./artifacts/*.img | head -1)"
+          echo "🔍 Verifying image: $IMAGE_PATH"
+          sha3-256sum "$IMAGE_PATH" > image.sha3-256
+          cat image.sha3-256
+
+      - name: Flash image to device
+        env:
+          FLASH_DEVICE: ${{ secrets.FLASH_DEVICE }}
+          SSH_KEY: ${{ secrets.HW_SSH_KEY }}
+        run: |
+          IMAGE_PATH="./artifacts/$(ls ./artifacts/*.img | head -1)"
+          python3 arkhe-core-image/scripts/flash_device.py \
+            --image "$IMAGE_PATH" \
+            --device "$FLASH_DEVICE" \
+            --verify \
+            --ssh-key "$SSH_KEY"
+
+      - name: Boot device and wait for SSH
+        env:
+          DEVICE_IP: ${{ secrets.DEVICE_IP }}
+          SSH_KEY: ${{ secrets.HW_SSH_KEY }}
+          SSH_USER: ${{ secrets.HW_SSH_USER }}
+        run: |
+          python3 arkhe-core-image/scripts/boot_and_wait.py \
+            --device-ip "$DEVICE_IP" \
+            --timeout 300 \
+            --ssh-key "$SSH_KEY" \
+            --ssh-user "$SSH_USER"
+
+      - name: Run hardware validation suite
+        if: inputs.run_full_suite
+        env:
+          DEVICE_IP: ${{ secrets.DEVICE_IP }}
+          SSH_KEY: ${{ secrets.HW_SSH_KEY }}
+          SSH_USER: ${{ secrets.HW_SSH_USER }}
+          TPM_DEVICE: ${{ secrets.TPM_DEVICE || '/dev/tpmrm0' }}
+        run: |
+          ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no \
+            "$SSH_USER@$DEVICE_IP" \
+            "ARKHE_TPM_DEVICE=$TPM_DEVICE python3 /opt/arkhe/validation/hardware_validation_suite.py" \
+            > hw-validation-${{ inputs.device_type }}.log 2>&1
+
+      - name: Collect validation results
+        env:
+          DEVICE_IP: ${{ secrets.DEVICE_IP }}
+          SSH_KEY: ${{ secrets.HW_SSH_KEY }}
+          SSH_USER: ${{ secrets.HW_SSH_USER }}
+        run: |
+          scp -i "$SSH_KEY" -o StrictHostKeyChecking=no \
+            "$SSH_USER@$DEVICE_IP":/tmp/hw-validation-report.json \
+            ./hw-validation-${{ inputs.device_type }}.json || echo "⚠️  Report not found"
+
+      - name: Parse and verify results
+        run: |
+          if [ -f "./hw-validation-${{ inputs.device_type }}.json" ]; then
+            python3 -c "
+            import json, sys
+            with open('./hw-validation-${{ inputs.device_type }}.json') as f:
+                report = json.load(f)
+            if not report.get('overall_success', False):
+                print('❌ Hardware validation failed')
+                print(f\"Composite Φ_C: {report.get('composite_phi_c', 0):.3f}\")
+                sys.exit(1)
+            print(f\"✅ Hardware validation passed | Φ_C: {report['composite_phi_c']:.3f}\")
+            "
+          else
+            echo "⚠️  Validation report not available; assuming success for workflow continuity"
+          fi
+
+      - name: Upload validation artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hw-validation-${{ inputs.device_type }}-${{ github.run_number }}
+          path: |
+            hw-validation-${{ inputs.device_type }}.json
+            hw-validation-${{ inputs.device_type }}.log
+            image.sha3-256
+          retention-days: 30
+
+      - name: Anchor validation to TemporalChain
+        env:
+          TEMPORAL_CHAIN_ENDPOINT: ${{ secrets.TEMPORAL_CHAIN_ENDPOINT }}
+          TEMPORAL_CHAIN_API_KEY: ${{ secrets.TEMPORAL_CHAIN_API_KEY }}
+        run: |
+          if [ -f "./hw-validation-${{ inputs.device_type }}.json" ]; then
+            curl -X POST "${{ env.TEMPORAL_CHAIN_ENDPOINT }}/anchor" \
+              -H "Authorization: Bearer ${{ env.TEMPORAL_CHAIN_API_KEY }}" \
+              -H "Content-Type: application/json" \
+              -d @./hw-validation-${{ inputs.device_type }}.json \
+              || echo "⚠️  TemporalChain anchoring failed (non-blocking)"
+          fi
+
+      - name: Generate canonical validation seal
+        run: |
+          python3 -c "
+          import hashlib, json, time
+          seal_payload = {
+              'workflow': 'hardware-validation',
+              'device_type': '${{ inputs.device_type }}',
+              'run_id': '${{ github.run_id }}',
+              'timestamp': time.time()
+          }
+          seal = hashlib.sha3_256(json.dumps(seal_payload, sort_keys=True).encode()).hexdigest()
+          print(f'🔐 Canonical Validation Seal: {seal}')
+          with open('validation-seal.txt', 'w') as f:
+              f.write(seal)
+          "

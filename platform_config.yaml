@@ -104,18 +104,92 @@ platforms:
 
   # ── IBM Z/Mainframe Family ──
   s390x:
+    description: "IBM Z / LinuxONE with Crypto Express acceleration"
+    enterprise_grade: true
+    financial_compliance: true  # PCI-DSS, SOX, GDPR ready
+
     architectures:
-      - name: ibm-z14
+      - name: ibm-z15-crypto-express-7s
         gadget: s390x-gadget
         kernel: s390x-kernel
         base: core26
-        image_size: 16G
+        image_size: 20G
         bootloader: zipl
         tpm_support: true
         tpm_version: "2.0"
         tpm_type: hardware
-        crypto_express: true
-        qemu_emulation: false
+
+        # Crypto Express Configuration
+        crypto_express:
+          enabled: true
+          model: "Crypto Express 7s"
+          pkcs11_module: "/usr/lib64/pkcs11/IBMpkiprov.so"
+          pkcs11_slot: 1
+          fips_140_3_level: 3
+          pqc_algorithms:
+            - Dilithium3
+            - Kyber-768
+            - SPHINCS+
+          acceleration_enabled: true
+
+        # CPACF Integration
+        cpacf:
+          enabled: true
+          lib_path: "/usr/lib/s390x-linux-gnu/libcpacf.so"
+          algorithms:
+            - AES-GCM-128
+            - AES-GCM-256
+            - SHA3-256
+            - SHA3-512
+            - HMAC-SHA3-256
+
+        # Constitutional Overrides for s390x
+        constitutional_overrides:
+          P1_verification:
+            additional_checks:
+              - "zipl_signature"
+              - "kernel_panic_integrity"
+              - "crypto_module_signature"
+              - "cpacf_capability_verification"
+              - "crypto_express_attestation"
+
+          P3_sovereign_gap:
+            phi_c_cap: 0.9999
+            novelty_injection_rate: 0.8  # More stability for critical systems
+            pqc_novelty_factor: 0.95  # Slightly higher for PQC operations
+
+          P6_transparency:
+            anchor_frequency: "real_time"
+            log_format: "syslog_rfc5424"
+            audit_encryption: "CPACF-AES-GCM-256"
+            crypto_ops_logging: true  # Log all crypto operations
+
+          P7_energy:
+            max_cpu_percent: 90  # Mainframes are efficient
+            energy_oracle_multiplier: 0.8  # Discount for proven efficiency
+            crypto_acceleration_discount: 0.9  # Additional discount for hardware crypto
+            power_management: "dynamic_voltage_scaling"
+
+        # High Availability Configuration
+        high_availability:
+          sysplex: true  # Parallel Sysplex support
+          gdps: true  # Geographically Dispersed Parallel Sysplex
+          crypto_key_replication: true  # Replicate keys across Sysplex members
+
+        # Build Configuration
+        build:
+          qemu_emulation: true  # For development/testing
+          qemu_args: >
+            -cpu max
+            -machine s390-ccw-virtio
+            -device pv-dma,ccw-devno=fe.0.0000
+            -device crypto-user,ccw-devno=fe.0.0001
+          hardware_deployment:
+            requirements:
+              - "IBM Z15 or newer"
+              - "Crypto Express 7s adapter"
+              - "TPM 2.0 module"
+              - "FIPS 140-3 Level 3 configuration"
 
 # ── Canonical Snap IDs by Architecture ──
 canonical_snap_ids:
@@ -142,7 +216,10 @@ canonical_snap_ids:
   s390x:
     s390x-gadget: "S390X_GADGET_SNAP_ID"
     s390x-kernel: "S390X_KERNEL_SNAP_ID"
-    core26: "CORE26_S390X_SNAP_ID"
+    core26: "{{CORE26_S390X_SNAP_ID}}"
+    # Crypto Express specific snaps
+    arkhe-cpacf: "{{ARKHE_CPACF_SNAP_ID}}"
+    arkhe-pqc-accel: "{{ARKHE_PQC_ACCEL_SNAP_ID}}"
 
 # ── Arkhe Snap IDs (cross-architecture) ──
 arkhe_snap_ids:
@@ -181,3 +258,15 @@ constitutional_enforcement:
       raspberry-pi-4: { max_cpu_percent: 70, max_memory_mb: 2048 }
       raspberry-pi-5: { max_cpu_percent: 80, max_memory_mb: 4096 }
       ibm-z14: { max_cpu_percent: 90, max_memory_mb: 65536 }
+
+  crypto_operations:
+    mandatory_anchoring: true
+    fips_mode_required: true
+    key_lifecycle_audit: true
+    pqc_signature_verification: true
+
+  s390x_specific:
+    zipl_integrity_check: true
+    crypto_express_attestation: true
+    sysplex_key_sync: true
+    gdps_failover_crypto: true
