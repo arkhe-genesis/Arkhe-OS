@@ -90,7 +90,8 @@ public static class MdeRuleEvolutionEngine
 
         lock (_lock)
         {
-            var state = _ruleStates[feedback.RuleName];
+            if (!_ruleStates.TryGetValue(feedback.RuleName, out var state))
+                return;
 
             // Atualizar contadores
             state = state with

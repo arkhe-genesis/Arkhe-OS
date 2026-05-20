@@ -65,9 +65,6 @@ public class ArkheCrowdStrikeAdapter
         var tokenResponse = await response.Content.ReadFromJsonAsync<FalconTokenResponse>();
         _accessToken = tokenResponse.AccessToken;
         _tokenExpiry = DateTime.UtcNow.AddSeconds(tokenResponse.ExpiresIn - 60);
-
-        _httpClient.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Bearer", _accessToken);
     }
 
     /// <summary>
@@ -99,8 +96,10 @@ public class ArkheCrowdStrikeAdapter
             };
 
             // Enviar para CrowdStrike
-            var response = await _httpClient.PostAsJsonAsync(
-                "ioa/entities/detections/v1", ioaEvent);
+            using var request = new HttpRequestMessage(HttpMethod.Post, "ioa/entities/detections/v1");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+            request.Content = JsonContent.Create(ioaEvent);
+            var response = await _httpClient.SendAsync(request);
 
             response.EnsureSuccessStatusCode();
 
@@ -137,8 +136,10 @@ public class ArkheCrowdStrikeAdapter
                 PatternExpression = TranslateToFalconQuery(rule)
             };
 
-            var response = await _httpClient.PostAsJsonAsync(
-                "ioa/entities/custom-detections/v1", ioaRule);
+            using var request = new HttpRequestMessage(HttpMethod.Post, "ioa/entities/custom-detections/v1");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+            request.Content = JsonContent.Create(ioaRule);
+            var response = await _httpClient.SendAsync(request);
 
             response.EnsureSuccessStatusCode();
             return true;
@@ -155,20 +156,27 @@ public class ArkheCrowdStrikeAdapter
     /// </summary>
     private async Task ExecuteRtrCommandAsync(string deviceId, string command)
     {
-        var rtrSession = await _httpClient.PostAsJsonAsync(
-            "real-time-response/combined/batch-init-session/v1",
-            new { DeviceIds = new[] { deviceId } });
+        using var request1 = new HttpRequestMessage(HttpMethod.Post, "real-time-response/combined/batch-init-session/v1");
+        request1.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+        request1.Content = JsonContent.Create(new { DeviceIds = new[] { deviceId } });
+        var rtrSession = await _httpClient.SendAsync(request1);
+
+        rtrSession.EnsureSuccessStatusCode();
 
         var session = await rtrSession.Content.ReadFromJsonAsync<RtrSessionResponse>();
 
-        await _httpClient.PostAsJsonAsync(
-            "real-time-response/combined/batch-command/v1",
+        using var request2 = new HttpRequestMessage(HttpMethod.Post, "real-time-response/combined/batch-command/v1");
+        request2.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+        request2.Content = JsonContent.Create(
             new
             {
                 SessionId = session.BatchId,
                 BaseCommand = command,
                 CommandString = command == "contain" ? "contain" : "runscript -CloudFile='arkhe_remediate'"
             });
+
+        var response2 = await _httpClient.SendAsync(request2);
+        response2.EnsureSuccessStatusCode();
     }
 
     private string MapToFalconSeverity(double phiC, string violationType)
@@ -200,7 +208,7 @@ public class ArkheCrowdStrikeAdapter
                 "EventType=ProcessRollup2 AND CommandLine Contains 'autocide'",
             "ETW_Provider_Disable_Attempt" =>
                 "EventType=RegKeySecurityDecrease AND RegObjectName Contains 'ETW'",
-            _ => $"EventType=ProcessRollup2 AND CommandLine Contains '{rule.RuleName}'"
+            _ => $"EventType=ProcessRollup2 AND CommandLine Contains '{rule.RuleName.Replace("'", "\\'")}'"
         };
     }
 

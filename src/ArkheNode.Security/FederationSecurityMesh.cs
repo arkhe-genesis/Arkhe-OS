@@ -51,6 +51,7 @@ public class FederationSecurityMesh
         // Gerar selo de consenso federado
         var consensusSeal = GenerateConsensusSeal(alert, successful, failed, consensusReached);
 
+        var validPhiCs = responses.Where(r => r.PhiC.HasValue).Select(r => r.PhiC.Value).ToList();
         return new FederationConsensusResult
         {
             ConsensusReached = consensusReached,
@@ -58,8 +59,8 @@ public class FederationSecurityMesh
             NodesFailed = failed,
             TotalNodes = _nodes.Count,
             ConsensusSeal = consensusSeal,
-            PhiCFederationAverage = responses.Where(r => r.PhiC.HasValue).Average(r => r.PhiC.Value),
-            MaxLatencyMs = responses.Max(r => r.LatencyMs),
+            PhiCFederationAverage = validPhiCs.Any() ? validPhiCs.Average() : 0.0,
+            MaxLatencyMs = responses.Any() ? responses.Max(r => r.LatencyMs) : 0.0,
             AlertAnchored = consensusReached
         };
     }

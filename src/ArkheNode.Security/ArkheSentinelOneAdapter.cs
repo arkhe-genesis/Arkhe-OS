@@ -155,9 +155,10 @@ public class ArkheSentinelOneAdapter
 
         foreach (var action in actions)
         {
-            await _httpClient.PostAsJsonAsync(
+            var response = await _httpClient.PostAsJsonAsync(
                 $"agents/actions/{action}",
                 new { Filter = new { ComputerName = nodeId } });
+            response.EnsureSuccessStatusCode();
         }
     }
 
