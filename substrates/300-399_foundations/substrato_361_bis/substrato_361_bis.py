@@ -348,12 +348,13 @@ class OrkutLabsHyperCycle:
 
         dev["tilling_score"] = tilling_adjusted
 
-        self.tilling_history.append({
-            "orcid": orcid,
-            "tilling": tilling_adjusted,
-            "virtues": {"courage": courage, "wisdom": wisdom, "compassion": compassion},
-            "computed_at": datetime.now(timezone.utc).isoformat(),
-        })
+        if not self.tilling_history or self.tilling_history[-1].get("tilling") != tilling_adjusted:
+            self.tilling_history.append({
+                "orcid": orcid,
+                "tilling": tilling_adjusted,
+                "virtues": {"courage": courage, "wisdom": wisdom, "compassion": compassion},
+                "computed_at": datetime.now(timezone.utc).isoformat(),
+            })
 
         return {
             "orcid": orcid,
@@ -411,6 +412,9 @@ class OrkutLabsHyperCycle:
         """Liquida bounty via TODA/IP (simulação)."""
         if winner_orcid not in self.developers:
             return {"error": "Winner not registered"}
+
+        if any(b.get("bounty_id") == bounty_id for b in self.bounties):
+            return {"error": "Bounty already settled"}
 
         # Verificar Tilling Score
         tilling_data = self.compute_tilling_for_developer(winner_orcid)
@@ -511,6 +515,9 @@ class OrkutLabsHyperCycleFixed(OrkutLabsHyperCycle):
     def settle_bounty_hypercycle(self, bounty_id: str, winner_orcid: str, amount: float) -> Dict:
         if winner_orcid not in self.developers:
             return {"error": "Winner not registered"}
+
+        if any(b.get("bounty_id") == bounty_id for b in self.bounties):
+            return {"error": "Bounty already settled"}
 
         tilling_data = self.compute_tilling_for_developer(winner_orcid)
 
