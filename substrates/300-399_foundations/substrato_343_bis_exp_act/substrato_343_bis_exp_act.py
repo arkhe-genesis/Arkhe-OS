@@ -1,5 +1,4 @@
 import os
-os.environ.setdefault('OSPF_MD5_KEY', 'mock-key-for-local-testing')
 import math, hashlib, json, time, numpy as np
 from typing import List, Dict, Tuple
 from dataclasses import dataclass
