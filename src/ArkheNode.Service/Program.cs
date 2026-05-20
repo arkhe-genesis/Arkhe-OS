@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddControllers();
-builder.Services.AddSingleton<IAuditLogger, DummyAuditLogger>();
+builder.Services.AddSingleton<IAuditLogger, RealAuditLogger>();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
@@ -45,7 +45,10 @@ record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
 
-class DummyAuditLogger : IAuditLogger
+class RealAuditLogger : IAuditLogger
 {
-    public void Log(AuditEvent auditEvent) { }
+    public void Log(AuditEvent auditEvent)
+    {
+        Console.WriteLine($"Audit: {auditEvent.EventType} - {auditEvent.Message}");
+    }
 }

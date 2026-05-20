@@ -155,10 +155,17 @@ public class ArkheSentinelOneAdapter
 
         foreach (var action in actions)
         {
-            var response = await _httpClient.PostAsJsonAsync(
-                $"agents/actions/{action}",
-                new { Filter = new { ComputerName = nodeId } });
-            response.EnsureSuccessStatusCode();
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync(
+                    $"agents/actions/{action}",
+                    new { Filter = new { ComputerName = nodeId } });
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Remediation action {action} failed: {ex.Message}");
+            }
         }
     }
 

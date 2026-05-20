@@ -170,7 +170,7 @@ public class ArkheCrowdStrikeAdapter
         request2.Content = JsonContent.Create(
             new
             {
-                SessionId = session.BatchId,
+                BatchId = session.BatchId,
                 BaseCommand = command,
                 CommandString = command == "contain" ? "contain" : "runscript -CloudFile='arkhe_remediate'"
             });
