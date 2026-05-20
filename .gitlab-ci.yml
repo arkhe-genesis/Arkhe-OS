@@ -1,0 +1,37 @@
+# .gitlab-ci.yml
+stages:
+  - validate
+
+alpha-rule-check:
+  stage: validate
+  image: python:3.11-slim
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+
+  before_script:
+    - pip install --upgrade pip
+
+  script:
+    - python check_137_rule.py . --ci --json > alpha-report.json
+    - |
+      if [ "$(python3 -c "import json; print(json.load(open('alpha-report.json'))['compliant'])")" = "False" ]; then
+        echo "❌ Regra dos 137 violada - merge bloqueado"
+        echo "Execute 'python check_137_rule.py . --fission' para sugestões de correção"
+      fi
+
+  artifacts:
+    paths:
+      - alpha-report.json
+    expire_in: 30 days
+    reports:
+      dotenv: alpha-report.json  # Para integração com dashboards
+
+  after_script:
+    # Ancorar na TemporalChain (mock)
+    - python3 -c "
+import json, hashlib, os
+r = json.load(open('alpha-report.json'))
+payload = {'event':'gitlab_ci_alpha','project':os.getenv('CI_PROJECT_PATH'),'commit':os.getenv('CI_COMMIT_SHA'),'compliant':r['compliant']}
+print('🔗 TemporalChain:', hashlib.sha3_256(json.dumps(payload,sort_keys=True).encode()).hexdigest()[:32])
+"

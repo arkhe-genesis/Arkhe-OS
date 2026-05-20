@@ -1,0 +1,100 @@
+# .github/workflows/137-rule.yml
+name: Validate Alpha⁻¹ Rule (137)
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  check-alpha-rule:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Necessário para comparação de diffs
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt  # Se houver
+
+    - name: Run 137-rule checker
+      id: alpha-check
+      run: |
+        python check_137_rule.py . --ci --json > alpha-report.json
+
+    - name: Upload violation report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: alpha-violation-report
+        path: alpha-report.json
+        retention-days: 30
+
+    - name: Comment on PR with violations
+      if: github.event_name == 'pull_request' && steps.alpha-check.outcome == 'failure'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const report = JSON.parse(fs.readFileSync('alpha-report.json', 'utf8'));
+
+          let comment = '## ⚠️ Regra dos 137 (α⁻¹) Violada\n\n';
+          comment += `**${report.violations.length} diretório(s)** excedem o limite de 137 items:\n\n`;
+
+          for (const v of report.violations.slice(0, 5)) {
+            comment += `- \`${v.path}\`: ${v.count} itens (excesso: ${v.count - report.limit})\n`;
+          }
+          if (report.violations.length > 5) {
+            comment += `- ... e mais ${report.violations.length - 5}\n`;
+          }
+
+          comment += '\n### 🔧 Correção Sugerida\n';
+          comment += '1. Execute localmente: `python check_137_rule.py . --fission`\n';
+          comment += '2. Ou use auto-fission: `python auto_fission.py violations.json`\n';
+          comment += '\n*Canon: ∞.Ω.∇+++.319*';
+
+          await github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
+
+    - name: Anchor to TemporalChain
+      if: always()
+      run: |
+        # Mock: em produção, POST para https://temporal.arkhe.org/v1/anchor
+        python3 -c "
+import json, hashlib, os
+report = json.load(open('alpha-report.json'))
+payload = {
+    'event': 'ci_alpha_validation',
+    'repo': os.getenv('GITHUB_REPOSITORY'),
+    'commit': os.getenv('GITHUB_SHA'),
+    'compliant': report['compliant'],
+    'violations': len(report['violations']),
+    'timestamp': __import__('datetime').datetime.utcnow().isoformat() + 'Z'
+}
+seal = hashlib.sha3_256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
+print(f'🔗 TemporalChain Seal: {seal}')
+with open('temporal-seal.txt', 'w') as f:
+    f.write(seal)
+"
+
+    - name: Upload temporal seal
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: temporal-chain-seal
+        path: temporal-seal.txt
+        retention-days: 90
