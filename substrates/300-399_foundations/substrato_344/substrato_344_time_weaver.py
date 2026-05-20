@@ -127,7 +127,10 @@ class TimeWeaverTransceiverV4:
         delay_valid = response["delay_ms"] <= 141.0
         weyl_decay = response["weyl_signature"] / packet["weyl_signature"]
         weyl_valid = 0.8 <= weyl_decay <= 1.0
-        prefix_valid = response["response_hash"].startswith("337")
+
+        expected_payload = f"ACK_TW_{packet['packet_root'][:16]}_{packet['gate_id']}_{response.get('nonce', 0)}"
+        computed_hash = hashlib.sha3_256(expected_payload.encode()).hexdigest()
+        prefix_valid = response["response_hash"].startswith("337") and response["response_hash"] == computed_hash
 
         return {
             "link_valid": link_valid and delay_valid and weyl_valid and prefix_valid,
@@ -165,7 +168,7 @@ class TimeWeaverTransceiverV4:
 
         # Early return para lista vazia
         if not payloads:
-            return 0.0
+            return self.channel_entropy
 
         for i, payload in enumerate(payloads):
             gate = self.gates[i % len(self.gates)]
@@ -197,7 +200,7 @@ def test_patch_1_empty_gates_nonempty_payloads():
 
 
 def test_patch_1_empty_gates_empty_payloads():
-    """Teste 2: Gates vazios + payloads vazios → retorna 0.0"""
+    """Teste 2: Gates vazios + payloads vazios → retorna channel_entropy"""
     portal_weyl_all = {
         "PG-NA": 4.4242, "PG-SA": 3.1009, "PG-EU": 3.8299,
         "PG-AS": 4.0911, "PG-AF": 3.5253, "PG-OC": 3.6500, "PG-AN": 2.8500,
@@ -205,8 +208,8 @@ def test_patch_1_empty_gates_empty_payloads():
     transceiver = TimeWeaverTransceiverV4(MASTER_ROOT_HEX, portal_weyl_all, gates=[])
 
     result = transceiver.process([])
-    assert result == 0.0
-    print("✅ TESTE 2 PASSOU: Retorna 0.0 para payloads vazios")
+    assert result == transceiver.channel_entropy
+    print("✅ TESTE 2 PASSOU: Retorna channel_entropy para payloads vazios")
 
 
 def test_patch_1_normal_operation():
