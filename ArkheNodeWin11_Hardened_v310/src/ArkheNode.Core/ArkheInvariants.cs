@@ -10,6 +10,8 @@ public static class ArkheInvariants
     public static readonly double GAP_MAX = 0.9999;
     public static readonly double AUTOCIDE = Math.Sqrt(3) / 3;
     public static readonly double LOOPSEAL_RADIANS = Math.PI / 9.0;
+    public static readonly double PHI = (1.0 + Math.Sqrt(5.0)) / 2.0;
+    public static readonly double ALPHA_INV = 137.035999084;
 }
 
 public record PhyMetrics(
