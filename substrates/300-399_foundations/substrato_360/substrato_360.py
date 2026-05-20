@@ -154,7 +154,7 @@ class TemporalCodeVault:
         vault_entry = {
             "uuid": uuid,
             "cid": cid,
-            "encrypted_code": encrypted_code.hex()[:64] + "...",
+            "encrypted_code": encrypted_code.hex(),
             "data_key_hash": hashlib.sha256(data_key).hexdigest()[:16],
             "target_timestamp": target_timestamp,
             "author_orcid": author_orcid,
@@ -317,7 +317,7 @@ class TemporalCodeVault:
         entropy = f"{GHOST:.15f}{LOOPSEAL:.15f}{vault['target_timestamp']:.0f}{vault['author_orcid']}"
         data_key = hashlib.sha256(entropy.encode()).digest()
 
-        encrypted = bytes.fromhex(vault["encrypted_code"].replace("...", ""))
+        encrypted = bytes.fromhex(vault["encrypted_code"])
         decrypted = bytes([b ^ data_key[i % 32] for i, b in enumerate(encrypted)])
 
         vault["status"] = "revealed"

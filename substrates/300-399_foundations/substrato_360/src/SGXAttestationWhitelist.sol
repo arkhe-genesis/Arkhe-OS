@@ -2,12 +2,14 @@
 // Substrato 360 — SGX Attestation Whitelist
 pragma solidity ^0.8.28;
 
+import "@openzeppelin/contracts/access/Ownable.sol";
+
 /**
  * @title SGXAttestationWhitelist
  * @notice Gerencia whitelist de MRENCLAVE/MRSIGNER para validadores DKG.
  *         Selos canônicos whitelist: 260, 261, 263.
  */
-contract SGXAttestationWhitelist {
+contract SGXAttestationWhitelist is Ownable {
     struct EnclaveIdentity {
         bytes32 mrenclave;   // Hash do enclave
         bytes32 mrsigner;    // Hash do signer
@@ -26,7 +28,7 @@ contract SGXAttestationWhitelist {
         bytes32 mrsigner,
         uint16 svn,
         uint256 canonicalSeal
-    ) external {
+    ) external onlyOwner {
         require(_isCanonicalSeal(canonicalSeal), "Seal not in canonical whitelist");
         require(svn >= 4, "SVN below minimum");
 
