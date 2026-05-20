@@ -32,11 +32,11 @@ contract CommunityDAO {
         return proposalId;
     }
 
-    function vote(uint256 proposalId, bool support) external {
+    function vote(uint256 proposalId, uint256 tokenId, bool support) external {
         Proposal storage p = proposals[proposalId];
         require(block.timestamp < p.deadline, "Voting closed");
 
-        uint256 tokenId = identityContract.tokenOfOwnerByIndex(msg.sender, 0);
+        require(identityContract.ownerOf(tokenId) == msg.sender, "Not token owner");
         require(!hasVoted[proposalId][tokenId], "Already voted");
         hasVoted[proposalId][tokenId] = true;
 

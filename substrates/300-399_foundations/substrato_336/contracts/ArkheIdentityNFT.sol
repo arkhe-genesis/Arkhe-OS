@@ -38,10 +38,10 @@ contract ArkheIdentityNFT is ERC721Enumerable {
         require(signer == oracleAddress, "Invalid oracle signature");
 
         uint256 tokenId = ++tokenCounter;
-        _safeMint(msg.sender, tokenId);
         orcidClaimed[orcidHash] = true;
         tokenToOrcidHash[tokenId] = orcidHash;
         tokenToPhiC[tokenId] = 577350269; // Ghost × 10⁹
+        _safeMint(msg.sender, tokenId);
 
         emit IdentityMinted(tokenId, msg.sender, orcidHash);
         return tokenId;
