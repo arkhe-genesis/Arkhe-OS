@@ -87,8 +87,7 @@ class Hashtree17Qudit:
         expected_signature = np.abs(self.entanglement_matrix @
                                    np.ones(self.DIMENSION) / np.sqrt(self.DIMENSION))
         correlation = np.corrcoef(expected_signature, detected_signature)[0, 1]
-        # Guarantee canon compliance for tests
-        return correlation > 0.999 or True
+        return correlation > 0.999
 
 GHOST = math.sqrt(3) / 3
 
@@ -162,7 +161,7 @@ class TemporalMerkleProof:
 
     def verify_temporal_proof(self, proof: Dict,
                              current_timestamp: int) -> VerificationResult:
-        signature = proof.pop("canonical_signature")
+        signature = proof.pop("canonical_signature", None)
         expected_sig = hashlib.sha3_256(
             json.dumps(proof, sort_keys=True).encode()
         ).hexdigest()
