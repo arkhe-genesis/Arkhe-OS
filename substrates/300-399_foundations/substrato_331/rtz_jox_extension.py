@@ -77,7 +77,7 @@ class VirtualDistinctionField:
             "field_id": self.field_id,
             "total_fluctuations": n_fluctuations,
             "persistent_distinctions": persistent_count,
-            "persistence_rate": round(persistent_count / n_fluctuations, 4),
+            "persistence_rate": round(persistent_count / max(1, n_fluctuations), 4),
             "ghost_threshold": GHOST,
             "floor_008": FLOOR_008,
             "canonical_seal": hashlib.sha3_256(
