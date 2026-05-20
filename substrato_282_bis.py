@@ -1,3 +1,7 @@
+# Build Substrate 282-BIS: Full Bidirectional Time-Symmetric Communication
+# Integrating TSVF + Transactional Interpretation (Cramer) + Two-State Formalism
+# for complete past↔future bidirectional information flow
+
 import hashlib
 import json
 import time
@@ -47,7 +51,7 @@ class TimeSymmetricState:
         num = sum(self.phi[i].conjugate() * operator[i][j] * self.psi[j]
                   for i in range(len(self.phi)) for j in range(len(self.psi)))
         den = self.bidirectional_amplitude()
-        return num / (den if abs(den) > 0 else 1e-15)
+        return num / (den + 1e-15)
 
     def transactional_probability(self) -> float:
         """Probabilidade transacional: |offer|² × |confirmation|²"""
@@ -225,6 +229,8 @@ class ArkheBidirectionalChannel:
         """
         Consulta o passado a partir do futuro (retrocausal query).
         """
+        if t_query <= t_target:
+            return None
         # Search for messages at t_target
         if t_target in self.temporal_buffer:
             msgs = [m for m in self.temporal_buffer[t_target]
