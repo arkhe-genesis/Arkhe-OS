@@ -1,0 +1,99 @@
+# global_routing_policy.yaml — Canon: ∞.Ω.∇+++.282.global_routing
+# Políticas de roteamento e seleção de anchor para 8+ regiões
+
+routing_policies:
+  # ── Primary Anchor Selection ──
+  primary_selection:
+    algorithm: "weighted_geodesic_phi_c"
+    weights:
+      geodesic_proximity: 0.4      # Closer regions preferred
+      phi_c_reputation: 0.4        # Higher Φ_C reputation preferred
+      infrastructure_capacity: 0.2 # Higher edge compute capacity preferred
+
+    constraints:
+      max_latency_ms: 100          # Hard latency budget for primary
+      min_phi_c: 0.93              # Minimum Φ_C for primary eligibility
+      require_tf_qkd: false        # TF-QKD preferred but not required
+
+  # ── Secondary Anchor Selection ──
+  secondary_selection:
+    algorithm: "diversity_weighted"
+    weights:
+      geographic_diversity: 0.5    # Prefer different continents
+      regulatory_diversity: 0.3    # Prefer different regulatory regimes
+      phi_c_reputation: 0.2        # Secondary Φ_C weight
+
+    constraints:
+      max_latency_ms: 200          # More lenient for secondaries
+      min_phi_c: 0.90
+      avoid_same_regulatory_zone: true
+
+  # ── Fallback Selection ──
+  fallback_selection:
+    algorithm: "reputation_priority"
+    weights:
+      phi_c_reputation: 0.7
+      historical_uptime: 0.3
+
+    constraints:
+      max_latency_ms: 500          # Very lenient for fallback
+      min_phi_c: 0.85
+      require_stable_connection: true
+
+# ── Regional Latency Budgets ──
+latency_budgets:
+  constitutional_critical:
+    max_latency_ms: 20
+    timeout_ms: 50
+    retry_count: 3
+
+  constitutional_standard:
+    max_latency_ms: 50
+    timeout_ms: 100
+    retry_count: 2
+
+  constitutional_bulk:
+    max_latency_ms: 150
+    timeout_ms: 300
+    retry_count: 1
+
+  non_constitutional:
+    max_latency_ms: 500
+    timeout_ms: 1000
+    retry_count: 1
+
+# ── Cross-Region Consensus Configuration ──
+consensus_config:
+  voting_mechanism: "phi_c_weighted_majority"
+  threshold_ratio: 0.67           # 2/3 majority required
+  minimum_participants: 5         # At least 5 regions must participate
+  vote_timeout_seconds: 30        # Timeout for collecting votes
+  fallback_on_timeout: "local_enforcement"  # What to do if consensus times out
+
+  reputation_decay:
+    enabled: true
+    half_life_hours: 24           # Reputation halves every 24h without activity
+    minimum_floor: 0.80           # Never decay below this
+
+  conflict_resolution:
+    strategy: "highest_phi_c_wins"
+    tie_breaker: "earliest_timestamp"
+    escalation_path: ["local", "regional_primary", "global_fallback"]
+
+# ── TemporalChain Anchoring Configuration ──
+anchoring_config:
+  local_batching:
+    enabled: true
+    batch_size: 100               # Anchor 100 events at once per region
+    flush_interval_seconds: 30    # Or flush every 30 seconds, whichever first
+
+  global_aggregation:
+    enabled: true
+    interval_minutes: 5           # Aggregate regional seals every 5 minutes
+    merkle_tree_depth: 4          # Depth of Merkle tree for global seal
+    verification_nodes: ["sa-east-1", "us-east-1", "eu-west-1", "ap-northeast-1"]
+
+  fallback_modes:
+    temporal_chain_unavailable: "local_buffer_with_retry"
+    consensus_failed: "safe_mode_local_enforcement"
+    network_partition: "partition_aware_anchoring"
