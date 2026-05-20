@@ -335,7 +335,7 @@ pub struct MistralAdapter;
 impl PartnerAdapter for MistralAdapter {
     fn partner_id(&self) -> PartnerId { PartnerId("mistral".to_string()) }
     fn model_name(&self) -> &str { "Mistral-Large-3" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.89).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.89) }
     fn region(&self) -> &str { "Europe-West" }
     fn tier(&self) -> u8 { 2 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
@@ -348,7 +348,7 @@ pub struct CohereAdapter;
 impl PartnerAdapter for CohereAdapter {
     fn partner_id(&self) -> PartnerId { PartnerId("cohere".to_string()) }
     fn model_name(&self) -> &str { "Command-R+" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.87).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.87) }
     fn region(&self) -> &str { "North-America-East" }
     fn tier(&self) -> u8 { 2 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
@@ -361,7 +361,7 @@ pub struct StabilityAdapter;
 impl PartnerAdapter for StabilityAdapter {
     fn partner_id(&self) -> PartnerId { PartnerId("stability".to_string()) }
     fn model_name(&self) -> &str { "Stable-Diffusion-4" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.85).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.85) }
     fn region(&self) -> &str { "Europe-West" }
     fn tier(&self) -> u8 { 2 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
@@ -374,7 +374,7 @@ pub struct EleutherAIAdapter;
 impl PartnerAdapter for EleutherAIAdapter {
     fn partner_id(&self) -> PartnerId { PartnerId("eleutherai".to_string()) }
     fn model_name(&self) -> &str { "GPT-NeoX-3" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.88).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.88) }
     fn region(&self) -> &str { "Global-Decentralized" }
     fn tier(&self) -> u8 { 2 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
@@ -387,7 +387,7 @@ pub struct AI2Adapter;
 impl PartnerAdapter for AI2Adapter {
     fn partner_id(&self) -> PartnerId { PartnerId("ai2".to_string()) }
     fn model_name(&self) -> &str { "OLMo-2" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.90).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.90) }
     fn region(&self) -> &str { "US-West" }
     fn tier(&self) -> u8 { 1 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
@@ -400,7 +400,7 @@ pub struct CerebrasAdapter;
 impl PartnerAdapter for CerebrasAdapter {
     fn partner_id(&self) -> PartnerId { PartnerId("cerebras".to_string()) }
     fn model_name(&self) -> &str { "CS-4-WaferScale" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.91).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.91) }
     fn region(&self) -> &str { "US-West" }
     fn tier(&self) -> u8 { 1 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
@@ -413,7 +413,7 @@ pub struct MITIBMWatsonAdapter;
 impl PartnerAdapter for MITIBMWatsonAdapter {
     fn partner_id(&self) -> PartnerId { PartnerId("mit-ibm-watson".to_string()) }
     fn model_name(&self) -> &str { "Research-Ensemble" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.90).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.90) }
     fn region(&self) -> &str { "US-East" }
     fn tier(&self) -> u8 { 1 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
