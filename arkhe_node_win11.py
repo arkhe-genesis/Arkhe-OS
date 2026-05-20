@@ -87,7 +87,7 @@ class FIPSAuditor:
                 content = f.read()
             current_hash = hashlib.sha3_256(content).hexdigest()
             expected_hash = os.environ.get("ARKHE_EXPECTED_HASH")
-            if expected_hash and current_hash != expected_hash:
+            if not expected_hash or current_hash != expected_hash:
                 self.results["integrity"] = False
                 return False
             self.results["integrity"] = True
