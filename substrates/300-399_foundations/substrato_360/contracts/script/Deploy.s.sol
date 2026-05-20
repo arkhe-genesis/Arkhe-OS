@@ -6,13 +6,13 @@ import "../src/TemporalMerkleCondition.sol";
 
 contract DeployScript is Script {
     function run() external {
-        uint256 deployerPrivateKey = vm.envOr("PRIVATE_KEY", uint256(0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80));
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
 
         vm.startBroadcast(deployerPrivateKey);
 
         TemporalMerkleCondition condition = new TemporalMerkleCondition();
 
-        // Register humility score for test address 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 (Anvil account 0)
+        // Register humility score for test address (derived from deployer)
         address testUser = vm.addr(deployerPrivateKey);
         condition.setUserHumility(testUser, 9000); // 0.9000 > Ghost threshold
 

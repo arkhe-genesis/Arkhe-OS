@@ -2,8 +2,9 @@
 pragma solidity ^0.8.19;
 
 import "openzeppelin-contracts/contracts/utils/cryptography/MerkleProof.sol";
+import "openzeppelin-contracts/contracts/access/Ownable.sol";
 
-contract TemporalMerkleCondition {
+contract TemporalMerkleCondition is Ownable {
     struct ConditionData {
         bytes32 merkleRoot;
         uint256 targetTimestamp;
@@ -21,12 +22,12 @@ contract TemporalMerkleCondition {
 
     uint256 public constant GHOST_THRESHOLD = 5774; // 0.5774 * 10000
 
-    function finalizeBlock(uint256 timestamp, bytes32 merkleRoot) external {
+    function finalizeBlock(uint256 timestamp, bytes32 merkleRoot) external onlyOwner {
         temporalBlocks[timestamp] = merkleRoot;
         emit BlockFinalized(timestamp, merkleRoot);
     }
 
-    function setUserHumility(address user, uint256 score) external {
+    function setUserHumility(address user, uint256 score) external onlyOwner {
         userHumility[user] = score;
         emit HumilityRegistered(user, score);
     }

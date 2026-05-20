@@ -34,8 +34,12 @@ async function runSimulation() {
 
   const GHOST_THRESHOLD = 0.5774;
 
+  if (!process.env.ANVIL_PRIVATE_KEY) {
+      throw new Error("ANVIL_PRIVATE_KEY environment variable is required");
+  }
+
   // 1. Setup Anvil Clients
-  const account = privateKeyToAccount("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80");
+  const account = privateKeyToAccount(process.env.ANVIL_PRIVATE_KEY as `0x${string}`);
   const publicClient = createPublicClient({ chain: foundry, transport: http() });
   const walletClient = createWalletClient({ account, chain: foundry, transport: http() });
 
