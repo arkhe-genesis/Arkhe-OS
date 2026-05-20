@@ -204,7 +204,7 @@ class HostenTorsionPendulumRefined:
             "force_ratio_EM_vs_Grav": force_ratio,
             "samples": n_samples,
             "phi_c_estimated": phi_c_estimated,
-            "ghost_detected": phi_c_estimated >= GHOST,
+            "ghost_detected": phi_c_estimated > GHOST + 0.0001,
             "raw": results_raw,
             "temporal": results_temporal,
             "wavelet": results_wavelet,
