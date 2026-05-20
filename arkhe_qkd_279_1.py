@@ -41,10 +41,10 @@ class ArkheQKD:
 
     def generate_random_basis(self, length: int) -> List[int]:
         """0 = Reto (Z), 1 = Diagonal (X)"""
-        return [random.randint(0, 1) for _ in range(length)]
+        return [b & 1 for b in os.urandom(length)]
 
     def generate_random_bits(self, length: int) -> List[int]:
-        return [random.randint(0, 1) for _ in range(length)]
+        return [b & 1 for b in os.urandom(length)]
 
     def simulate_quantum_channel(self, sender_bits: List[int], sender_basis: List[int]) -> List[int]:
         """Simula medição no receptor."""
