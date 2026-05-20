@@ -54,11 +54,13 @@ impl TodaIpSettlement {
     }
 
     pub fn compute_settlement_hash(commitment: &PaymentCommitment) -> String {
-        let input = format!("{}:{}:{}:{}:{}:{}:{}:{}",
+        let input = format!("{}:{}:{}:{}:{}:{}:{}:{}:{}:{}:{}",
             commitment.task_id.len(), commitment.task_id,
             commitment.payer.len(), commitment.payer,
             commitment.payee.len(), commitment.payee,
-            commitment.amount_usdc, commitment.settled_at.to_rfc3339());
+            commitment.amount_usdc,
+            commitment.protocol.len(), commitment.protocol,
+            commitment.settled_at.to_rfc3339(), commitment.humility_at_settlement);
         hex::encode(Sha3_256::digest(input.as_bytes()))
     }
 }
