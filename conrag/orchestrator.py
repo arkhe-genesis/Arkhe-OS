@@ -65,7 +65,7 @@ class ResultadoVerificacao:
                     'confianca': self.confianca,
                     'cadeia': self.cadeia_raciocinio,
                     'timestamp': time.time()
-                }, sort_keys=True).encode()
+            }, sort_keys=True).encode()
             ).hexdigest()
 
 class ProtocoloArkhe:
@@ -148,7 +148,7 @@ class ProtocoloArkhe:
                 'fatos_count': len(fatos),
                 'dominio': alegacao.dominio,
                 'timestamp': time.time()
-            }
+        }
         )
 
         # Atualizar estatísticas
@@ -270,12 +270,5 @@ class ProtocoloArkhe:
             'constitution_versions': {
                 dom: const.exportar_para_json()['hash'][:16] + "..."
                 for dom, const in self.constituicoes.items()
-            }
-class ProtocoloArkhe:
-    def verificar(self, query: str, dominio: str, contexto: str = "", metadados: dict = None) -> dict:
-        return {
-            "veredito": "verificado",
-            "confianca": 1.0,
-            "fontes": [],
-            "raciocinio": "Simulado"
+        }
         }

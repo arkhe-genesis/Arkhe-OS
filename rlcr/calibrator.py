@@ -226,6 +226,8 @@ class RLCRCalibrator:
                 self.T = T
             def predict(self, features: Dict) -> float:
                 raw = features['raw_score']
-                calibrated = 1 / (1 + np.exp(-(2 * raw - 1) / self.T))
-                return calibrated
+                # apply basic temp scaling
+                import math
+                logit = math.log(raw / (1 - raw)) if 0 < raw < 1 else (10.0 if raw >= 1 else -10.0)
+                return 1 / (1 + math.exp(-logit / self.T))
         return SimpleTemperature()
