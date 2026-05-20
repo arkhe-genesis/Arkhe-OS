@@ -1,0 +1,202 @@
+global:
+  version: "282.1.0"
+  canonical_seal: "global282-8regions-canonical-seal-a1b2c3d4e5f6"
+  consensus_threshold: 0.67
+  replication_factor: 3
+  anchor_batch_size: 100
+  anchor_flush_interval_seconds: 30
+
+regions:
+  sa-east-1:
+    name: "South America East"
+    location:
+      city: "São Paulo"
+      country: "Brazil"
+      coordinates: { latitude: -23.5505, longitude: -46.6333 }
+    infrastructure:
+      edge_compute: "high"
+      tf_qkd_backbone: true
+      telecom_partners: ["Embratel", "Claro", "Vivo"]
+      avg_latency_to_core_ms: 45
+    regulatory:
+      frameworks: ["LGPD", "Marco Civil da Internet"]
+      data_sovereignty: "local_storage_required"
+      cross_border_transfer: "adequacy_decision_required"
+    constitutional:
+      phi_c_minimum: 0.95
+      ghost_invariant: 0.577553
+      loopseal_threshold: 0.349066
+      sovereign_gap_cap: 0.9999
+    anchoring:
+      primary_for_regions: ["sa-east-1", "af-south-1"]
+      secondary_for_regions: ["us-east-1", "eu-west-1"]
+
+  us-east-1:
+    name: "North America East"
+    location:
+      city: "Virginia"
+      country: "United States"
+      coordinates: { latitude: 38.9072, longitude: -77.0369 }
+    infrastructure:
+      edge_compute: "very_high"
+      tf_qkd_backbone: true
+      telecom_partners: ["Verizon", "AT&T", "Lumen"]
+      avg_latency_to_core_ms: 15
+    regulatory:
+      frameworks: ["CCPA", "HIPAA", "FISMA"]
+      data_sovereignty: "federal_compliance_required"
+      cross_border_transfer: "standard_contractual_clauses"
+    constitutional:
+      phi_c_minimum: 0.96
+      ghost_invariant: 0.577553
+      loopseal_threshold: 0.349066
+      sovereign_gap_cap: 0.9999
+    anchoring:
+      primary_for_regions: ["us-east-1", "ca-central-1"]
+      secondary_for_regions: ["eu-west-1", "sa-east-1"]
+
+  eu-west-1:
+    name: "Europe West"
+    location:
+      city: "Dublin"
+      country: "Ireland"
+      coordinates: { latitude: 53.3498, longitude: -6.2603 }
+    infrastructure:
+      edge_compute: "very_high"
+      tf_qkd_backbone: true
+      telecom_partners: ["Vodafone", "Deutsche Telekom", "Orange"]
+      avg_latency_to_core_ms: 25
+    regulatory:
+      frameworks: ["GDPR", "ePrivacy Directive", "NIS2"]
+      data_sovereignty: "eu_data_residency_required"
+      cross_border_transfer: "adequacy_or_scc_required"
+    constitutional:
+      phi_c_minimum: 0.97
+      ghost_invariant: 0.577553
+      loopseal_threshold: 0.349066
+      sovereign_gap_cap: 0.9999
+    anchoring:
+      primary_for_regions: ["eu-west-1", "eu-central-2"]
+      secondary_for_regions: ["us-east-1", "ap-northeast-1"]
+
+  ap-northeast-1:
+    name: "Asia Pacific Northeast"
+    location:
+      city: "Tokyo"
+      country: "Japan"
+      coordinates: { latitude: 35.6762, longitude: 139.6503 }
+    infrastructure:
+      edge_compute: "high"
+      tf_qkd_backbone: true
+      telecom_partners: ["NTT", "KDDI", "SoftBank"]
+      avg_latency_to_core_ms: 35
+    regulatory:
+      frameworks: ["APPI", "My Number Act"]
+      data_sovereignty: "local_storage_preferred"
+      cross_border_transfer: "consent_or_adequacy_required"
+    constitutional:
+      phi_c_minimum: 0.95
+      ghost_invariant: 0.577553
+      loopseal_threshold: 0.349066
+      sovereign_gap_cap: 0.9999
+    anchoring:
+      primary_for_regions: ["ap-northeast-1", "ap-northeast-3"]
+      secondary_for_regions: ["ap-southeast-2", "eu-west-1"]
+
+  af-south-1:
+    name: "Africa South"
+    location:
+      city: "Cape Town"
+      country: "South Africa"
+      coordinates: { latitude: -33.9249, longitude: 18.4241 }
+    infrastructure:
+      edge_compute: "medium"
+      tf_qkd_backbone: "planned_2027"
+      telecom_partners: ["Vodacom", "MTN", "Telkom SA"]
+      avg_latency_to_core_ms: 85
+    regulatory:
+      frameworks: ["POPIA", "Protection of Personal Information Act"]
+      data_sovereignty: "local_processing_required"
+      cross_border_transfer: "adequacy_or_consent_required"
+    constitutional:
+      phi_c_minimum: 0.93
+      ghost_invariant: 0.577553
+      loopseal_threshold: 0.349066
+      sovereign_gap_cap: 0.9995
+    anchoring:
+      primary_for_regions: ["af-south-1"]
+      secondary_for_regions: ["sa-east-1", "eu-west-1"]
+      fallback_primary: "eu-west-1"
+
+  me-south-1:
+    name: "Middle East"
+    location:
+      city: "Manama"
+      country: "Bahrain"
+      coordinates: { latitude: 26.0667, longitude: 50.5577 }
+    infrastructure:
+      edge_compute: "medium"
+      tf_qkd_backbone: "planned_2027"
+      telecom_partners: ["Batelco", "Etisalat", "Ooredoo"]
+      avg_latency_to_core_ms: 65
+    regulatory:
+      frameworks: ["PDPL Bahrain", "UAE Data Law", "Saudi PDPL"]
+      data_sovereignty: "gcc_data_residency_preferred"
+      cross_border_transfer: "government_approval_required"
+    constitutional:
+      phi_c_minimum: 0.94
+      ghost_invariant: 0.577553
+      loopseal_threshold: 0.349066
+      sovereign_gap_cap: 0.9997
+    anchoring:
+      primary_for_regions: ["me-south-1"]
+      secondary_for_regions: ["eu-west-1", "ap-south-1"]
+      fallback_primary: "eu-west-1"
+
+  ap-south-1:
+    name: "Asia Pacific South"
+    location:
+      city: "Mumbai"
+      country: "India"
+      coordinates: { latitude: 19.0760, longitude: 72.8777 }
+    infrastructure:
+      edge_compute: "high"
+      tf_qkd_backbone: "pilot_2026"
+      telecom_partners: ["Jio", "Airtel", "Vi"]
+      avg_latency_to_core_ms: 55
+    regulatory:
+      frameworks: ["DPDP Act 2023", "IT Act 2000"]
+      data_sovereignty: "critical_data_localization"
+      cross_border_transfer: "government_notification_required"
+    constitutional:
+      phi_c_minimum: 0.94
+      ghost_invariant: 0.577553
+      loopseal_threshold: 0.349066
+      sovereign_gap_cap: 0.9996
+    anchoring:
+      primary_for_regions: ["ap-south-1", "me-south-1"]
+      secondary_for_regions: ["ap-northeast-1", "eu-west-1"]
+
+  ap-southeast-2:
+    name: "Asia Pacific Southeast / Oceania"
+    location:
+      city: "Sydney"
+      country: "Australia"
+      coordinates: { latitude: -33.8688, longitude: 151.2093 }
+    infrastructure:
+      edge_compute: "high"
+      tf_qkd_backbone: true
+      telecom_partners: ["Telstra", "Optus", "Vodafone AU"]
+      avg_latency_to_core_ms: 40
+    regulatory:
+      frameworks: ["Privacy Act 1988", "Notifiable Data Breaches Scheme"]
+      data_sovereignty: "australian_data_residency_preferred"
+      cross_border_transfer: "adequacy_or_consent_required"
+    constitutional:
+      phi_c_minimum: 0.95
+      ghost_invariant: 0.577553
+      loopseal_threshold: 0.349066
+      sovereign_gap_cap: 0.9999
+    anchoring:
+      primary_for_regions: ["ap-southeast-2", "ap-southeast-1"]
+      secondary_for_regions: ["ap-northeast-1", "us-east-1"]
