@@ -1,0 +1,17 @@
+image: python:3.10-alpine
+
+stages:
+  - test
+
+check_137_rule:
+  stage: test
+  script:
+    - apk add --no-cache git
+    - pip install -r requirements.txt || true
+    - python3 check_137_rule.py .
+    - |
+      if [ "\$(python3 -c \"import json; print(json.load(open('alpha-report.json'))['compliant'])\")" = "False" ]; then
+        echo "❌ Regra dos 137 violada - merge bloqueado"
+        echo "Execute 'python check_137_rule.py . --fission' para sugestões de correção"
+        exit 1
+      fi

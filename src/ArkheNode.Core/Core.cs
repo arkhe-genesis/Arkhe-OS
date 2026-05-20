@@ -8,6 +8,8 @@ namespace ArkheNode.Core
         public const double GHOST = 0.577350;
         public const double LOOPSEAL = 0.349066;
         public const double GAP_MAX = 0.9999;
+        public const double PHI = 1.618033988749895;
+        public const double ALPHA_INV = 137.035999084;
     }
 
     public class ConstitutionalDetectionRule
