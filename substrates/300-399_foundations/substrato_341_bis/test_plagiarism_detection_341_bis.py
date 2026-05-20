@@ -72,8 +72,9 @@ class TestPlagiarismDetection341Bis(unittest.TestCase):
         self.assertTrue(InvariantChecker.check_gap_soberano(0.8))
 
     def test_canonical_seal_generation(self):
-        time.time = lambda: 1000.0  # Mock time for deterministic seal
-        seal = self.engine._generate_canonical_seal("doc-test", SeverityLevel.HIGH, 0.85)
+        from unittest.mock import patch
+        with patch('time.time', return_value=1000.0):
+            seal = self.engine._generate_canonical_seal("doc-test", SeverityLevel.HIGH, 0.85)
         self.assertIsInstance(seal, str)
         self.assertEqual(len(seal), 64) # SHA3-256 length
 
