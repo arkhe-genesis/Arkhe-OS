@@ -16,11 +16,12 @@ export function HashtreeVerifier({ commitId, fileName, fileHash }: HashtreeVerif
   const [verified, setVerified] = useState<boolean | null>(null);
 
   // Ler merkleRoot do contrato
+  const [authorTokenId, commitNonce] = commitId.split('-');
   const { data: merkleRoot } = useContractRead({
     address: process.env.NEXT_PUBLIC_COMMIT_REGISTRY,
     abi: COMMIT_REGISTRY_ABI,
     functionName: 'getCommitMerkleRoot',
-    args: [commitId],
+    args: [authorTokenId, commitNonce],
   });
 
   const handleVerify = async () => {

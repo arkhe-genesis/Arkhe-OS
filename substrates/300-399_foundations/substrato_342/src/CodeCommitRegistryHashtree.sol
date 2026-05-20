@@ -31,7 +31,6 @@ contract CodeCommitRegistryHashtree {
     }
 
     mapping(uint256 => Commit[]) public commitsByAuthor; // tokenId → [commits]
-    mapping(bytes32 => bool) public merkleRootRegistered; // Prevenção de replay
 
     event CodeCommitted(
         uint256 indexed authorTokenId,
@@ -58,7 +57,6 @@ contract CodeCommitRegistryHashtree {
         string[] calldata fileNames,
         bytes32[] calldata fileHashes
     ) external {
-        require(!merkleRootRegistered[merkleRoot], "Merkle root already registered");
         require(fileNames.length == fileHashes.length, "File arrays mismatch");
 
         uint256 nonce = commitsByAuthor[authorTokenId].length;
@@ -72,8 +70,6 @@ contract CodeCommitRegistryHashtree {
             timestamp: block.timestamp,
             nonce: nonce
         }));
-
-        merkleRootRegistered[merkleRoot] = true;
 
         emit CodeCommitted(authorTokenId, repoName, commitHash, merkleRoot, block.timestamp, nonce);
     }

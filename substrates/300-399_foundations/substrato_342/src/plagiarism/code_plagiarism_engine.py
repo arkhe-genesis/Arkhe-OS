@@ -108,7 +108,7 @@ class CodePlagiarismEngine:
         set_b = ngrams(tokens_b, n)
 
         if not set_a and not set_b:
-            return 1.0
+            return 0.0
         if not set_a or not set_b:
             return 0.0
 

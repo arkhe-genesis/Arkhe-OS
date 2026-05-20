@@ -310,7 +310,7 @@ class CodePlagiarismEngine:
     def _structural_hash(self, code: str) -> int:
         normalized = re.sub(r'[a-zA-Z_][a-zA-Z0-9_]*', 'VAR', code)
         normalized = re.sub(r'\s+', ' ', normalized)
-        return hash(normalized) % (2**31)
+        return int(hashlib.md5(normalized.encode()).hexdigest(), 16) % (2**31)
 
     def _extract_cfg_features(self, code: str) -> List[int]:
         features = []
