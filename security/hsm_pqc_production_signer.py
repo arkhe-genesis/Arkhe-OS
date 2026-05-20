@@ -52,6 +52,15 @@ class PQCSignatureAlgorithm(Enum):
     DILITHIUM_3 = "CRYSTALS-Dilithium3"  # Recomendado para produção
     DILITHIUM_5 = "CRYSTALS-Dilithium5"
     SPHINCS_PLUS_SHA2_128f = "SPHINCS+-SHA2-128f-simple"
+    SQISIGN = "SQIsign"
+    HAWK = "HAWK"
+    MQOM = "MQOM"
+    SDITH = "SDitH"
+    MAYO = "MAYO"
+    QR_UOV = "QR-UOV"
+    SNOVA = "SNOVA"
+    UOV = "UOV"
+    FAEST = "FAEST"
 
 @dataclass
 class HSMConfig:
@@ -98,6 +107,15 @@ class HSMProductionSigner:
         PQCSignatureAlgorithm.DILITHIUM_3: {"security_level": 3, "sig_size_estimate": 3309},
         PQCSignatureAlgorithm.DILITHIUM_5: {"security_level": 5, "sig_size_estimate": 4627},
         PQCSignatureAlgorithm.SPHINCS_PLUS_SHA2_128f: {"security_level": 1, "sig_size_estimate": 8008},
+        PQCSignatureAlgorithm.SQISIGN: {"security_level": 1, "sig_size_estimate": 177},
+        PQCSignatureAlgorithm.HAWK: {"security_level": 1, "sig_size_estimate": 555},
+        PQCSignatureAlgorithm.MQOM: {"security_level": 1, "sig_size_estimate": 2400},
+        PQCSignatureAlgorithm.SDITH: {"security_level": 1, "sig_size_estimate": 2800},
+        PQCSignatureAlgorithm.MAYO: {"security_level": 1, "sig_size_estimate": 420},
+        PQCSignatureAlgorithm.QR_UOV: {"security_level": 1, "sig_size_estimate": 1200},
+        PQCSignatureAlgorithm.SNOVA: {"security_level": 1, "sig_size_estimate": 1300},
+        PQCSignatureAlgorithm.UOV: {"security_level": 1, "sig_size_estimate": 900},
+        PQCSignatureAlgorithm.FAEST: {"security_level": 1, "sig_size_estimate": 4000},
     }
 
     def __init__(
