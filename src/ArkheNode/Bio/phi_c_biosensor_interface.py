@@ -87,16 +87,23 @@ class FRETCoherenceSensor(PhiCBiosensor):
         # Incerteza: ~10% para FRET típico
         uncertainty = 0.10 * phi_c + 0.02
 
-        return PhiCBiosensorReading(
-            timestamp=timestamp,
-            cell_id=cell_id,
-            phi_c_estimate=round(phi_c, 6),
-            confidence_interval=(
+        reading_data = {
+            "phi_c_estimate": round(phi_c, 6),
+            "confidence_interval": (
                 round(max(0.0, phi_c - 1.96*uncertainty), 6),
                 round(min(1.0, phi_c + 1.96*uncertainty), 6)
             ),
-            measurement_method="FRET",
-            canonical_seal=self._generate_seal("fret_measure", cell_id, timestamp)
+            "measurement_method": "FRET",
+            "raw_uncertainty": uncertainty
+        }
+        return PhiCBiosensorReading(
+            timestamp=timestamp,
+            cell_id=cell_id,
+            phi_c_estimate=reading_data["phi_c_estimate"],
+            confidence_interval=reading_data["confidence_interval"],
+            measurement_method=reading_data["measurement_method"],
+            raw_uncertainty=reading_data["raw_uncertainty"],
+            canonical_seal=self._generate_seal("fret_measure", cell_id, timestamp, data_payload=reading_data)
         )
 
     async def stream(self, cell_ids: List[str], interval_s: float = 1.0) -> AsyncIterator[CoherenceStream]:
@@ -104,11 +111,13 @@ class FRETCoherenceSensor(PhiCBiosensor):
         while True:
             for cell_id in cell_ids:
                 reading = await self.measure(cell_id)
+                # extract raw uncertainty if available, otherwise compute from interval
+                stream_uncertainty = reading.raw_uncertainty if reading.raw_uncertainty is not None else (reading.confidence_interval[1] - reading.confidence_interval[0]) / 3.92
                 yield CoherenceStream(
                     cell_id=cell_id,
                     timestamp=reading.timestamp,
                     phi_c_estimate=reading.phi_c_estimate,
-                    uncertainty=(reading.confidence_interval[1] - reading.confidence_interval[0]) / 3.92,
+                    uncertainty=stream_uncertainty,
                     method="FRET",
                     metadata={"donor": self.donor, "acceptor": self.acceptor},
                     canonical_seal=reading.canonical_seal
@@ -127,7 +136,7 @@ class FRETCoherenceSensor(PhiCBiosensor):
             "typical_uncertainty": 0.10
         }
 
-    def _generate_seal(self, event_type: str, cell_id: str, timestamp: float) -> str:
+    def _generate_seal(self, event_type: str, cell_id: str, timestamp: float, data_payload: Dict = None) -> str:
         payload = {
             "event": event_type,
             "cell_id": cell_id,
@@ -135,6 +144,8 @@ class FRETCoherenceSensor(PhiCBiosensor):
             "timestamp": timestamp,
             "canon": "∞.Ω.∇+++.329.phi_c_biosensor"
         }
+        if data_payload:
+            payload.update(data_payload)
         return hashlib.sha3_256(
             json.dumps(payload, sort_keys=True).encode()
         ).hexdigest()

@@ -42,6 +42,7 @@ class PhiCBiosensorReading:
     confidence_interval: Tuple[float, float]  # 95% CI
     measurement_method: str  # "FRET", "FLIM", "interferometry"
     canonical_seal: str
+    raw_uncertainty: Optional[float] = None
 
 class InVitroValidator:
     """Validador experimental in vitro para cura ontológica."""
@@ -67,12 +68,15 @@ class InVitroValidator:
         reference_photons = 10000  # fótons conhecidos
         measured_counts = reference_photons * self.PMT_GAIN * 0.98  # 98% eficiência
 
-        calibration = {
+        calibration_data = {
             "reference_photons": reference_photons,
             "measured_counts": measured_counts,
             "efficiency": measured_counts / (reference_photons * self.PMT_GAIN),
-            "dark_count_rate": self.DARK_COUNT_RATE,
-            "calibration_seal": self._generate_seal("pmt_calibration", time.time())
+            "dark_count_rate": self.DARK_COUNT_RATE
+        }
+        calibration = {
+            **calibration_data,
+            "calibration_seal": self._generate_seal("pmt_calibration", time.time(), data_payload=calibration_data)
         }
 
         self._anchor_to_temporal_chain("pmt_calibration", calibration)
@@ -103,14 +107,21 @@ class InVitroValidator:
         # Estimar comprimento de coerência (simplificado)
         coherence_length = self._estimate_coherence_length(photon_count, duration_s)
 
+        meas_data = {
+            "wavelength_nm": 560.0,
+            "photon_count": photon_count,
+            "integration_time_ms": duration_s * 1000,
+            "background_subtracted": True,
+            "coherence_length_cm": coherence_length
+        }
         measurement = BiophotonMeasurement(
             timestamp=timestamp,
-            wavelength_nm=560.0,  # Pico de emissão da luciferase
-            photon_count=photon_count,
-            integration_time_ms=duration_s * 1000,
-            background_subtracted=True,
-            coherence_length_cm=coherence_length,
-            canonical_seal=self._generate_seal("biophoton_measurement", timestamp)
+            wavelength_nm=meas_data["wavelength_nm"],  # Pico de emissão da luciferase
+            photon_count=meas_data["photon_count"],
+            integration_time_ms=meas_data["integration_time_ms"],
+            background_subtracted=meas_data["background_subtracted"],
+            coherence_length_cm=meas_data["coherence_length_cm"],
+            canonical_seal=self._generate_seal("biophoton_measurement", timestamp, data_payload=meas_data)
         )
 
         self.measurements.append(measurement)
@@ -141,13 +152,19 @@ class InVitroValidator:
         ci_low = max(0.0, phi_c - ci_width)
         ci_high = min(1.0, phi_c + ci_width)
 
+        reading_data = {
+            "cell_id": cell_id,
+            "phi_c_estimate": round(phi_c, 6),
+            "confidence_interval": (round(ci_low, 6), round(ci_high, 6)),
+            "measurement_method": method
+        }
         reading = PhiCBiosensorReading(
             timestamp=timestamp,
             cell_id=cell_id,
-            phi_c_estimate=round(phi_c, 6),
-            confidence_interval=(round(ci_low, 6), round(ci_high, 6)),
-            measurement_method=method,
-            canonical_seal=self._generate_seal("phi_c_reading", timestamp)
+            phi_c_estimate=reading_data["phi_c_estimate"],
+            confidence_interval=reading_data["confidence_interval"],
+            measurement_method=reading_data["measurement_method"],
+            canonical_seal=self._generate_seal("phi_c_reading", timestamp, data_payload=reading_data)
         )
 
         self.phi_c_readings.append(reading)
@@ -199,7 +216,7 @@ class InVitroValidator:
         }
 
         # 6. Ancorar resultados completos
-        results = {
+        result_data = {
             "experiment_id": self.experiment_id,
             "cell_line": self.cell_line,
             "baseline": {
@@ -211,8 +228,11 @@ class InVitroValidator:
                 "phi_c": asdict(post_phi_c)
             },
             "healing_session": healing_session.to_dict(),
-            "efficacy": efficacy,
-            "canonical_seal": self._generate_seal("experiment_complete", time.time())
+            "efficacy": efficacy
+        }
+        results = {
+            **result_data,
+            "canonical_seal": self._generate_seal("experiment_complete", time.time(), data_payload=result_data)
         }
 
         self._anchor_to_temporal_chain("experiment_results", results)
@@ -230,7 +250,7 @@ class InVitroValidator:
         coherence_cm = min(10.0, snr * 0.1)  # Máximo 10 cm para tecido saudável
         return round(coherence_cm, 2)
 
-    def _generate_seal(self, event_type: str, timestamp: float) -> str:
+    def _generate_seal(self, event_type: str, timestamp: float, data_payload: Dict = None) -> str:
         """Gera selo SHA3-256 canônico para evento."""
         payload = {
             "event": event_type,
@@ -238,6 +258,8 @@ class InVitroValidator:
             "timestamp": timestamp,
             "canon": "∞.Ω.∇+++.329.in_vitro_validation"
         }
+        if data_payload:
+            payload.update(data_payload)
         return hashlib.sha3_256(
             json.dumps(payload, sort_keys=True).encode()
         ).hexdigest()
