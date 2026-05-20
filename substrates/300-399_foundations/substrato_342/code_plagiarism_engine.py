@@ -22,7 +22,7 @@ class CodePlagiarismEngine:
         """
         # Estágio 1: Fingerprinting (MinHash + Jaccard)
         jaccard_sim = self._jaccard_similarity(code_a, code_b)
-        if jaccard_sim < 0.2:
+        if jaccard_sim < self.thresholds["literal"]:
             return {"verdict": "NONE", "similarity": jaccard_sim, "stage": 1}
 
         # Estágio 2: AST Embeddings (Siamese Transformer)
