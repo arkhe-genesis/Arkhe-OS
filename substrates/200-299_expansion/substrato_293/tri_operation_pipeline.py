@@ -84,14 +84,15 @@ class TriOperationPipeline:
 
         # Override temporário no mock de deploy para usar o Φ_C real calculado, com pequeno boost pra simular ambiente top
         phi_c_environment = max(phi_c_report.phi_c_value, 0.995)
-        self.deployer._measure_environment_phi_c = self._mock_measure_phi(phi_c_environment)
+        local_deployer = TOPSecretDeployFramework(operator_id=self.operator_id, temporal_endpoint="https://temporal.arkhe.org/v1/anchor")
+        local_deployer._measure_environment_phi_c = self._mock_measure_phi(phi_c_environment)
 
         # --- FASE 3: DEPLOY TOP SECRET ---
         logger.info("\n" + "="*50)
         logger.info("Fase 3: Deploy TOP_SECRET com PQC")
         logger.info("="*50)
 
-        deploy_package = await self.deployer.deploy_top_secret_payload(payload)
+        deploy_package = await local_deployer.deploy_top_secret_payload(payload)
         logger.info(f"✅ Deploy concluído. Package: {deploy_package.package_id}. Selo: {deploy_package.temporal_anchor[:16]}...")
 
         # --- CONSOLIDAÇÃO E SELO FINAL ---
