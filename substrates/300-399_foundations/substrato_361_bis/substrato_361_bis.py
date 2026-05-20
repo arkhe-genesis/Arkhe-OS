@@ -348,7 +348,7 @@ class OrkutLabsHyperCycle:
 
         dev["tilling_score"] = tilling_adjusted
 
-        if not self.tilling_history or self.tilling_history[-1].get("tilling") != tilling_adjusted:
+        if not self.tilling_history or self.tilling_history[-1].get("orcid") != orcid or self.tilling_history[-1].get("tilling") != tilling_adjusted:
             self.tilling_history.append({
                 "orcid": orcid,
                 "tilling": tilling_adjusted,
