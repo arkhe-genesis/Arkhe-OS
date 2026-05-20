@@ -47,12 +47,12 @@ pub struct Settlement {
 
 /// Node Factory
 pub struct NodeFactory {
-    level: u8,
-    max_children: usize,
+    _level: u8,
+    _max_children: usize,
 }
 
 impl NodeFactory {
     pub fn new() -> Self {
-        Self { level: 10, max_children: 2 }
+        Self { _level: 10, _max_children: 2 }
     }
 }

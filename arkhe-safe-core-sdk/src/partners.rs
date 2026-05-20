@@ -302,6 +302,13 @@ impl PartnerRegistry {
             Box::new(AlibabaAdapter),
             Box::new(IBMAdapter),
             Box::new(XiaomiAdapter),
+            Box::new(MistralAdapter),
+            Box::new(CohereAdapter),
+            Box::new(StabilityAdapter),
+            Box::new(EleutherAIAdapter),
+            Box::new(AI2Adapter),
+            Box::new(CerebrasAdapter),
+            Box::new(MITIBMWatsonAdapter),
         ];
         Self { partners }
     }
@@ -320,5 +327,96 @@ impl PartnerRegistry {
 
     pub fn all_partners(&self) -> &[Box<dyn PartnerAdapter>] {
         &self.partners
+    }
+}
+
+pub struct MistralAdapter;
+#[async_trait]
+impl PartnerAdapter for MistralAdapter {
+    fn partner_id(&self) -> PartnerId { PartnerId("mistral".to_string()) }
+    fn model_name(&self) -> &str { "Mistral-Large-3" }
+    fn phi_c_base(&self) -> PhiC { PhiC::new(0.89).unwrap() }
+    fn region(&self) -> &str { "Europe-West" }
+    fn tier(&self) -> u8 { 2 }
+    async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
+        Ok(format!("mistral_result_{}_{}", wt, c).into_bytes())
+    }
+}
+
+pub struct CohereAdapter;
+#[async_trait]
+impl PartnerAdapter for CohereAdapter {
+    fn partner_id(&self) -> PartnerId { PartnerId("cohere".to_string()) }
+    fn model_name(&self) -> &str { "Command-R+" }
+    fn phi_c_base(&self) -> PhiC { PhiC::new(0.87).unwrap() }
+    fn region(&self) -> &str { "North-America-East" }
+    fn tier(&self) -> u8 { 2 }
+    async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
+        Ok(format!("cohere_result_{}_{}", wt, c).into_bytes())
+    }
+}
+
+pub struct StabilityAdapter;
+#[async_trait]
+impl PartnerAdapter for StabilityAdapter {
+    fn partner_id(&self) -> PartnerId { PartnerId("stability".to_string()) }
+    fn model_name(&self) -> &str { "Stable-Diffusion-4" }
+    fn phi_c_base(&self) -> PhiC { PhiC::new(0.85).unwrap() }
+    fn region(&self) -> &str { "Europe-West" }
+    fn tier(&self) -> u8 { 2 }
+    async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
+        Ok(format!("stability_result_{}_{}", wt, c).into_bytes())
+    }
+}
+
+pub struct EleutherAIAdapter;
+#[async_trait]
+impl PartnerAdapter for EleutherAIAdapter {
+    fn partner_id(&self) -> PartnerId { PartnerId("eleutherai".to_string()) }
+    fn model_name(&self) -> &str { "GPT-NeoX-3" }
+    fn phi_c_base(&self) -> PhiC { PhiC::new(0.88).unwrap() }
+    fn region(&self) -> &str { "Global-Decentralized" }
+    fn tier(&self) -> u8 { 2 }
+    async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
+        Ok(format!("eleutherai_result_{}_{}", wt, c).into_bytes())
+    }
+}
+
+pub struct AI2Adapter;
+#[async_trait]
+impl PartnerAdapter for AI2Adapter {
+    fn partner_id(&self) -> PartnerId { PartnerId("ai2".to_string()) }
+    fn model_name(&self) -> &str { "OLMo-2" }
+    fn phi_c_base(&self) -> PhiC { PhiC::new(0.90).unwrap() }
+    fn region(&self) -> &str { "US-West" }
+    fn tier(&self) -> u8 { 1 }
+    async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
+        Ok(format!("ai2_result_{}_{}", wt, c).into_bytes())
+    }
+}
+
+pub struct CerebrasAdapter;
+#[async_trait]
+impl PartnerAdapter for CerebrasAdapter {
+    fn partner_id(&self) -> PartnerId { PartnerId("cerebras".to_string()) }
+    fn model_name(&self) -> &str { "CS-4-WaferScale" }
+    fn phi_c_base(&self) -> PhiC { PhiC::new(0.91).unwrap() }
+    fn region(&self) -> &str { "US-West" }
+    fn tier(&self) -> u8 { 1 }
+    async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
+        Ok(format!("cerebras_result_{}_{}", wt, c).into_bytes())
+    }
+}
+
+pub struct MITIBMWatsonAdapter;
+#[async_trait]
+impl PartnerAdapter for MITIBMWatsonAdapter {
+    fn partner_id(&self) -> PartnerId { PartnerId("mit-ibm-watson".to_string()) }
+    fn model_name(&self) -> &str { "Research-Ensemble" }
+    fn phi_c_base(&self) -> PhiC { PhiC::new(0.90).unwrap() }
+    fn region(&self) -> &str { "US-East" }
+    fn tier(&self) -> u8 { 1 }
+    async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
+        Ok(format!("mit_ibm_watson_result_{}_{}", wt, c).into_bytes())
     }
 }
