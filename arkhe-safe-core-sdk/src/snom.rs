@@ -32,7 +32,7 @@ pub struct TW001Verifier {
     shoulder_tolerance: f64,
     wd_threshold: f64,
     r_threshold: f64,
-    num_shots: usize,
+    _num_shots: usize,
 }
 
 impl TW001Verifier {
@@ -42,7 +42,7 @@ impl TW001Verifier {
             shoulder_tolerance: 1.5,
             wd_threshold: 0.65,
             r_threshold: 0.45,
-            num_shots: 5,
+            _num_shots: 5,
         }
     }
 }
