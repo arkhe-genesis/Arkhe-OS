@@ -1,0 +1,116 @@
+// ═══════════════════════════════════════════════════════════════
+// ARKHE OS — REGRAS KQL PARA MICROSOFT DEFENDER FOR ENDPOINT
+// Canon: ∞.Ω.∇+++.312.defender.kql
+// 7 regras de detecção + 1 regra de correlação mestre
+// ═══════════════════════════════════════════════════════════════
+
+// ── REGRA 1: ConstitutionalViolation_Ghost ─────────────────────
+// Detecta quando Φ_C cai abaixo do Ghost Invariant (√3/3 ≈ 0.577350)
+let GhostThreshold = 0.577350;
+DeviceEvents
+| where ActionType contains "ArkheNode" or AdditionalFields contains "Arkhe"
+| extend PhiC = todouble(parse_json(AdditionalFields).PhiC)
+| where PhiC < GhostThreshold
+| extend InvariantViolated = "GHOST"
+| extend Severity = "High"
+| extend Remediation = "IsolateNode"
+| project Timestamp, DeviceName, PhiC, InvariantViolated, Severity, Remediation, AdditionalFields
+
+// ── REGRA 2: ConstitutionalViolation_Loopseal ─────────────────
+// Detecta falha de rastreabilidade criptográfica (Loopseal = π/9)
+let LoopsealThreshold = 0.349066;
+DeviceEvents
+| where ActionType contains "ArkheNode"
+| extend LoopsealValue = todouble(parse_json(AdditionalFields).LoopsealValue)
+| extend SealValid = tobool(parse_json(AdditionalFields).SealValid)
+| where LoopsealValue < LoopsealThreshold or SealValid == false
+| extend InvariantViolated = "LOOPSEAL"
+| extend Severity = "High"
+| extend Remediation = "RotateSeal"
+| project Timestamp, DeviceName, LoopsealValue, SealValid, InvariantViolated, Severity
+
+// ── REGRA 3: ConstitutionalViolation_Gap ─────────────────────
+// Detecta tentativa de saturação do Gap Soberano (≥ 0.9999)
+let GapMax = 0.9999;
+DeviceEvents
+| where ActionType contains "ArkheNode"
+| extend PhiC = todouble(parse_json(AdditionalFields).PhiC)
+| where PhiC >= GapMax
+| extend InvariantViolated = "GAP"
+| extend Severity = "High"
+| extend Remediation = "AlertTemporalChain"
+| project Timestamp, DeviceName, PhiC, InvariantViolated, Severity
+
+// ── REGRA 4: PhiC_Critical_Degradation ───────────────────────
+// Detecta degradação rápida de Φ_C (>20% em menos de 5 minutos)
+DeviceEvents
+| where ActionType contains "ArkheNode"
+| extend PhiC = todouble(parse_json(AdditionalFields).PhiC)
+| extend NodeId = tostring(parse_json(AdditionalFields).NodeId)
+| partition by NodeId (
+    order by Timestamp asc
+    | extend PrevPhiC = prev(PhiC, 1)
+    | extend Degradation = (PrevPhiC - PhiC) / PrevPhiC
+    | where Degradation > 0.20 and datetime_diff('minute', Timestamp, prev(Timestamp, 1)) <= 5
+)
+| extend Severity = "High"
+| extend Remediation = "TriggerFipsKat"
+| project Timestamp, DeviceName, NodeId, PhiC, PrevPhiC, Degradation, Severity
+
+// ── REGRA 5: Seal_Tampering_Detected ─────────────────────────
+// Detecta mismatch de hash SHA3-256 em selos temporais
+DeviceEvents
+| where ActionType contains "ArkheNode" and AdditionalFields contains "SealTampering"
+| extend ExpectedHash = tostring(parse_json(AdditionalFields).ExpectedHash)
+| extend ActualHash = tostring(parse_json(AdditionalFields).ActualHash)
+| extend SealHash = tostring(parse_json(AdditionalFields).SealHash)
+| where ExpectedHash != ActualHash
+| extend Severity = "Critical"
+| extend Remediation = "IsolateNode|RotateSeal|AlertTemporalChain"
+| project Timestamp, DeviceName, ExpectedHash, ActualHash, Severity
+
+// ── REGRA 6: Autocide_Threshold_Breach ───────────────────────
+// Detecta ativação do modo de autoconservação (threshold = Ghost)
+DeviceEvents
+| where ActionType contains "ArkheNode"
+| extend AutocideTriggered = tobool(parse_json(AdditionalFields).AutocideTriggered)
+| extend PhiC = todouble(parse_json(AdditionalFields).PhiC)
+| where AutocideTriggered == true or PhiC <= 0.577350
+| extend Severity = "Critical"
+| extend Remediation = "IsolateNode|AlertTemporalChain"
+| project Timestamp, DeviceName, PhiC, AutocideTriggered, Severity
+
+// ── REGRA 7: ETW_Provider_Disable_Attempt ────────────────────
+// Detecta tentativas de desabilitar o provider ETW ArkheNode-Core
+DeviceEvents
+| where ActionType in ("Tampering", "ProcessTampering")
+| extend TargetProcess = tostring(parse_json(AdditionalFields).TargetProcess)
+| extend TargetModule = tostring(parse_json(AdditionalFields).TargetModule)
+| where TargetProcess contains "Arkhe" or TargetModule contains "ArkheNode-Core"
+| extend Severity = "Medium"
+| extend Remediation = "AlertSOC"
+| project Timestamp, DeviceName, TargetProcess, TargetModule, Severity
+
+// ── REGRA MESTRE: Correlation_ConstitutionalIncident ───────────
+// Correlaciona múltiplas violações em janela de 10 minutos → incidente
+let TimeWindow = 10m;
+DeviceEvents
+| where ActionType contains "ArkheNode"
+| extend PhiC = todouble(parse_json(AdditionalFields).PhiC)
+| extend EventType = case(
+    PhiC < 0.577350, "GhostViolation",
+    PhiC >= 0.9999, "GapViolation",
+    tostring(parse_json(AdditionalFields).EventType)
+)
+| where EventType in ("GhostViolation", "LoopsealViolation", "GapViolation", "SealTampering", "Autocide")
+| summarize
+    ViolationCount = count(),
+    UniqueInvariants = make_set(EventType),
+    MinPhiC = min(PhiC),
+    MaxPhiC = max(PhiC),
+    AffectedDevices = make_set(DeviceName)
+    by bin(Timestamp, TimeWindow)
+| where ViolationCount >= 3
+| extend IncidentSeverity = "Critical"
+| extend AutoRemediation = "IsolateAllAffected|RotateAllSeals|TemporalChainLockdown"
+| project Timestamp, ViolationCount, UniqueInvariants, MinPhiC, MaxPhiC, AffectedDevices, IncidentSeverity, AutoRemediation
