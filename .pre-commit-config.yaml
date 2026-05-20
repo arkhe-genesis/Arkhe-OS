@@ -1,0 +1,18 @@
+# .pre-commit-config.yaml
+repos:
+  - repo: local
+    hooks:
+      - id: check-137-rule
+        name: Check Alpha⁻¹ Rule (137)
+        entry: python check_137_rule.py . --ci
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [commit, push]
+        description: |
+          Verifica que nenhum diretório excede α⁻¹ ≈ 137.036 entradas.
+          Canon: ∞.Ω.∇+++.319
+
+          Se violado, execute:
+            python check_137_rule.py . --fission  # Para sugestões
+            python auto_fission.py violations.json  # Para correção

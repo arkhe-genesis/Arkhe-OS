@@ -3,9 +3,9 @@ using System.Security.Cryptography;
 
 namespace ArkheNode.Core
 {
-    public static class ArkheInvariants
+    public static partial class ArkheInvariants
     {
-        public const double GHOST = 0.577350;
+        public const double GHOST = 0.577553;
         public const double LOOPSEAL = 0.349066;
         public const double GAP_MAX = 0.9999;
         public const double PHI = 1.618033988749895;
@@ -41,6 +41,18 @@ namespace ArkheNode.Core
         {
             using var sha = SHA256.Create(); // Dummy fallback for compilation
             return sha.ComputeHash(data);
+        }
+    }
+}
+namespace ArkheNode.Core
+{
+    public static partial class ArkheInvariants
+    {
+        public static class TorusParameters
+        {
+            public const double MajorRadius = PHI;
+            public const double MinorRadius = PHI_INVERSE;
+            public const int CycleBlocks = 144;
         }
     }
 }
