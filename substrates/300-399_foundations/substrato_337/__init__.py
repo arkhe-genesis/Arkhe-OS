@@ -1,4 +1,8 @@
 from .substrate_337 import (
-    P_PORTAL, Hashtree17Qudit, InformationStressEnergy,
-    TemporalMerkleProof, TimeWeaverChannel
+    Hashtree17Qudit,
+    InformationStressEnergy,
+    TemporalMerkleProof,
+    TimeWeaverChannel
 )
+
+from .substrato_337_exp_act import SNOMTWVerifier
