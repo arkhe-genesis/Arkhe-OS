@@ -143,11 +143,13 @@ class TestAccessLayerPrivacyFilter:
         assert "relay_0" not in path
         assert "relay_1" not in path
 
-    def test_select_relay_path_deterministic(self, filter):
-        """Caminho deve ser determinístico para mesmo tx_hash."""
-        path1 = filter.select_relay_path("0xtx", "source", "dest", min_hops=3)
-        path2 = filter.select_relay_path("0xtx", "source", "dest", min_hops=3)
-        assert path1 == path2
+    def test_select_relay_path_randomness(self, filter):
+        """Caminho deve ser aleatório para evitar rastreamento."""
+        # Como o path é aleatório, há chance de ser igual, mas com 5 relays testamos 10 paths
+        paths = []
+        for _ in range(10):
+            paths.append(tuple(filter.select_relay_path("0xtx", "source", "dest", min_hops=3)))
+        assert len(set(paths)) > 1 # Pelo menos 2 caminhos diferentes devem ser gerados
 
 
 class TestCanonicalInvariants325:

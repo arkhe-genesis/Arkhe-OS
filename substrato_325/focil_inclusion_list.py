@@ -10,6 +10,7 @@ Baseado na proposta FOCIL (Fork-Choice Inclusion List) do Ethereum.
 import hashlib
 import json
 import time
+import secrets
 from dataclasses import dataclass, field
 from typing import List, Dict, Set, Optional
 from enum import Enum
@@ -336,12 +337,9 @@ class AccessLayerPrivacyFilter:
         if len(eligible) < min_hops:
             return []  # Caminho insuficiente
 
-        # Aleatoriedade determinística baseada no tx_hash
-        hash_int = int(hashlib.sha256(tx_hash.encode()).hexdigest(), 16)
-
+        # Aleatoriedade criptográfica para evitar rastreamento da rota
         path = []
-        for i in range(min_hops):
-            idx = (hash_int + i * 7919) % len(eligible)  # 7919 = primo
-            path.append(eligible[idx])
+        for _ in range(min_hops):
+            path.append(secrets.choice(eligible))
 
         return path
