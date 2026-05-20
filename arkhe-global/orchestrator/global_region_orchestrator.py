@@ -232,8 +232,8 @@ class GlobalConsensusEngine:
 
         # Calculate global Φ_C as weighted average
         global_phi_c = sum(
-            self.reputation_scores.get(region, 0.9) * (1.0 if vote else 0.0)
-            for region, vote in votes.items()
+            self.reputation_scores.get(region, 0.9)
+            for region in votes.keys()
         ) / max(1, len(votes))
 
         return consensus_reached, global_phi_c
@@ -416,6 +416,9 @@ class GlobalRegionOrchestrator:
         if not region:
             return False
 
+        # Update consensus reputation before potential early return
+        self.consensus_engine.update_reputation(region_id, observed_phi_c)
+
         # Check constitutional thresholds
         if observed_phi_c < region.get_phi_c_minimum():
             logger.warning(f"⚠️ {region_id}: Φ_C {observed_phi_c:.4f} below minimum {region.get_phi_c_minimum()}")
@@ -428,9 +431,6 @@ class GlobalRegionOrchestrator:
                 timestamp=time.time()
             ))
             return False
-
-        # Update consensus reputation
-        self.consensus_engine.update_reputation(region_id, observed_phi_c)
 
         # Queue normal event for anchoring
         await self.anchoring.queue_event(AnchoringEvent(
