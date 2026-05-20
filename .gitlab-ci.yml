@@ -18,6 +18,7 @@ alpha-rule-check:
       if [ "$(python3 -c "import json; print(json.load(open('alpha-report.json'))['compliant'])")" = "False" ]; then
         echo "❌ Regra dos 137 violada - merge bloqueado"
         echo "Execute 'python check_137_rule.py . --fission' para sugestões de correção"
+        exit 1
       fi
 
   artifacts:

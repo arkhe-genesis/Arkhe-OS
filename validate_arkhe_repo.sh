@@ -38,7 +38,7 @@ print(hashlib.sha3_256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
 ")
     echo "   Selo TemporalChain: ${SEAL[:32]}..."
 
-    # We remove the exit 0 to fix script problem.
+    exit 0
 else
     echo "⚠️  Repositório Arkhe VIOLA a Regra dos 137"
     echo "   Relatório: ${REPORT_FILE}"
@@ -62,5 +62,5 @@ for v in r['violations']:
     echo "   python auto_fission.py ${REPORT_FILE} --dry-run  # Simular primeiro"
     echo "   python auto_fission.py ${REPORT_FILE}            # Executar com confirmação"
 
-    # We remove the exit 1 to fix script problem.
+    exit 1
 fi
