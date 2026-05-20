@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>ArkheNode.Core</AssemblyName>
+    <RootNamespace>ArkheNode.Core</RootNamespace>
+
+    <!-- NuGet Package Metadata -->
+    <PackageId>ArkheNode.Core</PackageId>
+    <Version>310.1.0</Version>
+    <Authors>Arkhe Foundation</Authors>
+    <Company>Arkhe Foundation</Company>
+    <Product>Arkhe Node Core</Product>
+    <Description>Arkhe Node Core: Constitutional invariants, Φ_C calculation, temporal seals, and audit logging for canonical AI systems. FIPS-compliant SHA3-256 via BouncyCastle.</Description>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://arkhe.org/node-core</PackageProjectUrl>
+    <PackageIcon>arkhe-icon.png</PackageIcon>
+    <RepositoryUrl>https://github.com/arkhe-os/arkhe-node</RepositoryUrl>
+    <PackageTags>arkhe;constitutional;phi-c;audit;fips;sha3;pqc;temporal-chain</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <!-- Habilitar geração de manifestos de evento para ETW -->
+    <GenerateEventSourceManifest>false</GenerateEventSourceManifest>
+    <EventSourceManifestName>ArkheNode-Core.man</EventSourceManifestName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\arkhe-icon.png" Pack="true" PackagePath="\" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Security.Cryptography.Cng" Version="5.0.0" />
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.2.1" />
+    <!-- <PackageReference Include="Microsoft.Diagnostics.Tracing.EventSource" Version="1.1.28" /> -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Manifesto de evento ETW será gerado automaticamente -->
+    <None Include="$(OutputPath)ArkheNode-Core.man" Condition="Exists('$(OutputPath)ArkheNode-Core.man')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

@@ -7,12 +7,9 @@ namespace ArkheNode.Core
     {
         public const double GHOST = 0.577553;
         public const double LOOPSEAL = 0.349066;
-        public const double GAP_MAX = 1.106;
+        public const double GAP_MAX = 0.9999;
         public const double PHI = 1.618033988749895;
-        public const double PHI_INVERSE = 1.0 / PHI;
-        public const double PHI_SQUARED = PHI * PHI;
-        public const double ALPHA_INVERSE = 137.035999;
-        public static readonly int[] FIBONACCI_SEQUENCE = { 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233 };
+        public const double ALPHA_INV = 137.035999084;
     }
 
     public class ConstitutionalDetectionRule

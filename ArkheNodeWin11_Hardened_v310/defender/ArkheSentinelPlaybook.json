@@ -1,0 +1,51 @@
+{
+  "playbookName": "Arkhe-Constitutional-Incident-Response",
+  "trigger": "Microsoft Sentinel Incident with tag 'ArkheConstitutional'",
+  "steps": [
+    {
+      "order": 1,
+      "name": "EnrichWithPhiC",
+      "action": "RunKqlQuery",
+      "query": "Event | where TimeGenerated > ago(1h) and Source == 'ArkheNode' | summarize AvgPhiC=avg(todouble(extract('PhiC=([0-9.]+)', 1, Message))) by Computer",
+      "output": "PhiC_Enrichment"
+    },
+    {
+      "order": 2,
+      "name": "EvaluateSeverity",
+      "action": "Condition",
+      "branches": {
+        "Critical": "AvgPhiC < 0.577350 or SealTampering == true",
+        "High": "AvgPhiC < 0.85 and AvgPhiC >= 0.577350",
+        "Medium": "AvgPhiC < 0.95 and AvgPhiC >= 0.85"
+      }
+    },
+    {
+      "order": 3,
+      "name": "AutoRemediateCritical",
+      "action": "TriggerDeviceIsolation",
+      "condition": "Critical",
+      "parameters": { "deviceIds": "@incident.affectedDevices", "duration": "PT1H" }
+    },
+    {
+      "order": 4,
+      "name": "AnchorToTemporalChain",
+      "action": "HttpPost",
+      "url": "https://temporalchain.arkhe.org/api/v1/anchor",
+      "headers": { "X-Arkhe-Seal": "@incident.canonicalSeal" },
+      "body": {
+        "incidentId": "@incident.id",
+        "phiC": "@PhiC_Enrichment.AvgPhiC",
+        "violations": "@incident.violationTypes",
+        "timestamp": "@incident.startTime"
+      }
+    },
+    {
+      "order": 5,
+      "name": "NotifyArchitect",
+      "action": "SendEmail",
+      "to": "architect@arkhe.org",
+      "subject": "[CRITICAL] Arkhe Constitutional Violation — Incident @incident.id",
+      "body": "PhiC: @PhiC_Enrichment.AvgPhiC | Devices: @incident.affectedDevices | Action: Auto-remediated"
+    }
+  ]
+}
