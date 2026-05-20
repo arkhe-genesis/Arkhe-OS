@@ -36,6 +36,15 @@ class PQCAlgorithm(Enum):
     DILITHIUM_3 = "CRYSTALS-Dilithium3"
     DILITHIUM_5 = "CRYSTALS-Dilithium5"
     SPHINCS_PLUS_SHA2_128f = "SPHINCS+-SHA2-128f-simple"
+    SQISIGN = "SQIsign"
+    HAWK = "HAWK"
+    MQOM = "MQOM"
+    SDITH = "SDitH"
+    MAYO = "MAYO"
+    QR_UOV = "QR-UOV"
+    SNOVA = "SNOVA"
+    UOV = "UOV"
+    FAEST = "FAEST"
 
     # Encriptação/KEM
     KYBER_512 = "CRYSTALS-Kyber512"
@@ -89,6 +98,15 @@ class PQCCryptoAdapter:
         PQCAlgorithm.DILITHIUM_3: {"security_level": 3, "type": "signature"},
         PQCAlgorithm.DILITHIUM_5: {"security_level": 5, "type": "signature"},
         PQCAlgorithm.SPHINCS_PLUS_SHA2_128f: {"security_level": 1, "type": "signature"},
+        PQCAlgorithm.SQISIGN: {"security_level": 1, "type": "signature"},
+        PQCAlgorithm.HAWK: {"security_level": 1, "type": "signature"},
+        PQCAlgorithm.MQOM: {"security_level": 1, "type": "signature"},
+        PQCAlgorithm.SDITH: {"security_level": 1, "type": "signature"},
+        PQCAlgorithm.MAYO: {"security_level": 1, "type": "signature"},
+        PQCAlgorithm.QR_UOV: {"security_level": 1, "type": "signature"},
+        PQCAlgorithm.SNOVA: {"security_level": 1, "type": "signature"},
+        PQCAlgorithm.UOV: {"security_level": 1, "type": "signature"},
+        PQCAlgorithm.FAEST: {"security_level": 1, "type": "signature"},
         PQCAlgorithm.KYBER_512: {"security_level": 1, "type": "kem"},
         PQCAlgorithm.KYBER_768: {"security_level": 3, "type": "kem"},
         PQCAlgorithm.KYBER_1024: {"security_level": 5, "type": "kem"},
@@ -140,7 +158,7 @@ class PQCCryptoAdapter:
             "public_key": os.urandom(256),  # Simulado
             "private_key": os.urandom(256),  # Simulado
             "algorithm": algorithm.value,
-            "type": "signature" if "DILITHIUM" in algorithm.value or "SPHINCS" in algorithm.value else "kem",
+            "type": "kem" if "KYBER" in algorithm.value else "signature",
             "fallback": True,
         }
 
