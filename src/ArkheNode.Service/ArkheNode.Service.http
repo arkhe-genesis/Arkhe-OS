@@ -1,0 +1,6 @@
+@ArkheNode.Service_HostAddress = http://localhost:5103
+
+GET {{ArkheNode.Service_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
