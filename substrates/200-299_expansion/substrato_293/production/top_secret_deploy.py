@@ -33,6 +33,15 @@ class PQCAlgorithm(Enum):
     DILITHIUM_3 = "dilithium_3"  # FIPS 204 - Signatures
     DILITHIUM_5 = "dilithium_5"
     SPHINCS_PLUS_128F = "sphincs_plus_128f"  # FIPS 205 - Signatures
+    SQISIGN = "SQIsign"
+    HAWK = "HAWK"
+    MQOM = "MQOM"
+    SDITH = "SDitH"
+    MAYO = "MAYO"
+    QR_UOV = "QR-UOV"
+    SNOVA = "SNOVA"
+    UOV = "UOV"
+    FAEST = "FAEST"
 
 @dataclass
 class TOPSecretPayload:

@@ -29,6 +29,15 @@ class ClassificationLevel(Enum):
 class PQCAlgorithm(Enum):
     KYBER_1024 = "kyber_1024"
     DILITHIUM_5 = "dilithium_5"
+    SQISIGN = "SQIsign"
+    HAWK = "HAWK"
+    MQOM = "MQOM"
+    SDITH = "SDitH"
+    MAYO = "MAYO"
+    QR_UOV = "QR-UOV"
+    SNOVA = "SNOVA"
+    UOV = "UOV"
+    FAEST = "FAEST"
 
 @dataclass
 class CustomRegionConfig:
