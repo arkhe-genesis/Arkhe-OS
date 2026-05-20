@@ -229,6 +229,8 @@ class ArkheBidirectionalChannel:
         """
         Consulta o passado a partir do futuro (retrocausal query).
         """
+        if t_query <= t_target:
+            return None
         # Search for messages at t_target
         if t_target in self.temporal_buffer:
             msgs = [m for m in self.temporal_buffer[t_target]
