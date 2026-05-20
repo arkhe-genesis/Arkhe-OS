@@ -1,0 +1,15 @@
+{
+  "name": "@arkhe/os-cdr-bridge",
+  "version": "0.1.0",
+  "dependencies": {
+    "@helia/unixfs": "^4.0.0",
+    "@piplabs/cdr-contracts": "^0.2.1",
+    "@piplabs/cdr-crypto": "^0.2.1",
+    "@piplabs/cdr-sdk": "^0.2.1",
+    "helia": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "typescript": "^6.0.3"
+  }
+}
