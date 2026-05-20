@@ -7,3 +7,6 @@ obj/
 packages/
 test_output.log
 test_results.txt
+
+bin/
+obj/

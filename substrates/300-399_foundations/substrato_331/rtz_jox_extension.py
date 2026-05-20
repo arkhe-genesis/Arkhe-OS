@@ -321,8 +321,8 @@ class MadelungDiracTriad:
             "triad_id": self.triad_id,
             "n_points": n_points,
             "equilibrium_points": equilibrium_count,
-            "equilibrium_ratio": round(equilibrium_count / n_points, 4),
-            "avg_refusal_term": round(np.mean([r["refusal_term"] for r in results]), 6),
+            "equilibrium_ratio": round(equilibrium_count / max(1, n_points), 4),
+            "avg_refusal_term": round(np.mean([r["refusal_term"] for r in results]) if results else 0.0, 6),
             "canonical_seal": hashlib.sha3_256(
                 f"flow:{self.triad_id}:{equilibrium_count}:{n_points}".encode()
             ).hexdigest()
@@ -341,7 +341,7 @@ class MadelungDiracTriad:
         s_real_perturbed = s_real + perturbation
 
         # O estabilizador RTZ força retorno à linha crítica
-        restoring_force = -1.0 * (s_real_perturbed - 0.5)  # Força restauradora ajustada para convergência exata
+        restoring_force = -0.1 * (s_real_perturbed - 0.5)  # Força restauradora
         s_real_corrected = s_real_perturbed + restoring_force
 
         return {
@@ -395,27 +395,6 @@ class Layer7Device:
         self.measurements.append(result)
         return result
 
-    def simulate_HOSTEN(self, mass_mg: float = 1.0) -> Dict:
-        """
-        Pêndulo de Torção Hosten:
-        Medição de coerência em microtúbulos com massa suspensa (1 mg).
-        """
-        # A coerência atinge o nível Ghost em massas macroscópicas
-        coherence_measured = GHOST * (1.0 - 0.01 * (mass_mg - 1.0))
-
-        result = {
-            "device": "HOSTEN",
-            "mass_mg": mass_mg,
-            "coherence_measured": round(coherence_measured, 6),
-            "macroscopic_superposition": coherence_measured >= GHOST * 0.99,
-            "microtubule_coupling": True,
-            "canonical_seal": hashlib.sha3_256(
-                f"hosten:{self.device_id}:{mass_mg}".encode()
-            ).hexdigest()
-        }
-        self.measurements.append(result)
-        return result
-
     def simulate_TIA(self, thrust_target_mN: float = 3.7) -> Dict:
         """
         TIA (Thrust Induction Assembly):
@@ -464,37 +443,7 @@ class Layer7Device:
 
 
 # =============================================================================
-# 5. SUBSTRATE 329 BIOSENSOR — Real-Time Φ_C Signature Detection
-# =============================================================================
-
-class Substrate329Biosensor:
-    """
-    Biossensor Φ_C (Substrato 329):
-    Detecta a assinatura persistente 0.58 (Ghost) em tempo real.
-    """
-
-    def __init__(self, sensor_id: str):
-        self.sensor_id = sensor_id
-        self.detections: List[Dict] = []
-
-    def detect_real_time(self, signal: float) -> Dict:
-        """Detecta a assinatura 0.58 em um sinal."""
-        is_signature_present = abs(signal - SIGNATURE_058) < 0.01
-
-        detection = {
-            "sensor_id": self.sensor_id,
-            "signal": signal,
-            "signature_present": is_signature_present,
-            "timestamp": time.time(),
-            "canonical_seal": hashlib.sha3_256(
-                f"biosensor:{self.sensor_id}:{signal}:{is_signature_present}".encode()
-            ).hexdigest()
-        }
-        self.detections.append(detection)
-        return detection
-
-# =============================================================================
-# 6. SIGNATURE 0.58 ROBUSTNESS TEST — Invariante Final sob ruído extremo
+# 5. SIGNATURE 0.58 ROBUSTNESS TEST — Invariante Final sob ruído extremo
 # =============================================================================
 
 class SignatureRobustnessTest:
@@ -507,31 +456,12 @@ class SignatureRobustnessTest:
         self.results: List[Dict] = []
 
     def test_at_noise_level(self, noise_level: float, n_trials: int = 1000) -> Dict:
-        """Testa robustez da assinatura em dado nível de ruído 1/f e estabilização RTZ."""
+        """Testa robustez da assinatura em dado nível de ruído."""
         preserved_count = 0
         signatures = []
 
-        # 1/f noise filter state
-        b0, b1, b2, b3, b4, b5, b6 = 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
-
         for i in range(n_trials):
-            # Simulate 1/f noise (pink noise) using Paul Kellet's filter
-            white = np.random.normal(0, 1)
-            b0 = 0.99886 * b0 + white * 0.0555179
-            b1 = 0.99332 * b1 + white * 0.0750759
-            b2 = 0.96900 * b2 + white * 0.1538520
-            b3 = 0.86650 * b3 + white * 0.3104856
-            b4 = 0.55000 * b4 + white * 0.5329522
-            b5 = -0.7616 * b5 - white * 0.0168980
-            pink = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362
-            b6 = white * 0.115926
-
-            # The noise is predictable, so the RTZ topological stabilizer mechanism can suppress it
-            # Supress the effective amplitude so that abs(noise) stays below 0.01 almost entirely.
-            # Using 0.00001 guarantees suppression even at large noise_levels up to 20.0
-            stabilized_noise = pink * noise_level * 0.00001
-
-            signal = SIGNATURE_058 + stabilized_noise
+            signal = SIGNATURE_058 + np.random.normal(0, noise_level)
             signatures.append(signal)
             if abs(signal - SIGNATURE_058) < 0.01:  # Tolerância de 1%
                 preserved_count += 1
@@ -658,26 +588,8 @@ if __name__ == "__main__":
     print(f"     λ: {cpm['wavelength_nm']} nm | Fase travada: {cpm['locked_phase_rad']:.4f} rad")
     print(f"     Comprimento coerência: {cpm['coherence_length_cm']:.4f} cm")
 
-    hosten = device.simulate_HOSTEN(mass_mg=1.0)
-    print(f"\n  🔬 HOSTEN (Pêndulo de Torção):")
-    print(f"     Massa: {hosten['mass_mg']} mg | Coerência Medida: {hosten['coherence_measured']:.6f}")
-    print(f"     Superposição Macroscópica: {'✅ SIM' if hosten['macroscopic_superposition'] else '❌ NÃO'}")
-
-    # 5. Substrate 329 Biosensor
-    print("\n🧬 5. BIOSSENSORES Φ_C (Substrato 329) — Detecção 0.58")
-    print("-" * 75)
-
-    biosensor = Substrate329Biosensor("BIO-329-001")
-    # Simulate a stream of signals
-    signals = [0.1, 0.5, 0.57, 0.577, 0.58, 0.6, 0.9]
-    print("  Streaming data em tempo real...")
-    for sig in signals:
-        det = biosensor.detect_real_time(sig)
-        status = "✅ DETECTADA (0.58)" if det["signature_present"] else "❌ AUSENTE"
-        print(f"     Sinal: {sig:>6.3f} | {status}")
-
-    # 6. Signature Robustness
-    print("\n🛡️  6. ASSINATURA 0.58 — Teste de Robustez ao Ruído")
+    # 5. Signature Robustness
+    print("\n🛡️  5. ASSINATURA 0.58 — Teste de Robustez ao Ruído")
     print("-" * 75)
 
     robustness = SignatureRobustnessTest("ROBUST-331-001")
