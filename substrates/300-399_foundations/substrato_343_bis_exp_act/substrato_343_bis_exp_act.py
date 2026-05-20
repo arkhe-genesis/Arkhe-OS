@@ -1,4 +1,5 @@
 import os
+os.environ.setdefault('OSPF_MD5_KEY', 'mock-key-for-local-testing')
 import math, hashlib, json, time, numpy as np
 from typing import List, Dict, Tuple
 from dataclasses import dataclass
@@ -97,7 +98,7 @@ if __name__ == '__main__':
       interface TenGigE0/0/0/0
        cost {int(1000 / gate.weyl_signature)}
        authentication message-digest
-       message-digest-key 17 md5 {os.environ.get('OSPF_MD5_KEY', 'ARKHE-' + gate.id)}
+       message-digest-key 17 md5 {os.environ['OSPF_MD5_KEY']}
     !
     ! ARKHE-PORTAL extension: Temporal BGP community
     router bgp 65017
@@ -154,7 +155,7 @@ if __name__ == '__main__':
                 interface xe-0/0/0.0 {{
                     /* ARKHE-PORTAL: OSPF metric = 1000 / Weyl */
                     metric {int(1000 / gate.weyl_signature)};
-                    authentication md5 17 key "{os.environ.get('OSPF_MD5_KEY', '$9$ARKHE' + gate.id)}";
+                    authentication md5 17 key "{os.environ['OSPF_MD5_KEY']}";
                 }}
             }}
         }}
@@ -207,7 +208,7 @@ if __name__ == '__main__':
       network 10.17.0.0 0.0.255.255
       interface XGigabitEthernet0/0/1
        cost {int(1000 / gate.weyl_signature)}
-       authentication-mode md5 17 cipher {os.environ.get('OSPF_MD5_KEY', 'ARKHE-' + gate.id)}
+       authentication-mode md5 17 cipher {os.environ['OSPF_MD5_KEY']}
     #
     # ARKHE-PORTAL: BGP Temporal Community
     bgp 65017
