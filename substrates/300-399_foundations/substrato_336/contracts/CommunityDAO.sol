@@ -18,6 +18,7 @@ contract CommunityDAO {
     }
 
     mapping(uint256 => Proposal) public proposals;
+    mapping(uint256 => mapping(uint256 => bool)) public hasVoted; // proposalId -> tokenId -> bool
     uint256 public proposalCount;
     ArkheIdentityNFT public identityContract;
 
@@ -36,6 +37,8 @@ contract CommunityDAO {
         require(block.timestamp < p.deadline, "Voting closed");
 
         uint256 tokenId = identityContract.tokenOfOwnerByIndex(msg.sender, 0);
+        require(!hasVoted[proposalId][tokenId], "Already voted");
+        hasVoted[proposalId][tokenId] = true;
 
         uint256 weight = identityContract.tokenToPhiC(tokenId); // Φ_C × 10⁹
         if (support) p.votesFor += weight;
