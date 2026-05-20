@@ -49,17 +49,17 @@ class CannabinoidBiosensorKM206:
             "5F-ADB": lambda conc: conc > 50
         }
 
-    def detect_sample(self, sample_id: str, thc_conc_pm: float, scras: list = None):
+    def detect_sample(self, sample_id: str, thc_conc_pm: float, scras: dict = None):
         if scras is None:
-            scras = []
+            scras = {}
 
         detected = thc_conc_pm >= self.limit_pm
 
         critical_risk = False
         detected_scras = []
 
-        for scra in scras:
-            if scra in self.synthetic_signatures and self.synthetic_signatures[scra](thc_conc_pm):
+        for scra, conc in scras.items():
+            if scra in self.synthetic_signatures and self.synthetic_signatures[scra](conc):
                 critical_risk = True
                 detected_scras.append(scra)
 
@@ -81,6 +81,9 @@ class PhotodynamicCannabinoidTherapy:
         self.phic = 0.717823
 
     def apply_session(self, tumor_id: str, cbd_ug: float, ir_dose: float, volume_mm3: float):
+        if volume_mm3 <= 0:
+            return {"tumor_id": tumor_id, "efficacy_pct": 0.0, "total_damage": 0.0}
+
         # Efficacy model loosely based on combination of IR and CBD
         efficacy_base = (ir_dose * cbd_ug) / (volume_mm3 * 10.0)
         efficacy_pct = min(100.0, max(0.0, efficacy_base * 100))

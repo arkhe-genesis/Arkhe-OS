@@ -34,12 +34,13 @@ def test_cannabinoid_biosensor():
     assert res2["detected"] is False
     assert res2["risk"] == "NEGATIVE"
 
-    res3 = sensor.detect_sample("SAMPLE-003", 500.0, ["JWH-018", "AM-2201"])
+    res3 = sensor.detect_sample("SAMPLE-003", 500.0, {"JWH-018": 350.0, "AM-2201": 200.0})
     assert res3["detected"] is True
     assert res3["risk"] == "CRITICAL"
     assert "JWH-018" in res3["scras"]
+    assert "AM-2201" not in res3["scras"]
 
-    res5 = sensor.detect_sample("SAMPLE-005", 80.0, ["5F-ADB"])
+    res5 = sensor.detect_sample("SAMPLE-005", 80.0, {"5F-ADB": 60.0})
     assert res5["detected"] is False
     assert res5["risk"] == "CRITICAL"
     assert "5F-ADB" in res5["scras"]
