@@ -60,9 +60,6 @@ contract TemporalMerkleCondition {
         // user has access rights proven by the temporal root
         bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(account, vault))));
 
-        // Require a valid Merkle proof for production
-        require(proof.length > 0, "Proof cannot be empty");
-
         return MerkleProof.verify(proof, finalizedRoot, leaf);
     }
 }

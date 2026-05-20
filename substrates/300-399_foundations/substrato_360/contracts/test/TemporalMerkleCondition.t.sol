@@ -31,7 +31,7 @@ contract TemporalMerkleConditionTest is Test {
         }
     }
 
-    function test_CheckReadCondition_Passes() public {
+    function test_CheckReadCondition_PassesMultiLeaf() public {
         (bytes32 merkleRoot, bytes32[] memory proof) = _buildTree();
         uint256 targetTimestamp = 1000;
 
@@ -46,6 +46,29 @@ contract TemporalMerkleConditionTest is Test {
         );
 
         bytes memory accessAuxData = abi.encode(proof);
+
+        bool result = condition.checkReadCondition(user1, vault, conditionData, accessAuxData);
+        assertTrue(result);
+    }
+
+    function test_CheckReadCondition_PassesSingleLeaf() public {
+        // Single leaf tree where root == leaf
+        bytes32 leaf1 = keccak256(bytes.concat(keccak256(abi.encode(user1, vault))));
+        bytes32 merkleRoot = leaf1;
+        bytes32[] memory emptyProof = new bytes32[](0);
+
+        uint256 targetTimestamp = 1000;
+        condition.finalizeBlock(targetTimestamp, merkleRoot);
+
+        bytes memory conditionData = abi.encode(
+            TemporalMerkleCondition.ConditionData({
+                merkleRoot: merkleRoot,
+                targetTimestamp: targetTimestamp,
+                requiredHumility: 6000
+            })
+        );
+
+        bytes memory accessAuxData = abi.encode(emptyProof);
 
         bool result = condition.checkReadCondition(user1, vault, conditionData, accessAuxData);
         assertTrue(result);
@@ -74,10 +97,13 @@ contract TemporalMerkleConditionTest is Test {
         assertFalse(result);
     }
 
-    function test_CheckReadCondition_FailsOnEmptyProof() public {
-        (bytes32 merkleRoot, ) = _buildTree();
-        uint256 targetTimestamp = 1000;
+    function test_CheckReadCondition_FailsOnInvalidSingleLeaf() public {
+        // Trying to use single leaf approach with wrong user
+        bytes32 leaf1 = keccak256(bytes.concat(keccak256(abi.encode(user2, vault)))); // root is user2's leaf
+        bytes32 merkleRoot = leaf1;
+        bytes32[] memory emptyProof = new bytes32[](0);
 
+        uint256 targetTimestamp = 1000;
         condition.finalizeBlock(targetTimestamp, merkleRoot);
 
         bytes memory conditionData = abi.encode(
@@ -88,10 +114,10 @@ contract TemporalMerkleConditionTest is Test {
             })
         );
 
-        bytes32[] memory emptyProof = new bytes32[](0);
         bytes memory accessAuxData = abi.encode(emptyProof);
 
-        vm.expectRevert("Proof cannot be empty");
-        condition.checkReadCondition(user1, vault, conditionData, accessAuxData);
+        // Try to access as user1, should fail because user1's leaf != user2's leaf
+        bool result = condition.checkReadCondition(user1, vault, conditionData, accessAuxData);
+        assertFalse(result);
     }
 }
