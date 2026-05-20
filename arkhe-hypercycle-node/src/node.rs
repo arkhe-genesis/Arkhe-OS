@@ -39,7 +39,7 @@ impl ArkheHyperCycleNode {
             crate::humility::HumilityVerdict::Acceptable { score } => {
                 let attestation = EpistemicHumilityEngine::compute_attestation(
                     task_id, &self.node_id, &task_id, *score);
-                self.tilling.record_activity(10.0, 1, 0, 1);
+                self.tilling.record_activity(10.0, 1, 0, 0);
                 Ok(attestation)
             }
             crate::humility::HumilityVerdict::Rejected { reason, .. } => {
