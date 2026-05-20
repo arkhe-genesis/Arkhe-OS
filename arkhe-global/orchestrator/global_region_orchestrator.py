@@ -232,8 +232,8 @@ class GlobalConsensusEngine:
 
         # Calculate global Φ_C as weighted average
         global_phi_c = sum(
-            self.reputation_scores.get(region, 0.9) * (1.0 if vote else 0.0)
-            for region, vote in votes.items()
+            self.reputation_scores.get(region, 0.9)
+            for region in votes.keys()
         ) / max(1, len(votes))
 
         return consensus_reached, global_phi_c
