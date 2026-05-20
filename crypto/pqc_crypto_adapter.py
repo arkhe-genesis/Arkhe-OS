@@ -262,7 +262,7 @@ class PQCCryptoAdapter:
 
             # Resultado final baseado em modo híbrido
             if hybrid:
-                valid = pqc_valid or classic_valid  # Pelo menos uma válida
+                valid = pqc_valid and classic_valid  # Ambas devem ser válidas para segurança em camadas
             else:
                 valid = pqc_valid if pqc_sig is not None else classic_valid
 
