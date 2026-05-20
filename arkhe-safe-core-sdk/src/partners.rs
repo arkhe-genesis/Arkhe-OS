@@ -29,7 +29,7 @@ pub struct KimiAdapter;
 impl PartnerAdapter for KimiAdapter {
     fn partner_id(&self) -> PartnerId { PartnerId("kimi".to_string()) }
     fn model_name(&self) -> &str { "Kimi-K2.6" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.93).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.93) }
     fn region(&self) -> &str { "Asia-East" }
     fn tier(&self) -> u8 { 1 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
@@ -42,7 +42,7 @@ pub struct AnthropicAdapter;
 impl PartnerAdapter for AnthropicAdapter {
     fn partner_id(&self) -> PartnerId { PartnerId("anthropic".to_string()) }
     fn model_name(&self) -> &str { "Claude-4" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.92).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.92) }
     fn region(&self) -> &str { "US-West" }
     fn tier(&self) -> u8 { 1 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
@@ -55,7 +55,7 @@ pub struct NvidiaAdapter;
 impl PartnerAdapter for NvidiaAdapter {
     fn partner_id(&self) -> PartnerId { PartnerId("nvidia".to_string()) }
     fn model_name(&self) -> &str { "NeMo-Enterprise" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.92).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.92) }
     fn region(&self) -> &str { "US-West" }
     fn tier(&self) -> u8 { 1 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
@@ -68,7 +68,7 @@ pub struct OpenAIAdapter;
 impl PartnerAdapter for OpenAIAdapter {
     fn partner_id(&self) -> PartnerId { PartnerId("openai".to_string()) }
     fn model_name(&self) -> &str { "GPT-5" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.91).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.91) }
     fn region(&self) -> &str { "US-West" }
     fn tier(&self) -> u8 { 1 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
@@ -81,7 +81,7 @@ pub struct GoogleAdapter;
 impl PartnerAdapter for GoogleAdapter {
     fn partner_id(&self) -> PartnerId { PartnerId("google".to_string()) }
     fn model_name(&self) -> &str { "Gemini-2.5-Pro" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.91).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.91) }
     fn region(&self) -> &str { "US-West" }
     fn tier(&self) -> u8 { 1 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
@@ -96,7 +96,7 @@ pub struct SpaceXAdapter;
 impl PartnerAdapter for SpaceXAdapter {
     fn partner_id(&self) -> PartnerId { PartnerId("spacex".to_string()) }
     fn model_name(&self) -> &str { "Starlink-AI" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.90).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.90) }
     fn region(&self) -> &str { "US-West" }
     fn tier(&self) -> u8 { 2 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
@@ -109,7 +109,7 @@ pub struct DeepSeekAdapter;
 impl PartnerAdapter for DeepSeekAdapter {
     fn partner_id(&self) -> PartnerId { PartnerId("deepseek".to_string()) }
     fn model_name(&self) -> &str { "DeepSeek-V4" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.88).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.88) }
     fn region(&self) -> &str { "Asia-East" }
     fn tier(&self) -> u8 { 2 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
@@ -122,7 +122,7 @@ pub struct MicrosoftAdapter;
 impl PartnerAdapter for MicrosoftAdapter {
     fn partner_id(&self) -> PartnerId { PartnerId("microsoft".to_string()) }
     fn model_name(&self) -> &str { "Copilot-Enterprise" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.89).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.89) }
     fn region(&self) -> &str { "US-West" }
     fn tier(&self) -> u8 { 2 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
@@ -135,7 +135,7 @@ pub struct AppleAdapter;
 impl PartnerAdapter for AppleAdapter {
     fn partner_id(&self) -> PartnerId { PartnerId("apple".to_string()) }
     fn model_name(&self) -> &str { "Apple-Intelligence" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.88).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.88) }
     fn region(&self) -> &str { "US-West" }
     fn tier(&self) -> u8 { 2 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
@@ -148,7 +148,7 @@ pub struct HuaweiAdapter;
 impl PartnerAdapter for HuaweiAdapter {
     fn partner_id(&self) -> PartnerId { PartnerId("huawei".to_string()) }
     fn model_name(&self) -> &str { "Pangu-Σ" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.87).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.87) }
     fn region(&self) -> &str { "Asia-East" }
     fn tier(&self) -> u8 { 2 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
@@ -161,7 +161,7 @@ pub struct XAIAdapter;
 impl PartnerAdapter for XAIAdapter {
     fn partner_id(&self) -> PartnerId { PartnerId("xai".to_string()) }
     fn model_name(&self) -> &str { "Grok-3" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.87).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.87) }
     fn region(&self) -> &str { "US-West" }
     fn tier(&self) -> u8 { 2 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
@@ -174,7 +174,7 @@ pub struct SamsungAdapter;
 impl PartnerAdapter for SamsungAdapter {
     fn partner_id(&self) -> PartnerId { PartnerId("samsung".to_string()) }
     fn model_name(&self) -> &str { "Gauss-2" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.86).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.86) }
     fn region(&self) -> &str { "Asia-East" }
     fn tier(&self) -> u8 { 2 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
@@ -187,7 +187,7 @@ pub struct PalantirAdapter;
 impl PartnerAdapter for PalantirAdapter {
     fn partner_id(&self) -> PartnerId { PartnerId("palantir".to_string()) }
     fn model_name(&self) -> &str { "AIP-Ontology" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.86).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.86) }
     fn region(&self) -> &str { "US-East" }
     fn tier(&self) -> u8 { 2 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
@@ -200,7 +200,7 @@ pub struct AndurilAdapter;
 impl PartnerAdapter for AndurilAdapter {
     fn partner_id(&self) -> PartnerId { PartnerId("anduril".to_string()) }
     fn model_name(&self) -> &str { "Lattice-AI" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.85).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.85) }
     fn region(&self) -> &str { "US-West" }
     fn tier(&self) -> u8 { 2 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
@@ -213,7 +213,7 @@ pub struct MetaAdapter;
 impl PartnerAdapter for MetaAdapter {
     fn partner_id(&self) -> PartnerId { PartnerId("meta".to_string()) }
     fn model_name(&self) -> &str { "Llama-4" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.85).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.85) }
     fn region(&self) -> &str { "US-West" }
     fn tier(&self) -> u8 { 2 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
@@ -226,7 +226,7 @@ pub struct ZAIAdapter;
 impl PartnerAdapter for ZAIAdapter {
     fn partner_id(&self) -> PartnerId { PartnerId("zai".to_string()) }
     fn model_name(&self) -> &str { "GLM-5" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.85).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.85) }
     fn region(&self) -> &str { "Asia-East" }
     fn tier(&self) -> u8 { 2 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
@@ -241,7 +241,7 @@ pub struct AlibabaAdapter;
 impl PartnerAdapter for AlibabaAdapter {
     fn partner_id(&self) -> PartnerId { PartnerId("alibaba".to_string()) }
     fn model_name(&self) -> &str { "Qwen-3" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.84).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.84) }
     fn region(&self) -> &str { "Asia-East" }
     fn tier(&self) -> u8 { 3 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
@@ -254,7 +254,7 @@ pub struct IBMAdapter;
 impl PartnerAdapter for IBMAdapter {
     fn partner_id(&self) -> PartnerId { PartnerId("ibm".to_string()) }
     fn model_name(&self) -> &str { "Granite-4" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.84).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.84) }
     fn region(&self) -> &str { "US-East" }
     fn tier(&self) -> u8 { 3 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
@@ -267,7 +267,7 @@ pub struct XiaomiAdapter;
 impl PartnerAdapter for XiaomiAdapter {
     fn partner_id(&self) -> PartnerId { PartnerId("xiaomi".to_string()) }
     fn model_name(&self) -> &str { "Mi-AI" }
-    fn phi_c_base(&self) -> PhiC { PhiC::new(0.83).unwrap() }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.83) }
     fn region(&self) -> &str { "Asia-East" }
     fn tier(&self) -> u8 { 3 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {

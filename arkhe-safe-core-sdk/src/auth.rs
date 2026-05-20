@@ -43,7 +43,7 @@ impl Authenticator for GhostAuthenticator {
             return Err(ArkheError::HumilityBelowGhost(humility.0));
         }
 
-        let input = format!("{}_{}_{}", partner_id.0, orcid, Utc::now().timestamp());
+        let input = format!("{}_{}_{}", partner_id.0, orcid, Utc::now().timestamp_nanos_opt().unwrap_or(0));
         let mut hasher = Sha3_256::new();
         hasher.update(input.as_bytes());
         let session_id = SessionId(hex::encode(&hasher.finalize()[..8]));
