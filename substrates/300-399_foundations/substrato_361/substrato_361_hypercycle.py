@@ -253,7 +253,7 @@ class ArkheHyperCycleNode:
             # Criar payment commitment para cada subcontractor
             sub_payment = {
                 "amount": task.get("budget", 0) / len(subcontractors),
-                "commitment_hash": hashlib.sha256(f"{sub}_{task['id']}".encode()).hexdigest()[:16],
+                "commitment_hash": hashlib.sha256(f"{sub}_{task.get('id', 'unknown')}".encode()).hexdigest()[:16],
             }
 
             subcontracts.append({
@@ -389,9 +389,11 @@ class HyperCycleNetwork:
             "active_nodes": sum(1 for n in self.nodes.values() if n.computations_completed > 0),
         })
 
-        # Atualizar Tilling Scores
+        # Atualizar Tilling Scores e limpar Merkle module local para evitar O(N^2)
         for node in self.nodes.values():
             node.compute_tilling_score()
+            node.merkle_module["metrics"] = {}
+            node.merkle_module["local_root"] = "0" * 64
 
         return {
             "cycle": self.heartbeat_cycle,
