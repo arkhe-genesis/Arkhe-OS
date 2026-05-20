@@ -338,8 +338,6 @@ class AccessLayerPrivacyFilter:
             return []  # Caminho insuficiente
 
         # Aleatoriedade criptográfica para evitar rastreamento da rota
-        path = []
-        for _ in range(min_hops):
-            path.append(secrets.choice(eligible))
+        path = secrets.SystemRandom().sample(eligible, min_hops)
 
         return path
