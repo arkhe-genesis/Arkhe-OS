@@ -167,7 +167,7 @@ class QuantumRepeaterDeployer:
 
         # Fase 3: Validar malha expandida
         print("   [3/3] Validating expanded mesh...")
-        validation = await self._validate_expanded_mesh(connected_regions)
+        validation = await self._validate_expanded_mesh(connected_regions, deployed_repeaters)
 
         return {
             "original_regions": 8,
@@ -179,14 +179,14 @@ class QuantumRepeaterDeployer:
             "canonical_seal": self._generate_expansion_seal(connected_regions, deployed_repeaters)
         }
 
-    async def _validate_expanded_mesh(self, connected_regions: List[str]) -> Dict:
+    async def _validate_expanded_mesh(self, connected_regions: List[str], deployed_repeaters: List[str]) -> Dict:
         """Valida malha expandida com repetidores."""
         # Mock: simular validação de conectividade end-to-end
         max_range = 600  # km base sem repetidores
 
         # Com repetidores: alcance efetivo = base + (n_repeaters * range_extension)
         range_extension = 200  # km por repetidor
-        effective_range = max_range + (len(self.QUANTUM_REPEATERS) * range_extension)
+        effective_range = max_range + (len(deployed_repeaters) * range_extension)
 
         # Verificar que todas as regiões conectadas têm Φ_C adequado
         phi_c_ok = all(self._simulate_region_phi_c(region) >= 0.93 for region in connected_regions)

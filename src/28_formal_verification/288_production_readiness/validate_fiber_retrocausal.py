@@ -119,7 +119,7 @@ class FiberValidationFramework:
 
         # TF‑QKD scaling: √η advantage sobre QKD tradicional
         eta = 10 ** (-loss_db / 10)
-        key_rate = 1e6 * math.sqrt(eta) * 0.93 * self._random_factor(0.95, 1.05)
+        key_rate = 1e6 * (eta ** 0.5) * 0.93 * self._random_factor(0.95, 1.05)
 
         return {
             "key_rate": max(100, key_rate),  # Mínimo 100 bps para operação
