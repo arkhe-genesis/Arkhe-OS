@@ -1,4 +1,4 @@
-import { createPublicClient, createWalletClient, http, type Address, getContract } from "viem";
+import { createPublicClient, createWalletClient, http, type Address, getContract, keccak256, encodeAbiParameters, encodePacked } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { foundry } from "viem/chains";
 import { ArkheCDRBridge } from "./arkhe_cdr_bridge.js";
@@ -43,6 +43,22 @@ async function runSimulation() {
   const conditionAddress: Address = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
   const ownerWriteConditionAddr: Address = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"; // mock
 
+  // Construct a valid Merkle Root for the simulation since the contract now requires it
+  const vaultAddress: Address = conditionAddress; // For simplicity in sim
+  const innerHash1 = keccak256(encodeAbiParameters([{ type: 'address' }, { type: 'address' }], [account.address, vaultAddress]));
+  const leaf1 = keccak256(encodePacked(['bytes'], [innerHash1]));
+
+  const dummyUser: Address = "0x0000000000000000000000000000000000000004";
+  const innerHash2 = keccak256(encodeAbiParameters([{ type: 'address' }, { type: 'address' }], [dummyUser, vaultAddress]));
+  const leaf2 = keccak256(encodePacked(['bytes'], [innerHash2]));
+
+  let mockMerkleRoot: `0x${string}`;
+  if (BigInt(leaf1) <= BigInt(leaf2)) {
+    mockMerkleRoot = keccak256(encodePacked(['bytes32', 'bytes32'], [leaf1, leaf2]));
+  } else {
+    mockMerkleRoot = keccak256(encodePacked(['bytes32', 'bytes32'], [leaf2, leaf1]));
+  }
+
   // 2. Instantiate ArkheBridge & Vault
   console.log("Instantiating ArkheCDRBridge...");
   const bridge = new ArkheCDRBridge(walletClient as any, publicClient as any);
@@ -64,7 +80,6 @@ async function runSimulation() {
 
   // 4. Seal Code
   const targetTimestamp = Math.floor(Date.now() / 1000) + 10;
-  const mockMerkleRoot = "0x1234567890123456789012345678901234567890123456789012345678901234";
   console.log(`Sealing code for timestamp >= ${targetTimestamp} with merkle root ${mockMerkleRoot}...`);
 
   // We intercept the CDR upload in simulation and assert variables
@@ -91,6 +106,7 @@ async function runSimulation() {
   const validator = new SGXAttestationValidator();
   // Using a mock string as parsing actual quotes requires real hardware signatures
   const mockAttestation = "0x0000000000000000000000000000000000000000000000000000000000000000";
+  // We expect this to fail now since it's an invalid quote from which mrenclave cannot be extracted
   await validator.validateEnclave(mockAttestation);
 
   console.log("=== CYCLE COMPLETE: REVELATION CONDITIONS MET ===");

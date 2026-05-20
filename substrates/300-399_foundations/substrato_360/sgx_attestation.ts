@@ -31,7 +31,8 @@ export class SGXAttestationValidator {
               return false;
           }
       } else {
-         console.warn("Could not extract MRENCLAVE from attestation, simulating check.");
+         console.error("Could not extract MRENCLAVE from attestation.");
+         return false;
       }
 
       console.log("Enclave validation successful. Φ_C compliant.");

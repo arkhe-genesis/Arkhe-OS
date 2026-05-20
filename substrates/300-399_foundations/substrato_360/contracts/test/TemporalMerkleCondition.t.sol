@@ -10,15 +10,30 @@ contract TemporalMerkleConditionTest is Test {
 
     address user1 = address(0x1);
     address vault = address(0x2);
+    address user2 = address(0x4);
 
     function setUp() public {
         condition = new TemporalMerkleCondition();
         condition.setUserHumility(user1, 9000); // Pass Ghost
     }
 
+    function _buildTree() internal view returns (bytes32 root, bytes32[] memory proof) {
+        bytes32 leaf1 = keccak256(bytes.concat(keccak256(abi.encode(user1, vault))));
+        bytes32 leaf2 = keccak256(bytes.concat(keccak256(abi.encode(user2, vault))));
+
+        proof = new bytes32[](1);
+        proof[0] = leaf2;
+
+        if (leaf1 <= leaf2) {
+            root = keccak256(abi.encodePacked(leaf1, leaf2));
+        } else {
+            root = keccak256(abi.encodePacked(leaf2, leaf1));
+        }
+    }
+
     function test_CheckReadCondition_Passes() public {
+        (bytes32 merkleRoot, bytes32[] memory proof) = _buildTree();
         uint256 targetTimestamp = 1000;
-        bytes32 merkleRoot = keccak256("test_root");
 
         condition.finalizeBlock(targetTimestamp, merkleRoot);
 
@@ -30,8 +45,7 @@ contract TemporalMerkleConditionTest is Test {
             })
         );
 
-        bytes32[] memory emptyProof = new bytes32[](0);
-        bytes memory accessAuxData = abi.encode(emptyProof);
+        bytes memory accessAuxData = abi.encode(proof);
 
         bool result = condition.checkReadCondition(user1, vault, conditionData, accessAuxData);
         assertTrue(result);
@@ -41,8 +55,28 @@ contract TemporalMerkleConditionTest is Test {
         address arrogantUser = address(0x3);
         condition.setUserHumility(arrogantUser, 2000); // Below Ghost
 
+        (bytes32 merkleRoot, bytes32[] memory proof) = _buildTree();
         uint256 targetTimestamp = 1000;
-        bytes32 merkleRoot = keccak256("test_root");
+
+        condition.finalizeBlock(targetTimestamp, merkleRoot);
+
+        bytes memory conditionData = abi.encode(
+            TemporalMerkleCondition.ConditionData({
+                merkleRoot: merkleRoot,
+                targetTimestamp: targetTimestamp,
+                requiredHumility: 6000
+            })
+        );
+
+        bytes memory accessAuxData = abi.encode(proof);
+
+        bool result = condition.checkReadCondition(arrogantUser, vault, conditionData, accessAuxData);
+        assertFalse(result);
+    }
+
+    function test_CheckReadCondition_FailsOnEmptyProof() public {
+        (bytes32 merkleRoot, ) = _buildTree();
+        uint256 targetTimestamp = 1000;
 
         condition.finalizeBlock(targetTimestamp, merkleRoot);
 
@@ -57,42 +91,7 @@ contract TemporalMerkleConditionTest is Test {
         bytes32[] memory emptyProof = new bytes32[](0);
         bytes memory accessAuxData = abi.encode(emptyProof);
 
-        bool result = condition.checkReadCondition(arrogantUser, vault, conditionData, accessAuxData);
-        assertFalse(result);
-    }
-
-    function test_CheckReadCondition_WithRealProof() public {
-        // Construct a small 2-leaf Merkle Tree
-        bytes32 leaf1 = keccak256(bytes.concat(keccak256(abi.encode(user1, vault))));
-
-        address user2 = address(0x4);
-        bytes32 leaf2 = keccak256(bytes.concat(keccak256(abi.encode(user2, vault))));
-
-        bytes32[] memory proof = new bytes32[](1);
-        proof[0] = leaf2;
-
-        // Sorting siblings as per OpenZeppelin MerkleProof standard
-        bytes32 root;
-        if (leaf1 <= leaf2) {
-            root = keccak256(abi.encodePacked(leaf1, leaf2));
-        } else {
-            root = keccak256(abi.encodePacked(leaf2, leaf1));
-        }
-
-        uint256 targetTimestamp = 2000;
-        condition.finalizeBlock(targetTimestamp, root);
-
-        bytes memory conditionData = abi.encode(
-            TemporalMerkleCondition.ConditionData({
-                merkleRoot: root,
-                targetTimestamp: targetTimestamp,
-                requiredHumility: 6000
-            })
-        );
-
-        bytes memory accessAuxData = abi.encode(proof);
-
-        bool result = condition.checkReadCondition(user1, vault, conditionData, accessAuxData);
-        assertTrue(result);
+        vm.expectRevert("Proof cannot be empty");
+        condition.checkReadCondition(user1, vault, conditionData, accessAuxData);
     }
 }
