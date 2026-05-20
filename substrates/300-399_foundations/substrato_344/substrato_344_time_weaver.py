@@ -74,6 +74,8 @@ class BaseTimeWeaver:
         self.phi_c_global = 0.469624
 
     def process(self, payloads: List[bytes]) -> float:
+        if not self.gates and payloads:
+            raise ValueError("No gates configured to process payloads")
         for i, payload in enumerate(payloads):
             gate = self.gates[i % len(self.gates)]
             h = hashlib.sha256(payload).hexdigest()
