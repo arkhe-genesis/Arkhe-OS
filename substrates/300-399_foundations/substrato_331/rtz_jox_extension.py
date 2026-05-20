@@ -77,7 +77,7 @@ class VirtualDistinctionField:
             "field_id": self.field_id,
             "total_fluctuations": n_fluctuations,
             "persistent_distinctions": persistent_count,
-            "persistence_rate": round(persistent_count / n_fluctuations, 4),
+            "persistence_rate": round(persistent_count / max(1, n_fluctuations), 4),
             "ghost_threshold": GHOST,
             "floor_008": FLOOR_008,
             "canonical_seal": hashlib.sha3_256(
@@ -321,8 +321,8 @@ class MadelungDiracTriad:
             "triad_id": self.triad_id,
             "n_points": n_points,
             "equilibrium_points": equilibrium_count,
-            "equilibrium_ratio": round(equilibrium_count / n_points, 4),
-            "avg_refusal_term": round(np.mean([r["refusal_term"] for r in results]), 6),
+            "equilibrium_ratio": round(equilibrium_count / max(1, n_points), 4),
+            "avg_refusal_term": round(np.mean([r["refusal_term"] for r in results]) if results else 0.0, 6),
             "canonical_seal": hashlib.sha3_256(
                 f"flow:{self.triad_id}:{equilibrium_count}:{n_points}".encode()
             ).hexdigest()
