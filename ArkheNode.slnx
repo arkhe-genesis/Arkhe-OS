@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ArkheNode.Core/ArkheNode.Core.csproj" />
+    <Project Path="src/ArkheNode.Security/ArkheNode.Security.csproj" />
+    <Project Path="src/ArkheNode.Service/ArkheNode.Service.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ArkheNode.Security.Tests/ArkheNode.Security.Tests.csproj" />
+  </Folder>
+</Solution>

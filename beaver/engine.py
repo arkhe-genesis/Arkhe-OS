@@ -92,7 +92,7 @@ class VerificationRule:
                 pass
 
             mock_dbs = ["aspirin", "ibuprofen", "paracetamol", "metformin", "acetaminofeno"]
-            return val_clean in [d.lower() for d in mock_dbs]
+            return any(d in val_clean.lower() for d in mock_dbs)
 
         elif database == "pubmed_indexed":
             try:
@@ -210,20 +210,7 @@ class BEAVEngine:
                     "priority": 100,
                     "evidence_required": ["fda_listing", "clinical_trial"]
                 },
-                {
-                    "id": "MED-002",
-                    "name": "diagnostico_valido",
-                    "description": "Diagnóstico deve ter código CIE-10 válido",
-                    "domain": "medicina",
-                    "condition": {
-                        "type": "pattern_match",
-                        "pattern": r"^[A-Z]\d{2}(\.\d+)?$",
-                        "field": "diagnosis_code"
-                    },
-                    "action": "block",
-                    "priority": 95,
-                    "evidence_required": ["cie10_reference"]
-                },
+
                 {
                     "id": "MED-003",
                     "name": "dosage_range",

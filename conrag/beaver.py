@@ -104,7 +104,7 @@ class VerificationRule:
         """Verifica existência em base de dados canônica."""
         # Simplificação: mock databases
         mock_dbs = {
-            "fda_approved": ["aspirin", "ibuprofen", "paracetamol", "metformin"],
+            "fda_approved": ["aspirin", "ibuprofen", "paracetamol", "metformin", "acetaminofeno"],
             "cie10_codes": ["A00", "B00", "C00", "I10", "J00", "K00"],
             "valid_laws": ["Constitution", "CivilCode", "PenalCode"],
             "ibge_cities": ["recife", "sao paulo", "rio de janeiro"]

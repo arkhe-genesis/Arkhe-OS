@@ -149,6 +149,7 @@ class ArkheinHypergraph:
 
         # 2. Busca de candidatos
         candidates = []
+
         for concept in concepts:
             # Busca exata por alias
             exact_matches = self._find_by_alias(concept, domain)
