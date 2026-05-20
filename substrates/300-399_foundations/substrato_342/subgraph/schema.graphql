@@ -1,0 +1,54 @@
+type Commit @entity {
+  id: ID! # authorTokenId-commitNonce
+  author: Identity!
+  repoName: String!
+  commitHash: String!
+  ipfsCid: String!
+  merkleRoot: Bytes!
+  timestamp: BigInt!
+  nonce: BigInt!
+  files: [File!]! @derivedFrom(field: "commit")
+}
+
+type File @entity {
+  id: ID! # commitId-fileName
+  commit: Commit!
+  fileName: String!
+  fileHash: Bytes!
+  leafIndex: BigInt!
+  ipfsCid: String
+}
+
+type Bounty @entity {
+  id: ID!
+  sponsor: Identity!
+  title: String!
+  descriptionCid: String!
+  reward: BigInt!
+  deadline: BigInt!
+  assignee: Identity
+  solutionCommit: Commit
+  status: BountyStatus!
+  paymentTxHash: String
+}
+
+enum BountyStatus {
+  OPEN
+  ASSIGNED
+  SUBMITTED
+  APPROVED
+  PAID
+  CANCELLED
+}
+
+type PlagiarismCheck @entity {
+  id: ID!
+  codeAHash: Bytes!
+  codeBHash: Bytes!
+  jaccardSimilarity: Float!
+  astSimilarity: Float!
+  graphSimilarity: Float!
+  verdict: String!
+  merkleProofCid: String! # Prova Hashtree da comparação
+  timestamp: BigInt!
+}
