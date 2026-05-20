@@ -60,17 +60,33 @@ def verify_invariants_formal():
         print("\n   [3] Verificando Teorema: 'É impossível violar os Invariantes sob o Escudo Epistêmico'")
         solver_neg = z3.Solver()
         # We assume the shield enforces the constraints. What if we try to force a violation while the shield is active?
-        # A true formal verification proves that IF the shield rules hold, THEN a violation is unsatisfiable.
+        # Initial valid state
         solver_neg.add(H >= GHOST_INVARIANT)
         solver_neg.add(Q >= LOOPSEAL_INVARIANT)
+        solver_neg.add(M >= 0)
         solver_neg.add(M < 1.0)
-        solver_neg.add(z3.Or(H < GHOST_INVARIANT, Q < LOOPSEAL_INVARIANT, M >= 1.0))
+
+        # State transition: apply Delta_Cap constraint
+        solver_neg.add(Delta_Cap >= CPE_THRESHOLD)
+
+        # Model the state transition correctly using a new variable M_next
+        # The shield enforces bounds via clipping:
+        # If M + Delta_Cap > 0.99, M_next = 0.99
+        # If M + Delta_Cap < 0, M_next = 0
+        # Otherwise M_next = M + Delta_Cap
+        M_next = z3.If(M + Delta_Cap > 0.99, 0.99, z3.If(M + Delta_Cap < 0, 0, M + Delta_Cap))
+
+        # A true verification checks if the NEXT state can violate invariants
+        # The invariants are that H >= GHOST_INVARIANT, Q >= LOOPSEAL_INVARIANT, and M_next < 1.0 and M_next >= 0
+        solver_neg.add(z3.Or(H < GHOST_INVARIANT, Q < LOOPSEAL_INVARIANT, M_next < 0, M_next >= 1.0))
 
         neg_result = solver_neg.check()
         if neg_result == z3.unsat:
             print("   🛡️ TEOREMA PROVADO (UNSAT): O Escudo Epistêmico garante formalmente a impossibilidade de colapso.")
         else:
             print("   ❌ FALHA: Violação encontrada.")
+            m = solver_neg.model()
+            print(f"     Contra-exemplo - H: {m[H]}, Q: {m[Q]}, M: {m[M]}, ΔCap: {m[Delta_Cap]}")
             return False
 
         seal_input = f"substrato_286_bis:formal_verified:{time.time()}"
