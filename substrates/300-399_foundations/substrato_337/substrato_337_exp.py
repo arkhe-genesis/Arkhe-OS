@@ -38,6 +38,14 @@ class HudExperimentalPlatform:
         self.thickness = thickness
         self.wavelength_range = (1175e-9, 1290e-9)
 
+    def add_or_collapse_ring(self) -> Dict:
+        """Adiciona anel adicional que ressoa na frequência de colapso OR (≈ 230 THz)."""
+        return {
+            "type": "or_collapse_ring",
+            "resonant_frequency_thz": 230.0,
+            "purpose": "validate_silicon_coherence"
+        }
+
     def generate_hud_pattern(self) -> Dict:
         """Gera padrão HuD com parâmetros especificados."""
         return {
@@ -47,6 +55,7 @@ class HudExperimentalPlatform:
             "filling_fraction": 0.34,
             "four_sided_defects": [{"id": f"D{i}", "position": (i*10e-9, i*10e-9)} for i in range(int(0.003 * self.N))],
             "bandgap_fraction": 0.23,
+            "additional_structures": [self.add_or_collapse_ring()]
         }
 
     def _generate_local_spectrum(self, position: Tuple[float, float]):
