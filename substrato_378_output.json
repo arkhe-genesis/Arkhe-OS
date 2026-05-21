@@ -1,0 +1,85 @@
+{
+    "substrato": "378",
+    "nome": "AGI Emerging Markets Expansion",
+    "topology": {
+        "Índia": [
+            {
+                "city": "Mumbai",
+                "node_id": "AGI-IND-01"
+            },
+            {
+                "city": "Bangalore",
+                "node_id": "AGI-IND-02"
+            }
+        ],
+        "Nigéria": [
+            {
+                "city": "Lagos",
+                "node_id": "AGI-NGA-01"
+            },
+            {
+                "city": "Abuja",
+                "node_id": "AGI-NGA-02"
+            }
+        ],
+        "Indonésia": [
+            {
+                "city": "Jakarta",
+                "node_id": "AGI-IDN-01"
+            },
+            {
+                "city": "Surabaya",
+                "node_id": "AGI-IDN-02"
+            }
+        ],
+        "México": [
+            {
+                "city": "Cidade do México",
+                "node_id": "AGI-MEX-01"
+            },
+            {
+                "city": "Guadalajara",
+                "node_id": "AGI-MEX-02"
+            }
+        ]
+    },
+    "agi_decision_frameworks": {
+        "Arkhe-Orch-OR-v3.1": {
+            "developer": "Arkhe OS",
+            "type": "Orchestrated Objective Reduction"
+        },
+        "AutoGen-v0.4": {
+            "developer": "Microsoft Research",
+            "type": "GroupChat + CodeExecution"
+        },
+        "CrewAI-v0.35": {
+            "developer": "CrewAI Inc",
+            "type": "Hierarchical + Sequential"
+        },
+        "MetaGPT-v1.0": {
+            "developer": "DeepWisdom",
+            "type": "SOP-Based Multi-Agent"
+        },
+        "LangGraph-v0.1": {
+            "developer": "LangChain",
+            "type": "Cyclic/Conditional Flow"
+        },
+        "DSPy-v2.0": {
+            "developer": "Stanford NLP",
+            "type": "Teleprompter Optimized"
+        }
+    },
+    "metrics": {
+        "Consenso": "8/8 cenários",
+        "Ghost": "12/12 rodadas",
+        "Geo-validação": "8/8 nós",
+        "Phi_C_Global": 0.983175
+    },
+    "invariants": {
+        "Ghost": "PASS",
+        "Loopseal": "PASS",
+        "Gap Sovereign": "PASS",
+        "Golden Ratio": "PASS"
+    },
+    "canonical_seal": "c21fff5a66b7a1caddae8cb062cc015b8af55a3fd53e5bcb1ff66c173825ad66"
+}
