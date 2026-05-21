@@ -181,7 +181,7 @@ class MultiSpeciesQNC:
         self.register_species(f"{target}_scratch", 5.0)
         loss_scratch = self.finetune_species(f"{target}_scratch", target_data, epochs=20, lr=0.01)
 
-        self.transfer_knowledge_to_species(source, f"{target}_transfer")
+        self.transfer_to_new_species(source, f"{target}_transfer")
         loss_transfer = self.finetune_species(f"{target}_transfer", target_data, epochs=20, lr=0.01)
 
         initial_loss_scratch = loss_scratch[0]
