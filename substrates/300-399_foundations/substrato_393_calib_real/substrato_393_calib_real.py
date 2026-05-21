@@ -164,6 +164,7 @@ class CalibrationProtocol:
 class ExperimentalData:
     def __init__(self):
         self.random_seed = 42
+        random.seed(self.random_seed)
 
     def generate_background(self, duration_s: float = 3600, rate_hz: float = 10) -> dict:
         counts = int(rate_hz * duration_s)
