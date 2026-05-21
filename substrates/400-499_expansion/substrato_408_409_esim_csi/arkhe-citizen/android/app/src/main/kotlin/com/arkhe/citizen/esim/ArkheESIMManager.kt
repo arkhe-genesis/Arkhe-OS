@@ -44,6 +44,16 @@ class ArkheESIMManager(private val context: Context) {
 
         val intent = Intent(EuiccManager.ACTION_START_EUICC_ACTIVATION).apply {
             putExtra(EuiccManager.EXTRA_USE_QR_SCANNER, false)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+
+        try {
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            return mapOf(
+                "status" to "error",
+                "message" to "Failed to start EuiccManager activation activity: ${e.message}"
+            )
         }
 
         return mapOf(
@@ -52,7 +62,7 @@ class ArkheESIMManager(private val context: Context) {
             "txid" to txid,
             "country" to country,
             "activationCode" to activationCode,
-            "message" to "Profile acquired. Use the UI to start the EuiccManager.ACTION_START_EUICC_ACTIVATION intent if needed."
+            "message" to "EuiccManager activation activity started."
         )
     }
 }
