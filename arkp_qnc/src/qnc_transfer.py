@@ -10,8 +10,8 @@ from scipy.linalg import sqrtm
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
 
-from arkhe.layers.sigha_core import FisherBuresManifold, NaturalGradientFlow
-from arkhe.layers.qnc_expanded import QuantumGenomicNetwork, GenomicEmbedding, PhiCGatedAttention
+from src.arkhe.layers.sigha_core import FisherBuresManifold, NaturalGradientFlow
+from src.arkhe.layers.qnc_expanded import QuantumGenomicNetwork, GenomicEmbedding, PhiCGatedAttention
 
 
 @dataclass
@@ -34,7 +34,7 @@ class MultiSpeciesQNC:
     def __init__(self, max_len=128, hidden_dim=4):
         self.max_len = max_len
         self.hidden_dim = hidden_dim
-        self.genomic_embedding = GenomicEmbedding(max_len)
+        self.genomic_embedding = GenomicEmbedding(max_len, hidden_dim)
         self.attention = PhiCGatedAttention(hidden_dim, hidden_dim, hidden_dim)
         self.species_adapters: Dict[str, np.ndarray] = {}
         self.classifier = [np.eye(hidden_dim, dtype=complex) / hidden_dim for _ in range(2)]
@@ -61,14 +61,14 @@ class MultiSpeciesQNC:
         query_rho = np.mean(rho_seq, axis=0)
         query_rho = 0.5 * (query_rho + query_rho.conj().T)
         # Add a tiny bit of identity to avoid singular matrices for sqrtm
-        query_rho += 1e-6 * np.eye(self.hidden_dim, dtype=complex)
+        query_rho += 1e-6 * np.eye(query_rho.shape[0], dtype=complex)
         tr = np.trace(query_rho).real
         if tr > 0:
             query_rho /= tr
 
         rho_seq_smoothed = []
         for r in rho_seq:
-            r_new = r + 1e-6 * np.eye(self.hidden_dim, dtype=complex)
+            r_new = r + 1e-6 * np.eye(r.shape[0], dtype=complex)
             r_new = 0.5 * (r_new + r_new.conj().T)
             r_new /= np.trace(r_new).real
             rho_seq_smoothed.append(r_new)
@@ -161,7 +161,7 @@ class MultiSpeciesQNC:
 
         return np.sum(grad**2)
 
-    def transfer_knowledge_to_species(self, source_species: str, target_species: str):
+    def transfer_to_new_species(self, source_species: str, target_species: str):
         """Transfere conhecimento de espécie fonte para alvo."""
         if source_species not in self.species_adapters:
             raise ValueError(f"Source species {source_species} not registered")
@@ -181,7 +181,7 @@ class MultiSpeciesQNC:
         self.register_species(f"{target}_scratch", 5.0)
         loss_scratch = self.finetune_species(f"{target}_scratch", target_data, epochs=20, lr=0.01)
 
-        self.transfer_knowledge_to_species(source, f"{target}_transfer")
+        self.transfer_to_new_species(source, f"{target}_transfer")
         loss_transfer = self.finetune_species(f"{target}_transfer", target_data, epochs=20, lr=0.01)
 
         initial_loss_scratch = loss_scratch[0]

@@ -184,7 +184,7 @@ def run_radix2_simulation():
 
     # Transferir conhecimento para RADIX-2
     print("\n🔄 Transferindo conhecimento de D. radiodurans → RADIX-2...")
-    transfer_model.transfer_knowledge_to_species("Deinococcus radiodurans", "RADIX-2")
+    transfer_model.transfer_to_new_species("Deinococcus radiodurans", "RADIX-2")
 
     # Simular RADIX-2
     phi_c = PhiCField(coupling_constant=0.15)  # Maior acoplamento que RADIX-1

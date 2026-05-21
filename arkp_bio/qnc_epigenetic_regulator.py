@@ -12,7 +12,7 @@ import numpy as np
 from scipy.linalg import sqrtm
 from dataclasses import dataclass, field
 from typing import List, Dict, Optional, Tuple
-from arkhe.layers.sigha_core import FisherBuresManifold, NaturalGradientFlow
+from src.arkhe.layers.sigha_core import FisherBuresManifold, NaturalGradientFlow
 from arkp_bio.rna_quantum_embedding import RNAEmbedding, RNAType
 from arkp_bio.epigenetic_operators import (
     MethylationOperator, HistoneModificationField,
