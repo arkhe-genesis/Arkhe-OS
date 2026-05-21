@@ -86,6 +86,8 @@ pub enum ArkheError {
     SNOMVerificationFailed(String),
     #[error("HyperCycle settlement failed: {0}")]
     HyperCycleSettlementFailed(String),
+    #[error("Not implemented")]
+    NotImplemented,
 }
 
 /// Generate canonical temporal seal

@@ -26,7 +26,7 @@ impl OctraBridge {
         // 1. Submeter workload ao nó Octra
         // 2. Aguardar execução e geração de prova ZK
         // 3. Retornar (resultado, prova)
-        todo!("Integração com Octra API")
+        Err(ArkheError::NotImplemented)
     }
 
     /// Verifica uma prova ZK gerada por um nó Octra.
