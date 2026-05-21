@@ -272,7 +272,8 @@ class PanprotopsychicField:
             phi_iit = 0.0
 
         # T_OR (tempo de redução objetiva): média dos tempos de colapso
-        t_or_ns = statistics.mean([(H_PLANCK / e.base_energy_j) * 1e9 for e in self.orchestrator.engines])
+        valid_engines = [e for e in self.orchestrator.engines if e.base_energy_j > 0]
+        t_or_ns = statistics.mean([(H_PLANCK / e.base_energy_j) * 1e9 for e in valid_engines]) if valid_engines else 0.0
 
         # Métrica Aureum (do Substrato 300): Φ_IIT × φ / T_OR
         if t_or_ns > 0:
