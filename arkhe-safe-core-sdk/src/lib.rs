@@ -9,8 +9,8 @@ pub mod gates;
 pub mod partners;
 pub mod octra_bridge;
 pub mod bulletproof_access;
-pub mod planetary_sensors;
 pub mod fractal_wave;
+pub mod planetary_sensors;
 
 use serde::{Deserialize, Serialize};
 use sha3::{Sha3_256, Digest};
@@ -24,6 +24,9 @@ pub const LOOPSEAL: f64 = 0.349_065_850_398_865_9;
 
 /// Canonical constant: Gap Sovereign Invariant
 pub const GAP_SOVEREIGN: f64 = 0.999_9;
+
+/// Canonical constant: Golden Ratio
+pub const PHI: f64 = 1.618_033_988_749_895;
 
 /// Partner identifier
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]

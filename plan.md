@@ -1,14 +1,11 @@
-1.  **Implement TimeWeaverTransceiver Class**:
-    - Update `substrato_344_time_weaver.py` to contain a full implementation of `TimeWeaverTransceiver`.
-    - It must process temporal mining with 7-Gate Continental Mesh.
-    - Implement payload processing logic.
-2.  **Implement Invariants Validation Logic**:
-    - Complete `ArkheInvariantsValidator.validate()`.
-    - Ensure boundaries for Ghost (`math.sqrt(3)/3`) and Gap Sovereign (`0.9999`) invariants.
-3.  **Implement Substrato Tests**:
-    - Enhance `test_substrato_344.py` with rigorous testing for constraints, valid data generation, and payload execution.
-    - Guarantee `ArkheInvariantsValidator` successfully validates inputs conforming to rules, and successfully detects anomalies.
-4.  **Complete pre commit steps**:
-    - Complete pre commit steps to make sure proper testing, verifications, reviews and reflections are done.
-5.  **Submit changes**:
-    - Submit the new module branch with a clean commit message.
+1. **Create Substrato 224 - Internet Mesh 2.0**
+   - Create a module `substrates/200-299_expansion/substrato_224_internet_mesh_2_0/internet_mesh_2_0.py`.
+   - Implement the layers: `PhysicalLayerSDR`, `RadioLayer`, `NetworkMeshLayer`, `GovernanceArkheLayer`, `ApplicationLayer`.
+   - Implement `InternetMesh20Node` which integrates these layers.
+2. **Create tests for Substrato 224**
+   - Create a file `tests/test_substrato_224_internet_mesh.py`.
+   - Test the cognitive radio scanning, radio profile selection, mesh routing, and governance verifications.
+3. **Pre-commit Checks**
+   - Run the pre-commit instructions to ensure everything is verified.
+4. **Submit**
+   - Commit the changes and submit.
