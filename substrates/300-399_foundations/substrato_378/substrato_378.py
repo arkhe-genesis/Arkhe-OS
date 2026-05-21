@@ -32,14 +32,14 @@ def symbolic_verify(explanation, sensor_data, decision):
     coherence = 1.0
     checks = []
     # Regra 1: Se magnitude >= 7.5, a explicação deve mencionar 'sismo' ou 'magnitude'
-    if sensor_data["seismic"]["mag"] >= 7.5:
+    if sensor_data.get("seismic", {}).get("mag", 0) >= 7.5:
         if "magnitude" in explanation.lower() or "sismo" in explanation.lower():
             checks.append(True)
         else:
             checks.append(False)
             coherence -= 0.2
     # Regra 2: Se deslocamento > 2.0, deve mencionar 'boia' ou 'DART' ou 'deslocamento'
-    if sensor_data["max_buoy_disp"] > 2.0:
+    if sensor_data.get("max_buoy_disp", 0) > 2.0:
         if any(w in explanation.lower() for w in ["boia", "dart", "deslocamento"]):
             checks.append(True)
         else:
