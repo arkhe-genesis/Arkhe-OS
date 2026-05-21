@@ -65,6 +65,9 @@ class AGIConsensus:
         self.agents = agents
 
     def classify_event(self, event: dict) -> dict:
+        if not self.agents:
+            return {"class": "UNKNOWN", "votes": 0, "total_agents": 0, "avg_confidence": 0.0, "quorum_reached": False}
+
         votes = []
         for agent in self.agents:
             result = agent.classify_event(event)
