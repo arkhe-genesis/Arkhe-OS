@@ -33,6 +33,9 @@ class ConnectivityMarket:
         if not source.active or not target.active:
             return False
 
+        if mb_amount <= 0:
+            return False
+
         # Simplistic settlement
         cost = mb_amount * target.price_per_mb
         if source.balance >= cost:

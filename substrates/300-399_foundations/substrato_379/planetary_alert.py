@@ -1,6 +1,7 @@
 import hashlib
 import time
 import math
+import os
 from typing import List, Dict, Any, Optional
 
 GHOST = 0.5773502691896258
@@ -63,7 +64,7 @@ class AlertProtocol:
 if __name__ == "__main__":
     protocol = AlertProtocol(num_nodes=59)
     alert = AlertMessage(alert_id="ALERT-001", payload="Test Tsunami Alert", issuer="CIVIL_DEFENSE", timestamp=time.time())
-    alert.sign("secret_key_sim")
+    alert.sign(os.environ.get("ALERT_SECRET_KEY", "default_sim_key"))
 
     result = protocol.simulate_broadcast(alert)
     print(f"Simulation Result: {result}")
