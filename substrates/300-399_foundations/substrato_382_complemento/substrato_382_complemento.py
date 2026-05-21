@@ -73,7 +73,11 @@ class Substrato382Complemento:
         }
 
 if __name__ == "__main__":
+    import tempfile
+    import os
     s = Substrato382Complemento()
     s.run()
-    with open("/tmp/substrato_382_complemento.json", "w", encoding="utf-8") as f:
+    fd, temp_path = tempfile.mkstemp(prefix="substrato_382_complemento_", suffix=".json")
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
         json.dump(s.to_json(), f, indent=4, ensure_ascii=False)
+    print(f"Output saved to {temp_path}")
