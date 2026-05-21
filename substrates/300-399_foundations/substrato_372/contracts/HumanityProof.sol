@@ -47,6 +47,8 @@ contract HumanityProof is InvariantGuard, Ownable {
 
         if (profile.startDay == 0) {
             profile.startDay = block.timestamp;
+        } else {
+            require(block.timestamp >= profile.startDay + profile.commitmentCount * 1 days, "Cooldown not met");
         }
 
         uint256 day = profile.commitmentCount++;

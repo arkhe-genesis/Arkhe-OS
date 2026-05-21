@@ -35,9 +35,6 @@ contract ZKInferenceVerifier is InvariantGuard {
         bytes calldata zkProof,
         uint256 phiC
     ) external aboveGhost(phiC) belowGap(phiC) {
-        // Verificar que o nó tem reputação mínima (Tilling score)
-        require(nodeReputation[msg.sender] > GHOST, "Node reputation too low");
-
         // Verificação simplificada da prova ZK
         // Em produção: chamar verificador Risc0/Starknet específico
         require(verifyZKInferenceProof(proofHash, zkProof), "Invalid ZK inference proof");
@@ -53,7 +50,7 @@ contract ZKInferenceVerifier is InvariantGuard {
         });
 
         // Atualizar reputação do nó (Tilling score)
-        nodeReputation[msg.sender] += uint256(phiC * 1e18);
+        nodeReputation[msg.sender] += phiC;
 
         emit InferenceProofSubmitted(proofHash, msg.sender, modelHash, phiC);
     }

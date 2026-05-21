@@ -38,6 +38,7 @@ contract TuringTestDAO is
 
     mapping(uint256 => TuringTestProposal) public turingTestProposals;
     mapping(address => bool) public approvedValidators;
+    mapping(uint256 => mapping(address => bool)) private _hasVoted;
 
     event TuringTestProposed(
         uint256 indexed proposalId,
@@ -117,7 +118,9 @@ contract TuringTestDAO is
 
         TuringTestProposal storage prop = turingTestProposals[proposalId];
         require(!prop.approved, "Test already approved");
+        require(!_hasVoted[proposalId][msg.sender], "Already voted");
 
+        _hasVoted[proposalId][msg.sender] = true;
         prop.validatorApprovals++;
 
         // Auto-approve if 3/5 validators approve (simplified)
@@ -125,6 +128,10 @@ contract TuringTestDAO is
             prop.approved = true;
             emit TuringTestApproved(proposalId, prop.testName, prop.validatorApprovals);
         }
+    }
+
+    function customHasVoted(uint256 proposalId, address account) public view returns (bool) {
+        return _hasVoted[proposalId][account];
     }
 
     // Required Governor overrides
