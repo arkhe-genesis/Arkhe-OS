@@ -1,6 +1,9 @@
-use crate::invariants::{GHOST, LOOPSEAL, GAP_SOVEREIGN, PHI};
+use crate::invariants::GHOST;
 use chrono::{DateTime, Utc};
 use sha3::{Sha3_256, Digest};
+use std::collections::{HashMap, HashSet};
+
+pub type Conflict = (usize, usize);
 
 #[derive(Debug, Clone)]
 pub struct Virtues {
@@ -79,5 +82,61 @@ impl TillingEngine {
         let input = format!("{}:{}:{}:{}", score.score, score.virtues.courage,
                            score.virtues.wisdom, score.virtues.compassion);
         hex::encode(Sha3_256::digest(input.as_bytes()))
+    }
+}
+#[derive(Debug, Clone)]
+pub struct DisputeAwareTilling {
+    pub tilling_score: f64,
+    pub delta_star: HashSet<Conflict>,  // conflitos efetivos
+    pub isolated: bool,
+}
+
+impl DisputeAwareTilling {
+    /// Reporta um resultado de workload e verifica consistência com outros nós.
+    pub fn report_result(&mut self, node_id: usize, result_hash: &[u8],
+                         peer_results: &HashMap<usize, Vec<u8>>) {
+        // Compara com os resultados dos pares
+        for (&peer_id, peer_hash) in peer_results {
+            if peer_id != node_id && peer_hash != result_hash {
+                // Adiciona conflito entre este nó e o peer
+                let conflict = (node_id.min(peer_id), node_id.max(peer_id));
+                self.delta_star.insert(conflict);
+            }
+        }
+        // Inferir ∆* como no artigo: se dois partidos juntos têm mais de t conflitos, conflito entre eles
+        let t = 45; // threshold de corrupção para 59 nós
+        let mut new_delta = self.delta_star.clone();
+        let mut changed = true;
+        while changed {
+            changed = false;
+            for i in 0..59 {
+                for j in i+1..59 {
+                    if !new_delta.contains(&(i,j)) {
+                        let conflicts_i: HashSet<usize> = new_delta.iter()
+                            .filter(|(a,b)| *a == i || *b == i)
+                            .map(|(a,b)| if *a == i { *b } else { *a })
+                            .collect();
+                        let conflicts_j: HashSet<usize> = new_delta.iter()
+                            .filter(|(a,b)| *a == j || *b == j)
+                            .map(|(a,b)| if *a == j { *b } else { *a })
+                            .collect();
+                        let union_size = conflicts_i.union(&conflicts_j).count();
+                        if union_size > t {
+                            new_delta.insert((i,j));
+                            changed = true;
+                        }
+                    }
+                }
+            }
+        }
+        self.delta_star = new_delta;
+        // Se o nó está em conflito com mais de t outros, isola‑o
+        let conflicts_with_node = self.delta_star.iter()
+            .filter(|(a,b)| *a == node_id || *b == node_id)
+            .count();
+        if conflicts_with_node > t {
+            self.isolated = true;
+            self.tilling_score *= 0.5; // penaliza o Tilling Score
+        }
     }
 }

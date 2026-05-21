@@ -6,6 +6,7 @@ pub mod snom;
 pub mod hypercycle;
 pub mod gates;
 pub mod partners;
+pub mod broadcast;
 
 use serde::{Deserialize, Serialize};
 use sha3::{Sha3_256, Digest};

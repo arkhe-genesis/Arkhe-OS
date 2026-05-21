@@ -3,6 +3,10 @@ pragma solidity ^0.8.24;
 
 import "./InvariantGuard.sol";
 
+interface IDisputeControl {
+    function isIsolated(address node) external view returns (bool);
+}
+
 // ═══════════════════════════════════════════════════════════════════
 // ConsensusPool.sol — Consenso distribuído com staking
 // ═══════════════════════════════════════════════════════════════════
@@ -20,6 +24,7 @@ contract ConsensusPool is InvariantGuard {
     mapping(address => Validator) public validators;
     uint256 public totalStake;
     uint256 public constant QUORUM = 76; // 76% = 3/4 majority
+    IDisputeControl public disputeControl;
 
     event BlockProposed(
         uint256 indexed blockNumber,
@@ -53,6 +58,16 @@ contract ConsensusPool is InvariantGuard {
         );
 
         return true;
+    }
+
+    // Submeter prova de inferência com controle de disputas
+    function submitInferenceProof(
+        bytes32 proofHash,
+        bytes calldata data
+    ) external {
+        if (address(disputeControl) != address(0) && disputeControl.isIsolated(msg.sender)) {
+            revert("Node is isolated due to disputes");
+        }
     }
 
     // Votar em bloco proposto
