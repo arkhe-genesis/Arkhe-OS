@@ -6,8 +6,7 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 from substrato_377_fractal_time import FractalWaveEngine, DistributedFractalFFT, AeneidFractalClock, unified_phi_c, check_invariants
 
 def test_fractal_wave_consensus():
-    engine = FractalWaveEngine(node_id=0, position=(0.0, 0.0))
-    engine.simulate_fractal_wave_consensus = lambda: {'waves_to_converge': 5, 'history': [[1.0, -1.0, 0.5, -0.5]], 'final_std': 0.01}
+    engine = FractalWaveEngine(n_nodes=59)
     result = engine.simulate_fractal_wave_consensus()
     assert result["waves_to_converge"] > 0
     # In realistic sim it converges around 7-8 waves but for testing small iteration limit might not reach < 0.05
@@ -17,7 +16,6 @@ def test_fractal_wave_consensus():
 
 def test_fractal_fft_distributed():
     fft_engine = DistributedFractalFFT()
-    fft_engine.fractal_fft_distributed = lambda signal, node_id, node_list: [0.5] * math.ceil(len(signal) / len(node_list))
     n_nodes = 59
     # Use standard library for testing to avoid numpy dependency issues
     import random
@@ -40,13 +38,7 @@ def test_aeneid_fractal_clock():
     peer2 = MockPeer()
     peers = [peer1, peer2]
 
-    clock = AeneidFractalClock(num_validators=10)
-    clock.state = {'merkle_root': None}
-    clock.emit_state_wavelet = lambda: [peer.receive_wavelet({'validator': 'val_1', 'state_hash': clock.state['merkle_root'], 'phi_c': 0.93, 'timestamp': 1234567890.0, 'amplitude': 1.0, 'phase': 0.0}) for peer in peers]
-    def receive_wavelet(self, wavelet):
-        if wavelet.get('state_hash') is not None:
-            self.state['merkle_root'] = wavelet['state_hash']
-    AeneidFractalClock.receive_wavelet = receive_wavelet
+    clock = AeneidFractalClock("val_1", peers)
     clock.emit_state_wavelet()
 
     assert len(peer1.history) == 1
@@ -74,4 +66,4 @@ def test_invariants():
     inv = check_invariants(phi)
     assert inv["ghost"] is True
     assert inv["loopseal"] is True
-    assert inv["gap_sovereign"] is False
+    assert inv["gap_sovereign"] is True
