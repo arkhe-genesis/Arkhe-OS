@@ -26,6 +26,7 @@ contract HumanityProof is InvariantGuard, Ownable {
         bytes32 latestCommitment;   // Último hash ancorado
         bool zkProofSubmitted;      // ZK-proof de humanidade gerado
         uint256 zkProofTimestamp;   // Quando a prova foi submetida
+        uint256 lastCommitmentTime; // Timestamp do último ancoramento
     }
 
     mapping(address => HumanProfile) public profiles;
@@ -48,12 +49,13 @@ contract HumanityProof is InvariantGuard, Ownable {
         if (profile.startDay == 0) {
             profile.startDay = block.timestamp;
         } else {
-            require(block.timestamp >= profile.startDay + profile.commitmentCount * 1 days, "Cooldown not met");
+            require(block.timestamp >= profile.lastCommitmentTime + 1 days, "Cooldown not met: Must wait 1 day");
         }
 
         uint256 day = profile.commitmentCount++;
         commitmentHistory[msg.sender].push(saltedHash);
         profile.latestCommitment = saltedHash;
+        profile.lastCommitmentTime = block.timestamp;
 
         emit DailyCommitmentAnchored(msg.sender, day, saltedHash);
 
