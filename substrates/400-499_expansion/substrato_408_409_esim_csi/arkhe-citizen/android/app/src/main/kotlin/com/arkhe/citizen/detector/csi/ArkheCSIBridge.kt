@@ -216,48 +216,56 @@ class ArkheCSIBridge(private val context: Context) {
         var reader: BufferedReader? = null
         val delimiter = "---EOF---"
 
-        while (isRunning) {
-            try {
-                if (spectralBin.exists() && spectralBin.length() > 0) {
-                    if (process == null) {
-                        process = Runtime.getRuntime().exec("su")
-                        os = DataOutputStream(process!!.outputStream)
-                        reader = BufferedReader(InputStreamReader(process!!.inputStream))
+        try {
+            while (isRunning) {
+                try {
+                    if (spectralBin.exists() && spectralBin.length() > 0) {
+                        if (process == null) {
+                            process = Runtime.getRuntime().exec("su")
+                            os = DataOutputStream(process!!.outputStream)
+                            reader = BufferedReader(InputStreamReader(process!!.inputStream))
+                        }
+
+                        val activeOs = os ?: continue
+                        val activeReader = reader ?: continue
+
+                        // Instead of using the shell, we should ideally read from the file directly if permissions allow,
+                        // or output the hex and decode it to avoid EOF blocking.
+                        // For binary data, xxd is a better choice:
+                        activeOs.writeBytes("xxd -p ${spectralBin.absolutePath}\n")
+                        activeOs.writeBytes("echo '$delimiter'\n")
+                        activeOs.flush()
+
+                        val sb = StringBuilder()
+                        while (true) {
+                            val line = activeReader.readLine() ?: break
+                            if (line == delimiter) break
+                            sb.append(line.trim())
+                        }
+
+                        val hexStr = sb.toString()
+                        val data = hexStr.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
+
+                        if (data.isNotEmpty()) {
+                            val frame = parseAth10kCSI(data)
+                            _csiFlow.emit(frame)
+                        }
+
+                        // Limpar buffer
+                        activeOs.writeBytes("echo clear > ${spectralCtl.absolutePath}\n")
+                        activeOs.flush()
                     }
-
-                    val activeOs = os ?: continue
-                    val activeReader = reader ?: continue
-
-                    // Instead of using the shell, we should ideally read from the file directly if permissions allow,
-                    // or output the hex and decode it to avoid EOF blocking.
-                    // For binary data, xxd is a better choice:
-                    activeOs.writeBytes("xxd -p ${spectralBin.absolutePath}\n")
-                    activeOs.writeBytes("echo '$delimiter'\n")
-                    activeOs.flush()
-
-                    val sb = StringBuilder()
-                    while (true) {
-                        val line = activeReader.readLine() ?: break
-                        if (line == delimiter) break
-                        sb.append(line.trim())
-                    }
-
-                    val hexStr = sb.toString()
-                    val data = hexStr.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
-
-                    if (data.isNotEmpty()) {
-                        val frame = parseAth10kCSI(data)
-                        _csiFlow.emit(frame)
-                    }
-
-                    // Limpar buffer
-                    activeOs.writeBytes("echo clear > ${spectralCtl.absolutePath}\n")
-                    activeOs.flush()
+                } catch (e: Exception) {
+                    Log.e("ArkheCSI", "Erro na captura ath10k: ${e.message}")
+                    process?.destroy()
+                    process = null
                 }
                 delay((1000 / sampleRateHz).toLong())
-            } catch (e: Exception) {
-                Log.e("ArkheCSI", "Erro na captura ath10k: ${e.message}")
             }
+        } finally {
+            process?.destroy()
+            try { os?.close() } catch (e: Exception) {}
+            try { reader?.close() } catch (e: Exception) {}
         }
     }
 
@@ -270,41 +278,49 @@ class ArkheCSIBridge(private val context: Context) {
         var reader: BufferedReader? = null
         val delimiter = "---EOF---"
 
-        while (isRunning) {
-            try {
-                if (nexmonDev.exists()) {
-                    if (process == null) {
-                        process = Runtime.getRuntime().exec("su")
-                        os = DataOutputStream(process!!.outputStream)
-                        reader = BufferedReader(InputStreamReader(process!!.inputStream))
+        try {
+            while (isRunning) {
+                try {
+                    if (nexmonDev.exists()) {
+                        if (process == null) {
+                            process = Runtime.getRuntime().exec("su")
+                            os = DataOutputStream(process!!.outputStream)
+                            reader = BufferedReader(InputStreamReader(process!!.inputStream))
+                        }
+
+                        val activeOs = os ?: continue
+                        val activeReader = reader ?: continue
+
+                        activeOs.writeBytes("xxd -p -l 4096 ${nexmonDev.absolutePath}\n")
+                        activeOs.writeBytes("echo '$delimiter'\n")
+                        activeOs.flush()
+
+                        val sb = StringBuilder()
+                        while (true) {
+                            val line = activeReader.readLine() ?: break
+                            if (line == delimiter) break
+                            sb.append(line.trim())
+                        }
+
+                        val hexStr = sb.toString()
+                        val data = hexStr.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
+
+                        if (data.isNotEmpty()) {
+                            val frame = parseNexmonCSI(data)
+                            _csiFlow.emit(frame)
+                        }
                     }
-
-                    val activeOs = os ?: continue
-                    val activeReader = reader ?: continue
-
-                    activeOs.writeBytes("xxd -p -l 4096 ${nexmonDev.absolutePath}\n")
-                    activeOs.writeBytes("echo '$delimiter'\n")
-                    activeOs.flush()
-
-                    val sb = StringBuilder()
-                    while (true) {
-                        val line = activeReader.readLine() ?: break
-                        if (line == delimiter) break
-                        sb.append(line.trim())
-                    }
-
-                    val hexStr = sb.toString()
-                    val data = hexStr.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
-
-                    if (data.isNotEmpty()) {
-                        val frame = parseNexmonCSI(data)
-                        _csiFlow.emit(frame)
-                    }
+                } catch (e: Exception) {
+                    Log.e("ArkheCSI", "Erro na captura nexmon: ${e.message}")
+                    process?.destroy()
+                    process = null
                 }
                 delay((1000 / sampleRateHz).toLong())
-            } catch (e: Exception) {
-                Log.e("ArkheCSI", "Erro na captura nexmon: ${e.message}")
             }
+        } finally {
+            process?.destroy()
+            try { os?.close() } catch (e: Exception) {}
+            try { reader?.close() } catch (e: Exception) {}
         }
     }
 
@@ -317,39 +333,47 @@ class ArkheCSIBridge(private val context: Context) {
         var reader: BufferedReader? = null
         val delimiter = "---EOF---"
 
-        while (isRunning) {
-            try {
-                if (sfcsDebug.exists()) {
-                    if (process == null) {
-                        process = Runtime.getRuntime().exec("su")
-                        os = DataOutputStream(process!!.outputStream)
-                        reader = BufferedReader(InputStreamReader(process!!.inputStream))
+        try {
+            while (isRunning) {
+                try {
+                    if (sfcsDebug.exists()) {
+                        if (process == null) {
+                            process = Runtime.getRuntime().exec("su")
+                            os = DataOutputStream(process!!.outputStream)
+                            reader = BufferedReader(InputStreamReader(process!!.inputStream))
+                        }
+
+                        val activeOs = os ?: continue
+                        val activeReader = reader ?: continue
+
+                        activeOs.writeBytes("cat ${sfcsDebug.absolutePath}\n")
+                        activeOs.writeBytes("echo '$delimiter'\n")
+                        activeOs.flush()
+
+                        val sb = StringBuilder()
+                        while (true) {
+                            val line = activeReader.readLine() ?: break
+                            if (line == delimiter) break
+                            sb.append(line).append("\n")
+                        }
+                        val data = sb.toString()
+
+                        if (data.isNotEmpty()) {
+                            val frame = parseIwlwifiCSI(data)
+                            _csiFlow.emit(frame)
+                        }
                     }
-
-                    val activeOs = os ?: continue
-                    val activeReader = reader ?: continue
-
-                    activeOs.writeBytes("cat ${sfcsDebug.absolutePath}\n")
-                    activeOs.writeBytes("echo '$delimiter'\n")
-                    activeOs.flush()
-
-                    val sb = StringBuilder()
-                    while (true) {
-                        val line = activeReader.readLine() ?: break
-                        if (line == delimiter) break
-                        sb.append(line).append("\n")
-                    }
-                    val data = sb.toString()
-
-                    if (data.isNotEmpty()) {
-                        val frame = parseIwlwifiCSI(data)
-                        _csiFlow.emit(frame)
-                    }
+                } catch (e: Exception) {
+                    Log.e("ArkheCSI", "Erro na captura iwlwifi: ${e.message}")
+                    process?.destroy()
+                    process = null
                 }
                 delay((1000 / sampleRateHz).toLong())
-            } catch (e: Exception) {
-                Log.e("ArkheCSI", "Erro na captura iwlwifi: ${e.message}")
             }
+        } finally {
+            process?.destroy()
+            try { os?.close() } catch (e: Exception) {}
+            try { reader?.close() } catch (e: Exception) {}
         }
     }
 
