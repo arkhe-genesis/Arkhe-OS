@@ -43,11 +43,10 @@ class RadioLayer:
         for profile, specs in self.PROFILES.items():
             if spectrum_status[profile] == "clear":
                 if specs["range_m"] >= target_distance_m and specs["speed_mbps"] >= required_speed_mbps:
-                    if best_profile is None or specs["speed_mbps"] < self.PROFILES[best_profile]["speed_mbps"]:
-                        # Choose the profile that covers the need but is most efficient (lowest speed that covers, or specific logic)
-                        # Actually let's pick the one with shortest sufficient range
-                        if best_profile is None or specs["range_m"] < self.PROFILES[best_profile]["range_m"]:
-                            best_profile = profile
+                    # Choose the profile that covers the need but is most efficient (lowest speed that covers, or specific logic)
+                    # Actually let's pick the one with shortest sufficient range
+                    if best_profile is None or specs["range_m"] < self.PROFILES[best_profile]["range_m"]:
+                        best_profile = profile
 
         if best_profile is None:
             # Fallback
