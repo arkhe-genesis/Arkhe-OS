@@ -139,6 +139,17 @@ class DistributedFractalFFT:
 
         return result
 
+
+def unified_phi_c():
+    return 0.93
+
+def check_invariants(phi_c: float):
+    return {
+        "ghost": phi_c >= GHOST,
+        "loopseal": phi_c >= LOOPSEAL,
+        "gap_sovereign": phi_c >= 0.85
+    }
+
 def canonize_377():
     print("================================================================")
     print("ARKHE Ω‑TEMP v∞.Ω — 377: FRACTAL TIME")
@@ -164,13 +175,3 @@ def canonize_377():
 
 if __name__ == "__main__":
     canonize_377()
-
-def unified_phi_c():
-    return 0.93
-
-def check_invariants(phi_c: float):
-    return {
-        "ghost": phi_c >= GHOST,
-        "loopseal": phi_c >= LOOPSEAL,
-        "gap_sovereign": GAP_SOVEREIGN >= 0.85
-    }

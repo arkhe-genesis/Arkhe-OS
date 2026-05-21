@@ -15,7 +15,6 @@ import random
 
 random.seed(377377377)
 
-
 # ── Constantes Canônicas ──
 GHOST = 0.5773502691896257
 LOOPSEAL = 0.3490658503988659
@@ -341,7 +340,6 @@ report_377 = {
 fd, json_path = tempfile.mkstemp(prefix="substrate_377_agi_", suffix="_report.json", dir="/tmp")
 with os.fdopen(fd, 'w', encoding='utf-8') as f:
     json.dump(report_377, f, indent=2, ensure_ascii=False)
-
 
 hasher = hashlib.sha3_256()
 hasher.update(b'Substrate_377_AGI_Orchestration_Global_Alert_CANONIZED')
