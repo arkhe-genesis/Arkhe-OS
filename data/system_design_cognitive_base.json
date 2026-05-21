@@ -1,0 +1,2652 @@
+{
+    "metadata": {
+        "version": "1.0",
+        "domain": "system_design",
+        "source": "https://raw.githubusercontent.com/ashishps1/awesome-system-design-resources/main/README.md",
+        "timestamp": 1779375615.8076534,
+        "node_count": 139
+    },
+    "nodes": [
+        {
+            "id": "18ebe3770d415ebddfd407bb67ada49c24b704ae840ee646f952041ee3ebc39d",
+            "label": "Scalability",
+            "domain": "system_design",
+            "category": "Core Concepts",
+            "definitions": [
+                "Resource on Scalability: https://algomaster.io/learn/system-design/scalability"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/scalability",
+                    "timestamp": 1779375615.8063385,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "e1d4e21cb7616ff7d9832f59d58991805ab344f7573b393f8f51140699258d7d",
+            "label": "Availability",
+            "domain": "system_design",
+            "category": "Core Concepts",
+            "definitions": [
+                "Resource on Availability: https://algomaster.io/learn/system-design/availability"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/availability",
+                    "timestamp": 1779375615.8063526,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "ba7065476848df46d1eb6c4443ed7f3d8d38cde868d1fec1f878ec7f815e29c2",
+            "label": "Reliability",
+            "domain": "system_design",
+            "category": "Core Concepts",
+            "definitions": [
+                "Resource on Reliability: https://algomaster.io/learn/system-design/reliability"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/reliability",
+                    "timestamp": 1779375615.8063602,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "447e5b36ed077ab0179bb0770cdea76866f2b91fb45111b519a5bc761a88b37c",
+            "label": "SPOF",
+            "domain": "system_design",
+            "category": "Core Concepts",
+            "definitions": [
+                "Resource on SPOF: https://algomaster.io/learn/system-design/single-point-of-failure-spof"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/single-point-of-failure-spof",
+                    "timestamp": 1779375615.8063676,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "413e872df028e237a9a4d619699489980b0e5bae36ba7cfe99a2f5c62644ba9d",
+            "label": "Latency vs Throughput vs Bandwidth",
+            "domain": "system_design",
+            "category": "Core Concepts",
+            "definitions": [
+                "Resource on Latency vs Throughput vs Bandwidth: https://algomaster.io/learn/system-design/latency-vs-throughput"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/latency-vs-throughput",
+                    "timestamp": 1779375615.8063755,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "6ad4e4a510797701da7341bad45d8445d4473292fb6bb2009a796f5671b260f9",
+            "label": "Consistent Hashing",
+            "domain": "system_design",
+            "category": "Core Concepts",
+            "definitions": [
+                "Resource on Consistent Hashing: https://algomaster.io/learn/system-design/consistent-hashing"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/consistent-hashing",
+                    "timestamp": 1779375615.8063896,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "c741c81c38e40673e7c4cec535103bdaecc3cbdb2bed832507bddb32ee2d575e",
+            "label": "CAP Theorem",
+            "domain": "system_design",
+            "category": "Core Concepts",
+            "definitions": [
+                "Resource on CAP Theorem: https://algomaster.io/learn/system-design/cap-theorem"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/cap-theorem",
+                    "timestamp": 1779375615.8063965,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "696b8289b4ed705621ae356a263811740325cbbbd1aac95718f1b2d30df4f76e",
+            "label": "Failover",
+            "domain": "system_design",
+            "category": "Core Concepts",
+            "definitions": [
+                "Resource on Failover: https://www.druva.com/glossary/what-is-a-failover-definition-and-related-faqs"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.druva.com/glossary/what-is-a-failover-definition-and-related-faqs",
+                    "timestamp": 1779375615.806408,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "fe84a32d8ea1b1851ffb5e5058e77f9d3910bc0deff2279238c28cc33d3c3e49",
+            "label": "Fault Tolerance",
+            "domain": "system_design",
+            "category": "Core Concepts",
+            "definitions": [
+                "Resource on Fault Tolerance: https://www.cockroachlabs.com/blog/what-is-fault-tolerance/"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.cockroachlabs.com/blog/what-is-fault-tolerance/",
+                    "timestamp": 1779375615.8064184,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "5cd22311d79f740539e4b390c7ee5ab9e55393cbf08b699436dd1b974a4728e4",
+            "label": "OSI Model",
+            "domain": "system_design",
+            "category": "Networking Fundamentals",
+            "definitions": [
+                "Resource on OSI Model: https://algomaster.io/learn/system-design/osi"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/osi",
+                    "timestamp": 1779375615.8064399,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "b4a7793c606c5aae5ed94113c7523d574621b04d6fa127c6c0c444f3b6b0db92",
+            "label": "IP Addresses",
+            "domain": "system_design",
+            "category": "Networking Fundamentals",
+            "definitions": [
+                "Resource on IP Addresses: https://algomaster.io/learn/system-design/ip-address"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/ip-address",
+                    "timestamp": 1779375615.8064468,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "da96b7e7f3d725aebd68aec836287cfa2140c8c3991577f93cdc287c322c5e52",
+            "label": "Domain Name System (DNS)",
+            "domain": "system_design",
+            "category": "Networking Fundamentals",
+            "definitions": [
+                "Resource on Domain Name System (DNS): https://blog.algomaster.io/p/how-dns-actually-works"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/p/how-dns-actually-works",
+                    "timestamp": 1779375615.8064537,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "f0f1cd013cd29d6eba39c3484776328387dd3e83a690465e90a232c785b2cc91",
+            "label": "Proxy vs Reverse Proxy",
+            "domain": "system_design",
+            "category": "Networking Fundamentals",
+            "definitions": [
+                "Resource on Proxy vs Reverse Proxy: https://blog.algomaster.io/p/proxy-vs-reverse-proxy-explained"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/p/proxy-vs-reverse-proxy-explained",
+                    "timestamp": 1779375615.8064609,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "4a68dfd774a40be94fda0b31ec959fcb5408fb9f1cb526b71a185230c300558d",
+            "label": "HTTP/HTTPS",
+            "domain": "system_design",
+            "category": "Networking Fundamentals",
+            "definitions": [
+                "Resource on HTTP/HTTPS: https://algomaster.io/learn/system-design/http-https"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/http-https",
+                    "timestamp": 1779375615.8064675,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "2d35c7d56f163ba40541c761e70c1fb6414499f12b50d6fbbfea0f4fa732e0f1",
+            "label": "TCP vs UDP",
+            "domain": "system_design",
+            "category": "Networking Fundamentals",
+            "definitions": [
+                "Resource on TCP vs UDP: https://algomaster.io/learn/system-design/tcp-vs-udp"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/tcp-vs-udp",
+                    "timestamp": 1779375615.8064744,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "2bcd0e18715f7657eaec2708e9a2c515a5ca149b7cb15c47917af9f513419443",
+            "label": "Load Balancing",
+            "domain": "system_design",
+            "category": "Networking Fundamentals",
+            "definitions": [
+                "Resource on Load Balancing: https://blog.algomaster.io/p/load-balancing-algorithms-explained-with-code"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/p/load-balancing-algorithms-explained-with-code",
+                    "timestamp": 1779375615.8064814,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "2ea779ae2c7a33a9f4bbf421f710e27bbfabf58fa4b17be961c463747ddede3d",
+            "label": "Checksums",
+            "domain": "system_design",
+            "category": "Networking Fundamentals",
+            "definitions": [
+                "Resource on Checksums: https://algomaster.io/learn/system-design/checksums"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/checksums",
+                    "timestamp": 1779375615.8064878,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "bf23749c34ee5cb58c92093389d70c0fffabac45e3f05942f503210eb9b167f6",
+            "label": "APIs",
+            "domain": "system_design",
+            "category": "API Fundamentals",
+            "definitions": [
+                "Resource on APIs: https://algomaster.io/learn/system-design/what-is-an-api"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/what-is-an-api",
+                    "timestamp": 1779375615.8065004,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "9532ccf5a1b645af2080ccf4c348c9bf8cfdf7650571bbd51b380a28a0c0b240",
+            "label": "API Gateway",
+            "domain": "system_design",
+            "category": "API Fundamentals",
+            "definitions": [
+                "Resource on API Gateway: https://blog.algomaster.io/p/what-is-an-api-gateway"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/p/what-is-an-api-gateway",
+                    "timestamp": 1779375615.806507,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "10815bc32740449616e517426f1c1c5e564ed116d7fd8a0824c9c6fd055b9e1a",
+            "label": "REST vs GraphQL",
+            "domain": "system_design",
+            "category": "API Fundamentals",
+            "definitions": [
+                "Resource on REST vs GraphQL: https://blog.algomaster.io/p/rest-vs-graphql"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/p/rest-vs-graphql",
+                    "timestamp": 1779375615.806517,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "a46b4de35bd636a76b59645b928dab4a46778273ff948ff18311ca74545e5cd0",
+            "label": "WebSockets",
+            "domain": "system_design",
+            "category": "API Fundamentals",
+            "definitions": [
+                "Resource on WebSockets: https://blog.algomaster.io/p/websockets"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/p/websockets",
+                    "timestamp": 1779375615.8065233,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "4b9fac15ab45e7689490375d3707e1fc45b7d00f671781f3faeabd75071bb95b",
+            "label": "Webhooks",
+            "domain": "system_design",
+            "category": "API Fundamentals",
+            "definitions": [
+                "Resource on Webhooks: https://algomaster.io/learn/system-design/webhooks"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/webhooks",
+                    "timestamp": 1779375615.8065333,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "9814743cd6b152aee25b20e1c663e7cf9d3d28b68f82cfdcaca56b57d2029147",
+            "label": "Idempotency",
+            "domain": "system_design",
+            "category": "API Fundamentals",
+            "definitions": [
+                "Resource on Idempotency: https://algomaster.io/learn/system-design/idempotency"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/idempotency",
+                    "timestamp": 1779375615.8065422,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "44382e9e4f63f03033ef467814432cb0f878bac9cc255941ba35900fb84d5a0c",
+            "label": "Rate limiting",
+            "domain": "system_design",
+            "category": "API Fundamentals",
+            "definitions": [
+                "Resource on Rate limiting: https://blog.algomaster.io/p/rate-limiting-algorithms-explained-with-code"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/p/rate-limiting-algorithms-explained-with-code",
+                    "timestamp": 1779375615.8065538,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "d9fca7ce79bb5da3c54fe70b3b6a592e4cebbdb4423d9f9009ccc5bb74739d5b",
+            "label": "API Design",
+            "domain": "system_design",
+            "category": "API Fundamentals",
+            "definitions": [
+                "Resource on API Design: https://abdulrwahab.medium.com/api-architecture-best-practices-for-designing-rest-apis-bf907025f5f"
+            ],
+            "sources": [
+                {
+                    "url": "https://abdulrwahab.medium.com/api-architecture-best-practices-for-designing-rest-apis-bf907025f5f",
+                    "timestamp": 1779375615.8065612,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "b3e891bfe18c884e789c4ff15ef3f1ce47bd43374457b325594668a26bab7a8c",
+            "label": "ACID Transactions",
+            "domain": "system_design",
+            "category": "Database Fundamentals",
+            "definitions": [
+                "Resource on ACID Transactions: https://algomaster.io/learn/system-design/acid-transactions"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/acid-transactions",
+                    "timestamp": 1779375615.806574,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "9c15699cd205138981afe29490608ed2b456e4d761877ee116bb55d8487f6977",
+            "label": "SQL vs NoSQL",
+            "domain": "system_design",
+            "category": "Database Fundamentals",
+            "definitions": [
+                "Resource on SQL vs NoSQL: https://algomaster.io/learn/system-design/sql-vs-nosql"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/sql-vs-nosql",
+                    "timestamp": 1779375615.8065805,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "b75c7c3d47ad9354f064c046010b56f1b7301edd49bab8ac1e5cc5e5d3995535",
+            "label": "Database Indexes",
+            "domain": "system_design",
+            "category": "Database Fundamentals",
+            "definitions": [
+                "Resource on Database Indexes: https://algomaster.io/learn/system-design/indexing"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/indexing",
+                    "timestamp": 1779375615.806587,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "9da6b88eddfc01d03b3c09c119e9d0e340d431683d72305735bb4653d0532ad9",
+            "label": "Database Sharding",
+            "domain": "system_design",
+            "category": "Database Fundamentals",
+            "definitions": [
+                "Resource on Database Sharding: https://algomaster.io/learn/system-design/sharding"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/sharding",
+                    "timestamp": 1779375615.8065977,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "541a6ca71242ea3c6dc44d9628f9745339fa50cd436a3efb5582e03273d8b4c1",
+            "label": "Data Replication",
+            "domain": "system_design",
+            "category": "Database Fundamentals",
+            "definitions": [
+                "Resource on Data Replication: https://redis.com/blog/what-is-data-replication/"
+            ],
+            "sources": [
+                {
+                    "url": "https://redis.com/blog/what-is-data-replication/",
+                    "timestamp": 1779375615.8066072,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "f067601ab75400395a508cdbfc3f7fc6c77bdb1f0dbc91e59b093012a44451b8",
+            "label": "Database Scaling",
+            "domain": "system_design",
+            "category": "Database Fundamentals",
+            "definitions": [
+                "Resource on Database Scaling: https://blog.algomaster.io/p/system-design-how-to-scale-a-database"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/p/system-design-how-to-scale-a-database",
+                    "timestamp": 1779375615.8066192,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "2f4aee5cad54508f4adad22c7b215ca80b679d5b08d5775a3184996b8cd2d47d",
+            "label": "Databases Types",
+            "domain": "system_design",
+            "category": "Database Fundamentals",
+            "definitions": [
+                "Resource on Databases Types: https://blog.algomaster.io/p/15-types-of-databases"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/p/15-types-of-databases",
+                    "timestamp": 1779375615.806626,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "83076038bba1056533e97bfeb02b64c18fd525349ff4681cc49da9abab6bc881",
+            "label": "Bloom Filters",
+            "domain": "system_design",
+            "category": "Database Fundamentals",
+            "definitions": [
+                "Resource on Bloom Filters: https://algomaster.io/learn/system-design/bloom-filters"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/bloom-filters",
+                    "timestamp": 1779375615.8066325,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "5cb03e0bce3c634cbc12a3ba492b2573f5712f919a9ee686cdedbf091f6b312e",
+            "label": "Database Architectures",
+            "domain": "system_design",
+            "category": "Database Fundamentals",
+            "definitions": [
+                "Resource on Database Architectures: https://www.mongodb.com/developer/products/mongodb/active-active-application-architectures/"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.mongodb.com/developer/products/mongodb/active-active-application-architectures/",
+                    "timestamp": 1779375615.8066435,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "aafb3f48bcbbdabbdccf204deed3ea0b69e04463f2610613dda1ef9bd1a9cd3f",
+            "label": "Caching 101",
+            "domain": "system_design",
+            "category": "Caching Fundamentals",
+            "definitions": [
+                "Resource on Caching 101: https://algomaster.io/learn/system-design/what-is-caching"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/what-is-caching",
+                    "timestamp": 1779375615.8066566,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "077b20fdb999b7e857aa4883d31511505e0e2c29048a163762e86cdb823bae1b",
+            "label": "Caching Strategies",
+            "domain": "system_design",
+            "category": "Caching Fundamentals",
+            "definitions": [
+                "Resource on Caching Strategies: https://algomaster.io/learn/system-design/caching-strategies"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/caching-strategies",
+                    "timestamp": 1779375615.8066673,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "10334e8f4c8adfbe03a32737dd75918c63c3ee5e67aeebacc3ba1a4fce11ee7a",
+            "label": "Cache Eviction Policies",
+            "domain": "system_design",
+            "category": "Caching Fundamentals",
+            "definitions": [
+                "Resource on Cache Eviction Policies: https://blog.algomaster.io/p/7-cache-eviction-strategies"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/p/7-cache-eviction-strategies",
+                    "timestamp": 1779375615.8066797,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "bdc883968be880a0a991817596c710a340ea007e0ce5fb0c303700c7bd1eaf7f",
+            "label": "Distributed Caching",
+            "domain": "system_design",
+            "category": "Caching Fundamentals",
+            "definitions": [
+                "Resource on Distributed Caching: https://blog.algomaster.io/p/distributed-caching"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/p/distributed-caching",
+                    "timestamp": 1779375615.8066862,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "7fcf0c383569e0a5f243aca447cadc2c5a27e7ccbafb9cb05c3c88b183c77198",
+            "label": "Content Delivery Network (CDN)",
+            "domain": "system_design",
+            "category": "Caching Fundamentals",
+            "definitions": [
+                "Resource on Content Delivery Network (CDN): https://algomaster.io/learn/system-design/content-delivery-network-cdn"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/content-delivery-network-cdn",
+                    "timestamp": 1779375615.8066933,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "0867ac4a2a11d05ef92e814d6ed039859ade2ae656c0fbf194bec324f20d37e0",
+            "label": "Pub/Sub",
+            "domain": "system_design",
+            "category": "Asynchronous Communication",
+            "definitions": [
+                "Resource on Pub/Sub: https://algomaster.io/learn/system-design/pub-sub"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/pub-sub",
+                    "timestamp": 1779375615.8067052,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "1d4ae3a078bce78c2ff00281f637b830314d13dd5cb61b4f60264456e8514fcf",
+            "label": "Message Queues",
+            "domain": "system_design",
+            "category": "Asynchronous Communication",
+            "definitions": [
+                "Resource on Message Queues: https://algomaster.io/learn/system-design/message-queues"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/message-queues",
+                    "timestamp": 1779375615.8067157,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "0317c13d2795038046c243beb31a5eea79c8e219407f0b854221e81457b5a7b5",
+            "label": "Change Data Capture (CDC)",
+            "domain": "system_design",
+            "category": "Asynchronous Communication",
+            "definitions": [
+                "Resource on Change Data Capture (CDC): https://algomaster.io/learn/system-design/change-data-capture-cdc"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/change-data-capture-cdc",
+                    "timestamp": 1779375615.8067234,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "6e7fb6ac804d8c9a3c9d570b750b9b5a12ee283c74c780172c7a8e246d13a291",
+            "label": "HeartBeats",
+            "domain": "system_design",
+            "category": "Distributed System and Microservices",
+            "definitions": [
+                "Resource on HeartBeats: https://blog.algomaster.io/p/heartbeats-in-distributed-systems"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/p/heartbeats-in-distributed-systems",
+                    "timestamp": 1779375615.8067353,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "9369e84c41d75d1a88c24e69b6e26758ed84bb62d34e993b23e987ad1f9c15c2",
+            "label": "Service Discovery",
+            "domain": "system_design",
+            "category": "Distributed System and Microservices",
+            "definitions": [
+                "Resource on Service Discovery: https://blog.algomaster.io/p/service-discovery-in-distributed-systems"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/p/service-discovery-in-distributed-systems",
+                    "timestamp": 1779375615.8067422,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "b42b60099fa15aaad8fe0ab208c9c48c8c241763244f8fddea320de17d3ee3da",
+            "label": "Consensus Algorithms",
+            "domain": "system_design",
+            "category": "Distributed System and Microservices",
+            "definitions": [
+                "Resource on Consensus Algorithms: https://medium.com/@sourabhatta1819/consensus-in-distributed-system-ac79f8ba2b8c"
+            ],
+            "sources": [
+                {
+                    "url": "https://medium.com/@sourabhatta1819/consensus-in-distributed-system-ac79f8ba2b8c",
+                    "timestamp": 1779375615.806749,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "93305342495cc903247b36daa508a2e5aa96b00f4962a23d29254c359937c771",
+            "label": "Distributed Locking",
+            "domain": "system_design",
+            "category": "Distributed System and Microservices",
+            "definitions": [
+                "Resource on Distributed Locking: https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html"
+            ],
+            "sources": [
+                {
+                    "url": "https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html",
+                    "timestamp": 1779375615.8067596,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "9468a6ceda394ffbe3370e349fb37d050a80677cdb9e8c5eaaa78e830a58d55b",
+            "label": "Gossip Protocol",
+            "domain": "system_design",
+            "category": "Distributed System and Microservices",
+            "definitions": [
+                "Resource on Gossip Protocol: http://highscalability.com/blog/2023/7/16/gossip-protocol-explained.html"
+            ],
+            "sources": [
+                {
+                    "url": "http://highscalability.com/blog/2023/7/16/gossip-protocol-explained.html",
+                    "timestamp": 1779375615.8067665,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "8cea714e456cc886545628e81bf2e1914aa28ac89a5354309e0f18cc92d2f635",
+            "label": "Circuit Breaker",
+            "domain": "system_design",
+            "category": "Distributed System and Microservices",
+            "definitions": [
+                "Resource on Circuit Breaker: https://medium.com/geekculture/design-patterns-for-microservices-circuit-breaker-pattern-276249ffab33"
+            ],
+            "sources": [
+                {
+                    "url": "https://medium.com/geekculture/design-patterns-for-microservices-circuit-breaker-pattern-276249ffab33",
+                    "timestamp": 1779375615.8067737,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "f9a4998e679cdd6fc1f94d6d97a0e9a6ea3c76f14256af94f15eccff759d4f7d",
+            "label": "Disaster Recovery",
+            "domain": "system_design",
+            "category": "Distributed System and Microservices",
+            "definitions": [
+                "Resource on Disaster Recovery: https://cloud.google.com/learn/what-is-disaster-recovery"
+            ],
+            "sources": [
+                {
+                    "url": "https://cloud.google.com/learn/what-is-disaster-recovery",
+                    "timestamp": 1779375615.8067877,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "cd4f9c61b0286d38315de0122c629780ffc9180ec4e3aef137670815e04d4f15",
+            "label": "Distributed Tracing",
+            "domain": "system_design",
+            "category": "Distributed System and Microservices",
+            "definitions": [
+                "Resource on Distributed Tracing: https://www.dynatrace.com/news/blog/what-is-distributed-tracing/"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.dynatrace.com/news/blog/what-is-distributed-tracing/",
+                    "timestamp": 1779375615.8067946,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "373c8518b6b770334bee2a0e4f914a4883a34c7086902645cbc138d1ed9db2d0",
+            "label": "Client-Server Architecture",
+            "domain": "system_design",
+            "category": "Architectural Patterns",
+            "definitions": [
+                "Resource on Client-Server Architecture: https://algomaster.io/learn/system-design/client-server-architecture"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/client-server-architecture",
+                    "timestamp": 1779375615.806807,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "a420d10304ab6d533d2a57013d1af9024c596ead8120e5af53bda906978e535b",
+            "label": "Microservices Architecture",
+            "domain": "system_design",
+            "category": "Architectural Patterns",
+            "definitions": [
+                "Resource on Microservices Architecture: https://medium.com/hashmapinc/the-what-why-and-how-of-a-microservices-architecture-4179579423a9"
+            ],
+            "sources": [
+                {
+                    "url": "https://medium.com/hashmapinc/the-what-why-and-how-of-a-microservices-architecture-4179579423a9",
+                    "timestamp": 1779375615.8068182,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "7699d29e7c4ce21afd43a967503619ca346f0bb7905491bd5c78e4bb7ea65958",
+            "label": "Serverless Architecture",
+            "domain": "system_design",
+            "category": "Architectural Patterns",
+            "definitions": [
+                "Resource on Serverless Architecture: https://blog.algomaster.io/p/2edeb23b-cfa5-4b24-845e-3f6f7a39d162"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/p/2edeb23b-cfa5-4b24-845e-3f6f7a39d162",
+                    "timestamp": 1779375615.806825,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "a0ac3598f156fe1e5fa813e601a7670d7879e82f9b38006c5dc5df59be568109",
+            "label": "Event-Driven Architecture",
+            "domain": "system_design",
+            "category": "Architectural Patterns",
+            "definitions": [
+                "Resource on Event-Driven Architecture: https://www.confluent.io/learn/event-driven-architecture/"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.confluent.io/learn/event-driven-architecture/",
+                    "timestamp": 1779375615.806832,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "2d0111e76a0f0767339164d934eaa88b8272e911b3ca2330b4813f7d5bf38a69",
+            "label": "Peer-to-Peer (P2P) Architecture",
+            "domain": "system_design",
+            "category": "Architectural Patterns",
+            "definitions": [
+                "Resource on Peer-to-Peer (P2P) Architecture: https://www.spiceworks.com/tech/networking/articles/what-is-peer-to-peer/"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.spiceworks.com/tech/networking/articles/what-is-peer-to-peer/",
+                    "timestamp": 1779375615.806839,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "b98c201cbbb5bcd06c604ea3795af514ffa8314a5ea85da8ad4d23e190504944",
+            "label": "Top 15 Tradeoffs",
+            "domain": "system_design",
+            "category": "System Design Tradeoffs",
+            "definitions": [
+                "Resource on Top 15 Tradeoffs: https://blog.algomaster.io/p/system-design-top-15-trade-offs"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/p/system-design-top-15-trade-offs",
+                    "timestamp": 1779375615.8068514,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "5af972af6d2f1f1d67edf9a5f1d5b7950ab1da0f082a594d155a25116f4efdd5",
+            "label": "Vertical vs Horizontal Scaling",
+            "domain": "system_design",
+            "category": "System Design Tradeoffs",
+            "definitions": [
+                "Resource on Vertical vs Horizontal Scaling: https://algomaster.io/learn/system-design/vertical-vs-horizontal-scaling"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/vertical-vs-horizontal-scaling",
+                    "timestamp": 1779375615.8068583,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "6a7ee7d6c9135b8808d64d494b22faa162ab8bf72b4d1cfbb5b05ba084538a32",
+            "label": "Concurrency vs Parallelism",
+            "domain": "system_design",
+            "category": "System Design Tradeoffs",
+            "definitions": [
+                "Resource on Concurrency vs Parallelism: https://blog.algomaster.io/p/concurrency-vs-parallelism"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/p/concurrency-vs-parallelism",
+                    "timestamp": 1779375615.806865,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "4bc55cec31334dd5b2a0d8412bc908a8ca8f02cff002aa24da463ff504e5b216",
+            "label": "Long Polling vs WebSockets",
+            "domain": "system_design",
+            "category": "System Design Tradeoffs",
+            "definitions": [
+                "Resource on Long Polling vs WebSockets: https://blog.algomaster.io/p/long-polling-vs-websockets"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/p/long-polling-vs-websockets",
+                    "timestamp": 1779375615.8068717,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "b309f87d8431657a5ec25dc794e4b1d28eeca2a21bfbefcbccd8e6b79527ce1b",
+            "label": "Batch vs Stream Processing",
+            "domain": "system_design",
+            "category": "System Design Tradeoffs",
+            "definitions": [
+                "Resource on Batch vs Stream Processing: https://blog.algomaster.io/p/batch-processing-vs-stream-processing"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/p/batch-processing-vs-stream-processing",
+                    "timestamp": 1779375615.8068824,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "302eb373903dd89ccb00cf92102a0246a0ada1505542c08755d6995b99413d37",
+            "label": "Stateful vs Stateless Design",
+            "domain": "system_design",
+            "category": "System Design Tradeoffs",
+            "definitions": [
+                "Resource on Stateful vs Stateless Design: https://blog.algomaster.io/p/stateful-vs-stateless-architecture"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/p/stateful-vs-stateless-architecture",
+                    "timestamp": 1779375615.8068893,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "ec709a8e44700a93b8b70f33eb99ee9b3bb6a69b3e184f1a2b4995f15171546b",
+            "label": "Strong vs Eventual Consistency",
+            "domain": "system_design",
+            "category": "System Design Tradeoffs",
+            "definitions": [
+                "Resource on Strong vs Eventual Consistency: https://blog.algomaster.io/p/strong-vs-eventual-consistency"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/p/strong-vs-eventual-consistency",
+                    "timestamp": 1779375615.806896,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "87a3aae34b707e0d52b58f6e8fed89141296e1422055c50b0e6ce41002fd81d2",
+            "label": "Read-Through vs Write-Through Cache",
+            "domain": "system_design",
+            "category": "System Design Tradeoffs",
+            "definitions": [
+                "Resource on Read-Through vs Write-Through Cache: https://blog.algomaster.io/p/59cae60d-9717-4e20-a59e-759e370db4e5"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/p/59cae60d-9717-4e20-a59e-759e370db4e5",
+                    "timestamp": 1779375615.8069036,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "044ebd92c0f1a5714de9491b00a945a88d5fb47b6a5e19ae5b7dafb41d0efb71",
+            "label": "Push vs Pull Architecture",
+            "domain": "system_design",
+            "category": "System Design Tradeoffs",
+            "definitions": [
+                "Resource on Push vs Pull Architecture: https://blog.algomaster.io/p/af5fe2fe-9a4f-4708-af43-184945a243af"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/p/af5fe2fe-9a4f-4708-af43-184945a243af",
+                    "timestamp": 1779375615.806918,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "dad23be766300b71721d0c48a2c76aa1be06d31f523be006adb879bd19e1f306",
+            "label": "REST vs RPC",
+            "domain": "system_design",
+            "category": "System Design Tradeoffs",
+            "definitions": [
+                "Resource on REST vs RPC: https://blog.algomaster.io/p/106604fb-b746-41de-88fb-60e932b2ff68"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/p/106604fb-b746-41de-88fb-60e932b2ff68",
+                    "timestamp": 1779375615.8069293,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "378843f49c48ffe27c2233ca1da626bf4e1ec49d8d998a6fdc28034b65ee9df4",
+            "label": "Synchronous vs. asynchronous communications",
+            "domain": "system_design",
+            "category": "System Design Tradeoffs",
+            "definitions": [
+                "Resource on Synchronous vs. asynchronous communications: https://blog.algomaster.io/p/aec1cebf-6060-45a7-8e00-47364ca70761"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/p/aec1cebf-6060-45a7-8e00-47364ca70761",
+                    "timestamp": 1779375615.8069377,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "c3380ebd416c1ba2f3f66d51c7549ca9db27da85add8b3626809bb2b4bb7156f",
+            "label": "Latency vs Throughput",
+            "domain": "system_design",
+            "category": "System Design Tradeoffs",
+            "definitions": [
+                "Resource on Latency vs Throughput: https://aws.amazon.com/compare/the-difference-between-throughput-and-latency/"
+            ],
+            "sources": [
+                {
+                    "url": "https://aws.amazon.com/compare/the-difference-between-throughput-and-latency/",
+                    "timestamp": 1779375615.8069446,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "3f38b4c9e88b635ebfdb793995e14c86e50d38bd3dbe76a6644d64e72d5b029f",
+            "label": "Design URL Shortener like TinyURL",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design URL Shortener like TinyURL: https://algomaster.io/learn/system-design-interviews/design-url-shortener"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design-interviews/design-url-shortener",
+                    "timestamp": 1779375615.8069742,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "3adf58b7c385b19fdb167db13e4cbb4c88efc4c5d94ecc7b0bf39bb26c412bf1",
+            "label": "Design Autocomplete for Search Engines",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Autocomplete for Search Engines: https://algomaster.io/learn/system-design-interviews/design-instagram"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design-interviews/design-instagram",
+                    "timestamp": 1779375615.8069813,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "4b834ee1c9c8ca603f01dd5a9355bb8bca86918fc562e9ae58e6dfc0d4b0c002",
+            "label": "Design Load Balancer",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Load Balancer: https://algomaster.io/learn/system-design-interviews/design-load-balancer"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design-interviews/design-load-balancer",
+                    "timestamp": 1779375615.806988,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "40dc139baa5bfd8ccda7169e181e332ed285668c78fec6a57b468af7974be412",
+            "label": "Design Content Delivery Network (CDN)",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Content Delivery Network (CDN): https://www.youtube.com/watch?v=8zX0rue2Hic"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=8zX0rue2Hic",
+                    "timestamp": 1779375615.806995,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "fb9a44300f12470db98072e406ad8803cb81dc56d4bc0ccacdcfebc573d453e7",
+            "label": "Design Parking Garage",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Parking Garage: https://www.youtube.com/watch?v=NtMvNh0WFVM"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=NtMvNh0WFVM",
+                    "timestamp": 1779375615.8070014,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "606f2e399135407f8331dea6dbc761fc02e663ad3ac2bfa8ae77243aadf53e40",
+            "label": "Design Vending Machine",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Vending Machine: https://www.youtube.com/watch?v=D0kDMUgo27c"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=D0kDMUgo27c",
+                    "timestamp": 1779375615.8070076,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "ede88a6ea34b8479818db293b75bc037440bd61925f38f4e40c067f89c948b5f",
+            "label": "Design Distributed Key-Value Store",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Distributed Key-Value Store: https://www.youtube.com/watch?v=rnZmdmlR-2M"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=rnZmdmlR-2M",
+                    "timestamp": 1779375615.8070142,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "a1aede4c7720769df1a931348788618911f342131e2d1fad7eedabd5cbed5ae3",
+            "label": "Design Distributed Cache",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Distributed Cache: https://www.youtube.com/watch?v=iuqZvajTOyA"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=iuqZvajTOyA",
+                    "timestamp": 1779375615.8070204,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "9d1263d4533fc5f407cd8436bbdf91b90fc7ac3b24031f05658dd2b38ce71e35",
+            "label": "Design Authentication System",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Authentication System: https://www.youtube.com/watch?v=uj_4vxm9u90"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=uj_4vxm9u90",
+                    "timestamp": 1779375615.8070343,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "7195a67033425d6134da4f4d30ccf133b8780c9dcc3af315fc31b80cd13f6b6f",
+            "label": "Design Unified Payments Interface (UPI)",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Unified Payments Interface (UPI): https://www.youtube.com/watch?v=QpLy0_c_RXk"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=QpLy0_c_RXk",
+                    "timestamp": 1779375615.8070867,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "cb78a5c7329ec94255bea0daff9260ad36f8f83a63003b731fd1f2f8664ac37e",
+            "label": "Design WhatsApp",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design WhatsApp: https://algomaster.io/learn/system-design-interviews/design-whatsapp"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design-interviews/design-whatsapp",
+                    "timestamp": 1779375615.8070984,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "4b24491aa1bee857fcfe9974297c2e62d425fab50a5ed5216db91e4c735c0704",
+            "label": "Design Spotify",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Spotify: https://algomaster.io/learn/system-design-interviews/design-spotify"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design-interviews/design-spotify",
+                    "timestamp": 1779375615.8071053,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "75edaa2c112c45dd89d8d7d178ad900777923be19ae567f6ac166dd40d339e0a",
+            "label": "Design Instagram",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Instagram: https://algomaster.io/learn/system-design-interviews/design-instagram"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design-interviews/design-instagram",
+                    "timestamp": 1779375615.8071125,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "3a41c7389c0178776be1b52ac24f6bc040c4f84f701b368f5328db68e0af092c",
+            "label": "Design Notification Service",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Notification Service: https://algomaster.io/learn/system-design-interviews/design-notification-service"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design-interviews/design-notification-service",
+                    "timestamp": 1779375615.8071194,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "9507bb51c8241dd5bd48e7db85aeabd2667039a254e21e94c1e2db34093f1091",
+            "label": "Design Distributed Job Scheduler",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Distributed Job Scheduler: https://blog.algomaster.io/p/design-a-distributed-job-scheduler"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/p/design-a-distributed-job-scheduler",
+                    "timestamp": 1779375615.8071263,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "b6f83d8bbb207a4d3e4af57391c2dae0bbae1fe6e795ab856ced9b7faf56e9c5",
+            "label": "Design Tinder",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Tinder: https://www.youtube.com/watch?v=tndzLznxq40"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=tndzLznxq40",
+                    "timestamp": 1779375615.8071358,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "6a1a2a194a1af824b4d6318fe2414793f023210aa3726f9fd54011a394d7227a",
+            "label": "Design Facebook",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Facebook: https://www.youtube.com/watch?v=9-hjBGxuiEs"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=9-hjBGxuiEs",
+                    "timestamp": 1779375615.8071425,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "d3d0bdae7bf00a69773459ba343d1dbfc404d1efc653f8d9562115ae42c8e627",
+            "label": "Design Twitter",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Twitter: https://www.youtube.com/watch?v=wYk0xPP_P_8"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=wYk0xPP_P_8",
+                    "timestamp": 1779375615.8071487,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "c87f553b46559e945c2a6f0e5de333a3497a13a7650ba53bd21973b5bce04754",
+            "label": "Design Reddit",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Reddit: https://www.youtube.com/watch?v=KYExYE_9nIY"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=KYExYE_9nIY",
+                    "timestamp": 1779375615.807155,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "beaa3b53f4d15a9866b1f54735e008fb9b9623e12b93548373262733a7fbf0d0",
+            "label": "Design Netflix",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Netflix: https://www.youtube.com/watch?v=psQzyFfsUGU"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=psQzyFfsUGU",
+                    "timestamp": 1779375615.807167,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "33d7006bf19f3269f8bd8fca07fa3f0b106b9b06c5abee8bfc17e4e33132304e",
+            "label": "Design Youtube",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Youtube: https://www.youtube.com/watch?v=jPKTo1iGQiE"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=jPKTo1iGQiE",
+                    "timestamp": 1779375615.8071773,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "db5f4a962e1656b43916ccf371a26cebef8b417602ca9df9f71d178a72c0f537",
+            "label": "Design Google Search",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Google Search: https://www.youtube.com/watch?v=CeGtqouT8eA"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=CeGtqouT8eA",
+                    "timestamp": 1779375615.8071835,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "7716425944a86689ed17e095806f50e5f458df8fde821bfe0c790b23e65ad1b3",
+            "label": "Design E-commerce Store like Amazon",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design E-commerce Store like Amazon: https://www.youtube.com/watch?v=EpASu_1dUdE"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=EpASu_1dUdE",
+                    "timestamp": 1779375615.8071969,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "946bde6c1a6a664b1c10f8dd08267729924d81329f3f3853e00088bcd73b9b95",
+            "label": "Design TikTok",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design TikTok: https://www.youtube.com/watch?v=Z-0g_aJL5Fw"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=Z-0g_aJL5Fw",
+                    "timestamp": 1779375615.8072035,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "5d8dd475cb9d2a062ef49ee2e252d2e45e4adc8f8ec87d9be5ba0e31095699a7",
+            "label": "Design Shopify",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Shopify: https://www.youtube.com/watch?v=lEL4F_0J3l8"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=lEL4F_0J3l8",
+                    "timestamp": 1779375615.8072097,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "21ce1b9f957cacdebbd98c35c8a015f7fd66256076e0829a5b448736a187ece7",
+            "label": "Design Airbnb",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Airbnb: https://www.youtube.com/watch?v=YyOXt2MEkv4"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=YyOXt2MEkv4",
+                    "timestamp": 1779375615.8072157,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "a22b674e2e387169ec0d4a1fc547ccd9db80f22445f8e5c40d4ffaa86ee5c45a",
+            "label": "Design Rate Limiter",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Rate Limiter: https://www.youtube.com/watch?v=mhUQe4BKZXs"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=mhUQe4BKZXs",
+                    "timestamp": 1779375615.8072224,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "b8ef723c5fe39f7fba9927d30fdf145b52d1a6774f4903949fc66cf7a202ebd1",
+            "label": "Design Distributed Message Queue like Kafka",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Distributed Message Queue like Kafka: https://www.youtube.com/watch?v=iJLL-KPqBpM"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=iJLL-KPqBpM",
+                    "timestamp": 1779375615.8072293,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "64a69a3972bfb598efe42852e3facf798f65f96785e7b91b3ae53829c69579e3",
+            "label": "Design Flight Booking System",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Flight Booking System: https://www.youtube.com/watch?v=qsGcfVGvFSs"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=qsGcfVGvFSs",
+                    "timestamp": 1779375615.8072355,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "2e8cd014a749a5aad06605f9b57cfc3689d4b639f1b33d54ac7eadb2bd1a2e2c",
+            "label": "Design Online Code Editor",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Online Code Editor: https://www.youtube.com/watch?v=07jkn4jUtso"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=07jkn4jUtso",
+                    "timestamp": 1779375615.807242,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "b5c0623350a011b6938d6dc7489c0bdcb503ed48e5953307aadc883c0ed90d7b",
+            "label": "Design an Analytics Platform (Metrics & Logging)",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design an Analytics Platform (Metrics & Logging): https://www.youtube.com/watch?v=kIcq1_pBQSY"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=kIcq1_pBQSY",
+                    "timestamp": 1779375615.8072486,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "45d479a2472ca3bff1e4e0352f40eb4e56b8edfff47022fc1c8997e746e8c09b",
+            "label": "Design Payment System",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Payment System: https://www.youtube.com/watch?v=olfaBgJrUBI"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=olfaBgJrUBI",
+                    "timestamp": 1779375615.8072588,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "56d6335a1c707d9876ea26962522fdbfd96a88fe4aa3afd8261ab4112cc74325",
+            "label": "Design a Digital Wallet",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design a Digital Wallet: https://www.youtube.com/watch?v=4ijjIUeq6hE"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=4ijjIUeq6hE",
+                    "timestamp": 1779375615.8072653,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "f07c7a8661f8984113e4d6f57c22dc2b8f37f029989ae7d1cccc123e6c931717",
+            "label": "Design Location Based Service like Yelp",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Location Based Service like Yelp: https://www.youtube.com/watch?v=M4lR_Va97cQ"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=M4lR_Va97cQ",
+                    "timestamp": 1779375615.8072803,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "73e08ed6eb6e81d329a5933a623d7dfa44fff5dce6ca68753795a33712c3edb4",
+            "label": "Design Uber",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Uber: https://www.youtube.com/watch?v=umWABit-wbk"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=umWABit-wbk",
+                    "timestamp": 1779375615.8072872,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "9104b6d03c8a35ca57adfc805c598cdc4d0d82600d87ecfa06ec15bb55df2fd1",
+            "label": "Design Food Delivery App like Doordash",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Food Delivery App like Doordash: https://www.youtube.com/watch?v=iRhSAR3ldTw"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=iRhSAR3ldTw",
+                    "timestamp": 1779375615.807298,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "6400b2067fd2be6b7fce9459a042c289e2eb39370bc5bebc424222c433bc54c2",
+            "label": "Design Google Docs",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Google Docs: https://www.youtube.com/watch?v=2auwirNBvGg"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=2auwirNBvGg",
+                    "timestamp": 1779375615.8073044,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "4c4dbb3075ca443884a8015db29bd2fc3dd97db73330c77cbaaf5c91185e3c51",
+            "label": "Design Google Maps",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Google Maps: https://www.youtube.com/watch?v=jk3yvVfNvds"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=jk3yvVfNvds",
+                    "timestamp": 1779375615.8073108,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "23e90a1757f01a99d8aa52e7907fe686f07a4d156f202146c070a11993a2d5e9",
+            "label": "Design Zoom",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Zoom: https://www.youtube.com/watch?v=G32ThJakeHk"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=G32ThJakeHk",
+                    "timestamp": 1779375615.807317,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "a281867a72e67cc93285e42fb09636c08fa45a3a0fc4f94c9b8768c2f6639675",
+            "label": "Design File Sharing System like Dropbox",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design File Sharing System like Dropbox: https://www.youtube.com/watch?v=U0xTu6E2CT8"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=U0xTu6E2CT8",
+                    "timestamp": 1779375615.8073282,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "6997f5f54566c2c67bb35121ad1d221e6f64e02a97c193f4405daae2a2d742ea",
+            "label": "Design Ticket Booking System like BookMyShow",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Ticket Booking System like BookMyShow: https://www.youtube.com/watch?v=lBAwJgoO3Ek"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=lBAwJgoO3Ek",
+                    "timestamp": 1779375615.807335,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "6ce9a55c9ce4fe8250671bc1987c317a5cdec513f73f75e7949329a9913fa929",
+            "label": "Design Distributed Web Crawler",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Distributed Web Crawler: https://www.youtube.com/watch?v=BKZxZwUgL3Y"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=BKZxZwUgL3Y",
+                    "timestamp": 1779375615.8073416,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "4c9cd0397b286495bf7b7192061597582c84aa90ade30dd6008aad17d8c0a58c",
+            "label": "Design Code Deployment System",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Code Deployment System: https://www.youtube.com/watch?v=q0KGYwNbf-0"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=q0KGYwNbf-0",
+                    "timestamp": 1779375615.8073592,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "678d2cac3bf73455b18f580319f57626bcee771cb5736df13de048ad6a227085",
+            "label": "Design Distributed Cloud Storage like S3",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Distributed Cloud Storage like S3: https://www.youtube.com/watch?v=UmWtcgC96X8"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=UmWtcgC96X8",
+                    "timestamp": 1779375615.8073666,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "cfcaf7707bb0d577a5f18e28830829a1a99131b31fd18fb4f2860568c1c501ae",
+            "label": "Design Distributed Locking Service",
+            "domain": "system_design",
+            "category": "System Design Interview Problems",
+            "definitions": [
+                "Resource on Design Distributed Locking Service: https://www.youtube.com/watch?v=v7x75aN9liM"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/watch?v=v7x75aN9liM",
+                    "timestamp": 1779375615.8073738,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "02a611948c0ae02e777566046cee85cb032c76d108e868091864d4aab338bfd0",
+            "label": "System Design Fundamentals",
+            "domain": "system_design",
+            "category": "Courses",
+            "definitions": [
+                "Resource on System Design Fundamentals: https://algomaster.io/learn/system-design/course-introduction"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design/course-introduction",
+                    "timestamp": 1779375615.8073883,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "de1a37c899e1397c1f6df0aaf8383a2d9686569e78b92d145dd8c2a1c6399fd2",
+            "label": "System Design Interviews",
+            "domain": "system_design",
+            "category": "Courses",
+            "definitions": [
+                "Resource on System Design Interviews: https://algomaster.io/learn/system-design-interviews/introduction"
+            ],
+            "sources": [
+                {
+                    "url": "https://algomaster.io/learn/system-design-interviews/introduction",
+                    "timestamp": 1779375615.8073957,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "9467223e7b6a1fa74ddf1c2cb323088a99a448ea8a8dd45cb609677f17e405bf",
+            "label": "AlgoMaster Newsletter",
+            "domain": "system_design",
+            "category": "Newsletters",
+            "definitions": [
+                "Resource on AlgoMaster Newsletter: https://blog.algomaster.io/"
+            ],
+            "sources": [
+                {
+                    "url": "https://blog.algomaster.io/",
+                    "timestamp": 1779375615.8074071,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "7f54ceb0504fea305a6349f3677ed45899062baf7e4d104f82693762ea3a403d",
+            "label": "Designing Data-Intensive Applications",
+            "domain": "system_design",
+            "category": "Books",
+            "definitions": [
+                "Resource on Designing Data-Intensive Applications: https://www.amazon.in/dp/9352135245"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.amazon.in/dp/9352135245",
+                    "timestamp": 1779375615.8074186,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "7b148c259d9077363a539b94416033383f5499a785f07fc69290f6db0c3f7513",
+            "label": "Tech Dummies Narendra L",
+            "domain": "system_design",
+            "category": "YouTube Channels",
+            "definitions": [
+                "Resource on Tech Dummies Narendra L: https://www.youtube.com/@TechDummiesNarendraL"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/@TechDummiesNarendraL",
+                    "timestamp": 1779375615.807433,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "b25b3e49fb8997c8691929ce8bf280d0f7354e7d80f8ac0986d54997698c6439",
+            "label": "Gaurav Sen",
+            "domain": "system_design",
+            "category": "YouTube Channels",
+            "definitions": [
+                "Resource on Gaurav Sen: https://www.youtube.com/@gkcs"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/@gkcs",
+                    "timestamp": 1779375615.8074398,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "7de80494f5e65ce469ea487d5b2c9c637b69359418fae18d3d6e1b900362059b",
+            "label": "codeKarle",
+            "domain": "system_design",
+            "category": "YouTube Channels",
+            "definitions": [
+                "Resource on codeKarle: https://www.youtube.com/@codeKarle"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/@codeKarle",
+                    "timestamp": 1779375615.807446,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "fd045fe26c0b1858d8f0251e067c08ff214e0a18619e9d60132ba1c47a740ab3",
+            "label": "ByteByteGo",
+            "domain": "system_design",
+            "category": "YouTube Channels",
+            "definitions": [
+                "Resource on ByteByteGo: https://www.youtube.com/@ByteByteGo"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/@ByteByteGo",
+                    "timestamp": 1779375615.8074522,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "ed0f3fa9263c5d6ba128bbb3018969600d83ce0dfb1739d4371ff74110cf2348",
+            "label": "System Design Interview",
+            "domain": "system_design",
+            "category": "YouTube Channels",
+            "definitions": [
+                "Resource on System Design Interview: https://www.youtube.com/@SystemDesignInterview"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/@SystemDesignInterview",
+                    "timestamp": 1779375615.8074634,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "7e3c6613cb8ecc8258441eec736740b2425df31d351ca0240b4d92f82115c1b0",
+            "label": "sudoCODE",
+            "domain": "system_design",
+            "category": "YouTube Channels",
+            "definitions": [
+                "Resource on sudoCODE: https://www.youtube.com/@sudocode"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/@sudocode",
+                    "timestamp": 1779375615.8074698,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "1ab6a93ab8ea9090548e336297e2ce9ae33cc3a75f44a498cf19871cfa8f78b1",
+            "label": "Success in Tech",
+            "domain": "system_design",
+            "category": "YouTube Channels",
+            "definitions": [
+                "Resource on Success in Tech: https://www.youtube.com/@SuccessinTech/videos"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.youtube.com/@SuccessinTech/videos",
+                    "timestamp": 1779375615.8074763,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "34f3eaa66237d7826084f83a91e3a6d7f2d58e6ba41ca49badd2dd61ff6d8987",
+            "label": "How Discord stores trillions of messages",
+            "domain": "system_design",
+            "category": "Must-Read Engineering Articles",
+            "definitions": [
+                "Resource on How Discord stores trillions of messages: https://discord.com/blog/how-discord-stores-trillions-of-messages"
+            ],
+            "sources": [
+                {
+                    "url": "https://discord.com/blog/how-discord-stores-trillions-of-messages",
+                    "timestamp": 1779375615.8074887,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "1fce0c35c47293ec82d1282d07288f31d9dd85003987a11ed261e539165b2870",
+            "label": "Building In-Video Search at Netflix",
+            "domain": "system_design",
+            "category": "Must-Read Engineering Articles",
+            "definitions": [
+                "Resource on Building In-Video Search at Netflix: https://netflixtechblog.com/building-in-video-search-936766f0017c"
+            ],
+            "sources": [
+                {
+                    "url": "https://netflixtechblog.com/building-in-video-search-936766f0017c",
+                    "timestamp": 1779375615.8074963,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "3f46bdf4992a19db246beda3c6d2a61e034b5348b6ce128a3ed7bef72299fd7c",
+            "label": "How Canva scaled Media uploads from Zero to 50 Million per Day",
+            "domain": "system_design",
+            "category": "Must-Read Engineering Articles",
+            "definitions": [
+                "Resource on How Canva scaled Media uploads from Zero to 50 Million per Day: https://www.canva.dev/blog/engineering/from-zero-to-50-million-uploads-per-day-scaling-media-at-canva/"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.canva.dev/blog/engineering/from-zero-to-50-million-uploads-per-day-scaling-media-at-canva/",
+                    "timestamp": 1779375615.8075085,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "f9e528376c278098841a0971d27fd277bcd34b45df8cbedd13a116a0b6a47aa9",
+            "label": "How Airbnb avoids double payments in a Distributed Payments System",
+            "domain": "system_design",
+            "category": "Must-Read Engineering Articles",
+            "definitions": [
+                "Resource on How Airbnb avoids double payments in a Distributed Payments System: https://medium.com/airbnb-engineering/avoiding-double-payments-in-a-distributed-payments-system-2981f6b070bb"
+            ],
+            "sources": [
+                {
+                    "url": "https://medium.com/airbnb-engineering/avoiding-double-payments-in-a-distributed-payments-system-2981f6b070bb",
+                    "timestamp": 1779375615.807518,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "391e4981076d2cdcc3c26d0dcfc458b4920f833d3ae21c9e30fe7b3d191099ad",
+            "label": "Stripe’s payments APIs - The first 10 years",
+            "domain": "system_design",
+            "category": "Must-Read Engineering Articles",
+            "definitions": [
+                "Resource on Stripe’s payments APIs - The first 10 years: https://stripe.com/blog/payment-api-design"
+            ],
+            "sources": [
+                {
+                    "url": "https://stripe.com/blog/payment-api-design",
+                    "timestamp": 1779375615.807531,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "976d2422028b382221c3d9c733eabf217bc83453049b2b25e5854f535b093d14",
+            "label": "Real time messaging at Slack",
+            "domain": "system_design",
+            "category": "Must-Read Engineering Articles",
+            "definitions": [
+                "Resource on Real time messaging at Slack: https://slack.engineering/real-time-messaging/"
+            ],
+            "sources": [
+                {
+                    "url": "https://slack.engineering/real-time-messaging/",
+                    "timestamp": 1779375615.8075383,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "e123c52cb2babf7bb8ed3f07886184e35651dac691fe25093e23f45310521470",
+            "label": "Paxos: The Part-Time Parliament",
+            "domain": "system_design",
+            "category": "Must-Read Distributed Systems Papers",
+            "definitions": [
+                "Resource on Paxos: The Part-Time Parliament: https://lamport.azurewebsites.net/pubs/lamport-paxos.pdf"
+            ],
+            "sources": [
+                {
+                    "url": "https://lamport.azurewebsites.net/pubs/lamport-paxos.pdf",
+                    "timestamp": 1779375615.8075519,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "e2d5474b1425f42b9daea7964cfd9c0f29aa75d96bbefd2d1444e2ffa4a872e6",
+            "label": "MapReduce: Simplified Data Processing on Large Clusters",
+            "domain": "system_design",
+            "category": "Must-Read Distributed Systems Papers",
+            "definitions": [
+                "Resource on MapReduce: Simplified Data Processing on Large Clusters: https://research.google.com/archive/mapreduce-osdi04.pdf"
+            ],
+            "sources": [
+                {
+                    "url": "https://research.google.com/archive/mapreduce-osdi04.pdf",
+                    "timestamp": 1779375615.8075593,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "17c2fc92609cbd438c6df1176705dbdd498e74b6b906387e58f851e586fc154c",
+            "label": "The Google File System",
+            "domain": "system_design",
+            "category": "Must-Read Distributed Systems Papers",
+            "definitions": [
+                "Resource on The Google File System: https://static.googleusercontent.com/media/research.google.com/en//archive/gfs-sosp2003.pdf"
+            ],
+            "sources": [
+                {
+                    "url": "https://static.googleusercontent.com/media/research.google.com/en//archive/gfs-sosp2003.pdf",
+                    "timestamp": 1779375615.8075714,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "050b4300b1b9ea5c99a14123403d1c15a92c292906e133e29ff9ac413b688aa3",
+            "label": "Dynamo: Amazon’s Highly Available Key-value Store",
+            "domain": "system_design",
+            "category": "Must-Read Distributed Systems Papers",
+            "definitions": [
+                "Resource on Dynamo: Amazon’s Highly Available Key-value Store: https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
+                    "timestamp": 1779375615.8075814,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "43b3c599a2bc64e41ad4a29707ee21be4975d48d19b90756faa677adba781e26",
+            "label": "Kafka: a Distributed Messaging System for Log Processing",
+            "domain": "system_design",
+            "category": "Must-Read Distributed Systems Papers",
+            "definitions": [
+                "Resource on Kafka: a Distributed Messaging System for Log Processing: https://notes.stephenholiday.com/Kafka.pdf"
+            ],
+            "sources": [
+                {
+                    "url": "https://notes.stephenholiday.com/Kafka.pdf",
+                    "timestamp": 1779375615.8075974,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "2d2fcc615ed8a476b964b7ed94e948e5e87878e635a1bb935d30a86390317b09",
+            "label": "Spanner: Google’s Globally-Distributed Database",
+            "domain": "system_design",
+            "category": "Must-Read Distributed Systems Papers",
+            "definitions": [
+                "Resource on Spanner: Google’s Globally-Distributed Database: https://static.googleusercontent.com/media/research.google.com/en//archive/spanner-osdi2012.pdf"
+            ],
+            "sources": [
+                {
+                    "url": "https://static.googleusercontent.com/media/research.google.com/en//archive/spanner-osdi2012.pdf",
+                    "timestamp": 1779375615.8076077,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "3890c97ebe5e6eddf503c93f34823a668a079a76db8eccc3aa200235d0d07632",
+            "label": "Bigtable: A Distributed Storage System for Structured Data",
+            "domain": "system_design",
+            "category": "Must-Read Distributed Systems Papers",
+            "definitions": [
+                "Resource on Bigtable: A Distributed Storage System for Structured Data: https://static.googleusercontent.com/media/research.google.com/en//archive/bigtable-osdi06.pdf"
+            ],
+            "sources": [
+                {
+                    "url": "https://static.googleusercontent.com/media/research.google.com/en//archive/bigtable-osdi06.pdf",
+                    "timestamp": 1779375615.807616,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "22dda25a18c8bec509105aa30638353c95cb3bca114ec72e5d5533c9ae9fff14",
+            "label": "ZooKeeper: Wait-free coordination for Internet-scale systems",
+            "domain": "system_design",
+            "category": "Must-Read Distributed Systems Papers",
+            "definitions": [
+                "Resource on ZooKeeper: Wait-free coordination for Internet-scale systems: https://www.usenix.org/legacy/event/usenix10/tech/full_papers/Hunt.pdf"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.usenix.org/legacy/event/usenix10/tech/full_papers/Hunt.pdf",
+                    "timestamp": 1779375615.8076236,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "081008a43bc2a3241e4714a8eac6611603d4f1d0dafad12a25ce79bd4057e606",
+            "label": "The Log-Structured Merge-Tree (LSM-Tree)",
+            "domain": "system_design",
+            "category": "Must-Read Distributed Systems Papers",
+            "definitions": [
+                "Resource on The Log-Structured Merge-Tree (LSM-Tree): https://www.cs.umb.edu/~poneil/lsmtree.pdf"
+            ],
+            "sources": [
+                {
+                    "url": "https://www.cs.umb.edu/~poneil/lsmtree.pdf",
+                    "timestamp": 1779375615.8076305,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        },
+        {
+            "id": "a28d0b18fa1866ad62e2be8e11eceb6a73ca36f633b7713ef2bb62df9c8c4d54",
+            "label": "The Chubby lock service for loosely-coupled distributed systems",
+            "domain": "system_design",
+            "category": "Must-Read Distributed Systems Papers",
+            "definitions": [
+                "Resource on The Chubby lock service for loosely-coupled distributed systems: https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf"
+            ],
+            "sources": [
+                {
+                    "url": "https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf",
+                    "timestamp": 1779375615.8076394,
+                    "quality": 0.95
+                }
+            ],
+            "metadata": {
+                "source_repository": "ashishps1/awesome-system-design-resources"
+            }
+        }
+    ]
+}
