@@ -54,5 +54,7 @@ if __name__ == "__main__":
     print("Relatorio Simulacao Wormhole:")
     print(json.dumps(report, indent=2))
 
-    with open("/tmp/substrate_382_wormhole_sim_report.json", "w") as f:
+    import tempfile
+    with tempfile.NamedTemporaryFile(mode="w", prefix="substrate_382_wormhole_sim_report_", suffix=".json", delete=False) as f:
         json.dump(report, f, indent=2)
+        print(f"Report saved to {f.name}")

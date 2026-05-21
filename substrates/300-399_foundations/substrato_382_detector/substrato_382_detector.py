@@ -28,8 +28,8 @@ class DarkMatterDetector:
     def execute(self):
         halos = self.sensor_layer.map_halos()
 
-        avg_density = sum(h["dark_matter_density"] for h in halos) / len(halos)
-        avg_coherence = sum(h["coherence"] for h in halos) / len(halos)
+        avg_density = sum(h["dark_matter_density"] for h in halos) / len(halos) if halos else 0.0
+        avg_coherence = sum(h["coherence"] for h in halos) / len(halos) if halos else 0.0
 
         report = {
             "module": "382-DETECTOR",
