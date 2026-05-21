@@ -110,8 +110,9 @@ class DistributedFractalFFT:
         """Executa uma etapa da Fractal FFT distribuída em um nó."""
         n_total = len(signal)
         # Cada nó é responsável por um segmento do sinal
-        segment_size = n_total // len(all_nodes)
+        segment_size = math.ceil(n_total / len(all_nodes)) if all_nodes else 0
         local_segment = signal[node_id * segment_size : (node_id + 1) * segment_size]
+        local_segment += [0.0] * (segment_size - len(local_segment))
 
         # FFT local (zero-padded para a potência de 2 mais próxima)
         # Para evitar numpy, implementamos DFT local manual se N for pequeno

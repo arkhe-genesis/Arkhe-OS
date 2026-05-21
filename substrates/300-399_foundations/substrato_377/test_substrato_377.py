@@ -25,7 +25,7 @@ def test_fractal_fft_distributed():
         fft_partial = fft_engine.fractal_fft_distributed(signal, node_id, list(range(n_nodes)))
         results.extend(fft_partial)
 
-    assert len(results) == n_nodes * (1024 // n_nodes)
+    assert len(results) == n_nodes * math.ceil(1024 / n_nodes)
 
 def test_aeneid_fractal_clock():
     class MockPeer:
