@@ -1,6 +1,6 @@
 --- a/drivers/net/wireless/ath/ath10k/spectral.c
 +++ b/drivers/net/wireless/ath/ath10k/spectral.c
-@@ -245,11 +245,19 @@ int ath10k_spectral_scan_trigger(struct ieee80211_hw *hw)
+@@ -245,11 +245,20 @@ int ath10k_spectral_scan_trigger(struct ieee80211_hw *hw)
         return ret;
  }
 
@@ -8,6 +8,7 @@
 +static DECLARE_WAIT_QUEUE_HEAD(particle_wq);
 +static bool particle_event_pending = false;
 +static struct ath10k_fft_sample last_particle_sample;
++static DEFINE_SPINLOCK(particle_lock);
 +
  static int ath10k_spectral_process_fft(struct ath10k *ar,
                                         struct ath10k_fft_sample *sample)
@@ -20,14 +21,16 @@
         if (!sp->enabled) {
                 ath10k_warn(ar, "spectral scan not enabled, ignoring FFT sample\n");
                 return -ENODATA;
-@@ -260,6 +268,14 @@ static int ath10k_spectral_process_fft(struct ath10k *ar,
+@@ -260,6 +269,16 @@ static int ath10k_spectral_process_fft(struct ath10k *ar,
                 return -ENOBUFS;
         }
 
 +       /* Encaminhar para o detetor de partículas em kernel-space */
 +       if (particle_detect_peak(sample, 8.0)) {
++               spin_lock_bh(&particle_lock);
 +               memcpy(&last_particle_sample, sample, sizeof(*sample));
 +               particle_event_pending = true;
++               spin_unlock_bh(&particle_lock);
 +               wake_up_interruptible(&particle_wq);
 +               ar->stats.particle_events++;
 +       }
@@ -35,7 +38,7 @@
         /* Enviar para relayfs para consumidores user‑space */
         relay_write(sp->relayfs, sample, sizeof(*sample));
         return 0;
-@@ -302,6 +318,21 @@ void ath10k_spectral_reset(struct ath10k *ar)
+@@ -302,6 +321,21 @@ void ath10k_spectral_reset(struct ath10k *ar)
         }
  }
 
@@ -53,6 +56,7 @@
 +
 +EXPORT_SYMBOL(last_particle_sample);
 +EXPORT_SYMBOL(particle_event_pending);
++EXPORT_SYMBOL(particle_lock);
 +
  MODULE_PARM_DESC(spectral, "Enable spectral scan support (default: 0)");
  module_param_named(spectral, spectral_enable, bool, 0644);
