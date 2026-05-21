@@ -207,7 +207,7 @@ class MicrotubularOrchestrator:
         center = random.randint(0, len(lattice) - 1)
         half = n_coherent // 2
         start = max(0, center - half)
-        end = min(len(lattice), center + half)
+        end = min(len(lattice), center + half + (n_coherent % 2))
 
         coherent_tubulins = []
         total_dipole = 0.0
@@ -680,7 +680,8 @@ class CanonicalTests:
                 self.results.append({
                     'test': test_fn.__name__,
                     'passed': False,
-                    'error': str(e)
+                    'error': str(e),
+                    'description': f"Test failed with exception: {e}"
                 })
 
         passed = sum(1 for r in self.results if r['passed'])
