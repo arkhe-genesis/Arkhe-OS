@@ -33,7 +33,7 @@ contract StakingRewards is InvariantGuard {
         require(amount > 0, "Cannot stake 0");
 
         // Transferir tokens do usuário
-        stakingToken.transferFrom(msg.sender, address(this), amount);
+        require(stakingToken.transferFrom(msg.sender, address(this), amount), "Transfer failed");
 
         // Atualizar estado do validador
         // (lógica simplificada)
