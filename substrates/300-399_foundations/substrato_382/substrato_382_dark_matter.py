@@ -171,7 +171,8 @@ if __name__ == "__main__":
     substrate = Substrato382()
     substrate.run_simulation()
 
-    output_path = "/tmp/substrate_382_report.json"
-    with open(output_path, "w", encoding="utf-8") as f:
+    import tempfile
+    fd, output_path = tempfile.mkstemp(prefix="substrate_382_", suffix="_report.json")
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
         json.dump(substrate.to_json(), f, indent=4)
     print(f"\nRelatorio JSON salvo em: {output_path}")
