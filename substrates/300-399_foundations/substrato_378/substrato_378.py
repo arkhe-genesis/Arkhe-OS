@@ -15,22 +15,16 @@ EXPLAIN_COHERENCE_THRESHOLD = 0.85
 # ── Simulador de motor neural ──
 def neural_explain(agent_id, sensor_data, decision):
     """Gera uma explicação textual com base nos dados (simulação de LLM)."""
-    templates = {
-        "seismic": f"Detetei um sismo de magnitude {sensor_data['seismic']['mag']} a {sensor_data['seismic']['depth_km']} km de profundidade, o que excede o limiar de 7.5 para alerta imediato. [boia, área]",
-        "ocean": f"As boias DART registaram um deslocamento máximo de {sensor_data['max_buoy_disp']:.1f} metros, muito acima do limiar de 2.0 m, indicando um tsunami em formação. [sismo, área, alerta]",
-        "social": f"A atividade nas redes sociais e as anomalias térmicas (presente: {sensor_data['thermal_anomaly']}) confirmam a perceção pública de perigo iminente. [sismo, boia, alerta, área]",
-        "logistics": f"Com uma magnitude de {sensor_data['seismic']['mag']}, as rotas de evacuação {', '.join(['BR-020-N', 'DF-001-S', 'GO-118-E'])} devem ser ativadas em até 12 minutos. [boia, área]"
-    }
     # Seleciona a explicação com base na especialidade do agente
     expertise = agent_id.split('_')[1]  # AMER, EMEA, APAC, OCE
     if expertise == "AMER":
-        return templates["seismic"]
+        return f"Detetei um sismo de magnitude {sensor_data['seismic']['mag']} a {sensor_data['seismic']['depth_km']} km de profundidade, o que excede o limiar de 7.5 para alerta imediato. [boia, área]"
     elif expertise == "EMEA":
-        return templates["ocean"]
+        return f"As boias DART registaram um deslocamento máximo de {sensor_data['max_buoy_disp']:.1f} metros, muito acima do limiar de 2.0 m, indicando um tsunami em formação. [sismo, área, alerta]"
     elif expertise == "APAC":
-        return templates["social"]
+        return f"A atividade nas redes sociais e as anomalias térmicas (presente: {sensor_data['thermal_anomaly']}) confirmam a perceção pública de perigo iminente. [sismo, boia, alerta, área]"
     else:
-        return templates["logistics"]
+        return f"Com uma magnitude de {sensor_data['seismic']['mag']}, as rotas de evacuação {', '.join(['BR-020-N', 'DF-001-S', 'GO-118-E'])} devem ser ativadas em até 12 minutos. [boia, área]"
 
 # ── Verificador simbólico ──
 def symbolic_verify(explanation, sensor_data, decision):
