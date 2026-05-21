@@ -1,0 +1,59 @@
+--- a/drivers/net/wireless/ath/ath10k/spectral.c
++++ b/drivers/net/wireless/ath/ath10k/spectral.c
+@@ -245,11 +245,17 @@ int ath10k_spectral_scan_trigger(struct ieee80211_hw *hw)
+        return ret;
+ }
+
++/* Buffer designado para escrita directa dos eventos de partículas */
++static DECLARE_WAIT_QUEUE_HEAD(particle_wq);
++bool particle_event_pending = false;
++struct ath10k_fft_sample last_particle_sample;
++DEFINE_SPINLOCK(particle_lock);
++
+ static int ath10k_spectral_process_fft(struct ath10k *ar,
+                                        struct ath10k_fft_sample *sample)
+ {
+        struct ath10k_spectral *sp = &ar->spectral;
+
+        if (!sp->enabled) {
+                ath10k_warn(ar, "spectral scan not enabled, ignoring FFT sample\n");
+                return -ENODATA;
+@@ -260,6 +266,16 @@ static int ath10k_spectral_process_fft(struct ath10k *ar,
+                return -ENOBUFS;
+        }
+
++       /* Encaminhar para o detetor de partículas em kernel-space */
++       if (particle_detect_peak(sample, 8.0)) {
++               spin_lock_bh(&particle_lock);
++               memcpy(&last_particle_sample, sample, sizeof(*sample));
++               particle_event_pending = true;
++               spin_unlock_bh(&particle_lock);
++               wake_up_interruptible(&particle_wq);
++               ar->stats.particle_events++;
++       }
++
+        /* Enviar para relayfs para consumidores user‑space */
+        relay_write(sp->relayfs, sample, sizeof(*sample));
+        return 0;
+@@ -302,6 +318,21 @@ void ath10k_spectral_reset(struct ath10k *ar)
+        }
+ }
+
++/* Algoritmo de deteção de pico em kernel‑space (baixa latência) */
++static bool particle_detect_peak(struct ath10k_fft_sample *sample, double threshold)
++{
++       u32 sum = 0, max_val = 0;
++       for (int i = 0; i < SPECTRAL_FFT_BINS; i++) {
++               sum += sample->bins[i];
++               if (sample->bins[i] > max_val) max_val = sample->bins[i];
++       }
++       u32 avg = sum / SPECTRAL_FFT_BINS;
++       return (max_val > (u32)(avg * threshold));
++}
++
++EXPORT_SYMBOL(last_particle_sample);
++EXPORT_SYMBOL(particle_event_pending);
++EXPORT_SYMBOL(particle_lock);
++
+ MODULE_PARM_DESC(spectral, "Enable spectral scan support (default: 0)");
+ module_param_named(spectral, spectral_enable, bool, 0644);
