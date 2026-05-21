@@ -261,7 +261,10 @@ class ORRing:
         }
 
     def measure_transmission_spectrum(self, probe_wavelengths_nm: List[float]) -> List[float]:
-        f_hud_thz = self.hud.get_or_resonant_mode()['frequency_thz']
+        hud_mode = self.hud.get_or_resonant_mode()
+        if hud_mode is None:
+            raise ValueError("HuD ring has no resonant modes in the target band")
+        f_hud_thz = hud_mode['frequency_thz']
         f_or_thz = self.or_mode['frequency_thz']
 
         f_probe_thz = [C_LIGHT / (wl * 1e-9) / 1e12 for wl in probe_wavelengths_nm]
@@ -439,6 +442,12 @@ class CanonicalTests374FAB:
 
     def test_hud_bridge_integrity(self) -> dict:
         hud_mode = self.or_ring.hud.get_or_resonant_mode()
+        if hud_mode is None:
+            return {
+                'test': 'P9_HuD_Bridge_337FAB',
+                'passed': False,
+                'description': 'HuD ring has no resonant modes in the target band'
+            }
         or_mode = self.or_ring.or_mode
 
         hud_in_band = 1175 <= hud_mode['wavelength_nm'] <= 1290
@@ -594,7 +603,11 @@ class Substrate374FAB:
             print(f"   → Colapso {i+1}: {c['coherent_tubulins']} tubulinas, Φ_C={c['phi_c']:.6f}")
 
         print("\n🔗 FASE 3: Bridge com Substrato 337-FAB (HuD)")
-        print(f"   → Frequência HuD: {self.hud.get_or_resonant_mode()['frequency_thz']:.4f} THz")
+        hud_mode = self.hud.get_or_resonant_mode()
+        if hud_mode:
+            print(f"   → Frequência HuD: {hud_mode['frequency_thz']:.4f} THz")
+        else:
+            print("   → Frequência HuD: N/A")
         print(f"   → Frequência OR:  {self.or_ring.or_mode['frequency_thz']:.4f} THz")
         print(f"   → Acoplamento κ: {self.or_ring.coupling_coefficient:.4f}")
 
@@ -641,7 +654,7 @@ if __name__ == '__main__':
         'testes': f"{result['test_results']['passed']}/{result['test_results']['total_tests']}",
         'taxa_pass': f"{result['test_results']['pass_rate']:.1%}",
         'or_frequency_thz': result['or_mode']['frequency_thz'],
-        'hud_frequency_thz': result['hud_mode']['frequency_thz'],
+        'hud_frequency_thz': result['hud_mode']['frequency_thz'] if result['hud_mode'] else None,
         'coupling_kappa': substrate.or_ring.coupling_coefficient,
         'q_factor': result['or_mode']['q_factor']
     }, indent=2, ensure_ascii=False))
