@@ -246,10 +246,10 @@ def execute_375_alert_global_real():
         'estacoes': {sid: {
             'freq_mhz': cfg['freq'],
             'padrao': cfg['standard'],
-            'validadores_recebidos': data['res']['received'],
-            'ghost_validos': data['res']['ghost_count'],
-            'geo_validos': data['res']['geo_valid_count'],
-            'loopseal': data['res']['loopseal_count']
+            'validadores_recebidos': station_results[sid]['res']['received'],
+            'ghost_validos': station_results[sid]['res']['ghost_count'],
+            'geo_validos': station_results[sid]['res']['geo_valid_count'],
+            'loopseal': station_results[sid]['res']['loopseal_count']
         } for sid, cfg in STATIONS_12.items()},
         'metricas_globais': {
             'total_validadores': total,
