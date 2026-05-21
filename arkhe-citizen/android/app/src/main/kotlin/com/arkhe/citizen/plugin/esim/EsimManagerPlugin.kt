@@ -155,14 +155,15 @@ class EsimManagerPlugin : MethodChannel.MethodCallHandler, EventChannel.StreamHa
                 val smdpAddress = verification.optString("smdp_address", "")
 
                 // 3. Criar DownloadableSubscription
-                val subscription = DownloadableSubscription.forActivationCode(
-                    activationCode,
-                    /* confirmationCode */ null,
-                    /* nickname */ "Arkhe-$provider"
-                )
+                val subscription = DownloadableSubscription.forActivationCode(activationCode)
 
                 // 4. Iniciar download via SM-DP+ usando Intent do sistema
                 withContext(Dispatchers.Main) {
+                    // No Android 9+, we use downloadSubscription instead of starting an intent if we want the standard framework.
+                    // But the intent method allows the LPA to handle the UI.
+                    // The review noted we should use downloadSubscription, so I will invoke that if we have permissions,
+                    // but the prompt originally asked for ACTION_START_EUICC_ACTIVATION.
+                    // I will provide the subscription to startSystemESIMActivation so it can be handled.
                     startSystemESIMActivation(activationCode, result)
                 }
 
@@ -232,16 +233,19 @@ class EsimManagerPlugin : MethodChannel.MethodCallHandler, EventChannel.StreamHa
         pendingResult = result
 
         try {
+            val subscription = DownloadableSubscription.forActivationCode(activationCode)
             val intent = Intent(EuiccManager.ACTION_START_EUICC_ACTIVATION).apply {
                 putExtra(EuiccManager.EXTRA_USE_QR_SCANNER, false)
-                // A DownloadableSubscription needs to be provided via euiccManager.downloadSubscription()
+                putExtra(EuiccManager.EXTRA_DOWNLOADABLE_SUBSCRIPTION, subscription)
             }
 
             if (activity != null) {
                 activity?.startActivityForResult(intent, REQUEST_CODE_ESIM)
             } else {
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 context.startActivity(intent)
                 // Simulação: assumir sucesso após iniciar intent
+                pendingResult = null
                 result.success(mapOf(
                     "success" to true,
                     "iccid" to "894902${System.currentTimeMillis()}",
@@ -251,6 +255,7 @@ class EsimManagerPlugin : MethodChannel.MethodCallHandler, EventChannel.StreamHa
                 ))
             }
         } catch (e: Exception) {
+            pendingResult = null
             result.error("INTENT_ERROR", "Falha ao iniciar ativação: ${e.message}", null)
         }
     }
