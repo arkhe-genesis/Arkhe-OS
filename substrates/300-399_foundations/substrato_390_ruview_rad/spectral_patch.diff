@@ -16,7 +16,7 @@
         struct ath10k_spectral *sp = &ar->spectral;
 
 +       /* Preservar timestamp de hardware de alta precisão */
-+       sample->timestamp = ktime_get_real_ns();
++       sample->timestamp = ktime_get_ns();
 +
         if (!sp->enabled) {
                 ath10k_warn(ar, "spectral scan not enabled, ignoring FFT sample\n");
