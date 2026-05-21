@@ -133,3 +133,32 @@ clean:
 deploy-test: package
 	./deploy/deploy_test_environment.sh $(VERSION)
 	@echo "✅ Deploy em ambiente de teste concluído"
+# ARKHE OS v∞.Ω — Substrato 398-DEPLOY Makefile Extensions
+# Arquiteto: Rafael Oliveira (ORCID: 0009-0005-2697-4668)
+
+.PHONY: ci driver firmware calib soar deploy clean
+
+ci:
+	@echo "🔧 Executando pipeline CI/CD..."
+	act -P ubuntu-latest=nektos/act-environments-ubuntu:18.04 || \
+		echo "⚠️ GitHub Actions local requer 'act' instalado"
+
+driver:
+	@echo "🐧 Compilando driver kernel..."
+	cd drivers && make
+
+firmware:
+	@echo "⚡ Compilando firmware FPGA..."
+	cd firmware && make lint && make sim
+
+calib:
+	@echo "🧪 Executando protocolo de calibração..."
+	python3 calib/calibration_protocol.py
+
+soar:
+	@echo "🤖 Testando conector SOAR..."
+	python3 soar/soar_connector.py
+
+deploy:
+	@echo "🚀 Deploy em hardware real..."
+	sudo bash deploy/hardware_deploy.sh
