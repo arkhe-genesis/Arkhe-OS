@@ -1,0 +1,49 @@
+{
+  "substrate": "398-CALIB",
+  "timestamp": 1779382659.5468547,
+  "points": [
+    {
+      "source": "Am-241",
+      "energy_mev": 5.486,
+      "amplitude_mV_mean": 548.45,
+      "amplitude_mV_std": 5.79,
+      "integral_nVs_mean": 5486.0,
+      "counts_detected": 908,
+      "counts_expected": 113486,
+      "efficiency": 0.908,
+      "resolution_percent": 1.06
+    },
+    {
+      "source": "Cs-137",
+      "energy_mev": 0.662,
+      "amplitude_mV_mean": 65.93,
+      "amplitude_mV_std": 5.64,
+      "integral_nVs_mean": 662.0,
+      "counts_detected": 913,
+      "counts_expected": 126140,
+      "efficiency": 0.913,
+      "resolution_percent": 8.56
+    },
+    {
+      "source": "Co-60",
+      "energy_mev": 1.173,
+      "amplitude_mV_mean": 117.23,
+      "amplitude_mV_std": 5.88,
+      "integral_nVs_mean": 1173.0,
+      "counts_detected": 895,
+      "counts_expected": 133066,
+      "efficiency": 0.895,
+      "resolution_percent": 5.02
+    }
+  ],
+  "calibration_curve": {
+    "slope_MeV_per_mV": 0.009999,
+    "intercept_MeV": 0.001828,
+    "r_squared": 1.0,
+    "keV_per_mV": 9.999
+  },
+  "phi_c": 0.98,
+  "status": "CANONIZED",
+  "invariants_passed": 4,
+  "invariants_total": 4
+}
