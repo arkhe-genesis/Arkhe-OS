@@ -200,7 +200,7 @@ class Substrato430BlueMobile:
         subs = [e["subsystem"] for e in self.energy]
         powers = [e["power_mw"] for e in self.energy]
 
-        ax.bar(subs, powers, color='purple')
+        ax.bar(subs, powers, color='purple', log=True)
         ax.set_yscale('log')
         ax.set_ylabel('Potencia (mW) - Escala Log')
         ax.set_xticks(np.arange(len(subs)))
@@ -222,6 +222,7 @@ class Substrato430BlueMobile:
             autopct='%1.1f%%',
             startangle=90,
             explode=explode,
+            normalize=True,
             colors=plt.cm.Paired(
                 np.linspace(
                     0,
@@ -236,8 +237,8 @@ class Substrato430BlueMobile:
         output_dir = "/tmp"
         if not os.path.exists(output_dir):
             os.makedirs(output_dir, exist_ok=True)
-        fd, path = tempfile.mkstemp(dir=output_dir,
-            suffix=".png", prefix="arkhe_430_blue_mobile_")
+        fd, path = tempfile.mkstemp(
+            dir=output_dir, suffix=".png", prefix="arkhe_430_blue_mobile_")
         os.close(fd)  # Close file descriptor since savefig opens it
         plt.savefig(path)
         plt.close(fig)
@@ -263,7 +264,8 @@ class Substrato430BlueMobile:
         output_dir = "/tmp"
         if not os.path.exists(output_dir):
             os.makedirs(output_dir, exist_ok=True)
-        fd, path = tempfile.mkstemp(dir=output_dir, suffix=".json", prefix="substrate_430_")
+        fd, path = tempfile.mkstemp(
+            dir=output_dir, suffix=".json", prefix="substrate_430_")
         with os.fdopen(fd, 'w') as f:
             json.dump(report, f, indent=4)
 
