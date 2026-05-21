@@ -8,7 +8,7 @@ import hashlib
 import random
 import math
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from dataclasses import dataclass, field
 from typing import List, Dict, Optional, Callable
 from enum import Enum
@@ -139,7 +139,7 @@ class PublicAlertAdapter:
             instruction=raw_message.get('instruction', 'Follow local emergency procedures'),
             effective_time=raw_message.get('effective_time', datetime.now(timezone.utc).isoformat()),
             expires_time=raw_message.get('expires_time',
-                (datetime.now(timezone.utc).replace(hour=datetime.now(timezone.utc).hour+1)).isoformat()),
+                (datetime.now(timezone.utc) + timedelta(hours=1)).isoformat()),
             sender=raw_message.get('sender', f'{self.region.operator}-simulator')
         )
 
@@ -271,7 +271,7 @@ class GlobalAlertNetworkSimulation:
                 description=f"Evacuação imediata para zonas altas. Onda prevista em 12 minutos. Região: {config.city}.",
                 instruction="Siga as rotas de evacuação sinalizadas. Mantenha-se informado via canais oficiais.",
                 effective_time=base_time.isoformat(),
-                expires_time=(base_time.replace(hour=base_time.hour+2)).isoformat(),
+                expires_time=(base_time + timedelta(hours=2)).isoformat(),
                 sender=f"{config.operator}-canonical-emitter"
             )
             alerts[region_code] = alert
