@@ -309,6 +309,24 @@ impl PartnerRegistry {
             Box::new(AI2Adapter),
             Box::new(CerebrasAdapter),
             Box::new(MITIBMWatsonAdapter),
+            Box::new(UNICEFAdapter),
+            Box::new(WHOAdapter),
+            Box::new(CERNAdapter),
+            Box::new(JapanGovAdapter),
+            Box::new(UKGovAdapter),
+            Box::new(CanadaGovAdapter),
+            Box::new(GermanyGovAdapter),
+            Box::new(USGovAdapter),
+            Box::new(ChinaGovAdapter),
+            Box::new(EUCommissionAdapter),
+            Box::new(BrazilGovAdapter),
+            Box::new(TsinghuaAdapter),
+            Box::new(IndiaGovAdapter),
+            Box::new(AfricanUnionAdapter),
+            Box::new(MozillaFoundationAdapter),
+            Box::new(RedCrossAdapter),
+            Box::new(BRICSAIAdapter),
+            Box::new(ZaiGLMAdapter),
         ];
         Self { partners }
     }
@@ -418,5 +436,240 @@ impl PartnerAdapter for MITIBMWatsonAdapter {
     fn tier(&self) -> u8 { 1 }
     async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
         Ok(format!("mit_ibm_watson_result_{}_{}", wt, c).into_bytes())
+    }
+}
+
+// Newly added partners
+pub struct UNICEFAdapter;
+#[async_trait]
+impl PartnerAdapter for UNICEFAdapter {
+    fn partner_id(&self) -> PartnerId { PartnerId("unicef".to_string()) }
+    fn model_name(&self) -> &str { "UNICEF" }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.88) }
+    fn region(&self) -> &str { "Global" }
+    fn tier(&self) -> u8 { 2 }
+    async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
+        Ok(format!("unicef_result_{}_{}", wt, c).into_bytes())
+    }
+}
+
+pub struct WHOAdapter;
+#[async_trait]
+impl PartnerAdapter for WHOAdapter {
+    fn partner_id(&self) -> PartnerId { PartnerId("who".to_string()) }
+    fn model_name(&self) -> &str { "WHO" }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.87) }
+    fn region(&self) -> &str { "Global" }
+    fn tier(&self) -> u8 { 2 }
+    async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
+        Ok(format!("who_result_{}_{}", wt, c).into_bytes())
+    }
+}
+
+pub struct CERNAdapter;
+#[async_trait]
+impl PartnerAdapter for CERNAdapter {
+    fn partner_id(&self) -> PartnerId { PartnerId("cern".to_string()) }
+    fn model_name(&self) -> &str { "CERN" }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.86) }
+    fn region(&self) -> &str { "Europe" }
+    fn tier(&self) -> u8 { 2 }
+    async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
+        Ok(format!("cern_result_{}_{}", wt, c).into_bytes())
+    }
+}
+
+pub struct JapanGovAdapter;
+#[async_trait]
+impl PartnerAdapter for JapanGovAdapter {
+    fn partner_id(&self) -> PartnerId { PartnerId("japan_gov".to_string()) }
+    fn model_name(&self) -> &str { "Japan Gov" }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.89) }
+    fn region(&self) -> &str { "Asia-East" }
+    fn tier(&self) -> u8 { 2 }
+    async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
+        Ok(format!("japan_gov_result_{}_{}", wt, c).into_bytes())
+    }
+}
+
+pub struct UKGovAdapter;
+#[async_trait]
+impl PartnerAdapter for UKGovAdapter {
+    fn partner_id(&self) -> PartnerId { PartnerId("uk_gov".to_string()) }
+    fn model_name(&self) -> &str { "UK Gov" }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.88) }
+    fn region(&self) -> &str { "Europe-West" }
+    fn tier(&self) -> u8 { 2 }
+    async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
+        Ok(format!("uk_gov_result_{}_{}", wt, c).into_bytes())
+    }
+}
+
+pub struct CanadaGovAdapter;
+#[async_trait]
+impl PartnerAdapter for CanadaGovAdapter {
+    fn partner_id(&self) -> PartnerId { PartnerId("canada_gov".to_string()) }
+    fn model_name(&self) -> &str { "Canada Gov" }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.86) }
+    fn region(&self) -> &str { "North-America" }
+    fn tier(&self) -> u8 { 2 }
+    async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
+        Ok(format!("canada_gov_result_{}_{}", wt, c).into_bytes())
+    }
+}
+
+pub struct GermanyGovAdapter;
+#[async_trait]
+impl PartnerAdapter for GermanyGovAdapter {
+    fn partner_id(&self) -> PartnerId { PartnerId("germany_gov".to_string()) }
+    fn model_name(&self) -> &str { "Germany Gov" }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.87) }
+    fn region(&self) -> &str { "Europe-West" }
+    fn tier(&self) -> u8 { 2 }
+    async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
+        Ok(format!("germany_gov_result_{}_{}", wt, c).into_bytes())
+    }
+}
+
+pub struct USGovAdapter;
+#[async_trait]
+impl PartnerAdapter for USGovAdapter {
+    fn partner_id(&self) -> PartnerId { PartnerId("us_gov".to_string()) }
+    fn model_name(&self) -> &str { "US Gov" }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.91) }
+    fn region(&self) -> &str { "North-America" }
+    fn tier(&self) -> u8 { 1 }
+    async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
+        Ok(format!("us_gov_result_{}_{}", wt, c).into_bytes())
+    }
+}
+
+pub struct ChinaGovAdapter;
+#[async_trait]
+impl PartnerAdapter for ChinaGovAdapter {
+    fn partner_id(&self) -> PartnerId { PartnerId("china_gov".to_string()) }
+    fn model_name(&self) -> &str { "China Gov" }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.90) }
+    fn region(&self) -> &str { "Asia-East" }
+    fn tier(&self) -> u8 { 1 }
+    async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
+        Ok(format!("china_gov_result_{}_{}", wt, c).into_bytes())
+    }
+}
+
+pub struct EUCommissionAdapter;
+#[async_trait]
+impl PartnerAdapter for EUCommissionAdapter {
+    fn partner_id(&self) -> PartnerId { PartnerId("eu_commission".to_string()) }
+    fn model_name(&self) -> &str { "EU Commission" }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.90) }
+    fn region(&self) -> &str { "Europe" }
+    fn tier(&self) -> u8 { 1 }
+    async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
+        Ok(format!("eu_commission_result_{}_{}", wt, c).into_bytes())
+    }
+}
+
+pub struct BrazilGovAdapter;
+#[async_trait]
+impl PartnerAdapter for BrazilGovAdapter {
+    fn partner_id(&self) -> PartnerId { PartnerId("brazil_gov".to_string()) }
+    fn model_name(&self) -> &str { "Brazil Gov" }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.7353) }
+    fn region(&self) -> &str { "South-America" }
+    fn tier(&self) -> u8 { 3 }
+    async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
+        Ok(format!("brazil_gov_result_{}_{}", wt, c).into_bytes())
+    }
+}
+
+pub struct TsinghuaAdapter;
+#[async_trait]
+impl PartnerAdapter for TsinghuaAdapter {
+    fn partner_id(&self) -> PartnerId { PartnerId("tsinghua".to_string()) }
+    fn model_name(&self) -> &str { "Tsinghua" }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.7743) }
+    fn region(&self) -> &str { "Asia-East" }
+    fn tier(&self) -> u8 { 3 }
+    async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
+        Ok(format!("tsinghua_result_{}_{}", wt, c).into_bytes())
+    }
+}
+
+pub struct IndiaGovAdapter;
+#[async_trait]
+impl PartnerAdapter for IndiaGovAdapter {
+    fn partner_id(&self) -> PartnerId { PartnerId("india_gov".to_string()) }
+    fn model_name(&self) -> &str { "India Gov" }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.85) }
+    fn region(&self) -> &str { "Asia-South" }
+    fn tier(&self) -> u8 { 2 }
+    async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
+        Ok(format!("india_gov_result_{}_{}", wt, c).into_bytes())
+    }
+}
+
+pub struct AfricanUnionAdapter;
+#[async_trait]
+impl PartnerAdapter for AfricanUnionAdapter {
+    fn partner_id(&self) -> PartnerId { PartnerId("african_union".to_string()) }
+    fn model_name(&self) -> &str { "African Union" }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.85) }
+    fn region(&self) -> &str { "Africa" }
+    fn tier(&self) -> u8 { 2 }
+    async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
+        Ok(format!("african_union_result_{}_{}", wt, c).into_bytes())
+    }
+}
+
+pub struct MozillaFoundationAdapter;
+#[async_trait]
+impl PartnerAdapter for MozillaFoundationAdapter {
+    fn partner_id(&self) -> PartnerId { PartnerId("mozilla_foundation".to_string()) }
+    fn model_name(&self) -> &str { "Mozilla Foundation" }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.85) }
+    fn region(&self) -> &str { "Global" }
+    fn tier(&self) -> u8 { 2 }
+    async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
+        Ok(format!("mozilla_foundation_result_{}_{}", wt, c).into_bytes())
+    }
+}
+
+pub struct RedCrossAdapter;
+#[async_trait]
+impl PartnerAdapter for RedCrossAdapter {
+    fn partner_id(&self) -> PartnerId { PartnerId("red_cross".to_string()) }
+    fn model_name(&self) -> &str { "Red Cross" }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.84) }
+    fn region(&self) -> &str { "Global" }
+    fn tier(&self) -> u8 { 3 }
+    async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
+        Ok(format!("red_cross_result_{}_{}", wt, c).into_bytes())
+    }
+}
+
+pub struct BRICSAIAdapter;
+#[async_trait]
+impl PartnerAdapter for BRICSAIAdapter {
+    fn partner_id(&self) -> PartnerId { PartnerId("brics_ai".to_string()) }
+    fn model_name(&self) -> &str { "BRICS AI" }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.82) }
+    fn region(&self) -> &str { "Global" }
+    fn tier(&self) -> u8 { 3 }
+    async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
+        Ok(format!("brics_ai_result_{}_{}", wt, c).into_bytes())
+    }
+}
+
+pub struct ZaiGLMAdapter;
+#[async_trait]
+impl PartnerAdapter for ZaiGLMAdapter {
+    fn partner_id(&self) -> PartnerId { PartnerId("zai_glm".to_string()) }
+    fn model_name(&self) -> &str { "Z.ai (GLM)" }
+    fn phi_c_base(&self) -> PhiC { PhiC(0.85) }
+    fn region(&self) -> &str { "Asia-East" }
+    fn tier(&self) -> u8 { 2 }
+    async fn execute_workload(&self, wt: &str, c: f64, _data: &[u8]) -> Result<Vec<u8>, ArkheError> {
+        Ok(format!("zai_glm_result_{}_{}", wt, c).into_bytes())
     }
 }

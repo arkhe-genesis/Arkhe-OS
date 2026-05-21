@@ -1,6 +1,6 @@
 [package]
 name = "arkhe-safe-core-sdk"
-version = "1.0.0"
+version = "1.2.0"
 edition = "2024"
 authors = ["Arquiteto ORCID 0009-0005-2697-4668"]
 license = "MIT OR Apache-2.0"
