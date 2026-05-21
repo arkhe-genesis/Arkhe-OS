@@ -59,7 +59,7 @@ impl PlanetarySensorMiddleware {
         // 1. Criar timestamp
         let timestamp = SystemTime::now()
             .duration_since(UNIX_EPOCH)
-            .unwrap()
+            .map_err(|e| ArkheError::InvalidSession(format!("Time error: {}", e)))?
             .as_millis() as u64;
 
         // 2. Construir Merkle leaf com os dados do sensor
@@ -69,6 +69,7 @@ impl PlanetarySensorMiddleware {
         hasher.update(&lon.to_le_bytes());
         hasher.update(&timestamp.to_le_bytes());
         hasher.update(&value.to_le_bytes());
+        hasher.update(format!("{:?}", sensor_type).as_bytes());
         let merkle_root: [u8; 32] = hasher.finalize().into();
 
         // 3. Assinar o fluxo (simulação: placeholder para ML-DSA)
@@ -89,10 +90,16 @@ impl PlanetarySensorMiddleware {
             signature,
         };
 
-        self.published_streams
+        let streams = self.published_streams
             .entry(node_id.to_string())
-            .or_insert_with(Vec::new)
-            .push(stream.clone());
+            .or_insert_with(Vec::new);
+
+        streams.push(stream.clone());
+
+        // Evict older streams to prevent resource leaks
+        if streams.len() > 1000 {
+            streams.drain(0..streams.len() - 1000);
+        }
 
         // 5. Ancorar na TemporalChain (evento off‑chain → on‑chain bridge)
         // Em produção: enviar para o contrato TemporalAnchoring.sol
