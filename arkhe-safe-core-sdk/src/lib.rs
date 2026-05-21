@@ -2,6 +2,7 @@
 
 pub mod auth;
 pub mod compute;
+pub mod broadcast;
 pub mod snom;
 pub mod hypercycle;
 pub mod gates;

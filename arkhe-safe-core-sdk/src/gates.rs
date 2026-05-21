@@ -2,7 +2,7 @@
 //!
 //! 7 Gates routing
 
-use crate::{ArkheError, PartnerId};
+use crate::{ArkheError, PartnerId, broadcast::CryptoBroadcast};
 
 /// Continental router trait
 pub trait ContinentalRouter {
@@ -40,3 +40,23 @@ impl ContinentalRouter for PGRouter {
 
 /// Weyl signature
 pub struct WeylSignature(pub f64);
+
+
+/// Continental Broadcast using optimal depth routing to reduce state sync latency
+pub struct ContinentalBroadcast {
+    pub broadcast: CryptoBroadcast,
+}
+
+impl ContinentalBroadcast {
+    pub fn new() -> Self {
+        // n = 7 gates, t = 4 (majority corrupt threshold according to specs)
+        Self {
+            broadcast: CryptoBroadcast::new(7, 4),
+        }
+    }
+
+    /// Disseminates state update to 7 gates using optimal depth block pipeline
+    pub fn disseminate_state(&mut self, source_gate: &str, state_payload: Vec<u8>) -> Result<(), String> {
+        self.broadcast.broadcast(state_payload, source_gate)
+    }
+}
