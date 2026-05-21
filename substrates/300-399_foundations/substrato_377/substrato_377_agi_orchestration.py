@@ -2,6 +2,8 @@ import json
 import hashlib
 import math
 import statistics
+import tempfile
+import os
 from datetime import datetime, timezone
 import random
 
@@ -257,7 +259,8 @@ else:
     phi_global = 1.0
 
 # Φ_C com ponderação AGI
-latency_score = max(0, 1.0 - (statistics.mean([v['latency_ms'] + v['verify_time_ms'] for v in validators_global if v['received_alert']]) / 100))
+latencies = [v['latency_ms'] + v['verify_time_ms'] for v in validators_global if v['received_alert']]
+latency_score = max(0, 1.0 - (statistics.mean(latencies) / 100)) if latencies else 0.0
 ghost_score = ghost_global
 coverage_score = total_received / N_VALIDATORS_TOTAL
 integration_score = 1.0
@@ -283,9 +286,9 @@ stats_global = {
     'total_ghost_valid': total_ghost,
     'total_geo_valid': total_geo,
     'byzantine_total': byzantine_count,
-    'latency_diffusion_avg_ms': float(statistics.mean([v['latency_ms'] for v in validators_global if v['received_alert']])),
-    'latency_verify_avg_ms': float(statistics.mean([v['verify_time_ms'] for v in validators_global if v['received_alert']])),
-    'latency_total_avg_ms': float(statistics.mean([v['latency_ms'] + v['verify_time_ms'] for v in validators_global if v['received_alert']])),
+    'latency_diffusion_avg_ms': float(statistics.mean([v['latency_ms'] for v in validators_global if v['received_alert']])) if total_received > 0 else 0.0,
+    'latency_verify_avg_ms': float(statistics.mean([v['verify_time_ms'] for v in validators_global if v['received_alert']])) if total_received > 0 else 0.0,
+    'latency_total_avg_ms': float(statistics.mean(latencies)) if latencies else 0.0,
     'agi_consensus_reached': consensus_global,
     'agi_yes_weight': float(yes_weight),
     'agi_quorum': float(quorum_threshold),
@@ -335,9 +338,10 @@ report_377 = {
     } for a in agi_nodes],
 }
 
-json_path = '/tmp/substrate_377_agi_orchestration_report.json'
-with open(json_path, 'w', encoding='utf-8') as f:
+fd, json_path = tempfile.mkstemp(prefix="substrate_377_agi_", suffix="_report.json", dir="/tmp")
+with os.fdopen(fd, 'w', encoding='utf-8') as f:
     json.dump(report_377, f, indent=2, ensure_ascii=False)
+
 
 hasher = hashlib.sha3_256()
 hasher.update(b'Substrate_377_AGI_Orchestration_Global_Alert_CANONIZED')

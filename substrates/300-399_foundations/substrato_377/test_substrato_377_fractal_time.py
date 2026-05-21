@@ -19,7 +19,7 @@ class TestSubstrato377(unittest.TestCase):
         self.assertGreater(new_state, 0.0)
 
     def test_aeneid_fractal_clock(self):
-        clock = AeneidFractalClock(node_id="test", peers=[], num_validators=10)
+        clock = AeneidFractalClock(num_validators=10)
         self.assertEqual(len(clock.validators), 10)
 
         # Run consensus for 3 steps
