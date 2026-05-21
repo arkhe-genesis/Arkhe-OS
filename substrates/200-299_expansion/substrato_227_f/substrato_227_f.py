@@ -139,9 +139,9 @@ class PCBDesign:
         payload = json.dumps({
             "name": self.name,
             "version": self.version,
-            "nets": len(self.nets),
-            "components": sorted([c.ref for c in self.components]),
-            "vias": len(self.vias),
+            "nets": [{"name": n.name, "nodes": n.nodes, "width": n.width_mm} for n in self.nets],
+            "components": sorted([{"ref": c.ref, "pn": c.pn, "pos": c.pos} for c in self.components], key=lambda x: x["ref"]),
+            "vias": [{"pos": v.pos, "net": v.net} for v in self.vias],
             "layers": self.layers,
             "thickness": self.thickness_mm
         }, sort_keys=True)
@@ -215,8 +215,8 @@ class DRCModule:
                     "min_mm": self.MIN_TRACE_WIDTH_MM
                 })
         if self.design.vias:
-            max_drill = max(v.drill_mm for v in self.design.vias)
-            aspect = self.design.thickness_mm / max_drill
+            min_drill = min(v.drill_mm for v in self.design.vias)
+            aspect = self.design.thickness_mm / min_drill
             if aspect > self.MAX_ASPECT_RATIO:
                 issues.append({
                     "type": "aspect_ratio",
@@ -434,11 +434,11 @@ class SecurityModule:
         if floating_vias:
             self.results.threat_checks.append((
                 ThreatID.T1_TROJAN_LAYER,
-                Severity.WARN,
+                Severity.FAIL,
                 str(len(floating_vias)) + " floating vias detected",
                 {"floating_vias": floating_vias}
             ))
-            return Severity.WARN
+            return Severity.FAIL
         self.results.threat_checks.append((
             ThreatID.T1_TROJAN_LAYER,
             Severity.PASS,
@@ -467,11 +467,11 @@ class SecurityModule:
         if suspicious_nets:
             self.results.threat_checks.append((
                 ThreatID.T3_HIDDEN_ANTENNA,
-                Severity.WARN,
+                Severity.FAIL,
                 str(len(suspicious_nets)) + " nets may act as unintended antennas",
                 {"suspicious_nets": suspicious_nets}
             ))
-            return Severity.WARN
+            return Severity.FAIL
         self.results.threat_checks.append((
             ThreatID.T3_HIDDEN_ANTENNA,
             Severity.PASS,
