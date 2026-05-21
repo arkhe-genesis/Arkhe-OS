@@ -1,0 +1,47 @@
+name: ARKHE OS CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        pip install pytest pytest-cov
+
+    - name: Run Core Tests
+      run: |
+        # Executa os scripts principais para garantir que funcionam e não dão erro
+        python3 substrates/300-399_foundations/substrato_390_opt/substrato_390_opt.py
+        python3 substrates/300-399_foundations/substrato_393_calib_real/substrato_393_calib_real.py
+        python3 substrates/300-399_foundations/substrato_394_soar/substrato_394_soar.py
+
+  deploy:
+    needs: build_and_test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Simulate Deploy
+      run: |
+        echo "Deploying ARKHE OS to production nodes..."
+        echo "Updating FPGA firmware..."
+        echo "Restarting Daemons..."
+        echo "Deploy Complete."
