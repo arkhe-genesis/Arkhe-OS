@@ -236,7 +236,7 @@ def main():
         "correlation": correlation
     }
 
-    fd, path = tempfile.mkstemp(prefix="substrate_408_oura_opt_report_", suffix=".json", dir="/tmp")
+    fd, path = tempfile.mkstemp(prefix="substrate_408_oura_opt_report_", suffix=".json")
     with os.fdopen(fd, 'w') as f:
         json.dump(report_data, f, indent=4)
 
