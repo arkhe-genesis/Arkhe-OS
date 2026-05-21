@@ -8,7 +8,7 @@ from dataclasses import dataclass, field
 from typing import List, Dict, Optional
 
 # Reuse SIGHA core
-from arkhe.layers.sigha_core import FisherBuresManifold, NaturalGradientFlow
+from src.arkhe.layers.sigha_core import FisherBuresManifold, NaturalGradientFlow
 
 # ═══════════════════════════════════════════════════════════
 # 1. Genomic Embedding Layer
@@ -74,7 +74,7 @@ class PhiCGatedAttention:
             fid = np.real(np.trace(sqrtm(sqrt_q @ key_rho @ sqrt_q)))
             # Modulate by local Φ_C (distance from coherent state)
             # Check for Bures distance implementation, adding fallback if needed
-            phi_mod = 1.0 / (1.0 + FisherBuresManifold(query_rho.shape[0]).bures_distance(key_rho, phi_c_field))
+            phi_mod = 1.0 / (1.0 + FisherBuresManifold(key_rho.shape[0]).bures_distance(key_rho, phi_c_field))
             scores.append(fid * phi_mod)
         return np.array(scores) / (np.sum(scores) + 1e-12)
 
