@@ -6,9 +6,9 @@
 
 +/* Buffer designado para escrita directa dos eventos de partículas */
 +static DECLARE_WAIT_QUEUE_HEAD(particle_wq);
-+static bool particle_event_pending = false;
-+static struct ath10k_fft_sample last_particle_sample;
-+static DEFINE_SPINLOCK(particle_lock);
++bool particle_event_pending = false;
++struct ath10k_fft_sample last_particle_sample;
++DEFINE_SPINLOCK(particle_lock);
 +
  static int ath10k_spectral_process_fft(struct ath10k *ar,
                                         struct ath10k_fft_sample *sample)
