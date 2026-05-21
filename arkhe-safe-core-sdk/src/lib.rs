@@ -6,6 +6,7 @@ pub mod snom;
 pub mod hypercycle;
 pub mod gates;
 pub mod partners;
+pub mod fractal_wave;
 
 use serde::{Deserialize, Serialize};
 use sha3::{Sha3_256, Digest};
