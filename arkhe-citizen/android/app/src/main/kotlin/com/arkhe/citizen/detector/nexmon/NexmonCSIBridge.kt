@@ -450,8 +450,10 @@ class NexmonFlutterPlugin {
             }
 
             eventChannel.setStreamHandler(object : io.flutter.plugin.common.EventChannel.StreamHandler {
+                private var streamJob: Job? = null
+
                 override fun onListen(arguments: Any?, events: io.flutter.plugin.common.EventChannel.EventSink?) {
-                    CoroutineScope(Dispatchers.Main).launch {
+                    streamJob = CoroutineScope(Dispatchers.Main).launch {
                         bridge.frameFlow.collect { frame ->
                             events?.success(mapOf(
                                 "timestampNs" to frame.timestampNs,
@@ -466,7 +468,10 @@ class NexmonFlutterPlugin {
                         }
                     }
                 }
-                override fun onCancel(arguments: Any?) {}
+                override fun onCancel(arguments: Any?) {
+                    streamJob?.cancel()
+                    streamJob = null
+                }
             })
         }
     }

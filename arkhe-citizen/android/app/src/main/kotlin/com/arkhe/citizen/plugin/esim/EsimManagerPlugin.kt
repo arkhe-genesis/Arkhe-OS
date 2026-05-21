@@ -225,12 +225,16 @@ class EsimManagerPlugin : MethodChannel.MethodCallHandler, EventChannel.StreamHa
 
     @RequiresApi(Build.VERSION_CODES.P)
     private fun startSystemESIMActivation(activationCode: String, result: MethodChannel.Result) {
+        if (pendingResult != null) {
+            result.error("CONCURRENT_REQUEST", "Outra ativação está em progresso", null)
+            return
+        }
         pendingResult = result
 
         try {
             val intent = Intent(EuiccManager.ACTION_START_EUICC_ACTIVATION).apply {
                 putExtra(EuiccManager.EXTRA_USE_QR_SCANNER, false)
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                // A DownloadableSubscription needs to be provided via euiccManager.downloadSubscription()
             }
 
             if (activity != null) {
