@@ -300,11 +300,12 @@ if __name__ == '__main__':
     ax.grid(True, alpha=0.3)
     ax.set_xlim(1175, 1290)
 
-    # Check if /tmp exists
     import os
-    os.makedirs('/tmp', exist_ok=True)
+    import tempfile
 
     plt.tight_layout()
-    plt.savefig('/tmp/or_ring_spectrum_v12.png', dpi=150)
+    fd, out_path = tempfile.mkstemp(prefix='or_ring_spectrum_v12_', suffix='.png')
+    os.close(fd)
+    plt.savefig(out_path, dpi=150)
     # plt.show()
-    print("\n📊 Gráfico final salvo: /tmp/or_ring_spectrum_v12.png")
+    print(f"\n📊 Gráfico final salvo: {out_path}")
