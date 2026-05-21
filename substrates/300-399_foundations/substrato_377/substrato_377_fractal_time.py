@@ -147,7 +147,7 @@ def check_invariants(phi_c: float):
     return {
         "ghost": phi_c >= GHOST,
         "loopseal": phi_c >= LOOPSEAL,
-        "gap_sovereign": phi_c >= 0.85
+        "gap_sovereign": phi_c >= GAP_SOVEREIGN
     }
 
 def canonize_377():

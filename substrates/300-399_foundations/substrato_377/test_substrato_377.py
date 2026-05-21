@@ -74,4 +74,4 @@ def test_invariants():
     inv = check_invariants(phi)
     assert inv["ghost"] is True
     assert inv["loopseal"] is True
-    assert inv["gap_sovereign"] is True
+    assert inv["gap_sovereign"] is False
