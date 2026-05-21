@@ -28,12 +28,16 @@ module event_fifo (
             if (wr_en && !full) begin
                 mem[wr_ptr] <= din;
                 wr_ptr      <= wr_ptr + 1;
-                count       <= count + 1;
             end
             if (rd_en && !empty) begin
                 rd_ptr <= rd_ptr + 1;
-                count  <= count - 1;
             end
+
+            case ({wr_en && !full, rd_en && !empty})
+                2'b10: count <= count + 1;
+                2'b01: count <= count - 1;
+                2'b11: count <= count;
+            endcase
         end
     end
 endmodule
