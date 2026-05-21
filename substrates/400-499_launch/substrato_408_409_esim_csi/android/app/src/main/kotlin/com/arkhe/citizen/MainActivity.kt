@@ -24,7 +24,7 @@ class MainActivity : FlutterActivity() {
         // Registrar plugin eSIM (408)
         esimPlugin = EsimManagerPlugin()
         esimPlugin?.let { plugin ->
-            EsimManagerPlugin.registerWithEngine(flutterEngine, this)
+            EsimManagerPlugin.registerWithEngine(flutterEngine, plugin)
             plugin.setActivity(this)
         }
 

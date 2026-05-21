@@ -134,7 +134,7 @@ class NexmonCSIBridge(private val context: Context) {
 
         // Desativar modo monitor
         try {
-            Runtime.getRuntime().exec("su -c 'nexutil -m0'")
+            Runtime.getRuntime().exec(arrayOf("su", "-c", "nexutil -m0"))
         } catch (e: Exception) {
             Log.w("ArkheNexmon", "Falha ao desativar modo monitor: ${e.message}")
         }
@@ -188,6 +188,7 @@ class NexmonCSIBridge(private val context: Context) {
 
                 while (isRunning) {
                     val bytesRead = fis.read(buffer)
+                    if (bytesRead == -1) break
                     if (bytesRead > 0) {
                         val frame = parseNexmonFrame(buffer.copyOf(bytesRead))
                         _frameFlow.emit(frame)
@@ -313,21 +314,22 @@ class NexmonCSIBridge(private val context: Context) {
 
     private fun activateNexmon(channel: Int, filter: String) {
         try {
+            require(filter.matches(Regex("^[a-zA-Z0-9_x]+$"))) { "Invalid filter" }
             // Desativar WiFi do sistema
-            Runtime.getRuntime().exec("su -c 'svc wifi disable'")
+            Runtime.getRuntime().exec(arrayOf("su", "-c", "svc wifi disable"))
             Thread.sleep(500)
 
             // Ativar interface
-            Runtime.getRuntime().exec("su -c 'ifconfig wlan0 up'")
+            Runtime.getRuntime().exec(arrayOf("su", "-c", "ifconfig wlan0 up"))
             Thread.sleep(200)
 
             // Configurar modo monitor
-            Runtime.getRuntime().exec("su -c 'nexutil -m1'")
-            Runtime.getRuntime().exec("su -c 'nexutil -c$channel'")
-            Runtime.getRuntime().exec("su -c 'nexutil -b$filter'")
+            Runtime.getRuntime().exec(arrayOf("su", "-c", "nexutil -m1"))
+            Runtime.getRuntime().exec(arrayOf("su", "-c", "nexutil -c$channel"))
+            Runtime.getRuntime().exec(arrayOf("su", "-c", "nexutil -b$filter"))
 
-            // Criar device node
-            Runtime.getRuntime().exec("su -c 'mknod /dev/nexmon_csi c 243 0 2>/dev/null; chmod 666 /dev/nexmon_csi'")
+            // Criar device node restrito
+            Runtime.getRuntime().exec(arrayOf("su", "-c", "mknod /dev/nexmon_csi c 243 0 2>/dev/null; chmod 600 /dev/nexmon_csi; chown system:system /dev/nexmon_csi"))
 
         } catch (e: Exception) {
             Log.e("ArkheNexmon", "Falha ao ativar Nexmon: ${e.message}")
@@ -336,7 +338,7 @@ class NexmonCSIBridge(private val context: Context) {
 
     private fun detectChipFamily(): String {
         return try {
-            val process = Runtime.getRuntime().exec("su -c 'cat /data/local/tmp/nexmon_status.json 2>/dev/null || echo unknown'")
+            val process = Runtime.getRuntime().exec(arrayOf("su", "-c", "cat /data/local/tmp/nexmon_status.json 2>/dev/null || echo unknown"))
             val output = process.inputStream.bufferedReader().readText().trim()
             if (output != "unknown") {
                 // Parse JSON simples
@@ -344,7 +346,7 @@ class NexmonCSIBridge(private val context: Context) {
                 chipMatch?.groupValues?.get(1) ?: "unknown"
             } else {
                 // Fallback: detectar via dmesg
-                val dmesgProcess = Runtime.getRuntime().exec("su -c 'dmesg | grep -i brcm | head -1'")
+                val dmesgProcess = Runtime.getRuntime().exec(arrayOf("su", "-c", "dmesg | grep -i brcm | head -1"))
                 val dmesgOutput = dmesgProcess.inputStream.bufferedReader().readText()
                 when {
                     dmesgOutput.contains("43430") -> "bcm43430a1"
@@ -361,7 +363,7 @@ class NexmonCSIBridge(private val context: Context) {
 
     private fun checkRootAccess(): Boolean {
         return try {
-            val process = Runtime.getRuntime().exec("su -c 'id'")
+            val process = Runtime.getRuntime().exec(arrayOf("su", "-c", "id"))
             val output = process.inputStream.bufferedReader().readText()
             output.contains("uid=0")
         } catch (e: Exception) {
@@ -447,8 +449,10 @@ class NexmonFlutterPlugin {
             }
 
             eventChannel.setStreamHandler(object : io.flutter.plugin.common.EventChannel.StreamHandler {
+                private var streamJob: Job? = null
+
                 override fun onListen(arguments: Any?, events: io.flutter.plugin.common.EventChannel.EventSink?) {
-                    CoroutineScope(Dispatchers.Main).launch {
+                    streamJob = CoroutineScope(Dispatchers.Main).launch {
                         bridge.frameFlow.collect { frame ->
                             events?.success(mapOf(
                                 "timestampNs" to frame.timestampNs,
@@ -463,7 +467,9 @@ class NexmonFlutterPlugin {
                         }
                     }
                 }
-                override fun onCancel(arguments: Any?) {}
+                override fun onCancel(arguments: Any?) {
+                    streamJob?.cancel()
+                }
             })
         }
     }

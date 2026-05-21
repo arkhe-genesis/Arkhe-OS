@@ -57,10 +57,7 @@ class EsimManagerPlugin : MethodChannel.MethodCallHandler, EventChannel.StreamHa
         }
 
         @JvmStatic
-        fun registerWithEngine(engine: FlutterEngine, context: Context) {
-            val plugin = EsimManagerPlugin()
-            plugin.context = context
-
+        fun registerWithEngine(engine: FlutterEngine, plugin: EsimManagerPlugin) {
             MethodChannel(engine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler(plugin)
             EventChannel(engine.dartExecutor.binaryMessenger, STATUS_CHANNEL).setStreamHandler(plugin)
         }
