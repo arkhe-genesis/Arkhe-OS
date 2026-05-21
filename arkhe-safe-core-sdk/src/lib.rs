@@ -9,6 +9,8 @@ pub mod gates;
 pub mod partners;
 pub mod octra_bridge;
 pub mod bulletproof_access;
+pub mod planetary_sensors;
+pub mod fractal_wave;
 
 use serde::{Deserialize, Serialize};
 use sha3::{Sha3_256, Digest};
