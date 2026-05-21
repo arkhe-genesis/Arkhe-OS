@@ -215,14 +215,16 @@ class DRCModule:
                     "min_mm": self.MIN_TRACE_WIDTH_MM
                 })
         if self.design.vias:
-            min_drill = min(v.drill_mm for v in self.design.vias)
-            aspect = self.design.thickness_mm / min_drill
-            if aspect > self.MAX_ASPECT_RATIO:
-                issues.append({
-                    "type": "aspect_ratio",
-                    "value": round(aspect, 2),
-                    "max": self.MAX_ASPECT_RATIO
-                })
+            valid_vias = [v for v in self.design.vias if v.drill_mm > 0]
+            if valid_vias:
+                min_drill = min(v.drill_mm for v in valid_vias)
+                aspect = self.design.thickness_mm / min_drill
+                if aspect > self.MAX_ASPECT_RATIO:
+                    issues.append({
+                        "type": "aspect_ratio",
+                        "value": round(aspect, 2),
+                        "max": self.MAX_ASPECT_RATIO
+                    })
         for via in self.design.vias:
             annular = (via.pad_mm - via.drill_mm) / 2
             if annular < self.MIN_ANNULAR_RING_MM:
