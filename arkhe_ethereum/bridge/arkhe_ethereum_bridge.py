@@ -17,15 +17,23 @@ class ArkheEthereumBridge:
         self.bridge_contract = None
         self.payment_contract = None
         self.governance_contract = None
+        self.aa_contract = None
+        self.verification_contract = None
 
     def connect_contracts(self, identity_address, identity_abi,
                           bridge_address, bridge_abi,
                           payment_address, payment_abi,
-                          governance_address, governance_abi):
+                          governance_address, governance_abi,
+                          aa_address=None, aa_abi=None,
+                          verification_address=None, verification_abi=None):
         self.identity_contract = self.w3.eth.contract(address=identity_address, abi=identity_abi)
         self.bridge_contract = self.w3.eth.contract(address=bridge_address, abi=bridge_abi)
         self.payment_contract = self.w3.eth.contract(address=payment_address, abi=payment_abi)
         self.governance_contract = self.w3.eth.contract(address=governance_address, abi=governance_abi)
+        if aa_address and aa_abi:
+            self.aa_contract = self.w3.eth.contract(address=aa_address, abi=aa_abi)
+        if verification_address and verification_abi:
+            self.verification_contract = self.w3.eth.contract(address=verification_address, abi=verification_abi)
 
     def _send_transaction(self, tx):
         if not self.account:
