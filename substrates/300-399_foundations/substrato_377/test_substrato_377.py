@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 from substrato_377_fractal_time import FractalWaveEngine, DistributedFractalFFT, AeneidFractalClock, unified_phi_c, check_invariants
 
 def test_fractal_wave_consensus():
-    engine = FractalWaveEngine(n_nodes=59)
+    engine = FractalWaveEngine(node_id=0, position=(0.0, 0.0), n_nodes=59)
     result = engine.simulate_fractal_wave_consensus()
     assert result["waves_to_converge"] > 0
     # In realistic sim it converges around 7-8 waves but for testing small iteration limit might not reach < 0.05

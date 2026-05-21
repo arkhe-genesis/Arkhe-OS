@@ -1,3 +1,6 @@
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 import math
 import unittest
 from substrato_377_fractal_time import FractalWaveEngine, AeneidFractalClock, DistributedFractalFFT
@@ -16,7 +19,7 @@ class TestSubstrato377(unittest.TestCase):
         self.assertGreater(new_state, 0.0)
 
     def test_aeneid_fractal_clock(self):
-        clock = AeneidFractalClock(num_validators=10)
+        clock = AeneidFractalClock(node_id="test", peers=[], num_validators=10)
         self.assertEqual(len(clock.validators), 10)
 
         # Run consensus for 3 steps
