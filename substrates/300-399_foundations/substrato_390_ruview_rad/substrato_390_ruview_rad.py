@@ -108,10 +108,16 @@ class ParticleDetectionAlgorithm:
     def __init__(self):
         self.threshold = 10.0; self.baseline_window = 100; self.coincidence_window_us = 100
     def detect(self, fft_sample: List[float]) -> bool:
+        if not fft_sample:
+            return False
         avg = sum(fft_sample) / len(fft_sample)
+        if avg == 0:
+            return False
         max_val = max(fft_sample)
         return max_val > (avg * self.threshold)
     def classify(self, fft_sample: List[float], timestamp_ns: int) -> dict:
+        if not fft_sample or sum(fft_sample) == 0:
+            return {"detected": False, "classification": "invalid"}
         avg = sum(fft_sample) / len(fft_sample)
         max_val = max(fft_sample)
         max_bin = fft_sample.index(max_val)
