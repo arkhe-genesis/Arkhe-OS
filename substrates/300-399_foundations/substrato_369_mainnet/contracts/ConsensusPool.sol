@@ -34,6 +34,12 @@ contract ConsensusPool is InvariantGuard {
         uint256 votes
     );
 
+    event InferenceProofSubmitted(
+        address indexed node,
+        bytes32 indexed proofHash,
+        uint256 timestamp
+    );
+
     // Propor novo bloco com validação de invariante
     function proposeBlock(
         bytes32 previousHash,
@@ -68,6 +74,9 @@ contract ConsensusPool is InvariantGuard {
         if (address(disputeControl) != address(0) && disputeControl.isIsolated(msg.sender)) {
             revert("Node is isolated due to disputes");
         }
+
+        // Armazenar a prova via emissão de evento
+        emit InferenceProofSubmitted(msg.sender, proofHash, block.timestamp);
     }
 
     // Votar em bloco proposto

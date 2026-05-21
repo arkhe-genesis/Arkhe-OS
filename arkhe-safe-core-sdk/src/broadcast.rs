@@ -27,7 +27,7 @@ impl CryptoBroadcast {
     /// Divide a mensagem em q = ⌈2n/(n‑t)⌉ blocos.
     fn split_message(&self, message: &[u8]) -> Vec<Vec<u8>> {
         let q = (2 * self.n) / (self.n - self.t);
-        let block_size = (message.len() + q - 1) / q;
+        let block_size = std::cmp::max(1, (message.len() + q - 1) / q);
         message.chunks(block_size).map(|c| c.to_vec()).collect()
     }
 
