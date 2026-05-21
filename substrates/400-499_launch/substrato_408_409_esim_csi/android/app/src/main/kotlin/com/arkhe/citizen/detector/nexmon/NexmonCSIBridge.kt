@@ -329,7 +329,8 @@ class NexmonCSIBridge(private val context: Context) {
             Runtime.getRuntime().exec(arrayOf("su", "-c", "nexutil -b$filter"))
 
             // Criar device node restrito
-            Runtime.getRuntime().exec(arrayOf("su", "-c", "mknod /dev/nexmon_csi c 243 0 2>/dev/null; chmod 600 /dev/nexmon_csi; chown system:system /dev/nexmon_csi"))
+            val uid = android.os.Process.myUid()
+            Runtime.getRuntime().exec(arrayOf("su", "-c", "mknod /dev/nexmon_csi c 243 0 2>/dev/null; chmod 600 /dev/nexmon_csi; chown $uid:$uid /dev/nexmon_csi"))
 
         } catch (e: Exception) {
             Log.e("ArkheNexmon", "Falha ao ativar Nexmon: ${e.message}")
