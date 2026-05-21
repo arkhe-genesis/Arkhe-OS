@@ -1,0 +1,17 @@
+{
+  "name": "Voidmob",
+  "coverage_countries": 200,
+  "payment_methods": [
+    "BTC",
+    "XMR",
+    "SOL"
+  ],
+  "kyc_required": false,
+  "ip_visible": true,
+  "ip_selectable": true,
+  "censorship_resistance": true,
+  "privacy_policy_url": "https://voidmob.io/privacy",
+  "data_retention_days": 7,
+  "self_hosted": false,
+  "price_tier": "$$"
+}

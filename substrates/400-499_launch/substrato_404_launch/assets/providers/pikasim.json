@@ -1,0 +1,15 @@
+{
+  "name": "Pikasim",
+  "coverage_countries": 180,
+  "payment_methods": [
+    "BTC",
+    "XMR"
+  ],
+  "kyc_required": false,
+  "ip_visible": false,
+  "censorship_resistance": true,
+  "privacy_policy_url": "https://pikasim.io/privacy",
+  "data_retention_days": 3,
+  "self_hosted": false,
+  "price_tier": "$$"
+}
