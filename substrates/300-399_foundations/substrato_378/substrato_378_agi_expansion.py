@@ -104,6 +104,6 @@ if __name__ == "__main__":
     substrate.run_simulation()
 
     # Save output to JSON
-    with open("substrato_378_output.json", "w") as f:
+    with open("substrato_378_output.json", "w", encoding="utf-8") as f:
         json.dump(substrate.to_json(), f, indent=4, ensure_ascii=False)
     print("Report saved to substrato_378_output.json")
