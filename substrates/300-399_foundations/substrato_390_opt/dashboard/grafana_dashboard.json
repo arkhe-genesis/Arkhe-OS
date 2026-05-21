@@ -1,0 +1,29 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "ARKHE 390-OPT: Real-Time Cherenkov Detection",
+    "tags": ["arkhe", "cherenkov", "sipm", "radiation"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1, "title": "Event Rate (Hz)", "type": "stat",
+        "datasource": "InfluxDB",
+        "targets": [{"query": "SELECT count(\"energy_kev\") FROM \"events\" WHERE $timeFilter GROUP BY time(1s)"}]
+      },
+      {
+        "id": 2, "title": "Energy Spectrum", "type": "histogram",
+        "targets": [{"query": "SELECT \"energy_kev\" FROM \"events\" WHERE $timeFilter"}]
+      },
+      {
+        "id": 3, "title": "Particle Classification", "type": "pie",
+        "targets": [{"query": "SELECT count(\"particle_type\") FROM \"events\" WHERE $timeFilter GROUP BY \"particle_type\""}]
+      },
+      {
+        "id": 4, "title": "System Health", "type": "singlestat",
+        "targets": [{"query": "SELECT last(\"cpu_usage\") FROM \"system\" WHERE $timeFilter"}]
+      }
+    ],
+    "time": {"from": "now-5m", "to": "now"},
+    "refresh": "5s"
+  }
+}

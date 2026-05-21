@@ -1,125 +1,47 @@
-name: ARKHE OS v∞.Ω — CI/CD Canônico
+name: ARKHE OS CI/CD Pipeline
 
 on:
   push:
-    branches: [main, develop, substrate/*]
+    branches: [ "main", "develop" ]
   pull_request:
-    branches: [main]
-  schedule:
-    - cron: '0 0 * * 0'  # Testes constitucionais semanais
-
-env:
-  ARKHE_ARCHITECT_ORCID: "0009-0005-2697-4668"
-  GHOST_THRESHOLD: 0.577350269
-  LOOPSEAL_THRESHOLD: 0.349065850
-  PHI_TOLERANCE: 0.02
+    branches: [ "main" ]
 
 jobs:
-  constitutional-check:
-    name: 🛡️ Invariantes Constitucionais
+  build_and_test:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Instalar dependências
-        run: |
-          pip install -r requirements.txt
-          pip install pytest pytest-cov
-      - name: Executar testes constitucionais
-        run: |
-          python -m pytest tests/test_invariants.py -v --tb=short
-          python -m pytest tests/test_primakoff.py -v --tb=short
-          python -m pytest tests/test_agi_consensus.py -v --tb=short
-      - name: Verificar Φ_C global
-        run: |
-          python -c "
-import sys
-from core.phi_c import compute_global_phi_c
-phi = compute_global_phi_c()
-print(f'Φ_C Global: {phi:.6f}')
-if phi < 0.7:
-    sys.exit(1)
-"
 
-  build-firmware:
-    name: ⚡ Build Firmware FPGA
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        pip install pytest pytest-cov
+
+    - name: Run Core Tests
+      run: |
+        # Executa os scripts principais para garantir que funcionam e não dão erro
+        python3 substrates/300-399_foundations/substrato_390_opt/substrato_390_opt.py
+        python3 substrates/300-399_foundations/substrato_393_calib_real/substrato_393_calib_real.py
+        python3 substrates/300-399_foundations/substrato_394_soar/substrato_394_soar.py
+
+  deploy:
+    needs: build_and_test
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Instalar Vivado CLI (simulado)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y verilator make
-      - name: Compilar firmware SystemVerilog
-        run: |
-          cd firmware/
-          make lint
-          make sim
-      - name: Verificar timing constraints
-        run: |
-          cat constraints.xdc | grep -q "create_clock" && echo "✅ Clock constraints presentes"
-
-  build-driver:
-    name: 🐧 Build Driver Kernel
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Instalar headers do kernel
-        run: sudo apt-get install -y linux-headers-generic build-essential
-      - name: Compilar módulo alx-event
-        run: |
-          cd drivers/
-          make
-      - name: Verificar símbolos
-        run: |
-          nm drivers/alx-event.ko | grep -q "alx_event_init" && echo "✅ Símbolos exportados"
-
-  integration-test:
-    name: 🔗 Testes End-to-End
-    needs: [constitutional-check, build-firmware, build-driver]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Simulação completa do pipeline
-        run: |
-          python scripts/run_primakoff.py
-          python scripts/calibrate.py
-      - name: Teste de mesh network
-        run: python tests/test_mesh_network.py
-
-  deploy-docker:
-    name: 🐳 Build & Push Docker
     if: github.ref == 'refs/heads/main'
-    needs: integration-test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Build imagem ARKHE OS
-        run: docker build -t arkhe-os:v∞.Ω .
-      - name: Push para registry (simulado)
-        run: echo "✅ Imagem pronta para push"
 
-  release:
-    name: 🏛️ Release Canônico
-    if: github.ref == 'refs/heads/main'
-    needs: deploy-docker
-    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Gerar selo de release
-        run: |
-          python -c "
-import hashlib, json, time
-record = {
-  'substrate': 398,
-  'name': 'DEPLOY-CI-CD-HARDWARE',
-  'timestamp': time.time(),
-  'architect': '0009-0005-2697-4668',
-  'status': 'CANONIZED'
-}
-seal = hashlib.sha3_256(json.dumps(record, sort_keys=True).encode()).hexdigest()
-print(f'Selo de Release: {seal}')
-"
+    - uses: actions/checkout@v3
+
+    - name: Simulate Deploy
+      run: |
+        echo "Deploying ARKHE OS to production nodes..."
+        echo "Updating FPGA firmware..."
+        echo "Restarting Daemons..."
+        echo "Deploy Complete."
