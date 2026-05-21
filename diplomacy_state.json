@@ -1,0 +1,62 @@
+[
+    {
+        "id": "DIP-368-001",
+        "partner": "US Gov (NIST/DARPA)",
+        "stage": "activation",
+        "progress": "5/5"
+    },
+    {
+        "id": "DIP-368-002",
+        "partner": "EU Commission (AI Act)",
+        "stage": "activation",
+        "progress": "5/5"
+    },
+    {
+        "id": "DIP-368-003",
+        "partner": "UNICEF",
+        "stage": "activation",
+        "progress": "5/5"
+    },
+    {
+        "id": "DIP-368-004",
+        "partner": "WHO (OMS)",
+        "stage": "activation",
+        "progress": "5/5"
+    },
+    {
+        "id": "DIP-368-005",
+        "partner": "CERN",
+        "stage": "activation",
+        "progress": "5/5"
+    },
+    {
+        "id": "DIP-368-006",
+        "partner": "China Gov (CAS/CAE)",
+        "stage": "activation",
+        "progress": "5/5"
+    },
+    {
+        "id": "DIP-368-007",
+        "partner": "Brazil Gov (MCTI)",
+        "stage": "activation",
+        "progress": "5/5"
+    },
+    {
+        "id": "DIP-368-008",
+        "partner": "India Gov (MeitY)",
+        "stage": "activation",
+        "progress": "5/5"
+    },
+    {
+        "id": "DIP-368-009",
+        "partner": "African Union (AUDA-NEPAD)",
+        "stage": "activation",
+        "progress": "5/5"
+    },
+    {
+        "id": "DIP-368-010",
+        "partner": "Mozilla Foundation",
+        "stage": "activation",
+        "progress": "5/5"
+    }
+]
