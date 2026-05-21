@@ -30,6 +30,7 @@ jobs:
         python3 substrates/300-399_foundations/substrato_390_opt/substrato_390_opt.py
         python3 substrates/300-399_foundations/substrato_393_calib_real/substrato_393_calib_real.py
         python3 substrates/300-399_foundations/substrato_394_soar/substrato_394_soar.py
+        python3 substrates/400-499_advanced/substrato_434_sfq_nv/substrato_434_sfq_nv.py
 
   deploy:
     needs: build_and_test
