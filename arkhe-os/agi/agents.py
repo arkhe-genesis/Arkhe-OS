@@ -74,6 +74,9 @@ class AGIConsensus:
             classes[cls]["count"] += 1
             classes[cls]["confidence_sum"] += v.get("confidence")
 
+        if not classes:
+            return {"class": "UNKNOWN", "votes": 0, "total_agents": len(self.agents), "avg_confidence": 0, "quorum_reached": False}
+
         winner = max(classes.items(), key=lambda x: x[1]["count"])
         return {
             "class": winner[0],
@@ -88,7 +91,7 @@ class AGIConsensus:
         yes_votes = sum(1 for d in decisions if d.get("vote") == "COMMIT_ALERT")
         quorum = len(self.agents) * 2/3
         return {
-            "consensus_reached": yes_votes >= quorum,
+            "consensus_reached": yes_votes >= quorum and len(self.agents) > 0,
             "yes_votes": yes_votes,
             "total_agents": len(self.agents),
             "quorum": quorum,

@@ -58,13 +58,14 @@ class OpticalDAQSystem:
         }
 
     def serialize_event(self, event: DAQEvent) -> bytes:
-        return struct.pack("<QHfH",
+        return struct.pack("<QHffH",
             event.timestamp_ns,
             event.channel,
             event.amplitude_mV,
+            event.integral_nVs,
             event.flags)
 
     def deserialize_event(self, data: bytes) -> DAQEvent:
-        ts, ch, amp, fl = struct.unpack("<QHfH", data)
+        ts, ch, amp, integ, fl = struct.unpack("<QHffH", data)
         return DAQEvent(timestamp_ns=ts, channel=ch,
-                       amplitude_mV=amp, integral_nVs=0, flags=fl)
+                       amplitude_mV=amp, integral_nVs=integ, flags=fl)
