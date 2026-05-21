@@ -6,6 +6,8 @@ pub mod snom;
 pub mod hypercycle;
 pub mod gates;
 pub mod partners;
+pub mod octra_bridge;
+pub mod bulletproof_access;
 
 use serde::{Deserialize, Serialize};
 use sha3::{Sha3_256, Digest};
