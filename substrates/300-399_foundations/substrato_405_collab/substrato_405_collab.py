@@ -24,7 +24,11 @@ class FFmpegMCPServer:
         if str(input_file).startswith(("http://", "https://", "file://", "concat:")):
             return {"status": "error", "message": "Unsafe protocol in input_file"}
 
-        fps = args.get("fps", 30)
+        try:
+            fps = float(args.get("fps", 30))
+        except (ValueError, TypeError):
+            return {"status": "error", "message": "Invalid fps"}
+
         output_pattern = args.get("output", "/tmp/frame_%06d.png")
 
         cmd = [
@@ -45,7 +49,10 @@ class FFmpegMCPServer:
         if str(input_file).startswith(("http://", "https://", "file://", "concat:")):
             return {"status": "error", "message": "Unsafe protocol in input_file"}
 
-        threshold = args.get("threshold", 0.02)
+        try:
+            threshold = float(args.get("threshold", 0.02))
+        except (ValueError, TypeError):
+            return {"status": "error", "message": "Invalid threshold"}
 
         # Usar filtro de detecao de movimento do FFmpeg
         cmd = [
