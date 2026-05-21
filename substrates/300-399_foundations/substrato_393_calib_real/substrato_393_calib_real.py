@@ -164,7 +164,7 @@ class CalibrationProtocol:
 class ExperimentalData:
     def __init__(self):
         self.random_seed = 42
-        random.seed(self.random_seed)
+        self.rng = random.Random(self.random_seed)
 
     def generate_background(self, duration_s: float = 3600, rate_hz: float = 10) -> dict:
         counts = int(rate_hz * duration_s)
@@ -178,7 +178,7 @@ class ExperimentalData:
     def generate_Am241_data(self, activity_Bq: float = 3700, efficiency: float = 0.008,
                              duration_s: float = 3600) -> dict:
         expected = activity_Bq * efficiency * duration_s * 0.852
-        observed = int(random.gauss(expected, math.sqrt(expected)))
+        observed = int(self.rng.gauss(expected, math.sqrt(expected)))
         return {
             "source": "Am-241",
             "energy_MeV": 5.486,
@@ -192,7 +192,7 @@ class ExperimentalData:
     def generate_Cs137_data(self, activity_Bq: float = 3700, efficiency: float = 0.012,
                              duration_s: float = 3600) -> dict:
         expected = activity_Bq * efficiency * duration_s * 0.947
-        observed = int(random.gauss(expected, math.sqrt(expected)))
+        observed = int(self.rng.gauss(expected, math.sqrt(expected)))
         return {
             "source": "Cs-137",
             "energy_MeV": 0.662,
@@ -207,7 +207,7 @@ class ExperimentalData:
                                  efficiency: float = 0.85, duration_s: float = 3600) -> dict:
         intensity = 0.852 if source == "Am-241" else 0.947
         expected = activity_Bq * efficiency * duration_s * intensity
-        observed = int(random.gauss(expected, math.sqrt(expected)))
+        observed = int(self.rng.gauss(expected, math.sqrt(expected)))
         return {
             "source": source,
             "detector": "EJ-200 + SiPM",
