@@ -21,6 +21,9 @@ class FFmpegMCPServer:
     def extract_frames(self, args: dict) -> dict:
         """Extrai frames de video cientifico para analise de particulas."""
         input_file = args.get("input")
+        if str(input_file).startswith(("http://", "https://", "file://", "concat:")):
+            return {"status": "error", "message": "Unsafe protocol in input_file"}
+
         fps = args.get("fps", 30)
         output_pattern = args.get("output", "/tmp/frame_%06d.png")
 
@@ -30,13 +33,18 @@ class FFmpegMCPServer:
         ]
         try:
             result = subprocess.run(cmd, capture_output=True, text=True)
-        except Exception:
-            pass
+            if result.returncode != 0:
+                return {"status": "error", "message": result.stderr}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
         return {"status": "completed", "output_pattern": output_pattern, "fps": fps}
 
     def detect_particles(self, args: dict) -> dict:
         """Deteta particulas em video cientifico usando analise de movimento."""
         input_file = args.get("input")
+        if str(input_file).startswith(("http://", "https://", "file://", "concat:")):
+            return {"status": "error", "message": "Unsafe protocol in input_file"}
+
         threshold = args.get("threshold", 0.02)
 
         # Usar filtro de detecao de movimento do FFmpeg
@@ -48,15 +56,20 @@ class FFmpegMCPServer:
         events = 0
         try:
             result = subprocess.run(cmd, capture_output=True, text=True)
+            if result.returncode != 0:
+                return {"status": "error", "message": result.stderr}
             # Parse da saida para contar eventos
             events = result.stderr.count("lavfi.mestimate")
-        except Exception:
-            pass
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
         return {"events_detected": events, "threshold": threshold}
 
     def compress_scientific(self, args: dict) -> dict:
         """Compressao otimizada para videos cientificos (lossless)."""
         input_file = args.get("input")
+        if str(input_file).startswith(("http://", "https://", "file://", "concat:")):
+            return {"status": "error", "message": "Unsafe protocol in input_file"}
+
         output_file = args.get("output", "/tmp/compressed.mkv")
 
         cmd = [
@@ -67,45 +80,54 @@ class FFmpegMCPServer:
         ]
         try:
             result = subprocess.run(cmd, capture_output=True, text=True)
+            if result.returncode != 0:
+                return {"status": "error", "message": result.stderr}
             # Calcular taxa de compressao
             input_size = os.path.getsize(input_file)
             output_size = os.path.getsize(output_file)
             ratio = input_size / output_size if output_size > 0 else 1
-        except Exception:
-            ratio = 1.0
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
 
         return {"compression_ratio": round(ratio, 2), "output": output_file}
 
     def convert_format(self, args: dict) -> dict:
         """Converte entre formatos usados em fisica (RAW, TIFF, HDF5)."""
         input_file = args.get("input")
+        if str(input_file).startswith(("http://", "https://", "file://", "concat:")):
+            return {"status": "error", "message": "Unsafe protocol in input_file"}
+
         output_format = args.get("format", "mp4")
         output_file = "/tmp/converted." + str(output_format)
 
         cmd = ["ffmpeg", "-i", str(input_file), output_file, "-y"]
         try:
-            subprocess.run(cmd, capture_output=True)
-        except Exception:
-            pass
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            if result.returncode != 0:
+                return {"status": "error", "message": result.stderr}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
         return {"output": output_file, "format": output_format}
 
     def get_metadata(self, args: dict) -> dict:
         """Extrai metadados cientificos de videos."""
         input_file = args.get("input")
+        if str(input_file).startswith(("http://", "https://", "file://", "concat:")):
+            return {"error": "Unsafe protocol in input_file"}
+
         cmd = ["ffprobe", "-v", "quiet", "-print_format", "json",
                "-show_format", "-show_streams", str(input_file)]
         try:
             result = subprocess.run(cmd, capture_output=True, text=True)
+            if result.returncode != 0:
+                return {"error": "Command failed", "message": result.stderr}
             metadata = json.loads(result.stdout)
             duration_s = float(metadata.get("format", {}).get("duration", 0))
             bit_rate = metadata.get("format", {}).get("bit_rate")
             streams = len(metadata.get("streams", []))
             codecs = [s.get("codec_name") for s in metadata.get("streams", [])]
-        except Exception:
-            duration_s = 0.0
-            bit_rate = None
-            streams = 0
-            codecs = []
+        except Exception as e:
+            return {"error": "Exception occurred", "message": str(e)}
 
         return {
             "duration_s": duration_s,
