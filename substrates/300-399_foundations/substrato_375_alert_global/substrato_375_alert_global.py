@@ -243,9 +243,11 @@ def execute_alert_global():
     seal = "a2ef76ba2eb353f3190508c020e8d8d78e4e73e8810bd0de3f785ff119511445"
     data['seal'] = seal
 
-    # Save the report out
-    output_path = '/tmp/substrate_375_alert_global_report.json'
-    with open(output_path, 'w') as f:
+    import tempfile
+
+    # Save the report out securely
+    fd, output_path = tempfile.mkstemp(prefix='substrate_375_alert_global_report_', suffix='.json')
+    with os.fdopen(fd, 'w') as f:
         json.dump(data, f, indent=2)
 
     print(f"\n{'═'*70}")
