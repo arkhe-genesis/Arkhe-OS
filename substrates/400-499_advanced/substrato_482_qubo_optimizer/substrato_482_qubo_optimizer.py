@@ -16,7 +16,7 @@ class QUBOOptimizer:
                     self.sampler = neal.SimulatedAnnealingSampler()
                 except ImportError:
                     import dimod
-                    self.sampler = dimod.RandomSampler()
+                    self.sampler = dimod.ExactSolver()
         except ImportError:
             self.sampler = None
 
