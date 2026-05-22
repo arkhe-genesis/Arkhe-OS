@@ -1,6 +1,5 @@
 #include "invariants.h"
 #include "../temporal/temporal_chain.h"
-#include <time.h>
 
 invariant_status_t loopseal_check(void) {
     /* Loopseal: cadeia fechada. Verifica se ha ancoragem temporal recente. */

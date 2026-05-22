@@ -1,1 +1,5 @@
-#include "kk_cavity_bridge.h"
+#include "sophon_orchestrator.h"
+
+int kk_cavity_dummy(void) {
+    return 0;
+}

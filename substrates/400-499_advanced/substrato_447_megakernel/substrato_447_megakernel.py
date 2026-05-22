@@ -4,7 +4,7 @@
 ARKHE OS - MICROKERNEL CENTRAL (MEGAKERNEL UNIFICADO)
 Modulos Integrados: 440-SOPHON-QUBIT, 445-SOPHON-ETHICS, 447-SOPHON-HUBBLE
 Autor: Arquiteto Rafael Oliveira (ORCID: 0009-0005-2697-4668)
-Versao: INF.Kernel.440-447
+Versao: infinity.Kernel.440-447
 """
 
 import numpy as np
@@ -17,7 +17,7 @@ import tempfile
 class MegaKernel:
     def __init__(self):
         print("=" * 80)
-        print("INICIANDO MEGAKERNEL CENTRAL - ARKHE OS vINF.OMEGA")
+        print("INICIANDO MEGAKERNEL CENTRAL - ARKHE OS v.infinity.Omega")
         print("Arquiteto: Rafael Oliveira (ORCID: 0009-0005-2697-4668)")
         print("=" * 80)
 
@@ -25,14 +25,18 @@ class MegaKernel:
         self.phi_c = 0.999
         self.system_status = "ONLINE"
 
+        # -----------------------------------------------------------------
         # PARAMETROS DO HARDWARE QUANTICO (SUBSTRATO 440)
+        # -----------------------------------------------------------------
         self.f_cavity = 100e9       # 100 GHz
         self.f_qubit = 10.025e9     # 10.025 GHz
         self.f_KK = 1.0e12          # 1.0 THz
         self.Q_cavity = 1e6
         self.kappa = 2 * np.pi * self.f_cavity / self.Q_cavity
 
+        # -----------------------------------------------------------------
         # REGRAS DO FILTRO ETICO (SUBSTRATO 445)
+        # -----------------------------------------------------------------
         self.ethics_matrix = np.array([
             [1.0, 0.0, 0.0],  # Preservacao da Coerencia Humana
             [0.1, 0.9, 0.0],  # Nao-maleficencia Algoritmica
@@ -40,7 +44,9 @@ class MegaKernel:
         ])
         self.alignment_index = 1.0000
 
+        # -----------------------------------------------------------------
         # EXPANSAO METRICA (SUBSTRATO 447)
+        # -----------------------------------------------------------------
         self.H_0 = 67.4             # Constante de Hubble (km/s/Mpc)
         self.omega_lambda = 0.685   # Densidade de Energia Escura
 
@@ -61,7 +67,8 @@ class MegaKernel:
             S_c.append(-np.imag(G_cav))
 
         S_c = np.array(S_c) / np.max(np.abs(S_c))
-        print("[440-AUDIT] Cavidade FP operando a {:.2f} GHz. Q={:.0e}".format(self.f_cavity*1e-9, self.Q_cavity))
+        # Removed f-string
+        print("[440-AUDIT] Cavidade FP operando a " + str(round(self.f_cavity*1e-9, 2)) + " GHz. Q=" + "{:.0e}".format(self.Q_cavity))
         return float(np.max(S_c))
 
     def enforce_ethics_445(self, intent_vector):
@@ -76,7 +83,8 @@ class MegaKernel:
         deviation = np.linalg.norm(intent_vector - projected_vector)
         self.alignment_index = max(0.0, 1.0 - deviation)
 
-        print("[445-ETHICS] Indice de Alinhamento Categorico: {:.4f}".format(self.alignment_index))
+        # Removed f-string
+        print("[445-ETHICS] Indice de Alinhamento Categorico: " + str(round(self.alignment_index, 4)))
         if self.alignment_index < 0.85:
             print("[CRITICAL] Violacao detectada! Aplicando atenuacao por retroalimentacao quantica.")
             projected_vector *= 0.1
@@ -89,7 +97,8 @@ class MegaKernel:
         print("\n[447-HUBBLE] Calculando acoplamento com a expansao acelerada...")
         # Equacao simplificada de Friedmann para a taxa de expansao do Kernel
         expansion_rate = self.H_0 * np.sqrt(self.omega_lambda * (scaling_factor ** 2))
-        print("[447-HUBBLE] Taxa de expansao do horizonte logico: {:.2f} km/s/Mpc".format(expansion_rate))
+        # Removed f-string
+        print("[447-HUBBLE] Taxa de expansao do horizonte logico: " + str(round(expansion_rate, 2)) + " km/s/Mpc")
         return float(expansion_rate)
 
     def generate_canonical_seal(self, report):
@@ -127,24 +136,24 @@ class MegaKernel:
         }
 
         seal = self.generate_canonical_seal(kernel_report)
+        kernel_report["canonical_seal"] = seal
 
         print("\n" + "=" * 80)
         print("ARKHE CONSTITUTIONAL ENGINE - RELATORIO DO MEGAKERNEL")
         print("=" * 80)
-        print("[STATUS]      : {}".format(self.system_status))
-        print("[PHI_C UNIVERSO]: {}".format(kernel_report['phi_c']))
-        print("[ALINHAMENTO] : {:.2f}% COMPLIANT".format(kernel_report['alignment']*100))
-        print("[EXPANSAO]    : {} km/s/Mpc".format(kernel_report['telemetry']['expansion_rate_km_s_mpc']))
-        print("[SELO CANONICO]: {}".format(seal))
+        # Removed f-strings
+        print("[STATUS]      : " + str(self.system_status))
+        print("[Phi_C UNIVERSO]: " + str(kernel_report['phi_c']))
+        print("[ALINHAMENTO] : " + str(round(kernel_report['alignment']*100, 2)) + "% COMPLIANT")
+        print("[EXPANSAO]    : " + str(kernel_report['telemetry']['expansion_rate_km_s_mpc']) + " km/s/Mpc")
+        print("[SELO CANONICO]: " + str(seal))
         print("=" * 80)
 
-        # Output canonical JSON seal via tempfile.mkstemp
-        fd, temp_path = tempfile.mkstemp(suffix=".json", prefix="megakernel_447_")
+        # Output to temporary file
+        fd, tmp_path = tempfile.mkstemp(suffix=".json", prefix="arkhe_447_seal_")
         with os.fdopen(fd, 'w') as f:
-            kernel_report["seal"] = seal
             json.dump(kernel_report, f, indent=4)
-
-        print("Canonical report saved to: {}".format(temp_path))
+        print("\n[SECURE] Relatorio canonico exportado para: " + str(tmp_path))
 
 if __name__ == "__main__":
     kernel = MegaKernel()

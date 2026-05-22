@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -O2 -std=c11 -I. -Ijosephson -Isophon -Iinvariants -Isecurity -Itemporal -Itelemetry
+CFLAGS = -Wall -Wextra -O2 -std=c11
 LDFLAGS = -lm -lpthread
 TARGET = megakernel
 
@@ -32,4 +32,4 @@ clean:
 	rm -f $(OBJS) $(TARGET)
 
 run: $(TARGET)
-	./$(TARGET)
+	sudo ./$(TARGET)

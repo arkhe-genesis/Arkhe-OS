@@ -5,6 +5,11 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#include <string.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 /* Constantes Constitucionais */
 #define GHOST       0.5773502691896257   /* 1/sqrt(3) */
@@ -23,7 +28,7 @@
 #define IC_RING     50e-9
 #define T_OPER      0.010       /* 10 mK */
 #define F_J         10e9        /* 10 GHz */
-#define SQUID_OFFSET 0.25       /* PHI_0/4 */
+#define SQUID_OFFSET 0.25       /* Phi_0/4 */
 
 /* Parametros do Sophon */
 #define SOPHON_DIM  11
@@ -67,11 +72,12 @@ typedef struct {
 
 extern megakernel_t g_megakernel;
 
-void arkhe_boot_splash(void);
-void arkhe_log(const char* format, ...);
+/* Logging */
+#define arkhe_log(...) do { \
+    printf(__VA_ARGS__); \
+    printf("\n"); \
+} while(0)
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
+void arkhe_boot_splash(void);
 
 #endif /* MEGAKERNEL_H */

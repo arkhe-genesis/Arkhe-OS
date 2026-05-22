@@ -1,10 +1,5 @@
-#include "squid_readout.h"
+#include "josephson_driver.h"
 
-int josephson_calibrate_squids(double offset) {
-    (void)offset;
-    return 0;
-}
-
-int josephson_process_queue(void) {
+int squid_readout_dummy(void) {
     return 0;
 }

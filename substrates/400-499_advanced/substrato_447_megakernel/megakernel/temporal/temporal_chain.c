@@ -1,5 +1,4 @@
 #include "temporal_chain.h"
-#include <time.h>
 
 int temporal_anchor_state(megakernel_t* mk) {
     (void)mk;
@@ -7,7 +6,7 @@ int temporal_anchor_state(megakernel_t* mk) {
 }
 
 double temporal_last_anchor_time(void) {
-    return time(NULL);
+    return (double)time(NULL);
 }
 
 int temporal_checkpoint(void) {
