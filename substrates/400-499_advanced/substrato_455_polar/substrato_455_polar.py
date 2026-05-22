@@ -9,20 +9,25 @@ class PolarEncoder:
     def __init__(self, N=1024, K=512):
         self.N = N
         self.K = K
-        # Construir matriz geradora G = G2^{otimes n}
-        n = int(np.log2(N))
-        G2 = np.array([[1, 0], [1, 1]])
-        self.G = G2
-        for _ in range(n - 1):
-            self.G = np.kron(self.G, G2)
+        # O(N log N) recursive butterfly encoding doesn't need explicit G matrix
+        self.G = None
         # Selecionar K subcanais mais confiaveis (simplificado: indices superiores)
         self.info_set = list(range(N - K, N))
 
     def encode(self, bits):
         """Codifica K bits de informacao em N bits codificados."""
-        u = np.zeros(self.N)
+        u = np.zeros(self.N, dtype=int)
         u[self.info_set] = bits[:self.K]
-        return (u @ self.G) % 2
+
+        # O(N log N) recursive butterfly network approach
+        n = int(np.log2(self.N))
+        x = u.copy()
+        for stage in range(n):
+            stride = 1 << stage
+            for i in range(0, self.N, 2 * stride):
+                for j in range(stride):
+                    x[i + j] = (x[i + j] + x[i + j + stride]) % 2
+        return x
 
 class Substrato455Polar:
     def __init__(self):
