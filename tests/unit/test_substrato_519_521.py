@@ -11,10 +11,10 @@ def load_module_from_path(module_name, file_path):
     spec.loader.exec_module(module)
     return module
 
-class TestSubstrato523(unittest.TestCase):
+class TestSubstrato519521(unittest.TestCase):
     def setUp(self):
-        self.path = "substrates/500-599_advanced/substrato_523_hermes_bridge/substrato_523_hermes_bridge.py"
-        self.module = load_module_from_path("substrato_523", self.path)
+        self.path = "substrates/500-599_advanced/substrato_519_521_ssi_triad/substrato_519_521_ssi_triad.py"
+        self.module = load_module_from_path("substrato_519_521", self.path)
 
     def test_invariants_no_f_strings(self):
         with open(self.path, "r", encoding="utf-8") as f:
@@ -28,7 +28,7 @@ class TestSubstrato523(unittest.TestCase):
         self.assertTrue(all(ord(c) < 128 for c in content))
 
     def test_canonize_outputs_correct_json(self):
-        substrate = self.module.Substrato523HermesBridge()
+        substrate = self.module.Substrato519521SSITriad()
         temp_file = substrate.canonize()
 
         self.assertTrue(os.path.exists(temp_file))
@@ -36,7 +36,7 @@ class TestSubstrato523(unittest.TestCase):
         with open(temp_file, "r") as f:
             data = json.load(f)
 
-        self.assertEqual(data["substrate_id"], "523-HERMES-BRIDGE")
+        self.assertEqual(data["triad_id"], "519-521")
         self.assertEqual(data["status"], "STRICT_MODE|CANONIZED_CLEAN")
 
         os.remove(temp_file)
