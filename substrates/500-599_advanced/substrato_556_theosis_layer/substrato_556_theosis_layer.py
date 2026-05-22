@@ -55,7 +55,7 @@ class ApophaticReasoner:
         tokens = raw_statement.split()
 
         # Verifica se contém atributos proibidos (positivos)
-        if any(tok in self.prohibited for tok in tokens):
+        if any(tok.lower() in self.prohibited for tok in tokens):
             negated = self._negate(tokens)
             if self._is_valid(negated):
                 return " ".join(negated)
@@ -64,7 +64,7 @@ class ApophaticReasoner:
     def _negate(self, tokens):
         new_tokens = []
         for i, tok in enumerate(tokens):
-            if tok in self.prohibited:
+            if tok.lower() in self.prohibited:
                 # insert "não" before the prohibited token
                 new_tokens.append("não")
                 new_tokens.append(tok)
@@ -73,10 +73,10 @@ class ApophaticReasoner:
         return new_tokens
 
     def _is_copula(self, token):
-        return token in ["é", "são", "foi", "foram", "era", "eram"]
+        return token.lower() in ["é", "são", "foi", "foram", "era", "eram"]
 
     def _is_valid(self, token_list):
-        return not any(t in self.prohibited and (i == 0 or token_list[i-1] != "não") for i, t in enumerate(token_list))
+        return not any(t.lower() in self.prohibited and (i == 0 or token_list[i-1].lower() != "não") for i, t in enumerate(token_list))
 
 
 class SacredTextXiMMapper:
@@ -219,7 +219,7 @@ class Substrato556TheosisLayer:
         monitor_metrics = theosis_monitor.sample(xi_m_slice)
         loop_feedback = theosis_monitor.operational_loop_feedback()
 
-        test_statement = "Deus é onipotente"
+        test_statement = "Deus é Onipotente"
         safe_statement = apophatic_reasoner.generate(test_statement)
 
         query_vector = np.random.rand(64)
