@@ -17,8 +17,11 @@ import "@ensdomains/ens-contracts/contracts/resolvers/PublicResolver.sol";
 contract AsiOwlEthGovernor is Governor, GovernorSettings, GovernorVotes {
     ENS public immutable ens;
     bytes32 public constant NAME_NODE = keccak256(abi.encodePacked(
-        keccak256(abi.encodePacked(bytes32(0), keccak256("eth"))),
-        keccak256("asi.owl")
+        keccak256(abi.encodePacked(
+            keccak256(abi.encodePacked(bytes32(0), keccak256("eth"))),
+            keccak256("owl")
+        )),
+        keccak256("asi")
     ));
 
     string public currentIpfsCid = "bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi";
@@ -27,7 +30,7 @@ contract AsiOwlEthGovernor is Governor, GovernorSettings, GovernorVotes {
 
     constructor(ENS _ens, IVotes _token)
         Governor("ASI.OWL.ETH Governor")
-        GovernorSettings(7200, 50400, 0) // 1 day voting, 1 week execution
+        GovernorSettings(7200, 50400, 1) // 1 day voting, 1 week execution, requires votes to propose
         GovernorVotes(_token)
     {
         ens = _ens;

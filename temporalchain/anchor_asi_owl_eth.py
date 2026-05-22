@@ -32,7 +32,10 @@ class AsiOwlEthAnchor:
         # Verify if the IPFS content still matches
         from tools.ens.verify_constitution import AsiOwlEthVerifier
         verifier = AsiOwlEthVerifier(os.getenv("ETH_RPC_URL", ""))
-        return verifier.verify()
+        try:
+            return verifier.verify()
+        except Exception:
+            return False
 
     def _compute_merkle_root(self, data_hash: str) -> str:
         import hashlib

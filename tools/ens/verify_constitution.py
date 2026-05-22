@@ -17,14 +17,14 @@ class AsiOwlEthVerifier:
         # Hash of the ENS name
         namehash = self.w3.ens.namehash("asi.owl.eth")
 
-        # Get the resolver
-        resolver_addr = self.w3.ens.resolver(namehash)
-        if not resolver_addr:
+        # Get the resolver contract
+        resolver_contract = self.w3.ens.resolver("asi.owl.eth")
+        if not resolver_contract:
             raise Exception("Resolver not found for asi.owl.eth")
 
-        # Resolver contract (Simplified ABI)
+        # Re-initialize contract with proper ABI for text records
         abi = [{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"string","name":"key","type":"string"}],"name":"text","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"}]
-        resolver = self.w3.eth.contract(address=resolver_addr, abi=abi)
+        resolver = self.w3.eth.contract(address=resolver_contract.address, abi=abi)
 
         cid = resolver.functions.text(namehash, "ipfs.cid").call()
         return cid

@@ -1,6 +1,7 @@
 import tempfile
 import json
 import time
+import os
 
 def canonize_asi_owl_eth():
     seal_data = {
@@ -16,6 +17,7 @@ def canonize_asi_owl_eth():
     }
 
     fd, path = tempfile.mkstemp(suffix=".json", prefix="asi_owl_eth_seal_")
+    os.close(fd)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(seal_data, f, indent=4)
     print("ASI.OWL.ETH Seal canonized at: " + path)
