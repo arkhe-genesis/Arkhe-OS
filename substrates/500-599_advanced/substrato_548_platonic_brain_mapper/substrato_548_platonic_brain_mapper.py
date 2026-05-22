@@ -287,16 +287,16 @@ O valor corrigido {:.6f} reflecte verificação formal completa.
 """.format(phi_c_real, seal_548, phi_c_real, phi_c_real)
 
         # Fallback to tempfile for actual execution as /mnt/agents is missing permissions in testing env
-        fd, path = tempfile.mkstemp(suffix=".txt", prefix="substrato_548_decree_")
-        os.close(fd)
         try:
             os.makedirs("/mnt/agents/output", exist_ok=True)
             path = "/mnt/agents/output/arkhe_canonization_decree_548_corrected.txt"
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(corrected_decree)
         except PermissionError:
-            pass
-
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(corrected_decree)
+            fd, path = tempfile.mkstemp(suffix=".txt", prefix="substrato_548_decree_")
+            os.close(fd)
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(corrected_decree)
 
         print("\n✓ Saved: " + path)
 
