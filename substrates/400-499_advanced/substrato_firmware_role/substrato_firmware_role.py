@@ -1,45 +1,37 @@
 import json
-import os
 import tempfile
+import os
 
-def canonize_firmware_role():
-    role_description = {
-        "title": "Firmware Engineer Role",
-        "description": "You'll be building the core application that runs on our hardware device -- the software layer that bridges user-facing experiences with the underlying firmware and embedded systems. Think of it as the single app that makes the robot do what it needs to do. You've shipped a product before. You know what it takes to go from prototype to production, and you thrive in that process.",
-        "responsibilities": [
-            "Own the development of the primary application running on Arkhe's hardware device, from architecture through production deployment",
-            "Build and optimize Android-based software that interfaces directly with embedded systems, sensors, and firmware layers",
-            "Work at the crossover between application-level code and firmware -- writing software that runs on the device, not in the cloud",
-            "Collaborate closely with hardware, embedded software, and AI teams to deliver a tightly integrated product experience",
-            "Manage the full lifecycle of getting software onto a physical device: flashing, OTA updates, boot sequences, and device provisioning",
-            "Debug across the full android stack -- from Android framework issues down to hardware-level communication protocols",
-            "Drive the product from development through manufacturing and into the hands of users"
-        ],
-        "requirements": [
-            "Strong communication skills to translate the requirements from XFN teams into designs.",
-            "5+ years of experience in Android development, with deep experience beyond standard mobile apps -- ideally on embedded or custom hardware devices",
-            "Strong understanding of the Android platform at the system level: AOSP, system services, HAL, native libraries, and device drivers",
-            "Hands-on experience with embedded systems, firmware integration, or low-level hardware/software interfaces",
-            "You have shipped a physical product. You know what it takes to get software running reliably on hardware in production -- not just in a lab",
-            "Experience with communication protocols common in embedded devices (UART, SPI, I2C, BLE, USB)",
-            "Proficiency in Java/Kotlin for application development and C/C++ for lower-level systems work",
-            "Comfort working in a fast-moving, cross-functional team where you'll touch hardware, firmware, and product decisions daily"
-        ],
-        "bonus_qualifications": [
-            "Experience with Android Things, AOSP board bring-up, or custom Android device builds",
-            "Background in robotics, consumer electronics, or IoT hardware",
-            "Experience with real-time operating systems (RTOS) or hybrid RTOS/Linux environments",
-            "Familiarity with AI/ML model deployment on edge devices",
-            "Hands-on experience analyzing and deconstructing Android device systems at the platform level"
-        ]
-    }
+class SubstratoFirmwareRole:
+    def canonize(self):
+        report = {
+            "Title": "Arkhe Firmware Engineer Role",
+            "Context": "You own critical pieces of the firmware stack that powers Arkhe consumer products - from board bring-up and peripheral drivers to the runtime environment that hosts on-device intelligence. This isn't firmware in a vacuum. You'll work directly with the hardware team on new silicon and sensor integrations, with the agent team on model execution and memory constraints, and with products on experiences that ship to real users. The problems are real, the constraints are tight, and the work matters immediately.",
+            "Responsibilities": [
+                "Develop and maintain embedded firmware in C/C++ targeting ARM-based SoCs and microcontrollers",
+                "Own BSP development, peripheral driver integration (SPI, I2C, UART, I2S), and RTOS task scheduling",
+                "Optimize power consumption and thermal performance for always-on, battery-powered operation",
+                "Build and maintain OTA update infrastructure for reliable field updates",
+                "Collaborate with the on-device AI team to support model inference within memory and latency budgets",
+                "Develop factory test and calibration firmware for manufacturing",
+                "Debug complex hardware-software interactions using logic analyzers, oscilloscopes, and JTAG"
+            ],
+            "Requirements": [
+                "3+ years of professional firmware or embedded systems development",
+                "Strong proficiency in C and/or C++ in resource-constrained environments",
+                "Experience with ARM Cortex-M or Cortex-A processors and associated toolchains",
+                "Hands-on experience with RTOS (FreeRTOS, Zephyr, or similar)",
+                "Familiarity with wireless protocols (BLE, Wi-Fi, or Thread)"
+            ]
+        }
 
-    fd, path = tempfile.mkstemp(suffix=".json", prefix="canon_firmware_role_")
-    with os.fdopen(fd, 'w') as f:
-        json.dump(role_description, f, indent=4)
+        fd, path = tempfile.mkstemp(suffix=".json", prefix="substrato_firmware_role_")
+        with os.fdopen(fd, 'w') as f:
+            json.dump(report, f, indent=4)
 
-    print("Canonical Firmware Engineer Role output securely to: " + path)
-    return path
+        print("Canonized Arkhe Firmware Engineer Role. Report saved to: " + path)
+        return path
 
-if __name__ == '__main__':
-    canonize_firmware_role()
+if __name__ == "__main__":
+    substrate = SubstratoFirmwareRole()
+    substrate.canonize()
