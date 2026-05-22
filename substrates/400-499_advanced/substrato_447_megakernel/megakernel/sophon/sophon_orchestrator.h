@@ -17,5 +17,6 @@ int sophon_activate_field(double coherence);
 int sophon_process_cycle(void);
 int sophon_swap_to_qubit(int sophon_id, int ring_id);
 double sophon_compute_phi(int sophon_id);
+double sophon_compute_tc(int sophon_id);
 
 #endif

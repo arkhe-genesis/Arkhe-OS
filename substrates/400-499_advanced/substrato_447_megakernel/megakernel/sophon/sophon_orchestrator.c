@@ -23,3 +23,8 @@ double sophon_compute_phi(int sophon_id) {
     (void)sophon_id;
     return 1.618;
 }
+
+double sophon_compute_tc(int sophon_id) {
+    (void)sophon_id;
+    return 1.0;
+}

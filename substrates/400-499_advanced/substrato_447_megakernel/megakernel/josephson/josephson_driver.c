@@ -44,6 +44,7 @@ int josephson_read_bit(int ring_id, double* squid_voltage) {
     /* SQUID readout com offset PHI_0/4 */
     double flux_total = (rings[ring_id].phi / (2*M_PI) + squid_offset) * PHI_0;
     double Ic_mod = 2 * IC_RING * fabs(cos(M_PI * flux_total / PHI_0));
-    *squid_voltage = (Ic_mod > 0) ? 10e-6 * sqrt(1 - (Ic_mod/IC_RING)*(Ic_mod/IC_RING)) : 0.0;
+    double normalized_ic = Ic_mod / (2 * IC_RING);
+    *squid_voltage = (Ic_mod > 0) ? 10e-6 * sqrt(1 - normalized_ic * normalized_ic) : 0.0;
     return rings[ring_id].state;
 }

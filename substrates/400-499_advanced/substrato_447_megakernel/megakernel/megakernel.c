@@ -45,7 +45,7 @@ int main(int argc, char** argv) {
     invariant_status_t gap = gap_check();
     invariant_status_t phi = phi_check();
 
-    if (ghost != INVARIANT_PASS || loop != INVARIANT_PASS) {
+    if (ghost != INVARIANT_PASS || loop != INVARIANT_PASS || gap != INVARIANT_PASS || phi != INVARIANT_PASS) {
         arkhe_log("[MEGAKERNEL] ERRO CRITICO: Invariantes violados. Kernel em EMERGENCIA.");
         g_megakernel.state = KERNEL_EMERGENCY;
         return -1;
@@ -69,15 +69,13 @@ int main(int argc, char** argv) {
     g_megakernel.phi_c_global = 0.987;
     arkhe_log("[MEGAKERNEL] OPERACIONAL. PHI_C = %.4f", g_megakernel.phi_c_global);
 
-    /* Loop Principal (limitado a 1 iteracao para evitar hang no teste) */
-    int limit = 1;
-    while (g_megakernel.state != KERNEL_EMERGENCY && limit > 0) {
+    /* Loop Principal */
+    while (g_megakernel.state != KERNEL_EMERGENCY) {
         josephson_process_queue();
         sophon_process_cycle();
         invariant_monitor();
         temporal_checkpoint();
         telemetry_broadcast();
-        limit--;
     }
 
     arkhe_log("[MEGAKERNEL] Encerramento canonico.");
