@@ -11,8 +11,12 @@ class QUBOOptimizer:
                 from dwave.system import EmbeddingComposite, DWaveSampler
                 self.sampler = EmbeddingComposite(DWaveSampler())
             else:
-                import dimod
-                self.sampler = dimod.ExactSolver()
+                try:
+                    import neal
+                    self.sampler = neal.SimulatedAnnealingSampler()
+                except ImportError:
+                    import dimod
+                    self.sampler = dimod.RandomSampler()
         except ImportError:
             self.sampler = None
 
