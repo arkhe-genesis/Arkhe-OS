@@ -115,14 +115,14 @@ class SinterCollectionBridge:
                 dem = builder.generate_dem()
 
                 # Serialize to temp files (in production, use ARKHE artifact store)
+                import tempfile
                 stem = f"453_d{d}_p{p:.0e}_r{rounds}"
-                circuit_path = f"/tmp/arkhe/562/{stem}.stim"
-                dem_path = f"/tmp/arkhe/562/{stem}.dem"
-                Path(circuit_path).parent.mkdir(parents=True, exist_ok=True)
-                with open(circuit_path, "w") as f:
+                with tempfile.NamedTemporaryFile(prefix=stem, suffix=".stim", delete=False, mode="w") as f:
                     f.write(str(circuit))
-                with open(dem_path, "w") as f:
+                    circuit_path = f.name
+                with tempfile.NamedTemporaryFile(prefix=stem, suffix=".dem", delete=False, mode="w") as f:
                     f.write(str(dem))
+                    dem_path = f.name
 
                 metadata = {
                     "d": d,

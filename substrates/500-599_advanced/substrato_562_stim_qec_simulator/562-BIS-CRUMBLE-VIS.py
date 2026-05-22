@@ -475,10 +475,10 @@ if __name__ == "__main__":
     print(f"    Qubits: {len(scene.qubits)}  |  Gates: {len(scene.gates)}  |  Frames: {projector_stream['total_frames']}")
 
     # Save sample frame
-    os.makedirs("/tmp/arkhe/562", exist_ok=True)
-    with open("/tmp/arkhe/562/crumble_scene_d3.json", "w") as f:
+    import tempfile
+    with tempfile.NamedTemporaryFile(prefix="crumble_scene_d3_", suffix=".json", delete=False, mode="w") as f:
         json.dump(projector_stream, f, indent=2)
-    print(f"    Saved projector stream to /tmp/arkhe/562/crumble_scene_d3.json")
+        print(f"    Saved projector stream to {f.name}")
 
     # ── Example 2: Anyon braid trajectory ──
     print("\\n[2] Rendering Ising anyon braid (557-ISING-BRAID) ...")
