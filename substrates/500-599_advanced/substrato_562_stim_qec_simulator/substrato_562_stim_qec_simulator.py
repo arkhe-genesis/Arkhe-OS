@@ -79,7 +79,7 @@ class Substrato562StimQecSimulator:
         integration_code = "\n".join([
             "import stim",
             "",
-            "def anyon_braid_circuit(braid_path):",
+            "def anyon_braid_circuit(braid_path, logical_qubits):",
             "    circuit = stim.Circuit()",
             "    for step in braid_path:",
             "        circuit.append_operation('SWAP', [step.current_qubit, step.next_qubit])",
