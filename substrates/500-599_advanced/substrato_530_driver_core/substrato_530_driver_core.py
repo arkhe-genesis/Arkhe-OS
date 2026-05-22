@@ -18,7 +18,7 @@ class Substrato530DriverCore:
             "author": "GREG_KROAH_HARTMAN",
             "source": "LINUX_KERNEL",
             "license": "GPL_2_0",
-            "phi_c": 0.995890,
+            "phi_c": 0.9940,
             "date": "2026-05-22",
             "modules": [
                 "530.1 Substrate Device Model",
