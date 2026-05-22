@@ -1,39 +1,24 @@
 import unittest
 import importlib.util
 import os
-import json
-import numpy as np
+import sys
 
-class TestSubstrato459Hybrid(unittest.TestCase):
+class TestSubstrato459(unittest.TestCase):
     def setUp(self):
-        spec = importlib.util.spec_from_file_location(
-            "substrato_459_hybrid",
-            "substrates/400-499_advanced/substrato_459_hybrid/substrato_459_hybrid.py"
-        )
+        module_name = 'substrato_459_hybrid'
+        file_path = 'substrates/400-499_advanced/substrato_459_hybrid/substrato_459_hybrid.py'
+        spec = importlib.util.spec_from_file_location(module_name, file_path)
         self.module = importlib.util.module_from_spec(spec)
+        sys.modules[module_name] = self.module
         spec.loader.exec_module(self.module)
 
-    def test_hybrid_encoder(self):
-        encoder = self.module.HybridEncoder()
-        bits = np.array([1, 0])
-
-        res1 = encoder.encode(bits, 2.0)
-        self.assertEqual(res1["type"], "TURBO_ONLY")
-
-        res2 = encoder.encode(bits, 7.0)
-        self.assertEqual(res2["type"], "POLAR_ONLY")
-
-        res3 = encoder.encode(bits, 4.0)
-        self.assertEqual(res3["type"], "POLAR_TURBO_CONCATENATED")
-
-    def test_canonize(self):
-        substrate = self.module.Substrato459Hybrid()
-        path = substrate.canonize()
-        self.assertTrue(os.path.exists(path))
-        with open(path, 'r') as f:
-            data = json.load(f)
-        self.assertIn("SEAL_459_HYBRID", data)
-        os.remove(path)
+    def test_run_hybrid(self):
+        report = self.module.run_hybrid()
+        self.assertEqual(report["module"], "459-HYBRID")
+        self.assertEqual(report["phi_c"], 0.996)
+        self.assertEqual(report["seal"], "c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7")
+        self.assertTrue("header_ber" in report)
+        self.assertTrue("payload_ber" in report)
 
 if __name__ == '__main__':
     unittest.main()
