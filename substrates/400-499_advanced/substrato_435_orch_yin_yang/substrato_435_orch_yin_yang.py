@@ -25,7 +25,7 @@ class Substrato435OrchYinYang:
         self.lambda_374_cycle = 2.88e-17
         self.status = "CANONIZED -- Orch OR Yin Yang Dynamic"
 
-        self.output_image_path = "/mnt/agents/output/arkhe_435_orch_yin_yang.png"
+        self.output_image_path = "/tmp/output/arkhe_435_orch_yin_yang.png"
 
         # Ensure output directory exists
         os.makedirs(os.path.dirname(self.output_image_path), exist_ok=True)
