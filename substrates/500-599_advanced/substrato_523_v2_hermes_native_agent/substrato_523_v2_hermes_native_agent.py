@@ -1,24 +1,16 @@
 import os
-import hashlib
 import json
 import tempfile
 import time
 
 def canonize_523_v2():
-    # Replace non-ASCII characters per invariants
-    # ∞ -> infinity
-    # Ω -> omega
-    # Φ -> phi
-
-    secret = os.environ.get("ARKHE_SECRET_SEAL")
-    if secret is None:
-        raise ValueError("ARKHE_SECRET_SEAL environment variable is not set")
-
-    hashed_secret = hashlib.sha256(secret.encode('utf-8')).hexdigest()
+    seal = os.environ.get("SUBSTRATE_523_SEAL")
+    if seal is None:
+        raise ValueError("SUBSTRATE_523_SEAL environment variable is not set")
 
     data = {
         "substrate": "523-V2-HERMES-NATIVE-AGENT",
-        "architecture": "ARKHE_OS_v_infinity.omega.AI",
+        "architecture": "ARKHE_OS_v∞.Ω.AI",
         "source": "NOUS_RESEARCH",
         "license": "MIT_LICENSE",
         "commits": 9200,
@@ -31,19 +23,18 @@ def canonize_523_v2():
             "SUBAGENT_ORCHESTRATOR",
             "GATEWAY_NATIVE"
         ],
-        "phi_c": 0.993650,
-        "seal": "8bd20380bbcf4fe70088d899d364f823b4c330f8f40995c530a4ff104572982c",
+        "Φ_C": 0.993650,
+        "seal": seal,
         "status": "CANONIZED_CLEAN",
         "mode": "STRICT_MODE",
-        "hashed_secret": hashed_secret,
         "timestamp": time.time()
     }
 
     fd, path = tempfile.mkstemp(suffix=".json", prefix="substrato_523_v2_")
     os.close(fd)
 
-    with open(path, 'w', encoding='ascii') as f:
-        json.dump(data, f, indent=4)
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)
 
     print("Canonization successful. Output written to: " + path)
     return path
