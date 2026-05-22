@@ -1,0 +1,9 @@
+{
+  "plugin_name": "arkhe-codec-custom",
+  "version": "1.0.0",
+  "type": "codec",
+  "developer_orcid": "0009-0005-2697-4668",
+  "required_substrates": [466, 470, 472],
+  "target_min_phi_c": 0.9650,
+  "security_clearance": "L2_CONTAINMENT"
+}
