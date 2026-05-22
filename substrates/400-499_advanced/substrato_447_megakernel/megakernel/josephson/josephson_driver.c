@@ -23,7 +23,7 @@ int josephson_calibrate_squids(double offset) {
 }
 
 int josephson_write_bit(int ring_id, int target_state) {
-    if (ring_id >= N_RINGS) return -1;
+    if (ring_id < 0 || ring_id >= N_RINGS) return -1;
 
     double target_phi = target_state ? M_PI : 0.0;
 
@@ -32,12 +32,14 @@ int josephson_write_bit(int ring_id, int target_state) {
     while (fabs(rings[ring_id].phi) < limiar) {
         rings[ring_id].bias = 3.0 * rings[ring_id].Ic;
         josephson_pid_control(ring_id, target_phi);
+        rings[ring_id].phi += (target_phi > rings[ring_id].phi) ? 0.1 : -0.1;
     }
     rings[ring_id].bias = 0.0;
 
     /* PID fino para anular erro residual */
     while (fabs(rings[ring_id].phi - target_phi) > 0.001) {
         josephson_pid_control(ring_id, target_phi);
+        rings[ring_id].phi += (target_phi - rings[ring_id].phi) * 0.5;
     }
 
     rings[ring_id].state = target_state;
@@ -45,10 +47,13 @@ int josephson_write_bit(int ring_id, int target_state) {
 }
 
 int josephson_read_bit(int ring_id, double* squid_voltage) {
+    if (ring_id < 0 || ring_id >= N_RINGS) return -1;
+
     /* SQUID readout com offset Phi_0/4 */
     double flux_total = (rings[ring_id].phi / (2*M_PI) + squid_offset_val) * PHI_0;
     double Ic_mod = 2 * IC_RING * fabs(cos(M_PI * flux_total / PHI_0));
-    *squid_voltage = (Ic_mod > 0) ? 10e-6 * sqrt(1 - (Ic_mod/IC_RING)*(Ic_mod/IC_RING)) : 0.0;
+    double discriminant = 1.0 - (Ic_mod/IC_RING)*(Ic_mod/IC_RING);
+    *squid_voltage = (discriminant > 0) ? 10e-6 * sqrt(discriminant) : 0.0;
     return rings[ring_id].state;
 }
 
