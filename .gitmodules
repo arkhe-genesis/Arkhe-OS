@@ -155,3 +155,6 @@
 	path = third_party/azurelinux
 	url = https://github.com/microsoft/azurelinux.git
 	branch = 4.0
+[submodule "third_party/Stim"]
+	path = third_party/Stim
+	url = https://github.com/quantumlib/Stim
