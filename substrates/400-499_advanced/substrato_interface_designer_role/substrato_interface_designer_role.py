@@ -6,22 +6,22 @@ class SubstratoInterfaceDesignerRole:
     def canonize(self):
         report = {
             "Role": "Interface Designer",
-            "Description": "You are an extraordinarily talented Interface Designer to help shape the software experiences at Arkhen. Working within our multi-disciplinary design team, you will help craft the interfaces people use every day to interact with our intelligence. Across a variety of platforms, and form factors. You care deeply about the details of interaction: how something feels to use, as much as how it works. You're as comfortable defining interaction patterns as you are pushing visual quality. You will help define what it means to interact with personal AI, bringing clarity, craft and intention to every screen, state and moment in the product.",
+            "Introduction": "You'll build the product surfaces of Arkhe - the interfaces and experiences users interact with every day across voice, text, and vision. That means translating what our agent can do into something that feels fast, intuitive, and trustworthy. The gap between a capable AI and one people actually want to use is a product problem, and this role owns it. This is a high-ownership role on a small team. You'll work directly with designers and model researchers, and what you ship will define how people experience Hark.",
             "Responsibilities": [
-                "Designing interfaces across Hark's software platforms, from early concept through to shipped product",
-                "Collaborating closely with product, engineering and brand to ensure a cohesive, high-quality experience",
-                "Building and maintaining design systems that scale across surfaces",
-                "Exploring new interaction paradigms suited to agentic, voice-first and multimodal AI",
-                "Contributing to the overall design culture and raising the bar for craft across the team"
+                "Design and build the product surfaces of Arkhe. The interfaces, conversations, and agentic experiences that users interact with every day across voice, text, and vision.",
+                "Work closely with designers to ship interactions that feel fast, reliable, and genuinely useful. The details matter here.",
+                "Own features end-to-end, from early prototyping to production deployment and iteration based on real usage.",
+                "Build the frontend for agent workflows that integrate tool use, memory retrieval, and multi-step reasoning. Making model capabilities feel coherent and trustworthy to the person using them.",
+                "Instrument and evaluate what you ship. Track quality, gather signal, and improve."
             ],
             "Requirements": [
-                "5+ years of experience designing interfaces for software products",
-                "A portfolio demonstrating exceptional craft across visual design, interaction design and systems thinking",
-                "Deep proficiency of design systems",
-                "Experience shipping products across web and mobile platforms",
-                "Ability to communicate design decisions clearly to cross-functional partners",
-                "Comfortable working in ambiguity and moving quickly without sacrificing quality",
-                "A genuine curiosity about AI and the future of human-computer interaction"
+                "Strong frontend engineering fundamentals. You are comfortable building polished, responsive interfaces and you care deeply about how things feel to use.",
+                "Experience shipping consumer products that real people depend on. You understand the gap between a prototype and something someone trusts every day.",
+                "Genuine curiosity about AI and agents. You have used LLM-powered products, noticed where they break down, and thought about what would make them better.",
+                "A product sensibility. You think about the person using the thing, not just the implementation. You notice when something is off and you want to fix it.",
+                "Comfort with ambiguity and fast iteration. You can take a rough idea, prototype it, get feedback, and move quickly toward something that works.",
+                "Strong communication. You can work closely with designers and engineers, explain your thinking, and make good decisions together.",
+                "5+ years of relevant software engineering experience. Experience at a fast-growing AI or consumer product company is a strong plus."
             ]
         }
 
