@@ -48,6 +48,8 @@ class AetherWeaveProtocol:
             return {'proof': None, 'valid': False}
         deposit_id = self.peers[network_key]['deposit_id']
         deposit = self.deposits[deposit_id]
+        if deposit.get('status') != 'active':
+            return {'proof': None, 'valid': False}
         proof_data = "{0}:{1}:zk_membership".format(network_key, deposit['pubkey'])
         proof_hash = hashlib.sha256(proof_data.encode()).hexdigest()
         amount_range = ">= {0:.0f} ETH".format(deposit['amount'] * 0.9)
@@ -58,6 +60,8 @@ class AetherWeaveProtocol:
         }
 
     def verify_membership(self, network_key, proof):
+        if network_key not in self.peers:
+            return False
         deposit_id = self.peers[network_key]['deposit_id']
         deposit = self.deposits[deposit_id]
         expected_data = "{0}:{1}:zk_membership".format(network_key, deposit['pubkey'])
@@ -89,10 +93,10 @@ class AetherWeaveProtocol:
         deposit_id = peer['deposit_id']
         deposit = self.deposits[deposit_id]
         if evidence['type'] == 'excessive_requests':
-            if peer['request_count'] > evidence['threshold']:
+            if peer['request_count'] > 100:
                 deposit['status'] = 'slashed'
                 peer['reputation'] = 0.0
-                reason = "Exceeded threshold: {0} > {1}".format(peer['request_count'], evidence['threshold'])
+                reason = "Exceeded threshold: {0} > 100".format(peer['request_count'])
                 return {
                     'status': 'slashed', 'deposit_id': deposit_id,
                     'amount_slashed': deposit['amount'],
@@ -172,10 +176,11 @@ class AetherWeaveSecurityAnalysis:
 
     def eclipse_resistance(self, alpha, s, n=10000):
         p_eclipse = alpha ** (s * np.sqrt(n))
+        resistance = -(s * np.sqrt(n)) * np.log10(alpha) if alpha > 0 else float('inf')
         return {
             'alpha': alpha, 's': s, 'n': n,
             'p_eclipse': p_eclipse,
-            'resistance': -np.log10(p_eclipse) if p_eclipse > 0 else float('inf')
+            'resistance': resistance
         }
 
     def communication_analysis(self, n, s):
