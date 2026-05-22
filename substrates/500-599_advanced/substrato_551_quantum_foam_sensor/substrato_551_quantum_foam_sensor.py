@@ -38,9 +38,8 @@ class Substrato551QuantumFoamSensor:
         }
 
         fd, path = tempfile.mkstemp(suffix=".json", prefix="substrato_551_")
-        os.close(fd)
 
-        with open(path, "w", encoding="utf-8") as f:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
             json.dump(report, f, indent=4, ensure_ascii=False)
 
         print("Canonized Substrate 551. Report saved to: " + path)
