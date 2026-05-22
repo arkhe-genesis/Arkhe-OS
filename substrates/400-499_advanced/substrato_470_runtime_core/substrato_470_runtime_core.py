@@ -201,12 +201,13 @@ class SealValidator:
         self.registry = registry
         self.verified_seals = []
         self.rejected_seals = []
+        self.hsm_key = os.environ["DILITHIUM3_HSM_KEY"]
 
     def verify_seal(self, seal: dict) -> bool:
         payload = json.dumps({
             k: v for k, v in seal.items() if k != "signature"
         }, sort_keys=True, default=str)
-        expected_sig = hashlib.sha3_256(payload.encode() + os.environ["DILITHIUM3_HSM_KEY"].encode()).hexdigest()[:64]
+        expected_sig = hashlib.sha3_256(payload.encode() + self.hsm_key.encode()).hexdigest()[:64]
 
         if seal.get("signature", "") != expected_sig:
             self.rejected_seals.append({"seal": seal, "reason": "signature_mismatch"})
