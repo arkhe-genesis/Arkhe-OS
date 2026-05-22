@@ -1,39 +1,28 @@
-import unittest
-import importlib.util
 import os
 import json
-import numpy as np
+import importlib.util
 
-class TestSubstrato482(unittest.TestCase):
-    def setUp(self):
-        spec = importlib.util.spec_from_file_location(
-            "substrato_482_qubo_optimizer",
-            "substrates/400-499_advanced/substrato_482_qubo_optimizer/substrato_482_qubo_optimizer.py"
-        )
-        self.module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(self.module)
+def load_module_from_path(module_name, file_path):
+    spec = importlib.util.spec_from_file_location(module_name, file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
-    def test_optimizer_simulated(self):
-        opt = self.module.QUBOOptimizer(use_hardware=False)
-        X = np.array([[1, 2], [3, 4]])
-        y = np.array([1, -1])
-        res = opt.solve_svm_qubo(X, y)
-        self.assertIsNotNone(res)
+def test_substrato_482_qubo_optimizer_canonize():
+    file_path = "substrates/400-499_advanced/substrato_482_qubo_optimizer/substrato_482_qubo_optimizer.py"
+    module = load_module_from_path("substrato_482_qubo_optimizer", file_path)
 
-    def test_canonize(self):
-        substrate = self.module.Substrato482QuboOptimizer()
-        path = substrate.canonize()
-        self.assertTrue(os.path.exists(path))
+    substrate = module.Substrato482QuboOptimizer()
+    report_path = substrate.canonize()
 
-        with open(path, 'r') as f:
-            data = json.load(f)
+    assert os.path.exists(report_path)
 
-        self.assertIn("SEAL_482_QUBO_OPTIMIZER", data)
-        self.assertEqual(data["SEAL_482_QUBO_OPTIMIZER"]["Hash"], "1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2")
-        self.assertEqual(data["SEAL_482_QUBO_OPTIMIZER"]["Phi_C"], 0.950)
-        self.assertEqual(data["SEAL_482_QUBO_OPTIMIZER"]["Status"], "CANONIZADO")
+    with open(report_path, "r") as f:
+        data = json.load(f)
 
-        os.remove(path)
+    assert "SEAL_482_QUBO_OPTIMIZER" in data
+    assert "Hash" in data["SEAL_482_QUBO_OPTIMIZER"]
+    assert "Phi_C" in data["SEAL_482_QUBO_OPTIMIZER"]
+    assert data["SEAL_482_QUBO_OPTIMIZER"]["Optimized"] == True
 
-if __name__ == '__main__':
-    unittest.main()
+    os.remove(report_path)

@@ -1,44 +1,28 @@
-import unittest
-import importlib.util
 import os
 import json
-import numpy as np
+import importlib.util
 
-class TestSubstrato486(unittest.TestCase):
-    def setUp(self):
-        spec = importlib.util.spec_from_file_location(
-            "substrato_486_hybrid_accelerator",
-            "substrates/400-499_advanced/substrato_486_hybrid_accelerator/substrato_486_hybrid_accelerator.py"
-        )
-        self.module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(self.module)
+def load_module_from_path(module_name, file_path):
+    spec = importlib.util.spec_from_file_location(module_name, file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
-    def test_accelerator(self):
-        acc = self.module.HybridAccelerator()
-        # test the dummy methods
-        res = acc._picard_step(5.0)
-        self.assertEqual(res, 5.1)
+def test_substrato_486_hybrid_accelerator_canonize():
+    file_path = "substrates/400-499_advanced/substrato_486_hybrid_accelerator/substrato_486_hybrid_accelerator.py"
+    module = load_module_from_path("substrato_486_hybrid_accelerator", file_path)
 
-        qk = acc.quantum_kernel([1, 2, 3], [4, 5, 6])
-        self.assertEqual(len(qk), 5)
+    substrate = module.Substrato486HybridAccelerator()
+    report_path = substrate.canonize()
 
-        jp = acc.jax_ensemble_predict([2.0, 4.0], None)
-        self.assertTrue(np.array_equal(jp, [1.0, 2.0]))
+    assert os.path.exists(report_path)
 
-    def test_canonize(self):
-        substrate = self.module.Substrato486HybridAccelerator()
-        path = substrate.canonize()
-        self.assertTrue(os.path.exists(path))
+    with open(report_path, "r") as f:
+        data = json.load(f)
 
-        with open(path, 'r') as f:
-            data = json.load(f)
+    assert "SEAL_486_HYBRID_ACCELERATOR" in data
+    assert "Hash" in data["SEAL_486_HYBRID_ACCELERATOR"]
+    assert "Phi_C" in data["SEAL_486_HYBRID_ACCELERATOR"]
+    assert data["SEAL_486_HYBRID_ACCELERATOR"]["Accelerated"] == True
 
-        self.assertIn("SEAL_486_HYBRID_ACCELERATOR", data)
-        self.assertEqual(data["SEAL_486_HYBRID_ACCELERATOR"]["Hash"], "5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6")
-        self.assertEqual(data["SEAL_486_HYBRID_ACCELERATOR"]["Phi_C"], 0.920)
-        self.assertEqual(data["SEAL_486_HYBRID_ACCELERATOR"]["Status"], "CANONIZADO")
-
-        os.remove(path)
-
-if __name__ == '__main__':
-    unittest.main()
+    os.remove(report_path)

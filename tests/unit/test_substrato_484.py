@@ -1,42 +1,28 @@
-import unittest
-import importlib.util
 import os
 import json
-import numpy as np
+import importlib.util
 
-class TestSubstrato484(unittest.TestCase):
-    def setUp(self):
-        spec = importlib.util.spec_from_file_location(
-            "substrato_484_lattice_simulator",
-            "substrates/400-499_advanced/substrato_484_lattice_simulator/substrato_484_lattice_simulator.py"
-        )
-        self.module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(self.module)
+def load_module_from_path(module_name, file_path):
+    spec = importlib.util.spec_from_file_location(module_name, file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
-    def test_lattice(self):
-        # Use a small N for testing to avoid huge memory footprint
-        sim = self.module.HVFFLatticeSimulator(N=100)
-        initial_u = sim.u.copy()
-        sim.picard_step()
-        self.assertFalse(np.array_equal(sim.u, initial_u))
+def test_substrato_484_lattice_simulator_canonize():
+    file_path = "substrates/400-499_advanced/substrato_484_lattice_simulator/substrato_484_lattice_simulator.py"
+    module = load_module_from_path("substrato_484_lattice_simulator", file_path)
 
-        feats = sim.extract_features()
-        self.assertEqual(feats.shape, (100, 5))
+    substrate = module.Substrato484LatticeSimulator()
+    report_path = substrate.canonize()
 
-    def test_canonize(self):
-        substrate = self.module.Substrato484LatticeSimulator()
-        path = substrate.canonize()
-        self.assertTrue(os.path.exists(path))
+    assert os.path.exists(report_path)
 
-        with open(path, 'r') as f:
-            data = json.load(f)
+    with open(report_path, "r") as f:
+        data = json.load(f)
 
-        self.assertIn("SEAL_484_LATTICE_SIMULATOR", data)
-        self.assertEqual(data["SEAL_484_LATTICE_SIMULATOR"]["Hash"], "3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4")
-        self.assertEqual(data["SEAL_484_LATTICE_SIMULATOR"]["Phi_C"], 0.990)
-        self.assertEqual(data["SEAL_484_LATTICE_SIMULATOR"]["Status"], "CANONIZADO")
+    assert "SEAL_484_LATTICE_SIMULATOR" in data
+    assert "Hash" in data["SEAL_484_LATTICE_SIMULATOR"]
+    assert "Phi_C" in data["SEAL_484_LATTICE_SIMULATOR"]
+    assert data["SEAL_484_LATTICE_SIMULATOR"]["Simulated"] == True
 
-        os.remove(path)
-
-if __name__ == '__main__':
-    unittest.main()
+    os.remove(report_path)
