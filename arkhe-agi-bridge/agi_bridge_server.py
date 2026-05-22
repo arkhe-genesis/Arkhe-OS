@@ -67,6 +67,11 @@ def force_emergency_fallback():
     Rota critica de seguranca. Permite que um supervisor de IA altere
     o tier de contencao do sistema caso detecte falha logica estrutural.
     """
+    # Require authentication/authorization (e.g. token check) before enforcing policy
+    expected_token = os.environ.get("SUPERVISOR_TOKEN")
+    if not expected_token or request.headers.get("X-Supervisor-Token") != expected_token:
+        return jsonify({"status": "UNAUTHORIZED"}), 401
+
     data = request.json or {}
     requested_tier = data.get("tier")
 
