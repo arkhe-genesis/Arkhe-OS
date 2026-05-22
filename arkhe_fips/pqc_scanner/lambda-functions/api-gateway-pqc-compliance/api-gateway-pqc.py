@@ -101,22 +101,30 @@ def lambda_handler(event, context):
 
         else:
             logger.warning(f"Unknown message type: {message_type}")
-            return build_evaluation(
+            result = build_evaluation(
                 "unknown",
                 "AWS::ApiGateway::RestApi",
                 'NOT_APPLICABLE',
                 f'Unsupported message type: {message_type}'
             )
+            if 'resultToken' in event:
+                import boto3
+                boto3.client('config').put_evaluations(Evaluations=[result], ResultToken=event['resultToken'])
+            return result
 
     except Exception as e:
         logger.error(f"Error in lambda_handler: {str(e)}", exc_info=True)
         error_msg = str(e)[:200] + "..." if len(str(e)) > 200 else str(e)
-        return build_evaluation(
+        result = build_evaluation(
             "unknown",
             "AWS::ApiGateway::RestApi",
             'NON_COMPLIANT',
             f'Evaluation error: {error_msg}'
         )
+        if 'resultToken' in event:
+            import boto3
+            boto3.client('config').put_evaluations(Evaluations=[result], ResultToken=event['resultToken'])
+        return result
 
 def evaluate_rest_api(config_item, check_type):
     """
