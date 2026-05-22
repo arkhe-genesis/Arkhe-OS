@@ -1,13 +1,15 @@
 import json
 import tempfile
 import os
+import hashlib
 
 class SubstratoAsiOwl:
     def __init__(self):
         self.phi_c = 0.999
-        self.seal = os.environ.get("ARKHE_SECRET_SEAL")
-        if not self.seal:
+        secret = os.environ.get("ARKHE_SECRET_SEAL")
+        if not secret:
             raise ValueError("ARKHE_SECRET_SEAL environment variable must be set.")
+        self.seal = hashlib.sha256(secret.encode('utf-8')).hexdigest()
 
     def canonize(self):
         report = {
