@@ -206,7 +206,7 @@ class SealValidator:
         payload = json.dumps({
             k: v for k, v in seal.items() if k != "signature"
         }, sort_keys=True, default=str)
-        expected_sig = hashlib.sha3_256(payload.encode() + os.environ.get("DILITHIUM3_HSM_KEY", "DEFAULT_TEST_KEY").encode()).hexdigest()[:64]
+        expected_sig = hashlib.sha3_256(payload.encode() + os.environ["DILITHIUM3_HSM_KEY"].encode()).hexdigest()[:64]
 
         if seal.get("signature", "") != expected_sig:
             self.rejected_seals.append({"seal": seal, "reason": "signature_mismatch"})
@@ -393,7 +393,7 @@ def main():
         "architect": "0009-0005-2697-4668"
     }
     payload = json.dumps({k: v for k, v in test_seal.items()}, sort_keys=True, default=str)
-    test_seal["signature"] = hashlib.sha3_256(payload.encode() + os.environ.get("DILITHIUM3_HSM_KEY", "DEFAULT_TEST_KEY").encode()).hexdigest()[:64]
+    test_seal["signature"] = hashlib.sha3_256(payload.encode() + os.environ["DILITHIUM3_HSM_KEY"].encode()).hexdigest()[:64]
     validator.verify_seal(test_seal)
 
     telemetry = TelemetryReplay()
