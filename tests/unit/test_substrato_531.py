@@ -10,7 +10,7 @@ class TestSubstrato531(unittest.TestCase):
         spec = importlib.util.spec_from_file_location("substrato_531_pnpm_supply_chain", file_path)
         self.module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(self.module)
-        self.substrate = self.module.Substrato531PnpmSupplyChain()
+        self.substrate = self.module.Substrato531PNPMSupplyChain()
 
     def test_canonize(self):
         path, seal = self.substrate.canonize()
