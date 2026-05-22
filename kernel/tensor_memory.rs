@@ -31,6 +31,19 @@ pub enum TensorDType {
     QuantumState, // Estado quantico (complex64)
 }
 
+impl TensorDType {
+    pub fn size_bytes(&self) -> usize {
+        match self {
+            TensorDType::Float32 => 4,
+            TensorDType::Float16 => 2,
+            TensorDType::Int8 => 1,
+            TensorDType::BFloat16 => 2,
+            TensorDType::QuantumState => 8,
+        }
+    }
+}
+
+
 pub struct TensorMemoryManager {
     tensors: RwLock<HashMap<u64, Arc<TensorHandle>>>,
     semantic_index: RwLock<Vec<(Vec<f32>, u64)>>, // embedding -> tensor_id
@@ -99,7 +112,7 @@ impl TensorMemoryManager {
         let mut scored: Vec<(f32, u64)> = index.iter()
             .map(|(emb, id)| (cosine_similarity(query_embedding, emb), *id))
             .collect();
-        scored.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap());
+        scored.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap_or(std::cmp::Ordering::Equal));
         scored.truncate(top_k);
         scored
     }

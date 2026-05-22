@@ -48,7 +48,7 @@ FusionDiagnostics boot_v2_ignition(void) {
 
         // Aumentar confinamento e tentar novamente
         tokamak_increase_confinement();
-        tokamak_pulse_sot_heating(10);  // 10 pulsos extra
+        tokamak_start_sot_heating();
         retries++;
         diag.state = PLASMA_HEATING;
     }

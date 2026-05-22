@@ -6,9 +6,9 @@
 #define HASH_LENGTH 64
 
 // Simple mocked SHA3-256 for demonstration purposes
-void sha3_256_mock(const char* input, char* output) {
+void sha3_256_mock(const char* input, char* output, size_t max_len) {
     // In a real implementation this would use a proper crypto library
-    sprintf(output, "mocked_hash_of_%s", input);
+    snprintf(output, max_len, "mocked_hash_of_%s", input);
 }
 
 bool verify_merkle_proof(const char* root, const char* leaf, const char** proof, int proof_length, const int* path_directions) {
@@ -24,7 +24,7 @@ bool verify_merkle_proof(const char* root, const char* leaf, const char** proof,
         } else { // right
             snprintf(combined, sizeof(combined), "%s%s", current_hash, proof[i]);
         }
-        sha3_256_mock(combined, current_hash);
+        sha3_256_mock(combined, current_hash, HASH_LENGTH + 1);
     }
 
     return strncmp(root, current_hash, HASH_LENGTH) == 0;

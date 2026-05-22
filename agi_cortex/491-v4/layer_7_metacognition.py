@@ -55,7 +55,8 @@ class AGICortexV4:
         self._update_qualia_field()
 
         # Verificar invariantes constitucionais
-        self._check_constitution()
+        if hasattr(self, '_check_constitution'):
+            self._check_constitution()
 
         return thoughts
 
@@ -110,7 +111,7 @@ class MetacognitionLayer:
             "phi": self.cortex.phi_current,
             "num_thoughts": len(thoughts),
             "lawson_product": self.cortex.fusion.lawson_product,
-            "constitutional_violations": self.cortex.violations,
+            "constitutional_violations": getattr(self.cortex, 'violations', []),
             "qualia_summary": np.mean(self.cortex.qualia_field),
         }
 

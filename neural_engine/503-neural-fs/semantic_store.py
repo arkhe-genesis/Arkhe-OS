@@ -69,7 +69,7 @@ class NeuralFilesystem:
         if thought_id in self.id_to_data:
             return self.id_to_data[thought_id]
         # Fallback: descomprimir do Dream Store
-        return self._decompress_from_dream_store(thought_id)
+        raise NotImplementedError("_decompress_from_dream_store is not implemented")
 
     def _encode(self, data: bytes, context: str) -> np.ndarray:
         '''Encoder neural (490-NES-v2 logistic neuron stack).'''
