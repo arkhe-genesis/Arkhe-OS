@@ -2,11 +2,14 @@ import os
 import json
 import tempfile
 import time
+import hashlib
 
 def canonize_523_v2():
     seal = os.environ.get("SUBSTRATE_523_SEAL")
     if seal is None:
         raise ValueError("SUBSTRATE_523_SEAL environment variable is not set")
+
+    hashed_seal = hashlib.sha256(seal.encode('utf-8')).hexdigest()
 
     data = {
         "substrate": "523-V2-HERMES-NATIVE-AGENT",
@@ -24,7 +27,7 @@ def canonize_523_v2():
             "GATEWAY_NATIVE"
         ],
         "Φ_C": 0.993650,
-        "seal": seal,
+        "seal": hashed_seal,
         "status": "CANONIZED_CLEAN",
         "mode": "STRICT_MODE",
         "timestamp": time.time()
