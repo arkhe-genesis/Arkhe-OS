@@ -9,11 +9,11 @@ def load_module_from_path(module_name, file_path):
     spec.loader.exec_module(module)
     return module
 
-class TestSubstrato514ASIOwlEth(unittest.TestCase):
+class TestSubstrato514AsiOwlEth(unittest.TestCase):
     def test_canonize_outputs_correct_json(self):
         path = "substrates/400-499_advanced/substrato_514_asi_owl_eth/substrato_514_asi_owl_eth.py"
         module = load_module_from_path("substrato_514", path)
-        substrate = module.Substrato514ASIOwlEth()
+        substrate = module.Substrato514AsiOwlEth()
 
         out_path = substrate.canonize()
         self.assertTrue(os.path.exists(out_path))
