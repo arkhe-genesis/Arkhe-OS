@@ -1,0 +1,5 @@
+mkdir -p substrates/400-499_advanced/substrato_482_qubo_optimizer
+mkdir -p substrates/400-499_advanced/substrato_483_ensemble_aggregator
+mkdir -p substrates/400-499_advanced/substrato_484_lattice_simulator
+mkdir -p substrates/400-499_advanced/substrato_485_holographic_projector
+mkdir -p substrates/400-499_advanced/substrato_486_hybrid_accelerator
