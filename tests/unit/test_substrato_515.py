@@ -31,7 +31,7 @@ class TestSubstrato515(unittest.TestCase):
             data = json.load(f)
             self.assertEqual(data["id"], "515-PEROVSKITE-QF")
             self.assertEqual(data["canonical_seal"], "05b50293091dfe88f44c4640efe493eefe25d93dfd0c737b6e7047924b0ff59c")
-            self.assertEqual(data["phi_c_calculation"]["final_phi_c"], 0.985500)
+            self.assertEqual(data["phi_c_calculation"]["final_phi_c"], 0.978250)
 
 if __name__ == '__main__':
     unittest.main()

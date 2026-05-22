@@ -10,7 +10,7 @@ class Substrato515PerovskiteQF:
 
     def __init__(self):
         self.seal_hash = "05b50293091dfe88f44c4640efe493eefe25d93dfd0c737b6e7047924b0ff59c"
-        self.phi_c = 0.985500
+        self.phi_c = 0.978250
         self.master_phi_c = 0.990660
 
     def get_principles_verification(self):
