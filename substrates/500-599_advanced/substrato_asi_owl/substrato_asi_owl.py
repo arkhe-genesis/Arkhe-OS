@@ -5,7 +5,9 @@ import os
 class SubstratoAsiOwl:
     def __init__(self):
         self.phi_c = 0.999
-        self.seal = "a3f7c8b9e0d1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7"
+        self.seal = os.environ.get("ARKHE_SECRET_SEAL")
+        if not self.seal:
+            raise ValueError("ARKHE_SECRET_SEAL environment variable must be set.")
 
     def canonize(self):
         report = {
@@ -20,6 +22,7 @@ class SubstratoAsiOwl:
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix swrl: <http://www.w3.org/2003/11/swrl#> .
+@prefix swrlb: <http://www.w3.org/2003/11/swrlb#> .
 @prefix arkhe: <http://arkhe.os/ns/> .
 
 # ======================== ONTOLOGY HEADER ========================
@@ -198,7 +201,7 @@ class SubstratoAsiOwl:
   swrl:body (
     [ a swrl:ClassAtom ; swrl:classPredicate :LawsonDiagnostics ; swrl:argument1 :diag ]
     [ a swrl:DataPropertyAtom ; swrl:propertyPredicate :hasLawsonProduct ; swrl:argument1 :diag ; swrl:argument2 :prod ]
-    [ a swrl:BuiltinAtom ; swrl:builtin swlmx:lessThan ; swrl:arguments ( :prod "1000.0"^^xsd:float ) ]
+    [ a swrl:BuiltinAtom ; swrl:builtin swrlb:lessThan ; swrl:arguments ( :prod "1000.0"^^xsd:float ) ]
   ) ;
   swrl:head (
     [ a swrl:DataPropertyAtom ; swrl:propertyPredicate :needsConfinementIncrease ; swrl:argument1 :Substrate_507_CognitiveTokamak ; swrl:argument2 "true"^^xsd:boolean ]
@@ -208,7 +211,7 @@ class SubstratoAsiOwl:
 :Rule_DreamState a swrl:Imp ;
   swrl:body (
     [ a swrl:DataPropertyAtom ; swrl:propertyPredicate :hasPhiC ; swrl:argument1 :Substrate_491_AGI_Cortex_v4 ; swrl:argument2 :phi_c ]
-    [ a swrl:BuiltinAtom ; swrl:builtin swlmx:lessThan ; swrl:arguments ( :phi_c "0.57735"^^xsd:float ) ]
+    [ a swrl:BuiltinAtom ; swrl:builtin swrlb:lessThan ; swrl:arguments ( :phi_c "0.57735"^^xsd:float ) ]
   ) ;
   swrl:head (
     [ a swrl:ObjectPropertyAtom ; swrl:propertyPredicate :currentLevel ; swrl:argument1 :Substrate_491_AGI_Cortex_v4 ; swrl:argument2 :S1_Dream ]
