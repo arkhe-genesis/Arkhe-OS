@@ -1,4 +1,4 @@
-from .constants import GHOST, LOOPSEAL, GAP_SOV
+from .constants import GHOST, LOOPSEAL, GAP_SOV, PHI_AUREA
 
 def verify_all_invariants(subsystems):
     """Verifies all invariants"""
@@ -13,7 +13,7 @@ def verify_all_invariants(subsystems):
         "Ghost": {"status": verify_ghost(avg_phi_c), "phi_c": avg_phi_c},
         "Loopseal": {"status": verify_loopseal(avg_phi_c), "phi_c": avg_phi_c},
         "Gap": {"status": verify_gap(avg_phi_c), "phi_c": avg_phi_c},
-        "GoldenRatio": {"status": verify_gap(avg_phi_c), "phi_c": avg_phi_c}
+        "GoldenRatio": {"status": verify_golden_ratio(avg_phi_c), "phi_c": avg_phi_c}
     }
 
 def verify_ghost(phi_c):
@@ -24,3 +24,6 @@ def verify_loopseal(phi_c):
 
 def verify_gap(phi_c):
     return phi_c < GAP_SOV
+
+def verify_golden_ratio(phi_c):
+    return phi_c < PHI_AUREA
