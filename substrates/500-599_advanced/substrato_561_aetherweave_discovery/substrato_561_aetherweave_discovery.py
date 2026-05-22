@@ -292,7 +292,7 @@ def create_vortex(payload: VortexCreate, monitor: TheosisMonitor = Depends(get_t
                             detail="Theosis Index too low; cannot create discovery vortex")
     # 2️⃣  Verify Ising‑phase pre‑condition
     in_phase = (0.3 < payload.gamma < 0.8) and (0.2 < payload.alpha < 0.6) and (0.8 < payload.omega < 1.2)
-    if not in_ising_phase:
+    if not in_phase:
         raise HTTPException(status_code=400,
                             detail="Parameters outside Ising phase – cannot create σ‑anyons")
     # 3️⃣  Create the vortex (the heavy lifting lives in the substrate)
@@ -400,14 +400,14 @@ message Target {
 message BraidRequest {
   string vortex_id = 1;
   repeated Target exchanges = 2;
-  string path = 4;        // "clockwise" | "counterclockwise"
+  string path = 3;        // "clockwise" | "counterclockwise"
   int32 iterations = 4;
 }
 message BraidResponse {
   string braid_id = 1;
   string status = 2;
-  repeated double unitary_matrix = 2; // row‑major, shape (2,2) for σ‑σ braid
-  double new_ti = 3;
+  repeated double unitary_matrix = 3; // row‑major, shape (2,2) for σ‑σ braid
+  double new_ti = 4;
 }
 message MeasureRequest {
   string braid_id = 1;
