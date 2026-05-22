@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "arkhe-os-cli"
+version = "8.448.0"
+authors = [
+  { name="Rafael Oliveira", email="arquiteto@arkhe.os" },
+]
+description = "ARKHE OS CLI Package"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "numpy>=1.24.0",
+    "click>=8.0.0",
+    "rich>=13.0.0",
+    "cryptography>=41.0.0",
+]
+
+[project.scripts]
+arkhe = "arkhe_os.cli:cli"
