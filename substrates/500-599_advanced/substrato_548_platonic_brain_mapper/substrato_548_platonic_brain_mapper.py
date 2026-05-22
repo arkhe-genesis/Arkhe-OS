@@ -112,7 +112,7 @@ GDPR compliant: True (explicit consent, data minimization)
 
         print("Claimed seal:   {}".format(claimed_seal))
         print("Computed seal:  {}".format(seal_548))
-        print("Seal valid:     {}".format("NO -- PLACEHOLDER" if claimed_seal == "d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2" else "YES"))
+        print("Seal valid:     {}".format("NO -- PLACEHOLDER" if claimed_seal == "d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2" else ("YES" if claimed_seal == seal_548 else "NO -- MISMATCH")))
 
         # --- 3. PHI_C DERIVATION (FIXED) ---
         print("\n--- 3. PHI_C DERIVATION ---")
