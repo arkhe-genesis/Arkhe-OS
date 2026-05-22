@@ -33,7 +33,7 @@ class Substrato489OpticalComputer:
     """
     def __init__(self):
         self.seal_hash = "d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6"
-        self.phi_c = 0.930
+        self.phi_c = 0.960
         self.status = "CANONIZED -- Acelerador analogo optico baseado em BIC"
         self.computer = OpticalBICComputer(N_input=4, N_output=4)
 
