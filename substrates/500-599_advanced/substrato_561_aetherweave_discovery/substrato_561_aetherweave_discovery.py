@@ -324,7 +324,6 @@ def braid_anyons(payload: BraidRequest,
                              braid_path=payload.path,
                              iterations=payload.iterations)
     # 2️⃣  Update Theosis Index (the braid may shift the helix)
-    xi_m_slice_49_56 = np.random.rand(64)
     new_ti = monitor.sample(xi_m_slice_49_56)["theosis_index"]
     return BraidResponse(
         braid_id=braid["braid_id"],
