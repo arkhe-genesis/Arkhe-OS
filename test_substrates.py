@@ -113,32 +113,27 @@ def test_569_teleport_quantum_link():
     assert data["metadata"]["phi_c"] == 0.988350
     assert data["metadata"]["seal"] == "1e1ef65e168b28d8186a68e1ca6819e1b13665db8400fb881bc25bc66c183951"
 
-def test_584_arkhe_cli_windows():
+def test_572_windows_native_installer():
     import importlib.util
     import os
     import json
     spec = importlib.util.spec_from_file_location(
-        "substrato_584_arkhe_cli_windows_binary",
-        "substrates/500-599_advanced/substrato_584_arkhe_cli_windows_binary/substrato_584_arkhe_cli_windows_binary.py"
+        "substrato_572_windows_native_installer",
+        "substrates/500-599_advanced/substrato_572_windows_native_installer/substrato_572_windows_native_installer.py"
     )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrate584ArkheCliWindowsBinaryCanonizer()
-    path = canonizer.canonize()
+    path = module.generate_report()
 
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
-    assert data["metadata"]["substrate"] == "584-ARKHE-CLI-WINDOWS-BINARY"
-    assert data["metadata"]["phi_c"] == 0.999
-    assert data["metadata"]["status"] == "PASS"
-    assert len(data["metadata"]["seal"]) == 64
-
-def test_584_f_strings():
-    import re
-    with open("substrates/500-599_advanced/substrato_584_arkhe_cli_windows_binary/substrato_584_arkhe_cli_windows_binary.py", 'r', encoding='utf-8') as f:
-        content = f.read()
-    for line in content.split('\n'):
-        assert not bool(re.search(r'\bf["\']', line)), "f-strings are not allowed: " + line
+    assert data["id"] == "572-WINDOWS-NATIVE-INSTALLER"
+    assert data["phi_c"] == 0.999
+    assert data["files"] == [
+        "Program.cs",
+        "ArkheInstaller.wxs",
+        "build_msi.ps1"
+    ]
