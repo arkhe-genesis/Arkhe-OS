@@ -131,7 +131,6 @@ def test_585_groth16_zksecurity():
     assert len(res["seal"]) == 64
 
 
-
 def test_arkhe_unified():
     import importlib.util
     import os
@@ -163,40 +162,60 @@ def test_arkhe_unified_f_strings():
     for line in content.split('\n'):
         assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
 
-def test_substrato_eng_practices():
+def test_595_iris_alpha():
     import importlib.util
     import os
     import json
     spec = importlib.util.spec_from_file_location(
-        "substrato_eng_practices",
-        "substrates/400-499_advanced/substrato_eng_practices/substrato_eng_practices.py"
+        "substrato_595_iris_alpha",
+        "substrates/500-599_advanced/substrato_595_iris_alpha/substrato_595_iris_alpha.py"
     )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    path = module.SubstratoEngPractices().canonize()
-    assert os.path.exists(path)
-    with open(path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    assert data["Repository"] == "https://github.com/google/eng-practices"
-    assert data["Description"] == "Google's Engineering Practices documentation"
-    assert "The Code Reviewer's Guide" in data["Components"]
-    assert "The Change Author's Guide" in data["Components"]
 
-def test_substrato_eng_practices():
+    canonizer = module.Substrate595IrisAlpha()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["metadata"]["id"] == "595-IRIS-ALPHA"
+    assert data["metadata"]["phi_c"] == 0.95
+    assert data["metadata"]["canonical_seal"] == "e7000398d9804be9a3ebe1f16b900d99e81abc6c22423687a85adfab42683073"
+
+def test_595_f_strings():
+    import re
+    with open("substrates/500-599_advanced/substrato_595_iris_alpha/substrato_595_iris_alpha.py", 'r', encoding='utf-8') as f:
+        content = f.read()
+    for line in content.split('\n'):
+        assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
+
+def test_597_biollm():
     import importlib.util
     import os
     import json
     spec = importlib.util.spec_from_file_location(
-        "substrato_eng_practices",
-        "substrates/400-499_advanced/substrato_eng_practices/substrato_eng_practices.py"
+        "substrato_597_biollm",
+        "substrates/500-599_advanced/substrato_597_biollm/substrato_597_biollm.py"
     )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    path = module.SubstratoEngPractices().canonize()
+
+    canonizer = module.Substrate597BioLLM()
+    path = canonizer.canonize()
+
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    assert data["Repository"] == "https://github.com/google/eng-practices"
-    assert data["Description"] == "Google's Engineering Practices documentation"
-    assert "The Code Reviewer's Guide" in data["Components"]
-    assert "The Change Author's Guide" in data["Components"]
+
+    assert data["metadata"]["id"] == "597-BIOLLM"
+    assert data["metadata"]["phi_c"] == 0.891667
+    assert len(data["metadata"]["seal"]) == 64
+
+def test_597_f_strings():
+    import re
+    with open("substrates/500-599_advanced/substrato_597_biollm/substrato_597_biollm.py", 'r', encoding='utf-8') as f:
+        content = f.read()
+    for line in content.split('\n'):
+        assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
