@@ -168,3 +168,24 @@ def test_arkhe_unified_f_strings():
         content = f.read()
     for line in content.split('\n'):
         assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
+
+def test_599_talos_agent():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_599_talos_agent",
+        "substrates/500-599_advanced/substrato_599_talos_agent/substrato_599_talos_agent.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrate599Canonizer()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    assert data["metadata"]["substrate"] == "599-TALOS-AGENT"
+    assert data["metadata"]["status"] == "CANONIZED_CLEAN"
+    assert len(data["metadata"]["seal"]) == 64
