@@ -219,3 +219,31 @@ def test_597_f_strings():
         content = f.read()
     for line in content.split('\n'):
         assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
+
+def test_603_hashtree_cc():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_603_hashtree_cc",
+        "substrates/603-HASHTREE-CC/substrato_603_hashtree_cc.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrate603HashtreeCC()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["metadata"]["id"] == "603-HASHTREE-CC"
+    assert data["metadata"]["canonical_seal"] == "e7000398d9804be9a3ebe1f16b900d99e81abc6c22423687a85adfab42683073"
+
+def test_603_f_strings():
+    import re
+    with open("substrates/603-HASHTREE-CC/substrato_603_hashtree_cc.py", 'r', encoding='utf-8') as f:
+        content = f.read()
+    for line in content.split('\n'):
+        assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
