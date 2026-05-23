@@ -146,6 +146,8 @@ class QuizEngine:
             answer = "Simulated answer for {0}".format(t)
             results[t] = self.grade_answer(q, answer)
         self.score[pillar_name] = [results[t] for t in topics]
+        if not self.score[pillar_name]:
+            return 0.0
         avg = sum(self.score[pillar_name]) / len(self.score[pillar_name])
         return avg
 

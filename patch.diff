@@ -1,0 +1,21 @@
+<<<<<<< SEARCH
+        self.score[pillar_name] = [results[t] for t in topics]
+        avg = sum(self.score[pillar_name]) / len(self.score[pillar_name])
+        return avg
+=======
+        self.score[pillar_name] = [results[t] for t in topics]
+        if not self.score[pillar_name]:
+            return 0.0
+        avg = sum(self.score[pillar_name]) / len(self.score[pillar_name])
+        return avg
+>>>>>>> REPLACE
+<<<<<<< SEARCH
+@click.group()
+def learn():
+=======
+def get_canonical_explanation(topic):
+    return "Canonical explanation for {0}".format(topic)
+
+@click.group()
+def learn():
+>>>>>>> REPLACE
