@@ -132,7 +132,7 @@ anyhow = "1.0"
 thiserror = "1.0"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
-winapi = { version = "0.3", features = ["processthreadsapi", "handleapi", "winbase", "winuser", "shellapi"] }
+winapi = { version = "0.3", features = ["processthreadsapi", "handleapi", "winbase", "winuser", "shellapi", "wincon"] }
 windows = { version = "0.54", features = ["Win32_System_Threading", "Win32_Foundation", "Win32_UI_WindowsAndMessaging"] }
 pqcrypto-dilithium = "0.5"
 pqcrypto-kyber = "0.7"
@@ -346,19 +346,20 @@ async fn main() {
 use std::env;
 use std::path::PathBuf;
 
-fn main() {
-    let target = env::var("TARGET").unwrap();
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let target = env::var("TARGET")?;
 
     if target.contains("windows") {
         let mut res = winres::WindowsResource::new();
         res.set_icon("assets/icon.ico");
         res.set_language(0x0409); // English US
         res.set_manifest_file("assets/manifest.xml");
-        res.compile().unwrap();
+        res.compile()?;
     }
 
     println!("cargo:rerun-if-changed=assets/icon.ico");
     println!("cargo:rerun-if-changed=assets/manifest.xml");
+    Ok(())
 }
 '''
         self.manifest_xml = '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -501,6 +502,22 @@ Write-Host "   Size: $((Get-Item "$DIST\\arkhe.exe").Length / 1MB) MB" -Foregrou
             "Cargo.toml": self.cargo_toml,
             "build.rs": self.build_rs,
             "src/main.rs": self.main_rs,
+            "src/cli/mod.rs": "// TODO: add cli mod implementation",
+            "src/substrates/mod.rs": "// TODO: add substrates mod implementation",
+            "src/quantum/mod.rs": "// TODO: add quantum mod implementation",
+            "src/codec/mod.rs": "// TODO: add codec mod implementation",
+            "src/render/mod.rs": "// TODO: add render mod implementation",
+            "src/sim/mod.rs": "// TODO: add sim mod implementation",
+            "src/cortex/mod.rs": "// TODO: add cortex mod implementation",
+            "src/theo/mod.rs": "// TODO: add theo mod implementation",
+            "src/mesh/mod.rs": "// TODO: add mesh mod implementation",
+            "src/security/mod.rs": "// TODO: add security mod implementation",
+            "src/deploy/mod.rs": "// TODO: add deploy mod implementation",
+            "src/mcp/mod.rs": "// TODO: add mcp mod implementation",
+            "src/bridge/mod.rs": "// TODO: add bridge mod implementation",
+            "src/crypto/mod.rs": "// TODO: add crypto mod implementation",
+            "src/telemetry/mod.rs": "// TODO: add telemetry mod implementation",
+            "src/lib/mod.rs": "// TODO: add lib mod implementation",
             "assets/manifest.xml": self.manifest_xml,
             "scripts/launcher.bat": self.launcher_bat,
             "scripts/build.ps1": self.build_ps1,
