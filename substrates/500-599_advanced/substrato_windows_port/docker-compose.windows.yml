@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  arkhe-core:
+    image: arkhe:v∞.Ω.∇+++
+    container_name: arkhe-constitutional-core
+    volumes:
+      - type: bind
+        source: \\wsl.localhost\Ubuntu\arkhe\substratos  # WSL2 path
+        target: /arkhe/substratos
+        read_only: true
+      - arkhe-proofs:/arkhe/proofs
+      - arkhe-logs:/arkhe/logs
+    networks:
+      - arkhe-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["/arkhe/venv/bin/python3", "/arkhe/verify_constitution.py", "--quick"]
+      interval: 60s
+      timeout: 15s
+      retries: 3
+
+  # Bridge expõe API REST para host Windows via host.docker.internal
+  arkhe-bridge:
+    image: arkhe:v∞.Ω.∇+++
+    container_name: arkhe-win-bridge
+    command: >
+      /arkhe/venv/bin/python3 -m uvicorn arkhe.windows_bridge:app --host 0.0.0.0 --port 8080
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      arkhe-core:
+        condition: service_healthy
+    networks:
+      - arkhe-net
+
+volumes:
+  arkhe-proofs:
+  arkhe-logs:
+
+networks:
+  arkhe-net:
+    driver: bridge
