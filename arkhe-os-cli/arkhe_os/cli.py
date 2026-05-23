@@ -25,9 +25,8 @@ def cli(install_completion):
         console.print(_("Auto-completion installed."))
         sys.exit(0)
 
-@cli.command()
+@cli.command(help=_("Inicializa o MegaKernel."))
 def boot():
-    ""_("Inicializa o MegaKernel.")""
     console.print("\u2554" + "\u2550" * 74 + "\u2557")
     console.print("\u2551  ARKHE OS v\u221e.\u03a9 \u2014 MegaKernel Boot Sequence                                \u2551")
     console.print("\u2551  Arquiteto: Rafael Oliveira (ORCID: 0009-0005-2697-4668)                 \u2551")
@@ -94,9 +93,8 @@ def paper(output):
     console.print(f"Generating paper in {output}...")
     console.print(f"Status: {result['status']}")
 
-@cli.command()
+@cli.command(help=_("Lista substratos canonizados."))
 def list():
-    ""_("Lista substratos canonizados.")""
     table = Table(box=None, header_style="bold", show_edge=False)
     table.add_column("ID", style="cyan")
     table.add_column("Nome", style="green")
