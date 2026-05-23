@@ -226,20 +226,53 @@ def test_597_f_strings():
     for line in content.split('\n'):
         assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
 
+
 def test_603_hashtree_cc():
     import importlib.util
-    file_path = os.path.abspath('substrates/600-699_advanced/substrato_603_hashtree_cc/substrato_603_hashtree_cc.py')
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/603-HASHTREE-CC/substrato_603_hashtree_cc.py')
     spec = importlib.util.spec_from_file_location("substrato_603_hashtree_cc", file_path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrate603Canonizer()
-    path = canonizer.canonize()
+    canonizer = module.Substrato603HashtreeCC()
+    path = canonizer.generate_json()
 
-    with open(path, 'r') as f:
-        import json
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
     assert data["id"] == "603-HASHTREE-CC"
-    assert data["status"] == "CANONIZED"
-    assert "publish_livecoder.sh" in data["artifacts"]
+    assert "canonical_seal" in data
+    assert len(data["canonical_seal"]) == 64
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
+
+def test_604_cybersecurity_ai():
+    import importlib.util
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/604-CYBERSECURITY-AI/substrato_604_cybersecurity_ai.py')
+    spec = importlib.util.spec_from_file_location("substrato_604_cybersecurity_ai", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato604CybersecurityAI()
+    path = canonizer.generate_json()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "604-CYBERSECURITY-AI"
+    assert "canonical_seal" in data
+    assert len(data["canonical_seal"]) == 64
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
