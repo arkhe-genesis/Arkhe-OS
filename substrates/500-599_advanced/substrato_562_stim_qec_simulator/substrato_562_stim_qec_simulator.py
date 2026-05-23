@@ -221,6 +221,8 @@ class Bridge562to557:
         sampler = circuit.compile_sampler()
         shots = sampler.sample(shots=1000)
 
+        if shots.shape[1] == 0:
+            return { "fusion_outcome": "1", "theosis_index": 0.0 }
         outcome_counts = np.bincount(shots[:, 0].astype(int))
         if len(outcome_counts) > 1:
             dominant_outcome = "1" if outcome_counts[0] > outcome_counts[1] else "ψ"
