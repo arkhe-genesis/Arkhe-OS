@@ -42,7 +42,7 @@ COPY arkhe-groth16-go/go.mod arkhe-groth16-go/go.sum ./
 RUN go mod download
 
 COPY arkhe-groth16-go/ ./
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o /output/585/groth16-verifier-go ./
+RUN mkdir -p /output/585 && CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o /output/585/groth16-verifier-go ./
 
 # ───────────────────────────────────────────────────────────────────────────────
 # STAGE 3: Builder Python (Substrates 566 + 570 + 586)
@@ -1361,9 +1361,35 @@ output "azure_aks_cluster_name" {
 }
 """
 
+        self.deployment_yaml = """apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "arkhe-os-unified.fullname" . }}
+  labels:
+    {{- include "arkhe-os-unified.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.substrate585.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "arkhe-os-unified.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "arkhe-os-unified.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.substrate585.image.repository }}:{{ .Values.substrate585.image.tag }}"
+          imagePullPolicy: {{ .Values.substrate585.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.substrate585.service.port }}
+              protocol: TCP
+"""
+
     def canonize(self):
         base_dir = tempfile.mkdtemp()
-        os.makedirs(os.path.join(base_dir, "helm-arkhe-os-unified"), exist_ok=True)
+        os.makedirs(os.path.join(base_dir, "helm-arkhe-os-unified", "templates"), exist_ok=True)
         os.makedirs(os.path.join(base_dir, ".github", "workflows"), exist_ok=True)
         os.makedirs(os.path.join(base_dir, "terraform"), exist_ok=True)
 
@@ -1373,6 +1399,7 @@ output "azure_aks_cluster_name" {
             "helm-arkhe-os-unified/values.yaml": self.values_yaml,
             "helm-arkhe-os-unified/values-production.yaml": self.values_production_yaml,
             "helm-arkhe-os-unified/README.md": self.readme_md,
+            "helm-arkhe-os-unified/templates/deployment.yaml": self.deployment_yaml,
             ".github/workflows/ci-cd-unified.yml": self.github_action_ci,
             "terraform/main.tf": self.terraform_main,
             "terraform/variables.tf": self.terraform_vars,
