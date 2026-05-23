@@ -1,37 +1,14 @@
-# Arkhe ASI - Terraform Cloud Configuration Example
+# Arkhe OS - Consolidated Local Dev Config
 
-# ==========================================
-# AWS Configuration
-# ==========================================
-aws_region     = "us-east-1"
-aws_profile    = "arkhe-deploy"
-aws_cluster_name = "arkhe-cluster-aws"
-aws_node_type  = "t3.large"
-aws_node_count = 3
+# General
+environment = "development"
+cluster_name = "arkhe-mesh-local-dev"
+num_workers = 3
 
-# ==========================================
-# GCP Configuration
-# ==========================================
-gcp_project    = "arkhe-asi-project"
-gcp_region     = "us-central1"
-gcp_zone       = "us-central1-a"
-gcp_cluster_name = "arkhe-cluster-gcp"
-gcp_node_type  = "e2-standard-4"
-gcp_node_count = 3
+# AWS
+enable_kafka = true
+enable_spark = true
 
-# ==========================================
-# Azure Configuration
-# ==========================================
-azure_subscription_id = "00000000-0000-0000-0000-000000000000"
-azure_tenant_id       = "00000000-0000-0000-0000-000000000000"
-azure_location        = "eastus"
-azure_cluster_name    = "arkhe-cluster-aks"
-azure_node_type       = "Standard_DS2_v2"
-azure_node_count      = 3
-
-# ==========================================
-# Local Development (Consolidated)
-# ==========================================
-local_dev_mode = true
-local_k3d_cluster_name = "arkhe-local-dev"
-local_registry_port = 5000
+# Kubernetes Core Overrides
+temporal_chain_version = "9018-dev"
+mesh_orchestrator_image = "arkhe/mesh-orchestrator:9043-dev"

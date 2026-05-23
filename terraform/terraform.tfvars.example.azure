@@ -1,0 +1,7 @@
+environment = "production"
+cluster_name = "arkhe-mesh-azure"
+num_workers = 10
+
+# Azure specific
+azure_resource_group = "arkhe-mesh-rg"
+azure_location = "East US"
