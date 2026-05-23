@@ -1,0 +1,44 @@
+# ARKHE OS Unified Container Runtime - Terraform Variables Example
+# Consolidated for local development and multi-cloud deployment (AWS, GCP, Azure)
+
+# General Configuration
+environment = "development" # Options: development, staging, production
+arkhe_version = "v∞.Ω.∇+++"
+
+# Multi-Cloud Selection
+cloud_provider = "aws" # Options: aws, gcp, azure, local
+
+# ==========================================
+# Local Development (Podman/Quadlet)
+# ==========================================
+local_runtime = "podman"
+local_mode = "rootless"
+local_uid = 1000
+local_gid = 1000
+
+# ==========================================
+# AWS Configuration (EKS/EC2)
+# ==========================================
+aws_region = "us-east-1"
+aws_instance_type = "m6g.xlarge" # ARM64 optimal for container runtime
+aws_eks_cluster_name = "arkhe-cluster-aws"
+
+# ==========================================
+# GCP Configuration (GKE/Compute Engine)
+# ==========================================
+gcp_project_id = "arkhe-os-production"
+gcp_region = "us-central1"
+gcp_machine_type = "n2-standard-4"
+gcp_gke_cluster_name = "arkhe-cluster-gcp"
+
+# ==========================================
+# Azure Configuration (AKS/Virtual Machines)
+# ==========================================
+azure_location = "East US"
+azure_vm_size = "Standard_D4s_v5"
+azure_aks_cluster_name = "arkhe-cluster-azure"
+
+# ==========================================
+# Integration API Keys (570-CLAUDE-CODE-BRIDGE)
+# ==========================================
+# anthropic_api_key = "sk-ant-..."

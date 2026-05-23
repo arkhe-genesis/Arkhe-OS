@@ -124,16 +124,101 @@ def test_572_windows_native_installer():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    path = module.generate_report()
+    canonizer = module.Substrate572Canonizer()
+    path = canonizer.canonize()
 
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
-    assert data["id"] == "572-WINDOWS-NATIVE-INSTALLER"
-    assert data["phi_c"] == 0.999
-    assert data["files"] == [
-        "Program.cs",
-        "ArkheInstaller.wxs",
-        "build_msi.ps1"
-    ]
+    assert data["metadata"]["substrate"] == "572-WINDOWS-NATIVE-INSTALLER"
+    assert data["metadata"]["phi_c"] == 0.999
+    assert "ArkheService.cs" in data["build_components"]["service"]
+
+def test_566_container_runtime():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_566_container_runtime",
+        "substrates/500-599_advanced/substrato_566_container_runtime/substrato_566_container_runtime.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrate566Canonizer()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["metadata"]["substrate"] == "CONTAINER-RUNTIME"
+    assert data["metadata"]["phi_c"] == 0.973333
+    assert data["metadata"]["seal"] == "3df2c43d8d766e5d525fb1ca9f46da8c7e735dbb978791fb1372319a3eca4604"
+
+def test_570_claude_code_bridge():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_570_claude_code_bridge",
+        "substrates/500-599_advanced/substrato_570_claude_code_bridge/substrato_570_claude_code_bridge.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrate570Canonizer()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["metadata"]["substrate"] == "CLAUDE-CODE-BRIDGE"
+    assert data["metadata"]["phi_c"] == 0.973333
+    assert data["metadata"]["seal"] == "087b7f70aec00fcda24c197b0b36e8d704ccc07db4de73a14ab47763eee7ca76"
+
+def test_587_podman_runtime():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_587_podman_runtime",
+        "substrates/500-599_advanced/substrato_587_podman_runtime/substrato_587_podman_runtime.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrate587Canonizer()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["metadata"]["substrate"] == "PODMAN-RUNTIME"
+    assert data["metadata"]["phi_c"] == 0.973333
+    assert data["metadata"]["seal"] == "2d927c2c115e87a7130bf0bb01ec8725852a4dea40fe1d944e3c355c27e96370"
+
+def test_arkhe_container_unified():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "arkhe_container_unified",
+        "substrates/arkhe_container_unified/arkhe_container_unified.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.UnifiedContainerCanonizer()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["metadata"]["container_name"] == "ARKHE-OS-UNIFIED-RUNTIME"
+    assert data["metadata"]["phi_c"] == 0.972889
+    assert data["metadata"]["seal"] == "e6c32a920cf0aca67b58950d2e04a03492b6b99ff9f22d2a3018f9490dcf4a9f"

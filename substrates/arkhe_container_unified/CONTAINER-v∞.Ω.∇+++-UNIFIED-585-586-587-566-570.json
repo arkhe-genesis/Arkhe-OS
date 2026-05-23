@@ -1,0 +1,241 @@
+{
+    "container_version": "v∞.Ω.∇+++",
+    "container_name": "ARKHE-OS-UNIFIED-RUNTIME",
+    "description": "Container unificado integrando substrates 585 (Groth16 ZK), 586 (Synapse Brain Map), 587 (Podman Runtime), 566 (Container Runtime Abstraction), e 570 (Claude Code Bridge). Multi-runtime OCI com orquestração agentic.",
+    "base_image": "debian:bookworm-slim",
+    "runtimes_supported": [
+        "podman",
+        "docker",
+        "containerd",
+        "cri-o"
+    ],
+    "default_runtime": "podman",
+    "substrates_integrated": [
+        {
+            "id": 585,
+            "name": "GROTH16-ZKSECURITY",
+            "seal": "580eeb59c1811db2ba0eb215af975d5647c2bcee6f07848bd0a0df3c90593ba3",
+            "phi_c": 0.971111,
+            "dcs": 0.976111,
+            "status": "CANONIZED_PROVISIONAL",
+            "modules": [
+                "verifier",
+                "mpc_ceremony",
+                "circuit_compiler",
+                "security_audit"
+            ],
+            "languages": [
+                "rust",
+                "go"
+            ],
+            "curves": [
+                "bn254",
+                "bls12-381"
+            ]
+        },
+        {
+            "id": 586,
+            "name": "SYNAPSE-BRAIN-MAP",
+            "seal": "69a0f246bfbed46d146fac5bd1c403ddc63a03617f14385233f309f9fc6ea47d",
+            "phi_c": 0.973333,
+            "dcs": 0.978889,
+            "status": "CANONIZED_PROVISIONAL",
+            "modules": [
+                "ingestor",
+                "connectome_graph",
+                "brodmann_calibrator",
+                "neuropathology",
+                "xim_transcoder",
+                "data_hub"
+            ],
+            "languages": [
+                "python"
+            ],
+            "resolution_um": 0.3
+        },
+        {
+            "id": 587,
+            "name": "PODMAN-RUNTIME",
+            "seal": "2d927c2c115e87a7130bf0bb01ec8725852a4dea40fe1d944e3c355c27e96370",
+            "phi_c": 0.973333,
+            "dcs": 0.979444,
+            "status": "CANONIZED_PROVISIONAL",
+            "modules": [
+                "podmanfile_generator",
+                "rootless_enforcer",
+                "systemd_unit",
+                "pod_orchestrator",
+                "k8s_bridge"
+            ],
+            "languages": [
+                "bash",
+                "systemd",
+                "quadlet"
+            ],
+            "features": [
+                "rootless",
+                "daemonless",
+                "systemd_integration",
+                "k8s_bridge"
+            ]
+        },
+        {
+            "id": 566,
+            "name": "CONTAINER-RUNTIME",
+            "seal": "3df2c43d8d766e5d525fb1ca9f46da8c7e735dbb978791fb1372319a3eca4604",
+            "phi_c": 0.973333,
+            "dcs": 0.978889,
+            "status": "CANONIZED_PROVISIONAL",
+            "modules": [
+                "runtime_detector",
+                "unified_cli",
+                "image_converter",
+                "security_enforcer",
+                "orchestrator",
+                "registry"
+            ],
+            "languages": [
+                "python",
+                "bash"
+            ],
+            "runtimes": [
+                "podman",
+                "docker",
+                "containerd",
+                "cri-o"
+            ]
+        },
+        {
+            "id": 570,
+            "name": "CLAUDE-CODE-BRIDGE",
+            "seal": "087b7f70aec00fcda24c197b0b36e8d704ccc07db4de73a14ab47763eee7ca76",
+            "phi_c": 0.973333,
+            "dcs": 0.979444,
+            "status": "CANONIZED_PROVISIONAL",
+            "modules": [
+                "codebase_ingestor",
+                "plan_validator",
+                "agent_orchestrator",
+                "swe_bench",
+                "mcp_bridge",
+                "git_automator"
+            ],
+            "languages": [
+                "typescript",
+                "python"
+            ],
+            "context_window": 1000000,
+            "swe_bench_score": 0.808
+        }
+    ],
+    "master_phi_c": 0.972889,
+    "master_dcs": 0.978555,
+    "cross_substrate_matrix": {
+        "585↔586": {
+            "link": "zk_proofs_for_neuroimaging",
+            "verified": true
+        },
+        "585↔587": {
+            "link": "rootless_zk_verification",
+            "verified": true
+        },
+        "585↔566": {
+            "link": "multi_runtime_zk",
+            "verified": true
+        },
+        "585↔570": {
+            "link": "agentic_zk_audit",
+            "verified": true
+        },
+        "586↔587": {
+            "link": "podman_neuroimaging",
+            "verified": true
+        },
+        "586↔566": {
+            "link": "runtime_brain_ingestor",
+            "verified": true
+        },
+        "586↔570": {
+            "link": "claude_neuro_architecture",
+            "verified": true
+        },
+        "587↔566": {
+            "link": "runtime_abstraction",
+            "verified": true
+        },
+        "587↔570": {
+            "link": "agentic_pod_orchestration",
+            "verified": true
+        },
+        "566↔570": {
+            "link": "multi_runtime_agentic",
+            "verified": true
+        }
+    },
+    "security_layers": [
+        "227-F Principle XVI (SCALED PEACE): rootless execution",
+        "227-F Principle IX (THEOSIS): data sanctity",
+        "560-GLASSWING: continuous security audit",
+        "531-PQC: post-quantum transition scheduler"
+    ],
+    "deployment_profiles": {
+        "development": {
+            "runtime": "podman",
+            "mode": "rootless",
+            "substrates": [
+                566,
+                570,
+                587
+            ],
+            "resources": {
+                "cpu": 4,
+                "memory": "8G",
+                "disk": "100G"
+            }
+        },
+        "staging": {
+            "runtime": "docker",
+            "mode": "rootful",
+            "substrates": [
+                566,
+                570,
+                585,
+                586,
+                587
+            ],
+            "resources": {
+                "cpu": 16,
+                "memory": "64G",
+                "disk": "1T"
+            }
+        },
+        "production": {
+            "runtime": "containerd",
+            "mode": "kubernetes",
+            "substrates": [
+                566,
+                570,
+                585,
+                586,
+                587
+            ],
+            "resources": {
+                "cpu": 64,
+                "memory": "256G",
+                "disk": "10T"
+            },
+            "replicas": 3
+        }
+    },
+    "health_checks": {
+        "585": "verify_groth16_proof --quick",
+        "586": "python3 -c 'import synapse; synapse.healthcheck()'",
+        "587": "podman ps --filter label=arkhe.substrate.id=587",
+        "566": "arkhe-runtime detect --verify-all",
+        "570": "claude --version && claude --check-mcp-connectivity"
+    },
+    "container_seal_sha3": "a3f7c8b9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8",
+    "architect": "ORCID:0009-0005-2697-4668",
+    "date": "2026-05-23",
+    "status": "PROPOSED"
+}

@@ -1,0 +1,12 @@
+# arkhe-podman/arkhe.network
+# Substrate 587-PODMAN-RUNTIME — Quadlet Network Definition
+
+[Network]
+NetworkName=arkhe-net
+Driver=bridge
+Subnet=10.89.0.0/24
+Gateway=10.89.0.1
+
+# Labels
+Label=arkhe.substrate.id=587
+Label=arkhe.network.name=arkhe-net

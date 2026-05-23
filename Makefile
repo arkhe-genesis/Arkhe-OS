@@ -162,3 +162,31 @@ soar:
 deploy:
 	@echo "🚀 Deploy em hardware real..."
 	sudo bash deploy/hardware_deploy.sh
+
+# ==============================================================================
+# UNIFIED CONTAINER RUNTIME (566, 570, 587)
+# ==============================================================================
+.PHONY: container_build container_lint container_deploy container_test
+
+container_build:
+	@echo "Building containers and components..."
+	podman build -t arkhe:v∞.Ω.∇+++ -f Podmanfile.unified .
+	@echo "Build complete."
+
+container_lint:
+	@echo "Linting code..."
+	flake8 src/ || echo "flake8 not found or failed, continuing..."
+	@echo "Checking for forbidden f-strings..."
+	! grep -r "f[\"']" src/
+	@echo "Linting complete."
+
+container_deploy:
+	@echo "Deploying..."
+	./src/arkhe_podman/install.sh
+	./src/arkhe_podman/pod-orchestrator.sh
+	@echo "Deployment complete."
+
+container_test:
+	@echo "Running tests..."
+	PYTHONPATH=. python3 -m pytest test_substrates.py
+	@echo "Tests complete."

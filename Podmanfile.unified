@@ -1,0 +1,68 @@
+# ARKHE OS v∞.Ω.∇+++ — Podman Runtime v2.0
+# Substrate 587-PODMAN-RUNTIME
+# Selo: 2d927c2c115e87a7130bf0bb01ec8725852a4dea40fe1d944e3c355c27e96370
+# Build: podman build -t arkhe:v∞.Ω.∇+++ -f Podmanfile .
+
+FROM debian:bookworm-slim AS base
+
+LABEL org.arkhe.version="v∞.Ω.∇+++"
+LABEL org.arkhe.container="podman-runtime"
+LABEL org.arkhe.substrate.id="587"
+LABEL org.arkhe.substrate.name="PODMAN-RUNTIME"
+LABEL org.arkhe.seal="2d927c2c115e87a7130bf0bb01ec8725852a4dea40fe1d944e3c355c27e96370"
+LABEL org.arkhe.phi_c="0.973333"
+LABEL org.arkhe.dcs="0.979444"
+LABEL org.arkhe.architect="ORCID:0009-0005-2697-4668"
+
+# Rootless: UID/GID do utilizador host
+ARG USER_UID=1000
+ARG USER_GID=1000
+
+# Instalar dependências (sem need de root após build)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3.12 python3.12-venv \
+    bpfcc-tools libbpfcc-dev \
+    curl jq ca-certificates \
+    systemd systemd-sysv \
+    && rm -rf /var/lib/apt/lists/*
+
+# Criar ambiente virtual
+RUN python3.12 -m venv /arkhe/venv
+ENV PATH="/arkhe/venv/bin:$PATH"
+
+# Instalar dependências Python
+RUN pip install --no-cache-dir \
+    sympy numpy scipy matplotlib \
+    cryptography pytest pytest-cov hypothesis \
+    flask fastapi uvicorn pyyaml \
+    qiskit qiskit-aer pennylane
+
+# Diretórios da Catedral
+RUN mkdir -p /arkhe/{substratos,verificadores,proofs,logs,config,skills} \
+    && chmod 755 /arkhe \
+    && chmod 1777 /arkhe/proofs \
+    && chmod 1777 /arkhe/logs
+
+# Copiar código
+COPY arkhe/ /arkhe/
+
+# Gerar manifesto SHA-3
+RUN find /arkhe/substratos -type f -name '*.py' -exec sha3sum -b {} \; > /arkhe/proofs/manifest.sha3 \
+    && sha3sum -b /arkhe/arkhe_cli.py >> /arkhe/proofs/manifest.sha3 \
+    && sha3sum -b /arkhe/verify_constitution.py >> /arkhe/proofs/manifest.sha3
+
+# Container seal com SHA-256 real
+RUN echo "ARKHE OS v∞.Ω.∇+++ (Podman Runtime)\nSubstrate 587-PODMAN-RUNTIME\nSeal: $(sha256sum /arkhe/proofs/manifest.sha3 | cut -d' ' -f1)" > /arkhe/proofs/container.seal
+
+# Imutável
+RUN chmod -R 555 /arkhe/substratos && chmod 755 /arkhe/arkhe_cli.py && chmod 755 /arkhe/verify_constitution.py
+
+# Utilizador não-privilegiado (rootless)
+USER $USER_UID:$USER_GID
+
+# Healthcheck com verificação constitucional
+HEALTHCHECK --interval=60s --timeout=15s --start-period=10s --retries=3 \
+    CMD /arkhe/venv/bin/python3 /arkhe/verify_constitution.py --quick || exit 1
+
+ENTRYPOINT ["/arkhe/venv/bin/python3", "/arkhe/arkhe_cli.py"]
+CMD ["--help"]
