@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="ARKHE OS CLI" Language="1033" Version="1.0.0.0" Manufacturer="Arkhe" UpgradeCode="PUT-GUID-HERE">
+  <Product Id="*" Name="ARKHE OS CLI" Language="1033" Version="1.0.0.0" Manufacturer="Arkhe" UpgradeCode="12345678-1234-1234-1234-123456789012">
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
     <MediaTemplate EmbedCab="yes" />
 
@@ -15,10 +15,11 @@
       <Directory Id="ProgramMenuFolder" />
     </Directory>
 
+    <Icon Id="ArkheIcon.ico" SourceFile="ArkheIcon.ico" />
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-      <Component Id="ArkheExe" Guid="PUT-GUID-HERE">
+      <Component Id="ArkheExe" Guid="87654321-4321-4321-4321-210987654321">
         <File Id="arkhe.exe" Source="$(var.Arkhe.Cli.TargetDir)publish\arkhe.exe" KeyPath="yes" Checksum="yes" />
-        <Shortcut Directory="ProgramMenuFolder" Name="ARKHE OS CLI" WorkingDirectory="INSTALLFOLDER" Icon="ArkheIcon.ico" />
+        <Shortcut Id="ArkheExeShortcut" Directory="ProgramMenuFolder" Name="ARKHE OS CLI" WorkingDirectory="INSTALLFOLDER" Icon="ArkheIcon.ico" />
         <Environment Id="ArkhePath" Name="PATH" Value="[INSTALLFOLDER]" Permanent="no" Part="last" Action="set" System="yes" />
       </Component>
     </ComponentGroup>
