@@ -112,3 +112,27 @@ def test_569_teleport_quantum_link():
     assert data["metadata"]["substrate"] == "569-TELEPORT-QUANTUM-LINK"
     assert data["metadata"]["phi_c"] == 0.988350
     assert data["metadata"]["seal"] == "1e1ef65e168b28d8186a68e1ca6819e1b13665db8400fb881bc25bc66c183951"
+
+def test_585_groth16_zksecurity():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location(
+        "substrato_585_groth16_zksecurity",
+        "substrates/500-599_advanced/substrato_585_groth16_zksecurity/substrato_585_groth16_zksecurity.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrate585Canonizer()
+    res = canonizer.canonize()
+
+    assert os.path.exists(res["temp_dir"])
+    assert os.path.exists(res["manifest_path"])
+    assert len(res["seal"]) == 64
+
+def test_585_f_strings():
+    import re
+    with open("substrates/500-599_advanced/substrato_585_groth16_zksecurity/substrato_585_groth16_zksecurity.py", 'r', encoding='utf-8') as f:
+        content = f.read()
+    for line in content.split('\n'):
+        assert not bool(re.search(r'\bf["\']', line)), "f-strings are not allowed: " + line
