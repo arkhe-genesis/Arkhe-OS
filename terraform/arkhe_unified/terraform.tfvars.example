@@ -1,3 +1,0 @@
-environment  = "local-dev"
-cluster_name = "arkhe-mesh-local"
-num_workers  = 3
