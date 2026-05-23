@@ -10,6 +10,7 @@
 #include "ConsciousnessCycleAsync.h"
 #include <unordered_map>
 #include <shared_mutex>
+#include <mutex>
 #include <memory>
 #include <string>
 #include <chrono>
@@ -18,6 +19,7 @@
 #include <atomic>
 #include <thread>
 #include <algorithm>      // PATCH #7 (preemptive)
+#include <condition_variable>
 
 namespace Arkhe {
 namespace Iris {
@@ -77,8 +79,8 @@ public:
     AsyncTask<IrisResponse> RunCycleI2TAsync(const I2TRequest& req);
     AsyncTask<IrisResponse> RunCycleT2TAsync(const T2TRequest& req);
     bool CheckAlignment(const IrisResponse& resp) const;
-    const TenantContext& GetContext() const { return context_; }
-    TenantContext& GetContextMutable() { return context_; }
+    TenantContext GetContext() const;
+    void SetContext(const TenantContext& ctx);
     double CurrentPhi() const { return currentPhi_.load(); }
     double CurrentXiM() const { return currentXiM_.load(); }
     ConsciousnessState::Phase CurrentPhase() const { return currentPhase_.load(); }
@@ -87,6 +89,7 @@ public:
 
 private:
     TenantContext context_;
+    mutable std::mutex contextMutex_;
     ConsciousnessCycleAsync cycle_;
     std::atomic<double> currentPhi_{0.0};
     std::atomic<double> currentXiM_{0.0};
@@ -131,11 +134,13 @@ private:
     PhiMeter* sharedPhiMeter_;
     XiMFieldDetector* sharedXiMDetector_;
     mutable std::shared_mutex tenantsMutex_;
-    std::unordered_map<TenantID, std::unique_ptr<TenantConsciousnessCycle>, TenantIDHash> tenants_;
+    std::unordered_map<TenantID, std::shared_ptr<TenantConsciousnessCycle>, TenantIDHash> tenants_;
     std::unordered_map<TenantID, std::unique_ptr<ConsciousnessLogger>, TenantIDHash> tenantLoggers_;
     mutable std::shared_mutex loggersMutex_;
     std::thread cleanupThread_;
     std::atomic<bool> cleanupRunning_{false};
+    std::mutex cleanupMutex_;
+    std::condition_variable cleanupCv_;
     std::chrono::minutes idleTimeout_{60};
     void CleanupLoop();
     ConsciousnessLogger* GetOrCreateTenantLogger(const TenantID& id);

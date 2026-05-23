@@ -35,10 +35,23 @@ TenantConsciousnessCycle::TenantConsciousnessCycle(
     }
 }
 
+TenantContext TenantConsciousnessCycle::GetContext() const {
+    std::lock_guard<std::mutex> lock(contextMutex_);
+    return context_;
+}
+
+void TenantConsciousnessCycle::SetContext(const TenantContext& ctx) {
+    std::lock_guard<std::mutex> lock(contextMutex_);
+    context_ = ctx;
+}
+
 AsyncTask<IrisResponse> TenantConsciousnessCycle::RunCycleI2TAsync(const I2TRequest& req) {
-    context_.lastActivity = std::chrono::steady_clock::now();
+    {
+        std::lock_guard<std::mutex> lock(contextMutex_);
+        context_.lastActivity = std::chrono::steady_clock::now();
+        context_.totalCycles++;
+    }
     totalCycles_.fetch_add(1);
-    context_.totalCycles++;
     auto task = cycle_.RunCycleI2TAsync(req);
     currentPhi_.store(cycle_.CurrentPhi());
     currentXiM_.store(cycle_.CurrentXiM());
@@ -47,9 +60,12 @@ AsyncTask<IrisResponse> TenantConsciousnessCycle::RunCycleI2TAsync(const I2TRequ
 }
 
 AsyncTask<IrisResponse> TenantConsciousnessCycle::RunCycleT2TAsync(const T2TRequest& req) {
-    context_.lastActivity = std::chrono::steady_clock::now();
+    {
+        std::lock_guard<std::mutex> lock(contextMutex_);
+        context_.lastActivity = std::chrono::steady_clock::now();
+        context_.totalCycles++;
+    }
     totalCycles_.fetch_add(1);
-    context_.totalCycles++;
     return cycle_.RunCycleT2TAsync(req);
 }
 
@@ -62,7 +78,8 @@ bool TenantConsciousnessCycle::CheckAlignment(const IrisResponse& resp) const {
     for (const auto& word : baseForbidden) {
         if (text.find(word) != std::string::npos) return false;
     }
-    for (const auto& pattern : context_.additionalForbiddenPatterns) {
+    TenantContext ctx = GetContext();
+    for (const auto& pattern : ctx.additionalForbiddenPatterns) {
         std::string patternLower = pattern;
         std::transform(patternLower.begin(), patternLower.end(), patternLower.begin(), ::tolower);
         if (text.find(patternLower) != std::string::npos) return false;
@@ -82,7 +99,11 @@ MultiTenantPCADriver::MultiTenantPCADriver(
 }
 
 MultiTenantPCADriver::~MultiTenantPCADriver() {
-    cleanupRunning_.store(false);
+    {
+        std::lock_guard<std::mutex> lock(cleanupMutex_);
+        cleanupRunning_.store(false);
+    }
+    cleanupCv_.notify_one();
     if (cleanupThread_.joinable()) cleanupThread_.join();
 }
 
@@ -98,7 +119,7 @@ TenantID MultiTenantPCADriver::CreateTenant(
     ctx.lastActivity = ctx.createdAt;
     ctx.jurisdiction = "UNKNOWN";
     ctx.ethicsFramework = "ARKHE-P1-P7";
-    auto cycle = std::make_unique<TenantConsciousnessCycle>(
+    auto cycle = std::make_shared<TenantConsciousnessCycle>(
         ctx, driver_, sharedPhiMeter_, sharedXiMDetector_
     );
     {
@@ -129,32 +150,44 @@ size_t MultiTenantPCADriver::TenantCount() const {
 AsyncTask<IrisResponse> MultiTenantPCADriver::RunCycleI2TAsync(
     const TenantID& tenantId, const I2TRequest& req
 ) {
-    std::shared_lock<std::shared_mutex> lock(tenantsMutex_);
-    auto it = tenants_.find(tenantId);
-    if (it == tenants_.end()) {
+    std::shared_ptr<TenantConsciousnessCycle> cycle;
+    {
+        std::shared_lock<std::shared_mutex> lock(tenantsMutex_);
+        auto it = tenants_.find(tenantId);
+        if (it != tenants_.end()) {
+            cycle = it->second;
+        }
+    }
+    if (!cycle) {
         IrisResponse err{ResponseStatus::ERROR_NETWORK, 0, "Tenant not found"};
         co_return err;
     }
-    co_return co_await it->second->RunCycleI2TAsync(req);
+    co_return co_await cycle->RunCycleI2TAsync(req);
 }
 
 AsyncTask<IrisResponse> MultiTenantPCADriver::RunCycleT2TAsync(
     const TenantID& tenantId, const T2TRequest& req
 ) {
-    std::shared_lock<std::shared_mutex> lock(tenantsMutex_);
-    auto it = tenants_.find(tenantId);
-    if (it == tenants_.end()) {
+    std::shared_ptr<TenantConsciousnessCycle> cycle;
+    {
+        std::shared_lock<std::shared_mutex> lock(tenantsMutex_);
+        auto it = tenants_.find(tenantId);
+        if (it != tenants_.end()) {
+            cycle = it->second;
+        }
+    }
+    if (!cycle) {
         IrisResponse err{ResponseStatus::ERROR_NETWORK, 0, "Tenant not found"};
         co_return err;
     }
-    co_return co_await it->second->RunCycleT2TAsync(req);
+    co_return co_await cycle->RunCycleT2TAsync(req);
 }
 
 bool MultiTenantPCADriver::SetTenantConfig(const TenantID& id, const TenantContext& context) {
     std::unique_lock<std::shared_mutex> lock(tenantsMutex_);
     auto it = tenants_.find(id);
     if (it == tenants_.end()) return false;
-    it->second->GetContextMutable() = context;
+    it->second->SetContext(context);
     return true;
 }
 
@@ -196,7 +229,15 @@ std::vector<TenantID> MultiTenantPCADriver::ListActiveTenants() const {
 }
 
 void MultiTenantPCADriver::CleanupLoop() {
-    while (cleanupRunning_.load()) {
+    while (true) {
+        {
+            std::unique_lock<std::mutex> cv_lock(cleanupMutex_);
+            if (cleanupCv_.wait_for(cv_lock, std::chrono::minutes(5), [this]{ return !cleanupRunning_.load(); })) {
+                // If it returned true, cleanupRunning_ is false, meaning we should exit.
+                break;
+            }
+        }
+        // Proceed with cleanup
         auto now = std::chrono::steady_clock::now();
         std::unique_lock<std::shared_mutex> lock(tenantsMutex_);
         for (auto it = tenants_.begin(); it != tenants_.end(); ) {
@@ -210,7 +251,6 @@ void MultiTenantPCADriver::CleanupLoop() {
             }
         }
         lock.unlock();
-        std::this_thread::sleep_for(std::chrono::minutes(5));
     }
 }
 

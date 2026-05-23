@@ -84,6 +84,8 @@ void PhiRendererGL::Shutdown() {
     if (geoOverlay_.vao) glDeleteVertexArrays(1, &geoOverlay_.vao);
     if (geoOverlay_.vbo) glDeleteBuffers(1, &geoOverlay_.vbo);
     if (geoOverlay_.ebo) glDeleteBuffers(1, &geoOverlay_.ebo);
+    if (geoText_.vao) glDeleteVertexArrays(1, &geoText_.vao);
+    if (geoText_.vbo) glDeleteBuffers(1, &geoText_.vbo);
     if (shaderOverlay_.id) glDeleteProgram(shaderOverlay_.id);
     if (shaderImmersive_.id) glDeleteProgram(shaderImmersive_.id);
     if (shaderText_.id) glDeleteProgram(shaderText_.id);
@@ -317,6 +319,9 @@ void PhiRendererGL::RenderText(const std::string& text, float x, float y, float 
     glUniform1i(glGetUniformLocation(shaderText_.id, "uTexture"), 0);
     glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(screenW_), static_cast<float>(screenH_), 0.0f);
     glUniformMatrix4fv(glGetUniformLocation(shaderText_.id, "uMVP"), 1, GL_FALSE, glm::value_ptr(projection));
+
+    glBindVertexArray(geoText_.vao);
+
     float xPos = x;
     for (char c : text) {
         auto it = fontAtlas_.glyphs.find(c);
@@ -326,9 +331,25 @@ void PhiRendererGL::RenderText(const std::string& text, float x, float y, float 
         float y0 = y - glyph.bearingY * scale;
         float x1 = x0 + glyph.width * scale;
         float y1 = y0 + glyph.height * scale;
-        // Render quad para cada caractere (simplificado)
+
+        float vertices[6][4] = {
+            { x0, y1,   glyph.u0, glyph.v1 },
+            { x0, y0,   glyph.u0, glyph.v0 },
+            { x1, y0,   glyph.u1, glyph.v0 },
+
+            { x0, y1,   glyph.u0, glyph.v1 },
+            { x1, y0,   glyph.u1, glyph.v0 },
+            { x1, y1,   glyph.u1, glyph.v1 }
+        };
+
+        glBindBuffer(GL_ARRAY_BUFFER, geoText_.vbo);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
         xPos += glyph.advance * scale;
     }
+    glBindVertexArray(0);
 }
 
 void PhiRendererGL::RenderPhaseIndicator(float x, float y, ConsciousnessState::Phase phase) {
@@ -510,6 +531,18 @@ bool PhiRendererGL::CreateGeometry() {
     glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(5 * sizeof(float)));
     glEnableVertexAttribArray(2);
     geoOverlay_.indexCount = 6;
+
+    // Text geometry setup
+    glGenVertexArrays(1, &geoText_.vao);
+    glGenBuffers(1, &geoText_.vbo);
+    glBindVertexArray(geoText_.vao);
+    glBindBuffer(GL_ARRAY_BUFFER, geoText_.vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
     return true;
 }
 

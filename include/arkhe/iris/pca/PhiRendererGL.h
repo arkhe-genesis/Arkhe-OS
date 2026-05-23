@@ -62,6 +62,11 @@ struct AttentionMapMesh {
     int resolution;
 };
 
+struct TextGeometry {
+    GLuint vao;
+    GLuint vbo;
+};
+
 // ============================================================================
 // Texture atlas para fontes
 // ============================================================================
@@ -126,6 +131,7 @@ private:
     OverlayGeometry geoOverlay_;
     OverlayGeometry geoBar_;
     OverlayGeometry geoGraph_;
+    TextGeometry geoText_;
     AttentionMapMesh meshAttention0_;
     AttentionMapMesh meshAttention1_;
     FontAtlas fontAtlas_;
@@ -277,7 +283,7 @@ void main() {
 
 constexpr const char* VS_TEXT = R"(
 #version 330 core
-layout(location = 0) in vec4 aVertex;
+layout(location = 0) in vec4 aVertex; // <vec2 pos, vec2 tex>
 uniform mat4 uMVP;
 out vec2 vUV;
 void main() {
