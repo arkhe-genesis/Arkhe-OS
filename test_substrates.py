@@ -276,3 +276,34 @@ def test_604_cybersecurity_ai():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
     assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
+
+def test_613_cybersec_fundamentals():
+    import importlib.util
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/613-CYBERSEC-FUNDAMENTALS/substrato_613_cybersec_fundamentals.py')
+    spec = importlib.util.spec_from_file_location("substrato_613_cybersec_fundamentals", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato613CybersecFundamentals()
+    path = canonizer.generate_json()
+
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "613-CYBERSEC-FUNDAMENTALS"
+    assert "canonical_seal" in data
+    assert len(data["canonical_seal"]) == 64
+
+    materialized_path = data["plugin_materialized_path"]
+    assert os.path.isdir(materialized_path)
+    assert os.path.isfile(os.path.join(materialized_path, "plugin.toml"))
+    assert os.path.isfile(os.path.join(materialized_path, "cybersec_cli.py"))
+    assert os.path.isfile(os.path.join(materialized_path, "curriculum.py"))
+
+    # Assert no f-strings
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
