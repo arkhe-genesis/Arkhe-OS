@@ -134,6 +134,10 @@ bool MultiTenantPCADriver::RemoveTenant(const TenantID& id) {
     auto it = tenants_.find(id);
     if (it == tenants_.end()) return false;
     tenants_.erase(it);
+    {
+        std::unique_lock<std::shared_mutex> logLock(loggersMutex_);
+        tenantLoggers_.erase(id);
+    }
     return true;
 }
 
@@ -245,7 +249,12 @@ void MultiTenantPCADriver::CleanupLoop() {
                 now - it->second->GetContext().lastActivity
             ).count();
             if (idle > idleTimeout_.count()) {
+                TenantID erased_id = it->first;
                 it = tenants_.erase(it);
+                {
+                    std::unique_lock<std::shared_mutex> logLock(loggersMutex_);
+                    tenantLoggers_.erase(erased_id);
+                }
             } else {
                 ++it;
             }
