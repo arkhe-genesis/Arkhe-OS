@@ -75,7 +75,6 @@ class Substrate595Canonizer:
                 json.dump(report, f, indent=4, ensure_ascii=False)
             print("Canonization 595 complete. Report saved to: {0}".format(temp_path))
         except Exception as e:
-            os.close(fd)
             raise e
         return temp_path
 
