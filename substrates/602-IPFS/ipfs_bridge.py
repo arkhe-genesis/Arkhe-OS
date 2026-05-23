@@ -69,7 +69,7 @@ class IPFSBridge:
                 "metadata": metadata or {},
                 "substrate": "ARKHE-OS-602"
             }
-            headers = {"Authorization": "Bearer " + self.chain_token}
+            headers = {"Authorization": "Bearer " + (self.chain_token or "")}
             try:
                 resp = requests.post(self.chain_endpoint + "/v1/anchor", json=payload, headers=headers)
                 resp.raise_for_status()
