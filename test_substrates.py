@@ -113,22 +113,22 @@ def test_569_teleport_quantum_link():
     assert data["metadata"]["phi_c"] == 0.988350
     assert data["metadata"]["seal"] == "1e1ef65e168b28d8186a68e1ca6819e1b13665db8400fb881bc25bc66c183951"
 
-def test_572_windows_native_installer():
+def test_585_groth16_zksecurity():
     import importlib.util
     import os
-    import json
     spec = importlib.util.spec_from_file_location(
-        "substrato_572_windows_native_installer",
-        "substrates/500-599_advanced/substrato_572_windows_native_installer/substrato_572_windows_native_installer.py"
+        "substrato_585_groth16_zksecurity",
+        "substrates/500-599_advanced/substrato_585_groth16_zksecurity/substrato_585_groth16_zksecurity.py"
     )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    path = module.generate_report()
+    canonizer = module.Substrate585Canonizer()
+    res = canonizer.canonize()
 
-    assert os.path.exists(path)
-    with open(path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
+    assert os.path.exists(res["temp_dir"])
+    assert os.path.exists(res["manifest_path"])
+    assert len(res["seal"]) == 64
 
     assert data["id"] == "572-WINDOWS-NATIVE-INSTALLER"
     assert data["phi_c"] == 0.999

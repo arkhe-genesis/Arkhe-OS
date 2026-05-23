@@ -1,0 +1,7 @@
+environment = "production"
+cluster_name = "arkhe-mesh-gcp"
+num_workers = 10
+
+# GCP specific
+gcp_project_id = "arkhe-broadcast"
+gcp_region = "us-central1"

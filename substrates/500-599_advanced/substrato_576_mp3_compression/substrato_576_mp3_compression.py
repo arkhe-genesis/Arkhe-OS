@@ -5,12 +5,9 @@ import os
 import tempfile
 from datetime import datetime
 
-class Substrate576:
-    def canonize(self):
-        # ============================================================
-        # UTILITIES
-        # ============================================================
-        invariant_weights = {
+class Substrate576Canonizer:
+    def __init__(self):
+        self.invariant_weights = {
             "ghost": 0.05, "loopseal": 0.05, "gap": 0.05,
             "entropy": 0.06, "coherence": 0.06, "causality": 0.06,
             "alignment": 0.06, "resilience": 0.06, "fidelity": 0.06,
@@ -19,19 +16,17 @@ class Substrate576:
             "theosis": 0.05, "correlation": 0.05, "simplicity": 0.05
         }
 
-        def compute_phi_c(invariant_scores):
-            if len(invariant_scores) != 18:
-                raise ValueError("Exactly 18 invariants required")
-            weighted_sum = sum(s * invariant_weights[k] for s, k in zip(invariant_scores, invariant_weights.keys()))
-            return round(weighted_sum, 6)
+    def compute_phi_c(self, invariant_scores):
+        if len(invariant_scores) != 18:
+            raise ValueError("Exactly 18 invariants required")
+        weighted_sum = sum(s * self.invariant_weights[k] for s, k in zip(invariant_scores, self.invariant_weights.keys()))
+        return round(weighted_sum, 6)
 
-        def sha256_canonical(text):
-            return hashlib.sha256(text.encode('utf-8')).hexdigest()
+    def sha256_canonical(self, text):
+        return hashlib.sha256(text.encode('utf-8')).hexdigest()
 
-        # ============================================================
-        # 1) DECRETO CANONIZÁVEL COMPLETO — SUBSTRATE 576
-        # ============================================================
-        decree_576 = """================================================================================
+    def canonize(self):
+        decree_576_raw = '''================================================================================
 ARKHE OS — CANONIZATION DECREE
 SUBSTRATE 576-MP3-PSYCHOACOUSTIC-COMPRESSION
 Perceptual Ontology Compression Layer v1.0
@@ -218,18 +213,16 @@ AUDIT LOG
 ================================================================================
 END OF DECREE — SUBSTRATE 576-MP3-PSYCHOACOUSTIC-COMPRESSION v1.0
 ================================================================================
-""".format(
+'''
+        decree_576 = "\n".join(line.rstrip() for line in decree_576_raw.split("\n"))
+        decree_576 = decree_576.format(
             seal_576="ae1cab32db10d82e1a1e447c8640b9ee5229a7a2f320d3207357f981248f40e8",
             phi_c_576="0.991500"
         )
 
-        # Recompute seal over the actual decree text to ensure consistency
-        seal_576_real = sha256_canonical(decree_576)
+        seal_576_real = self.sha256_canonical(decree_576)
 
-        # ============================================================
-        # 2) API SPEC — 576/577 ↔ 564-MCP-STATELESS-BRIDGE
-        # ============================================================
-        api_spec = """================================================================================
+        api_spec = '''================================================================================
 ARKHE OS — API SPECIFICATION
 576-MP3-ENCODER / 577-MP3-DECODER ↔ 564-MCP-STATELESS-BRIDGE INTEGRATION
 Version: 1.0.0
@@ -468,30 +461,26 @@ Energy:                     <1 nJ/bit on 2nm GAA
 ================================================================================
 END OF API SPECIFICATION — 576/577 ↔ 564-MCP INTEGRATION
 ================================================================================
-"""
+'''
 
-        # ============================================================
-        # SAVE TO OUTPUT
-        # ============================================================
-        fd1, decree_path = tempfile.mkstemp(prefix="ARKHE_576_CANONIZATION_DECREE_v1.0_", suffix=".txt")
-        with os.fdopen(fd1, "w", encoding="utf-8") as f:
+        temp_dir = tempfile.mkdtemp()
+        decree_path = os.path.join(temp_dir, "ARKHE_576_CANONIZATION_DECREE_v1.0.txt")
+        api_spec_path = os.path.join(temp_dir, "ARKHE_576_577_MCP_API_SPEC_v1.0.txt")
+
+        with open(decree_path, "w", encoding="utf-8") as f:
             f.write(decree_576)
 
-        fd2, api_path = tempfile.mkstemp(prefix="ARKHE_576_577_MCP_API_SPEC_v1.0_", suffix=".txt")
-        with os.fdopen(fd2, "w", encoding="utf-8") as f:
+        with open(api_spec_path, "w", encoding="utf-8") as f:
             f.write(api_spec)
 
         print("Files saved successfully.")
         print("576 Decree seal (recalculated): " + seal_576_real)
-        print("Expected seal:                  " + "b836c8a6a1d55182acd7c386f9ec295b26f3b7ec064e2fb4d57d33a05f00e542")
-        print("Match: " + str(seal_576_real == 'b836c8a6a1d55182acd7c386f9ec295b26f3b7ec064e2fb4d57d33a05f00e542'))
+        print("Expected seal:                  ae1cab32db10d82e1a1e447c8640b9ee5229a7a2f320d3207357f981248f40e8")
+        print("Match: " + str(seal_576_real == "ae1cab32db10d82e1a1e447c8640b9ee5229a7a2f320d3207357f981248f40e8"))
 
         return {
+            "temp_dir": temp_dir,
             "decree_path": decree_path,
-            "api_spec_path": api_path,
+            "api_spec_path": api_spec_path,
             "seal": seal_576_real
         }
-
-if __name__ == "__main__":
-    substrate = Substrate576()
-    substrate.canonize()
