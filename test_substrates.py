@@ -90,3 +90,23 @@ def test_563_f_strings():
         content = f.read()
     for line in content.split('\n'):
         assert not bool(re.search(r'\bf["\']', line)), "f-strings are not allowed: " + line
+
+def test_arkhe_container():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_arkhe_container",
+        "substrates/500-599_advanced/substrato_arkhe_container/substrato_arkhe_container.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.ArkheContainerCanonizer()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    assert data["metadata"]["substrate"] == "ARKHE-CONTAINER"
+    assert "seal" in data["metadata"]
