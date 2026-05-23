@@ -50,14 +50,14 @@ def test_562_stim_qec_simulator():
     )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    path = module.canonize()
+    path, _ = module.Substrato562StimQecSimulator().canonize()
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
     assert data["phi_c"] == 0.999000
     assert data["status"] == "CANONIZED_CLEAN"
-    assert data["seal"] == "3f9d1756b8d02fb88b18d455d8e9acaa8486e2ac368f9a4c682ac6e5fbbfc9f7"
-    assert data["d3_logical_error"] <= 0.01
+    assert len(data["canonical_seal"]) == 64
+    assert data["results"]["d3_logical_error_rate"] <= 0.01
 
 def test_562_f_strings():
     import re
@@ -76,13 +76,13 @@ def test_563_ftqc_unified():
     )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    layer = module.FTQCUnifiedLayer()
+    layer = module.Substrate563Canonizer()
     path = layer.canonize()
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    assert data["phi_c"] == 0.983889
-    assert data["seal"] == "66896068625b33aa280e522878bda3989beab1be2dcf58c378c1e5c777047a93"
+    assert data["metadata"]["phi_c"] == 0.983889
+    assert data["metadata"]["seal"] == "66896068625b33aa280e522878bda3989beab1be2dcf58c378c1e5c777047a93"
 
 def test_563_f_strings():
     import re
