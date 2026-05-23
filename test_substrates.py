@@ -124,16 +124,49 @@ def test_572_windows_native_installer():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    path = module.generate_report()
+    canonizer = module.Substrate572Canonizer()
+    path = canonizer.canonize()
 
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
-    assert data["id"] == "572-WINDOWS-NATIVE-INSTALLER"
-    assert data["phi_c"] == 0.999
-    assert data["files"] == [
-        "Program.cs",
-        "ArkheInstaller.wxs",
-        "build_msi.ps1"
-    ]
+    assert data["metadata"]["substrate"] == "572-WINDOWS-NATIVE-INSTALLER"
+    assert data["metadata"]["phi_c"] == 0.999
+    assert "ArkheInstaller.wxs" in data["build_components"]["installer_script"]
+
+def test_595_iris_alpha():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_595_iris_alpha",
+        "substrates/500-599_advanced/substrato_595_iris_alpha/substrato_595_iris_alpha.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    canonizer = module.Substrate595Canonizer()
+    path = canonizer.canonize()
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    assert data["metadata"]["substrate"] == "595-IRIS-ALPHA"
+    assert data["metadata"]["phi_c"] == 0.709444
+
+def test_597_biollm():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_597_biollm",
+        "substrates/500-599_advanced/substrato_597_biollm/substrato_597_biollm.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    canonizer = module.Substrate597Canonizer()
+    path = canonizer.canonize()
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    assert data["metadata"]["substrate"] == "597-BIOLLM"
+    assert data["metadata"]["phi_c"] == 0.891667

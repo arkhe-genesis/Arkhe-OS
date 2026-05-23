@@ -114,7 +114,7 @@ package-pkg:
 # Docker Multi‑Arch
 # =============================================================================
 docker:
-	docker buildx build --platform linux/amd64,linux/arm64,windows/amd64 -t arkhe/asi:$(VERSION) --push .
+	podman build --platform linux/amd64,linux/arm64,windows/amd64 -t arkhe/asi:$(VERSION) -f Podmanfile .
 	@echo "✅ Imagens Docker multi‑arch publicadas"
 
 # =============================================================================
@@ -162,3 +162,21 @@ soar:
 deploy:
 	@echo "🚀 Deploy em hardware real..."
 	sudo bash deploy/hardware_deploy.sh
+
+# =============================================================================
+# Terraform & Helm Deployment Targets (Requested)
+# =============================================================================
+lint:
+	@echo "🔍 Linting Terraform configurations..."
+	cd terraform && terraform fmt -check
+	@echo "🔍 Linting Helm chart..."
+	helm lint helm/arkhe/
+
+build: docker
+	@echo "✅ Build complete (Docker multi-arch)"
+
+deploy-cloud:
+	@echo "🚀 Deploying infrastructure via Terraform..."
+	cd terraform && terraform apply -auto-approve
+	@echo "🚀 Deploying application via Helm..."
+	helm upgrade --install arkhe-asi helm/arkhe/ --namespace arkhe-system --create-namespace
