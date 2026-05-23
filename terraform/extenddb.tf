@@ -14,7 +14,7 @@ resource "aws_db_instance" "extenddb_postgres" {
   identifier     = "${var.cluster_name}-extenddb"
   engine         = "postgres"
   engine_version = "16.4"
-  instance_class = var.extenddb_postgres_instance_class
+  instance_class = var.extenddb_postgres_instance_class[var.cloud_provider]
 
   db_name  = local.extenddb_postgres_db_name
   username = local.extenddb_postgres_user
@@ -25,7 +25,7 @@ resource "aws_db_instance" "extenddb_postgres" {
   storage_type          = "gp3"
   multi_az              = var.environment == "production"
   publicly_accessible   = false
-  vpc_security_group_ids = [aws_security_group.extenddb_postgres[0].id]
+  vpc_security_group_ids = [module.aws_infrastructure[0].node_security_group_id]
   db_subnet_group_name  = aws_db_subnet_group.extenddb[0].name
 
   backup_retention_period = var.environment == "production" ? 30 : 7
@@ -75,7 +75,7 @@ resource "google_sql_database_instance" "extenddb_postgres" {
   region           = var.gcp_region
 
   settings {
-    tier              = var.extenddb_postgres_instance_class
+    tier              = var.extenddb_postgres_instance_class[var.cloud_provider]
     disk_size         = var.extenddb_postgres_storage_gb
     disk_type         = "PD_SSD"
     availability_type = var.environment == "production" ? "REGIONAL" : "ZONAL"
@@ -112,8 +112,8 @@ resource "google_sql_user" "extenddb" {
 resource "azurerm_postgresql_flexible_server" "extenddb" {
   count               = var.cloud_provider == "azure" && var.extenddb_enabled ? 1 : 0
   name                = "${var.cluster_name}-extenddb"
-  resource_group_name = azurerm_resource_group.rg[0].name
-  location            = azurerm_resource_group.rg[0].location
+  resource_group_name = "rg-${var.cluster_name}-${var.environment}"
+  location            = var.region
   version             = "16"
 
   administrator_login    = local.extenddb_postgres_user
@@ -121,7 +121,7 @@ resource "azurerm_postgresql_flexible_server" "extenddb" {
 
   storage_mb   = var.extenddb_postgres_storage_gb * 1024
   storage_tier = "P30"
-  sku_name     = var.extenddb_postgres_instance_class
+  sku_name     = var.extenddb_postgres_instance_class[var.cloud_provider]
 
   backup_retention_days = var.environment == "production" ? 35 : 7
 

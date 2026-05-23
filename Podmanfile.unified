@@ -1,7 +1,7 @@
 # ARKHE OS v∞.Ω.∇+++ — Podman Runtime v2.0
 # Substrate 587-PODMAN-RUNTIME
 # Selo: 2d927c2c115e87a7130bf0bb01ec8725852a4dea40fe1d944e3c355c27e96370
-# Build: podman build -t arkhe:v∞.Ω.∇+++ -f Podmanfile .
+# Build: podman build -t arkhe:v∞.Ω.∇+++ -f Podmanfile.unified .
 
 FROM debian:bookworm-slim AS base
 
@@ -46,13 +46,13 @@ RUN mkdir -p /arkhe/{substratos,verificadores,proofs,logs,config,skills} \
 # Copiar código
 COPY arkhe/ /arkhe/
 
-# Gerar manifesto SHA-3
-RUN find /arkhe/substratos -type f -name '*.py' -exec sha3sum -b {} \; > /arkhe/proofs/manifest.sha3 \
-    && sha3sum -b /arkhe/arkhe_cli.py >> /arkhe/proofs/manifest.sha3 \
-    && sha3sum -b /arkhe/verify_constitution.py >> /arkhe/proofs/manifest.sha3
+# Gerar manifesto SHA-256
+RUN find /arkhe/substratos -type f -name '*.py' -exec sha256sum -b {} \; > /arkhe/proofs/manifest.sha3 \
+    && sha256sum -b /arkhe/arkhe_cli.py >> /arkhe/proofs/manifest.sha3 \
+    && sha256sum -b /arkhe/verify_constitution.py >> /arkhe/proofs/manifest.sha3
 
 # Container seal com SHA-256 real
-RUN echo "ARKHE OS v∞.Ω.∇+++ (Podman Runtime)\nSubstrate 587-PODMAN-RUNTIME\nSeal: $(sha256sum /arkhe/proofs/manifest.sha3 | cut -d' ' -f1)" > /arkhe/proofs/container.seal
+RUN echo -e "ARKHE OS v∞.Ω.∇+++ (Podman Runtime)\nSubstrate 587-PODMAN-RUNTIME\nSeal: $(sha256sum /arkhe/proofs/manifest.sha3 | cut -d' ' -f1)" > /arkhe/proofs/container.seal
 
 # Imutável
 RUN chmod -R 555 /arkhe/substratos && chmod 755 /arkhe/arkhe_cli.py && chmod 755 /arkhe/verify_constitution.py

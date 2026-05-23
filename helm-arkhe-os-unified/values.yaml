@@ -71,3 +71,59 @@ extenddb:
     enabled: true
     metricsPort: 8000
     metricsPath: /metrics
+
+# ───────────────────────────────────────────────────────────────────────────────
+# Substrate 597A — OpenBioLLM (Ollama Sidecar)
+# ───────────────────────────────────────────────────────────────────────────────
+substrate597a:
+  enabled: true
+  image:
+    repository: ghcr.io/arkhe-os/openbiollm
+    tag: "latest"
+  sidecarOllama:
+    enabled: true
+    image: ollama/ollama:latest
+    port: 11434
+    resources:
+      limits:
+        cpu: 2000m
+        memory: 8Gi
+
+# ───────────────────────────────────────────────────────────────────────────────
+# Substrate 597B — BioLLM-BGI (scGPT/Geneformer with GPU)
+# ───────────────────────────────────────────────────────────────────────────────
+substrate597b:
+  enabled: true
+  image:
+    repository: ghcr.io/arkhe-os/biollm-bgi
+    tag: "latest"
+  resources:
+    limits:
+      nvidia.com/gpu: 1
+      memory: 32Gi
+
+# ───────────────────────────────────────────────────────────────────────────────
+# Substrate 597C — BioLLM-Wetware
+# ───────────────────────────────────────────────────────────────────────────────
+substrate597c:
+  enabled: true
+  image:
+    repository: ghcr.io/arkhe-os/biollm-wetware
+    tag: "latest"
+  cl1_interface_url: "http://biollm-wetware.internal:5000"
+
+# ───────────────────────────────────────────────────────────────────────────────
+# Substrate 595 — IRIS-ALPHA v3.0 Live-Coder
+# ───────────────────────────────────────────────────────────────────────────────
+substrate595:
+  enabled: true
+  image:
+    repository: ghcr.io/arkhe-os/live-coder
+    tag: "latest"
+  sidecarIris:
+    enabled: true
+    image: ghcr.io/arkhe-os/iris-alpha:latest
+    port: 8080
+    resources:
+      limits:
+        nvidia.com/gpu: 1

@@ -1,7 +1,3 @@
-# arkhe-podman/arkhe.pod
-# Substrate 587-PODMAN-RUNTIME — Quadlet Pod Definition
-# Define um pod Arkhe com múltiplos containers
-
 [Pod]
 PodName=arkhe-pod
 PublishPort=8080:8080

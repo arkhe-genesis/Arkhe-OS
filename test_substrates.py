@@ -222,3 +222,67 @@ def test_arkhe_container_unified():
     assert data["metadata"]["container_name"] == "ARKHE-OS-UNIFIED-RUNTIME"
     assert data["metadata"]["phi_c"] == 0.972889
     assert data["metadata"]["seal"] == "e6c32a920cf0aca67b58950d2e04a03492b6b99ff9f22d2a3018f9490dcf4a9f"
+
+def test_597_biollm():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_597_biollm",
+        "substrates/500-599_advanced/substrato_597_biollm/substrato_597_biollm.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrate597Canonizer()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["metadata"]["substrate"] == "597-BIOLLM"
+    assert len(data["tracks"]) == 3
+
+def test_595_iris_alpha():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_595_iris_alpha",
+        "substrates/500-599_advanced/substrato_595_iris_alpha/substrato_595_iris_alpha.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrate595Canonizer()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["metadata"]["substrate"] == "595-IRIS-ALPHA-LIVE-CODER"
+    assert len(data["features"]) == 4
+
+def test_595_iris_alpha_v3():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_595_iris_alpha",
+        "substrates/500-599_advanced/substrato_595_iris_alpha/substrato_595_iris_alpha.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrate595Canonizer()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["metadata"]["substrate"] == "595-IRIS-ALPHA-LIVE-CODER"
+    assert "T2I (Text-to-Image) Texture Generation" in data["features"]
+    assert "C++ Native Live-Coder App Integration" in data["features"]
