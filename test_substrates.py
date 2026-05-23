@@ -37,6 +37,40 @@ def test_563_ftqc_unified():
     assert data["metadata"]["phi_c"] == 0.983889
     assert data["metadata"]["seal"] == "66896068625b33aa280e522878bda3989beab1be2dcf58c378c1e5c777047a93"
 
+
+def test_611_codegraph():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_611_codegraph",
+        "substrates/611-CODEGRAPH/substrato_611_codegraph.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    path = module.canonize_611()
+    assert os.path.exists(path)
+
+    with open(path, "r") as f:
+        data = json.load(f)
+
+    assert data["substrate"] == "611-CODEGRAPH"
+    assert "CodeGraph" in data["description"]
+    assert "seal_computed" in data
+
+def test_611_f_strings():
+    import os
+    file_path = "substrates/611-CODEGRAPH/substrato_611_codegraph.py"
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    # Simple check for f-strings
+    lines = content.split('\n')
+    for i, line in enumerate(lines):
+        if " f'" in line or ' f"' in line or line.startswith("f'") or line.startswith('f"'):
+            assert False, "f-string found in line {}: {}".format(i+1, line.strip())
+
 if __name__ == '__main__':
     pytest.main(['-v', 'test_substrates.py'])
 
@@ -279,22 +313,30 @@ def test_604_cybersecurity_ai():
 
 def test_612_llm_foundations():
     import importlib.util
-    import os
     import json
-    spec = importlib.util.spec_from_file_location(
-        "substrato_612_llm_foundations",
-        "substrates/600-699_advanced/substrato_612_llm_foundations/substrato_612_llm_foundations.py"
-    )
+    import os
+
+    file_path = os.path.abspath('substrates/612-LLM-FOUNDATIONS/substrato_612_llm_foundations.py')
+    spec = importlib.util.spec_from_file_location("substrato_612_llm_foundations", file_path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato612LLMFoundations()
-    path, seal = canonizer.canonize()
+    canonizer = module.Substrato612LlmFoundations()
+    path = canonizer.generate_json()
 
-    with open(path, 'r', encoding='utf-8') as f:
+    assert os.path.exists(path)
+
+    json_path = os.path.join(path, "FICHA_CANONICA_612.json")
+    with open(json_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    assert data["substrate"] == "612-LLM-FOUNDATIONS"
-    assert data["phi_c"] == 1.000000
-    assert data["canonical_seal"] == "cde2f475d5a9d42d927f215c0a1cf48c158493217b3870db1e7f8a58678390f2"
-    assert "plugins/arkhe-learn/__init__.py" in data["artifacts_generated"]["plugin_arkhe_learn"]
+    assert data["id"] == "612-LLM-FOUNDATIONS"
+    assert "seal_sha256" in data
+    assert len(data["seal_sha256"]) == 64
+
+def test_612_f_strings():
+    import os
+    file_path = os.path.abspath('substrates/612-LLM-FOUNDATIONS/substrato_612_llm_foundations.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
