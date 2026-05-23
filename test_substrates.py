@@ -90,3 +90,25 @@ def test_563_f_strings():
         content = f.read()
     for line in content.split('\n'):
         assert not bool(re.search(r'\bf["\']', line)), "f-strings are not allowed: " + line
+
+def test_569_teleport_quantum_link():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_569_teleport_quantum_link",
+        "substrates/500-599_advanced/substrato_569_teleport_quantum_link/substrato_569_teleport_quantum_link.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrate569Canonizer()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["metadata"]["substrate"] == "569-TELEPORT-QUANTUM-LINK"
+    assert data["metadata"]["phi_c"] == 0.988350
+    assert data["metadata"]["seal"] == "1e1ef65e168b28d8186a68e1ca6819e1b13665db8400fb881bc25bc66c183951"
