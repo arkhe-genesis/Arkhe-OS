@@ -54,7 +54,7 @@ def test_562_stim_qec_simulator():
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    assert data["phi_c"] == 0.999000
+    assert data.get("metadata", data).get("phi_c", data.get("phi_c")) == 0.999000
     assert data["status"] == "CANONIZED_CLEAN"
     assert len(data["canonical_seal"]) == 64
     assert data["results"]["d3_logical_error_rate"] <= 0.01
