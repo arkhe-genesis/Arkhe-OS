@@ -6,7 +6,10 @@
 // Stub implementation for C++ compilation check
 namespace LiveCoder {
 
-IrisBridge::IrisBridge(const std::string& ep) : endpoint(ep), apiKey("ARKHE-IRIS-595") {
+IrisBridge::IrisBridge(const std::string& ep) : endpoint(ep) {
+    if (const char* env_p = std::getenv("ARKHE_IRIS_API_KEY")) {
+        apiKey = std::string(env_p);
+    }
 }
 
 IrisBridge::~IrisBridge() {
