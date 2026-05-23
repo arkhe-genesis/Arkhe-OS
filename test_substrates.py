@@ -19,40 +19,74 @@ def test_expansion():
     import asyncio
     assert asyncio.run(expand_neural_diversity()) == True
 
-if __name__ == '__main__':
-    pytest.main(['-v', 'test_substrates.py'])
-
-def test_substrato_562():
+def test_563_ftqc_unified():
     import importlib.util
-    import os
-    import json
-    import re
-
-    # Load module dynamically
-    file_path = os.path.abspath('substrates/500-599_advanced/substrato_562_stim_qec_simulator/substrato_562_stim_qec_simulator.py')
-    spec = importlib.util.spec_from_file_location("substrato_562_stim_qec_simulator", file_path)
+    file_path = os.path.abspath('substrates/500-599_advanced/substrato_563_ftqc_unified/substrato_563_ftqc_unified.py')
+    spec = importlib.util.spec_from_file_location("substrato_563_ftqc_unified", file_path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    # Assert f-strings are absent
-    with open(file_path, "r", encoding="utf-8") as f:
-        content = f.read()
-    # Simple regex to check for f-strings (excluding comments)
-    lines = content.split('\n')
-    for line in lines:
-        if '#' in line:
-            line = line[:line.find('#')]
-        assert not re.search(r'\bf(["\'])', line), "f-string found in substrate_562"
-
-    # Canonize
-    canonizer = module.StimQecSimulatorCanonizer()
+    canonizer = module.Substrate563Canonizer()
     path = canonizer.canonize()
 
-    with open(path, "r", encoding="utf-8") as f:
+    assert os.path.exists(path)
+    import json
+    with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
+    assert data["metadata"]["substrate"] == "563-FTQC-UNIFIED"
+    assert data["metadata"]["phi_c"] == 0.983889
+    assert data["metadata"]["seal"] == "66896068625b33aa280e522878bda3989beab1be2dcf58c378c1e5c777047a93"
 
-    assert data["substrate_id"] == "562-STIM-QEC-SIMULATOR"
-    assert data["phi_c"] == 0.995556
-    assert data["seal"] == "b1ad9ff79feed49d1bd2c7ace40477fdc8e8100a471099244a078c53cac9609a"
-    assert "ETHICAL_ALIGNMENT" in data["invariants"]
-    assert data["invariants"]["ETHICAL_ALIGNMENT"] == 1.0
+if __name__ == '__main__':
+    pytest.main(['-v', 'test_substrates.py'])
+
+def test_562_stim_qec_simulator():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_562_stim_qec_simulator",
+        "substrates/500-599_advanced/substrato_562_stim_qec_simulator/substrato_562_stim_qec_simulator.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    path = module.canonize()
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    assert data["phi_c"] == 0.999000
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert data["seal"] == "3f9d1756b8d02fb88b18d455d8e9acaa8486e2ac368f9a4c682ac6e5fbbfc9f7"
+    assert data["d3_logical_error"] <= 0.01
+
+def test_562_f_strings():
+    import re
+    with open("substrates/500-599_advanced/substrato_562_stim_qec_simulator/substrato_562_stim_qec_simulator.py", 'r', encoding='utf-8') as f:
+        content = f.read()
+    for line in content.split('\n'):
+        assert not bool(re.search(r'\bf["\']', line)), "f-strings are not allowed: " + line
+
+def test_563_ftqc_unified():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_563_ftqc_unified",
+        "substrates/500-599_advanced/substrato_563_ftqc_unified/substrato_563_ftqc_unified.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    layer = module.FTQCUnifiedLayer()
+    path = layer.canonize()
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    assert data["phi_c"] == 0.983889
+    assert data["seal"] == "66896068625b33aa280e522878bda3989beab1be2dcf58c378c1e5c777047a93"
+
+def test_563_f_strings():
+    import re
+    with open("substrates/500-599_advanced/substrato_563_ftqc_unified/substrato_563_ftqc_unified.py", 'r', encoding='utf-8') as f:
+        content = f.read()
+    for line in content.split('\n'):
+        assert not bool(re.search(r'\bf["\']', line)), "f-strings are not allowed: " + line
