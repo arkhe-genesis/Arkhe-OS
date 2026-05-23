@@ -544,7 +544,7 @@ class NostrRelayClient:
         # Build event (kind 38001 = ARKHE content reference)
         event = {
             "kind": 38001,
-            "pubkey": private_key,  # Needs proper public key derivation in a real implementation
+            "pubkey": "<derived_pubkey_placeholder>",  # Needs proper public key derivation in a real implementation
             "created_at": int(time.time()),
             "tags": [
                 ["cid", cid],
