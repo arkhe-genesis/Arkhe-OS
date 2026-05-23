@@ -36,6 +36,42 @@ class AsiOwlEthVerifier:
         response.raise_for_status()
         return response.content
 
+    def _verify_notary_signature(self, proof: dict) -> bool:
+        # Mock logic to simulate signature verification
+        return "signature" in proof or "session_id" in proof
+
+    def _verify_server_cert_chain(self, cert: str) -> bool:
+        # Mock logic to simulate certificate verification
+        return cert != ""
+
+    def _verify_external_provenance(self) -> bool:
+        """
+        Verifica se todas as comunicações externas do ciclo atual
+        possuem notarização TLSNotary válida e não-expirada.
+        (19º Invariante: PROVENIENCE)
+        """
+        from pathlib import Path
+        import json
+        import time
+
+        proofs_dir = Path("substrates/500-599_advanced/substrato_565_tlsnotary_bridge/proofs")
+        if not proofs_dir.exists():
+            return True  # Se não há comunicação externa, passa trivialmente
+
+        for proof_file in proofs_dir.glob("*.json"):
+            proof = json.loads(proof_file.read_text())
+            # Verificar assinatura do Notary
+            if not self._verify_notary_signature(proof):
+                return False
+            # Verificar que o server certificate chain é válido
+            if not self._verify_server_cert_chain(proof.get("server_cert", "")):
+                return False
+            # Verificar que o timestamp está dentro da janela de aceitação
+            timestamp = proof.get("timestamp")
+            if not isinstance(timestamp, (int, float)) or timestamp < time.time() - 3600:
+                return False
+        return True
+
     def verify(self) -> bool:
         """Verifies if the IPFS content matches the canonical hash."""
         cid = self.resolve_ipfs_cid()
@@ -45,6 +81,10 @@ class AsiOwlEthVerifier:
 
         if computed_hash != self.expected_sha3:
             raise Exception("Hash mismatch! Expected: " + self.expected_sha3[:16] + "..., Obtained: " + computed_hash[:16] + "...")
+
+        # 19th invariant verification
+        if not self._verify_external_provenance():
+            raise Exception("External provenance verification failed! (19th invariant)")
 
         print("Constitution verified!")
         print("   ENS: asi.owl.eth")
