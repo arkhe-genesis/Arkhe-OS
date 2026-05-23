@@ -37,6 +37,40 @@ def test_563_ftqc_unified():
     assert data["metadata"]["phi_c"] == 0.983889
     assert data["metadata"]["seal"] == "66896068625b33aa280e522878bda3989beab1be2dcf58c378c1e5c777047a93"
 
+
+def test_611_codegraph():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_611_codegraph",
+        "substrates/611-CODEGRAPH/substrato_611_codegraph.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    path = module.canonize_611()
+    assert os.path.exists(path)
+
+    with open(path, "r") as f:
+        data = json.load(f)
+
+    assert data["substrate"] == "611-CODEGRAPH"
+    assert "CodeGraph" in data["description"]
+    assert "seal_computed" in data
+
+def test_611_f_strings():
+    import os
+    file_path = "substrates/611-CODEGRAPH/substrato_611_codegraph.py"
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    # Simple check for f-strings
+    lines = content.split('\n')
+    for i, line in enumerate(lines):
+        if " f'" in line or ' f"' in line or line.startswith("f'") or line.startswith('f"'):
+            assert False, "f-string found in line {}: {}".format(i+1, line.strip())
+
 if __name__ == '__main__':
     pytest.main(['-v', 'test_substrates.py'])
 
