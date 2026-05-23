@@ -24,14 +24,10 @@
         <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
             <!-- Ensure root directories and permissions exist -->
             <Component Id="CreateLogsFolder" Guid="*">
-                <CreateFolder Directory="LOGSFOLDER">
-                    <Permission User="Users" GenericAll="yes" />
-                </CreateFolder>
+                <CreateFolder Directory="LOGSFOLDER" />
             </Component>
             <Component Id="CreateProofsFolder" Guid="*">
-                <CreateFolder Directory="PROOFSFOLDER">
-                    <Permission User="Users" GenericAll="yes" />
-                </CreateFolder>
+                <CreateFolder Directory="PROOFSFOLDER" />
             </Component>
         </ComponentGroup>
 

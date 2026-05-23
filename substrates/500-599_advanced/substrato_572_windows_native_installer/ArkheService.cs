@@ -47,8 +47,12 @@ namespace ArkheOS.NativeService
 
                 using (Process process = Process.Start(startInfo))
                 {
-                    process.WaitForExit(30000);
-                    if (process.ExitCode == 0)
+                    if (!process.WaitForExit(30000))
+                    {
+                        process.Kill();
+                        LogMessage("ARKHE healthcheck FAIL: Timeout");
+                    }
+                    else if (process.ExitCode == 0)
                     {
                         LogMessage("ARKHE healthcheck PASS (Native C# Bridge)");
                     }
