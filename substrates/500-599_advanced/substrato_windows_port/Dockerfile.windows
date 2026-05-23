@@ -1,3 +1,0 @@
-# Dockerfile for Arkhe OS Windows Container v2.3
-FROM mcr.microsoft.com/windows/servercore:ltsc2022
-WORKDIR C:\\Arkhe

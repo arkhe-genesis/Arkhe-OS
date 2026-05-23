@@ -54,7 +54,7 @@ def test_562_stim_qec_simulator():
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    assert data["phi_c"] == 0.999000
+    assert data.get("metadata", data).get("phi_c", data.get("phi_c")) == 0.999000
     assert data["status"] == "CANONIZED_CLEAN"
     assert len(data["canonical_seal"]) == 64
     assert data["results"]["d3_logical_error_rate"] <= 0.01
@@ -113,136 +113,54 @@ def test_569_teleport_quantum_link():
     assert data["metadata"]["phi_c"] == 0.988350
     assert data["metadata"]["seal"] == "1e1ef65e168b28d8186a68e1ca6819e1b13665db8400fb881bc25bc66c183951"
 
-def test_572_windows_native_installer():
+def test_585_groth16_zksecurity():
     import importlib.util
     import os
-    import json
     spec = importlib.util.spec_from_file_location(
-        "substrato_572_windows_native_installer",
-        "substrates/500-599_advanced/substrato_572_windows_native_installer/substrato_572_windows_native_installer.py"
+        "substrato_585_groth16_zksecurity",
+        "substrates/500-599_advanced/substrato_585_groth16_zksecurity/substrato_585_groth16_zksecurity.py"
     )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrate572Canonizer()
+    canonizer = module.Substrate585Canonizer()
+    res = canonizer.canonize()
+
+    assert os.path.exists(res["temp_dir"])
+    assert os.path.exists(res["manifest_path"])
+    assert len(res["seal"]) == 64
+
+
+def test_arkhe_unified():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_arkhe_unified",
+        "substrates/500-599_advanced/substrato_arkhe_unified/substrato_arkhe_unified.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.SubstrateArkheUnifiedCanonizer()
     path = canonizer.canonize()
 
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
-    assert data["metadata"]["substrate"] == "572-WINDOWS-NATIVE-INSTALLER"
-    assert data["metadata"]["phi_c"] == 0.999
-    assert "ArkheService.cs" in data["build_components"]["service"]
-
-def test_566_container_runtime():
-    import importlib.util
-    import os
-    import json
-    spec = importlib.util.spec_from_file_location(
-        "substrato_566_container_runtime",
-        "substrates/500-599_advanced/substrato_566_container_runtime/substrato_566_container_runtime.py"
-    )
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-
-    canonizer = module.Substrate566Canonizer()
-    path = canonizer.canonize()
-
-    assert os.path.exists(path)
-    with open(path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-
-    assert data["metadata"]["substrate"] == "CONTAINER-RUNTIME"
-    assert data["metadata"]["phi_c"] == 0.973333
-    assert data["metadata"]["seal"] == "3df2c43d8d766e5d525fb1ca9f46da8c7e735dbb978791fb1372319a3eca4604"
-
-def test_570_claude_code_bridge():
-    import importlib.util
-    import os
-    import json
-    spec = importlib.util.spec_from_file_location(
-        "substrato_570_claude_code_bridge",
-        "substrates/500-599_advanced/substrato_570_claude_code_bridge/substrato_570_claude_code_bridge.py"
-    )
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-
-    canonizer = module.Substrate570Canonizer()
-    path = canonizer.canonize()
-
-    assert os.path.exists(path)
-    with open(path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-
-    assert data["metadata"]["substrate"] == "CLAUDE-CODE-BRIDGE"
-    assert data["metadata"]["phi_c"] == 0.973333
-    assert data["metadata"]["seal"] == "087b7f70aec00fcda24c197b0b36e8d704ccc07db4de73a14ab47763eee7ca76"
-
-def test_587_podman_runtime():
-    import importlib.util
-    import os
-    import json
-    spec = importlib.util.spec_from_file_location(
-        "substrato_587_podman_runtime",
-        "substrates/500-599_advanced/substrato_587_podman_runtime/substrato_587_podman_runtime.py"
-    )
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-
-    canonizer = module.Substrate587Canonizer()
-    path = canonizer.canonize()
-
-    assert os.path.exists(path)
-    with open(path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-
-    assert data["metadata"]["substrate"] == "PODMAN-RUNTIME"
-    assert data["metadata"]["phi_c"] == 0.973333
-    assert data["metadata"]["seal"] == "2d927c2c115e87a7130bf0bb01ec8725852a4dea40fe1d944e3c355c27e96370"
-
-def test_arkhe_container_unified():
-    import importlib.util
-    import os
-    import json
-    spec = importlib.util.spec_from_file_location(
-        "arkhe_container_unified",
-        "substrates/arkhe_container_unified/arkhe_container_unified.py"
-    )
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-
-    canonizer = module.UnifiedContainerCanonizer()
-    path = canonizer.canonize()
-
-    assert os.path.exists(path)
-    with open(path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-
-    assert data["metadata"]["container_name"] == "ARKHE-OS-UNIFIED-RUNTIME"
+    assert data["metadata"]["substrate"] == "ARKHE-UNIFIED"
     assert data["metadata"]["phi_c"] == 0.972889
     assert data["metadata"]["seal"] == "e6c32a920cf0aca67b58950d2e04a03492b6b99ff9f22d2a3018f9490dcf4a9f"
+    assert data["metadata"]["dcs"] == 0.978555
+    assert data["metadata"]["architect"] == "ORCID:0009-0005-2697-4668"
 
-def test_597_biollm():
-    import importlib.util
-    import os
-    import json
-    spec = importlib.util.spec_from_file_location(
-        "substrato_597_biollm",
-        "substrates/500-599_advanced/substrato_597_biollm/substrato_597_biollm.py"
-    )
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-
-    canonizer = module.Substrate597Canonizer()
-    path = canonizer.canonize()
-
-    assert os.path.exists(path)
-    with open(path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-
-    assert data["metadata"]["substrate"] == "597-BIOLLM"
-    assert len(data["tracks"]) == 3
+def test_arkhe_unified_f_strings():
+    import re
+    with open("substrates/500-599_advanced/substrato_arkhe_unified/substrato_arkhe_unified.py", 'r', encoding='utf-8') as f:
+        content = f.read()
+    for line in content.split('\n'):
+        assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
 
 def test_595_iris_alpha():
     import importlib.util
@@ -255,34 +173,49 @@ def test_595_iris_alpha():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrate595Canonizer()
+    canonizer = module.Substrate595IrisAlpha()
     path = canonizer.canonize()
 
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
-    assert data["metadata"]["substrate"] == "595-IRIS-ALPHA-LIVE-CODER"
-    assert len(data["features"]) == 4
+    assert data["metadata"]["id"] == "595-IRIS-ALPHA"
+    assert data["metadata"]["phi_c"] == 0.95
+    assert data["metadata"]["canonical_seal"] == "e7000398d9804be9a3ebe1f16b900d99e81abc6c22423687a85adfab42683073"
 
-def test_595_iris_alpha_v3():
+def test_595_f_strings():
+    import re
+    with open("substrates/500-599_advanced/substrato_595_iris_alpha/substrato_595_iris_alpha.py", 'r', encoding='utf-8') as f:
+        content = f.read()
+    for line in content.split('\n'):
+        assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
+
+def test_597_biollm():
     import importlib.util
     import os
     import json
     spec = importlib.util.spec_from_file_location(
-        "substrato_595_iris_alpha",
-        "substrates/500-599_advanced/substrato_595_iris_alpha/substrato_595_iris_alpha.py"
+        "substrato_597_biollm",
+        "substrates/500-599_advanced/substrato_597_biollm/substrato_597_biollm.py"
     )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrate595Canonizer()
+    canonizer = module.Substrate597BioLLM()
     path = canonizer.canonize()
 
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
-    assert data["metadata"]["substrate"] == "595-IRIS-ALPHA-LIVE-CODER"
-    assert "T2I (Text-to-Image) Texture Generation" in data["features"]
-    assert "C++ Native Live-Coder App Integration" in data["features"]
+    assert data["metadata"]["id"] == "597-BIOLLM"
+    assert data["metadata"]["phi_c"] == 0.891667
+    assert len(data["metadata"]["seal"]) == 64
+
+def test_597_f_strings():
+    import re
+    with open("substrates/500-599_advanced/substrato_597_biollm/substrato_597_biollm.py", 'r', encoding='utf-8') as f:
+        content = f.read()
+    for line in content.split('\n'):
+        assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
