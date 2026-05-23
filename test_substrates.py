@@ -30,8 +30,8 @@ def test_563_ftqc_unified():
     path = canonizer.canonize()
 
     assert os.path.exists(path)
-    import json
     with open(path, 'r', encoding='utf-8') as f:
+        import json
         data = json.load(f)
     assert data["metadata"]["substrate"] == "563-FTQC-UNIFIED"
     assert data["metadata"]["phi_c"] == 0.983889
@@ -53,6 +53,7 @@ def test_562_stim_qec_simulator():
     path, _ = module.Substrato562StimQecSimulator().canonize()
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
+        import json
         data = json.load(f)
     assert data.get("metadata", data).get("phi_c", data.get("phi_c")) == 0.999000
     assert data["status"] == "CANONIZED_CLEAN"
@@ -80,6 +81,7 @@ def test_563_ftqc_unified():
     path = layer.canonize()
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
+        import json
         data = json.load(f)
     assert data["metadata"]["phi_c"] == 0.983889
     assert data["metadata"]["seal"] == "66896068625b33aa280e522878bda3989beab1be2dcf58c378c1e5c777047a93"
@@ -107,6 +109,7 @@ def test_569_teleport_quantum_link():
 
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
+        import json
         data = json.load(f)
 
     assert data["metadata"]["substrate"] == "569-TELEPORT-QUANTUM-LINK"
@@ -147,6 +150,7 @@ def test_arkhe_unified():
 
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
+        import json
         data = json.load(f)
 
     assert data["metadata"]["substrate"] == "ARKHE-UNIFIED"
@@ -178,6 +182,7 @@ def test_595_iris_alpha():
 
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
+        import json
         data = json.load(f)
 
     assert data["metadata"]["id"] == "595-IRIS-ALPHA"
@@ -207,6 +212,7 @@ def test_597_biollm():
 
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
+        import json
         data = json.load(f)
 
     assert data["metadata"]["id"] == "597-BIOLLM"
@@ -219,3 +225,21 @@ def test_597_f_strings():
         content = f.read()
     for line in content.split('\n'):
         assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
+
+def test_603_hashtree_cc():
+    import importlib.util
+    file_path = os.path.abspath('substrates/600-699_advanced/substrato_603_hashtree_cc/substrato_603_hashtree_cc.py')
+    spec = importlib.util.spec_from_file_location("substrato_603_hashtree_cc", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrate603Canonizer()
+    path = canonizer.canonize()
+
+    with open(path, 'r') as f:
+        import json
+        data = json.load(f)
+
+    assert data["id"] == "603-HASHTREE-CC"
+    assert data["status"] == "CANONIZED"
+    assert "publish_livecoder.sh" in data["artifacts"]
