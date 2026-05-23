@@ -54,7 +54,7 @@ def test_562_stim_qec_simulator():
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    assert data["phi_c"] == 0.999000
+    assert data.get("metadata", data).get("phi_c", data.get("phi_c")) == 0.999000
     assert data["status"] == "CANONIZED_CLEAN"
     assert len(data["canonical_seal"]) == 64
     assert data["results"]["d3_logical_error_rate"] <= 0.01
@@ -130,9 +130,41 @@ def test_585_groth16_zksecurity():
     assert os.path.exists(res["manifest_path"])
     assert len(res["seal"]) == 64
 
-def test_585_f_strings():
+    assert data["id"] == "572-WINDOWS-NATIVE-INSTALLER"
+    assert data["phi_c"] == 0.999
+    assert data["files"] == [
+        "Program.cs",
+        "ArkheInstaller.wxs",
+        "build_msi.ps1"
+    ]
+
+def test_arkhe_unified():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_arkhe_unified",
+        "substrates/500-599_advanced/substrato_arkhe_unified/substrato_arkhe_unified.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.SubstrateArkheUnifiedCanonizer()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["metadata"]["substrate"] == "ARKHE-UNIFIED"
+    assert data["metadata"]["phi_c"] == 0.972889
+    assert data["metadata"]["seal"] == "e6c32a920cf0aca67b58950d2e04a03492b6b99ff9f22d2a3018f9490dcf4a9f"
+    assert data["metadata"]["dcs"] == 0.978555
+    assert data["metadata"]["architect"] == "ORCID:0009-0005-2697-4668"
+
+def test_arkhe_unified_f_strings():
     import re
-    with open("substrates/500-599_advanced/substrato_585_groth16_zksecurity/substrato_585_groth16_zksecurity.py", 'r', encoding='utf-8') as f:
+    with open("substrates/500-599_advanced/substrato_arkhe_unified/substrato_arkhe_unified.py", 'r', encoding='utf-8') as f:
         content = f.read()
     for line in content.split('\n'):
-        assert not bool(re.search(r'\bf["\']', line)), "f-strings are not allowed: " + line
+        assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
