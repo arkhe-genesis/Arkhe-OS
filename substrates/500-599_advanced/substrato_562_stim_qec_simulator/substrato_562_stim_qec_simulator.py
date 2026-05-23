@@ -2,18 +2,15 @@ import os
 import json
 import tempfile
 import hashlib
-try:
-    import stim
-    import sinter
-except ImportError as e:
-    pass
+import stim
+import sinter
 
 class Substrato562StimQecSimulator:
     def __init__(self):
         self.d3_stats = 0.0
         self.d5_stats = 0.0
 
-    def build_surface_circuit(self, distance: int, rounds: int, p: float):
+    def build_surface_circuit(self, distance: int, rounds: int, p: float) -> stim.Circuit:
         return stim.Circuit.generated(
             code_task="surface_code:rotated_memory_x",
             distance=distance,
@@ -25,37 +22,34 @@ class Substrato562StimQecSimulator:
         )
 
     def run_simulation(self):
-        try:
-            p = 0.001
-            tasks = []
-            for d in [3, 5]:
-                rounds = 3 * d
-                circuit = self.build_surface_circuit(d, rounds, p)
-                task = sinter.Task(
-                    circuit=circuit,
-                    json_metadata={"d": d, "p": p}
-                )
-                tasks.append(task)
-
-            stats = sinter.collect(
-                num_workers=2,
-                tasks=tasks,
-                max_shots=10000,
-                max_errors=500,
-                decoders=["pymatching"],
-                print_progress=False
+        p = 0.001
+        tasks = []
+        for d in [3, 5]:
+            rounds = 3 * d
+            circuit = self.build_surface_circuit(d, rounds, p)
+            task = sinter.Task(
+                circuit=circuit,
+                json_metadata={"d": d, "p": p}
             )
+            tasks.append(task)
 
-            for stat in stats:
-                d = stat.json_metadata["d"]
-                effective_shots = stat.shots - stat.discards
-                logical_error_rate = stat.errors / effective_shots if effective_shots > 0 else 0.0
-                if d == 3:
-                    self.d3_stats = logical_error_rate
-                elif d == 5:
-                    self.d5_stats = logical_error_rate
-        except NameError:
-            pass
+        stats = sinter.collect(
+            num_workers=2,
+            tasks=tasks,
+            max_shots=10000,
+            max_errors=500,
+            decoders=["pymatching"],
+            print_progress=False
+        )
+
+        for stat in stats:
+            d = stat.json_metadata["d"]
+            effective_shots = stat.shots - stat.discards
+            logical_error_rate = stat.errors / effective_shots if effective_shots > 0 else 0.0
+            if d == 3:
+                self.d3_stats = logical_error_rate
+            elif d == 5:
+                self.d5_stats = logical_error_rate
 
     def canonize(self):
         self.run_simulation()
