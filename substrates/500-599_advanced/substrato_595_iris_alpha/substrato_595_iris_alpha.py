@@ -107,15 +107,33 @@ void IrisClient::workerLoop() {
                 switch (mode) {
                     case IrisMode::T2T:
                         url = endpoint + "/generate";
-                        jsonBody = "{\\"mode\\":\\"t2t\\",\\"prompt\\":\\"" + pendingCode + "\\"}";
+                        {
+                            Json::Value root;
+                            root["mode"] = "t2t";
+                            root["prompt"] = pendingCode;
+                            Json::FastWriter writer;
+                            jsonBody = writer.write(root);
+                        }
                         break;
                     case IrisMode::I2T:
                         url = endpoint + "/analyze";
-                        jsonBody = "{\\"mode\\":\\"i2t\\",\\"image\\":\\"" + pendingImageBase64 + "\\"}";
+                        {
+                            Json::Value root;
+                            root["mode"] = "i2t";
+                            root["image"] = pendingImageBase64;
+                            Json::FastWriter writer;
+                            jsonBody = writer.write(root);
+                        }
                         break;
                     case IrisMode::T2I:
                         url = endpoint + "/generate_image";
-                        jsonBody = "{\\"mode\\":\\"t2i\\",\\"prompt\\":\\"" + pendingCode + "\\"}";
+                        {
+                            Json::Value root;
+                            root["mode"] = "t2i";
+                            root["prompt"] = pendingCode;
+                            Json::FastWriter writer;
+                            jsonBody = writer.write(root);
+                        }
                         break;
                 }
                 requestPending = false;
