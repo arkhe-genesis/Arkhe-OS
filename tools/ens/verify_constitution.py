@@ -67,7 +67,8 @@ class AsiOwlEthVerifier:
             if not self._verify_server_cert_chain(proof.get("server_cert", "")):
                 return False
             # Verificar que o timestamp está dentro da janela de aceitação
-            if proof.get("timestamp", 0) < time.time() - 3600:  # 1h tolerance
+            timestamp = proof.get("timestamp")
+            if not isinstance(timestamp, (int, float)) or timestamp < time.time() - 3600:
                 return False
         return True
 
