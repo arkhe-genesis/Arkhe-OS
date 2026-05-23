@@ -1,0 +1,6 @@
+# Remover todas as capabilities exceto:
+# - CAP_NET_BIND_SERVICE (bind em portas <1024, se necessário)
+# - CAP_CHOWN (mudança de ownership de proofs)
+DROP_ALL
+ADD cap_net_bind_service
+ADD cap_chown

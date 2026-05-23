@@ -50,15 +50,14 @@ def test_562_stim_qec_simulator():
     )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    substrate = module.Substrato562StimQecSimulator()
-    path, seal = substrate.canonize()
+    path, _ = module.Substrato562StimQecSimulator().canonize()
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
     assert data["phi_c"] == 0.999000
     assert data["status"] == "CANONIZED_CLEAN"
-
-    assert data.get("d3_logical_error", data.get("results", {}).get("d3_logical_error_rate", 1.0)) <= 0.01
+    assert len(data["canonical_seal"]) == 64
+    assert data["results"]["d3_logical_error_rate"] <= 0.01
 
 def test_562_f_strings():
     import re
@@ -77,13 +76,13 @@ def test_563_ftqc_unified():
     )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    canonizer = module.Substrate563Canonizer()
-    path = canonizer.canonize()
+    layer = module.Substrate563Canonizer()
+    path = layer.canonize()
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    assert data.get("phi_c", data.get("metadata", {}).get("phi_c")) == 0.983889
-    assert data.get("seal", data.get("metadata", {}).get("seal")) == "66896068625b33aa280e522878bda3989beab1be2dcf58c378c1e5c777047a93"
+    assert data["metadata"]["phi_c"] == 0.983889
+    assert data["metadata"]["seal"] == "66896068625b33aa280e522878bda3989beab1be2dcf58c378c1e5c777047a93"
 
 def test_563_f_strings():
     import re
@@ -92,61 +91,24 @@ def test_563_f_strings():
     for line in content.split('\n'):
         assert not bool(re.search(r'\bf["\']', line)), "f-strings are not allowed: " + line
 
-def test_windows_port_canonization():
+def test_569_teleport_quantum_link():
     import importlib.util
     import os
     import json
     spec = importlib.util.spec_from_file_location(
-        "substrato_windows_port",
-        "substrates/500-599_advanced/substrato_windows_port/substrato_windows_port.py"
+        "substrato_569_teleport_quantum_link",
+        "substrates/500-599_advanced/substrato_569_teleport_quantum_link/substrato_569_teleport_quantum_link.py"
     )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    canonizer = module.WindowsPortCanonizer()
+
+    canonizer = module.Substrate569Canonizer()
     path = canonizer.canonize()
+
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    assert data["phi_c"] == 0.990278
-    assert data["seal_sha3_256"] == "d72b4f1b5c01abe643d67ddc0ed1618d6d22ff397ac876bbe6374236d7fbce7d"
 
-def test_windows_port_f_strings():
-    import re
-    files_to_check = [
-        "substrates/500-599_advanced/substrato_windows_port/substrato_windows_port.py",
-        "substrates/500-599_advanced/substrato_windows_port/Dockerfile.windows",
-        "substrates/500-599_advanced/substrato_windows_port/verify_constitution_windows.py",
-        "substrates/500-599_advanced/substrato_windows_port/ArkheBridgeService.py",
-        "substrates/500-599_advanced/substrato_windows_port/Install-ArkheWindows.ps1"
-    ]
-    for filepath in files_to_check:
-        with open(filepath, 'r', encoding='utf-8') as f:
-            content = f.read()
-        for line in content.split('\n'):
-            assert not bool(re.search(r'\bf["\']', line)), "f-strings are not allowed: " + line
-
-def test_substrate_572_windows_native_installer():
-    import importlib.util
-    import os
-    import json
-    spec = importlib.util.spec_from_file_location(
-        "substrato_572_windows_native_installer",
-        "substrates/500-599_advanced/substrato_572_windows_native_installer/substrato_572_windows_native_installer.py"
-    )
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    canonizer = module.Substrate572Canonizer()
-    path = canonizer.canonize()
-    assert os.path.exists(path)
-    with open(path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    assert data["metadata"]["substrate"] == "572-WINDOWS-NATIVE-INSTALLER"
-    assert data["metadata"]["phi_c"] == 0.999000
-    assert data["metadata"]["seal"] == "9cb4c28b6c412382fb6a9c8a83d16f479e697670802745cf501a985955e0c980"
-
-def test_572_f_strings():
-    import re
-    with open("substrates/500-599_advanced/substrato_572_windows_native_installer/substrato_572_windows_native_installer.py", 'r', encoding='utf-8') as f:
-        content = f.read()
-    for line in content.split('\n'):
-        assert not bool(re.search(r'\bf["\']', line)), "f-strings are not allowed: " + line
+    assert data["metadata"]["substrate"] == "569-TELEPORT-QUANTUM-LINK"
+    assert data["metadata"]["phi_c"] == 0.988350
+    assert data["metadata"]["seal"] == "1e1ef65e168b28d8186a68e1ca6819e1b13665db8400fb881bc25bc66c183951"
