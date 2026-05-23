@@ -45,5 +45,5 @@ CMD ["--help"]
 # Healthcheck: verificar integridade dos substratos
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD /usr/bin/python3 -c "import hashlib; \
-        assert hashlib.sha3_256(open('/arkhe/substratos/substrato_227f_verifier.py','rb').read()).hexdigest() == 'EXPECTED_HASH'" \
+        assert hashlib.sha3_256(open('/arkhe/substratos/substrato_227f_verifier.py','rb').read()).hexdigest() == 'ACTUAL_HASH'" \
         || exit 1
