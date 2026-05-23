@@ -273,7 +273,7 @@ def peek_evict(context_name: str, target: int):
     """Manually evict entries to meet token budget."""
     cm = ContextMap(context_name)
     before = cm.total_tokens()
-    if target:
+    if target is not None:
         old_budget = cm.budget_tokens
         cm.budget_tokens = target
         cm._evict()
