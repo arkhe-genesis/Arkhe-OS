@@ -520,7 +520,7 @@ class NostrRelayClient:
 
                     if isinstance(data, list) and len(data) > 2:
                         event = data[2]
-                        tags = {t[0]: t[1] for t in event.get("tags", [])}
+                        tags = {t[0]: t[1] for t in event.get("tags", []) if len(t) >= 2}
 
                         return {
                             "nhash": tags.get("nhash"),
@@ -540,10 +540,12 @@ class NostrRelayClient:
         if not HAS_WEBSOCKETS:
             return False
 
+        import time
         # Build event (kind 38001 = ARKHE content reference)
         event = {
             "kind": 38001,
-            "created_at": int(asyncio.get_event_loop().time()),
+            "pubkey": private_key,  # Needs proper public key derivation in a real implementation
+            "created_at": int(time.time()),
             "tags": [
                 ["cid", cid],
                 ["nhash", nhash],
@@ -797,8 +799,7 @@ echo "[ARKHE-603] Platform: ${PLATFORM}"
         ;;
     *)
         echo "[ERROR] Unsupported platform: ${PLATFORM}"
-        exit_code=1
-        return 1
+        exit 1
         ;;
 esac
 
