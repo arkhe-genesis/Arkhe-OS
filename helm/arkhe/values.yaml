@@ -1,0 +1,42 @@
+replicaCount: 1
+
+image:
+  repository: arkhe-asi
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 8080
+
+resources: {}
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# ───────────────────────────────────────────────────────────────────────────────
+# Substrate 597 — BioLLM Tracks
+# ───────────────────────────────────────────────────────────────────────────────
+substrate597a:
+  enabled: true
+  name: openbiollm
+  image: "arkhe/openbiollm:latest"
+  ollamaSidecar:
+    enabled: true
+    image: "ollama/ollama:latest"
+
+substrate597b:
+  enabled: true
+  name: biollm-bgi
+  image: "arkhe/biollm-bgi:latest"
+  gpu: true
+  resources:
+    limits:
+      nvidia.com/gpu: 1
+
+substrate597c:
+  enabled: true
+  name: biollm-wetware
+  image: "arkhe/biollm-wetware:latest"
+  cl1Simulated: true
