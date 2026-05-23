@@ -219,3 +219,26 @@ def test_597_f_strings():
         content = f.read()
     for line in content.split('\n'):
         assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
+
+def test_substrato_aliasrobotics_cai():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_aliasrobotics_cai",
+        "substrates/400-499_advanced/substrato_aliasrobotics_cai/substrato_aliasrobotics_cai.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    sub = module.SubstratoCai()
+    path = sub.canonize()
+
+    assert os.path.exists(path)
+
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["Title"] == "Cybersecurity AI (CAI)"
+    assert "Features" in data
+    assert "Architecture" in data
