@@ -11,6 +11,14 @@ from .substrates import SUBSTRATES
 from .invariants import verify_all_invariants
 from .seal import generate_canonical_seal
 
+import importlib
+import pkgutil
+try:
+    from . import plugins
+    has_plugins = True
+except ImportError:
+    has_plugins = False
+
 console = Console()
 
 @click.group(invoke_without_command=True)
@@ -130,6 +138,19 @@ def mcp():
 def connect():
     """Conectar CLI a servidores MCP."""
     console.print("Conectado a servidores MCP.")
+
+
+# Load plugins dynamically
+if has_plugins:
+    for _, plugin_name, _ in pkgutil.iter_modules(plugins.__path__):
+        try:
+            module = importlib.import_module(".plugins." + plugin_name, package="arkhe_os")
+            if hasattr(module, "register_commands"):
+                cmds = module.register_commands()
+                for name, cmd in cmds.items():
+                    cli.add_command(cmd, name=name)
+        except Exception as e:
+            pass
 
 if __name__ == '__main__':
     cli()

@@ -245,3 +245,29 @@ def test_603_hashtree_cc():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
     assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
+
+def test_610_peek():
+    import json
+    import subprocess
+    import os
+    import sys
+
+    # We generated the scripts directly and ran it.
+    assert os.path.exists('arkhe-os-cli/arkhe_os/plugins/peek_bridge.py')
+    assert os.path.exists('arkhe-os-cli/arkhe_os/plugins/arkhe_nuclei_peek.py')
+
+    # Run a test click command
+    result = subprocess.run([sys.executable, "-c", "import sys, os; sys.path.insert(0, os.path.abspath('arkhe-os-cli')); import arkhe_os.cli as aocli; from click.testing import CliRunner; res = CliRunner().invoke(aocli.cli, ['peek', '--help']); print(res.output)"], capture_output=True, text=True)
+    assert "PEEK context map cache for ARKHE agents" in result.stdout
+
+def test_610_f_strings():
+    import re
+    with open("arkhe-os-cli/arkhe_os/plugins/peek_bridge.py", 'r', encoding='utf-8') as f:
+        content = f.read()
+    for line in content.split('\n'):
+        assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
+
+    with open("arkhe-os-cli/arkhe_os/plugins/arkhe_nuclei_peek.py", 'r', encoding='utf-8') as f:
+        content = f.read()
+    for line in content.split('\n'):
+        assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
