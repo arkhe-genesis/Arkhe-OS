@@ -15,7 +15,7 @@ services:
       - arkhe-net
     restart: unless-stopped
     healthcheck:
-      test: ["/arkhe/venv/bin/python3", "/arkhe/verify_constitution.py", "--quick"]
+      test: ["/arkhe/venv/bin/python3", "/arkhe/verify_constitution_windows.py", "--quick"]
       interval: 60s
       timeout: 15s
       retries: 3

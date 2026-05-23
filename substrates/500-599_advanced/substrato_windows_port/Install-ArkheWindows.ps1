@@ -32,7 +32,7 @@ Copy-Item -Path "C:\Arkhe-Source\arkhe\*" -Destination "C:\Arkhe\" -Recurse -For
 & C:\Arkhe\venv\Scripts\python.exe -c "
 import hashlib, pathlib
 base = pathlib.Path('C:/Arkhe')
-files = list((base/'Substratos').rglob('*.py')) + [base/'arkhe_cli.py', base/'verify_constitution.py']
+files = list((base/'Substratos').rglob('*.py')) + [base/'arkhe_cli.py', base/'verify_constitution_windows.py']
 with open(base/'Proofs'/'manifest.sha3', 'w') as mf:
     for f in files:
         h = hashlib.sha3_256(f.read_bytes()).hexdigest()
@@ -52,7 +52,7 @@ if ($Mode -eq "Native") {
 }
 
 # 8. Verificação inicial
-& C:\Arkhe\venv\Scripts\python.exe C:\Arkhe\verify_constitution.py
+& C:\Arkhe\venv\Scripts\python.exe C:\Arkhe\verify_constitution_windows.py
 if ($LASTEXITCODE -eq 0) {
     Write-Host "VERIFICAÇÃO CONSTITUCIONAL: PASS (Φ_C preservado)" -ForegroundColor Green
 } else {

@@ -42,7 +42,7 @@ class ArkheBridgeService(win32serviceutil.ServiceFramework):
         while self.is_alive:
             try:
                 r = subprocess.run(
-                    [venv_python, r"C:\Arkhe\verify_constitution.py", "--quick"],
+                    [venv_python, r"C:\Arkhe\verify_constitution_windows.py", "--quick"],
                     capture_output=True, text=True, timeout=30
                 )
                 if r.returncode != 0:
