@@ -228,9 +228,8 @@ class ArkheContainerRuntime:
         }
 
         fd, out_path = tempfile.mkstemp(prefix="arkhe_container_runtime_", suffix=".json", dir="/tmp")
-        os.close(fd)
 
-        with open(out_path, "w", encoding="utf-8") as f:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
             json.dump(report, f, indent=4, ensure_ascii=False)
 
         print("ARKHE OS CONSTITUTIONAL CONTAINER RUNTIME CANONIZED")
