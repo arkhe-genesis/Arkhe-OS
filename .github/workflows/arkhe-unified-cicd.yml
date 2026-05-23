@@ -1,0 +1,54 @@
+name: ARKHE OS Unified CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Podman
+        run: sudo apt-get update && sudo apt-get install -y podman
+
+      - name: Build Unified Container
+        run: podman build -t arkhe:unified-v∞.Ω.∇+++ -f substrates/500-599_advanced/substrato_unified_container/arkhe_unified/Podmanfile.unified .
+
+      - name: Tag Container
+        run: podman tag arkhe:unified-v∞.Ω.∇+++ ghcr.io/arkhe-os/arkhe-unified:latest
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push Container
+        run: podman push ghcr.io/arkhe-os/arkhe-unified:latest
+
+  terraform-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        working-directory: terraform/arkhe_unified
+        run: terraform init -backend=false
+
+      - name: Terraform Format Check
+        working-directory: terraform/arkhe_unified
+        run: terraform fmt -check
+
+      - name: Terraform Validate
+        working-directory: terraform/arkhe_unified
+        run: terraform validate

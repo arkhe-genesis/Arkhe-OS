@@ -54,9 +54,9 @@ def test_562_stim_qec_simulator():
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    assert data["phi_c"] == 0.999000
+    assert data["metadata"]["phi_c"] == 0.999000
     assert data["status"] == "CANONIZED_CLEAN"
-    assert len(data["canonical_seal"]) == 64
+    assert len(data["metadata"]["seal"]) == 64
     assert data["results"]["d3_logical_error_rate"] <= 0.01
 
 def test_562_f_strings():
@@ -124,14 +124,14 @@ def test_572_windows_native_installer():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    path = module.generate_report()
+    path = module.Substrate572Canonizer().canonize()
 
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
-    assert data["id"] == "572-WINDOWS-NATIVE-INSTALLER"
-    assert data["phi_c"] == 0.999
+    assert data["metadata"]["substrate"] == "572-WINDOWS-NATIVE-INSTALLER"
+    assert data["metadata"]["phi_c"] == 0.999
     assert data["files"] == [
         "Program.cs",
         "ArkheInstaller.wxs",

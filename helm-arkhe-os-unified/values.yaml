@@ -1,0 +1,597 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# ARKHE OS Unified — Values
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# ───────────────────────────────────────────────────────────────────────────────
+# Global
+# ───────────────────────────────────────────────────────────────────────────────
+global:
+  arkhe:
+    version: "v∞.Ω.∇+++"
+    seal: "e6c32a920cf0aca67b58950d2e04a03492b6b99ff9f22d2a3018f9490dcf4a9f"
+    substrates: "585,586,587,566,570"
+    master_phi_c: "0.972889"
+    master_dcs: "0.978555"
+  imageRegistry: "ghcr.io/arkhe-os"
+  imagePullSecrets: []
+  storageClass: "standard"
+
+# ───────────────────────────────────────────────────────────────────────────────
+# Substrate 585 — Groth16 ZK Security
+# ───────────────────────────────────────────────────────────────────────────────
+substrate585:
+  enabled: true
+  name: groth16-zksecurity
+  seal: "580eeb59c1811db2ba0eb215af975d5647c2bcee6f07848bd0a0df3c90593ba3"
+  phi_c: "0.971111"
+
+  image:
+    repository: arkhe-os/groth16-verifier
+    tag: "v∞.Ω.∇+++"
+    pullPolicy: IfNotPresent
+
+  replicaCount: 3
+
+  service:
+    type: ClusterIP
+    port: 8080
+    targetPort: 8080
+
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    capabilities:
+      drop:
+        - ALL
+      add:
+        - NET_BIND_SERVICE
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    seccompProfile:
+      type: RuntimeDefault
+
+  env:
+    - name: ARKHE_SUBSTRATE_ID
+      value: "585"
+    - name: ARKHE_CURVE
+      value: "bn254"
+    - name: ARKHE_MPC_MIN_PARTICIPANTS
+      value: "100"
+
+  livenessProbe:
+    exec:
+      command:
+        - /arkhe/585/groth16-verifier-go
+        - --healthcheck
+    initialDelaySeconds: 30
+    periodSeconds: 60
+    timeoutSeconds: 10
+    failureThreshold: 3
+
+  readinessProbe:
+    exec:
+      command:
+        - /arkhe/585/groth16-verifier-go
+        - --ready
+    initialDelaySeconds: 10
+    periodSeconds: 30
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  persistence:
+    enabled: true
+    size: 10Gi
+    mountPath: /arkhe/proofs
+    accessMode: ReadWriteOnce
+
+  ingress:
+    enabled: false
+
+# ───────────────────────────────────────────────────────────────────────────────
+# Substrate 586 — Synapse Brain Map
+# ───────────────────────────────────────────────────────────────────────────────
+substrate586:
+  enabled: true
+  name: synapse-brain-map
+  seal: "69a0f246bfbed46d146fac5bd1c403ddc63a03617f14385233f309f9fc6ea47d"
+  phi_c: "0.973333"
+
+  image:
+    repository: arkhe-os/synapse-ingestor
+    tag: "v∞.Ω.∇+++"
+    pullPolicy: IfNotPresent
+
+  replicaCount: 2
+
+  service:
+    type: ClusterIP
+    port: 8081
+    targetPort: 8081
+
+  resources:
+    limits:
+      cpu: 8000m
+      memory: 32Gi
+      nvidia.com/gpu: 1
+    requests:
+      cpu: 2000m
+      memory: 8Gi
+
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: false
+    allowPrivilegeEscalation: false
+
+  env:
+    - name: ARKHE_SUBSTRATE_ID
+      value: "586"
+    - name: SYNAPSE_RESOLUTION_UM
+      value: "0.3"
+    - name: SYNAPSE_HUB
+      value: "nscc.sg"
+    - name: SYNAPSE_MAX_VOLUME_GB
+      value: "1024"
+
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 8081
+    initialDelaySeconds: 60
+    periodSeconds: 30
+    timeoutSeconds: 10
+    failureThreshold: 3
+
+  readinessProbe:
+    httpGet:
+      path: /ready
+      port: 8081
+    initialDelaySeconds: 30
+    periodSeconds: 15
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  persistence:
+    enabled: true
+    size: 500Gi
+    mountPath: /arkhe/data
+    accessMode: ReadWriteMany
+    storageClass: "fast-ssd"
+
+  ingress:
+    enabled: false
+
+# ───────────────────────────────────────────────────────────────────────────────
+# Substrate 587 — Podman Runtime
+# ───────────────────────────────────────────────────────────────────────────────
+substrate587:
+  enabled: true
+  name: podman-runtime
+  seal: "2d927c2c115e87a7130bf0bb01ec8725852a4dea40fe1d944e3c355c27e96370"
+  phi_c: "0.973333"
+
+  image:
+    repository: arkhe-os/podman-runtime
+    tag: "v∞.Ω.∇+++"
+    pullPolicy: IfNotPresent
+
+  replicaCount: 2
+
+  service:
+    type: ClusterIP
+    port: 8082
+    targetPort: 8082
+
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    capabilities:
+      drop:
+        - ALL
+      add:
+        - SYS_ADMIN
+        - NET_ADMIN
+    readOnlyRootFilesystem: false
+    allowPrivilegeEscalation: false
+
+  env:
+    - name: ARKHE_SUBSTRATE_ID
+      value: "587"
+    - name: PODMAN_RUNTIME
+      value: "crun"
+    - name: PODMAN_ROOTLESS
+      value: "true"
+
+  livenessProbe:
+    exec:
+      command:
+        - podman
+        - --version
+    initialDelaySeconds: 10
+    periodSeconds: 30
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  readinessProbe:
+    exec:
+      command:
+        - podman
+        - ps
+    initialDelaySeconds: 5
+    periodSeconds: 15
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  persistence:
+    enabled: true
+    size: 50Gi
+    mountPath: /var/lib/containers
+    accessMode: ReadWriteOnce
+
+  ingress:
+    enabled: false
+
+# ───────────────────────────────────────────────────────────────────────────────
+# Substrate 566 — Container Runtime Abstraction
+# ───────────────────────────────────────────────────────────────────────────────
+substrate566:
+  enabled: true
+  name: container-runtime
+  seal: "3df2c43d8d766e5d525fb1ca9f46da8c7e735dbb978791fb1372319a3eca4604"
+  phi_c: "0.973333"
+
+  image:
+    repository: arkhe-os/runtime-abstraction
+    tag: "v∞.Ω.∇+++"
+    pullPolicy: IfNotPresent
+
+  replicaCount: 2
+
+  service:
+    type: ClusterIP
+    port: 8083
+    targetPort: 8083
+
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+
+  env:
+    - name: ARKHE_SUBSTRATE_ID
+      value: "566"
+    - name: RUNTIME_PREFERENCE
+      value: "podman,docker,containerd,crio"
+
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 8083
+    initialDelaySeconds: 10
+    periodSeconds: 30
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  readinessProbe:
+    httpGet:
+      path: /ready
+      port: 8083
+    initialDelaySeconds: 5
+    periodSeconds: 15
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  persistence:
+    enabled: false
+
+  ingress:
+    enabled: false
+
+# ───────────────────────────────────────────────────────────────────────────────
+# Substrate 570 — Claude Code Bridge
+# ───────────────────────────────────────────────────────────────────────────────
+substrate570:
+  enabled: true
+  name: claude-code-bridge
+  seal: "087b7f70aec00fcda24c197b0b36e8d704ccc07db4de73a14ab47763eee7ca76"
+  phi_c: "0.973333"
+
+  image:
+    repository: arkhe-os/claude-bridge
+    tag: "v∞.Ω.∇+++"
+    pullPolicy: IfNotPresent
+
+  replicaCount: 1
+
+  service:
+    type: ClusterIP
+    port: 8084
+    targetPort: 8084
+
+  resources:
+    limits:
+      cpu: 4000m
+      memory: 16Gi
+    requests:
+      cpu: 1000m
+      memory: 4Gi
+
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: false
+    allowPrivilegeEscalation: false
+
+  env:
+    - name: ARKHE_SUBSTRATE_ID
+      value: "570"
+    - name: CLAUDE_CONTEXT_WINDOW
+      value: "1000000"
+    - name: CLAUDE_SWE_BENCH_TARGET
+      value: "0.808"
+    - name: CLAUDE_PLAN_MODE
+      value: "true"
+    - name: CLAUDE_MAX_AGENTS
+      value: "5"
+    - name: MCP_BRIDGE_ENABLED
+      value: "true"
+
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 8084
+    initialDelaySeconds: 30
+    periodSeconds: 60
+    timeoutSeconds: 10
+    failureThreshold: 3
+
+  readinessProbe:
+    httpGet:
+      path: /ready
+      port: 8084
+    initialDelaySeconds: 15
+    periodSeconds: 30
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  persistence:
+    enabled: true
+    size: 100Gi
+    mountPath: /arkhe/repos
+    accessMode: ReadWriteOnce
+
+  ingress:
+    enabled: false
+
+# ───────────────────────────────────────────────────────────────────────────────
+# Gateway / Ingress
+# ───────────────────────────────────────────────────────────────────────────────
+gateway:
+  enabled: true
+  name: arkhe-gateway
+
+  image:
+    repository: arkhe-os/gateway
+    tag: "v∞.Ω.∇+++"
+    pullPolicy: IfNotPresent
+
+  replicaCount: 2
+
+  service:
+    type: LoadBalancer
+    port: 80
+    targetPort: 8080
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+
+  ingress:
+    enabled: true
+    className: "nginx"
+    annotations:
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/proxy-body-size: "10g"
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    hosts:
+      - host: arkhe.unified.arkhe-os.org
+        paths:
+          - path: /585
+            pathType: Prefix
+            service: substrate585
+          - path: /586
+            pathType: Prefix
+            service: substrate586
+          - path: /587
+            pathType: Prefix
+            service: substrate587
+          - path: /566
+            pathType: Prefix
+            service: substrate566
+          - path: /570
+            pathType: Prefix
+            service: substrate570
+    tls:
+      - secretName: arkhe-unified-tls
+        hosts:
+          - arkhe.unified.arkhe-os.org
+
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+
+# ───────────────────────────────────────────────────────────────────────────────
+# Autoscaling
+# ───────────────────────────────────────────────────────────────────────────────
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+        - type: Percent
+          value: 10
+          periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      policies:
+        - type: Percent
+          value: 50
+          periodSeconds: 15
+        - type: Pods
+          value: 2
+          periodSeconds: 15
+      selectPolicy: Max
+
+# ───────────────────────────────────────────────────────────────────────────────
+# Pod Disruption Budget
+# ───────────────────────────────────────────────────────────────────────────────
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+# ───────────────────────────────────────────────────────────────────────────────
+# Service Account
+# ───────────────────────────────────────────────────────────────────────────────
+serviceAccount:
+  create: true
+  annotations:
+    arkhe.substrates: "585,586,587,566,570"
+  name: "arkhe-unified-sa"
+
+# ───────────────────────────────────────────────────────────────────────────────
+# Network Policies
+# ───────────────────────────────────────────────────────────────────────────────
+networkPolicy:
+  enabled: true
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: arkhe-os
+      ports:
+        - protocol: TCP
+          port: 8080
+        - protocol: TCP
+          port: 8081
+        - protocol: TCP
+          port: 8082
+        - protocol: TCP
+          port: 8083
+        - protocol: TCP
+          port: 8084
+  egress:
+    - to: []
+      ports:
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 80
+
+# ───────────────────────────────────────────────────────────────────────────────
+# Monitoring (Prometheus/Grafana)
+# ───────────────────────────────────────────────────────────────────────────────
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    interval: 30s
+    scrapeTimeout: 10s
+    labels:
+      release: prometheus
+  metricsPort: 9090
+  metricsPath: /metrics
+
+# ───────────────────────────────────────────────────────────────────────────────
+# ConfigMap — Configurações ARKHE
+# ───────────────────────────────────────────────────────────────────────────────
+configMap:
+  data:
+    arkhe.conf: |
+      [global]
+      version = v∞.Ω.∇+++
+      seal = e6c32a920cf0aca67b58950d2e04a03492b6b99ff9f22d2a3018f9490dcf4a9f
+      master_phi_c = 0.972889
+      master_dcs = 0.978555
+      substrates = 585,586,587,566,570
+
+      [substrate_585]
+      curve = bn254
+      mpc_min_participants = 100
+
+      [substrate_586]
+      resolution_um = 0.3
+      hub = nscc.sg
+
+      [substrate_587]
+      runtime = crun
+      rootless = true
+
+      [substrate_566]
+      preference = podman,docker,containerd,crio
+
+      [substrate_570]
+      context_window = 1000000
+      swe_bench_target = 0.808
+      max_agents = 5
+
+# ───────────────────────────────────────────────────────────────────────────────
+# Secrets
+# ───────────────────────────────────────────────────────────────────────────────
+secrets:
+  enabled: true
+  data: {}
+    # Base64-encoded secrets (override in production)
+    # claude-api-key: <base64>
+    # groth16-toxic-waste-hash: <base64>
+    # synapse-auth-token: <base64>

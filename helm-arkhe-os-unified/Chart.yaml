@@ -1,0 +1,29 @@
+apiVersion: v2
+name: arkhe-os-unified
+description: ARKHE OS v∞.Ω.∇+++ — Unified Helm Chart for 5 Substrates (585, 586, 587, 566, 570)
+type: application
+version: 1.0.0
+appVersion: "v∞.Ω.∇+++"
+home: https://arkhe-os.org
+sources:
+  - https://github.com/arkhe-os/arkhe-os-unified
+maintainers:
+  - name: Arkhe Architect
+    email: architect@arkhe-os.org
+    orcid: 0009-0005-2697-4668
+keywords:
+  - groth16
+  - zero-knowledge
+  - neuroscience
+  - podman
+  - container-runtime
+  - claude-code
+  - agentic-coding
+  - OCI
+annotations:
+  arkhe.substrates: "585,586,587,566,570"
+  arkhe.seal: "e6c32a920cf0aca67b58950d2e04a03492b6b99ff9f22d2a3018f9490dcf4a9f"
+  arkhe.master.phi_c: "0.972889"
+  arkhe.master.dcs: "0.978555"
+  arkhe.principles: "19"
+dependencies: []
