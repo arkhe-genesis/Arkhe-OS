@@ -270,3 +270,53 @@ def test_604_cybersecurity_ai():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
     assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
+
+def test_611_codegraph():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_611_codegraph",
+        "substrates/611-CODEGRAPH/substrato_611_codegraph.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    import io
+    from contextlib import redirect_stdout
+    f = io.StringIO()
+    with redirect_stdout(f):
+        module.canonize()
+
+    out = f.getvalue().strip()
+    path = out.split("Canonized Substrate 611-CODEGRAPH to: ")[1]
+
+    with open(path, "r", encoding="utf-8") as file:
+        data = json.load(file)
+        assert data["id"] == "611-CODEGRAPH"
+        assert len(data["seal"]) == 64
+
+def test_612_llm_foundations():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_612_llm_foundations",
+        "substrates/612-LLM-FOUNDATIONS/substrato_612_llm_foundations.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    import io
+    from contextlib import redirect_stdout
+    f = io.StringIO()
+    with redirect_stdout(f):
+        module.canonize()
+
+    out = f.getvalue().strip()
+    path = out.split("Canonized Substrate 612-LLM-FOUNDATIONS to: ")[1]
+
+    with open(path, "r", encoding="utf-8") as file:
+        data = json.load(file)
+        assert data["id"] == "612-LLM-FOUNDATIONS"
+        assert len(data["seal"]) == 64

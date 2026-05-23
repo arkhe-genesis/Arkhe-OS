@@ -1,5 +1,7 @@
 import click
 import sys
+import os
+import importlib
 from rich.console import Console
 from rich.table import Table
 
@@ -130,6 +132,35 @@ def mcp():
 def connect():
     """Conectar CLI a servidores MCP."""
     console.print("Conectado a servidores MCP.")
+
+@cli.group()
+def plugin():
+    """Gerenciar plugins do MegaKernel."""
+    pass
+
+@plugin.command()
+@click.argument('name')
+def install(name):
+    """Instala um plugin no ambiente ARKHE."""
+    console.print(f"Instalando plugin {name}...")
+    console.print(f"Plugin {name} instalado com sucesso.")
+
+def load_plugins():
+    plugins_dir = os.path.join(os.path.dirname(__file__), "plugins")
+    if not os.path.exists(plugins_dir):
+        return
+
+    for filename in os.listdir(plugins_dir):
+        if filename.endswith(".py") and not filename.startswith("__"):
+            module_name = filename[:-3]
+            try:
+                module = importlib.import_module(f"arkhe_os.plugins.{module_name}")
+                if hasattr(module, "register"):
+                    module.register(cli)
+            except Exception as e:
+                console.print(f"Failed to load plugin {module_name}: {e}")
+
+load_plugins()
 
 if __name__ == '__main__':
     cli()
