@@ -1,27 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="ARKHE OS CLI" Language="1033" Version="1.0.0.0" Manufacturer="Arkhe" UpgradeCode="12345678-1234-1234-1234-123456789012">
-    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
-    <MediaTemplate EmbedCab="yes" />
+    <Product Id="*" Name="ARKHE OS Windows Port" Language="1033" Version="2.3.0.0" Manufacturer="Arkhe Project" UpgradeCode="7E5528DB-235E-4B07-A9D4-09FE9199A6E1">
+        <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
 
-    <Feature Id="ProductFeature" Title="ARKHE OS CLI" Level="1">
-      <ComponentGroupRef Id="ProductComponents" />
-    </Feature>
+        <MajorUpgrade DowngradeErrorMessage="A newer version of ARKHE OS is already installed." />
+        <MediaTemplate EmbedCab="yes" />
 
-    <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="ProgramFilesFolder">
-        <Directory Id="INSTALLFOLDER" Name="ARKHE OS CLI" />
-      </Directory>
-      <Directory Id="ProgramMenuFolder" />
-    </Directory>
+        <Feature Id="ProductFeature" Title="ARKHE OS Constitutional Runtime" Level="1">
+            <ComponentGroupRef Id="ProductComponents" />
+            <ComponentGroupRef Id="ServiceComponents" />
+        </Feature>
 
-    <Icon Id="ArkheIcon.ico" SourceFile="ArkheIcon.ico" />
-    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-      <Component Id="ArkheExe" Guid="87654321-4321-4321-4321-210987654321">
-        <File Id="arkhe.exe" Source="$(var.Arkhe.Cli.TargetDir)publish\arkhe.exe" KeyPath="yes" Checksum="yes" />
-        <Shortcut Id="ArkheExeShortcut" Directory="ProgramMenuFolder" Name="ARKHE OS CLI" WorkingDirectory="INSTALLFOLDER" Icon="ArkheIcon.ico" />
-        <Environment Id="ArkhePath" Name="PATH" Value="[INSTALLFOLDER]" Permanent="no" Part="last" Action="set" System="yes" />
-      </Component>
-    </ComponentGroup>
-  </Product>
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFilesFolder">
+                <Directory Id="INSTALLFOLDER" Name="Arkhe">
+                    <Directory Id="LOGSFOLDER" Name="Logs" />
+                    <Directory Id="PROOFSFOLDER" Name="Proofs" />
+                    <Directory Id="SUBSTRATOSFOLDER" Name="Substratos" />
+                </Directory>
+            </Directory>
+        </Directory>
+
+        <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+            <!-- Ensure root directories and permissions exist -->
+            <Component Id="CreateLogsFolder" Guid="*">
+                <CreateFolder Directory="LOGSFOLDER" />
+            </Component>
+            <Component Id="CreateProofsFolder" Guid="*">
+                <CreateFolder Directory="PROOFSFOLDER" />
+            </Component>
+        </ComponentGroup>
+
+        <ComponentGroup Id="ServiceComponents" Directory="INSTALLFOLDER">
+            <Component Id="ArkheNativeService" Guid="*">
+                <File Id="ArkheServiceExe" Source="ArkheService.exe" KeyPath="yes" />
+                <ServiceInstall
+                    Id="ServiceInstaller"
+                    Type="ownProcess"
+                    Name="ArkheBridge"
+                    DisplayName="ARKHE OS Constitutional Bridge"
+                    Description="Native C#/.NET Runtime for ARKHE OS V2.3"
+                    Start="auto"
+                    Account="LocalSystem"
+                    ErrorControl="normal" />
+                <ServiceControl
+                    Id="StartService"
+                    Start="install"
+                    Stop="both"
+                    Remove="uninstall"
+                    Name="ArkheBridge"
+                    Wait="yes" />
+            </Component>
+        </ComponentGroup>
+    </Product>
 </Wix>
