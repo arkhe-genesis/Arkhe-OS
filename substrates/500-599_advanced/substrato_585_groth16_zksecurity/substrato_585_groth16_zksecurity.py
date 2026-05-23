@@ -153,7 +153,7 @@ RUN curl -L https://go.dev/dl/go1.22.0.linux-amd64.tar.gz | tar -C /usr/local -x
 ENV PATH="/usr/local/go/bin:${PATH}"
 COPY arkhe-groth16-go/ /build/arkhe-groth16-go/
 WORKDIR /build/arkhe-groth16-go
-RUN go build -o groth16-verifier-go ./...
+RUN go build -o groth16-verifier-go .
 
 # --- Runtime stage ---
 FROM debian:bookworm-slim
@@ -331,6 +331,7 @@ func (vk *VerifyingKey) VerifyRecursive(proof *Proof, innerVKDigest [32]byte, ma
 
 use ark_bn254::Fr;
 use ark_ff::Field;
+use ark_serialize::CanonicalSerialize;
 use sha2::{Sha256, Digest};
 use rand::rngs::OsRng;
 
@@ -390,6 +391,16 @@ impl MPCCeremony {
         // Atualizar transcript hash
         let mut hasher = Sha256::new();
         hasher.update(&self.transcript_hash);
+        for power in &contrib.new_powers_g1 {
+            let mut bytes = Vec::new();
+            power.serialize_uncompressed(&mut bytes).unwrap();
+            hasher.update(&bytes);
+        }
+        for power in &contrib.new_powers_g2 {
+            let mut bytes = Vec::new();
+            power.serialize_uncompressed(&mut bytes).unwrap();
+            hasher.update(&bytes);
+        }
         hasher.update(&contrib.proof_of_knowledge);
         hasher.update(contrib.participant_id.as_bytes());
         self.transcript_hash = hasher.finalize().into();
@@ -571,6 +582,25 @@ mod tests {
     }
 }'''
 
+
+        cargo_toml = '''[package]
+name = "arkhe-groth16"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+bn254 = []
+
+[dependencies]
+ark-bn254 = "0.4.0"
+ark-ec = "0.4.0"
+ark-ff = "0.4.0"
+ark-std = "0.4.0"
+ark-serialize = "0.4.0"
+sha2 = "0.10.0"
+rand = "0.8.5"
+'''
+
         lib_rs = '''// arkhe-groth16/src/lib.rs
 //! Substrate 585-GROTH16-ZKSECURITY
 //!
@@ -607,6 +637,7 @@ pub const DCS_585: f64 = 0.976111;'''
         safe_write(os.path.join("arkhe-groth16-go", "verifier.go"), verifier_go)
 
         os.makedirs(os.path.join(temp_dir, "arkhe-groth16", "src"), exist_ok=True)
+        safe_write(os.path.join("arkhe-groth16", "Cargo.toml"), cargo_toml)
         safe_write(os.path.join("arkhe-groth16", "src", "mpc_ceremony.rs"), mpc_ceremony_rs)
         safe_write(os.path.join("arkhe-groth16", "src", "verifier.rs"), verifier_rs)
         safe_write(os.path.join("arkhe-groth16", "src", "lib.rs"), lib_rs)
