@@ -393,12 +393,12 @@ impl MPCCeremony {
         hasher.update(&self.transcript_hash);
         for power in &contrib.new_powers_g1 {
             let mut bytes = Vec::new();
-            power.serialize_uncompressed(&mut bytes).unwrap();
+            power.serialize_uncompressed(&mut bytes).map_err(|_| MPCError::InvalidProofOfKnowledge)?;
             hasher.update(&bytes);
         }
         for power in &contrib.new_powers_g2 {
             let mut bytes = Vec::new();
-            power.serialize_uncompressed(&mut bytes).unwrap();
+            power.serialize_uncompressed(&mut bytes).map_err(|_| MPCError::InvalidProofOfKnowledge)?;
             hasher.update(&bytes);
         }
         hasher.update(&contrib.proof_of_knowledge);
