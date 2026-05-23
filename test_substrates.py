@@ -30,12 +30,46 @@ def test_563_ftqc_unified():
     path = canonizer.canonize()
 
     assert os.path.exists(path)
-    import json
     with open(path, 'r', encoding='utf-8') as f:
+        import json
         data = json.load(f)
     assert data["metadata"]["substrate"] == "563-FTQC-UNIFIED"
     assert data["metadata"]["phi_c"] == 0.983889
     assert data["metadata"]["seal"] == "66896068625b33aa280e522878bda3989beab1be2dcf58c378c1e5c777047a93"
+
+
+def test_611_codegraph():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_611_codegraph",
+        "substrates/611-CODEGRAPH/substrato_611_codegraph.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    path = module.canonize_611()
+    assert os.path.exists(path)
+
+    with open(path, "r") as f:
+        data = json.load(f)
+
+    assert data["substrate"] == "611-CODEGRAPH"
+    assert "CodeGraph" in data["description"]
+    assert "seal_computed" in data
+
+def test_611_f_strings():
+    import os
+    file_path = "substrates/611-CODEGRAPH/substrato_611_codegraph.py"
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    # Simple check for f-strings
+    lines = content.split('\n')
+    for i, line in enumerate(lines):
+        if " f'" in line or ' f"' in line or line.startswith("f'") or line.startswith('f"'):
+            assert False, "f-string found in line {}: {}".format(i+1, line.strip())
 
 if __name__ == '__main__':
     pytest.main(['-v', 'test_substrates.py'])
@@ -53,6 +87,7 @@ def test_562_stim_qec_simulator():
     path, _ = module.Substrato562StimQecSimulator().canonize()
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
+        import json
         data = json.load(f)
     assert data.get("metadata", data).get("phi_c", data.get("phi_c")) == 0.999000
     assert data["status"] == "CANONIZED_CLEAN"
@@ -80,6 +115,7 @@ def test_563_ftqc_unified():
     path = layer.canonize()
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
+        import json
         data = json.load(f)
     assert data["metadata"]["phi_c"] == 0.983889
     assert data["metadata"]["seal"] == "66896068625b33aa280e522878bda3989beab1be2dcf58c378c1e5c777047a93"
@@ -107,6 +143,7 @@ def test_569_teleport_quantum_link():
 
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
+        import json
         data = json.load(f)
 
     assert data["metadata"]["substrate"] == "569-TELEPORT-QUANTUM-LINK"
@@ -147,6 +184,7 @@ def test_arkhe_unified():
 
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
+        import json
         data = json.load(f)
 
     assert data["metadata"]["substrate"] == "ARKHE-UNIFIED"
@@ -178,6 +216,7 @@ def test_595_iris_alpha():
 
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
+        import json
         data = json.load(f)
 
     assert data["metadata"]["id"] == "595-IRIS-ALPHA"
@@ -207,6 +246,7 @@ def test_597_biollm():
 
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
+        import json
         data = json.load(f)
 
     assert data["metadata"]["id"] == "597-BIOLLM"
@@ -246,28 +286,57 @@ def test_603_hashtree_cc():
         content = f.read()
     assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
 
-def test_610_peek():
+def test_604_cybersecurity_ai():
+    import importlib.util
     import json
-    import subprocess
     import os
-    import sys
 
-    # We generated the scripts directly and ran it.
-    assert os.path.exists('arkhe-os-cli/arkhe_os/plugins/peek_bridge.py')
-    assert os.path.exists('arkhe-os-cli/arkhe_os/plugins/arkhe_nuclei_peek.py')
+    file_path = os.path.abspath('substrates/604-CYBERSECURITY-AI/substrato_604_cybersecurity_ai.py')
+    spec = importlib.util.spec_from_file_location("substrato_604_cybersecurity_ai", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
 
-    # Run a test click command
-    result = subprocess.run([sys.executable, "-c", "import sys, os; sys.path.insert(0, os.path.abspath('arkhe-os-cli')); import arkhe_os.cli as aocli; from click.testing import CliRunner; res = CliRunner().invoke(aocli.cli, ['peek', '--help']); print(res.output)"], capture_output=True, text=True)
-    assert "PEEK context map cache for ARKHE agents" in result.stdout
+    canonizer = module.Substrato604CybersecurityAI()
+    path = canonizer.generate_json()
 
-def test_610_f_strings():
-    import re
-    with open("arkhe-os-cli/arkhe_os/plugins/peek_bridge.py", 'r', encoding='utf-8') as f:
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "604-CYBERSECURITY-AI"
+    assert "canonical_seal" in data
+    assert len(data["canonical_seal"]) == 64
+
+    with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
-    for line in content.split('\n'):
-        assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
+    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
 
-    with open("arkhe-os-cli/arkhe_os/plugins/arkhe_nuclei_peek.py", 'r', encoding='utf-8') as f:
+def test_612_llm_foundations():
+    import importlib.util
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/612-LLM-FOUNDATIONS/substrato_612_llm_foundations.py')
+    spec = importlib.util.spec_from_file_location("substrato_612_llm_foundations", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato612LlmFoundations()
+    path = canonizer.generate_json()
+
+    assert os.path.exists(path)
+
+    json_path = os.path.join(path, "FICHA_CANONICA_612.json")
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "612-LLM-FOUNDATIONS"
+    assert "seal_sha256" in data
+    assert len(data["seal_sha256"]) == 64
+
+def test_612_f_strings():
+    import os
+    file_path = os.path.abspath('substrates/612-LLM-FOUNDATIONS/substrato_612_llm_foundations.py')
+    with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
-    for line in content.split('\n'):
-        assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
+    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"

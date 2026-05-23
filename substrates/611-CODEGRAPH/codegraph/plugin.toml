@@ -1,0 +1,9 @@
+[plugin]
+name = "codegraph"
+version = "1.0.0"
+description = "CodeGraph — Pre-indexed Code Knowledge Graph for AI Agents (colbymchenry)"
+author = "ORCID 0009-0005-2697-4668"
+license = "MIT"
+entry_point = "codegraph_bridge"
+dependencies = ["click", "rich", "subprocess"]
+arkhe_version = "∞.Ω.∇+++"

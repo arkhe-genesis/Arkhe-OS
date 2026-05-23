@@ -10,6 +10,8 @@ from .paper import generate_paper
 from .substrates import SUBSTRATES
 from .invariants import verify_all_invariants
 from .seal import generate_canonical_seal
+from .i18n import get_translator, set_locale
+_ = get_translator()
 
 import importlib
 import pkgutil
@@ -22,16 +24,17 @@ except ImportError:
 console = Console()
 
 @click.group(invoke_without_command=True)
-@click.option("--install-completion", is_flag=True, help="Auto-complete para bash/zsh/fish.")
+@click.option("--install-completion", is_flag=True, help=_("Auto-complete para bash/zsh/fish."))
 def cli(install_completion):
     """ARKHE OS CLI - MegaKernel Interface."""
+    global _
+    _ = get_translator()
     if install_completion:
-        console.print("Auto-completion installed.")
+        console.print(_("Auto-completion installed."))
         sys.exit(0)
 
-@cli.command()
+@cli.command(help=_("Inicializa o MegaKernel."))
 def boot():
-    """Inicializa o MegaKernel."""
     console.print("\u2554" + "\u2550" * 74 + "\u2557")
     console.print("\u2551  ARKHE OS v\u221e.\u03a9 \u2014 MegaKernel Boot Sequence                                \u2551")
     console.print("\u2551  Arquiteto: Rafael Oliveira (ORCID: 0009-0005-2697-4668)                 \u2551")
@@ -57,7 +60,7 @@ def boot():
 def status():
     """Exibe invariantes constitucionais."""
     invariants = verify_all_invariants({})
-    table = Table(title="Status de Invariantes")
+    table = Table(title=_("Status de Invariantes"))
     table.add_column("Invariante", style="cyan")
     table.add_column("Status", style="green")
     for inv, data in invariants.items():
@@ -98,9 +101,8 @@ def paper(output):
     console.print(f"Generating paper in {output}...")
     console.print(f"Status: {result['status']}")
 
-@cli.command()
+@cli.command(help=_("Lista substratos canonizados."))
 def list():
-    """Lista substratos canonizados."""
     table = Table(box=None, header_style="bold", show_edge=False)
     table.add_column("ID", style="cyan")
     table.add_column("Nome", style="green")
@@ -140,17 +142,75 @@ def connect():
     console.print("Conectado a servidores MCP.")
 
 
-# Load plugins dynamically
-if has_plugins:
-    for _, plugin_name, _ in pkgutil.iter_modules(plugins.__path__):
-        try:
-            module = importlib.import_module(".plugins." + plugin_name, package="arkhe_os")
-            if hasattr(module, "register_commands"):
-                cmds = module.register_commands()
-                for name, cmd in cmds.items():
-                    cli.add_command(cmd, name=name)
-        except Exception as e:
-            pass
+@cli.group()
+def lang():
+    """Gerencia o idioma do sistema (i18n)."""
+    pass
+
+@lang.command()
+@click.argument('locale')
+def set(locale):
+    """Altera o idioma de exibição."""
+    set_locale(locale)
+    global _
+    _ = get_translator()
+    console.print(f"{_('Idioma definido para')} {locale}")
+
+
+import importlib.util
+import glob
+import os
+
+PLUGINS_DIR = os.path.join(os.path.dirname(__file__), "plugins")
+os.makedirs(PLUGINS_DIR, exist_ok=True)
+
+def load_plugins():
+    for plugin_path in glob.glob(os.path.join(PLUGINS_DIR, "*.py")):
+        if os.path.basename(plugin_path) == "__init__.py":
+            continue
+        plugin_name = os.path.splitext(os.path.basename(plugin_path))[0]
+        spec = importlib.util.spec_from_file_location(plugin_name, plugin_path)
+        if spec and spec.loader:
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            # Find click commands or groups in the module and attach to cli
+            for attr_name in dir(module):
+                attr = getattr(module, attr_name)
+                if isinstance(attr, (click.Command, click.Group)) and attr_name != 'cli':
+                    cli.add_command(attr)
+
+@cli.group()
+def plugin():
+    """Gerencia plugins do MegaKernel."""
+    pass
+
+@plugin.command()
+@click.argument('name')
+def install(name):
+    """Instala um plugin."""
+    console.print(f"Instalando plugin: {name} (simulado)")
+    console.print(f"Plugin {name} instalado com sucesso.")
+
+@plugin.command()
+def list():
+    """Lista plugins instalados."""
+    plugins = []
+    for plugin_path in glob.glob(os.path.join(PLUGINS_DIR, "*.py")):
+        if os.path.basename(plugin_path) != "__init__.py":
+            plugins.append(os.path.basename(plugin_path))
+
+    if plugins:
+        table = Table(title="Plugins Instalados", box=None, header_style="bold", show_edge=False)
+        table.add_column("Nome", style="green")
+        for p in plugins:
+            table.add_row(p)
+        console.print(table)
+    else:
+        console.print("Nenhum plugin instalado.")
+
+
+
+load_plugins()
 
 if __name__ == '__main__':
     cli()
