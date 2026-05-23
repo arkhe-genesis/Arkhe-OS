@@ -37,11 +37,11 @@ class ArkheContainer:
         checks = {
             'substrato_227f': self._check_hash(
                 '/arkhe/substratos/substrato_227f_verifier.py',
-                '<ACTUAL_SHA3_256_HEX_DIGEST_HERE>'
+                'YOUR_PRECOMPUTED_227F_HASH_HERE'
             ),
             'substrato_233': self._check_hash(
                 '/arkhe/substratos/substrato_233_lagrangian.py',
-                '<ACTUAL_SHA3_256_HEX_DIGEST_HERE>'
+                'YOUR_PRECOMPUTED_233_HASH_HERE'
             ),
             'seccomp': Path('/etc/arkhe/seccomp.json').exists(),
             'selinux': Path('/etc/arkhe/arkhe.te').exists(),
