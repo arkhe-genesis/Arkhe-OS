@@ -130,13 +130,7 @@ def test_585_groth16_zksecurity():
     assert os.path.exists(res["manifest_path"])
     assert len(res["seal"]) == 64
 
-    assert data["id"] == "572-WINDOWS-NATIVE-INSTALLER"
-    assert data["phi_c"] == 0.999
-    assert data["files"] == [
-        "Program.cs",
-        "ArkheInstaller.wxs",
-        "build_msi.ps1"
-    ]
+
 
 def test_arkhe_unified():
     import importlib.util
@@ -168,3 +162,41 @@ def test_arkhe_unified_f_strings():
         content = f.read()
     for line in content.split('\n'):
         assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
+
+def test_substrato_eng_practices():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_eng_practices",
+        "substrates/400-499_advanced/substrato_eng_practices/substrato_eng_practices.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    path = module.SubstratoEngPractices().canonize()
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    assert data["Repository"] == "https://github.com/google/eng-practices"
+    assert data["Description"] == "Google's Engineering Practices documentation"
+    assert "The Code Reviewer's Guide" in data["Components"]
+    assert "The Change Author's Guide" in data["Components"]
+
+def test_substrato_eng_practices():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_eng_practices",
+        "substrates/400-499_advanced/substrato_eng_practices/substrato_eng_practices.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    path = module.SubstratoEngPractices().canonize()
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    assert data["Repository"] == "https://github.com/google/eng-practices"
+    assert data["Description"] == "Google's Engineering Practices documentation"
+    assert "The Code Reviewer's Guide" in data["Components"]
+    assert "The Change Author's Guide" in data["Components"]
