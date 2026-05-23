@@ -1,0 +1,6 @@
+apiVersion: v2
+name: ipfs
+description: ARKHE IPFS cluster — core storage layer
+type: application
+version: 1.0.0
+appVersion: "kubo-v0.32.1"

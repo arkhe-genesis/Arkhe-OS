@@ -1,0 +1,42 @@
+name: Build PCA-595
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build_cmake:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        build_type: [Release, Debug]
+        sanitizer: [none, asan, tsan]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Configure CMake
+      run: >
+        cmake -B build
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -DARKHE_USE_ASAN=${{ matrix.sanitizer == 'asan' && 'ON' || 'OFF' }}
+        -DARKHE_USE_TSAN=${{ matrix.sanitizer == 'tsan' && 'ON' || 'OFF' }}
+    - name: Build
+      run: cmake --build build --parallel 4
+
+  build_bazel:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config: [opt, dbg, asan, tsan]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build with Bazel
+      run: bazel build //... -c ${{ matrix.config }}
+
+  build-ipfs-bridge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build IPFS bridge container
+        run: |
+          docker build -t ghcr.io/arkhe-os/ipfs-bridge:latest -f docker/ipfs-bridge/Dockerfile .
