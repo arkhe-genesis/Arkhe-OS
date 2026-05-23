@@ -276,3 +276,33 @@ def test_604_cybersecurity_ai():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
     assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
+
+def test_612_llm_foundations():
+    import importlib.util
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/612-LLM-FOUNDATIONS/substrato_612_llm_foundations.py')
+    spec = importlib.util.spec_from_file_location("substrato_612_llm_foundations", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato612LlmFoundations()
+    path = canonizer.generate_json()
+
+    assert os.path.exists(path)
+
+    json_path = os.path.join(path, "FICHA_CANONICA_612.json")
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "612-LLM-FOUNDATIONS"
+    assert "seal_sha256" in data
+    assert len(data["seal_sha256"]) == 64
+
+def test_612_f_strings():
+    import os
+    file_path = os.path.abspath('substrates/612-LLM-FOUNDATIONS/substrato_612_llm_foundations.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
