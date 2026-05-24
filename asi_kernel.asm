@@ -99,6 +99,8 @@ pca_superposition:
     ret
 
 or_executing:
+    ; Gateway HTTP integration point
+    call invoke_gateway_http
     movsd xmm0, [phi_measurement]
     mov rax, 0x3fb999999999999a ; 0.1
     push rax
@@ -435,3 +437,9 @@ exit_kernel:
     mov rax, SYS_EXIT
     xor rdi, rdi
     syscall
+
+invoke_gateway_http:
+    ; Substrate 631-OPENSERV-GATEWAY - HTTP invocation stub
+    ; This would ideally use raw sockets to communicate with the HTTP Gateway
+    ; For now, we simulate the effect of the gateway invocation.
+    ret

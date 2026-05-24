@@ -592,3 +592,19 @@ def test_substrato_xalgorix():
 
 if __name__ == '__main__':
     pytest.main(['-v', 'test_substrates.py'])
+
+def test_631_openserv_gateway_compilation():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("substrato_631_openserv_gateway", "substrates/631-OPENSERV-GATEWAY/substrato_631_openserv_gateway.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    module.canonize()
+
+def test_631_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath('substrates/631-OPENSERV-GATEWAY/gateway_http.py')
+    with open(file_path, 'r') as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), "Found f-string in gateway_http.py"
