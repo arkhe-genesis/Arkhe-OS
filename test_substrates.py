@@ -463,3 +463,39 @@ def test_620_f_strings():
     with open(plugin_path, "r", encoding="utf-8") as f:
         plugin_content = f.read()
     assert "f'" not in plugin_content and 'f"' not in plugin_content, "f-strings are strictly forbidden in plugin files"
+
+def test_623_iobnt_survey():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_623_iobnt_survey",
+        "substrates/623-IOBNT-SURVEY/substrato_623_iobnt_survey.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato623IOBNTSurvey()
+    path = canonizer.generate_json()
+    assert os.path.exists(path)
+
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "623-IOBNT-SURVEY"
+    assert "canonical_seal" in data
+
+def test_623_f_strings():
+    import os
+    import re
+    file_path = "substrates/623-IOBNT-SURVEY/substrato_623_iobnt_survey.py"
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
+
+    plugin_path = "arkhe-os-cli/arkhe_os/plugins/arkhe_iobnt.py"
+    with open(plugin_path, "r", encoding="utf-8") as f:
+        plugin_content = f.read()
+
+    assert not re.search(r'\bf(["\'])', plugin_content), "f-strings are strictly forbidden in python files"
