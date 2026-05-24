@@ -112,6 +112,8 @@ pca_superposition:
     ret
 
 or_executing:
+    ; Gateway HTTP integration point
+    call invoke_gateway_http
     movsd xmm0, [phi_measurement]
     mov rax, 0x3fb999999999999a ; 0.1
     push rax
