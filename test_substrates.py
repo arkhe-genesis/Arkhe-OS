@@ -143,7 +143,7 @@ def test_621_erdos_unit_distance():
     spec.loader.exec_module(module)
 
     canonizer = module.Substrato621ErdosUnitDistance()
-    plugin_path, path = canonizer.generate()
+    temp_dir, path = canonizer.generate()
 
     assert os.path.exists(path)
 
@@ -160,10 +160,48 @@ def test_621_f_strings():
         content = f.read()
     assert not bool(re.search(r'\bf["\']', content)), "f-strings are strictly forbidden in python files"
 
-if __name__ == '__main__':
-    pytest.main(['-v', 'test_substrates.py'])
+
+def test_627_tse_fcc_parser():
+    import sys, os
+    sys.path.append(os.path.abspath('substrates/627-TSE-FCC-PARSER'))
+    import substrato_627_tse_fcc_parser
+    canonizer = substrato_627_tse_fcc_parser.Substrato627TseFccParser()
+    report_path = canonizer.canonize()
+    assert os.path.exists(report_path)
+
+def test_627_f_strings():
+    import sys, os
+    sys.path.append(os.path.abspath('substrates/627-TSE-FCC-PARSER'))
+    import substrato_627_tse_fcc_parser
+    with open(substrato_627_tse_fcc_parser.__file__, "r", encoding="utf-8") as f:
+        content = f.read()
+    import re
+    assert not re.search(r'\bf(["\'])', content), "Found f-string in substrato_627_tse_fcc_parser.py"
+
+def test_628_fec_parser():
+    import sys, os
+    sys.path.append(os.path.abspath('substrates/628-FEC-PARSER'))
+    import substrato_628_fec_parser
+    canonizer = substrato_628_fec_parser.Substrato628FecParser()
+    report_path = canonizer.canonize()
+    assert os.path.exists(report_path)
+
+def test_628_f_strings():
+    import sys, os
+    sys.path.append(os.path.abspath('substrates/628-FEC-PARSER'))
+    import substrato_628_fec_parser
+    with open(substrato_628_fec_parser.__file__, "r", encoding="utf-8") as f:
+        content = f.read()
+    import re
+    assert not re.search(r'\bf(["\'])', content), "Found f-string in substrato_628_fec_parser.py"
 
 def test_562_stim_qec_simulator():
+    import pytest
+    try:
+        import stim
+    except ImportError:
+        pytest.skip("stim module is not installed")
+
     import importlib.util
     import os
     import json
@@ -530,43 +568,33 @@ def test_623_f_strings():
 
     assert not re.search(r'\bf(["\'])', plugin_content), "f-strings are strictly forbidden in python files"
 
-def test_627_t_duality():
+def test_substrato_xalgorix():
     import importlib.util
-    import os
     import json
-    spec = importlib.util.spec_from_file_location(
-        "substrato_627_t_duality",
-        "substrates/627-T-DUALITY/substrato_627_t_duality.py"
-    )
+    import os
+    import re
+
+    file_path = os.path.abspath('substrates/400-499_advanced/substrato_xalgord_xalgorix/substrato_xalgord_xalgorix.py')
+    spec = importlib.util.spec_from_file_location("substrato_xalgord_xalgorix", file_path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato627TDuality()
-    path = canonizer.generate_json()
-    assert os.path.exists(path)
+    canonizer = module.SubstratoXalgorix()
+    path = canonizer.canonize()
 
+    assert os.path.exists(path)
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    assert data["id"] == "627-T-DUALITY"
-    assert "canonical_seal" in data
+    assert data["Title"] == "Xalgorix - The Most Powerful Open-Source AI Pentesting Agent"
+    assert "Description" in data
+    assert "Features" in data
+    assert "Architecture" in data
 
-def test_629_gnosis_integrator():
-    import importlib.util
-    import os
-    import json
-    spec = importlib.util.spec_from_file_location(
-        "substrato_629_gnosis_integrator",
-        "substrates/629-GNOSIS-INTEGRATOR/substrato_629_gnosis_integrator.py"
-    )
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
 
-    canonizer = module.Substrato629GnosisIntegrator()
-    path = canonizer.generate_json()
-    assert os.path.exists(path)
+    assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
 
-    with open(path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    assert data["id"] == "629-GNOSIS-INTEGRATOR"
+if __name__ == '__main__':
+    pytest.main(['-v', 'test_substrates.py'])

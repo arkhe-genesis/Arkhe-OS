@@ -39,3 +39,15 @@ deploy-all: init
 destroy-all: init
 	@echo "Destroying infrastructure across all clouds..."
 	terraform -chdir=terraform destroy -auto-approve
+
+# ASI Kernel Build
+.PHONY: asi_kernel clean-asi
+
+asi_kernel: asi_kernel.o
+	ld asi_kernel.o -o asi_kernel
+
+asi_kernel.o: asi_kernel.asm
+	nasm -f elf64 asi_kernel.asm -o asi_kernel.o
+
+clean-asi:
+	rm -f asi_kernel.o asi_kernel
