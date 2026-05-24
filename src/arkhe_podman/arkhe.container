@@ -1,0 +1,45 @@
+[Container]
+Image=arkhe:v∞.Ω.∇+++
+ContainerName=arkhe-runtime
+PodmanArgs=--cgroups=split --sdnotify=conmon --replace
+PublishPort=8080:8080
+PublishPort=8443:8443
+Volume=/opt/arkhe/data:/arkhe/data:Z
+Volume=/opt/arkhe/proofs:/arkhe/proofs:Z
+User=1000:1000
+Group=1000
+
+# Security
+DropCapability=ALL
+AddCapability=NET_BIND_SERVICE
+NoNewPrivileges=true
+SeccompProfile=/etc/arkhe/seccomp-arkhe.json
+
+# Resource limits
+Memory=4G
+MemorySwap=4G
+CPUShares=1024
+PidsLimit=2048
+
+# Healthcheck
+HealthCmd=/arkhe/venv/bin/python3 /arkhe/verify_constitution.py --quick
+HealthInterval=60s
+HealthTimeout=15s
+HealthRetries=3
+HealthStartPeriod=10s
+
+# Labels
+Label=arkhe.substrate.id=587
+Label=arkhe.substrate.name=PODMAN-RUNTIME
+Label=arkhe.seal=2d927c2c115e87a7130bf0bb01ec8725852a4dea40fe1d944e3c355c27e96370
+Label=arkhe.phi_c=0.973333
+Label=arkhe.architect=ORCID:0009-0005-2697-4668
+
+[Service]
+Restart=always
+RestartSec=5
+Type=notify
+NotifyAccess=all
+
+[Install]
+WantedBy=default.target
