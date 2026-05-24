@@ -159,6 +159,9 @@ contract ServRegistryBridge {
         ServStatus status;
         uint256 registerTime;
         uint256 invokeCount;
+        uint256 totalLatencyMs;
+        uint256 verifiedCount;
+        uint256 stake;
         bool active;
     }
 
@@ -185,6 +188,7 @@ contract ServRegistryBridge {
     address public governance;
     uint256 public constant MIN_STAKE = 0.01 ether;
     uint256 public constant SERV_TIMEOUT_MS = 30000;
+    uint256 public globalVerifiedCount;
 
     // ── Modifiers ──────────────────────────────────────────────────────
     modifier onlyGovernance() {
@@ -234,6 +238,9 @@ contract ServRegistryBridge {
             status: ServStatus.Idle,
             registerTime: block.timestamp,
             invokeCount: 0,
+            totalLatencyMs: 0,
+            verifiedCount: 0,
+            stake: msg.value,
             active: true
         });
 
@@ -279,6 +286,7 @@ contract ServRegistryBridge {
         servInvocations[servId].push(invocationId);
         invocationList.push(invocationId);
         servs[servId].invokeCount++;
+        servs[servId].totalLatencyMs += latencyMs;
 
         emit ServInvoked(servId, msg.sender, direction, payloadHash, block.timestamp, latencyMs);
     }
@@ -296,7 +304,11 @@ contract ServRegistryBridge {
 
         // In production: verify zk proof or TEE attestation
         bool valid = _verifyProofInternal(invocationId, proofBytes);
-        invocations[invocationId].verified = valid;
+        if (valid && !invocations[invocationId].verified) {
+            invocations[invocationId].verified = true;
+            servs[invocations[invocationId].servId].verifiedCount++;
+            globalVerifiedCount++;
+        }
 
         emit ProofVerified(
             invocations[invocationId].servId,
@@ -346,6 +358,18 @@ contract ServRegistryBridge {
     }
 
     /**
+     * @notice Withdraw stake
+     */
+    function withdrawStake(bytes32 servId) external validServ(servId) {
+        require(msg.sender == servs[servId].creator, "not authorized");
+        require(!servs[servId].active, "must deregister first");
+        uint256 amount = servs[servId].stake;
+        require(amount > 0, "no stake to withdraw");
+        servs[servId].stake = 0;
+        payable(msg.sender).transfer(amount);
+    }
+
+    /**
      * @notice Get Serv statistics
      */
     function getServStats(bytes32 servId) external view validServ(servId) returns (
@@ -356,22 +380,12 @@ contract ServRegistryBridge {
         Serv storage s = servs[servId];
         invokeCount = s.invokeCount;
 
-        bytes32[] storage invs = servInvocations[servId];
-        if (invs.length == 0) {
+        if (invokeCount == 0) {
             return (0, 0, 0);
         }
 
-        uint256 totalLatency = 0;
-        uint256 verifiedCount = 0;
-        for (uint256 i = 0; i < invs.length; i++) {
-            totalLatency += invocations[invs[i]].latencyMs;
-            if (invocations[invs[i]].verified) {
-                verifiedCount++;
-            }
-        }
-
-        avgLatency = totalLatency / invs.length;
-        verificationRate = (verifiedCount * 100) / invs.length;
+        avgLatency = s.totalLatencyMs / invokeCount;
+        verificationRate = (s.verifiedCount * 100) / invokeCount;
     }
 
     /**
@@ -388,13 +402,7 @@ contract ServRegistryBridge {
         if (totalInvocations == 0) {
             avgVerificationRate = 0;
         } else {
-            uint256 verifiedCount = 0;
-            for (uint256 i = 0; i < totalInvocations; i++) {
-                if (invocations[invocationList[i]].verified) {
-                    verifiedCount++;
-                }
-            }
-            avgVerificationRate = (verifiedCount * 100) / totalInvocations;
+            avgVerificationRate = (globalVerifiedCount * 100) / totalInvocations;
         }
     }
 
