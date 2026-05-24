@@ -215,9 +215,11 @@ class TokenicEngine:
 
         # Escrever Φ_sgrna no sysfs
         sys_dir = "/sys/arkhe/med"
-        os.makedirs(sys_dir, exist_ok=True)
-        with open(os.path.join(sys_dir, "sgrna_phi"), "w") as f:
-            f.write("{0:.4f}".format(self.best_fitness))
+        try:
+            with open(os.path.join(sys_dir, "sgrna_phi"), "w") as f:
+                f.write("{0:.4f}".format(self.best_fitness))
+        except FileNotFoundError:
+            print("[633] Warning: Sysfs interface not found. Kernel module may not be loaded.")
 
         print("[633] sgRNA design complete. Φ_sgrna = {0:.4f}".format(self.best_fitness))
         return report

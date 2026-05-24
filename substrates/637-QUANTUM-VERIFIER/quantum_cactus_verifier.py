@@ -223,9 +223,11 @@ class GenomeIntegrityVerifier:
         # Escrever Φ_quantum no sysfs
         phi_quantum = integrity_score * 0.10  # peso do Substrato 637
         sys_dir = "/sys/arkhe/med"
-        os.makedirs(sys_dir, exist_ok=True)
-        with open(os.path.join(sys_dir, "quantum_phi"), "w") as f:
-            f.write("{0:.4f}".format(phi_quantum))
+        try:
+            with open(os.path.join(sys_dir, "quantum_phi"), "w") as f:
+                f.write("{0:.4f}".format(phi_quantum))
+        except FileNotFoundError:
+            print("[637] Warning: Sysfs interface not found. Kernel module may not be loaded.")
 
         print("[637] Quantum verification complete. Φ_quantum = {0:.4f}".format(phi_quantum))
         return report
