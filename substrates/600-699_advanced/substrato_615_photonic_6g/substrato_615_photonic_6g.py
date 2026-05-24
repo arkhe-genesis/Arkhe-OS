@@ -751,7 +751,6 @@ class PhotonicEngine:
             photonic_signature=hashlib.sha3_256(sig_data.encode()).hexdigest()
         )
 
-        self.frame_buffer.append(frame)
         return frame
 
     def _simulate_sensor_data(self, sensor_type: str, duration_ms: int) -> bytes:
