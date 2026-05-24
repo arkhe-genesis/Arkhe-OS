@@ -1,21 +1,15 @@
-<<<<<<< SEARCH
-        self.score[pillar_name] = [results[t] for t in topics]
-        avg = sum(self.score[pillar_name]) / len(self.score[pillar_name])
-        return avg
-=======
-        self.score[pillar_name] = [results[t] for t in topics]
-        if not self.score[pillar_name]:
-            return 0.0
-        avg = sum(self.score[pillar_name]) / len(self.score[pillar_name])
-        return avg
->>>>>>> REPLACE
-<<<<<<< SEARCH
-@click.group()
-def learn():
-=======
-def get_canonical_explanation(topic):
-    return "Canonical explanation for {0}".format(topic)
-
-@click.group()
-def learn():
->>>>>>> REPLACE
+--- substrates/630-PAPERDEBUGGER-BRIDGE/AcademicWritingAttestationBridge.sol
++++ substrates/630-PAPERDEBUGGER-BRIDGE/AcademicWritingAttestationBridge.sol
+@@ -321,10 +321,7 @@
+         if (totalRevisions == 0) {
+             avgPhiScore = 0;
+         } else {
+-            uint256 totalPhi = 0;
+-            for (uint256 i = 0; i < totalRevisions; i++) {
+-                totalPhi += revisions[allRevisions[i]].phiScore;
+-            }
+-            avgPhiScore = totalPhi / totalRevisions;
++            // Calculate using a maintained state variable `totalPhiScore` incremented during anchorRevision
++            avgPhiScore = totalPhiScore / totalRevisions;
+         }
+     }
