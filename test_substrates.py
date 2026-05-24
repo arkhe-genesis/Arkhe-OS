@@ -1,3 +1,4 @@
+import json
 import pytest
 import os
 import sys
@@ -216,6 +217,156 @@ def test_597_biollm():
 def test_597_f_strings():
     import re
     with open("substrates/500-599_advanced/substrato_597_biollm/substrato_597_biollm.py", 'r', encoding='utf-8') as f:
+        content = f.read()
+    for line in content.split('\n'):
+        assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
+
+def test_603_hashtree():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "substrato_603_hashtree",
+        "substrates/600-699_advanced/substrato_603_hashtree/substrato_603_hashtree.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrate603Hashtree()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["metadata"]["id"] == "603-HASHTREE-CC"
+
+def test_603_f_strings():
+    import re
+    with open("substrates/600-699_advanced/substrato_603_hashtree/substrato_603_hashtree.py", 'r', encoding='utf-8') as f:
+        content = f.read()
+    for line in content.split('\n'):
+        assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
+
+def test_610_peek():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "substrato_610_peek",
+        "substrates/600-699_advanced/substrato_610_peek/substrato_610_peek.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrate610Peek()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["metadata"]["id"] == "610-PEEK"
+
+def test_610_f_strings():
+    import re
+    with open("substrates/600-699_advanced/substrato_610_peek/substrato_610_peek.py", 'r', encoding='utf-8') as f:
+        content = f.read()
+    for line in content.split('\n'):
+        assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
+
+def test_611_codegraph():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "substrato_611_codegraph",
+        "substrates/600-699_advanced/substrato_611_codegraph/substrato_611_codegraph.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrate611CodeGraph()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["metadata"]["id"] == "611-CODEGRAPH"
+
+def test_611_f_strings():
+    import re
+    with open("substrates/600-699_advanced/substrato_611_codegraph/substrato_611_codegraph.py", 'r', encoding='utf-8') as f:
+        content = f.read()
+    for line in content.split('\n'):
+        assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
+
+def test_602_ipfs():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "substrato_602_ipfs",
+        "substrates/600-699_advanced/substrato_602_ipfs/substrato_602_ipfs.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrate602IPFS()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["metadata"]["id"] == "602-IPFS"
+
+def test_602_f_strings():
+    import re
+    with open("substrates/600-699_advanced/substrato_602_ipfs/substrato_602_ipfs.py", 'r', encoding='utf-8') as f:
+        content = f.read()
+    for line in content.split('\n'):
+        assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
+
+def test_612_llm_foundations():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "substrato_612_llm_foundations",
+        "substrates/600-699_advanced/substrato_612_llm_foundations/substrato_612_llm_foundations.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrate612LlmFoundations()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["metadata"]["id"] == "612-LLM-FOUNDATIONS"
+
+def test_612_f_strings():
+    import re
+    with open("substrates/600-699_advanced/substrato_612_llm_foundations/substrato_612_llm_foundations.py", 'r', encoding='utf-8') as f:
+        content = f.read()
+    for line in content.split('\n'):
+        assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
+
+def test_613_cybersec_fundamentals():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "substrato_613_cybersec_fundamentals",
+        "substrates/600-699_advanced/substrato_613_cybersec_fundamentals/substrato_613_cybersec_fundamentals.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrate613CybersecFundamentals()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["metadata"]["id"] == "613-CYBERSEC-FUNDAMENTALS"
+
+def test_613_f_strings():
+    import re
+    with open("substrates/600-699_advanced/substrato_613_cybersec_fundamentals/substrato_613_cybersec_fundamentals.py", 'r', encoding='utf-8') as f:
         content = f.read()
     for line in content.split('\n'):
         assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
