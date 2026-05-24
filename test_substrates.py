@@ -143,14 +143,14 @@ def test_621_erdos_unit_distance():
     spec.loader.exec_module(module)
 
     canonizer = module.Substrato621ErdosUnitDistance()
-    path = canonizer.generate()[1]
+    temp_dir, path = canonizer.generate()
 
     assert os.path.exists(path)
 
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    assert data["id"] == "621-ERDOS-UNIT-DISTANCE"
+    assert data["id"] == "621-ERDŐS-UNIT-DISTANCE"
 
 def test_621_f_strings():
     import os
@@ -196,6 +196,12 @@ def test_628_f_strings():
     assert not re.search(r'\bf(["\'])', content), "Found f-string in substrato_628_fec_parser.py"
 
 def test_562_stim_qec_simulator():
+    import pytest
+    try:
+        import stim
+    except ImportError:
+        pytest.skip("stim module is not installed")
+
     import importlib.util
     import os
     import json
