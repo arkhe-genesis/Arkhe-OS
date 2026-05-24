@@ -4316,13 +4316,13 @@ void MultiTenantOverlayManager::DataCollectionLoop() {
             }
         }
 
-        fd, temp_path = tempfile.mkstemp(suffix=".json")
-        with os.fdopen(fd, "w", encoding="utf-8") as f:
+        fd, temp_path = tempfile.mkstemp(suffix='.json')
+        with os.fdopen(fd, 'w', encoding='utf-8') as f:
             json.dump(report, f, indent=4, ensure_ascii=False)
 
         return temp_path
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     canonizer = Substrate595IrisAlpha()
     path = canonizer.canonize()
-    print("Substrate 595-IRIS-ALPHA canonized at: " + path)
+    print('Substrate 595-IRIS-ALPHA canonized at: ' + path)
