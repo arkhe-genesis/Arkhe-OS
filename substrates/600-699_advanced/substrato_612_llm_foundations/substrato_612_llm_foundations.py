@@ -490,6 +490,7 @@ class ConselhoEngine:
             "votos": {},
             "resultado": None
         }
+        self.votacoes.append(sessao)
         return sessao
 
     def votar(self, sessao_id, membro_id, voto, justificativa=""):
@@ -752,7 +753,8 @@ class BibliotecaEngine:
             }
 
         # Carrega conteúdo
-        cku_path = self.base_path / "ckus" / "{0}.json".format(cku_id)
+        safe_cku_id = Path(cku_id).name
+        cku_path = self.base_path / "ckus" / "{0}.json".format(safe_cku_id)
         if cku_path.exists():
             conteudo = json.loads(cku_path.read_text())
         else:
@@ -834,7 +836,8 @@ class BibliotecaEngine:
         if nivel_minimo not in ["ASI-ARCHITECT", "TRANSCENDENTE"]:
             return {"status": "ERRO", "motivo": "Apenas Master+ pode adicionar CKUs"}
 
-        cku_path = self.base_path / "ckus" / "{0}.json".format(cku_id)
+        safe_cku_id = Path(cku_id).name
+        cku_path = self.base_path / "ckus" / "{0}.json".format(safe_cku_id)
         cku_path.parent.mkdir(parents=True, exist_ok=True)
         cku_path.write_text(json.dumps(conteudo, indent=2))
 
