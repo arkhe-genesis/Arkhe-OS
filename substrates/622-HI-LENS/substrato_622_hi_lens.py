@@ -133,6 +133,8 @@ class HILensEngine:
 
         # Magnificação aproximada: depende da massa H I (tamanho do disco)
         # Massa maior → disco maior → magnificação menor
+        if hi_mass_msun <= 0:
+            raise ValueError("M_HI must be strictly positive")
         base_mu = 30.0
         mass_correction = max(0.5, 1.0 - math.log10(hi_mass_msun / 1e10) * 0.1)
 

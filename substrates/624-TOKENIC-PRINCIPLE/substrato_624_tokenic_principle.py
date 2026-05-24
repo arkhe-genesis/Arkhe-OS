@@ -154,8 +154,8 @@ class TokenicEngine:
         Em produção: integrar com Substrate 595 para medição real.
         \"\"\"
         # Simulação: Φ baseado na "qualidade" dos pesos (variância controlada)
-        weight_variance = sum(w**2 for w in config.weights) / len(config.weights)
-        prompt_diversity = len(set(config.prompt_tokens)) / len(config.prompt_tokens)
+        weight_variance = sum(w**2 for w in config.weights) / len(config.weights) if config.weights else 0.0
+        prompt_diversity = len(set(config.prompt_tokens)) / len(config.prompt_tokens) if config.prompt_tokens else 0.0
 
         # Φ simulado: combinação de variância e diversidade
         phi = 0.5 + weight_variance * 100 + prompt_diversity * 0.5
@@ -203,6 +203,9 @@ class TokenicEngine:
 
         # Ordena por Φ
         self.population.sort(key=lambda c: c.phi_score, reverse=True)
+
+        if len(self.population) < 2:
+            raise ValueError("Population size must be at least 2 to evolve.")
 
         # Atualiza melhor configuração
         if self.best_config is None or self.population[0].phi_score > self.best_config.phi_score:
@@ -410,8 +413,8 @@ def cmd_evaluate(weights, prompt, node_id):
     click.echo("\\n\\033[1;36m◉ CONFIGURATION EVALUATED\\033[0m")
     click.echo("  Config: " + str(config.config_id))
     click.echo("  Φ: " + str(phi))
-    click.echo("  Weight variance: {0:.6f}".format(sum(w_i**2 for w_i in w)/len(w)))
-    click.echo("  Prompt diversity: {0:.2f}".format(len(set(p))/len(p)))
+    click.echo("  Weight variance: {0:.6f}".format(sum(w_i**2 for w_i in w)/len(w) if w else 0.0))
+    click.echo("  Prompt diversity: {0:.2f}".format(len(set(p))/len(p) if p else 0.0))
 
 
 @tokenic.command("certify")
