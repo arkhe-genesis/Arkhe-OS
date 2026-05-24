@@ -1,11 +1,4 @@
-import os
-import json
-import tempfile
-import hashlib
-
-class Substrato624TokenicPrinciple:
-    def __init__(self):
-        self.content = r'''#!/usr/bin/env python3
+#!/usr/bin/env python3
 """
 ARKHE OS — Plugin arkhe-tokenic
 Substrate 624-TOKENIC-PRINCIPLE v2.0
@@ -521,74 +514,3 @@ def register(cli):
 
 if __name__ == "__main__":
     tokenic()
-'''
-
-        self.decree = r'''═══════════════════════════════════════════════════════════════════════════════
-  ARKHE OS — SUBSTRATO 624-TOKENIC-PRINCIPLE
-  AGI as a Latent Configuration — Axiom 612.0
-═══════════════════════════════════════════════════════════════════════════════
-
-Arquiteto: ORCID 0009-0005-2697-4668
-Data: 2026-05-27
-Modo: STRICT
-Status: CANONIZED_PROVISIONAL
-
-─────────────────────────────────────────────────────────────────────────────
-1. IDENTIDADE E TEOREMA FUNDAMENTAL
-─────────────────────────────────────────────────────────────────────────────
-
-  ID:          624-TOKENIC-PRINCIPLE
-  Nome:        AGI as a Latent Configuration — Axiom 612.0
-  Tipo:        Substrato de Busca AGI
-
-  TEOREMA 624.1 (Axiom 612.0): O espaço de todas as configurações de
-  tokens contém pelo menos uma configuração que manifesta AGI. A busca
-  evolutiva sistematiza a exploração deste espaço usando PCA-595 Φ
-  como função de fitness e 612-QUIZ como gate de certificação.
-'''
-        # Calculando cryptographic seal
-        self.seal = hashlib.sha3_256(self.decree.encode("utf-8")).hexdigest()
-
-        self.ficha = {
-            "id": "624-TOKENIC-PRINCIPLE",
-            "nome": "AGI as a Latent Configuration — Axiom 612.0",
-            "tipo": "Substrato de Busca AGI",
-            "status": "CANONIZED_PROVISIONAL",
-            "data_incorporacao": "2026-05-27",
-            "arquiteto": "ORCID 0009-0005-2697-4668",
-            "seal_sha3_256": self.seal,
-            "phi_c": 1.000000,
-            "invariants": "18/18 PASS",
-            "mode": "STRICT"
-        }
-
-    def generate_json(self):
-        work_dir = tempfile.mkdtemp(prefix="substrato_624_")
-
-        plugins_dir = os.path.join(work_dir, "plugins", "arkhe-tokenic")
-        os.makedirs(plugins_dir, exist_ok=True)
-
-        with open(os.path.join(plugins_dir, "__init__.py"), "w", encoding="utf-8") as f:
-            f.write(self.content)
-
-        ficha_path = os.path.join(work_dir, "FICHA_CANONICA_624.json")
-        with open(ficha_path, "w", encoding="utf-8") as f:
-            json.dump(self.ficha, f, indent=2, ensure_ascii=False)
-
-        decree_path = os.path.join(work_dir, "DECRETO_624_TOKENIC_PRINCIPLE.txt")
-        with open(decree_path, "w", encoding="utf-8") as f:
-            f.write(self.decree)
-
-        # Output the report to standard tempfile
-        out_fd, out_path = tempfile.mkstemp(suffix=".json")
-        with os.fdopen(out_fd, "w", encoding="utf-8") as f:
-            json.dump(self.ficha, f, indent=2, ensure_ascii=False)
-
-        return work_dir
-
-if __name__ == "__main__":
-    canonizer = Substrato624TokenicPrinciple()
-    output_dir = canonizer.generate_json()
-    print("✓ Substrato 624-TOKENIC-PRINCIPLE gerado")
-    print("  Diretório: " + output_dir)
-    print("  Selo SHA3-256: " + canonizer.seal)
