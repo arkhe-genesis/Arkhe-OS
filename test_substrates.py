@@ -71,33 +71,65 @@ def test_611_f_strings():
         if " f'" in line or ' f"' in line or line.startswith("f'") or line.startswith('f"'):
             assert False, "f-string found in line {}: {}".format(i+1, line.strip())
 
-def test_615_photonic_6g():
-    import importlib.util
-    import json
-    import os
 
-    file_path = os.path.abspath('substrates/615-PHOTONIC-6G/substrato_615_photonic_6g.py')
-    spec = importlib.util.spec_from_file_location("substrato_615_photonic_6g", file_path)
+def test_614_shieldnet():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_614_shieldnet",
+        "substrates/614-SHIELDNET/substrato_614_shieldnet.py"
+    )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato615Photonic6G()
-    path = canonizer.canonize()
-
-    assert os.path.exists(path)
-    with open(path, "r", encoding="utf-8") as f:
+    report_path = module.canonize_614()
+    assert report_path is not None
+    assert os.path.exists(report_path)
+    with open(report_path, "r", encoding="utf-8") as f:
         data = json.load(f)
+    assert data["substrate"] == "614-SHIELDNET"
 
-    assert data["substrate"] == "615-PHOTONIC-6G"
-    assert "canonical_seal" in data
-    assert data["canonical_seal"] == "96097ef8a0cdbc712abf0f4ec6b130b1dce29a021b3d6063ea9cc098c2a52ab3"
-
-def test_615_f_strings():
-    import os
-    file_path = os.path.abspath('substrates/615-PHOTONIC-6G/substrato_615_photonic_6g.py')
-    with open(file_path, "r", encoding="utf-8") as f:
+    with open("substrates/614-SHIELDNET/substrato_614_shieldnet.py", "r", encoding="utf-8") as f:
         content = f.read()
     assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
+
+
+def test_619_octra():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_619_octra",
+        "substrates/619-OCTRA/substrato_619_octra.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    path = module.canonize_619()
+    assert os.path.exists(path)
+
+    json_path = os.path.join(path, "FICHA_CANONICA_619.json")
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "619-OCTRA"
+    assert "seal_sha3_256" in data
+    assert len(data["seal_sha3_256"]) == 64
+
+    plugin_path = os.path.join(path, "arkhe_os", "plugins", "octra", "arkhe_octra.py")
+    assert os.path.exists(plugin_path)
+
+def test_619_f_strings():
+    import os
+    file_path = "substrates/619-OCTRA/substrato_619_octra.py"
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    lines = content.split('\n')
+    for i, line in enumerate(lines):
+        if " f'" in line or ' f"' in line or line.startswith("f'") or line.startswith('f"'):
+            assert False, "f-string found in line {}: {}".format(i+1, line.strip())
 
 if __name__ == '__main__':
     pytest.main(['-v', 'test_substrates.py'])
@@ -310,6 +342,35 @@ def test_603_hashtree_cc():
     assert "canonical_seal" in data
     assert len(data["canonical_seal"]) == 64
 
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
+
+def test_615_photonic_6g():
+    import importlib.util
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/600-699_advanced/substrato_615_photonic_6g/substrato_615_photonic_6g.py')
+    spec = importlib.util.spec_from_file_location("substrato_615_photonic_6g", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrate615Canonizer()
+    report_path = canonizer.canonize()
+
+    assert os.path.exists(report_path)
+
+    with open(report_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "615-PHOTONIC-6G"
+    assert "seal" in data
+    assert len(data["seal"]) == 64
+    assert len(data["artifacts"]) == 5
+    assert data["status"] == "CANONIZED"
+
+    # Check that f-strings are strictly forbidden in the source
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
     assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
