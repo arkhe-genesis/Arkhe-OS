@@ -751,3 +751,31 @@ def test_650_f_strings():
         content = f.read()
     match = re.search(r'\bf(["\'])', content)
     assert match is None, "f-strings are strictly forbidden in Substrate 650"
+
+def test_substrato_652_stellar_sail():
+    import importlib.util
+    import os
+    import json
+
+    path = "substrates/652-STELLAR-SAIL/substrato_652_stellar_sail.py"
+    spec = importlib.util.spec_from_file_location("substrato_652", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+
+    canonizer = mod.Substrato652StellarSail()
+    temp_dir, report_path = canonizer.generate()
+
+    assert os.path.exists(temp_dir)
+    assert os.path.exists(report_path)
+
+    with open(report_path, "r") as f:
+        data = json.load(f)
+
+    assert data["id"] == "652-STELLAR-SAIL"
+    assert "canonical_seal" in data
+def test_652_f_strings():
+    import re
+    file_path = "substrates/652-STELLAR-SAIL/substrato_652_stellar_sail.py"
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), "f-strings found!"
