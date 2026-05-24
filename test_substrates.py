@@ -276,3 +276,31 @@ def test_604_cybersecurity_ai():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
     assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
+
+def test_612_llm_foundations():
+    import importlib.util
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/600-699_advanced/substrato_612_llm_foundations/substrato_612_llm_foundations.py')
+    spec = importlib.util.spec_from_file_location("substrato_612_llm_foundations", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrate612Canonizer()
+    path = canonizer.generate_json()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "612-LLM-FOUNDATIONS"
+    assert "canonical_seal" in data
+    assert data["canonical_seal"] == "10bf6efa9da79f4069f2cfccd984080bd9282ef9ef93e8afddf38a6628f35f1f"
+
+def test_612_llm_foundations_f_strings():
+    import re
+    with open("substrates/600-699_advanced/substrato_612_llm_foundations/substrato_612_llm_foundations.py", 'r', encoding='utf-8') as f:
+        content = f.read()
+    for line in content.split('\n'):
+        assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
