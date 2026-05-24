@@ -160,7 +160,7 @@ def test_621_erdos_unit_distance():
         import json
         data = json.load(f)
 
-    assert data["id"] == "621-ERDŐS-UNIT-DISTANCE"
+    assert data["id"] == "621-ERDOS-UNIT-DISTANCE"
 
 def test_621_f_strings():
     import os
@@ -688,3 +688,33 @@ def test_631_f_strings():
     with open(file_path, 'r') as f:
         content = f.read()
     assert not re.search(r'\bf(["\'])', content), "Found f-string in gateway_http.py"
+
+
+def test_641_mechanistic_interpretability():
+    import importlib.util
+    import os
+    import json
+    import re
+
+    file_path = os.path.abspath('substrates/641-MECHANISTIC-INTERPRETABILITY/substrato_641_mechanistic_interpretability.py')
+    spec = importlib.util.spec_from_file_location("substrato_641_mechanistic_interpretability", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato641MechanisticInterpretability()
+    path = canonizer.generate_json()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["id"] == "641-MECHANISTIC-INTERPRETABILITY"
+    assert "canonical_seal" in data
+
+    # Check for f-strings
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), "f-string found in canonizer script!"
+
+    plugin_path = os.path.abspath('arkhe-os-cli/arkhe_os/plugins/arkhe_mech_interp.py')
+    assert os.path.exists(plugin_path)
