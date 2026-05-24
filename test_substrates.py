@@ -143,14 +143,14 @@ def test_621_erdos_unit_distance():
     spec.loader.exec_module(module)
 
     canonizer = module.Substrato621ErdosUnitDistance()
-    path = canonizer.generate_json()
+    temp_dir, path = canonizer.generate()
 
     assert os.path.exists(path)
 
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    assert data["id"] == "621-ERDOS-UNIT-DISTANCE"
+    assert data["id"] == "621-ERDŐS-UNIT-DISTANCE"
 
 def test_621_f_strings():
     import os
