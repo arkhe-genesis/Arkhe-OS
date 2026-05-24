@@ -1,21 +1,26 @@
 <<<<<<< SEARCH
-        self.score[pillar_name] = [results[t] for t in topics]
-        avg = sum(self.score[pillar_name]) / len(self.score[pillar_name])
-        return avg
-=======
-        self.score[pillar_name] = [results[t] for t in topics]
-        if not self.score[pillar_name]:
-            return 0.0
-        avg = sum(self.score[pillar_name]) / len(self.score[pillar_name])
-        return avg
->>>>>>> REPLACE
-<<<<<<< SEARCH
-@click.group()
-def learn():
-=======
-def get_canonical_explanation(topic):
-    return "Canonical explanation for {0}".format(topic)
+        result = self.results[request_id]
+        # Simula verificação ZK
+        verified = result.zk_verified and len(result.zk_proof) > 50
 
-@click.group()
-def learn():
+        return {
+            "request_id": request_id,
+            "zk_verified": verified,
+            "verification_method": result.zk_system.name,
+            "output_commitment": result.output_commitment,
+            "temporal_anchor": result.temporal_anchor
+        }
+=======
+        result = self.results[request_id]
+        req = self.computations[request_id]
+        # Simula verificação ZK
+        verified = result.zk_verified and len(result.zk_proof) > 50
+
+        return {
+            "request_id": request_id,
+            "zk_verified": verified,
+            "verification_method": req.zk_system.name,
+            "output_commitment": result.output_commitment,
+            "temporal_anchor": result.temporal_anchor
+        }
 >>>>>>> REPLACE
