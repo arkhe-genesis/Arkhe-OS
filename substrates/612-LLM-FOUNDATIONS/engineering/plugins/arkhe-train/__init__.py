@@ -270,7 +270,10 @@ def _get_ia_training_state(ia_model_id):
     if not state_file.exists():
         return []
     data = json.loads(state_file.read_text())
-    return list(data.get("scores", {}).keys())
+    trained = []
+    for pillar_scores in data.get("scores", {}).values():
+        trained.extend(pillar_scores.keys())
+    return trained
 
 def _resolve_name_from_id(topic_id):
     for name, tid in _TOPIC_ID_MAP.items():

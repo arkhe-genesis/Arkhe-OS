@@ -172,9 +172,9 @@ class AI_CertificationEngine:
 
             if result["correct"]:
                 base_difficulty = min(5, base_difficulty + 0.5)
-                total_score += 10 * (1 + 0.1 * base_difficulty)
             else:
                 base_difficulty = max(1, base_difficulty - 1.0)
+            total_score += result.get("score", 0)
 
             hist = self.ia_history.setdefault(topic_id, {"correct": 0, "total": 0})
             hist["total"] += 1
