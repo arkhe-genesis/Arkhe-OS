@@ -8,6 +8,7 @@ Princípios CAGE: 02 (accountability), 06 (devido processo), 11 (diálogo)
 import numpy as np
 import json
 import hashlib
+import os
 from dataclasses import dataclass, field
 from typing import List, Tuple, Dict
 from pathlib import Path
@@ -207,13 +208,15 @@ class TokenicEngine:
         }
 
         # Salvar relatório
-        os.makedirs("/opt/arkhe/sgrna_design", exist_ok=True)
-        with open("/opt/arkhe/sgrna_design/report.json", "w") as f:
+        report_dir = "/tmp/arkhe/sgrna_design"
+        os.makedirs(report_dir, exist_ok=True)
+        with open(os.path.join(report_dir, "report.json"), "w") as f:
             json.dump(report, f, indent=2)
 
         # Escrever Φ_sgrna no sysfs
-        os.makedirs("/sys/arkhe/med", exist_ok=True)
-        with open("/sys/arkhe/med/sgrna_phi", "w") as f:
+        sys_dir = "/tmp/sys/arkhe/med"
+        os.makedirs(sys_dir, exist_ok=True)
+        with open(os.path.join(sys_dir, "sgrna_phi"), "w") as f:
             f.write("{0:.4f}".format(self.best_fitness))
 
         print("[633] sgRNA design complete. Φ_sgrna = {0:.4f}".format(self.best_fitness))

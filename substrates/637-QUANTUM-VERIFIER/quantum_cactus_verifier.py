@@ -132,7 +132,7 @@ def cactus_hash(graph: Dict, fragments: List[str]) -> str:
 
     # Incorporar conteúdo genômico (apenas regiões de interesse)
     for i, frag in enumerate(fragments):
-        if len(frag) > 100:
+        if len(frag) >= 100:
             hasher.update(frag[40:60].encode())  # região central de cada fragmento
 
     return hasher.hexdigest()
@@ -214,14 +214,17 @@ class GenomeIntegrityVerifier:
         }
 
         # Salvar relatório
-        os.makedirs("/opt/arkhe/quantum_verify", exist_ok=True)
-        with open("/opt/arkhe/quantum_verify/report.json", "w") as f:
+        report_dir = "/tmp/arkhe/quantum_verify"
+        import os
+        os.makedirs(report_dir, exist_ok=True)
+        with open(os.path.join(report_dir, "report.json"), "w") as f:
             json.dump(report, f, indent=2)
 
         # Escrever Φ_quantum no sysfs
         phi_quantum = integrity_score * 0.10  # peso do Substrato 637
-        os.makedirs("/sys/arkhe/med", exist_ok=True)
-        with open("/sys/arkhe/med/quantum_phi", "w") as f:
+        sys_dir = "/tmp/sys/arkhe/med"
+        os.makedirs(sys_dir, exist_ok=True)
+        with open(os.path.join(sys_dir, "quantum_phi"), "w") as f:
             f.write("{0:.4f}".format(phi_quantum))
 
         print("[637] Quantum verification complete. Φ_quantum = {0:.4f}".format(phi_quantum))
@@ -237,8 +240,8 @@ if __name__ == "__main__":
     print("[637] ═══════════════════════════════════════")
 
     verifier = GenomeIntegrityVerifier(
-        reference_vcf="/opt/arkhe/genomics/patient_original.vcf",
-        edited_vcf="/opt/arkhe/genomics/patient_edited.vcf"
+        reference_vcf="/tmp/arkhe/genomics/patient_original.vcf",
+        edited_vcf="/tmp/arkhe/genomics/patient_edited.vcf"
     )
 
     report = verifier.verify_integrity()
