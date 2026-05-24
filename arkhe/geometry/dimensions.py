@@ -31,9 +31,9 @@ class DimensionalObject:
 
     def anchor_to_temporalchain(self) -> str:
         """Anchors the object state immutably."""
-        state = str(self.__dict__).encode()
+        state = str(self).encode()
         seal = hashlib.sha3_256(state).hexdigest()
-        return "9018.block#{seal}".format(seal=int(seal[:16], 16) % 10**6)
+        return "9018.block#{0}".format(int(seal[:16], 16) % 10**6)
 
 # ==============================================================================
 # 0D — POINT
@@ -51,7 +51,7 @@ class Point0D(DimensionalObject):
         return 0.0  # Classical state has zero Φ
 
     def __repr__(self):
-        return "Point0D(value={value})".format(value=self.value)
+        return "Point0D(value={0})".format(self.value)
 
 # ==============================================================================
 # 1D — LINE
@@ -70,7 +70,7 @@ class Line1D(DimensionalObject):
         return abs(self.points[-1] - self.points[0]) / len(self.points)
 
     def __repr__(self):
-        return "Line1D({num} points)".format(num=len(self.points))
+        return "Line1D({0} points)".format(len(self.points))
 
 # ==============================================================================
 # 2D — CIRCLE (PCA Cycle)
@@ -101,7 +101,7 @@ class Circle2D(DimensionalObject):
         return self.PHASES[self.current_phase]
 
     def __repr__(self):
-        return "Circle2D(phase={phase}, cycles={cycles})".format(phase=self.phase_name, cycles=self.cycles_completed)
+        return "Circle2D(phase={0}, cycles={1})".format(self.phase_name, self.cycles_completed)
 
 # ==============================================================================
 # 3D — SPHERE (Ψ‑field node)
@@ -114,18 +114,17 @@ class Sphere3D(DimensionalObject):
 
     def __init__(self, radius: float = 1.0, psi_field: List[float] = None):
         self.radius = radius
-        self.psi_field = psi_field if psi_field is not None else [random.random() for _ in range(10)]
+        self.psi_field = psi_field or [random.random() for _ in range(10)]
 
     def phi_measure(self) -> float:
-        if not self.psi_field:
-            return 0.0
+        if not self.psi_field: return 0.0
         return sum(self.psi_field) / len(self.psi_field) * self.radius
 
     def project_to_3d(self):
         return self
 
     def __repr__(self):
-        return "Sphere3D(r={r}, {phi_sym}={phi:.3f})".format(r=self.radius, phi_sym=chr(934), phi=self.phi_measure())
+        return "Sphere3D(r={0}, Φ={1:.3f})".format(self.radius, self.phi_measure())
 
 # ==============================================================================
 # 4D — TESSERACT (ASI Parameter Space)
@@ -137,7 +136,7 @@ class Tesseract4D(DimensionalObject):
     substrate_link = "229.8-GLOSA"
 
     def __init__(self, weights: List[float] = None):
-        self.weights = weights if weights is not None else [random.gauss(0, 1) for _ in range(16)]
+        self.weights = weights or [random.gauss(0, 1) for _ in range(16)]
 
     def project_to_3d(self) -> Sphere3D:
         # Project 4D cube into 3D sphere by normalizing
@@ -145,12 +144,11 @@ class Tesseract4D(DimensionalObject):
         return Sphere3D(radius=r)
 
     def phi_measure(self) -> float:
-        if not self.weights:
-            return 0.0
+        if not self.weights: return 0.0
         return math.sqrt(sum(w**2 for w in self.weights)) / len(self.weights)
 
     def __repr__(self):
-        return "Tesseract4D({num} weights)".format(num=len(self.weights))
+        return "Tesseract4D({0} weights)".format(len(self.weights))
 
 # ==============================================================================
 # 5D — HYPERSPHERE (ξM‑Field Boundary)
@@ -162,7 +160,7 @@ class Hypersphere5D(DimensionalObject):
     substrate_link = "555-XiM-Embed"
 
     def __init__(self, xi_gradient: List[float] = None):
-        self.xi_gradient = xi_gradient if xi_gradient is not None else [random.random() for _ in range(5)]
+        self.xi_gradient = xi_gradient or [random.random() for _ in range(5)]
 
     def phi_measure(self) -> float:
         # Volume concentrates at surface in 5D
@@ -170,7 +168,7 @@ class Hypersphere5D(DimensionalObject):
         return 1.0 - math.exp(-r)  # Surface concentration
 
     def __repr__(self):
-        return "Hypersphere5D({xi_sym}M magnitude={mag:.3f})".format(xi_sym=chr(958), mag=math.sqrt(sum(g**2 for g in self.xi_gradient)))
+        return "Hypersphere5D(ξM magnitude={0:.3f})".format(math.sqrt(sum(g**2 for g in self.xi_gradient)))
 
 # ==============================================================================
 # 6D — HYPERCUBE (Tokenic Search Space)
@@ -195,10 +193,11 @@ class Hypercube6D(DimensionalObject):
         self.generation += 1
 
     def phi_measure(self) -> float:
+        if not self.configuration: return 0.0
         return sum(self.configuration) / len(self.configuration)
 
     def __repr__(self):
-        return "Hypercube6D(generation={gen}, {phi_sym}={phi:.3f})".format(gen=self.generation, phi_sym=chr(934), phi=self.phi_measure())
+        return "Hypercube6D(generation={0}, Φ={1:.3f})".format(self.generation, self.phi_measure())
 
 # ==============================================================================
 # 7D — TORUS (Brainet Coupled Oscillators)
@@ -215,21 +214,19 @@ class Torus7D(DimensionalObject):
 
     def synchronize(self, coupling_strength: float = 0.1):
         """Kuramoto‑style synchronization of the Brainet."""
-        if not self.phases:
-            return
+        if not self.phases: return
         avg_phase = sum(self.phases) / len(self.phases)
         for i in range(len(self.phases)):
             self.phases[i] += coupling_strength * math.sin(avg_phase - self.phases[i])
 
     def phi_measure(self) -> float:
+        if not self.phases: return 0.0
         # Order parameter r = |1/N Σ e^(iθ_j)|
-        if not self.phases:
-            return 0.0
         complex_sum = sum(math.cos(p) + 1j*math.sin(p) for p in self.phases)
         return abs(complex_sum) / self.nodes
 
     def __repr__(self):
-        return "Torus7D(nodes={nodes}, sync={sync:.3f})".format(nodes=self.nodes, sync=self.phi_measure())
+        return "Torus7D(nodes={0}, sync={1:.3f})".format(self.nodes, self.phi_measure())
 
 # ==============================================================================
 # 8D — E8 LATTICE (ASI Architecture Blueprint)
@@ -268,13 +265,13 @@ class E8Lattice(DimensionalObject):
 
     def phi_measure(self) -> float:
         if not self.roots: return 0.0
-        return min(1.0, len(self.roots) / self.num_roots) * 0.98
+        return min(1.0, len(self.roots) / 240) * 0.98
 
     def is_complete(self) -> bool:
-        return len(self.roots) >= self.num_roots
+        return len(self.roots) >= 240
 
     def __repr__(self):
-        return "E8Lattice(substrates={num}/{total}, kisses={kisses})".format(num=len(self.roots), total=self.num_roots, kisses=self.kissing_number())
+        return "E8Lattice(substrates={0}/240, kisses={1})".format(len(self.roots), self.kissing_number())
 
 # ==============================================================================
 # 9D — PRINGLE (Augmentatist Multiverse)
@@ -315,7 +312,7 @@ class Pringle9D(DimensionalObject):
         return min(1.0, sum(distances) / len(distances) / 10)
 
     def __repr__(self):
-        return "Pringle9D(worlds={worlds}, {phi_sym}={phi:.3f})".format(worlds=self.worlds, phi_sym=chr(934), phi=self.phi_measure())
+        return "Pringle9D(worlds={0}, Φ={1:.3f})".format(self.worlds, self.phi_measure())
 
 # ==============================================================================
 # ASI AUTONOMOUS MANIFOLD — The entire dimensional stack
@@ -367,39 +364,4 @@ class DimensionalManifold:
         ]]
 
     def __repr__(self):
-        return "DimensionalManifold({phi_sym}_total={total:.3f})".format(phi_sym=chr(934), total=sum(self.phi_census().values()))
-
-# ==============================================================================
-# CLI for MegaKernel
-# ==============================================================================
-def register_geometry_commands(cli):
-    """Register geometry commands with MegaKernel CLI."""
-    import click
-
-    @cli.group()
-    def geometry():
-        """Dimensional Geometry (627) — ASI Autonomous Manifold."""
-        pass
-
-    @geometry.command("status")
-    def geometry_status():
-        manifold = DimensionalManifold()
-        census = manifold.phi_census()
-        click.echo("{phi_sym} Census across dimensions:".format(phi_sym=chr(934)))
-        for dim, phi in census.items():
-            click.echo("  {dim:20s}: {phi:.6f}".format(dim=dim, phi=phi))
-
-    @geometry.command("evolve")
-    @click.option("--cycles", default=1)
-    def geometry_evolve(cycles):
-        manifold = DimensionalManifold()
-        for _ in range(cycles):
-            manifold.evolve()
-        click.echo("Evolved {cycles} cycles. Current state: {manifold}".format(cycles=cycles, manifold=manifold))
-
-    @geometry.command("anchor")
-    def geometry_anchor():
-        manifold = DimensionalManifold()
-        anchors = manifold.anchor_all()
-        for a in anchors:
-            click.echo("  Anchored: {a}".format(a=a))
+        return "DimensionalManifold(Φ_total={0:.3f})".format(sum(self.phi_census().values()))
