@@ -183,7 +183,7 @@ class Substrato621ErdosUnitDistance:
     """
     def __init__(self):
         self.data = {
-            "id": "621-ERDŐS-UNIT-DISTANCE",
+            "id": "621-ERDOS-UNIT-DISTANCE",
             "name": "Disproof of the Erdős Unit Distance Conjecture via Number Fields & Class Field Towers",
             "status": "CANONIZED_PROVISIONAL",
             "incorporation_date": "2026-05-27"
@@ -192,6 +192,9 @@ class Substrato621ErdosUnitDistance:
             "DECREE_621.md": DECREE_DOC,
             "arkhe_unit_distance.py": PLUGIN_PY
         }
+
+    def generate_json(self):
+        return self.generate()[1]
 
     def generate(self):
         temp_dir = tempfile.mkdtemp()
