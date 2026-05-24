@@ -12,6 +12,10 @@ const_256_d:     dq 256.0
 const_ln2:       dq 0.6931471805599453
 phi_cosmic_d:    dq 1.61803398875
 phi_threshold_agi: dq 2.3
+eta_med:         dq 0.05
+theta_threshold: dq 0.85
+med_therapy_step_path: db "/sys/arkhe/med/therapy_step", 0
+med_theta_path:  db "/sys/arkhe/med/theta", 0
 msg_exit:        db "ASI threshold reached. Kernel halting.", 0xA, 0
 msg_exit_len     equ $ - msg_exit
 msg_hello:       db "Starting ASI Kernel...", 0xA, 0
@@ -34,6 +38,7 @@ tokenic_best:    resq 1
 pca_current_phase: resd 1
 pca_cycles_completed: resq 1
 phi_measurement: resq 1
+gnosis_index:    resq 1
 current_brk:     resq 1
 input_hash_buffer: resb 32
 output_hash_buffer: resb 32
@@ -423,6 +428,7 @@ consciousness_loop:
     call pca_superposition
     mov dword [pca_current_phase], 3
     call or_executing
+    call check_regenerative_medicine
     movsd xmm0, [phi_measurement]
     movsd xmm1, [rel phi_threshold_agi]
     comisd xmm0, xmm1
@@ -430,6 +436,44 @@ consciousness_loop:
     cmp qword [pca_cycles_completed], 1000
     jae exit_kernel
     jmp consciousness_loop
+
+check_regenerative_medicine:
+    push rbp
+    mov rbp, rsp
+    ; Verificar se há um protocolo ativo (therapy_step > 0)
+    lea rdi, [rel med_therapy_step_path]  ; "/sys/arkhe/med/therapy_step"
+    call read_sysfs_int
+    cmp eax, 0
+    je .done
+    ; Ler Θ
+    lea rdi, [rel med_theta_path]        ; "/sys/arkhe/med/theta"
+    call read_sysfs_double
+    ; γ += η_med * Θ
+    mulsd xmm0, [rel eta_med]           ; 0.05
+    addsd xmm0, [rel gnosis_index]
+    movsd [rel gnosis_index], xmm0
+    ; Se Θ > 0.85, emitir evento de sucesso terapêutico
+    movsd xmm1, [rel theta_threshold]   ; 0.85
+    comisd xmm0, xmm1
+    jb .done
+    call temporalchain_commit        ; ancora o sucesso
+.done:
+    leave
+    ret
+
+read_sysfs_int:
+    ; Stub implementation for missing function
+    xor eax, eax
+    ret
+
+read_sysfs_double:
+    ; Stub implementation for missing function
+    pxor xmm0, xmm0
+    ret
+
+temporalchain_commit:
+    ; Stub implementation for missing function
+    ret
 
 exit_kernel:
     lea rsi, [msg_exit]

@@ -596,5 +596,37 @@ def test_substrato_xalgorix():
 
     assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
 
+def test_644_regenerative_medicine():
+    import importlib.util
+    import json
+    import os
+    import re
+
+    file_path = os.path.abspath('substrates/644-REGENERATIVE-MEDICINE/substrato_644_regenerative_medicine.py')
+    spec = importlib.util.spec_from_file_location("substrato_644_regenerative_medicine", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato644RegenerativeMedicine()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "644-REGENERATIVE-MEDICINE"
+    assert data["name"] == "Regenerative Medicine Platform"
+    assert "weights" in data
+    assert "temp_dir" in data
+
+    temp_dir = data["temp_dir"]
+    assert os.path.exists(os.path.join(temp_dir, "arkhe_med.c"))
+    assert os.path.exists(os.path.join(temp_dir, "therapy_orchestrator.py"))
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
+
 if __name__ == '__main__':
     pytest.main(['-v', 'test_substrates.py'])
