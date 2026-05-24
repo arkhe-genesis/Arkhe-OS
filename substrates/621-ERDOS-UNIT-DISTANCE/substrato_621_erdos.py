@@ -193,6 +193,9 @@ class Substrato621ErdosUnitDistance:
             "arkhe_unit_distance.py": PLUGIN_PY
         }
 
+    def generate_json(self):
+        return self.generate()[1]
+
     def generate(self):
         temp_dir = tempfile.mkdtemp()
         for filename, content in self.files.items():
