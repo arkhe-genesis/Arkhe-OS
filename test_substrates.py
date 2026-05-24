@@ -596,5 +596,22 @@ def test_substrato_xalgorix():
 
     assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
 
+def test_substrato_learn_mechanistic_interpretability():
+    import importlib.util
+    file_path = os.path.abspath('substrates/400-499_advanced/substrato_catmcgee_learn_mechanistic_interpretability/substrato_catmcgee_learn_mechanistic_interpretability.py')
+    spec = importlib.util.spec_from_file_location("substrato_catmcgee_learn_mechanistic_interpretability", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.SubstratoLearnMechanisticInterpretability()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        import json
+        report = json.load(f)
+        assert "Learn Mechanistic Interpretability" in report["Title"]
+        assert len(report["Features"]) == 6
+
 if __name__ == '__main__':
     pytest.main(['-v', 'test_substrates.py'])
