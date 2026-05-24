@@ -947,3 +947,69 @@ def test_636_f_strings():
         content = f.read()
     match = re.search(r'\bf(["\'])', content)
     assert match is None, "f-strings are strictly forbidden in Substrate 636"
+
+def test_substrato_679_pvac_compression():
+    import sys
+    sys.path.append('substrates/679-PVAC-COMPRESSION')
+    from substrato_679_pvac_compression import Substrato679
+    sub = Substrato679()
+    path = sub.canonize()
+    import json
+    with open(path, 'r') as f:
+        data = json.load(f)
+    assert data["id"] == "679-PVAC-COMPRESSION"
+    assert "canonical_seal" in data
+    assert data["canonical_seal"] == "d77ed28d7f9a1e3c5b8f2a4d6e0c9b1a3f5e7d2c4a6b8f0e2d4c6a8b0f2e4d6c8a0b2f4"
+
+def test_substrato_680_pvac_crypto():
+    import sys
+    sys.path.append('substrates/680-PVAC-CRYPTO')
+    from substrato_680_pvac_crypto import Substrato680
+    sub = Substrato680()
+    path = sub.canonize()
+    import json
+    with open(path, 'r') as f:
+        data = json.load(f)
+    assert data["id"] == "680-PVAC-CRYPTO"
+    assert "canonical_seal" in data
+    assert data["canonical_seal"] == "c22661bebfaf4f556cb2e953006aa8821db493fbc02f55bdbbe8cbeb51a93e14"
+
+def test_substrato_681_pvac_fhe():
+    import sys
+    sys.path.append('substrates/681-PVAC-FHE')
+    from substrato_681_pvac_fhe import Substrato681
+    sub = Substrato681()
+    path = sub.canonize()
+    import json
+    with open(path, 'r') as f:
+        data = json.load(f)
+    assert data["id"] == "681-PVAC-FHE"
+    assert "canonical_seal" in data
+    assert data["canonical_seal"] == "93ace50b959cc8f6bd6fb39786e1aba0df2954ff3a558477a0dabb4c23128a0f"
+
+def test_substrato_682_pvac_net():
+    import sys
+    sys.path.append('substrates/682-PVAC-NET')
+    from substrato_682_pvac_net import Substrato682
+    sub = Substrato682()
+    path = sub.canonize()
+    import json
+    with open(path, 'r') as f:
+        data = json.load(f)
+    assert data["id"] == "682-PVAC-NET"
+    assert "canonical_seal" in data
+    assert data["canonical_seal"] == "cc539320f1cbdd2922bd9fdf6d327611f48e273ee617e7c6dc3a45152c11392c"
+
+
+def test_pvac_f_strings():
+    import os
+    import re
+    files_to_check = [
+        'substrates/679-PVAC-COMPRESSION/substrato_679_pvac_compression.py',
+        'substrates/680-PVAC-CRYPTO/substrato_680_pvac_crypto.py',
+        'substrates/681-PVAC-FHE/substrato_681_pvac_fhe.py',
+        'substrates/682-PVAC-NET/substrato_682_pvac_net.py'
+    ]
+    for filepath in files_to_check:
+        with open(filepath, 'r') as f:
+            content = f.read()
