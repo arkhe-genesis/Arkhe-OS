@@ -392,3 +392,28 @@ def test_612_f_strings():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
     assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
+
+
+def test_618_openark():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_618_openark",
+        "substrates/618-OPENARK/substrato_618_openark.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    base_dir, json_file = module.Substrato618Openark().canonize()
+
+    assert os.path.exists(json_file)
+    with open(json_file, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    assert data["substrate"] == "618-OPENARK"
+    assert "seal" in data
+    assert len(data["seal"]) == 64
+    assert os.path.exists(os.path.join(base_dir, "plugin", "arkhe_openark.py"))
+
+if __name__ == '__main__':
+    import pytest
+    pytest.main([__file__])
