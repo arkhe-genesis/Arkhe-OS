@@ -37,18 +37,17 @@ fn sha3_256(data: &[u8]) -> Vec<u8> {
 /// Retorna (output, phi_score) ou erro.
 pub async fn invoke_serv(
     gateway_url: &str,
+    gateway_pubkey_hex: &str,
     serv_id: &str,
     input_data: &[u8],
     time_direction: &str,
 ) -> Result<(Vec<u8>, f64), Box<dyn std::error::Error>> {
     let client = reqwest::Client::new();
 
-    // 1. Obter chave pública do gateway
-    let pk: PubkeyResponse = client
-        .get(format!("{}/gateway_pubkey", gateway_url))
-        .send().await?.json().await?;
-    let pk_bytes = hex::decode(&pk.public_key_hex)?;
-    let vk = VerifyingKey::from_bytes(&pk_bytes.try_into().unwrap())?;
+    // 1. Instanciar chave pública pinada do gateway
+    let pk_bytes = hex::decode(gateway_pubkey_hex)?;
+    let pk_array: [u8; 32] = pk_bytes.try_into().map_err(|_| "Invalid gateway pubkey length")?;
+    let vk = VerifyingKey::from_bytes(&pk_array)?;
 
     // 2. Preparar requisição
     let req = InvokeRequest {

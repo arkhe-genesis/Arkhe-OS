@@ -331,7 +331,44 @@ validate_serv_response:
     lea edi, [sign_msg_buf]
     sub ebx, edi                ; tamanho da mensagem
 
-    ; 7. Verificar assinatura Ed25519
+    ; 7. Extrair e decodificar a assinatura hex do buffer JSON para json_signature_raw
+    ; Local fictício (em prod usar parser JSON)
+    lea rsi, [json_result_buffer + 512]
+    lea rdi, [json_signature_raw]
+    mov ecx, 64
+.decode_hex_sig_loop:
+    ; Convert 2 hex chars from rsi to 1 byte in rdi
+    lodsw                      ; ax = ah:al = char2:char1
+
+    ; Convert char1 (al)
+    cmp al, '9'
+    jbe .char1_digit
+    and al, 0xdf               ; uppercase
+    sub al, 'A' - 10
+    jmp .char1_done
+.char1_digit:
+    sub al, '0'
+.char1_done:
+    shl al, 4                  ; high nibble
+    mov dl, al
+
+    ; Convert char2 (ah)
+    mov al, ah
+    cmp al, '9'
+    jbe .char2_digit
+    and al, 0xdf               ; uppercase
+    sub al, 'A' - 10
+    jmp .char2_done
+.char2_digit:
+    sub al, '0'
+.char2_done:
+    or al, dl                  ; combine low nibble
+
+    stosb                      ; write byte
+    dec ecx
+    jnz .decode_hex_sig_loop
+
+    ; 8. Verificar assinatura Ed25519
     lea rdi, [gateway_pubkey_raw]
     lea rsi, [sign_msg_buf]
     mov edx, ebx
@@ -341,7 +378,7 @@ validate_serv_response:
     test rax, rax
     jnz .invalid
 
-    ; 8. Sucesso: phi_score em xmm0
+    ; 9. Sucesso: phi_score em xmm0
     movsd xmm0, [json_phi_score_double]
     xor eax, eax
     jmp .done
