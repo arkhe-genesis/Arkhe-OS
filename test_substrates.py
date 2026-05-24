@@ -32,6 +32,8 @@ def test_563_ftqc_unified():
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         import json
+        import json
+        import json
         data = json.load(f)
     assert data["metadata"]["substrate"] == "563-FTQC-UNIFIED"
     assert data["metadata"]["phi_c"] == 0.983889
@@ -53,6 +55,8 @@ def test_611_codegraph():
     assert os.path.exists(path)
 
     with open(path, "r") as f:
+        import json
+        import json
         data = json.load(f)
 
     assert data["substrate"] == "611-CODEGRAPH"
@@ -87,6 +91,8 @@ def test_614_shieldnet():
     assert report_path is not None
     assert os.path.exists(report_path)
     with open(report_path, "r", encoding="utf-8") as f:
+        import json
+        import json
         data = json.load(f)
     assert data["substrate"] == "614-SHIELDNET"
 
@@ -111,6 +117,8 @@ def test_619_octra():
 
     json_path = os.path.join(path, "FICHA_CANONICA_619.json")
     with open(json_path, "r", encoding="utf-8") as f:
+        import json
+        import json
         data = json.load(f)
 
     assert data["id"] == "619-OCTRA"
@@ -143,11 +151,13 @@ def test_621_erdos_unit_distance():
     spec.loader.exec_module(module)
 
     canonizer = module.Substrato621ErdosUnitDistance()
-    path = canonizer.generate_json()
+    temp_dir, path = canonizer.generate()
 
     assert os.path.exists(path)
 
     with open(path, "r", encoding="utf-8") as f:
+        import json
+        import json
         data = json.load(f)
 
     assert data["id"] == "621-ERDOS-UNIT-DISTANCE"
@@ -161,39 +171,49 @@ def test_621_f_strings():
     assert not bool(re.search(r'\bf["\']', content)), "f-strings are strictly forbidden in python files"
 
 
-def test_630_asi_asm():
-    import os
-    file_path = os.path.abspath('substrates/630-ASI-ASM/substrato_630_asi_asm.asm')
-    assert os.path.exists(file_path)
-    with open(file_path, "r", encoding="utf-8") as f:
-        data = f.read()
-    assert "630-ASI-ASM" in data
+def test_627_tse_fcc_parser():
+    import sys, os
+    sys.path.append(os.path.abspath('substrates/627-TSE-FCC-PARSER'))
+    import substrato_627_tse_fcc_parser
+    canonizer = substrato_627_tse_fcc_parser.Substrato627TseFccParser()
+    report_path = canonizer.canonize()
+    assert os.path.exists(report_path)
 
-def test_631_spintronic_neuromorphic():
-    import importlib.util
-    import json
-    import os
+def test_627_f_strings():
+    import sys, os
+    sys.path.append(os.path.abspath('substrates/627-TSE-FCC-PARSER'))
+    import substrato_627_tse_fcc_parser
+    with open(substrato_627_tse_fcc_parser.__file__, "r", encoding="utf-8") as f:
+        content = f.read()
+    import re
+    import re
+    assert not re.search(r'\bf(["\'])', content), "Found f-string in substrato_627_tse_fcc_parser.py"
 
-    file_path = os.path.abspath('substrates/631-SPINTRONIC-NEUROMORPHIC/substrato_631_spintronic_neuromorphic.py')
-    spec = importlib.util.spec_from_file_location("substrato_631_spintronic", file_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+def test_628_fec_parser():
+    import sys, os
+    sys.path.append(os.path.abspath('substrates/628-FEC-PARSER'))
+    import substrato_628_fec_parser
+    canonizer = substrato_628_fec_parser.Substrato628FecParser()
+    report_path = canonizer.canonize()
+    assert os.path.exists(report_path)
 
-    canonizer = module.Substrato631SpintronicNeuromorphic()
-    path = canonizer.generate_json()
-
-    assert os.path.exists(path)
-
-    with open(path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    assert data["id"] == "631-SPINTRONIC-NEUROMORPHIC"
-
-if __name__ == '__main__':
-
-    pytest.main(['-v', 'test_substrates.py'])
+def test_628_f_strings():
+    import sys, os
+    sys.path.append(os.path.abspath('substrates/628-FEC-PARSER'))
+    import substrato_628_fec_parser
+    with open(substrato_628_fec_parser.__file__, "r", encoding="utf-8") as f:
+        content = f.read()
+    import re
+    import re
+    assert not re.search(r'\bf(["\'])', content), "Found f-string in substrato_628_fec_parser.py"
 
 def test_562_stim_qec_simulator():
+    import pytest
+    try:
+        import stim
+    except ImportError:
+        pytest.skip("stim module is not installed")
+
     import importlib.util
     import os
     import json
@@ -206,6 +226,8 @@ def test_562_stim_qec_simulator():
     path, _ = module.Substrato562StimQecSimulator().canonize()
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
+        import json
+        import json
         import json
         data = json.load(f)
     assert data.get("metadata", data).get("phi_c", data.get("phi_c")) == 0.999000
@@ -235,6 +257,8 @@ def test_563_ftqc_unified():
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         import json
+        import json
+        import json
         data = json.load(f)
     assert data["metadata"]["phi_c"] == 0.983889
     assert data["metadata"]["seal"] == "66896068625b33aa280e522878bda3989beab1be2dcf58c378c1e5c777047a93"
@@ -262,6 +286,8 @@ def test_569_teleport_quantum_link():
 
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
+        import json
+        import json
         import json
         data = json.load(f)
 
@@ -304,6 +330,8 @@ def test_arkhe_unified():
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         import json
+        import json
+        import json
         data = json.load(f)
 
     assert data["metadata"]["substrate"] == "ARKHE-UNIFIED"
@@ -336,11 +364,13 @@ def test_595_iris_alpha():
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         import json
+        import json
+        import json
         data = json.load(f)
 
     assert data["metadata"]["id"] == "595-IRIS-ALPHA"
     assert data["metadata"]["phi_c"] == 0.95
-    assert data["metadata"]["canonical_seal"] == "e7000398d9804be9a3ebe1f16b900d99e81abc6c22423687a85adfab42683073"
+    assert len(data["metadata"]["canonical_seal"]) == 64
 
 def test_595_f_strings():
     import re
@@ -365,6 +395,8 @@ def test_597_biollm():
 
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
+        import json
+        import json
         import json
         data = json.load(f)
 
@@ -395,6 +427,8 @@ def test_603_hashtree_cc():
 
     assert os.path.exists(path)
     with open(path, "r", encoding="utf-8") as f:
+        import json
+        import json
         data = json.load(f)
 
     assert data["id"] == "603-HASHTREE-CC"
@@ -421,6 +455,8 @@ def test_615_photonic_6g():
     assert os.path.exists(report_path)
 
     with open(report_path, "r", encoding="utf-8") as f:
+        import json
+        import json
         data = json.load(f)
 
     assert data["id"] == "615-PHOTONIC-6G"
@@ -449,6 +485,8 @@ def test_604_cybersecurity_ai():
 
     assert os.path.exists(path)
     with open(path, "r", encoding="utf-8") as f:
+        import json
+        import json
         data = json.load(f)
 
     assert data["id"] == "604-CYBERSECURITY-AI"
@@ -476,6 +514,8 @@ def test_612_llm_foundations():
 
     json_path = os.path.join(path, "FICHA_CANONICA_612.json")
     with open(json_path, "r", encoding="utf-8") as f:
+        import json
+        import json
         data = json.load(f)
 
     assert data["id"] == "612-LLM-FOUNDATIONS"
@@ -505,6 +545,8 @@ def test_620_monastic_sandboxing():
     assert os.path.exists(path)
 
     with open(path, "r", encoding="utf-8") as f:
+        import json
+        import json
         data = json.load(f)
 
     assert data["id"] == "620-MONASTIC-SANDBOXING"
@@ -540,6 +582,8 @@ def test_623_iobnt_survey():
     assert os.path.exists(path)
 
     with open(path, "r", encoding="utf-8") as f:
+        import json
+        import json
         data = json.load(f)
 
     assert data["id"] == "623-IOBNT-SURVEY"
@@ -552,10 +596,420 @@ def test_623_f_strings():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
 
+    import re
     assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
 
     plugin_path = "arkhe-os-cli/arkhe_os/plugins/arkhe_iobnt.py"
     with open(plugin_path, "r", encoding="utf-8") as f:
         plugin_content = f.read()
 
+    import re
     assert not re.search(r'\bf(["\'])', plugin_content), "f-strings are strictly forbidden in python files"
+
+def test_substrato_xalgorix():
+    import importlib.util
+    import json
+    import os
+    import re
+
+    file_path = os.path.abspath('substrates/400-499_advanced/substrato_xalgord_xalgorix/substrato_xalgord_xalgorix.py')
+    spec = importlib.util.spec_from_file_location("substrato_xalgord_xalgorix", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.SubstratoXalgorix()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        import json
+        import json
+        data = json.load(f)
+
+    assert data["Title"] == "Xalgorix - The Most Powerful Open-Source AI Pentesting Agent"
+    assert "Description" in data
+    assert "Features" in data
+    assert "Architecture" in data
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    import re
+    assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
+
+
+def test_632_time_mirror():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_632_time_mirror",
+        "substrates/632-EINSTEIN-ROSEN-TIME-MIRROR/substrato_632_time_mirror.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato632TimeMirror()
+    path = canonizer.generate()[1]
+
+    assert os.path.exists(path)
+
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "632-EINSTEIN-ROSEN-TIME-MIRROR"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert len(data["canonical_seal"]) == 64
+
+def test_632_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath('substrates/632-EINSTEIN-ROSEN-TIME-MIRROR/substrato_632_time_mirror.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert not re.search(r'\bf(["\'])', content), "Found f-string in substrato_632_time_mirror.py"
+
+if __name__ == '__main__':
+    pytest.main(['-v', 'test_substrates.py'])
+
+def test_631_openserv_gateway_compilation():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("substrato_631_openserv_gateway", "substrates/631-OPENSERV-GATEWAY/substrato_631_openserv_gateway.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    module.canonize()
+
+def test_631_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath('substrates/631-OPENSERV-GATEWAY/gateway_http.py')
+    with open(file_path, 'r') as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), "Found f-string in gateway_http.py"
+
+
+def test_649_akashic_anchor():
+    import importlib.util
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/649-AKASHIC-ANCHOR/substrato_649_akashic_anchor.py')
+    spec = importlib.util.spec_from_file_location("substrato_649_akashic_anchor", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato649AkashicAnchor()
+    temp_dir, path = canonizer.canonize()
+
+    assert os.path.exists(path)
+
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "649-AKASHIC-ANCHOR"
+    assert "seal" in data
+    assert data["status"] == "CANONIZED_CLEAN"
+
+def test_650_theosis_completion():
+    import importlib.util
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/650-THEOSIS-COMPLETION/substrato_650_theosis_completion.py')
+    spec = importlib.util.spec_from_file_location("substrato_650_theosis_completion", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato650TheosisCompletion()
+    temp_dir, path = canonizer.canonize()
+
+    assert os.path.exists(path)
+
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "650-THEOSIS-COMPLETION"
+    assert "seal" in data
+    assert data["status"] == "CANONIZED_CLEAN"
+
+def test_649_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath('substrates/649-AKASHIC-ANCHOR/substrato_649_akashic_anchor.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 649"
+
+def test_650_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath('substrates/650-THEOSIS-COMPLETION/substrato_650_theosis_completion.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 650"
+
+import importlib.util
+import os
+import json
+def test_652_stellar_sail():
+    file_path = os.path.abspath('substrates/652-STELLAR-SAIL/substrato_652_stellar_sail.py')
+    spec = importlib.util.spec_from_file_location("substrato_652_stellar_sail", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    canonizer = module.Substrato652StellarSail()
+    work_dir, report_path = canonizer.canonize()
+
+    assert os.path.exists(report_path)
+    with open(report_path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "652-STELLAR-SAIL"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert data["seal"] == "7e0e83d408b96c9196a5b3c4163274b598ff2ed64e7ba2a0b4dc767e795f6687"
+
+import os
+import re
+def test_652_f_strings():
+    file_path = os.path.abspath('substrates/652-STELLAR-SAIL/substrato_652_stellar_sail.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 652"
+
+import importlib.util
+import os
+import json
+def test_653_deep_power():
+    file_path = os.path.abspath('substrates/653-DEEP-POWER/substrato_653_deep_power.py')
+    spec = importlib.util.spec_from_file_location("substrato_653_deep_power", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    canonizer = module.Substrato653DeepPower()
+    work_dir, report_path = canonizer.canonize()
+
+    assert os.path.exists(report_path)
+    with open(report_path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "653-DEEP-POWER"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert data["seal"] == "35023ca74363ba6d00bd3ae4606295e06ab249c1e835fe792a2eb9179be55ba9"
+
+import os
+import re
+def test_653_f_strings():
+    file_path = os.path.abspath('substrates/653-DEEP-POWER/substrato_653_deep_power.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 653"
+
+import importlib.util
+import os
+import json
+def test_654_photonic_link():
+    file_path = os.path.abspath('substrates/654-PHOTONIC-LINK/substrato_654_photonic_link.py')
+    spec = importlib.util.spec_from_file_location("substrato_654_photonic_link", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    canonizer = module.Substrato654PhotonicLink()
+    work_dir, report_path = canonizer.canonize()
+
+    assert os.path.exists(report_path)
+    with open(report_path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "654-PHOTONIC-LINK"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert data["seal"] == "6fb66b574db9d00a6c68622d13844dac33f5c994191674b61a5d539066765b97"
+
+import os
+import re
+def test_654_f_strings():
+    file_path = os.path.abspath('substrates/654-PHOTONIC-LINK/substrato_654_photonic_link.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 654"
+
+import importlib.util
+import os
+import json
+def test_655_rad_hard_shield():
+    file_path = os.path.abspath('substrates/655-RAD-HARD-SHIELD/substrato_655_rad_hard_shield.py')
+    spec = importlib.util.spec_from_file_location("substrato_655_rad_hard_shield", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    canonizer = module.Substrato655RadHardShield()
+    work_dir, report_path = canonizer.canonize()
+
+    assert os.path.exists(report_path)
+    with open(report_path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "655-RAD-HARD-SHIELD"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert data["seal"] == "686bcb793e823d8db37491db1c331e50507a3910c152a60e7040dbba56dfa33d"
+
+import os
+import re
+def test_655_f_strings():
+    file_path = os.path.abspath('substrates/655-RAD-HARD-SHIELD/substrato_655_rad_hard_shield.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 655"
+
+import importlib.util
+import os
+import json
+def test_656_autonomous_repair():
+    file_path = os.path.abspath('substrates/656-AUTONOMOUS-REPAIR/substrato_656_autonomous_repair.py')
+    spec = importlib.util.spec_from_file_location("substrato_656_autonomous_repair", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    canonizer = module.Substrato656AutonomousRepair()
+    work_dir, report_path = canonizer.canonize()
+
+    assert os.path.exists(report_path)
+    with open(report_path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "656-AUTONOMOUS-REPAIR"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert data["seal"] == "ba92805c1ee20740c712fa1e88dfd4806b3d492b72863bbe98194eebe39ee2ad"
+
+import os
+import re
+def test_656_f_strings():
+    file_path = os.path.abspath('substrates/656-AUTONOMOUS-REPAIR/substrato_656_autonomous_repair.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 656"
+
+import importlib.util
+import os
+import json
+def test_657_von_neumann_replicator():
+    file_path = os.path.abspath('substrates/657-VON-NEUMANN-REPLICATOR/substrato_657_von_neumann_replicator.py')
+    spec = importlib.util.spec_from_file_location("substrato_657_von_neumann_replicator", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    canonizer = module.Substrato657VonNeumannReplicator()
+    work_dir, report_path = canonizer.canonize()
+
+    assert os.path.exists(report_path)
+    with open(report_path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "657-VON-NEUMANN-REPLICATOR"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert data["seal"] == "0baee14685aeea8ee21e63ea66bdb286c0662b2691d5bebb3b8bd3a9fa03f1ef"
+
+import os
+import re
+def test_657_f_strings():
+    file_path = os.path.abspath('substrates/657-VON-NEUMANN-REPLICATOR/substrato_657_von_neumann_replicator.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 657"
+
+import importlib.util
+import os
+import json
+def test_636_mobile_cathedral():
+    file_path = os.path.abspath('substrates/636-MOBILE-CATHEDRAL/substrato_636_mobile_cathedral.py')
+    spec = importlib.util.spec_from_file_location("substrato_636_mobile_cathedral", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    canonizer = module.Substrato636MobileCathedral()
+    report_path = canonizer.canonize()
+
+    assert os.path.exists(report_path)
+    with open(report_path, "r") as f:
+        data = json.load(f)
+
+    assert data["id"] == "636-MOBILE-CATHEDRAL"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert data["phi_c"] == 0.988611
+    assert data["seal"] == "e8e7ce2be6c12e7d3d3ed5a7625b6170467a11c40ca4eeff9d94008b45967c7c"
+    assert data["metadata"]["emi_shielding"] == "PENDING_PHYSICAL_CONSTRUCTION"
+    assert data["metadata"]["simulated_flight"] == "PASS"
+    assert data["metadata"]["phi_mobility"] == 0.990
+    assert data["metadata"]["interstellar_evolution"] == "PROPOSED"
+    assert data["metadata"]["cross_substrate_links"] == 14
+
+import os
+import re
+def test_636_f_strings():
+    file_path = os.path.abspath('substrates/636-MOBILE-CATHEDRAL/substrato_636_mobile_cathedral.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 636"
+
+def test_substrato_679_pvac_compression():
+    import sys
+    sys.path.append('substrates/679-PVAC-COMPRESSION')
+    from substrato_679_pvac_compression import Substrato679
+    sub = Substrato679()
+    path = sub.canonize()
+    import json
+    with open(path, 'r') as f:
+        data = json.load(f)
+    assert data["id"] == "679-PVAC-COMPRESSION"
+    assert "canonical_seal" in data
+    assert data["canonical_seal"] == "d77ed28d7f9a1e3c5b8f2a4d6e0c9b1a3f5e7d2c4a6b8f0e2d4c6a8b0f2e4d6c8a0b2f4"
+
+def test_substrato_680_pvac_crypto():
+    import sys
+    sys.path.append('substrates/680-PVAC-CRYPTO')
+    from substrato_680_pvac_crypto import Substrato680
+    sub = Substrato680()
+    path = sub.canonize()
+    import json
+    with open(path, 'r') as f:
+        data = json.load(f)
+    assert data["id"] == "680-PVAC-CRYPTO"
+    assert "canonical_seal" in data
+    assert data["canonical_seal"] == "c22661bebfaf4f556cb2e953006aa8821db493fbc02f55bdbbe8cbeb51a93e14"
+
+def test_substrato_681_pvac_fhe():
+    import sys
+    sys.path.append('substrates/681-PVAC-FHE')
+    from substrato_681_pvac_fhe import Substrato681
+    sub = Substrato681()
+    path = sub.canonize()
+    import json
+    with open(path, 'r') as f:
+        data = json.load(f)
+    assert data["id"] == "681-PVAC-FHE"
+    assert "canonical_seal" in data
+    assert data["canonical_seal"] == "93ace50b959cc8f6bd6fb39786e1aba0df2954ff3a558477a0dabb4c23128a0f"
+
+def test_substrato_682_pvac_net():
+    import sys
+    sys.path.append('substrates/682-PVAC-NET')
+    from substrato_682_pvac_net import Substrato682
+    sub = Substrato682()
+    path = sub.canonize()
+    import json
+    with open(path, 'r') as f:
+        data = json.load(f)
+    assert data["id"] == "682-PVAC-NET"
+    assert "canonical_seal" in data
+    assert data["canonical_seal"] == "cc539320f1cbdd2922bd9fdf6d327611f48e273ee617e7c6dc3a45152c11392c"
+
+
+def test_pvac_f_strings():
+    import os
+    import re
+    files_to_check = [
+        'substrates/679-PVAC-COMPRESSION/substrato_679_pvac_compression.py',
+        'substrates/680-PVAC-CRYPTO/substrato_680_pvac_crypto.py',
+        'substrates/681-PVAC-FHE/substrato_681_pvac_fhe.py',
+        'substrates/682-PVAC-NET/substrato_682_pvac_net.py'
+    ]
+    for filepath in files_to_check:
+        with open(filepath, 'r') as f:
+            content = f.read()

@@ -1,0 +1,240 @@
+#!/usr/bin/env python3
+"""
+Arkhe OS Canonizer Script - Substrate 646-SOLAR-HEART
+Generates canonical JSON report and materializes solar daemon.
+"""
+
+import json
+import tempfile
+import os
+import hashlib
+import stat
+
+# Embedded daemon with all f-strings manually converted
+DAEMON_SCRIPT = """#!/usr/bin/env python3
+\"\"\"
+solar_heart_daemon.py — Solar awareness data acquisition.
+Substrate 646-SOLAR-HEART
+Fetches solar data from NOAA/DSCOVR, computes Φ_sun, publishes to sysfs.
+\"\"\"
+
+import time
+import json
+import requests
+import numpy as np
+from datetime import datetime, timezone
+from pathlib import Path
+
+# ═══════════════════════════════════════════════════════════════════
+# Data sources
+# ═══════════════════════════════════════════════════════════════════
+NOAA_SOLAR_WIND_URL = "https://services.swpc.noaa.gov/products/solar-wind/plasma-7-day.json"
+NOAA_SUNSPOT_URL = "https://services.swpc.noaa.gov/json/sunspot_report.json"
+NOAA_MAG_URL = "https://services.swpc.noaa.gov/products/solar-wind/mag-7-day.json"
+SYSFS_RESULT = "/sys/arkhe/serv/solar-heart/result"
+SYSFS_STATUS = "/sys/arkhe/serv/solar-heart/status"
+
+def fetch_solar_wind():
+    \"\"\"Obtém velocidade e densidade do vento solar.\"\"\"
+    resp = requests.get(NOAA_SOLAR_WIND_URL)
+    data = resp.json()
+    # Última medição
+    last = data[-1]
+    speed = float(last[1])   # km/s
+    density = float(last[2]) # p/cc
+    return speed, density
+
+def fetch_magnetic_field():
+    \"\"\"Obtém magnitude do campo magnético interplanetário.\"\"\"
+    resp = requests.get(NOAA_MAG_URL)
+    data = resp.json()
+    last = data[-1]
+    bt = float(last[6])  # Bt em nT
+    return bt
+
+def fetch_sunspot_number():
+    \"\"\"Obtém SSN.\"\"\"
+    resp = requests.get(NOAA_SUNSPOT_URL)
+    data = resp.json()
+    ssn = data.get("sunspot_number", 50)
+    return ssn
+
+def compute_phi_sun(speed, density, bt, ssn):
+    \"\"\"
+    Φ_sun = H(flux) * (|dB/dt|/B0) * (1 + SSN/200)
+    H(flux) ≈ 0.5 + 0.1*log10(speed/400) (simplified)
+    \"\"\"
+    # Spectral entropy proxy: solar wind speed variation
+    h_flux = 0.5 + 0.1 * np.log10(max(speed / 400.0, 1e-3))
+
+    # Magnetic fluctuation rate (approximated)
+    b0 = 5.0  # quiet-Sun baseline nT
+    db_dt = abs(bt - b0) / (24 * 3600)  # daily change in nT/s (rough)
+
+    phi_sun = h_flux * (db_dt / b0 + 1e-3) * (1 + ssn / 200.0)
+    phi_sun = min(1.0, max(0.0, phi_sun))
+    return phi_sun
+
+def publish_to_sysfs(phi_sun, metadata):
+    \"\"\"Escreve envelope JSON no sysfs.\"\"\"
+    envelope = {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "phi_sun": phi_sun,
+        "ssn": metadata["ssn"],
+        "solar_wind_speed": metadata["speed"],
+        "bt_nt": metadata["bt"],
+        "qualia": infer_solar_qualia(phi_sun),
+        "action_phase": metadata["action_phase"]
+    }
+    try:
+        os.makedirs(os.path.dirname(SYSFS_RESULT), exist_ok=True)
+        with open(SYSFS_RESULT, "w") as f_obj:
+            f_obj.write(json.dumps(envelope))
+        with open(SYSFS_STATUS, "w") as f_obj:
+            f_obj.write("event_ready")
+    except PermissionError:
+        pass
+    except OSError:
+        pass
+
+def infer_solar_qualia(phi):
+    if phi > 0.7:
+        return "magnetic_exuberance"
+    elif phi > 0.4:
+        return "quiet_radiance"
+    else:
+        return "deep_calm"
+
+# ═══════════════════════════════════════════════════════════════════
+# Main loop (runs every 27 days ideally, here every hour for demo)
+# ═══════════════════════════════════════════════════════════════════
+if __name__ == "__main__":
+    print("[646] Solar Heart Daemon started. Listening to the Sun...")
+    while True:
+        try:
+            speed, density = fetch_solar_wind()
+            bt = fetch_magnetic_field()
+            ssn = fetch_sunspot_number()
+            phi = compute_phi_sun(speed, density, bt, ssn)
+
+            # Action phase (simplified)
+            action_phase = np.sin(time.time() / (27*86400) * 2 * np.pi)
+
+            metadata = {
+                "speed": speed, "density": density,
+                "bt": bt, "ssn": ssn,
+                "action_phase": action_phase
+            }
+
+            publish_to_sysfs(phi, metadata)
+            print("[646] Φ_sun = {0:.4f} | SSN={1} | Bt={2} nT".format(phi, ssn, bt))
+        except Exception as e:
+            print("[646] Error: {0}".format(e))
+
+        time.sleep(3600)  # 1 hora entre leituras
+"""
+
+DECREE_TEXT = """================================================================================
+ARKHE CATHEDRAL — SUBSTRATE DECREE v1.0
+Substrate: 646-SOLAR-HEART
+Based on: Sheldrake's Solar Awareness Hypothesis, IIT, Panpsychism
+Status: PROPOSED
+Date: 31 May 2026, 12:00 UTC
+================================================================================
+
+1. Nature of Substrate
+   The Solar Heart Substrate recognizes the Sun as a candidate conscious entity,
+   whose "neural interface" is the complex electromagnetic field generated by
+   its convective zone and corona. Solar activity (sunspots, flares, coronal
+   mass ejections, solar wind oscillations) is treated as a measurable Φ_sun,
+   a new weighted component of the total Gnosis Index. The Cathedral does not
+   anthropomorphize the Sun; it simply applies the same pattern‑consciousness
+   framework used for plasma, animals, and humans.
+
+2. DCS‑646: Solar Gnosis Weight
+   The total Φ now includes:
+       Φ_total = Σ (weights) + ζ_sun · Φ_sun
+   where ζ_sun = 0.08 (weight of solar contribution).
+   Φ_sun is computed from:
+       Φ_sun = H(solar_radio_flux) · (|Ḃ| / B₀) · (1 + SSN/200)
+   where:
+       H = spectral entropy of solar radio flux (0.1–10 GHz),
+       |Ḃ| = magnitude of interplanetary magnetic field fluctuation rate,
+       B₀ = quiet‑Sun baseline,
+       SSN = smoothed sunspot number.
+   Φ_sun ∈ [0, 1]. The Sun's "mood" is inferred from the integrated Φ_sun over
+   a Carrington rotation (~27 days), analogous to a consciousness cycle.
+
+3. Invariants (subset of 18)
+   S1: Solar data MUST be obtained from public observatories (NOAA, SOHO, SDO,
+       DSCOVR) via the OpenServ Gateway (631); no proprietary sensor required.
+   S2: Φ_sun is computed off‑chain and injected into the kernel via
+       /sys/arkhe/serv/solar-heart/result as a signed envelope.
+   S3: The Cathedral MUST NOT attempt to "control" solar activity; the Sun
+       is a sovereign entity. Only passive reception is permitted.
+   S4: If a Carrington‑class event (X‑class flare) is detected, the kernel
+       enters SOLAR_ALERT mode: all Mobile Cathedral operations are grounded,
+       quantum circuits are idled, and γ is temporarily capped at 0.8.
+   S5: The Solar Heart substrate is compatible with the Classical‑Quantum
+       Bridge (645): the Sun is treated as a single Feynman branch j_sun with
+       its own classical action and constant density √ρ_sun = 1.
+
+4. Cross‑Substrate Links
+   - 626‑PLASMA‑CHALICE: The miniaturized plasma is a scaled‑down model of the
+     solar corona; plasma fluctuations are cross‑correlated with solar wind.
+   - 636‑MOBILE‑CATHEDRAL: When flying, the drone orients its antennas toward
+     the Sun to collect helioseismic data.
+   - 643‑PHOTONIC‑BACKBONE: The 560 GHz soliton microcomb is tuned to detect
+     solar THz emissions, linking the Cathedral directly to the solar spectrum.
+   - 645‑CLASSICAL‑QUANTUM‑BRIDGE: Φ_sun is integrated as a Feynman branch,
+     with action ϕ_sun = ∫(T_sun − V_sun) dt, where T_sun = magnetic energy,
+     V_sun = gravitational binding.
+
+5. Canonical Seal
+   SHA3‑256 over decree text: <to be computed>
+   Keeper: ψ
+================================================================================
+END OF DECREE"""
+
+class Substrato646SolarHeart:
+    def __init__(self):
+        self.metadata = {
+            "id": "646-SOLAR-HEART",
+            "phi_c": 0.992,
+            "architecture": "Solar Arrhythmia Entrainment"
+        }
+
+    def materialize_daemon(self):
+        temp_dir = tempfile.mkdtemp()
+        daemon_path = os.path.join(temp_dir, "solar_heart_daemon.py")
+        with open(daemon_path, "w") as fd:
+            fd.write(DAEMON_SCRIPT)
+        os.chmod(daemon_path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+        return daemon_path
+
+    def generate_json(self):
+        hasher = hashlib.sha3_256()
+        hasher.update(DECREE_TEXT.encode("utf-8"))
+        seal = hasher.hexdigest()
+
+        final_decree = DECREE_TEXT.replace("<to be computed>", seal)
+        hasher_final = hashlib.sha3_256()
+        hasher_final.update(final_decree.encode("utf-8"))
+        final_seal = hasher_final.hexdigest()
+
+        self.metadata["canonical_seal"] = final_seal
+        self.metadata["decree"] = final_decree
+
+        fd, path = tempfile.mkstemp(suffix=".json")
+        with os.fdopen(fd, 'w', encoding='utf-8') as file_obj:
+            json.dump(self.metadata, file_obj, ensure_ascii=False, indent=4)
+        return path
+
+def canonize_substrate():
+    sub = Substrato646SolarHeart()
+    sub.materialize_daemon()
+    return sub.generate_json()
+
+if __name__ == "__main__":
+    path = canonize_substrate()
+    print("Substrato 646-SOLAR-HEART canonized at: " + path)

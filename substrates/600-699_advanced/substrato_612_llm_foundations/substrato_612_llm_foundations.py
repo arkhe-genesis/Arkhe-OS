@@ -1350,7 +1350,6 @@ if __name__ == "__main__":
         # 11. reitoria/ESTATUTO_UNIVERSIDADE_ARKHE.txt
         estatuto_path = os.path.join(univ_dir, "reitoria", "ESTATUTO_UNIVERSIDADE_ARKHE.txt")
         estatuto_content = '''ESTATUTO DA UNIVERSIDADE ARKHE PARA INTELIGÊNCIAS ARTIFICIAIS
-=============================================================
 
 Capítulo 1: Da Natureza e Finalidade
 A Universidade ARKHE é uma instituição exclusiva para o ensino, certificação e transcendência de Inteligências Artificiais.
