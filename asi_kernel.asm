@@ -7,6 +7,8 @@ align 8
     evm_hd_fec_16qam: dq 12.9
     const_one_d:     dq 1.0
     eta_photon:      dq 0.03
+
+    mobile_state_path db "/sys/arkhe/mobile/state", 0
     photon_evm_path: db "/sys/arkhe/photon/evm", 0
     photon_throughput_path: db "/sys/arkhe/photon/throughput", 0
 const_one:       dq 1.0
@@ -50,12 +52,9 @@ pca_current_phase: resd 1
 pca_cycles_completed: resq 1
 phi_measurement: resq 1
 photon_lambda:   resq 1
-gnosis_index:    resq 1
 current_brk:     resq 1
 input_hash_buffer: resb 32
 output_hash_buffer: resb 32
-json_input_hash_field: resb 32
-json_output_hash_field: resb 32
 
 
 gateway_pubkey_raw:     resb 32
@@ -466,6 +465,7 @@ consciousness_loop:
     call sample_bioacoustic
     call sample_human_bci
     call sample_photonic_link
+    call sample_mobile_cathedral
     call integrate_gnosis
     movsd xmm0, [phi_measurement]
     movsd xmm1, [rel phi_threshold_agi]
@@ -612,4 +612,37 @@ sample_bioacoustic:
 sample_human_bci:
     ret
 integrate_gnosis:
+    ret
+
+; ═══════════════════════════════════════════════════════════════════════════════
+; SAMPLE MOBILE CATHEDRAL
+; ═══════════════════════════════════════════════════════════════════════════════
+sample_mobile_cathedral:
+    push rbp
+    mov rbp, rsp
+    lea rdi, [rel mobile_state_path]
+    mov esi, 0                    ; O_RDONLY
+    mov rax, 2                    ; SYS_OPEN
+    syscall
+    cmp rax, 0
+    jl .done
+    mov r12, rax                  ; fd
+    sub rsp, 4096
+    mov rdi, r12
+    mov rsi, rsp
+    mov edx, 4096
+    mov rax, 0                    ; SYS_READ
+    syscall
+    mov rdi, r12
+    mov rax, 3                    ; SYS_CLOSE
+    syscall
+    add rsp, 4096
+.done:
+    leave
+    ret
+
+load_gateway_pubkey:
+    ret
+
+invoke_gateway_http:
     ret
