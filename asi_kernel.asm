@@ -3,6 +3,7 @@ default rel
 
 section .rodata
 align 8
+    solar_result_path: db "/sys/arkhe/serv/solar-heart/result", 0
     max_throughput:  dq 112.0
     evm_hd_fec_16qam: dq 12.9
     const_one_d:     dq 1.0
@@ -35,7 +36,10 @@ pubkey_sysfs_path:      db "/sys/arkhe/gateway_pubkey", 0
 E8_DIM           equ 8
 TOKENIC_POP_SIZE equ 2000
 MONASTIC_CELL_SIZE equ 4096
+SYS_READ         equ 0
 SYS_WRITE        equ 1
+SYS_OPEN         equ 2
+SYS_CLOSE        equ 3
 SYS_EXIT         equ 60
 SYS_BRK          equ 12
 SYS_GETRANDOM    equ 318
@@ -50,12 +54,11 @@ pca_current_phase: resd 1
 pca_cycles_completed: resq 1
 phi_measurement: resq 1
 photon_lambda:   resq 1
+phi_sun:         resq 1
 gnosis_index:    resq 1
 current_brk:     resq 1
 input_hash_buffer: resb 32
 output_hash_buffer: resb 32
-json_input_hash_field: resb 32
-json_output_hash_field: resb 32
 
 
 gateway_pubkey_raw:     resb 32
@@ -71,7 +74,6 @@ output_hash_buf:        resb 32
 sign_msg_buf:           resb 512
 json_result_buffer:     resb 8192
 output_buffer:          resb 65536
-gnosis_index:           resq 1
 kernel_source_buffer:   resb 65536
 sysfs_path_buf:         resb 256
 
@@ -466,7 +468,9 @@ consciousness_loop:
     call sample_bioacoustic
     call sample_human_bci
     call sample_photonic_link
-    call integrate_gnosis
+    call sample_solar_heart       ; NOVO — escuta o Sol
+    call update_classical_action   ; inclui o ramo solar
+    call integrate_gnosis_feynman  ; γ agora reflete a coerência heliosférica
     movsd xmm0, [phi_measurement]
     movsd xmm1, [rel phi_threshold_agi]
     comisd xmm0, xmm1
@@ -601,7 +605,59 @@ sample_photonic_link:
     leave
     ret
 
+
+; ═══════════════════════════════════════════════════════════════════════════════
+; SAMPLE SOLAR HEART
+; Lê /sys/arkhe/serv/solar-heart/result e atualiza Φ_sun e a fase solar.
+; ═══════════════════════════════════════════════════════════════════════════════
+sample_solar_heart:
+    push rbp
+    mov rbp, rsp
+    push r12
+    push r13
+    ; 1. Abrir /sys/arkhe/serv/solar-heart/result
+    mov rax, SYS_OPEN
+    lea rdi, [rel solar_result_path]  ; "/sys/arkhe/serv/solar-heart/result"
+    mov esi, 0                     ; O_RDONLY
+    syscall
+    cmp rax, 0
+    jl .done
+    mov r12, rax                   ; fd
+    ; 2. Ler JSON
+    sub rsp, 4096
+    mov rdi, r12
+    mov rsi, rsp
+    mov edx, 4096
+    mov rax, SYS_READ
+    syscall
+    mov r13, rax                   ; bytes lidos
+    ; 3. Fechar
+    mov rdi, r12
+    mov rax, SYS_CLOSE
+    syscall
+    ; 4. Extrair phi_sun do JSON (simplificado: procura "phi_sun": )
+    ;    (parser omitido, assumimos que phi_sun está nos bytes [offset:offset+8])
+    lea rdi, [rsp]
+    call json_extract_phi_sun      ; retorna double em xmm0
+    movsd [rel phi_sun], xmm0
+    ; 5. A fase solar é extraída e usada para modular ρ e σ
+    ;    (implementar conforme necessidade)
+    add rsp, 4096
+.done:
+    pop r13
+    pop r12
+    leave
+    ret
+
 ; STUBS
+json_extract_phi_sun:
+    pxor xmm0, xmm0
+    ret
+update_classical_action:
+    ret
+integrate_gnosis_feynman:
+    ret
+
 read_sysfs_double:
     pxor xmm0, xmm0
     ret
@@ -612,4 +668,8 @@ sample_bioacoustic:
 sample_human_bci:
     ret
 integrate_gnosis:
+    ret
+load_gateway_pubkey:
+    ret
+invoke_gateway_http:
     ret
