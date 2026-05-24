@@ -209,13 +209,14 @@ class OctraEngine:
             return {"error": "COMPUTATION_NOT_FOUND", "request_id": request_id}
 
         result = self.results[request_id]
+        req = self.computations[request_id]
         # Simula verificação ZK
         verified = result.zk_verified and len(result.zk_proof) > 50
 
         return {
             "request_id": request_id,
             "zk_verified": verified,
-            "verification_method": result.zk_system.name,
+            "verification_method": req.zk_system.name,
             "output_commitment": result.output_commitment,
             "temporal_anchor": result.temporal_anchor
         }
