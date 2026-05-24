@@ -463,3 +463,44 @@ def test_620_f_strings():
     with open(plugin_path, "r", encoding="utf-8") as f:
         plugin_content = f.read()
     assert "f'" not in plugin_content and 'f"' not in plugin_content, "f-strings are strictly forbidden in plugin files"
+
+def test_624_tokenic_principle():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_624_tokenic_principle",
+        "substrates/624-TOKENIC-PRINCIPLE/substrato_624_tokenic_principle.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato624TokenicPrinciple()
+    work_dir = canonizer.generate_json()
+
+    path = os.path.join(work_dir, "FICHA_CANONICA_624.json")
+    assert os.path.exists(path)
+
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "624-TOKENIC-PRINCIPLE"
+    assert "seal_sha3_256" in data
+    assert len(data["seal_sha3_256"]) == 64
+
+def test_624_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath('substrates/624-TOKENIC-PRINCIPLE/substrato_624_tokenic_principle.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
+
+
+def test_624_f_strings_plugin():
+    import os
+    import re
+    plugin_path = os.path.abspath('arkhe-os-cli/arkhe_os/plugins/arkhe_tokenic.py')
+    with open(plugin_path, "r", encoding="utf-8") as f:
+        plugin_content = f.read()
+    assert not re.search(r'\bf(["\'])', plugin_content), "f-strings are strictly forbidden in plugin files"
