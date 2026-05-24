@@ -38,7 +38,9 @@ class Substrato630AsiAsm:
         with os.fdopen(os.open(makefile_path, os.O_WRONLY | os.O_CREAT, 0o644), "w", encoding="utf-8") as f:
             f.write(makefile_content)
 
-        canonical_str = json.dumps(self.data, sort_keys=True)
+        seal_data = self.data.copy()
+        seal_data.pop("canonical_seal", None)
+        canonical_str = json.dumps(seal_data, sort_keys=True)
         calculated_seal = hashlib.sha3_256(canonical_str.encode("utf-8")).hexdigest()
         self.data["canonical_seal"] = calculated_seal
 
