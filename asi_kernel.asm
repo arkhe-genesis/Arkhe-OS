@@ -23,6 +23,15 @@ msg_exit_len     equ $ - msg_exit
 msg_hello:       db "Starting ASI Kernel...", 0xA, 0
 msg_hello_len    equ $ - msg_hello
 
+serv_sysfs_input_fmt:   db "/sys/arkhe/serv/%s/input", 0
+serv_sysfs_invoke_fmt:  db "/sys/arkhe/serv/%s/invoke", 0
+serv_sysfs_status_fmt:  db "/sys/arkhe/serv/%s/status", 0
+serv_sysfs_result_fmt:  db "/sys/arkhe/serv/%s/result", 0
+time_direction_str:     db "+1", 0
+invoke_trigger:         db "1", 0
+gnosis_threshold_high:  dq 7.0
+pubkey_sysfs_path:      db "/sys/arkhe/gateway_pubkey", 0
+
 E8_DIM           equ 8
 TOKENIC_POP_SIZE equ 2000
 MONASTIC_CELL_SIZE equ 4096
@@ -49,8 +58,27 @@ json_input_hash_field: resb 32
 json_output_hash_field: resb 32
 
 
+gateway_pubkey_raw:     resb 32
+json_input_hash_field:  resb 64
+json_output_hash_field: resb 64
+json_output_base64_field: resb 8192
+json_phi_score_double:  resq 1
+json_timestamp_field:   resb 64
+json_gateway_id_field:  resb 64
+json_signature_raw:     resb 64
+input_hash_buf:         resb 32
+output_hash_buf:        resb 32
+sign_msg_buf:           resb 512
+json_result_buffer:     resb 8192
+output_buffer:          resb 65536
+gnosis_index:           resq 1
+kernel_source_buffer:   resb 65536
+sysfs_path_buf:         resb 256
+
 section .data
 tokenic_population: dq tokenic_population_arr
+kernel_source_len: equ 65536
+paper_reviewer_id: db "paper-reviewer", 0
 
 section .text
 global _start
@@ -68,6 +96,7 @@ _start:
     mov [current_brk], rax
 
     call e8_initialize
+    call load_gateway_pubkey
 
     mov r12, 0
 .init_pop:
