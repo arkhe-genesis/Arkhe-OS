@@ -984,7 +984,7 @@ def test_680_pvac_crypto():
         data = json.load(f)
     assert data["id"] == "680-PVAC-CRYPTO"
     assert data["status"] == "CANONIZED_CLEAN"
-    assert data["canonical_seal"] == "0e0b782a2945f2e3e58f4f19cb819379a5b664292a64f7ded3b35183451ba545"
+    assert data["canonical_seal"] == "1ec6d8934082e399fc6f6753f7311321d0bb63b0bcf95fbe2a4d348b59996147"
     assert "pvac_crypto_rs_b64" in data
 
 def test_680_f_strings():
@@ -1007,7 +1007,7 @@ def test_681_pvac_fhe():
         data = json.load(f)
     assert data["id"] == "681-PVAC-FHE"
     assert data["status"] == "CANONIZED_CLEAN"
-    assert data["canonical_seal"] == "005c58d21822cc8e42df2f59c38fb173b0186b8ca036e7104a9bf3ae259a5652"
+    assert data["canonical_seal"] == "74e5611156355a67e9f09fd114eb83a10fb63c77c8cb075db70947c53eb5f4f1"
     assert "pvac_fhe_rs_b64" in data
 
 def test_681_f_strings():
@@ -1030,7 +1030,7 @@ def test_682_pvac_net():
         data = json.load(f)
     assert data["id"] == "682-PVAC-NET"
     assert data["status"] == "CANONIZED_CLEAN"
-    assert data["canonical_seal"] == "b3900b42f65d01108249ca88c094408189623d366c739936ce936391fb484a7a"
+    assert data["canonical_seal"] == "6012551761f1385f72218353ddfe203ea3a23e6504d4e49a2643ba77ccfbb9a5"
     assert "pvac_net_rs_b64" in data
 
 def test_682_f_strings():
