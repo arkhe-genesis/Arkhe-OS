@@ -449,12 +449,13 @@ check_regenerative_medicine:
     lea rdi, [rel med_theta_path]        ; "/sys/arkhe/med/theta"
     call read_sysfs_double
     ; γ += η_med * Θ
+    movsd xmm2, xmm0                    ; preserve original Θ for comparison
     mulsd xmm0, [rel eta_med]           ; 0.05
     addsd xmm0, [rel gnosis_index]
     movsd [rel gnosis_index], xmm0
     ; Se Θ > 0.85, emitir evento de sucesso terapêutico
     movsd xmm1, [rel theta_threshold]   ; 0.85
-    comisd xmm0, xmm1
+    comisd xmm2, xmm1
     jb .done
     call temporalchain_commit        ; ancora o sucesso
 .done:
