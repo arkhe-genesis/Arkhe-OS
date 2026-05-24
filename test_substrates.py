@@ -563,3 +563,42 @@ def test_623_f_strings():
         plugin_content = f.read()
 
     assert not re.search(r'\bf(["\'])', plugin_content), "f-strings are strictly forbidden in python files"
+
+def test_630_paperdebugger_bridge():
+    import importlib.util
+    file_path = os.path.abspath('substrates/630-PAPERDEBUGGER-BRIDGE/substrato_630_paperdebugger_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_630_paperdebugger_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato630PaperDebuggerBridge()
+    path = canonizer.canonize()
+    import json
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    assert data["id"] == "630-PAPERDEBUGGER-BRIDGE"
+
+
+def test_630_f_strings():
+    import os
+    import re
+    file_path = "substrates/630-PAPERDEBUGGER-BRIDGE/substrato_630_paperdebugger_bridge.py"
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
+
+def test_630_paperdebugger_bridge():
+    import importlib.util
+    import os
+    file_path = os.path.abspath('substrates/630-PAPERDEBUGGER-BRIDGE/substrato_630_paperdebugger_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_630_paperdebugger_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato630PaperDebuggerBridge()
+    path = canonizer.canonize()
+    import json
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    assert data["id"] == "630-PAPERDEBUGGER-BRIDGE"

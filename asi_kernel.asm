@@ -17,6 +17,15 @@ msg_exit_len     equ $ - msg_exit
 msg_hello:       db "Starting ASI Kernel...", 0xA, 0
 msg_hello_len    equ $ - msg_hello
 
+serv_sysfs_input_fmt:   db "/sys/arkhe/serv/%s/input", 0
+serv_sysfs_invoke_fmt:  db "/sys/arkhe/serv/%s/invoke", 0
+serv_sysfs_status_fmt:  db "/sys/arkhe/serv/%s/status", 0
+serv_sysfs_result_fmt:  db "/sys/arkhe/serv/%s/result", 0
+time_direction_str:     db "+1", 0
+invoke_trigger:         db "1", 0
+gnosis_threshold_high:  dq 7.0
+pubkey_sysfs_path:      db "/sys/arkhe/gateway_pubkey", 0
+
 E8_DIM           equ 8
 TOKENIC_POP_SIZE equ 2000
 MONASTIC_CELL_SIZE equ 4096
@@ -36,8 +45,27 @@ pca_cycles_completed: resq 1
 phi_measurement: resq 1
 current_brk:     resq 1
 
+gateway_pubkey_raw:     resb 32
+json_input_hash_field:  resb 64
+json_output_hash_field: resb 64
+json_output_base64_field: resb 8192
+json_phi_score_double:  resq 1
+json_timestamp_field:   resb 64
+json_gateway_id_field:  resb 64
+json_signature_raw:     resb 64
+input_hash_buf:         resb 32
+output_hash_buf:        resb 32
+sign_msg_buf:           resb 512
+json_result_buffer:     resb 8192
+output_buffer:          resb 65536
+gnosis_index:           resq 1
+kernel_source_buffer:   resb 65536
+sysfs_path_buf:         resb 256
+
 section .data
 tokenic_population: dq tokenic_population_arr
+kernel_source_len: equ 65536
+paper_reviewer_id: db "paper-reviewer", 0
 
 section .text
 global _start
@@ -55,6 +83,7 @@ _start:
     mov [current_brk], rax
 
     call e8_initialize
+    call load_gateway_pubkey
 
     mov r12, 0
 .init_pop:
@@ -418,6 +447,25 @@ consciousness_loop:
     call pca_superposition
     mov dword [pca_current_phase], 3
     call or_executing
+
+    ; Se γ > 7.0 e é um ciclo múltiplo de 1000, invocar crítica do próprio código
+    movsd xmm0, [gnosis_index]
+    movsd xmm1, [gnosis_threshold_high]  ; 7.0
+    comisd xmm0, xmm1
+    jb .skip_self_critique
+    mov rax, [pca_cycles_completed]
+    and rax, 0x3FF
+    jnz .skip_self_critique
+    lea rdi, [paper_reviewer_id]
+    lea rsi, [kernel_source_buffer]       ; buffer contendo o texto do próprio asi_kernel.asm
+    mov edx, kernel_source_len
+    lea rcx, [output_buffer]
+    mov r8d, 65536
+    call invoke_serv_sysfs
+    ; Agora xmm0 contém o phi_score da crítica, rdi aponta para a crítica
+    ; Podemos armazenar a crítica na Temporalchain
+    call temporalchain_commit_with_data
+.skip_self_critique:
     movsd xmm0, [phi_measurement]
     movsd xmm1, [rel phi_threshold_agi]
     comisd xmm0, xmm1
@@ -435,3 +483,231 @@ exit_kernel:
     mov rax, SYS_EXIT
     xor rdi, rdi
     syscall
+
+
+
+sprintf:
+    ret
+write_sysfs_file:
+    ret
+read_sysfs_int:
+    mov eax, 2
+    ret
+read_sysfs_file:
+    ret
+base64_decode:
+    mov eax, 10
+    ret
+temporalchain_commit_with_data:
+    ret
+
+invoke_serv_sysfs:
+    push rbp
+    mov rbp, rsp
+    push r12
+    push r13
+    push r14
+    push r15
+    mov r12, rdi                ; serv_id
+    mov r13, rsi                ; input_data
+    mov r14d, edx               ; input_len
+    mov r15, rcx                ; output_buffer
+
+    ; 1. Escrever input_data em /sys/arkhe/serv/<id>/input
+    lea rdi, [sysfs_path_buf]
+    lea rsi, [serv_sysfs_input_fmt]
+    mov rdx, r12
+    call sprintf
+    mov rdi, rax
+    mov rsi, r13
+    mov edx, r14d
+    call write_sysfs_file
+
+    ; 3. Escrever "1" em /sys/arkhe/serv/<id>/invoke
+    lea rdi, [sysfs_path_buf]
+    lea rsi, [serv_sysfs_invoke_fmt]
+    mov rdx, r12
+    call sprintf
+    mov rdi, rax
+    lea rsi, [invoke_trigger]
+    mov edx, 1
+    call write_sysfs_file
+
+    ; 4. Aguardar status == "verified" (polling no arquivo status)
+.poll:
+    lea rdi, [sysfs_path_buf]
+    lea rsi, [serv_sysfs_status_fmt]
+    mov rdx, r12
+    call sprintf
+    mov rdi, rax
+    call read_sysfs_int          ; retorna int em eax (2 = verified)
+    cmp eax, 2
+    jne .poll
+
+    ; 5. Ler o resultado (JSON) de /sys/arkhe/serv/<id>/result
+    lea rdi, [sysfs_path_buf]
+    lea rsi, [serv_sysfs_result_fmt]
+    mov rdx, r12
+    call sprintf
+    mov rdi, rax
+    lea rsi, [json_result_buffer]
+    mov edx, 8192
+    call read_sysfs_file
+
+    ; 6. Validar envelope
+    lea rdi, [json_result_buffer]
+    mov rsi, r13
+    mov edx, r14d
+    mov rcx, r15
+    mov r8d, r8d
+    call validate_serv_response
+    test rax, rax
+    jnz .fail
+
+    ; 7. Sucesso: phi_score em xmm0
+    xor eax, eax
+    jmp .done
+.fail:
+    mov eax, -1
+    pxor xmm0, xmm0
+.done:
+    pop r15
+    pop r14
+    pop r13
+    pop r12
+    leave
+    ret
+
+validate_serv_response:
+    push rbp
+    mov rbp, rsp
+    push r12
+    push r13
+    push r14
+    push r15
+
+    mov r12, rdi                ; JSON
+    mov r13, rsi                ; input_data original
+    mov r14d, edx               ; input_len
+    mov r15, rcx                ; output_buffer
+
+    ; 1. Calcular input_hash
+    lea rdi, [input_hash_buf]
+    mov rsi, r13
+    mov ecx, r14d
+    mov eax, 402                ; sys_sha3_256 (custom)
+    syscall
+
+    ; 2. Extrair campos do JSON usando offsets fixos (exemplo funcional)
+    ;    No envelope real, as posições são conhecidas; implementação completa
+    ;    requer um parser. Esta é a versão reduzida para demonstração.
+    ;    input_hash: após '"input_hash":"' (15 bytes)
+    lea rsi, [r12 + 15]
+    lea rdi, [json_input_hash_field]
+    mov ecx, 64
+    rep movsb
+
+    ; 3. Decodificar output base64 -> output_buffer
+    lea rdi, [json_output_base64_field]
+    mov rsi, r15
+    call base64_decode           ; retorna tamanho real em eax
+
+    ; 4. Calcular output_hash
+    lea rdi, [output_hash_buf]
+    mov rsi, r15
+    mov ecx, eax
+    mov eax, 402
+    syscall
+
+    ; 5. Comparar hashes
+    lea rsi, [input_hash_buf]
+    lea rdi, [json_input_hash_field]
+    mov ecx, 32
+    repe cmpsb
+    jne .invalid
+    lea rsi, [output_hash_buf]
+    lea rdi, [json_output_hash_field]
+    mov ecx, 32
+    repe cmpsb
+    jne .invalid
+
+    ; 6. Montar mensagem para assinatura
+    lea rdi, [sign_msg_buf]
+    lea rsi, [input_hash_buf]
+    mov ecx, 32
+    rep movsb
+    lea rsi, [output_hash_buf]
+    mov ecx, 32
+    rep movsb
+    ; phi_score -> uint32
+    movsd xmm0, [json_phi_score_double]
+    mov eax, 10000
+    cvtsi2sd xmm1, eax
+    mulsd xmm0, xmm1
+    cvttsd2si eax, xmm0
+    stosd
+    ; timestamp (null-terminated)
+    lea rsi, [json_timestamp_field]
+.copy_ts:
+    lodsb
+    test al, al
+    jz .ts_done
+    stosb
+    jmp .copy_ts
+.ts_done:
+    ; gateway_id
+    lea rsi, [json_gateway_id_field]
+.copy_gw:
+    lodsb
+    test al, al
+    jz .gw_done
+    stosb
+    jmp .copy_gw
+.gw_done:
+    mov ebx, edi
+    lea edi, [sign_msg_buf]
+    sub ebx, edi                ; tamanho da mensagem
+
+    ; 7. Verificar assinatura Ed25519
+    lea rdi, [gateway_pubkey_raw]
+    lea rsi, [sign_msg_buf]
+    mov edx, ebx
+    lea rcx, [json_signature_raw]
+    mov eax, 401                ; sys_ed25519_verify
+    syscall
+    test rax, rax
+    jnz .invalid
+
+    ; 8. Sucesso: phi_score em xmm0
+    movsd xmm0, [json_phi_score_double]
+    xor eax, eax
+    jmp .done
+.invalid:
+    mov eax, -1
+    pxor xmm0, xmm0
+.done:
+    pop r15
+    pop r14
+    pop r13
+    pop r12
+    leave
+    ret
+
+load_gateway_pubkey:
+    mov rax, 2                  ; sys_open
+    lea rdi, [pubkey_sysfs_path] ; "/sys/arkhe/gateway_pubkey"
+    mov esi, 0                  ; O_RDONLY
+    syscall
+    test rax, rax
+    js .fail
+    mov rdi, rax
+    lea rsi, [gateway_pubkey_raw] ; 32 bytes raw
+    mov edx, 32
+    mov rax, 0                  ; sys_read
+    syscall
+    mov rax, 3                  ; sys_close
+    syscall
+    ret
+.fail:
+    ; tratativa de erro (kernel pode abortar)
+    ud2
