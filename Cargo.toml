@@ -66,8 +66,10 @@ members = [
     "scripts",                              # Self‑completion binary (arkhe-self-complete)
     "ark-lang/ark-compiler", "substrate-6067",
     "arkp-polyglot", "arkhe_photon", "bhyve",
-    "substrates/substrato_231_sqlite"
-, "store/rust"]
+    "substrates/substrato_231_sqlite",
+    "store/rust",
+    "substrates/631-OPENSERV-GATEWAY/arkhe_serv_client",
+    "substrates/631-OPENSERV-GATEWAY/openserv-gateway-axum"]
 
 # ============================================================================
 # Workspace‑level shared dependencies

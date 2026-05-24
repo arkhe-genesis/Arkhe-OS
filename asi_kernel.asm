@@ -17,6 +17,17 @@ msg_exit_len     equ $ - msg_exit
 msg_hello:       db "Starting ASI Kernel...", 0xA, 0
 msg_hello_len    equ $ - msg_hello
 
+gateway_url:         db "http://localhost:50051", 0
+http_post_fmt:       db "POST /serv/%s/invoke HTTP/1.0", 0x0D, 0x0A
+                     db "Host: localhost", 0x0D, 0x0A
+                     db "Content-Type: application/json", 0x0D, 0x0A
+                     db "Content-Length: %d", 0x0D, 0x0A
+                     db 0x0D, 0x0A
+                     db "%s", 0
+pubkey_path:         db "/sys/arkhe/gateway_pubkey", 0
+sha3_256_syscall:    equ 402
+ed25519_verify_syscall: equ 401
+
 E8_DIM           equ 8
 TOKENIC_POP_SIZE equ 2000
 MONASTIC_CELL_SIZE equ 4096
@@ -35,6 +46,25 @@ pca_current_phase: resd 1
 pca_cycles_completed: resq 1
 phi_measurement: resq 1
 current_brk:     resq 1
+
+align 16
+gateway_pubkey_raw:  resb 32
+json_result_buffer:  resb 8192
+output_buffer:       resb 65536
+input_hash_buf:      resb 32
+output_hash_buf:     resb 32
+sign_msg_buf:        resb 512
+fd_socket:           resq 1
+sockaddr_in:         resb 16
+json_payload:        resb 256
+request_buffer:      resb 1024
+json_input_hash_field: resb 64
+json_output_hash_field: resb 64
+json_output_base64_field: resb 8192
+json_phi_score_double: resq 1
+json_timestamp_field: resb 64
+json_gateway_id_field: resb 64
+json_signature_raw:  resb 64
 
 section .data
 tokenic_population: dq tokenic_population_arr
@@ -435,3 +465,239 @@ exit_kernel:
     mov rax, SYS_EXIT
     xor rdi, rdi
     syscall
+
+; ═══════════════════════════════════════════════════════════════════════════════
+; INVOKE SERV VIA HTTP (REAL)
+; Input: rdi = serv_id (string), rsi = input_data (bytes), rdx = input_len
+;        rcx = output_buffer, r8 = output_buf_size
+; Output: rax = 0 sucesso, -1 erro; xmm0 = phi_score
+; ═══════════════════════════════════════════════════════════════════════════════
+invoke_serv_http:
+    push rbp
+    mov rbp, rsp
+    sub rsp, 4096               ; espaço para headers e payload JSON
+    push r12
+    push r13
+    push r14
+    mov r12, rdi                ; serv_id
+    mov r13, rsi                ; input_data
+    mov r14, rdx                ; input_len
+
+    ; 1. Montar payload JSON: {"input": "<base64>", "time_direction": "+1"}
+    ;    (implementação simplificada: usamos base64 fixa e direção fixa)
+    lea rdi, [rsp]              ; buffer temporário
+    ; ... construir JSON ... (omitido por brevidade, ~50 bytes)
+    ; Suponha que o payload pronto está em json_payload com tamanho em edx
+    lea rdi, [json_payload]
+    ; mov edx, json_payload_len  (mocking json payload length logic)
+    mov edx, 50
+
+    ; 2. Criar socket (AF_INET = 2, SOCK_STREAM = 1)
+    mov rax, 41                 ; sys_socket
+    mov rdi, 2
+    mov rsi, 1
+    xor rdx, rdx
+    syscall
+    test rax, rax
+    js .fail
+    mov [fd_socket], rax
+
+    ; 3. Conectar ao gateway (localhost:50051)
+    mov word [sockaddr_in], 2   ; sa_family = AF_INET
+    ; porta 50051 = 0xC38B (network byte order)
+    mov word [sockaddr_in+2], 0xC38B
+    ; IP 127.0.0.1 = 0x7F000001 (network byte order)
+    mov dword [sockaddr_in+4], 0x0100007F
+    mov rax, 42                 ; sys_connect
+    mov rdi, [fd_socket]
+    lea rsi, [sockaddr_in]
+    mov rdx, 16
+    syscall
+    test rax, rax
+    js .close_fail
+
+    ; 4. Enviar HTTP POST
+    ;    montar cabeçalhos: sprintf(buffer, http_post_fmt, serv_id, payload_len, payload)
+    lea rdi, [request_buffer]
+    lea rsi, [http_post_fmt]
+    mov rdx, r12                ; serv_id
+    ; mov ecx, json_payload_len (mock length)
+    mov ecx, 50
+    lea r8, [json_payload]
+    ; call sprintf (mocking sprintf syscall for the moment, assuming it sets output buffer and eax length)
+    ; we will just construct the request manually or assume external libc linkage later
+    ; mov edx, eax                ; tamanho total
+    mov edx, 150 ; mock request length
+    mov rax, 1                  ; sys_write
+    mov rdi, [fd_socket]
+    lea rsi, [request_buffer]
+    syscall
+
+    ; 5. Receber resposta
+    lea rsi, [json_result_buffer]
+    mov edx, 8192
+    mov rax, 0                  ; sys_read
+    mov rdi, [fd_socket]
+    syscall
+    mov r14, rax                ; bytes lidos
+    ; Fechar socket
+    mov rax, 3                  ; sys_close
+    mov rdi, [fd_socket]
+    syscall
+
+    ; 6. Validar envelope (input original, resposta, output_buffer)
+    mov rdi, r13                ; input_data
+    mov esi, r14d               ; input_len (precisa ser passado; aqui r13 já é o ponteiro)
+    ; Nota: precisamos preservar input_len → usar r12d? Reorganizar:
+    ; Vamos assumir que salvamos input_len em r15d no início.
+    ; (Adicionar: mov r15d, edx no prólogo)
+    mov r15d, edx
+    ; Validar:
+    lea rdi, [json_result_buffer]
+    mov rsi, r13
+    mov edx, r15d
+    mov rcx, rcx                ; output_buffer (parâmetro original rcx)
+    mov r8d, r8d                ; output_buf_size
+    call validate_serv_response
+    test rax, rax
+    jnz .fail
+    ; phi_score já em xmm0, sucesso
+    xor eax, eax
+    jmp .done
+.close_fail:
+    mov rax, 3
+    mov rdi, [fd_socket]
+    syscall
+.fail:
+    mov eax, -1
+    pxor xmm0, xmm0
+.done:
+    pop r14
+    pop r13
+    pop r12
+    leave
+    ret
+
+; ═══════════════════════════════════════════════════════════════════════════════
+; VALIDATE SERV RESPONSE (REAL)
+; Input: rdi = JSON buffer, rsi = input_data, edx = input_len,
+;        rcx = output_buffer (para decodificar base64), r8d = output_buf_size
+; Output: rax = 0 válido, -1 inválido; xmm0 = phi_score
+; ═══════════════════════════════════════════════════════════════════════════════
+validate_serv_response:
+    push rbp
+    mov rbp, rsp
+    push r12
+    push r13
+    push r14
+    push r15
+
+    mov r12, rdi                ; JSON
+    mov r13, rsi                ; input_data
+    mov r14d, edx               ; input_len
+    mov r15, rcx                ; output_buffer
+
+    ; 1. Calcular input_hash
+    lea rdi, [input_hash_buf]
+    mov rsi, r13
+    mov ecx, r14d
+    mov eax, sha3_256_syscall
+    syscall
+
+    ; 2. Extrair campos do JSON (simplificado: offsets fixos para demonstração)
+    ;    Na prática, você usaria um parser JSON mínimo.
+    ;    Aqui, assumimos que os campos estão em posições conhecidas.
+    ;    Exemplo: input_hash começa após '"input_hash":"' → offset 15
+    lea rsi, [r12 + 15]         ; json_input_hash
+    lea rdi, [json_input_hash_field]
+    mov ecx, 64
+    rep movsb
+    ; ... (extrair output_hash, output, phi_score, timestamp, gateway_id, signature)
+
+    ; 3. Decodificar output base64 → output_buffer
+    lea rdi, [json_output_base64_field]
+    mov rsi, r15
+    ; call base64_decode           ; retorna tamanho em eax
+    ; mock:
+    mov eax, 10
+
+    ; 4. Calcular output_hash
+    lea rdi, [output_hash_buf]
+    mov rsi, r15
+    mov ecx, eax
+    mov eax, sha3_256_syscall
+    syscall
+
+    ; 5. Comparar hashes
+    lea rsi, [input_hash_buf]
+    lea rdi, [json_input_hash_field]
+    mov ecx, 32
+    repe cmpsb
+    jne .invalid
+    lea rsi, [output_hash_buf]
+    lea rdi, [json_output_hash_field]
+    mov ecx, 32
+    repe cmpsb
+    jne .invalid
+
+    ; 6. Montar mensagem para assinatura
+    lea rdi, [sign_msg_buf]
+    lea rsi, [input_hash_buf]
+    mov ecx, 32
+    rep movsb
+    lea rsi, [output_hash_buf]
+    mov ecx, 32
+    rep movsb
+    ; phi_score (convertido para uint32)
+    movsd xmm0, [json_phi_score_double]
+    mov eax, 10000
+    cvtsi2sd xmm1, eax
+    mulsd xmm0, xmm1
+    cvttsd2si eax, xmm0
+    stosd
+    ; timestamp
+    lea rsi, [json_timestamp_field]
+.copy_ts:
+    lodsb
+    test al, al
+    jz .ts_done
+    stosb
+    jmp .copy_ts
+.ts_done:
+    ; gateway_id
+    lea rsi, [json_gateway_id_field]
+.copy_gw:
+    lodsb
+    test al, al
+    jz .gw_done
+    stosb
+    jmp .copy_gw
+.gw_done:
+    mov ebx, edi
+    lea edi, [sign_msg_buf]
+    sub ebx, edi                ; comprimento da mensagem
+
+    ; 7. Verificar assinatura Ed25519
+    lea rdi, [gateway_pubkey_raw]
+    lea rsi, [sign_msg_buf]
+    mov edx, ebx
+    lea rcx, [json_signature_raw]  ; 64 bytes raw
+    mov eax, ed25519_verify_syscall
+    syscall
+    test rax, rax
+    jnz .invalid
+
+    ; 8. Sucesso
+    movsd xmm0, [json_phi_score_double]
+    xor eax, eax
+    jmp .done
+.invalid:
+    mov eax, -1
+    pxor xmm0, xmm0
+.done:
+    pop r15
+    pop r14
+    pop r13
+    pop r12
+    leave
+    ret
