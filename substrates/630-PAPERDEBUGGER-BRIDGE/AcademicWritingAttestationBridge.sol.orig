@@ -320,8 +320,11 @@ contract AcademicWritingAttestationBridge {
         if (totalRevisions == 0) {
             avgPhiScore = 0;
         } else {
-            // Calculate using a maintained state variable `totalPhiScore` incremented during anchorRevision
-            avgPhiScore = totalPhiScore / totalRevisions;
+            uint256 totalPhi = 0;
+            for (uint256 i = 0; i < totalRevisions; i++) {
+                totalPhi += revisions[allRevisions[i]].phiScore;
+            }
+            avgPhiScore = totalPhi / totalRevisions;
         }
     }
 

@@ -73,18 +73,27 @@ pub enum PaperCommands {
     },
 }
 
+fn get_bridge_path() -> Result<PathBuf, String> {
+    let mut exe_path = std::env::current_exe().map_err(|e| format!("Failed to get current executable path: {}", e))?;
+    exe_path.pop();
+    exe_path.push("paper_debugger_bridge.py");
+    Ok(exe_path)
+}
+
 pub fn handle_paper(cmd: PaperCommands) -> Result<(), String> {
+    let bridge_path = get_bridge_path()?;
     match cmd {
         PaperCommands::Debugger { url } => {
             println!("📝 [630] Initializing PaperDebugger session");
             println!("   URL: {}", url);
 
             let mut python_cmd = Command::new("python3");
+            let current_dir = std::env::current_dir().map_err(|e| format!("Failed to get current directory: {}", e))?;
             python_cmd
-                .arg("paper_debugger_bridge.py")
+                .arg(&bridge_path)
                 .arg("connect")
                 .arg(&url)
-                .current_dir(std::env::current_dir().unwrap());
+                .current_dir(current_dir);
 
             let output = python_cmd.output().map_err(|e| e.to_string())?;
             println!("{}", String::from_utf8_lossy(&output.stdout));
@@ -101,7 +110,7 @@ pub fn handle_paper(cmd: PaperCommands) -> Result<(), String> {
             println!("🔍 [630→Reviewer] Running AAAI-style critique...");
 
             let mut python_cmd = Command::new("python3");
-            python_cmd.arg("paper_debugger_bridge.py").arg("critique").arg(&file);
+            python_cmd.arg(&bridge_path).arg("critique").arg(&file);
             if let Some(sel) = selection {
                 python_cmd.arg(&sel);
             }
@@ -117,7 +126,8 @@ pub fn handle_paper(cmd: PaperCommands) -> Result<(), String> {
                     "output": stdout.trim(),
                     "status": if output.status.success() { "success" } else { "error" }
                 });
-                println!("{}", serde_json::to_string_pretty(&result).unwrap());
+                let json_str = serde_json::to_string_pretty(&result).map_err(|e| e.to_string())?;
+                println!("{}", json_str);
             } else {
                 println!("{}", stdout);
             }
@@ -137,7 +147,7 @@ pub fn handle_paper(cmd: PaperCommands) -> Result<(), String> {
             println!("✨ [630→Enhancer] Running XtraGPT enhancement...");
 
             let mut python_cmd = Command::new("python3");
-            python_cmd.arg("paper_debugger_bridge.py").arg("enhance").arg(&file);
+            python_cmd.arg(&bridge_path).arg("enhance").arg(&file);
             if let Some(sel) = selection {
                 python_cmd.arg(&sel);
             }
@@ -152,7 +162,8 @@ pub fn handle_paper(cmd: PaperCommands) -> Result<(), String> {
                     "output": stdout.trim(),
                     "status": if output.status.success() { "success" } else { "error" }
                 });
-                println!("{}", serde_json::to_string_pretty(&result).unwrap());
+                let json_str = serde_json::to_string_pretty(&result).map_err(|e| e.to_string())?;
+                println!("{}", json_str);
             } else {
                 println!("{}", stdout);
             }
@@ -170,7 +181,7 @@ pub fn handle_paper(cmd: PaperCommands) -> Result<(), String> {
             println!("📚 [630→Researcher] Searching literature: '{}'...", query_str);
 
             let mut python_cmd = Command::new("python3");
-            python_cmd.arg("paper_debugger_bridge.py").arg("research").arg(&query_str);
+            python_cmd.arg(&bridge_path).arg("research").arg(&query_str);
 
             let output = python_cmd.output().map_err(|e| e.to_string())?;
             let stdout = String::from_utf8_lossy(&output.stdout);
@@ -182,7 +193,8 @@ pub fn handle_paper(cmd: PaperCommands) -> Result<(), String> {
                     "output": stdout.trim(),
                     "status": if output.status.success() { "success" } else { "error" }
                 });
-                println!("{}", serde_json::to_string_pretty(&result).unwrap());
+                let json_str = serde_json::to_string_pretty(&result).map_err(|e| e.to_string())?;
+                println!("{}", json_str);
             } else {
                 println!("{}", stdout);
             }
@@ -202,7 +214,7 @@ pub fn handle_paper(cmd: PaperCommands) -> Result<(), String> {
             println!("📊 [630→Scorer] Evaluating document quality...");
 
             let mut python_cmd = Command::new("python3");
-            python_cmd.arg("paper_debugger_bridge.py").arg("score").arg(&file);
+            python_cmd.arg(&bridge_path).arg("score").arg(&file);
 
             let output = python_cmd.output().map_err(|e| e.to_string())?;
             let stdout = String::from_utf8_lossy(&output.stdout);
@@ -214,7 +226,8 @@ pub fn handle_paper(cmd: PaperCommands) -> Result<(), String> {
                     "output": stdout.trim(),
                     "status": if output.status.success() { "success" } else { "error" }
                 });
-                println!("{}", serde_json::to_string_pretty(&result).unwrap());
+                let json_str = serde_json::to_string_pretty(&result).map_err(|e| e.to_string())?;
+                println!("{}", json_str);
             } else {
                 println!("{}", stdout);
             }
@@ -238,7 +251,8 @@ pub fn handle_paper(cmd: PaperCommands) -> Result<(), String> {
 
             // Use git apply or patch command
             let mut cmd = Command::new("git");
-            cmd.arg("apply").arg(&patch).current_dir(target.parent().unwrap());
+            let parent_dir = target.parent().ok_or("Target file has no parent directory")?;
+            cmd.arg("apply").arg(&patch).current_dir(parent_dir);
 
             let output = cmd.output().map_err(|e| e.to_string())?;
             if output.status.success() {
@@ -258,7 +272,7 @@ pub fn handle_paper(cmd: PaperCommands) -> Result<(), String> {
             println!("🔑 [630→547] IPNS key: {}", ipns_key);
 
             let mut python_cmd = Command::new("python3");
-            python_cmd.arg("paper_debugger_bridge.py").arg("audit").arg(&session);
+            python_cmd.arg(&bridge_path).arg("audit").arg(&session);
 
             let output = python_cmd.output().map_err(|e| e.to_string())?;
             let stdout = String::from_utf8_lossy(&output.stdout);
@@ -283,7 +297,7 @@ pub fn handle_paper(cmd: PaperCommands) -> Result<(), String> {
 
             let mut python_cmd = Command::new("python3");
             python_cmd
-                .arg("paper_debugger_bridge.py")
+                .arg(&bridge_path)
                 .arg("compare")
                 .arg(&paper_a)
                 .arg(&paper_b);
@@ -299,7 +313,8 @@ pub fn handle_paper(cmd: PaperCommands) -> Result<(), String> {
                     "output": stdout.trim(),
                     "status": if output.status.success() { "success" } else { "error" }
                 });
-                println!("{}", serde_json::to_string_pretty(&result).unwrap());
+                let json_str = serde_json::to_string_pretty(&result).map_err(|e| e.to_string())?;
+                println!("{}", json_str);
             } else {
                 println!("{}", stdout);
             }
