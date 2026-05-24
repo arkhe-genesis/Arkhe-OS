@@ -1,0 +1,14 @@
+# Arkhe OS - Consolidated Local Dev Config
+
+# General
+environment = "development"
+cluster_name = "arkhe-mesh-local-dev"
+num_workers = 3
+
+# AWS
+enable_kafka = true
+enable_spark = true
+
+# Kubernetes Core Overrides
+temporal_chain_version = "9018-dev"
+mesh_orchestrator_image = "arkhe/mesh-orchestrator:9043-dev"

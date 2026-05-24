@@ -2,6 +2,7 @@ import os
 import json
 import numpy as np
 import tempfile
+import hashlib
 
 class TheosisMonitor:
     """Real-time self-assessment metrics for the Cathedral's operational loop."""
@@ -205,7 +206,10 @@ class TheologicalEthicalAuditor:
 
 class Substrato556TheosisLayer:
     def canonize(self):
-        canonical_seal = "e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2"
+        secret = os.environ.get('ARKHE_SECRET_SEAL')
+        if not secret:
+            raise ValueError("Environment variable ARKHE_SECRET_SEAL is missing.")
+        canonical_seal = hashlib.sha256(secret.encode('utf-8')).hexdigest()
 
         # 1. Initialize Components
         theosis_monitor = TheosisMonitor(xi_m_field_dim=64)

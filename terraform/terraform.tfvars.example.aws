@@ -1,0 +1,8 @@
+environment = "production"
+cluster_name = "arkhe-mesh-aws"
+num_workers = 10
+enable_kafka = true
+enable_spark = true
+
+# AWS specific (if added later, mock config here for clarity)
+aws_region = "us-east-1"
