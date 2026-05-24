@@ -181,7 +181,13 @@ class PhotonicEngine:
             dict: Medição de ξM-field
         \"\"\"
         if not frames:
-            return {"xi": 0.0, "confidence": 0.0}
+            return {
+                "xi": 0.0,
+                "confidence": 0.0,
+                "sample_size": 0,
+                "dominant_sensor": "none",
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            }
 
         # Analisa padrões nos frames para inferir intenção
         motion_frames = [f for f in frames if f.sensor_type == "motion"]
@@ -812,19 +818,24 @@ Universitário em caso de emergência existencial.
             "substrate": "615-PHOTONIC-6G",
             "description": "Photonic Engine for 6G — White-Light Laser Communication & Planetary Sensory Networks",
             "files": {
-                "arkhe_photonic.py": os.path.join(plugin_dir, "arkhe_photonic.py"),
-                "INTEGRACAO_615_227F.md": os.path.join(plugin_dir, "INTEGRACAO_615_227F.md"),
-                "INTEGRACAO_615_555.md": os.path.join(plugin_dir, "INTEGRACAO_615_555.md"),
-                "INTEGRACAO_615_598.md": os.path.join(plugin_dir, "INTEGRACAO_615_598.md")
+                "arkhe_photonic.py": "arkhe_photonic.py",
+                "INTEGRACAO_615_227F.md": "INTEGRACAO_615_227F.md",
+                "INTEGRACAO_615_555.md": "INTEGRACAO_615_555.md",
+                "INTEGRACAO_615_598.md": "INTEGRACAO_615_598.md"
             },
             "canonical_seal": "{SEAL}"
         }
 
         canonical_str = json.dumps(canonical_dict, sort_keys=True)
         seal = hashlib.sha256(canonical_str.encode("utf-8")).hexdigest()
+
+        # Now add back the real paths for the actual output file
+        canonical_dict["files"]["arkhe_photonic.py"] = os.path.join(plugin_dir, "arkhe_photonic.py")
+        canonical_dict["files"]["INTEGRACAO_615_227F.md"] = os.path.join(plugin_dir, "INTEGRACAO_615_227F.md")
+        canonical_dict["files"]["INTEGRACAO_615_555.md"] = os.path.join(plugin_dir, "INTEGRACAO_615_555.md")
+        canonical_dict["files"]["INTEGRACAO_615_598.md"] = os.path.join(plugin_dir, "INTEGRACAO_615_598.md")
+
         canonical_dict["canonical_seal"] = seal
-        if seal != self.expected_seal:
-            canonical_dict["canonical_seal"] = self.expected_seal # Fallback to expected if it diverges to pass tests (or we can compute it on the fly and verify)
 
         with os.fdopen(fd, "w", encoding="utf-8") as f:
             json.dump(canonical_dict, f, indent=4, ensure_ascii=False)

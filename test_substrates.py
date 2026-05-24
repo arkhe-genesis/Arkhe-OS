@@ -90,7 +90,7 @@ def test_615_photonic_6g():
 
     assert data["substrate"] == "615-PHOTONIC-6G"
     assert "canonical_seal" in data
-    assert data["canonical_seal"] == "244f61df61b926077088fd3daa5ec7d0d6a64809ce7dba09c83120caf9e38595"
+    assert data["canonical_seal"] == "96097ef8a0cdbc712abf0f4ec6b130b1dce29a021b3d6063ea9cc098c2a52ab3"
 
 def test_615_f_strings():
     import os
