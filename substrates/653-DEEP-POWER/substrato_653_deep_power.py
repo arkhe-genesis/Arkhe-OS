@@ -3,11 +3,11 @@ import hashlib
 import tempfile
 import os
 
-class Substrato652:
+class Substrato653:
     def __init__(self):
-        self.id = "652-STELLAR-SAIL"
-        self.description = "Vela de metasuperfície fotônica para propulsão a laser"
-        self.tech_base = "Metajets (Texas A&M, 2026), Breakthrough Starshot"
+        self.id = "653-DEEP-POWER"
+        self.description = "Next Gen RTG + gerenciamento térmico para espaço profundo"
+        self.tech_base = "L3Harris Next Gen RTG (250 W), TFINER"
 
     def canonize(self):
         # We must strictly avoid f-strings!
