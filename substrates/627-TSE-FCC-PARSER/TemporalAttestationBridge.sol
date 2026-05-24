@@ -41,6 +41,8 @@ contract TemporalAttestationBridge {
     mapping(bytes32 => bool) public knownHashes;
     bytes32[] public attestationList;
 
+    mapping(address => uint256) public stakes;
+
     address public governance;
     uint256 public constant MIN_STAKE = 0.01 ether;
 
@@ -76,6 +78,8 @@ contract TemporalAttestationBridge {
         require(!knownHashes[fileHash], "627: file already attested");
         require(bytes(filename).length > 0, "627: empty filename");
         require(bytes(ipnsCid).length > 0, "627: empty IPNS");
+
+        stakes[msg.sender] += msg.value;
 
         Attestation memory a = Attestation({
             fileHash: fileHash,
@@ -146,6 +150,24 @@ contract TemporalAttestationBridge {
      */
     function updateGovernance(address newGov) external onlyGovernance {
         governance = newGov;
+    }
+
+    /**
+     * @notice Withdraw legitimate stake
+     */
+    function withdrawStake(uint256 amount) external {
+        require(stakes[msg.sender] >= amount, "627: insufficient balance");
+        stakes[msg.sender] -= amount;
+        payable(msg.sender).transfer(amount);
+    }
+
+    /**
+     * @notice Slash fraudulent stake
+     */
+    function slashStake(address user, uint256 amount) external onlyGovernance {
+        require(stakes[user] >= amount, "627: insufficient balance");
+        stakes[user] -= amount;
+        payable(governance).transfer(amount);
     }
 
     // ── Fallback ───────────────────────────────────────────────────────

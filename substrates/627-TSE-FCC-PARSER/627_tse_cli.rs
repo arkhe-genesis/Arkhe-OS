@@ -49,11 +49,12 @@ pub fn handle_tse(cmd: TseCommands) -> Result<(), String> {
             }
 
             // Delegate to Python parser (embedded or external)
+            let current_dir = std::env::current_dir().map_err(|e| e.to_string())?;
             let mut python_cmd = Command::new("python3");
             python_cmd
                 .arg("fcc_parser.py")
                 .arg(&file)
-                .current_dir(std::env::current_dir().unwrap());
+                .current_dir(current_dir);
             if json {
                 python_cmd.arg("--json");
             }
@@ -132,7 +133,7 @@ fn submit_attestation(path: &PathBuf, ipns_key: &String) -> Result<(), String> {
     let timestamp = chrono::Utc::now().to_rfc3339();
     let attestation = format!(
         r#"{{"substrate":"627","file":"{}","sha3_256":"{}","timestamp":"{}","ipns":"{}"}}"#,
-        path.file_name().unwrap().to_string_lossy(),
+        path.file_name().and_then(|n| n.to_str()).unwrap_or("unknown"),
         hash,
         timestamp,
         ipns_key
