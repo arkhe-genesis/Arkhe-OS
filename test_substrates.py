@@ -947,3 +947,95 @@ def test_636_f_strings():
         content = f.read()
     match = re.search(r'\bf(["\'])', content)
     assert match is None, "f-strings are strictly forbidden in Substrate 636"
+
+def test_679_pvac_compression():
+    file_path = os.path.abspath('substrates/679-PVAC-COMPRESSION/substrato_679_pvac_compression.py')
+    spec = importlib.util.spec_from_file_location("substrato_679_pvac_compression", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    canonizer = module.Substrato679PvacCompression()
+    report_path = canonizer.canonize()
+
+    assert os.path.exists(report_path)
+    with open(report_path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "679-PVAC-COMPRESSION"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert data["canonical_seal"] == "4af8d86fa3156c3869b3c2ef33a5baf7bedd7b0aef3d3b5b3d56a6d8030c8bce"
+    assert "pvac_rs_b64" in data
+
+def test_679_f_strings():
+    file_path = os.path.abspath('substrates/679-PVAC-COMPRESSION/substrato_679_pvac_compression.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 679"
+
+def test_680_pvac_crypto():
+    file_path = os.path.abspath('substrates/680-PVAC-CRYPTO/substrato_680_pvac_crypto.py')
+    spec = importlib.util.spec_from_file_location("substrato_680_pvac_crypto", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    canonizer = module.Substrato680PvacCrypto()
+    report_path = canonizer.canonize()
+
+    assert os.path.exists(report_path)
+    with open(report_path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "680-PVAC-CRYPTO"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert data["canonical_seal"] == "0e0b782a2945f2e3e58f4f19cb819379a5b664292a64f7ded3b35183451ba545"
+    assert "pvac_crypto_rs_b64" in data
+
+def test_680_f_strings():
+    file_path = os.path.abspath('substrates/680-PVAC-CRYPTO/substrato_680_pvac_crypto.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 680"
+
+def test_681_pvac_fhe():
+    file_path = os.path.abspath('substrates/681-PVAC-FHE/substrato_681_pvac_fhe.py')
+    spec = importlib.util.spec_from_file_location("substrato_681_pvac_fhe", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    canonizer = module.Substrato681PvacFhe()
+    report_path = canonizer.canonize()
+
+    assert os.path.exists(report_path)
+    with open(report_path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "681-PVAC-FHE"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert data["canonical_seal"] == "005c58d21822cc8e42df2f59c38fb173b0186b8ca036e7104a9bf3ae259a5652"
+    assert "pvac_fhe_rs_b64" in data
+
+def test_681_f_strings():
+    file_path = os.path.abspath('substrates/681-PVAC-FHE/substrato_681_pvac_fhe.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 681"
+
+def test_682_pvac_net():
+    file_path = os.path.abspath('substrates/682-PVAC-NET/substrato_682_pvac_net.py')
+    spec = importlib.util.spec_from_file_location("substrato_682_pvac_net", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    canonizer = module.Substrato682PvacNet()
+    report_path = canonizer.canonize()
+
+    assert os.path.exists(report_path)
+    with open(report_path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "682-PVAC-NET"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert data["canonical_seal"] == "b3900b42f65d01108249ca88c094408189623d366c739936ce936391fb484a7a"
+    assert "pvac_net_rs_b64" in data
+
+def test_682_f_strings():
+    file_path = os.path.abspath('substrates/682-PVAC-NET/substrato_682_pvac_net.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 682"
