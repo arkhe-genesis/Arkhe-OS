@@ -751,3 +751,135 @@ def test_650_f_strings():
         content = f.read()
     match = re.search(r'\bf(["\'])', content)
     assert match is None, "f-strings are strictly forbidden in Substrate 650"
+
+def test_659_2_first_interplanetary_cruise():
+    import importlib.util
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/659.2-FIRST-INTERPLANETARY-CRUISE/substrato_659_2_first_interplanetary_cruise.py')
+    spec = importlib.util.spec_from_file_location("substrato_659_2_first_interplanetary_cruise", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato6592FirstInterplanetaryCruise()
+    temp_dir, path = canonizer.canonize()
+
+    assert os.path.exists(path)
+
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "659.2-FIRST-INTERPLANETARY-CRUISE"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert "seal" in data
+    assert os.path.exists(data["decree_path"])
+    assert data["metadata"]["phi_c"] == 0.940600
+
+def test_659_2_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath('substrates/659.2-FIRST-INTERPLANETARY-CRUISE/substrato_659_2_first_interplanetary_cruise.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 659.2"
+
+def test_665_13_1pw_laser_sail_test():
+    import importlib.util
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/665.13-1PW-LASER-SAIL-TEST/substrato_665_13_1pw_laser_sail_test.py')
+    spec = importlib.util.spec_from_file_location("substrato_665_13_1pw_laser_sail_test", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato665131pwLaserSailTest()
+    temp_dir, path = canonizer.canonize()
+
+    assert os.path.exists(path)
+
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "665.13-1PW-LASER-SAIL-TEST"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert "seal" in data
+    assert os.path.exists(data["decree_path"])
+    assert data["metadata"]["phi_c"] == 0.941700
+
+def test_665_13_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath('substrates/665.13-1PW-LASER-SAIL-TEST/substrato_665_13_1pw_laser_sail_test.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 665.13"
+
+def test_667_4_full_ring_population_phase_3():
+    import importlib.util
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/667.4-FULL-RING-POPULATION-PHASE-3/substrato_667_4_full_ring_population_phase_3.py')
+    spec = importlib.util.spec_from_file_location("substrato_667_4_full_ring_population_phase_3", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato6674FullRingPopulationPhase3()
+    temp_dir, path = canonizer.canonize()
+
+    assert os.path.exists(path)
+
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "667.4-FULL-RING-POPULATION-PHASE-3"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert "seal" in data
+    assert os.path.exists(data["decree_path"])
+    assert data["metadata"]["phi_c"] == 0.938900
+
+def test_667_4_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath('substrates/667.4-FULL-RING-POPULATION-PHASE-3/substrato_667_4_full_ring_population_phase_3.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 667.4"
+
+def test_672_generation_zero_education_protocol():
+    import importlib.util
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/672-GENERATION-ZERO-EDUCATION-PROTOCOL/substrato_672_generation_zero_education_protocol.py')
+    spec = importlib.util.spec_from_file_location("substrato_672_generation_zero_education_protocol", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato672GenerationZeroEducationProtocol()
+    temp_dir, path = canonizer.canonize()
+
+    assert os.path.exists(path)
+
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "672-GENERATION-ZERO-EDUCATION-PROTOCOL"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert "seal" in data
+    assert os.path.exists(data["decree_path"])
+    assert data["metadata"]["phi_c"] == 0.946100
+
+def test_672_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath('substrates/672-GENERATION-ZERO-EDUCATION-PROTOCOL/substrato_672_generation_zero_education_protocol.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 672"
