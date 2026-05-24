@@ -194,8 +194,6 @@ def test_628_f_strings():
         content = f.read()
     import re
     assert not re.search(r'\bf(["\'])', content), "Found f-string in substrato_628_fec_parser.py"
-if __name__ == '__main__':
-    pytest.main(['-v', 'test_substrates.py'])
 
 def test_562_stim_qec_simulator():
     import importlib.util
@@ -563,3 +561,34 @@ def test_623_f_strings():
         plugin_content = f.read()
 
     assert not re.search(r'\bf(["\'])', plugin_content), "f-strings are strictly forbidden in python files"
+
+def test_substrato_xalgorix():
+    import importlib.util
+    import json
+    import os
+    import re
+
+    file_path = os.path.abspath('substrates/400-499_advanced/substrato_xalgord_xalgorix/substrato_xalgord_xalgorix.py')
+    spec = importlib.util.spec_from_file_location("substrato_xalgord_xalgorix", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.SubstratoXalgorix()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["Title"] == "Xalgorix - The Most Powerful Open-Source AI Pentesting Agent"
+    assert "Description" in data
+    assert "Features" in data
+    assert "Architecture" in data
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
+
+if __name__ == '__main__':
+    pytest.main(['-v', 'test_substrates.py'])
