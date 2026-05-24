@@ -44,7 +44,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .get(format!("{}/gateway_pubkey", url))
         .send().await?.json().await?;
     let pk_bytes = hex::decode(&pk.public_key_hex)?;
-    let vk = VerifyingKey::from_bytes(&pk_bytes.try_into().unwrap())?;
+    let pk_array: [u8; 32] = pk_bytes.try_into().map_err(|_| "Invalid public key length")?;
+    let vk = VerifyingKey::from_bytes(&pk_array)?;
     println!("[client] Gateway {} | pubkey {}", pk.gateway_id, &pk.public_key_hex[..16]);
 
     // 2. Invocar Serv paper-reviewer

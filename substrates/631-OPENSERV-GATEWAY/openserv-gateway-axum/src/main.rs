@@ -159,7 +159,7 @@ async fn invoke_serv(
 // ═══════════════════════════════════════════════════════════════════════════════
 
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut csprng = rand::thread_rng();
     let signing_key = SigningKey::generate(&mut csprng);
     let verifying: VerifyingKey = (&signing_key).into();
@@ -180,6 +180,7 @@ async fn main() {
         }))
         .with_state(state);
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:50051").await.unwrap();
-    axum::serve(listener, app).await.unwrap();
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:50051").await?;
+    axum::serve(listener, app).await?;
+    Ok(())
 }
