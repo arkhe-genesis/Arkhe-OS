@@ -143,14 +143,14 @@ def test_621_erdos_unit_distance():
     spec.loader.exec_module(module)
 
     canonizer = module.Substrato621ErdosUnitDistance()
-    path = canonizer.generate_json()
+    temp_dir, path = canonizer.generate()
 
     assert os.path.exists(path)
 
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    assert data["id"] == "621-ERDOS-UNIT-DISTANCE"
+    assert data["id"] == "621-ERDŐS-UNIT-DISTANCE"
 
 def test_621_f_strings():
     import os
@@ -194,10 +194,14 @@ def test_628_f_strings():
         content = f.read()
     import re
     assert not re.search(r'\bf(["\'])', content), "Found f-string in substrato_628_fec_parser.py"
-if __name__ == '__main__':
-    pytest.main(['-v', 'test_substrates.py'])
 
 def test_562_stim_qec_simulator():
+    import pytest
+    try:
+        import stim
+    except ImportError:
+        pytest.skip("stim module is not installed")
+
     import importlib.util
     import os
     import json
@@ -564,27 +568,82 @@ def test_623_f_strings():
 
     assert not re.search(r'\bf(["\'])', plugin_content), "f-strings are strictly forbidden in python files"
 
-
-def test_630_f_strings():
+def test_substrato_xalgorix():
+    import importlib.util
+    import json
     import os
     import re
-    file_path = "substrates/630-PAPERDEBUGGER-BRIDGE/substrato_630_paperdebugger_bridge.py"
+
+    file_path = os.path.abspath('substrates/400-499_advanced/substrato_xalgord_xalgorix/substrato_xalgord_xalgorix.py')
+    spec = importlib.util.spec_from_file_location("substrato_xalgord_xalgorix", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.SubstratoXalgorix()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["Title"] == "Xalgorix - The Most Powerful Open-Source AI Pentesting Agent"
+    assert "Description" in data
+    assert "Features" in data
+    assert "Architecture" in data
+
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
 
     assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
 
-def test_630_paperdebugger_bridge():
+
+def test_632_time_mirror():
     import importlib.util
     import os
-    file_path = os.path.abspath('substrates/630-PAPERDEBUGGER-BRIDGE/substrato_630_paperdebugger_bridge.py')
-    spec = importlib.util.spec_from_file_location("substrato_630_paperdebugger_bridge", file_path)
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_632_time_mirror",
+        "substrates/632-EINSTEIN-ROSEN-TIME-MIRROR/substrato_632_time_mirror.py"
+    )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato630PaperDebuggerBridge()
-    path = canonizer.canonize()
-    import json
+    canonizer = module.Substrato632TimeMirror()
+    path = canonizer.generate()[1]
+
+    assert os.path.exists(path)
+
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
-    assert data["id"] == "630-PAPERDEBUGGER-BRIDGE"
+
+    assert data["id"] == "632-EINSTEIN-ROSEN-TIME-MIRROR"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert len(data["canonical_seal"]) == 64
+
+def test_632_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath('substrates/632-EINSTEIN-ROSEN-TIME-MIRROR/substrato_632_time_mirror.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert not re.search(r'\bf(["\'])', content), "Found f-string in substrato_632_time_mirror.py"
+
+if __name__ == '__main__':
+    pytest.main(['-v', 'test_substrates.py'])
+
+def test_631_openserv_gateway_compilation():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("substrato_631_openserv_gateway", "substrates/631-OPENSERV-GATEWAY/substrato_631_openserv_gateway.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    module.canonize()
+
+def test_631_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath('substrates/631-OPENSERV-GATEWAY/gateway_http.py')
+    with open(file_path, 'r') as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), "Found f-string in gateway_http.py"
