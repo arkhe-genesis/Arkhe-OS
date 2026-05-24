@@ -1,0 +1,9 @@
+[plugin]
+name = "learn"
+version = "1.0.0"
+description = "Interactive CLI for navigating the canonical curriculum"
+author = "ORCID 0009-0005-2697-4668"
+license = "MIT"
+entry_point = "learn"
+dependencies = ["click", "arkhe-peek"]
+arkhe_version = "∞.Ω.∇+++"

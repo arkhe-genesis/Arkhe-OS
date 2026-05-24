@@ -3,3 +3,5 @@ uvicorn
 pydantic
 httpx
 pytest
+grpcio
+grpcio-tools

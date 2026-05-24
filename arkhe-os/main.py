@@ -6,6 +6,7 @@ import time
 from core.coherence.engine import coherence_engine
 from core.lfir.lfir_parser import LFIRParser
 from core.kym.verifier import KYMVerifier
+from core.consensus.client import consensus_client
 
 app = FastAPI(title="ARKHE OS Nexus API", version="5003.0")
 
@@ -24,6 +25,10 @@ class VerifyRequest(BaseModel):
     did: str
     signature: str
     challenge: str
+
+@app.on_event("startup")
+async def startup_event():
+    consensus_client.connect()
 
 @app.get("/api/coherence")
 def get_coherence():
