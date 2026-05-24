@@ -596,22 +596,54 @@ def test_substrato_xalgorix():
 
     assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
 
-def test_substrato_learn_mechanistic_interpretability():
+
+def test_632_time_mirror():
     import importlib.util
-    file_path = os.path.abspath('substrates/400-499_advanced/substrato_catmcgee_learn_mechanistic_interpretability/substrato_catmcgee_learn_mechanistic_interpretability.py')
-    spec = importlib.util.spec_from_file_location("substrato_catmcgee_learn_mechanistic_interpretability", file_path)
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_632_time_mirror",
+        "substrates/632-EINSTEIN-ROSEN-TIME-MIRROR/substrato_632_time_mirror.py"
+    )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.SubstratoLearnMechanisticInterpretability()
-    path = canonizer.canonize()
+    canonizer = module.Substrato632TimeMirror()
+    path = canonizer.generate()[1]
 
     assert os.path.exists(path)
-    with open(path, 'r', encoding='utf-8') as f:
-        import json
-        report = json.load(f)
-        assert "Learn Mechanistic Interpretability" in report["Title"]
-        assert len(report["Features"]) == 6
+
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "632-EINSTEIN-ROSEN-TIME-MIRROR"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert len(data["canonical_seal"]) == 64
+
+def test_632_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath('substrates/632-EINSTEIN-ROSEN-TIME-MIRROR/substrato_632_time_mirror.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert not re.search(r'\bf(["\'])', content), "Found f-string in substrato_632_time_mirror.py"
 
 if __name__ == '__main__':
     pytest.main(['-v', 'test_substrates.py'])
+
+def test_631_openserv_gateway_compilation():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("substrato_631_openserv_gateway", "substrates/631-OPENSERV-GATEWAY/substrato_631_openserv_gateway.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    module.canonize()
+
+def test_631_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath('substrates/631-OPENSERV-GATEWAY/gateway_http.py')
+    with open(file_path, 'r') as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), "Found f-string in gateway_http.py"

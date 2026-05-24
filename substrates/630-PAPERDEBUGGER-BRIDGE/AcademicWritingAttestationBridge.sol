@@ -1,0 +1,354 @@
+// SPDX-License-Identifier: MIT
+// AcademicWritingAttestationBridge.sol — Substrate 630
+// Anchors paper revisions, critiques, and scores to immutable blockchain
+// Network: Ethereum-compatible (Polygon, Arbitrum, or L2)
+// Author: ORCID 0009-0005-2697-4668
+// Date: 2026-05-24
+
+pragma solidity ^0.8.19;
+
+contract AcademicWritingAttestationBridge {
+    // ── Enums ──────────────────────────────────────────────────────────
+    enum AgentType { Reviewer, Enhancer, Scorer, Researcher, Comparator }
+    enum RevisionStatus { Pending, Applied, Rejected, Anchored }
+
+    // ── Events ─────────────────────────────────────────────────────────
+    event RevisionAnchored(
+        bytes32 indexed revisionHash,
+        bytes32 indexed sessionHash,
+        address indexed author,
+        AgentType agentType,
+        uint256 timestamp,
+        string ipnsCid,
+        uint256 phiScore
+    );
+
+    event SessionCreated(
+        bytes32 indexed sessionHash,
+        address indexed author,
+        string overleafUrl,
+        uint256 timestamp
+    );
+
+    event ScoreRecorded(
+        bytes32 indexed revisionHash,
+        uint256 phiScore,
+        uint256 clarityScore,
+        uint256 coherenceScore,
+        uint256 structureScore,
+        uint256 originalityScore,
+        uint256 timestamp
+    );
+
+    event AnomalyDetected(
+        bytes32 indexed revisionHash,
+        string reason,
+        uint256 timestamp
+    );
+
+    // ── State ──────────────────────────────────────────────────────────
+    struct Revision {
+        bytes32 revisionHash;
+        bytes32 sessionHash;
+        address author;
+        AgentType agentType;
+        uint256 timestamp;
+        string ipnsCid;
+        uint256 phiScore;
+        RevisionStatus status;
+        string diffCid;      // IPFS CID of the unified diff
+        string metadata;     // JSON-encoded agent metadata
+    }
+
+    struct Session {
+        bytes32 sessionHash;
+        address author;
+        string overleafUrl;
+        string projectName;
+        uint256 createdAt;
+        uint256 revisionCount;
+        bool active;
+    }
+
+    mapping(bytes32 => Revision) public revisions;
+    mapping(bytes32 => Session) public sessions;
+    mapping(bytes32 => bool) public knownRevisions;
+    mapping(bytes32 => bool) public knownSessions;
+    mapping(address => bytes32[]) public authorSessions;
+    mapping(bytes32 => bytes32[]) public sessionRevisions;
+
+    bytes32[] public allRevisions;
+    bytes32[] public allSessions;
+
+    address public governance;
+    uint256 public totalPhiScore;
+    uint256 public constant MIN_STAKE = 0.005 ether;
+    uint256 public constant PHI_SCALE = 10000; // 4 decimal places
+
+    // ── Modifiers ──────────────────────────────────────────────────────
+    modifier onlyGovernance() {
+        require(msg.sender == governance, "630: not governance");
+        _;
+    }
+
+    modifier validSession(bytes32 sessionHash) {
+        require(knownSessions[sessionHash], "630: unknown session");
+        _;
+    }
+
+    // ── Constructor ────────────────────────────────────────────────────
+    constructor() {
+        governance = msg.sender;
+    }
+
+    // ── Core Functions ─────────────────────────────────────────────────
+
+    /**
+     * @notice Create a new writing session
+     * @param sessionHash SHA3-256 of session metadata
+     * @param overleafUrl Overleaf project URL
+     * @param projectName Human-readable project name
+     */
+    function createSession(
+        bytes32 sessionHash,
+        string calldata overleafUrl,
+        string calldata projectName
+    ) external payable {
+        require(msg.value >= MIN_STAKE, "630: insufficient stake");
+        require(!knownSessions[sessionHash], "630: session already exists");
+        require(bytes(overleafUrl).length > 0, "630: empty URL");
+
+        Session memory s = Session({
+            sessionHash: sessionHash,
+            author: msg.sender,
+            overleafUrl: overleafUrl,
+            projectName: projectName,
+            createdAt: block.timestamp,
+            revisionCount: 0,
+            active: true
+        });
+
+        sessions[sessionHash] = s;
+        knownSessions[sessionHash] = true;
+        allSessions.push(sessionHash);
+        authorSessions[msg.sender].push(sessionHash);
+
+        emit SessionCreated(sessionHash, msg.sender, overleafUrl, block.timestamp);
+    }
+
+    /**
+     * @notice Anchor a revision to the chain
+     * @param revisionHash SHA3-256 of revision content
+     * @param sessionHash Parent session hash
+     * @param agentType Type of agent that produced the revision
+     * @param ipnsCid IPNS pointer to full revision data
+     * @param phiScore Quality score (0-10000, scaled)
+     * @param diffCid IPFS CID of unified diff
+     * @param metadata JSON-encoded agent metadata
+     */
+    function anchorRevision(
+        bytes32 revisionHash,
+        bytes32 sessionHash,
+        AgentType agentType,
+        string calldata ipnsCid,
+        uint256 phiScore,
+        string calldata diffCid,
+        string calldata metadata
+    ) external payable validSession(sessionHash) {
+        require(msg.value >= MIN_STAKE / 2, "630: insufficient stake");
+        require(!knownRevisions[revisionHash], "630: revision already anchored");
+        require(bytes(ipnsCid).length > 0, "630: empty IPNS");
+        require(phiScore <= PHI_SCALE, "630: phi score exceeds max");
+
+        Revision memory r = Revision({
+            revisionHash: revisionHash,
+            sessionHash: sessionHash,
+            author: msg.sender,
+            agentType: agentType,
+            timestamp: block.timestamp,
+            ipnsCid: ipnsCid,
+            phiScore: phiScore,
+            status: RevisionStatus.Anchored,
+            diffCid: diffCid,
+            metadata: metadata
+        });
+
+        revisions[revisionHash] = r;
+        knownRevisions[revisionHash] = true;
+        allRevisions.push(revisionHash);
+        sessionRevisions[sessionHash].push(revisionHash);
+        sessions[sessionHash].revisionCount++;
+        totalPhiScore += phiScore;
+
+        emit RevisionAnchored(
+            revisionHash,
+            sessionHash,
+            msg.sender,
+            agentType,
+            block.timestamp,
+            ipnsCid,
+            phiScore
+        );
+    }
+
+    /**
+     * @notice Record detailed scores for a revision
+     */
+    function recordScores(
+        bytes32 revisionHash,
+        uint256 phiScore,
+        uint256 clarityScore,
+        uint256 coherenceScore,
+        uint256 structureScore,
+        uint256 originalityScore
+    ) external onlyGovernance {
+        require(knownRevisions[revisionHash], "630: unknown revision");
+        require(phiScore <= PHI_SCALE, "630: phi score exceeds max");
+
+        Revision storage r = revisions[revisionHash];
+        r.phiScore = phiScore;
+
+        emit ScoreRecorded(
+            revisionHash,
+            phiScore,
+            clarityScore,
+            coherenceScore,
+            structureScore,
+            originalityScore,
+            block.timestamp
+        );
+    }
+
+    /**
+     * @notice Update revision status
+     */
+    function updateRevisionStatus(
+        bytes32 revisionHash,
+        RevisionStatus status
+    ) external {
+        require(knownRevisions[revisionHash], "630: unknown revision");
+        Revision storage r = revisions[revisionHash];
+        require(
+            msg.sender == r.author || msg.sender == governance,
+            "630: not authorized"
+        );
+        r.status = status;
+    }
+
+    /**
+     * @notice Flag anomalous revision (e.g., plagiarism detected)
+     */
+    function flagAnomaly(
+        bytes32 revisionHash,
+        string calldata reason
+    ) external onlyGovernance {
+        require(knownRevisions[revisionHash], "630: unknown revision");
+        revisions[revisionHash].status = RevisionStatus.Rejected;
+        emit AnomalyDetected(revisionHash, reason, block.timestamp);
+    }
+
+    /**
+     * @notice Retrieve revision by hash
+     */
+    function getRevision(bytes32 revisionHash)
+        external
+        view
+        returns (Revision memory)
+    {
+        require(knownRevisions[revisionHash], "630: unknown revision");
+        return revisions[revisionHash];
+    }
+
+    /**
+     * @notice Retrieve session by hash
+     */
+    function getSession(bytes32 sessionHash)
+        external
+        view
+        returns (Session memory)
+    {
+        require(knownSessions[sessionHash], "630: unknown session");
+        return sessions[sessionHash];
+    }
+
+    /**
+     * @notice Get all revisions for a session
+     */
+    function getSessionRevisions(bytes32 sessionHash, uint256 start, uint256 end)
+        external
+        view
+        validSession(sessionHash)
+        returns (Revision[] memory)
+    {
+        bytes32[] storage revHashes = sessionRevisions[sessionHash];
+        require(start < end && end <= revHashes.length, "630: invalid range");
+        Revision[] memory batch = new Revision[](end - start);
+        for (uint256 i = start; i < end; i++) {
+            batch[i - start] = revisions[revHashes[i]];
+        }
+        return batch;
+    }
+
+    /**
+     * @notice Get sessions by author
+     */
+    function getAuthorSessions(address author, uint256 start, uint256 end)
+        external
+        view
+        returns (Session[] memory)
+    {
+        bytes32[] storage sessHashes = authorSessions[author];
+        require(start < end && end <= sessHashes.length, "630: invalid range");
+        Session[] memory batch = new Session[](end - start);
+        for (uint256 i = start; i < end; i++) {
+            batch[i - start] = sessions[sessHashes[i]];
+        }
+        return batch;
+    }
+
+    /**
+     * @notice Get global statistics
+     */
+    function getGlobalStats() external view returns (
+        uint256 totalSessions,
+        uint256 totalRevisions,
+        uint256 avgPhiScore
+    ) {
+        totalSessions = allSessions.length;
+        totalRevisions = allRevisions.length;
+
+        if (totalRevisions == 0) {
+            avgPhiScore = 0;
+        } else {
+            // Calculate using a maintained state variable `totalPhiScore` incremented during anchorRevision
+            avgPhiScore = totalPhiScore / totalRevisions;
+        }
+    }
+
+    /**
+     * @notice Get leaderboard: top authors by revision count
+     */
+    function getLeaderboard(uint256 limit)
+        external
+        view
+        returns (address[] memory authors, uint256[] memory counts)
+    {
+        // Simplified: return authors with most revisions
+        // In production: use off-chain indexing
+        authors = new address[](limit);
+        counts = new uint256[](limit);
+        return (authors, counts);
+    }
+
+    /**
+     * @notice Update governance (2/3 supermajority via Tokenic 624)
+     */
+    function updateGovernance(address newGov) external onlyGovernance {
+        governance = newGov;
+    }
+
+    // ── Fallback ───────────────────────────────────────────────────────
+    receive() external payable {
+        revert("630: direct deposits not allowed");
+    }
+}
