@@ -298,7 +298,7 @@ def cmd_vtxo(action, vtxo_id, node_id):
 def cmd_verify(vtxo_root, proofs, node_id):
     """Verificar integridade de VTXO tree."""
     engine = OpenArkEngine(node_id)
-    proof_list = list(proofs) if proofs else ["mock-proof-" + "0"*56]
+    proof_list = list(proofs) if proofs else ["mock-proof-" + "0"*53]
     result = engine.verify_vtxo_tree(vtxo_root, proof_list)
 
     click.echo("\n\033[1;36m◉ VTXO TREE VERIFICATION\033[0m")
