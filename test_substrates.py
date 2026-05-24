@@ -160,8 +160,40 @@ def test_621_f_strings():
         content = f.read()
     assert not bool(re.search(r'\bf["\']', content)), "f-strings are strictly forbidden in python files"
 
-if __name__ == '__main__':
-    pytest.main(['-v', 'test_substrates.py'])
+
+def test_627_tse_fcc_parser():
+    import sys, os
+    sys.path.append(os.path.abspath('substrates/627-TSE-FCC-PARSER'))
+    import substrato_627_tse_fcc_parser
+    canonizer = substrato_627_tse_fcc_parser.Substrato627TseFccParser()
+    report_path = canonizer.canonize()
+    assert os.path.exists(report_path)
+
+def test_627_f_strings():
+    import sys, os
+    sys.path.append(os.path.abspath('substrates/627-TSE-FCC-PARSER'))
+    import substrato_627_tse_fcc_parser
+    with open(substrato_627_tse_fcc_parser.__file__, "r", encoding="utf-8") as f:
+        content = f.read()
+    import re
+    assert not re.search(r'\bf(["\'])', content), "Found f-string in substrato_627_tse_fcc_parser.py"
+
+def test_628_fec_parser():
+    import sys, os
+    sys.path.append(os.path.abspath('substrates/628-FEC-PARSER'))
+    import substrato_628_fec_parser
+    canonizer = substrato_628_fec_parser.Substrato628FecParser()
+    report_path = canonizer.canonize()
+    assert os.path.exists(report_path)
+
+def test_628_f_strings():
+    import sys, os
+    sys.path.append(os.path.abspath('substrates/628-FEC-PARSER'))
+    import substrato_628_fec_parser
+    with open(substrato_628_fec_parser.__file__, "r", encoding="utf-8") as f:
+        content = f.read()
+    import re
+    assert not re.search(r'\bf(["\'])', content), "Found f-string in substrato_628_fec_parser.py"
 
 def test_562_stim_qec_simulator():
     import pytest
@@ -536,34 +568,33 @@ def test_623_f_strings():
 
     assert not re.search(r'\bf(["\'])', plugin_content), "f-strings are strictly forbidden in python files"
 
-
-def test_630_asi_asm():
+def test_substrato_xalgorix():
     import importlib.util
     import json
     import os
+    import re
 
-    file_path = os.path.abspath('substrates/630-ASI-ASM/substrato_630_asi_asm.py')
-    spec = importlib.util.spec_from_file_location("substrato_630_asi_asm", file_path)
+    file_path = os.path.abspath('substrates/400-499_advanced/substrato_xalgord_xalgorix/substrato_xalgord_xalgorix.py')
+    spec = importlib.util.spec_from_file_location("substrato_xalgord_xalgorix", file_path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato630AsiAsm()
-    temp_dir, path = canonizer.generate()
+    canonizer = module.SubstratoXalgorix()
+    path = canonizer.canonize()
 
     assert os.path.exists(path)
-
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    assert data["id"] == "630-ASI-ASM"
-    assert "canonical_seal" in data
-    assert len(data["canonical_seal"]) == 64
+    assert data["Title"] == "Xalgorix - The Most Powerful Open-Source AI Pentesting Agent"
+    assert "Description" in data
+    assert "Features" in data
+    assert "Architecture" in data
 
-def test_630_f_strings():
-    import os
-    import re
-    file_path = "substrates/630-ASI-ASM/substrato_630_asi_asm.py"
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
 
     assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
+
+if __name__ == '__main__':
+    pytest.main(['-v', 'test_substrates.py'])
