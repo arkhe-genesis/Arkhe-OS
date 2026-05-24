@@ -363,3 +363,42 @@ def test_612_f_strings():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
     assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
+
+def test_617_quantum_teleport():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_617_quantum_teleport",
+        "substrates/617-QUANTUM-TELEPORT/substrato_617_quantum_teleport.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato617QuantumTeleport()
+    temp_dir, report_path = canonizer.generate()
+
+    assert os.path.exists(temp_dir)
+    assert os.path.exists(report_path)
+
+    with open(report_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "617-QUANTUM-TELEPORT"
+    assert "calculated_seal" in data
+    assert os.path.exists(os.path.join(temp_dir, "arkhe_quantum_teleport.py"))
+
+def test_617_f_strings():
+    import os
+    file_path = "substrates/617-QUANTUM-TELEPORT/substrato_617_quantum_teleport.py"
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+
+    # We must strip out the word 'stark_proof' (or its quotes) to avoid false positives
+    # if the naive test simply looks for `f"` or `f'` because 'f"' matches the end of 'proof"'.
+    # This naive regex-less approach mimics Arkhe OS's crude check.
+    content_stripped = content.replace('stark_proof"', 'stark_proo_quote')
+    content_stripped = content_stripped.replace("stark_proof'", "stark_proo_quote")
+
+    assert "f\"" not in content_stripped
+    assert "f'" not in content_stripped
