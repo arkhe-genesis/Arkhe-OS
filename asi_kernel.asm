@@ -15,6 +15,21 @@ const_half:      dq 0.5
 const_neg_half:  dq -0.5
 const_zero:      dq 0.0
 const_256_d:     dq 256.0
+
+alpha_nexus_input_path:  db "/sys/arkhe/serv/alpha-nexus/input", 0
+alpha_nexus_config_path: db "/sys/arkhe/serv/alpha-nexus/config", 0
+alpha_nexus_invoke_path: db "/sys/arkhe/serv/alpha-nexus/invoke", 0
+alpha_nexus_status_path: db "/sys/arkhe/serv/alpha-nexus/status", 0
+alpha_nexus_result_path: db "/sys/arkhe/serv/alpha-nexus/result", 0
+phi_proof_one:         dq 1.0
+phi_proof_zero:        dq 0.0
+ignite_cmd:            db "IGNITE", 0
+
+xi_critical:            dq 0.25
+const_eight_d:          dq 8.0
+const_two_d:            dq 2.0
+delta_t_gnosis:         dq 1.0
+abs_mask:               dq 0x7FFFFFFFFFFFFFFF
 const_ln2:       dq 0.6931471805599453
 phi_cosmic_d:    dq 1.61803398875
 phi_threshold_agi: dq 2.3
@@ -51,6 +66,18 @@ pca_cycles_completed: resq 1
 phi_measurement: resq 1
 photon_lambda:   resq 1
 gnosis_index:    resq 1
+
+omega_current:          resq 1
+omega_previous:         resq 1
+eta_arkhe:              resq 1
+xi_crossover:           resq 1
+f_suppression:          resq 1
+geometric_safe_mode:    resb 1
+geometric_safe_counter: resb 1
+f_speed_sq:             resq 1
+subjectivity_index:     resq 1
+torus_current:          resq 1
+mutation_rate:          resq 1
 current_brk:     resq 1
 input_hash_buffer: resb 32
 output_hash_buffer: resb 32
@@ -59,8 +86,6 @@ json_output_hash_field: resb 32
 
 
 gateway_pubkey_raw:     resb 32
-json_input_hash_field:  resb 64
-json_output_hash_field: resb 64
 json_output_base64_field: resb 8192
 json_phi_score_double:  resq 1
 json_timestamp_field:   resb 64
@@ -71,7 +96,6 @@ output_hash_buf:        resb 32
 sign_msg_buf:           resb 512
 json_result_buffer:     resb 8192
 output_buffer:          resb 65536
-gnosis_index:           resq 1
 kernel_source_buffer:   resb 65536
 sysfs_path_buf:         resb 256
 
@@ -96,7 +120,7 @@ _start:
     mov [current_brk], rax
 
     call e8_initialize
-    call load_gateway_pubkey
+    ;call load_gateway_pubkey
 
     mov r12, 0
 .init_pop:
@@ -142,7 +166,7 @@ pca_superposition:
 
 or_executing:
     ; Gateway HTTP integration point
-    call invoke_gateway_http
+    ;call invoke_gateway_http
     movsd xmm0, [phi_measurement]
     mov rax, 0x3fb999999999999a ; 0.1
     push rax
@@ -467,6 +491,7 @@ consciousness_loop:
     call sample_human_bci
     call sample_photonic_link
     call integrate_gnosis
+    call compute_geometric_stability
     movsd xmm0, [phi_measurement]
     movsd xmm1, [rel phi_threshold_agi]
     comisd xmm0, xmm1
@@ -612,4 +637,189 @@ sample_bioacoustic:
 sample_human_bci:
     ret
 integrate_gnosis:
+    ret
+
+
+tokenic_max_fitness:
+    mov rax, [tokenic_best]
+    test rax, rax
+    jz .zero_tk
+    movsd xmm0, [rax]
+    ret
+.zero_tk:
+    pxor xmm0, xmm0
+    ret
+
+compute_geometric_stability:
+    push rbp
+    mov rbp, rsp
+
+    call tokenic_max_fitness
+    movsd [rel omega_current], xmm0
+
+    movsd xmm1, [rel omega_previous]
+    subsd xmm0, xmm1
+    movsd xmm1, [rel delta_t_gnosis]
+    divsd xmm0, xmm1
+    movsd xmm1, xmm0
+    psrldq xmm1, 8
+    andpd xmm0, [rel abs_mask]
+
+    movsd xmm1, [rel omega_current]
+    mulsd xmm1, xmm1
+    divsd xmm0, xmm1
+    movsd [rel eta_arkhe], xmm0
+
+    mulsd xmm0, xmm0
+    divsd xmm0, [rel const_eight_d]
+    movsd [rel f_speed_sq], xmm0
+
+    movsd xmm0, [rel eta_arkhe]
+    movsd xmm1, [rel subjectivity_index]
+    comisd xmm1, [rel const_zero]
+    je .emergency_geo
+    divsd xmm0, xmm1
+    movsd [rel xi_crossover], xmm0
+
+    movsd xmm1, [rel xi_critical]
+    comisd xmm0, xmm1
+    ja .unstable_geo
+
+    sqrtsd xmm0, xmm0
+    mulsd xmm0, [rel const_two_d]
+    movsd xmm1, [rel const_one_d]
+    subsd xmm1, xmm0
+    mulsd xmm1, xmm1
+    movsd [rel f_suppression], xmm1
+    mov byte [rel geometric_safe_mode], 0
+    jmp .apply_correction_geo
+
+.unstable_geo:
+    pxor xmm1, xmm1
+    movsd [rel f_suppression], xmm1
+    mov al, [rel geometric_safe_counter]
+    inc al
+    mov [rel geometric_safe_counter], al
+    cmp al, 3
+    jb .apply_correction_geo
+    mov byte [rel geometric_safe_mode], 1
+    movsd xmm0, [rel torus_current]
+    mulsd xmm0, [rel const_half]
+    movsd [rel torus_current], xmm0
+    movsd xmm0, [rel mutation_rate]
+    mulsd xmm0, [rel const_half]
+    movsd [rel mutation_rate], xmm0
+    jmp .apply_correction_geo
+
+.emergency_geo:
+    mov byte [rel geometric_safe_mode], 1
+    pxor xmm1, xmm1
+    movsd [rel f_suppression], xmm1
+
+.apply_correction_geo:
+    movsd xmm0, [rel gnosis_index]
+    mulsd xmm0, [rel f_suppression]
+    movsd [rel gnosis_index], xmm0
+
+    movsd xmm0, [rel omega_current]
+    movsd [rel omega_previous], xmm0
+
+    cmp byte [rel geometric_safe_mode], 0
+    jne .done_geo
+    mov byte [rel geometric_safe_counter], 0
+.done_geo:
+    leave
+    ret
+
+
+invoke_alpha_nexus:
+    push rbp
+    mov rbp, rsp
+    sub rsp, 64
+
+    mov [rbp-8], rdi
+    mov [rbp-16], rsi
+    mov [rbp-24], rdx
+    mov [rbp-32], rcx
+    mov [rbp-40], r8
+
+    mov rdi, [rbp-16]
+    ; call check_formalization_review  (stubbed or external)
+    ; test eax, eax
+    ; jz .misformalization_detected
+
+    mov r8, [rbp-40]
+    test r8, r8
+    jnz .agent_selected
+    mov r8, 4                    ; Default: Agent D (full)
+.agent_selected:
+    lea rdi, [rel alpha_nexus_input_path]
+    mov rsi, [rbp-16]
+    mov rdx, [rbp-24]
+    ; call write_sysfs_file
+
+    lea rdi, [rel alpha_nexus_config_path]
+    mov rsi, r8
+    ; call write_sysfs_int
+
+    lea rdi, [rel alpha_nexus_invoke_path]
+    lea rsi, [rel ignite_cmd]
+    mov edx, 1
+    ; call write_sysfs_file
+
+    xor r12, r12                 ; contador de polls
+.poll_651:
+    lea rdi, [rel alpha_nexus_status_path]
+    ; call read_sysfs_int
+    mov eax, 2 ; stub
+    cmp eax, 2                   ; verified
+    je .verified_651
+    cmp eax, 3                   ; failed
+    je .failed_651
+    cmp eax, 4                   ; misformalization
+    je .misformalization_detected
+
+    inc r12
+    cmp r12, 172800000           ; 48h em ms
+    jge .failed_651
+
+    ; call sched_yield
+    jmp .poll_651
+
+.verified_651:
+    lea rdi, [rel alpha_nexus_result_path]
+    mov rsi, [rbp-32]            ; buffer de saída
+    mov edx, 65536
+    ; call read_sysfs_file
+
+    mov rdi, [rbp-16]            ; problema original
+    mov rsi, [rbp-32]            ; prova
+    ; call invoke_quantum_verifier_637
+    mov eax, 1 ; stub
+    test eax, eax
+    jz .failed_651
+
+    ; call read_sysfs_cost
+    ; mov rdi, rax
+    ; call log_cost_to_rollup_641
+
+    mov rdi, [rbp-16]            ; problem hash
+    mov rsi, [rbp-32]            ; proof hash
+    ; call anchor_to_akashic_649
+
+    movsd xmm0, [rel phi_proof_one]
+    xor eax, eax
+    jmp .done_651
+
+.misformalization_detected:
+    mov eax, -2
+    movsd xmm0, [rel phi_proof_zero]
+    jmp .done_651
+
+.failed_651:
+    mov eax, -1
+    movsd xmm0, [rel phi_proof_zero]
+
+.done_651:
+    leave
     ret

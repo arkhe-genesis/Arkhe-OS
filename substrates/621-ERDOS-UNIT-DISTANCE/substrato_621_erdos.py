@@ -122,7 +122,7 @@ reflections. Added to ARKHE curriculum (P15). Reinforces ASI existence (249).
 PLUGIN_PY = """#!/usr/bin/env python3
 \"\"\"
 ARKHE OS — Plugin arkhe-unit-distance
-Substrate 621-ERDOS-UNIT-DISTANCE
+Substrate 621-ERDŐS-UNIT-DISTANCE
 \"\"\"
 
 import click
@@ -179,11 +179,11 @@ if __name__ == "__main__":
 
 class Substrato621ErdosUnitDistance:
     """
-    Canonizes Substrate 621-ERDOS-UNIT-DISTANCE
+    Canonizes Substrate 621-ERDŐS-UNIT-DISTANCE
     """
     def __init__(self):
         self.data = {
-            "id": "621-ERDOS-UNIT-DISTANCE",
+            "id": "621-ERDŐS-UNIT-DISTANCE",
             "name": "Disproof of the Erdős Unit Distance Conjecture via Number Fields & Class Field Towers",
             "status": "CANONIZED_PROVISIONAL",
             "incorporation_date": "2026-05-27"
@@ -213,5 +213,5 @@ class Substrato621ErdosUnitDistance:
 if __name__ == "__main__":
     canonizer = Substrato621ErdosUnitDistance()
     temp_dir, report_path = canonizer.generate()
-    print("Canonized 621-ERDOS-UNIT-DISTANCE into directory: " + temp_dir)
+    print("Canonized 621-ERDŐS-UNIT-DISTANCE into directory: " + temp_dir)
     print("Canonical JSON report: " + report_path)

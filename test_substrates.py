@@ -647,3 +647,81 @@ def test_631_f_strings():
     with open(file_path, 'r') as f:
         content = f.read()
     assert not re.search(r'\bf(["\'])', content), "Found f-string in gateway_http.py"
+
+def test_647_amt_geometric_stabilizer():
+    import importlib.util
+    file_path = os.path.abspath('substrates/647-AMT-GEOMETRIC-STABILIZER/substrato_647_amt_geometric_stabilizer.py')
+    spec = importlib.util.spec_from_file_location("substrato_647_amt_geometric_stabilizer", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    path = module.canonize_substrate()
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = __import__('json').load(f)
+        assert data['id'] == "647-AMT-GEOMETRIC-STABILIZER"
+        assert 'xi_critical' in data['metrics']
+
+def test_647_f_strings():
+    file_path = os.path.abspath('substrates/647-AMT-GEOMETRIC-STABILIZER/substrato_647_amt_geometric_stabilizer.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    import re
+    assert not re.search(r'\bf(["\'])', content), "Found f-string in substrato_647_amt_geometric_stabilizer.py"
+
+def test_651_alpha_nexus():
+    import importlib.util
+    file_path = os.path.abspath('substrates/651-ALPHA-NEXUS/substrato_651_alpha_nexus.py')
+    spec = importlib.util.spec_from_file_location("substrato_651_alpha_nexus", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    path = module.canonize_substrate()
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = __import__('json').load(f)
+        assert data['id'] == "651-ALPHA-NEXUS"
+
+def test_651_f_strings():
+    file_path = os.path.abspath('substrates/651-ALPHA-NEXUS/substrato_651_alpha_nexus.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    import re
+    assert not re.search(r'\bf(["\'])', content), "Found f-string in substrato_651_alpha_nexus.py"
+
+def test_647_amt_geometric_stabilizer():
+    import importlib.util
+    file_path = os.path.abspath('substrates/647-AMT-GEOMETRIC-STABILIZER/substrato_647_amt_geometric_stabilizer.py')
+    spec = importlib.util.spec_from_file_location("substrato_647_amt_geometric_stabilizer", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    path = module.canonize_substrate()
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = __import__('json').load(f)
+        assert data['id'] == "647-AMT-GEOMETRIC-STABILIZER"
+        assert 'xi_critical' in data['metrics']
+
+def test_647_f_strings():
+    file_path = os.path.abspath('substrates/647-AMT-GEOMETRIC-STABILIZER/substrato_647_amt_geometric_stabilizer.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    import re
+    assert not re.search(r'\bf(["\'])', content), "Found f-string in substrato_647_amt_geometric_stabilizer.py"
+
+def test_651_alpha_nexus():
+    import importlib.util
+    file_path = os.path.abspath('substrates/651-ALPHA-NEXUS/substrato_651_alpha_nexus.py')
+    spec = importlib.util.spec_from_file_location("substrato_651_alpha_nexus", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    path = module.canonize_substrate()
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = __import__('json').load(f)
+        assert data['id'] == "651-ALPHA-NEXUS"
+
+def test_651_f_strings():
+    file_path = os.path.abspath('substrates/651-ALPHA-NEXUS/substrato_651_alpha_nexus.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    import re
+    assert not re.search(r'\bf(["\'])', content), "Found f-string in substrato_651_alpha_nexus.py"
