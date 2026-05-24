@@ -1,0 +1,16 @@
+{
+  "name": "Silent Link",
+  "coverage_countries": 160,
+  "payment_methods": [
+    "BTC",
+    "Lightning",
+    "XMR"
+  ],
+  "kyc_required": false,
+  "ip_visible": false,
+  "censorship_resistance": true,
+  "privacy_policy_url": "https://silent.link/privacy",
+  "data_retention_days": 0,
+  "self_hosted": false,
+  "price_tier": "$$$"
+}

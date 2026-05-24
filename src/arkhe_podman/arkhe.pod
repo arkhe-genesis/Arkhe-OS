@@ -1,0 +1,22 @@
+[Pod]
+PodName=arkhe-pod
+PublishPort=8080:8080
+PublishPort=8443:8443
+Network=arkhe-net
+
+# Shared namespaces
+ShareNet=true
+ShareIpc=true
+ShareUts=true
+
+# Labels
+Label=arkhe.substrate.id=587
+Label=arkhe.pod.name=arkhe-pod
+Label=arkhe.seal=2d927c2c115e87a7130bf0bb01ec8725852a4dea40fe1d944e3c355c27e96370
+
+[Service]
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

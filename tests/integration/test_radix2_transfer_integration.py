@@ -10,9 +10,9 @@ import pytest
 import hashlib
 
 from arkp_radix1.src.radix2_simulation import RADIX2Genome, RADIX2Simulator
-from arkp_bio.src.quantum_folding_simulator import PhiCField
+from arkp_bio.quantum_folding_simulator import PhiCField
 from arkp_qnc.src.qnc_transfer import MultiSpeciesQNC
-from arkp_bio.src.extremophile_analyzer import EXTREMOPHILE_DATABASE
+from arkp_bio.extremophile_analyzer import EXTREMOPHILE_DATABASE
 
 
 def test_radix2_genome_structure():
@@ -60,7 +60,7 @@ def test_transfer_knowledge_to_radix2():
     model.pretrain_on_all_species(species_data, epochs=5, lr=0.03)
 
     # Transferir
-    model.transfer_knowledge_to_species("Deinococcus radiodurans", "RADIX-2")
+    model.transfer_to_new_species("Deinococcus radiodurans", "RADIX-2")
 
     assert "RADIX-2" in model.species_adapters
     # Adapter deve ser diferente do estado base
@@ -81,7 +81,7 @@ def test_radix2_simulation():
         label = 1 if org.radiation_resistance_kgy >= 10.0 else 0
         species_data[org.organism_name] = [(seq, label) for _ in range(2)]
     model.pretrain_on_all_species(species_data, epochs=5, lr=0.03)
-    model.transfer_knowledge_to_species("Deinococcus radiodurans", "RADIX-2")
+    model.transfer_to_new_species("Deinococcus radiodurans", "RADIX-2")
 
     simulator = RADIX2Simulator(phi_c, phi_c_value=0.9999, transfer_model=model)
 
@@ -98,7 +98,7 @@ def test_radix2_simulation():
 
 def test_radix2_vs_radix1_superiority():
     """Testa que RADIX-2 supera RADIX-1 em métricas-chave."""
-    from arkp_radix1.src.radix1_simulation import RADIX1Simulator
+    from arkp_bio.radix1_simulation import RADIX1Simulator
 
     phi_c = PhiCField(coupling_constant=0.15)
 
@@ -114,7 +114,7 @@ def test_radix2_vs_radix1_superiority():
         label = 1 if org.radiation_resistance_kgy >= 10.0 else 0
         species_data[org.organism_name] = [(seq, label) for _ in range(2)]
     model.pretrain_on_all_species(species_data, epochs=5, lr=0.03)
-    model.transfer_knowledge_to_species("Deinococcus radiodurans", "RADIX-2")
+    model.transfer_to_new_species("Deinococcus radiodurans", "RADIX-2")
 
     sim2 = RADIX2Simulator(phi_c, phi_c_value=0.9999, transfer_model=model)
     result2 = sim2.simulate_with_transfer_learning(radiation_stress=50.0, max_cycles=500)
@@ -162,7 +162,7 @@ def test_full_integration_radix2_transfer():
 
     # 2. Transferir para RADIX-2
     print("🔄 Transferindo conhecimento para RADIX-2...")
-    model.transfer_knowledge_to_species("Deinococcus radiodurans", "RADIX-2")
+    model.transfer_to_new_species("Deinococcus radiodurans", "RADIX-2")
 
     # 3. Simular RADIX-2 sob radiação extrema
     phi_c = PhiCField(coupling_constant=0.15)

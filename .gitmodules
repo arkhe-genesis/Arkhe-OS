@@ -151,3 +151,10 @@
 [submodule "gitlawb/node"]
 	path = gitlawb/node
 	url = https://github.com/Gitlawb/node
+[submodule "third_party/azurelinux"]
+	path = third_party/azurelinux
+	url = https://github.com/microsoft/azurelinux.git
+	branch = 4.0
+[submodule "third_party/Stim"]
+	path = third_party/Stim
+	url = https://github.com/quantumlib/Stim

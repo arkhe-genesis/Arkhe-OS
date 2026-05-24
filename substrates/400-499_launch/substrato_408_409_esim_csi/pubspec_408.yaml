@@ -1,0 +1,40 @@
+name: arkhe_citizen
+description: ARKHE OS Citizen App — Telescópio Planetário de Raios Cósmicos
+version: 1.0.0+408
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Deteção de partículas
+  camera: ^0.11.0
+  sensors_plus: ^5.0.0
+  connectivity_plus: ^6.0.0
+
+  # eSIM (Substrato 408)
+  esim_manager: ^1.0.0  # Plugin nativo para EuiccManager
+
+  # WiFi CSI (Substrato 409)
+  wifi_csi: ^1.0.0  # Plugin nativo para Nexmon/ath10k
+
+  # Privacidade e cripto
+  encrypt: ^5.0.3
+
+  # UI
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/providers/silent_link.json
+    - assets/providers/voidmob.json
+    - assets/providers/pikasim.json
+    - assets/nexmon/chip_database.json

@@ -1,0 +1,5 @@
+detection:
+  threshold_sigma: 5.0
+  coincidence_window_ns: 100
+calibration:
+  table_path: "calibration_table.yaml"

@@ -1,0 +1,22 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Arkhe OS\n"
+"Language: ja_JP\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "ARKHE OS CLI - MegaKernel Interface."
+msgstr "ARKHE OS CLI - メガカーネル インターフェース。"
+
+msgid "Inicializa o MegaKernel."
+msgstr "メガカーネルを初期化します。"
+
+msgid "Status de Invariantes"
+msgstr "不変量のステータス"
+
+msgid "Lista substratos canonizados."
+msgstr "正規化された基質を一覧表示します。"
+
+msgid "Idioma definido para"
+msgstr "言語が設定されました："

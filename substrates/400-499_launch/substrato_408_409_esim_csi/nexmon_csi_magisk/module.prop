@@ -1,0 +1,6 @@
+id=nexmon_csi_arkhe
+name=Nexmon CSI Arkhe OS
+version=v1.0.0
+versionCode=1
+author=Arkhe OS
+description=Habilita modo monitor e CSI em chipsets BCM para deteção de partículas. Substrato 409.

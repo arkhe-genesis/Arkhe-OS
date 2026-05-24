@@ -33,6 +33,27 @@ def verify_invariants_formal():
     solver.add(M >= 0)
     solver.add(M < 1.0)
 
+
+    print("   [1.5] Adicionando constraints para República Pública (Substrato 368)...")
+    N_participants = z3.Int('N_participants')
+    N_validators = z3.Int('N_validators')
+    Tier1 = z3.Int('Tier1')
+    Tier2 = z3.Int('Tier2')
+    Tier3 = z3.Int('Tier3')
+    Tier4 = z3.Int('Tier4')
+    Tier5 = z3.Int('Tier5')
+
+    solver.add(N_participants == 64)
+    solver.add(N_validators == 59)
+    solver.add(Tier1 + Tier2 + Tier3 + Tier4 + Tier5 == N_participants)
+    solver.add(Tier1 == 8)
+    solver.add(Tier2 >= 18)
+
+    # Validação cross-tier
+    cross_tier_valid = z3.Bool('cross_tier_valid')
+    solver.add(cross_tier_valid == z3.And(Tier1 > 0, Tier2 > 0, Tier3 > 0))
+    solver.add(cross_tier_valid == True)
+
     # CPE constraints from Substrato 285-286
     # Let Delta_Cap be the change in capability loss, which must not exceed 5% degradation.
     # For simplification in proof assistant, we verify that M is monotonically non-decreasing
