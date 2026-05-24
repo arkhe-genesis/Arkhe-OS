@@ -208,13 +208,13 @@ class TokenicEngine:
         }
 
         # Salvar relatório
-        report_dir = "/tmp/arkhe/sgrna_design"
+        report_dir = "/opt/arkhe/sgrna_design"
         os.makedirs(report_dir, exist_ok=True)
         with open(os.path.join(report_dir, "report.json"), "w") as f:
             json.dump(report, f, indent=2)
 
         # Escrever Φ_sgrna no sysfs
-        sys_dir = "/tmp/sys/arkhe/med"
+        sys_dir = "/sys/arkhe/med"
         os.makedirs(sys_dir, exist_ok=True)
         with open(os.path.join(sys_dir, "sgrna_phi"), "w") as f:
             f.write("{0:.4f}".format(self.best_fitness))

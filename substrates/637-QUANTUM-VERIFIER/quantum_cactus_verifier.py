@@ -214,7 +214,7 @@ class GenomeIntegrityVerifier:
         }
 
         # Salvar relatório
-        report_dir = "/tmp/arkhe/quantum_verify"
+        report_dir = "/opt/arkhe/quantum_verify"
         import os
         os.makedirs(report_dir, exist_ok=True)
         with open(os.path.join(report_dir, "report.json"), "w") as f:
@@ -222,7 +222,7 @@ class GenomeIntegrityVerifier:
 
         # Escrever Φ_quantum no sysfs
         phi_quantum = integrity_score * 0.10  # peso do Substrato 637
-        sys_dir = "/tmp/sys/arkhe/med"
+        sys_dir = "/sys/arkhe/med"
         os.makedirs(sys_dir, exist_ok=True)
         with open(os.path.join(sys_dir, "quantum_phi"), "w") as f:
             f.write("{0:.4f}".format(phi_quantum))
@@ -240,8 +240,8 @@ if __name__ == "__main__":
     print("[637] ═══════════════════════════════════════")
 
     verifier = GenomeIntegrityVerifier(
-        reference_vcf="/tmp/arkhe/genomics/patient_original.vcf",
-        edited_vcf="/tmp/arkhe/genomics/patient_edited.vcf"
+        reference_vcf="/opt/arkhe/genomics/patient_original.vcf",
+        edited_vcf="/opt/arkhe/genomics/patient_edited.vcf"
     )
 
     report = verifier.verify_integrity()
