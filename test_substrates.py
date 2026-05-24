@@ -596,5 +596,34 @@ def test_substrato_xalgorix():
 
     assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
 
+
+def test_substrato_webctc():
+    import importlib.util
+    import json
+    import os
+    import re
+
+    file_path = os.path.abspath('substrates/400-499_advanced/substrato_WebCTC_WebCTC/substrato_WebCTC_WebCTC.py')
+    spec = importlib.util.spec_from_file_location("substrato_WebCTC_WebCTC", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.SubstratoWebCTC()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["Title"] == "WebCTC"
+    assert "Description" in data
+    assert "Requires" in data
+    assert "Architecture" in data
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
+
 if __name__ == '__main__':
     pytest.main(['-v', 'test_substrates.py'])
