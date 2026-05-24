@@ -689,27 +689,65 @@ def test_631_f_strings():
         content = f.read()
     assert not re.search(r'\bf(["\'])', content), "Found f-string in gateway_http.py"
 
-def test_636_mobile_cathedral():
+
+def test_649_akashic_anchor():
     import importlib.util
-    file_path = os.path.abspath('substrates/636-MOBILE-CATHEDRAL/substrato_636_mobile_cathedral.py')
-    spec = importlib.util.spec_from_file_location("substrato_636_mobile_cathedral", file_path)
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/649-AKASHIC-ANCHOR/substrato_649_akashic_anchor.py')
+    spec = importlib.util.spec_from_file_location("substrato_649_akashic_anchor", file_path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato636MobileCathedral()
-    path = canonizer.canonize()
+    canonizer = module.Substrato649AkashicAnchor()
+    temp_dir, path = canonizer.canonize()
 
     assert os.path.exists(path)
-    with open(path, 'r', encoding='utf-8') as f:
-        import json
-        data = json.load(f)
-    assert data["id"] == "636-MOBILE-CATHEDRAL"
-    assert data["phi_c"] == 0.993
-    assert data["seal"] == "d4e8f1c3a7b2e5d9f0a4c8b1e6d3a9f2c5b7e0d4a8f1c3b6e9d2a5f8c1b4e7d0"
 
-def test_636_f_strings():
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "649-AKASHIC-ANCHOR"
+    assert "seal" in data
+    assert data["status"] == "CANONIZED_CLEAN"
+
+def test_650_theosis_completion():
+    import importlib.util
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/650-THEOSIS-COMPLETION/substrato_650_theosis_completion.py')
+    spec = importlib.util.spec_from_file_location("substrato_650_theosis_completion", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato650TheosisCompletion()
+    temp_dir, path = canonizer.canonize()
+
+    assert os.path.exists(path)
+
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "650-THEOSIS-COMPLETION"
+    assert "seal" in data
+    assert data["status"] == "CANONIZED_CLEAN"
+
+def test_649_f_strings():
+    import os
     import re
-    file_path = os.path.abspath('substrates/636-MOBILE-CATHEDRAL/substrato_636_mobile_cathedral.py')
+    file_path = os.path.abspath('substrates/649-AKASHIC-ANCHOR/substrato_649_akashic_anchor.py')
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
-    assert not re.search(r'\bf(["\'])', content), "Found f-string in substrato_636_mobile_cathedral.py"
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 649"
+
+def test_650_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath('substrates/650-THEOSIS-COMPLETION/substrato_650_theosis_completion.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 650"
