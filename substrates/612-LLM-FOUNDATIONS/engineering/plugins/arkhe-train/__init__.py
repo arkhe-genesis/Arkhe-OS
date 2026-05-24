@@ -272,7 +272,8 @@ def _get_ia_training_state(ia_model_id):
     data = json.loads(state_file.read_text())
     trained = []
     for pillar_scores in data.get("scores", {}).values():
-        trained.extend(pillar_scores.keys())
+        if isinstance(pillar_scores, dict):
+            trained.extend(pillar_scores.keys())
     return trained
 
 def _resolve_name_from_id(topic_id):
