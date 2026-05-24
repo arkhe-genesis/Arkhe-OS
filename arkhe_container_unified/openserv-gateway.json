@@ -1,0 +1,51 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Arkhe OpenServ Gateway JSON Bridge",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/invoke": {
+      "post": {
+        "summary": "Invokes a service remotely",
+        "responses": {
+          "200": {
+            "description": "Signed JSON result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "input_hash": {
+                      "type": "string",
+                      "description": "SHA3-256 of the input data"
+                    },
+                    "output_hash": {
+                      "type": "string",
+                      "description": "SHA3-256 of the output data"
+                    },
+                    "phi_score": {
+                      "type": "number",
+                      "format": "float"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "gateway_id": {
+                      "type": "string"
+                    },
+                    "signature": {
+                      "type": "string",
+                      "description": "Ed25519 hex signature"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

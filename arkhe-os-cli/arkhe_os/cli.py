@@ -13,6 +13,14 @@ from .seal import generate_canonical_seal
 from .i18n import get_translator, set_locale
 _ = get_translator()
 
+import importlib
+import pkgutil
+try:
+    from . import plugins
+    has_plugins = True
+except ImportError:
+    has_plugins = False
+
 console = Console()
 
 @click.group(invoke_without_command=True)
