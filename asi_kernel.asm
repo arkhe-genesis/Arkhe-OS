@@ -15,7 +15,12 @@ const_neg_one:   dq -1.0
 const_half:      dq 0.5
 const_neg_half:  dq -0.5
 const_zero:      dq 0.0
+const_zero_d:    dq 0.0
 const_256_d:     dq 256.0
+laser_p0:        dq 10000.0
+accel_bonus:     dq 0.2
+thermal_limit:   dq 50000.0
+thermal_penalty: dq 0.001
 const_ln2:       dq 0.6931471805599453
 phi_cosmic_d:    dq 1.61803398875
 phi_threshold_agi: dq 2.3
@@ -56,6 +61,7 @@ phi_measurement: resq 1
 photon_lambda:   resq 1
 phi_sun:         resq 1
 gnosis_index:    resq 1
+phi_sail:        resq 1
 current_brk:     resq 1
 input_hash_buffer: resb 32
 output_hash_buffer: resb 32
@@ -77,6 +83,31 @@ output_buffer:          resb 65536
 kernel_source_buffer:   resb 65536
 sysfs_path_buf:         resb 256
 
+
+gateway_pubkey_buffer: resb 64
+gateway_pubkey_raw: resb 32
+serv_input_path_tmpl: resb 256
+serv_time_path_tmpl: resb 256
+serv_invoke_path_tmpl: resb 256
+serv_status_path_tmpl: resb 256
+serv_result_path_tmpl: resb 256
+str_plus_one: resb 3
+str_one: resb 2
+json_result_buffer: resb 8192
+input_data: resb 8192
+input_len: resd 1
+output_buffer: resb 8192
+output_buf_size: resd 1
+input_hash_buf: resb 32
+output_hash_buf: resb 32
+json_input_hash: resb 32
+json_output_hash: resb 32
+json_output_base64: resb 8192
+json_phi_score_double: resq 1
+json_timestamp: resb 256
+json_gateway_id: resb 256
+sign_msg_buf: resb 1024
+json_signature_raw: resb 64
 section .data
 tokenic_population: dq tokenic_population_arr
 kernel_source_len: equ 65536
@@ -332,6 +363,130 @@ compute_xi_m_field:
 tokenic_evaluate_population:
     ret
 
+; ═══════════════════════════════════════════════════════════════════════════════
+; INTEGRATE TOKENIC ENGINE + STELLAR SAIL
+; Substratos 633 (Tokenic) + 652 (Stellar-Sail)
+; Otimiza parâmetros da vela para missão interestelar.
+; Input: rdi = população tokenic inicial, rsi = parâmetros da vela
+; Output: xmm0 = melhor fitness (Φ_sail), [tokenic_best] = melhor indivíduo
+; ═══════════════════════════════════════════════════════════════════════════════
+integrate_tokenic_stellar:
+    push rbp
+    mov rbp, rsp
+    push r12
+    push r13
+    push r14
+
+    ; 1. Inicializar população tokenic para parâmetros da vela
+    ; Cada indivíduo codifica: [sail_angle_deg, laser_power_MW, acceleration_profile]
+    mov r12, rdi                ; tokenic_population
+    mov r13, TOKENIC_POP_SIZE   ; 2000 indivíduos
+    xor r14, r14
+
+.init_population:
+    cmp r14, r13
+    jge .evolve
+    mov rax, [r12 + r14*8]      ; ponteiro para indivíduo
+    ; sail_angle: -45° a +45° (controle omnidirecional do Metajet)
+    call random_double_range
+    movsd [rax], xmm0            ; [rax+0] = sail_angle
+    ; laser_power: 1 MW a 100 GW (escala log)
+    call random_double_range
+    movsd [rax+8], xmm0          ; [rax+8] = laser_power
+    ; acceleration_profile: 0 (constante) a 1 (gradiente otimizado)
+    call random_double_range
+    movsd [rax+16], xmm0         ; [rax+16] = accel_profile
+    inc r14
+    jmp .init_population
+
+.evolve:
+    ; 2. Loop evolutivo: 50 gerações
+    mov r14, 50                  ; gerações
+
+.gen_loop:
+    ; Avaliar fitness de cada indivíduo
+    call tokenic_evaluate_stellar ; retorna array de fitness
+    ; Selecionar elite (top 10%)
+    call tokenic_sort_population
+    call tokenic_select_elite
+    ; Crossover + mutação
+    call tokenic_breed_stellar
+    dec r14
+    jnz .gen_loop
+
+    ; 3. Retornar melhor indivíduo
+    mov rax, [tokenic_best]
+    movsd xmm0, [rax + 24]       ; fitness do melhor
+    movsd [phi_sail], xmm0
+
+    pop r14
+    pop r13
+    pop r12
+    leave
+    ret
+
+; ═══════════════════════════════════════════════════════════════════════════════
+; FITNESS FUNCTION: tokenic_evaluate_stellar
+; Avalia cada indivíduo da população tokenic para parâmetros da vela estelar.
+; Fitness = eficiência de aceleração × (1 - desvio de trajetória) × fator térmico
+; ═══════════════════════════════════════════════════════════════════════════════
+tokenic_evaluate_stellar:
+    push rbp
+    mov rbp, rsp
+    mov r12, [tokenic_population]
+    mov r13, TOKENIC_POP_SIZE
+    xor r14, r14
+
+.eval_loop:
+    cmp r14, r13
+    jge .done
+    mov rax, [r12 + r14*8]
+    ; Extrair parâmetros do indivíduo
+    movsd xmm0, [rax]        ; sail_angle
+
+    ; Calcular eficiência de aceleração (modelo simplificado do Metajet)
+    ; eff = cos²(angle) * (1 - exp(-power/P0)) * (1 + 0.2 * accel_profile)
+    movsd xmm3, xmm0         ; angle
+    call cos_double
+    mulsd xmm0, xmm0         ; cos²(angle)
+    mov rax, [r12 + r14*8]
+    movsd xmm1, [rax+8]      ; laser_power
+    movsd xmm2, [rax+16]     ; accel_profile
+    movsd xmm4, xmm1         ; power
+    divsd xmm4, [laser_p0]   ; P0 = 10 GW (referência)
+    movsd xmm5, [const_one_d]
+    ; exp(-power/P0) aproximado como 1/(1 + power/P0)
+    addsd xmm4, [const_one_d]
+    divsd xmm5, xmm4
+    movsd xmm4, [const_one_d]
+    subsd xmm4, xmm5          ; 1 - exp(-P/P0)
+    mulsd xmm0, xmm4
+    ; Bônus por perfil de aceleração otimizado
+    movsd xmm5, xmm2
+    mulsd xmm5, [accel_bonus] ; 0.2
+    addsd xmm5, [const_one_d]
+    mulsd xmm0, xmm5
+
+    ; Penalidade térmica: se laser_power > 50 GW, eficiência cai
+    movsd xmm5, xmm1
+    subsd xmm5, [thermal_limit] ; 50 GW
+    comisd xmm5, [const_zero_d]
+    jbe .no_thermal_penalty
+    mulsd xmm5, [thermal_penalty] ; 0.001
+    movsd xmm6, [const_one_d]
+    subsd xmm6, xmm5
+    mulsd xmm0, xmm6
+.no_thermal_penalty:
+
+    ; Armazenar fitness
+    movsd [rax + 24], xmm0     ; fitness
+    inc r14
+    jmp .eval_loop
+
+.done:
+    leave
+    ret
+
 tokenic_sort_population:
     push rbp
     mov rbp, rsp
@@ -433,6 +588,8 @@ tokenic_breed_generation:
     push rax
     movsd xmm1, [rsp]
     add rsp, 8
+    addsd xmm0, xmm1
+    movsd [r10], xmm0
     dec r8
     jnz .mutate
     inc r15
@@ -489,6 +646,69 @@ exit_kernel:
     xor rdi, rdi
     syscall
 
+; ═══════════════════════════════════════════════════════════════════════════════
+; INVOKE SERV (Lightweight Validation)
+; ═══════════════════════════════════════════════════════════════════════════════
+invoke_serv:
+    push rbp
+    mov rbp, rsp
+    ; 1. Escrever input_data no sysfs do Serv
+    lea rdi, [serv_input_path_tmpl]
+    mov rsi, rdi
+    call sprintf_path
+    mov rdi, rax
+    mov rsi, r8
+    mov edx, r9d
+    call write_sysfs_file
+    ; 2. Escrever time_direction (default +1)
+    lea rdi, [serv_time_path_tmpl]
+    mov rsi, rdi
+    call sprintf_path
+    mov rdi, rax
+    lea rsi, [str_plus_one]
+    mov edx, 2
+    call write_sysfs_file
+    ; 3. Escrever "1" no invoke
+    lea rdi, [serv_invoke_path_tmpl]
+    mov rsi, rdi
+    call sprintf_path
+    mov rdi, rax
+    lea rsi, [str_one]
+    mov edx, 1
+    call write_sysfs_file
+    ; 4. Aguardar status == "verified"
+.poll:
+    lea rdi, [serv_status_path_tmpl]
+    mov rsi, rdi
+    call sprintf_path
+    mov rdi, rax
+    call read_sysfs_int
+    cmp eax, 2
+    jne .poll
+    ; 5. Ler o resultado JSON do sysfs result
+    lea rdi, [serv_result_path_tmpl]
+    mov rsi, rdi
+    call sprintf_path
+    mov rdi, rax
+    lea rsi, [json_result_buffer]
+    mov edx, 8192
+    call read_sysfs_file
+    ; 6. Validar resposta (hashes + assinatura)
+    mov rdi, json_result_buffer
+    mov rsi, input_data
+    mov edx, input_len
+    mov rcx, output_buffer
+    mov r8d, output_buf_size
+    call validate_serv_response
+    test rax, rax
+    jnz .fail
+    xor eax, eax
+    jmp .done
+.fail:
+    mov eax, -1
+    pxor xmm0, xmm0
+.done:
+    leave
 
 sha3_256:
     ret
@@ -506,6 +726,104 @@ sha3_256:
 validate_serv_response:
     push rbp
     mov rbp, rsp
+    ; 1. Calcular input_hash localmente
+    lea rdi, [input_hash_buf]
+    mov rsi, rsi
+    mov ecx, edx
+    call sha3_256
+    ; 2. Extrair campos do JSON
+    call parse_signed_result_json
+    ; 3. Decodificar output base64 → binário no output_buffer
+    lea rdi, [json_output_base64]
+    lea rsi, [output_buffer]
+    mov ecx, r8d
+    call base64_decode
+    ; 4. Calcular output_hash a partir do output decodificado
+    lea rdi, [output_hash_buf]
+    mov rsi, output_buffer
+    mov ecx, eax
+    call sha3_256
+    ; 5. Comparar hashes
+    lea rsi, [input_hash_buf]
+    lea rdi, [json_input_hash]
+    mov ecx, 32
+    repe cmpsb
+    jne .invalid
+    lea rsi, [output_hash_buf]
+    lea rdi, [json_output_hash]
+    mov ecx, 32
+    repe cmpsb
+    jne .invalid
+    ; 6. Montar mensagem para verificação de assinatura
+    lea rdi, [sign_msg_buf]
+    lea rsi, [input_hash_buf]
+    mov ecx, 32
+    rep movsb
+    lea rsi, [output_hash_buf]
+    mov ecx, 32
+    rep movsb
+    movsd xmm0, [json_phi_score_double]
+    mov eax, 10000
+    cvtsi2sd xmm1, eax
+    mulsd xmm0, xmm1
+    cvttsd2si eax, xmm0
+    stosd
+    lea rsi, [json_timestamp]
+.copy_ts:
+    lodsb
+    test al, al
+    jz .ts_done
+    stosb
+    jmp .copy_ts
+.ts_done:
+    lea rsi, [json_gateway_id]
+.copy_gw:
+    lodsb
+    test al, al
+    jz .gw_done
+    stosb
+    jmp .copy_gw
+.gw_done:
+    mov rbx, rdi
+    lea rdi, [sign_msg_buf]
+    mov edx, ebx
+    sub edx, edi
+    ; 7. Verificar assinatura Ed25519
+    lea rdi, [gateway_pubkey_raw]
+    mov rsi, sign_msg_buf
+    mov edx, edx
+    lea rcx, [json_signature_raw]
+    call sys_ed25519_verify
+    test rax, rax
+    jnz .invalid
+    ; 8. Tudo válido, retornar phi_score em xmm0
+    movsd xmm0, [json_phi_score_double]
+    xor eax, eax
+    jmp .done
+.invalid:
+    mov eax, -1
+    pxor xmm0, xmm0
+.done:
+    leave
+    ret
+
+load_gateway_pubkey:
+    ret
+sprintf_path:
+    ret
+write_sysfs_file:
+    ret
+read_sysfs_int:
+    ret
+read_sysfs_file:
+    ret
+sha3_256:
+    ret
+parse_signed_result_json:
+    ret
+base64_decode:
+    ret
+sys_ed25519_verify:
     push r12
     push r13
     push r14
@@ -650,6 +968,16 @@ sample_solar_heart:
     ret
 
 ; STUBS
+
+random_double_range:
+    ret
+tokenic_select_elite:
+    ret
+tokenic_breed_stellar:
+    ret
+cos_double:
+    ret
+
 json_extract_phi_sun:
     pxor xmm0, xmm0
     ret
