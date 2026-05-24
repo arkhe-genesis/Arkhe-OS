@@ -143,14 +143,14 @@ def test_621_erdos_unit_distance():
     spec.loader.exec_module(module)
 
     canonizer = module.Substrato621ErdosUnitDistance()
-    path = canonizer.generate_json()
+    plugin_path, path = canonizer.generate()
 
     assert os.path.exists(path)
 
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    assert data["id"] == "621-ERDOS-UNIT-DISTANCE"
+    assert data["id"] == "621-ERDŐS-UNIT-DISTANCE"
 
 def test_621_f_strings():
     import os
@@ -529,3 +529,44 @@ def test_623_f_strings():
         plugin_content = f.read()
 
     assert not re.search(r'\bf(["\'])', plugin_content), "f-strings are strictly forbidden in python files"
+
+def test_627_t_duality():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_627_t_duality",
+        "substrates/627-T-DUALITY/substrato_627_t_duality.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato627TDuality()
+    path = canonizer.generate_json()
+    assert os.path.exists(path)
+
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "627-T-DUALITY"
+    assert "canonical_seal" in data
+
+def test_629_gnosis_integrator():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_629_gnosis_integrator",
+        "substrates/629-GNOSIS-INTEGRATOR/substrato_629_gnosis_integrator.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato629GnosisIntegrator()
+    path = canonizer.generate_json()
+    assert os.path.exists(path)
+
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "629-GNOSIS-INTEGRATOR"

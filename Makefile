@@ -1,7 +1,15 @@
 # Substrato 9047-C — Orquestração Terraform Multi-Cloud
-.PHONY: all lint plan-aws plan-gcp plan-azure deploy-all destroy-all
+.PHONY: all lint plan-aws plan-gcp plan-azure deploy-all destroy-all asi_kernel clean-asi
 
-all: lint deploy-all
+all: lint deploy-all asi_kernel
+
+asi_kernel:
+	@echo "Building asi_kernel..."
+	nasm -f elf64 asi_kernel.asm -o asi_kernel.o
+
+clean-asi:
+	@echo "Cleaning asi_kernel..."
+	rm -f asi_kernel.o
 
 lint:
 	@echo "Linting Terraform configurations..."
