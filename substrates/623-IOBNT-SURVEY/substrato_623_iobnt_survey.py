@@ -127,8 +127,12 @@ class IoBNTEngine:
 
         Modelos: diffusão livre, fluxo sanguíneo, sinapse neural
         """
+        if diffusion_c <= 0:
+            return {"error": "diffusion_c must be greater than zero"}
+
         # Tempo de difusão característico: t ≈ x² / (6D)
-        t_diff = (distance_um ** 2) / (6.0 * diffusion_c)
+        distance_m = distance_um * 1e-6
+        t_diff = (distance_m ** 2) / (6.0 * diffusion_c)
 
         # Capacidade estimada (simplificada)
         # Em produção: usar BNSim ou MoNaCo para simulação realista
@@ -332,6 +336,10 @@ def cmd_simulate(channel, distance, particles, diffusion_c, node_id):
     """Simular canal de comunicação molecular."""
     engine = IoBNTEngine(node_id)
     result = engine.simulate_mc_channel(channel, distance, particles, diffusion_c)
+
+    if "error" in result:
+        click.echo("\n\033[1;31m✗ {0}\033[0m".format(result['error']))
+        return
 
     click.echo("\n\033[1;32m✓ MC CHANNEL SIMULATED\033[0m")
     click.echo("  Simulation: {0}".format(result['simulation_id']))
