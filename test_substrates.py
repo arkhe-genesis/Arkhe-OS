@@ -161,7 +161,7 @@ def test_621_erdos_unit_distance():
         import json
         data = json.load(f)
 
-    assert data["id"] == "621-ERDŐS-UNIT-DISTANCE"
+    assert data["id"] == "621-ERDOS-UNIT-DISTANCE"
 
 def test_621_f_strings():
     import os
