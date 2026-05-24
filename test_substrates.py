@@ -309,6 +309,35 @@ def test_603_hashtree_cc():
         content = f.read()
     assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
 
+def test_615_photonic_6g():
+    import importlib.util
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/600-699_advanced/substrato_615_photonic_6g/substrato_615_photonic_6g.py')
+    spec = importlib.util.spec_from_file_location("substrato_615_photonic_6g", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrate615Canonizer()
+    report_path = canonizer.canonize()
+
+    assert os.path.exists(report_path)
+
+    with open(report_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "615-PHOTONIC-6G"
+    assert "seal" in data
+    assert len(data["seal"]) == 64
+    assert len(data["artifacts"]) == 5
+    assert data["status"] == "CANONIZED"
+
+    # Check that f-strings are strictly forbidden in the source
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
+
 def test_604_cybersecurity_ai():
     import importlib.util
     import json
