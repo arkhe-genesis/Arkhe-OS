@@ -143,14 +143,14 @@ def test_621_erdos_unit_distance():
     spec.loader.exec_module(module)
 
     canonizer = module.Substrato621ErdosUnitDistance()
-    path = canonizer.generate_json()
+    temp_dir, path = canonizer.generate()
 
     assert os.path.exists(path)
 
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    assert data["id"] == "621-ERDOS-UNIT-DISTANCE"
+    assert data["id"] == "621-ERDŐS-UNIT-DISTANCE"
 
 def test_621_f_strings():
     import os
@@ -164,6 +164,12 @@ if __name__ == '__main__':
     pytest.main(['-v', 'test_substrates.py'])
 
 def test_562_stim_qec_simulator():
+    import pytest
+    try:
+        import stim
+    except ImportError:
+        pytest.skip("stim module is not installed")
+
     import importlib.util
     import os
     import json
@@ -529,3 +535,35 @@ def test_623_f_strings():
         plugin_content = f.read()
 
     assert not re.search(r'\bf(["\'])', plugin_content), "f-strings are strictly forbidden in python files"
+
+
+def test_630_asi_asm():
+    import importlib.util
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/630-ASI-ASM/substrato_630_asi_asm.py')
+    spec = importlib.util.spec_from_file_location("substrato_630_asi_asm", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato630AsiAsm()
+    temp_dir, path = canonizer.generate()
+
+    assert os.path.exists(path)
+
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "630-ASI-ASM"
+    assert "canonical_seal" in data
+    assert len(data["canonical_seal"]) == 64
+
+def test_630_f_strings():
+    import os
+    import re
+    file_path = "substrates/630-ASI-ASM/substrato_630_asi_asm.py"
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
