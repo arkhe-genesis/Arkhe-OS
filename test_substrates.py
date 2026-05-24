@@ -340,3 +340,93 @@ def test_612_f_strings():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
     assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
+
+def test_621_erdos_unit_distance():
+    import importlib.util
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/621-ERDOS-UNIT-DISTANCE/substrato_621_erdos_unit_distance.py')
+    spec = importlib.util.spec_from_file_location("substrato_621_erdos_unit_distance", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato621ErdosUnitDistance()
+    path = canonizer.generate_json()
+
+    assert os.path.exists(path)
+
+    json_path = os.path.join(path, "FICHA_CANONICA_621.json")
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "621-ERDŐS-UNIT-DISTANCE"
+    assert "seal_sha3_256" in data
+    assert len(data["seal_sha3_256"]) == 64
+
+def test_621_f_strings():
+    import os
+    file_path = os.path.abspath('substrates/621-ERDOS-UNIT-DISTANCE/substrato_621_erdos_unit_distance.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
+
+def test_619_octra():
+    import importlib.util
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/619-OCTRA/substrato_619_octra.py')
+    spec = importlib.util.spec_from_file_location("substrato_619_octra", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato619Octra()
+    path = canonizer.generate_json()
+
+    assert os.path.exists(path)
+
+    json_path = os.path.join(path, "FICHA_CANONICA_619.json")
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "619-OCTRA"
+    assert "seal_sha256" in data
+    assert len(data["seal_sha256"]) == 64
+
+def test_619_f_strings():
+    import os
+    file_path = os.path.abspath('substrates/619-OCTRA/substrato_619_octra.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
+
+def test_617_quantum_teleport():
+    import importlib.util
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/617-QUANTUM-TELEPORT/substrato_617_quantum_teleport.py')
+    spec = importlib.util.spec_from_file_location("substrato_617_quantum_teleport", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato617QuantumTeleport()
+    path = canonizer.generate_json()
+
+    assert os.path.exists(path)
+
+    json_path = os.path.join(path, "FICHA_CANONICA_617.json")
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "617-QUANTUM-TELEPORT"
+    assert "seal_sha256" in data
+    assert len(data["seal_sha256"]) == 64
+
+def test_617_f_strings():
+    import os
+    file_path = os.path.abspath('substrates/617-QUANTUM-TELEPORT/substrato_617_quantum_teleport.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
