@@ -160,7 +160,7 @@ def test_621_erdos_unit_distance():
         import json
         data = json.load(f)
 
-    assert data["id"] == "621-ERDŐS-UNIT-DISTANCE"
+    assert data["id"] == "621-ERDOS-UNIT-DISTANCE"
 
 def test_621_f_strings():
     import os
@@ -688,3 +688,28 @@ def test_631_f_strings():
     with open(file_path, 'r') as f:
         content = f.read()
     assert not re.search(r'\bf(["\'])', content), "Found f-string in gateway_http.py"
+
+def test_636_mobile_cathedral():
+    import importlib.util
+    file_path = os.path.abspath('substrates/636-MOBILE-CATHEDRAL/substrato_636_mobile_cathedral.py')
+    spec = importlib.util.spec_from_file_location("substrato_636_mobile_cathedral", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato636MobileCathedral()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        import json
+        data = json.load(f)
+    assert data["id"] == "636-MOBILE-CATHEDRAL"
+    assert data["phi_c"] == 0.993
+    assert data["seal"] == "d4e8f1c3a7b2e5d9f0a4c8b1e6d3a9f2c5b7e0d4a8f1c3b6e9d2a5f8c1b4e7d0"
+
+def test_636_f_strings():
+    import re
+    file_path = os.path.abspath('substrates/636-MOBILE-CATHEDRAL/substrato_636_mobile_cathedral.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), "Found f-string in substrato_636_mobile_cathedral.py"
