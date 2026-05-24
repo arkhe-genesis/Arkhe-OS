@@ -70,7 +70,7 @@ class ShieldnetEngine:
 
         # Gera prova via Stone Prover (simulação — em produção: Cairo VM)
         # using str concatenation to avoid f-strings
-        proof_id = "SHIELD-" + str(substrate_id) + "-" + str(int(datetime.now().timestamp()))
+        proof_id = "SHIELD-" + str(substrate_id) + "-" + str(int(datetime.now().timestamp())) + "-" + state_diff_hash[:8]
 
         # Simula geração de prova
         proof_bytes = self._simulate_stone_prove(state_diff_hash, substrate_id)
@@ -370,6 +370,10 @@ def cmd_verify(proof_id):
     """Verifica STARK proof em O(log n)."""
     engine = ShieldnetEngine()
     result = engine.verify_proof(proof_id)
+
+    if result["status"] == "ERROR":
+        click.echo("\n\033[1;31m✗ {}\033[0m".format(result.get("motivo", "Unknown error")))
+        return
 
     icon = "✓" if result["status"] == "VERIFIED" else "✗"
     color = "32" if result["status"] == "VERIFIED" else "31"
