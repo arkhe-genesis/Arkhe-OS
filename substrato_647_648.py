@@ -148,6 +148,7 @@ compute_geometric_stability:
     inc byte [geometric_safe_counter]
     cmp byte [geometric_safe_counter], 3
     jb .apply_correction
+    ja .apply_correction
     mov byte [geometric_safe_mode], 1
     ; Reduzir corrente do Plasma Chalice em 50%
     movsd xmm0, [torus_current]
