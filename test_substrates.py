@@ -94,6 +94,43 @@ def test_614_shieldnet():
         content = f.read()
     assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
 
+
+def test_619_octra():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_619_octra",
+        "substrates/619-OCTRA/substrato_619_octra.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    path = module.canonize_619()
+    assert os.path.exists(path)
+
+    json_path = os.path.join(path, "FICHA_CANONICA_619.json")
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "619-OCTRA"
+    assert "seal_sha3_256" in data
+    assert len(data["seal_sha3_256"]) == 64
+
+    plugin_path = os.path.join(path, "arkhe_os", "plugins", "octra", "arkhe_octra.py")
+    assert os.path.exists(plugin_path)
+
+def test_619_f_strings():
+    import os
+    file_path = "substrates/619-OCTRA/substrato_619_octra.py"
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    lines = content.split('\n')
+    for i, line in enumerate(lines):
+        if " f'" in line or ' f"' in line or line.startswith("f'") or line.startswith('f"'):
+            assert False, "f-string found in line {}: {}".format(i+1, line.strip())
+
 if __name__ == '__main__':
     pytest.main(['-v', 'test_substrates.py'])
 
