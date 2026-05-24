@@ -160,7 +160,7 @@ def test_621_erdos_unit_distance():
         import json
         data = json.load(f)
 
-    assert data["id"] == "621-ERDŐS-UNIT-DISTANCE"
+    assert data["id"] == "621-ERDOS-UNIT-DISTANCE"
 
 def test_621_f_strings():
     import os
@@ -688,3 +688,30 @@ def test_631_f_strings():
     with open(file_path, 'r') as f:
         content = f.read()
     assert not re.search(r'\bf(["\'])', content), "Found f-string in gateway_http.py"
+
+def test_636_mobile_cathedral():
+    import importlib.util
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/636-MOBILE-CATHEDRAL/substrato_636_mobile_cathedral.py')
+    spec = importlib.util.spec_from_file_location("substrato_636_mobile_cathedral", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    path = module.canonize_substrate()
+
+    assert os.path.exists(path)
+
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "636-MOBILE-CATHEDRAL"
+    assert data["metrics"]["phi_c"] == "0.988611"
+    assert data["metrics"]["ti"] == "0.985000"
+
+    # Check for f-strings
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    import re
+    assert not re.search(r'\bf(["\'])', content), "f-strings are not allowed"
