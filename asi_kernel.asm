@@ -613,6 +613,8 @@ sample_photonic_link:
 sample_solar_heart:
     push rbp
     mov rbp, rsp
+    push r12
+    push r13
     ; 1. Abrir /sys/arkhe/serv/solar-heart/result
     mov rax, SYS_OPEN
     lea rdi, [rel solar_result_path]  ; "/sys/arkhe/serv/solar-heart/result"
@@ -642,6 +644,8 @@ sample_solar_heart:
     ;    (implementar conforme necessidade)
     add rsp, 4096
 .done:
+    pop r13
+    pop r12
     leave
     ret
 
