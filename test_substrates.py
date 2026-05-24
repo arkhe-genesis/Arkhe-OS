@@ -363,3 +363,37 @@ def test_612_f_strings():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
     assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
+
+def test_620_monastic_sandboxing():
+    import importlib.util
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/620-MONASTIC-SANDBOXING/substrato_620_monastic_sandboxing.py')
+    spec = importlib.util.spec_from_file_location("substrato_620_monastic_sandboxing", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato620MonasticSandboxing()
+    path = canonizer.generate_json()
+
+    assert os.path.exists(path)
+
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "620-MONASTIC-SANDBOXING"
+    assert "canonical_seal" in data
+    assert len(data["canonical_seal"]) == 64
+
+def test_620_f_strings():
+    import os
+    file_path = os.path.abspath('substrates/620-MONASTIC-SANDBOXING/substrato_620_monastic_sandboxing.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden in python files"
+
+    plugin_path = os.path.abspath('arkhe-os-cli/arkhe_os/plugins/arkhe_monastic.py')
+    with open(plugin_path, "r", encoding="utf-8") as f:
+        plugin_content = f.read()
+    assert "f'" not in plugin_content and 'f"' not in plugin_content, "f-strings are strictly forbidden in plugin files"
