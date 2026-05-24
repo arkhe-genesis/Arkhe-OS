@@ -131,6 +131,21 @@ def test_619_f_strings():
         if " f'" in line or ' f"' in line or line.startswith("f'") or line.startswith('f"'):
             assert False, "f-string found in line {}: {}".format(i+1, line.strip())
 
+
+def test_627_dimensional_geometry():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location(
+        "substrato_627_dimensional_geometry",
+        "substrates/627-DIMENSIONAL-GEOMETRY/substrato_627_dimensional_geometry.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    module.canonize()
+
+    assert os.path.exists("arkhe/geometry/dimensions.py")
+    assert os.path.exists("arkhe/geometry/__init__.py")
+
 if __name__ == '__main__':
     pytest.main(['-v', 'test_substrates.py'])
 
