@@ -333,8 +333,15 @@ def show_progress(ia, format):
 @click.option("--level", "-l", type=click.Choice(["Nivel1", "Nivel2", "Nivel3", "Mestre"]), default="Nivel3")
 @click.option("--architect", "-a", default="0009-0005-2697-4668", help="ORCID do Arquiteto")
 def certify_ia(ia, level, architect):
+    import json
+    from pathlib import Path
     from arkhe.plugins.arkhe_quiz import AI_CertificationEngine
     engine = AI_CertificationEngine(ia_model_id=ia, architect_orcid=architect)
+
+    state_file = Path.home() / ".arkhe" / "ia_training_{}.json".format(ia.replace('/', '_'))
+    if state_file.exists():
+        data = json.loads(state_file.read_text())
+        engine.scores = data.get("scores", {p: {} for p in ["P{}".format(i) for i in range(1, 12)]})
 
     if engine.is_ia_certified(level):
         badge = engine.issue_ia_badge(level)
@@ -367,7 +374,10 @@ def _get_ia_training_state(ia_model_id):
     if not state_file.exists():
         return []
     data = json.loads(state_file.read_text())
-    return list(data.get("scores", {}).keys())
+    trained_topics = []
+    for pillar_scores in data.get("scores", {}).values():
+        trained_topics.extend(pillar_scores.keys())
+    return trained_topics
 
 def _resolve_name_from_id(topic_id):
     for name, tid in _TOPIC_ID_MAP.items():
@@ -703,6 +713,9 @@ class CurriculumRepoIndexer:
         codegraph_dir = target_dir / ".codegraph"
 
         if not target_dir.exists() or force:
+            if force and target_dir.exists():
+                import shutil
+                shutil.rmtree(target_dir)
             print("[612↔611] Cloning {} for {}...".format(repo_name, topic_id))
             subprocess.run(
                 ["git", "clone", "--depth", "1", repo_url, str(target_dir)],
