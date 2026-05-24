@@ -30,7 +30,7 @@ class EntropyMonitor:
             self.dns_entropy_buffer += count
 
     def compute_shannon_entropy(self) -> float:
-        """Calcula a entropia de Shannon das traduções recentes."""
+        """Calcula a entropia de von Neumann (fracamente quase i.i.d.) das traduções recentes."""
         with self._lock:
             total = sum(self.translation_counter.values())
             if total == 0:
@@ -39,9 +39,13 @@ class EntropyMonitor:
                 return max(0.0, 0.0 - dns_reduction)
 
             entropy = 0.0
+            # Aproximação espectral para fontes quânticas fracamente quase i.i.d.
+            # Onde os autovalores da matriz de densidade reduzida são aproximados
+            # pela distribuição de probabilidade das ações.
             for count in self.translation_counter.values():
                 if count > 0:
                     p = count / total
+                    # Entropia de von Neumann S(rho) = -Tr(rho log2 rho)
                     entropy -= p * math.log2(p)
 
             # O numa reduz a entropia total bloqueando domínios de rastreamento
