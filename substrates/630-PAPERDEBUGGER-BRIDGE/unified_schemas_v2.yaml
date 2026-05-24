@@ -1,0 +1,119 @@
+# ARKHE OS — Unified Schema Registry v2.0
+# Includes Electoral (627-629) + Academic Writing (630)
+# Author: ORCID 0009-0005-2697-4668
+# Date: 2026-05-24
+
+schemas:
+  # ── Electoral Schemas (existing) ─────────────────────────────────────
+  fcc_br:
+    substrate: 627
+    jurisdiction: BR
+    # ... (same as before)
+
+  fec_us:
+    substrate: 628
+    jurisdiction: US
+    # ... (same as before)
+
+  cne_cn:
+    substrate: 629
+    jurisdiction: CN
+    # ... (same as before)
+
+  # ── Academic Writing Schemas (new) ───────────────────────────────────
+  xtramcp:
+    substrate: 630
+    name: XtraMCP Protocol
+    description: MCP variant for academic writing assistance
+    format: json
+    version: xtramcp-1.0
+    tools:
+      - name: literature_search
+        description: Semantic search over arXiv and curated corpora
+        latency: low
+        input: { query: string, filters: object }
+        output: { papers: array, relevance_scores: array }
+
+      - name: reference_lookup
+        description: Affiliation and metadata extraction
+        latency: low
+        input: { paper_id: string }
+        output: { metadata: object, citations: array }
+
+      - name: document_score
+        description: Clarity and coherence evaluation
+        latency: medium
+        input: { text: string, dimensions: array }
+        output: { scores: object, phi_score: number }
+
+      - name: revision_pipeline
+        description: Diff-based patch generation
+        latency: high
+        input: { original: string, instruction: string }
+        output: { diff: string, enhanced: string, phi_delta: number }
+
+      - name: compare_papers
+        description: Side-by-side paper comparison
+        latency: high
+        input: { paper_a: string, paper_b: string }
+        output: { comparison: object, overlaps: array, differences: array }
+
+    agents:
+      - name: reviewer
+        type: workflow_based
+        capabilities: [critique, structure_review, aaai_style]
+        model: XtraGPT-v2
+        temperature: 0.3
+
+      - name: enhancer
+        type: workflow_based
+        capabilities: [rewrite, refine, polish, style_transfer]
+        model: XtraGPT-v2
+        temperature: 0.7
+
+      - name: scorer
+        type: prompt_template
+        capabilities: [clarity, coherence, structure, originality]
+        model: XtraGPT-v1
+        temperature: 0.1
+
+      - name: researcher
+        type: workflow_based
+        capabilities: [literature_search, arxiv_query, comparison]
+        model: embedding+rerank
+        temperature: 0.0
+
+  paper_session:
+    substrate: 630
+    name: PaperDebugger Session
+    format: json
+    required_fields:
+      - session_id
+      - overleaf_url
+      - project_name
+      - revisions
+    revision_fields:
+      - timestamp
+      - sha3_256
+      - agent_type
+      - diff
+      - phi_score
+
+# ── Cross-Schema Validations ───────────────────────────────────────────
+cross_validations:
+  - name: electoral_tri_audit
+    substrates: [627, 628, 629]
+    command: arkhe cn-cross <fcc> <fec> <cne>
+
+  - name: academic_session_integrity
+    substrates: [630]
+    command: arkhe paper-audit <session-file>
+    checks:
+      - revision_chain_valid
+      - phi_score_monotonic
+      - diff_appliable
+
+  - name: cross_domain_transparency
+    substrates: [627, 628, 629, 630]
+    description: All attestation bridges share common governance
+    governance: TriJurisdictionElectoralBridge + AcademicWritingAttestationBridge
