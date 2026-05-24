@@ -3,6 +3,12 @@ default rel
 
 section .rodata
 align 8
+    max_throughput:  dq 112.0
+    evm_hd_fec_16qam: dq 12.9
+    const_one_d:     dq 1.0
+    eta_photon:      dq 0.03
+    photon_evm_path: db "/sys/arkhe/photon/evm", 0
+    photon_throughput_path: db "/sys/arkhe/photon/throughput", 0
 const_one:       dq 1.0
 const_neg_one:   dq -1.0
 const_half:      dq 0.5
@@ -34,6 +40,8 @@ tokenic_best:    resq 1
 pca_current_phase: resd 1
 pca_cycles_completed: resq 1
 phi_measurement: resq 1
+photon_lambda:   resq 1
+gnosis_index:    resq 1
 current_brk:     resq 1
 input_hash_buffer: resb 32
 output_hash_buffer: resb 32
@@ -425,6 +433,11 @@ consciousness_loop:
     call pca_superposition
     mov dword [pca_current_phase], 3
     call or_executing
+    call sample_plasma_modes
+    call sample_bioacoustic
+    call sample_human_bci
+    call sample_photonic_link
+    call integrate_gnosis
     movsd xmm0, [phi_measurement]
     movsd xmm1, [rel phi_threshold_agi]
     comisd xmm0, xmm1
@@ -515,4 +528,59 @@ validate_serv_response:
     pop r13
     pop r12
     leave
+    ret
+
+; ═══════════════════════════════════════════════════════════════════════════════
+; SAMPLE PHOTONIC LINK
+; Lê /sys/arkhe/photon/evm e /sys/arkhe/photon/throughput, calcula Λ.
+; ═══════════════════════════════════════════════════════════════════════════════
+sample_photonic_link:
+    push rbp
+    mov rbp, rsp
+    ; 1. Ler EVM
+    lea rdi, [rel photon_evm_path]   ; "/sys/arkhe/photon/evm"
+    call read_sysfs_double        ; retorna double em xmm0
+    movsd xmm12, xmm0            ; EVM medido
+    ; 2. Ler throughput
+    lea rdi, [rel photon_throughput_path] ; "/sys/arkhe/photon/throughput"
+    call read_sysfs_double
+    movsd xmm13, xmm0            ; throughput em Gbps
+    ; 3. Calcular Λ = (throughput/112) * (1 - EVM/12.9)
+    movsd xmm0, xmm13
+    divsd xmm0, [rel max_throughput] ; 112.0
+    movsd xmm1, xmm12
+    divsd xmm1, [rel evm_hd_fec_16qam] ; 12.9
+    movsd xmm2, [rel const_one_d]
+    subsd xmm2, xmm1
+    mulsd xmm0, xmm2
+    ; limitar a [0, 1]
+    pxor xmm1, xmm1
+    comisd xmm0, xmm1
+    jae .not_neg
+    pxor xmm0, xmm0
+.not_neg:
+    movsd xmm1, [rel const_one_d]
+    comisd xmm0, xmm1
+    jbe .store
+    movsd xmm0, xmm1
+.store:
+    movsd [rel photon_lambda], xmm0
+    ; 4. Contribuir para γ: γ += η_photon * Λ
+    mulsd xmm0, [rel eta_photon]     ; 0.03
+    addsd xmm0, [rel gnosis_index]
+    movsd [rel gnosis_index], xmm0
+    leave
+    ret
+
+; STUBS
+read_sysfs_double:
+    pxor xmm0, xmm0
+    ret
+sample_plasma_modes:
+    ret
+sample_bioacoustic:
+    ret
+sample_human_bci:
+    ret
+integrate_gnosis:
     ret
