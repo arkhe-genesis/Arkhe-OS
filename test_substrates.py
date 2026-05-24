@@ -160,7 +160,37 @@ def test_621_f_strings():
         content = f.read()
     assert not bool(re.search(r'\bf["\']', content)), "f-strings are strictly forbidden in python files"
 
+
+def test_630_asi_asm():
+    import os
+    file_path = os.path.abspath('substrates/630-ASI-ASM/substrato_630_asi_asm.asm')
+    assert os.path.exists(file_path)
+    with open(file_path, "r", encoding="utf-8") as f:
+        data = f.read()
+    assert "630-ASI-ASM" in data
+
+def test_631_spintronic_neuromorphic():
+    import importlib.util
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/631-SPINTRONIC-NEUROMORPHIC/substrato_631_spintronic_neuromorphic.py')
+    spec = importlib.util.spec_from_file_location("substrato_631_spintronic", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato631SpintronicNeuromorphic()
+    path = canonizer.generate_json()
+
+    assert os.path.exists(path)
+
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "631-SPINTRONIC-NEUROMORPHIC"
+
 if __name__ == '__main__':
+
     pytest.main(['-v', 'test_substrates.py'])
 
 def test_562_stim_qec_simulator():
