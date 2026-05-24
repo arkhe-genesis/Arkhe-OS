@@ -675,7 +675,7 @@ validate_serv_response:
     lea rdi, [gateway_pubkey_raw]
     lea rsi, [sign_msg_buf]
     mov edx, ebx
-    lea rcx, [json_signature_raw]
+    lea r10, [json_signature_raw]
     mov eax, 401                ; sys_ed25519_verify
     syscall
     test rax, rax
