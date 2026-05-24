@@ -620,6 +620,7 @@ integrate_gnosis:
 sample_mobile_cathedral:
     push rbp
     mov rbp, rsp
+    push r12
     lea rdi, [rel mobile_state_path]
     mov esi, 0                    ; O_RDONLY
     mov rax, 2                    ; SYS_OPEN
@@ -638,6 +639,7 @@ sample_mobile_cathedral:
     syscall
     add rsp, 4096
 .done:
+    pop r12
     leave
     ret
 

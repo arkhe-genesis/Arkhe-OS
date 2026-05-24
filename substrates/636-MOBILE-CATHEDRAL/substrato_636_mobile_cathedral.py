@@ -46,14 +46,16 @@ class MobileCathedralController:
 
     async def upload_mission(self, waypoints):
         self.master.waypoint_clear_all_send()
+        self.master.waypoint_count_send(len(waypoints))
+
         for i, wp in enumerate(waypoints):
+            msg = self.master.recv_match(type='MISSION_REQUEST', blocking=True)
             self.master.mav.mission_item_int_send(
                 self.master.target_system, self.master.target_component,
-                i, wp['frame'], wp['command'], 0, wp['autocontinue'],
+                msg.seq, wp['frame'], wp['command'], 0, wp['autocontinue'],
                 wp['param1'], wp['param2'], wp['param3'], wp['param4'],
                 wp['x'], wp['y'], wp['z']
             )
-        self.master.waypoint_count_send(len(waypoints))
         print("[636] Mission uploaded: " + str(len(waypoints)) + " waypoints")
 
     async def mission_loop(self):
@@ -70,14 +72,15 @@ class MobileCathedralController:
     def compute_novelty(self):
         return np.random.uniform(0.5, 0.9)
 
+
     async def publish_state_to_kernel(self):
         state = {
             "timestamp": time.time(),
-            "latitude": self.get_gps()[0],
-            "longitude": self.get_gps()[1],
-            "altitude": self.get_altitude(),
+            "latitude": getattr(self, "latitude", 0.0),
+            "longitude": getattr(self, "longitude", 0.0),
+            "altitude": getattr(self, "altitude", 0.0),
             "phi_mobility": self.compute_phi_mobility(),
-            "battery_voltage": self.get_battery(),
+            "battery_voltage": getattr(self, "battery_voltage", 12.0),
             "state": self.state
         }
         try:
@@ -118,7 +121,7 @@ class BatSonar:
 
 MAX_SAFE_DISTANCE = 2.0
 
-async def safety_check():
+async def safety_check(sonar):
     sonar.emit_chirp()
     echoes = sonar.mics.record(duration=0.05)
     obstacles = sonar.detect_obstacles(echoes)
@@ -187,6 +190,7 @@ if __name__ == "__main__":
 sample_mobile_cathedral:
     push rbp
     mov rbp, rsp
+    push r12
     lea rdi, [rel mobile_state_path]
     mov esi, 0                    ; O_RDONLY
     mov rax, 2                    ; SYS_OPEN
@@ -206,6 +210,7 @@ sample_mobile_cathedral:
     syscall
     add rsp, 4096
 .done:
+    pop r12
     leave
     ret
 """).decode('utf-8')
