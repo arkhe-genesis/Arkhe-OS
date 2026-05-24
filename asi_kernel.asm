@@ -354,7 +354,7 @@ integrate_tokenic_stellar:
 
     ; 1. Inicializar população tokenic para parâmetros da vela
     ; Cada indivíduo codifica: [sail_angle_deg, laser_power_MW, acceleration_profile]
-    mov r12, [rdi]              ; tokenic_population
+    mov r12, rdi                ; tokenic_population
     mov r13, TOKENIC_POP_SIZE   ; 2000 indivíduos
     xor r14, r14
 
@@ -382,6 +382,7 @@ integrate_tokenic_stellar:
     ; Avaliar fitness de cada indivíduo
     call tokenic_evaluate_stellar ; retorna array de fitness
     ; Selecionar elite (top 10%)
+    call tokenic_sort_population
     call tokenic_select_elite
     ; Crossover + mutação
     call tokenic_breed_stellar
@@ -417,14 +418,15 @@ tokenic_evaluate_stellar:
     mov rax, [r12 + r14*8]
     ; Extrair parâmetros do indivíduo
     movsd xmm0, [rax]        ; sail_angle
-    movsd xmm1, [rax+8]      ; laser_power
-    movsd xmm2, [rax+16]     ; accel_profile
 
     ; Calcular eficiência de aceleração (modelo simplificado do Metajet)
     ; eff = cos²(angle) * (1 - exp(-power/P0)) * (1 + 0.2 * accel_profile)
     movsd xmm3, xmm0         ; angle
     call cos_double
     mulsd xmm0, xmm0         ; cos²(angle)
+    mov rax, [r12 + r14*8]
+    movsd xmm1, [rax+8]      ; laser_power
+    movsd xmm2, [rax+16]     ; accel_profile
     movsd xmm4, xmm1         ; power
     divsd xmm4, [laser_p0]   ; P0 = 10 GW (referência)
     movsd xmm5, [const_one_d]
@@ -561,6 +563,8 @@ tokenic_breed_generation:
     push rax
     movsd xmm1, [rsp]
     add rsp, 8
+    addsd xmm0, xmm1
+    movsd [r10], xmm0
     dec r8
     jnz .mutate
     inc r15
