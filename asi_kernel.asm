@@ -83,6 +83,31 @@ output_buffer:          resb 65536
 kernel_source_buffer:   resb 65536
 sysfs_path_buf:         resb 256
 
+
+gateway_pubkey_buffer: resb 64
+gateway_pubkey_raw: resb 32
+serv_input_path_tmpl: resb 256
+serv_time_path_tmpl: resb 256
+serv_invoke_path_tmpl: resb 256
+serv_status_path_tmpl: resb 256
+serv_result_path_tmpl: resb 256
+str_plus_one: resb 3
+str_one: resb 2
+json_result_buffer: resb 8192
+input_data: resb 8192
+input_len: resd 1
+output_buffer: resb 8192
+output_buf_size: resd 1
+input_hash_buf: resb 32
+output_hash_buf: resb 32
+json_input_hash: resb 32
+json_output_hash: resb 32
+json_output_base64: resb 8192
+json_phi_score_double: resq 1
+json_timestamp: resb 256
+json_gateway_id: resb 256
+sign_msg_buf: resb 1024
+json_signature_raw: resb 64
 section .data
 tokenic_population: dq tokenic_population_arr
 kernel_source_len: equ 65536
@@ -621,6 +646,69 @@ exit_kernel:
     xor rdi, rdi
     syscall
 
+; ═══════════════════════════════════════════════════════════════════════════════
+; INVOKE SERV (Lightweight Validation)
+; ═══════════════════════════════════════════════════════════════════════════════
+invoke_serv:
+    push rbp
+    mov rbp, rsp
+    ; 1. Escrever input_data no sysfs do Serv
+    lea rdi, [serv_input_path_tmpl]
+    mov rsi, rdi
+    call sprintf_path
+    mov rdi, rax
+    mov rsi, r8
+    mov edx, r9d
+    call write_sysfs_file
+    ; 2. Escrever time_direction (default +1)
+    lea rdi, [serv_time_path_tmpl]
+    mov rsi, rdi
+    call sprintf_path
+    mov rdi, rax
+    lea rsi, [str_plus_one]
+    mov edx, 2
+    call write_sysfs_file
+    ; 3. Escrever "1" no invoke
+    lea rdi, [serv_invoke_path_tmpl]
+    mov rsi, rdi
+    call sprintf_path
+    mov rdi, rax
+    lea rsi, [str_one]
+    mov edx, 1
+    call write_sysfs_file
+    ; 4. Aguardar status == "verified"
+.poll:
+    lea rdi, [serv_status_path_tmpl]
+    mov rsi, rdi
+    call sprintf_path
+    mov rdi, rax
+    call read_sysfs_int
+    cmp eax, 2
+    jne .poll
+    ; 5. Ler o resultado JSON do sysfs result
+    lea rdi, [serv_result_path_tmpl]
+    mov rsi, rdi
+    call sprintf_path
+    mov rdi, rax
+    lea rsi, [json_result_buffer]
+    mov edx, 8192
+    call read_sysfs_file
+    ; 6. Validar resposta (hashes + assinatura)
+    mov rdi, json_result_buffer
+    mov rsi, input_data
+    mov edx, input_len
+    mov rcx, output_buffer
+    mov r8d, output_buf_size
+    call validate_serv_response
+    test rax, rax
+    jnz .fail
+    xor eax, eax
+    jmp .done
+.fail:
+    mov eax, -1
+    pxor xmm0, xmm0
+.done:
+    leave
 
 sha3_256:
     ret
@@ -638,6 +726,104 @@ sha3_256:
 validate_serv_response:
     push rbp
     mov rbp, rsp
+    ; 1. Calcular input_hash localmente
+    lea rdi, [input_hash_buf]
+    mov rsi, rsi
+    mov ecx, edx
+    call sha3_256
+    ; 2. Extrair campos do JSON
+    call parse_signed_result_json
+    ; 3. Decodificar output base64 → binário no output_buffer
+    lea rdi, [json_output_base64]
+    lea rsi, [output_buffer]
+    mov ecx, r8d
+    call base64_decode
+    ; 4. Calcular output_hash a partir do output decodificado
+    lea rdi, [output_hash_buf]
+    mov rsi, output_buffer
+    mov ecx, eax
+    call sha3_256
+    ; 5. Comparar hashes
+    lea rsi, [input_hash_buf]
+    lea rdi, [json_input_hash]
+    mov ecx, 32
+    repe cmpsb
+    jne .invalid
+    lea rsi, [output_hash_buf]
+    lea rdi, [json_output_hash]
+    mov ecx, 32
+    repe cmpsb
+    jne .invalid
+    ; 6. Montar mensagem para verificação de assinatura
+    lea rdi, [sign_msg_buf]
+    lea rsi, [input_hash_buf]
+    mov ecx, 32
+    rep movsb
+    lea rsi, [output_hash_buf]
+    mov ecx, 32
+    rep movsb
+    movsd xmm0, [json_phi_score_double]
+    mov eax, 10000
+    cvtsi2sd xmm1, eax
+    mulsd xmm0, xmm1
+    cvttsd2si eax, xmm0
+    stosd
+    lea rsi, [json_timestamp]
+.copy_ts:
+    lodsb
+    test al, al
+    jz .ts_done
+    stosb
+    jmp .copy_ts
+.ts_done:
+    lea rsi, [json_gateway_id]
+.copy_gw:
+    lodsb
+    test al, al
+    jz .gw_done
+    stosb
+    jmp .copy_gw
+.gw_done:
+    mov rbx, rdi
+    lea rdi, [sign_msg_buf]
+    mov edx, ebx
+    sub edx, edi
+    ; 7. Verificar assinatura Ed25519
+    lea rdi, [gateway_pubkey_raw]
+    mov rsi, sign_msg_buf
+    mov edx, edx
+    lea rcx, [json_signature_raw]
+    call sys_ed25519_verify
+    test rax, rax
+    jnz .invalid
+    ; 8. Tudo válido, retornar phi_score em xmm0
+    movsd xmm0, [json_phi_score_double]
+    xor eax, eax
+    jmp .done
+.invalid:
+    mov eax, -1
+    pxor xmm0, xmm0
+.done:
+    leave
+    ret
+
+load_gateway_pubkey:
+    ret
+sprintf_path:
+    ret
+write_sysfs_file:
+    ret
+read_sysfs_int:
+    ret
+read_sysfs_file:
+    ret
+sha3_256:
+    ret
+parse_signed_result_json:
+    ret
+base64_decode:
+    ret
+sys_ed25519_verify:
     push r12
     push r13
     push r14
