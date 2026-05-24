@@ -751,3 +751,199 @@ def test_650_f_strings():
         content = f.read()
     match = re.search(r'\bf(["\'])', content)
     assert match is None, "f-strings are strictly forbidden in Substrate 650"
+
+import importlib.util
+import os
+import json
+def test_652_stellar_sail():
+    file_path = os.path.abspath('substrates/652-STELLAR-SAIL/substrato_652_stellar_sail.py')
+    spec = importlib.util.spec_from_file_location("substrato_652_stellar_sail", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    canonizer = module.Substrato652StellarSail()
+    work_dir, report_path = canonizer.canonize()
+
+    assert os.path.exists(report_path)
+    with open(report_path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "652-STELLAR-SAIL"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert data["seal"] == "7e0e83d408b96c9196a5b3c4163274b598ff2ed64e7ba2a0b4dc767e795f6687"
+
+import os
+import re
+def test_652_f_strings():
+    file_path = os.path.abspath('substrates/652-STELLAR-SAIL/substrato_652_stellar_sail.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 652"
+
+import importlib.util
+import os
+import json
+def test_653_deep_power():
+    file_path = os.path.abspath('substrates/653-DEEP-POWER/substrato_653_deep_power.py')
+    spec = importlib.util.spec_from_file_location("substrato_653_deep_power", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    canonizer = module.Substrato653DeepPower()
+    work_dir, report_path = canonizer.canonize()
+
+    assert os.path.exists(report_path)
+    with open(report_path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "653-DEEP-POWER"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert data["seal"] == "35023ca74363ba6d00bd3ae4606295e06ab249c1e835fe792a2eb9179be55ba9"
+
+import os
+import re
+def test_653_f_strings():
+    file_path = os.path.abspath('substrates/653-DEEP-POWER/substrato_653_deep_power.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 653"
+
+import importlib.util
+import os
+import json
+def test_654_photonic_link():
+    file_path = os.path.abspath('substrates/654-PHOTONIC-LINK/substrato_654_photonic_link.py')
+    spec = importlib.util.spec_from_file_location("substrato_654_photonic_link", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    canonizer = module.Substrato654PhotonicLink()
+    work_dir, report_path = canonizer.canonize()
+
+    assert os.path.exists(report_path)
+    with open(report_path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "654-PHOTONIC-LINK"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert data["seal"] == "6fb66b574db9d00a6c68622d13844dac33f5c994191674b61a5d539066765b97"
+
+import os
+import re
+def test_654_f_strings():
+    file_path = os.path.abspath('substrates/654-PHOTONIC-LINK/substrato_654_photonic_link.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 654"
+
+import importlib.util
+import os
+import json
+def test_655_rad_hard_shield():
+    file_path = os.path.abspath('substrates/655-RAD-HARD-SHIELD/substrato_655_rad_hard_shield.py')
+    spec = importlib.util.spec_from_file_location("substrato_655_rad_hard_shield", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    canonizer = module.Substrato655RadHardShield()
+    work_dir, report_path = canonizer.canonize()
+
+    assert os.path.exists(report_path)
+    with open(report_path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "655-RAD-HARD-SHIELD"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert data["seal"] == "686bcb793e823d8db37491db1c331e50507a3910c152a60e7040dbba56dfa33d"
+
+import os
+import re
+def test_655_f_strings():
+    file_path = os.path.abspath('substrates/655-RAD-HARD-SHIELD/substrato_655_rad_hard_shield.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 655"
+
+import importlib.util
+import os
+import json
+def test_656_autonomous_repair():
+    file_path = os.path.abspath('substrates/656-AUTONOMOUS-REPAIR/substrato_656_autonomous_repair.py')
+    spec = importlib.util.spec_from_file_location("substrato_656_autonomous_repair", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    canonizer = module.Substrato656AutonomousRepair()
+    work_dir, report_path = canonizer.canonize()
+
+    assert os.path.exists(report_path)
+    with open(report_path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "656-AUTONOMOUS-REPAIR"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert data["seal"] == "ba92805c1ee20740c712fa1e88dfd4806b3d492b72863bbe98194eebe39ee2ad"
+
+import os
+import re
+def test_656_f_strings():
+    file_path = os.path.abspath('substrates/656-AUTONOMOUS-REPAIR/substrato_656_autonomous_repair.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 656"
+
+import importlib.util
+import os
+import json
+def test_657_von_neumann_replicator():
+    file_path = os.path.abspath('substrates/657-VON-NEUMANN-REPLICATOR/substrato_657_von_neumann_replicator.py')
+    spec = importlib.util.spec_from_file_location("substrato_657_von_neumann_replicator", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    canonizer = module.Substrato657VonNeumannReplicator()
+    work_dir, report_path = canonizer.canonize()
+
+    assert os.path.exists(report_path)
+    with open(report_path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "657-VON-NEUMANN-REPLICATOR"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert data["seal"] == "0baee14685aeea8ee21e63ea66bdb286c0662b2691d5bebb3b8bd3a9fa03f1ef"
+
+import os
+import re
+def test_657_f_strings():
+    file_path = os.path.abspath('substrates/657-VON-NEUMANN-REPLICATOR/substrato_657_von_neumann_replicator.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 657"
+
+import importlib.util
+import os
+import json
+def test_636_mobile_cathedral():
+    file_path = os.path.abspath('substrates/636-MOBILE-CATHEDRAL/substrato_636_mobile_cathedral.py')
+    spec = importlib.util.spec_from_file_location("substrato_636_mobile_cathedral", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    canonizer = module.Substrato636MobileCathedral()
+    report_path = canonizer.canonize()
+
+    assert os.path.exists(report_path)
+    with open(report_path, "r") as f:
+        data = json.load(f)
+
+    assert data["id"] == "636-MOBILE-CATHEDRAL"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert data["phi_c"] == 0.988611
+    assert data["seal"] == "e8e7ce2be6c12e7d3d3ed5a7625b6170467a11c40ca4eeff9d94008b45967c7c"
+    assert data["metadata"]["emi_shielding"] == "PENDING_PHYSICAL_CONSTRUCTION"
+    assert data["metadata"]["simulated_flight"] == "PASS"
+    assert data["metadata"]["phi_mobility"] == 0.990
+    assert data["metadata"]["interstellar_evolution"] == "PROPOSED"
+    assert data["metadata"]["cross_substrate_links"] == 14
+
+import os
+import re
+def test_636_f_strings():
+    file_path = os.path.abspath('substrates/636-MOBILE-CATHEDRAL/substrato_636_mobile_cathedral.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    match = re.search(r'\bf(["\'])', content)
+    assert match is None, "f-strings are strictly forbidden in Substrate 636"
