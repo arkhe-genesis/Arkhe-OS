@@ -71,6 +71,34 @@ def test_611_f_strings():
         if " f'" in line or ' f"' in line or line.startswith("f'") or line.startswith('f"'):
             assert False, "f-string found in line {}: {}".format(i+1, line.strip())
 
+def test_615_photonic_6g():
+    import importlib.util
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/615-PHOTONIC-6G/substrato_615_photonic_6g.py')
+    spec = importlib.util.spec_from_file_location("substrato_615_photonic_6g", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato615Photonic6G()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["substrate"] == "615-PHOTONIC-6G"
+    assert "canonical_seal" in data
+    assert data["canonical_seal"] == "244f61df61b926077088fd3daa5ec7d0d6a64809ce7dba09c83120caf9e38595"
+
+def test_615_f_strings():
+    import os
+    file_path = os.path.abspath('substrates/615-PHOTONIC-6G/substrato_615_photonic_6g.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
+
 if __name__ == '__main__':
     pytest.main(['-v', 'test_substrates.py'])
 
