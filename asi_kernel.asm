@@ -430,6 +430,11 @@ tokenic_breed_generation:
     push rax
     movsd xmm1, [rsp]
     add rsp, 8
+    ; Apply mutation to the target gene
+    mulsd xmm0, xmm1
+    movsd xmm2, [r10]
+    addsd xmm2, xmm0
+    movsd [r10], xmm2
     dec r8
     jnz .mutate
     inc r15
@@ -447,11 +452,14 @@ tokenic_breed_generation:
 
 get_random_int:
     sub rsp, 8
+.retry:
     mov rax, SYS_GETRANDOM
     mov rdi, rsp
     mov rsi, 8
     xor rdx, rdx
     syscall
+    test rax, rax
+    js .retry  ; Retry on error (e.g. -EINTR)
     pop rax
     and rax, 0x7FFFFFFF
     ret
