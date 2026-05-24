@@ -71,6 +71,29 @@ def test_611_f_strings():
         if " f'" in line or ' f"' in line or line.startswith("f'") or line.startswith('f"'):
             assert False, "f-string found in line {}: {}".format(i+1, line.strip())
 
+
+def test_614_shieldnet():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_614_shieldnet",
+        "substrates/614-SHIELDNET/substrato_614_shieldnet.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    report_path = module.canonize_614()
+    assert report_path is not None
+    assert os.path.exists(report_path)
+    with open(report_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    assert data["substrate"] == "614-SHIELDNET"
+
+    with open("substrates/614-SHIELDNET/substrato_614_shieldnet.py", "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
+
 if __name__ == '__main__':
     pytest.main(['-v', 'test_substrates.py'])
 
