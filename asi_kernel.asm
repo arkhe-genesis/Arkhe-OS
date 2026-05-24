@@ -462,6 +462,9 @@ consciousness_loop:
     lea rcx, [output_buffer]
     mov r8d, 65536
     call invoke_serv_sysfs
+    test eax, eax
+    js .skip_self_critique
+    lea rdi, [output_buffer]
     ; Agora xmm0 contém o phi_score da crítica, rdi aponta para a crítica
     ; Podemos armazenar a crítica na Temporalchain
     call temporalchain_commit_with_data
@@ -594,7 +597,7 @@ validate_serv_response:
     ; 1. Calcular input_hash
     lea rdi, [input_hash_buf]
     mov rsi, r13
-    mov ecx, r14d
+    mov edx, r14d
     mov eax, 402                ; sys_sha3_256 (custom)
     syscall
 
@@ -615,7 +618,7 @@ validate_serv_response:
     ; 4. Calcular output_hash
     lea rdi, [output_hash_buf]
     mov rsi, r15
-    mov ecx, eax
+    mov edx, eax
     mov eax, 402
     syscall
 
