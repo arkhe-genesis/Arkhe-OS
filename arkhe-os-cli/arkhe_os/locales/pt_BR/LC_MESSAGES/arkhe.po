@@ -1,0 +1,22 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Arkhe OS\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "ARKHE OS CLI - MegaKernel Interface."
+msgstr "ARKHE OS CLI - Interface MegaKernel."
+
+msgid "Inicializa o MegaKernel."
+msgstr "Inicializa o MegaKernel."
+
+msgid "Status de Invariantes"
+msgstr "Status de Invariantes"
+
+msgid "Lista substratos canonizados."
+msgstr "Lista substratos canonizados."
+
+msgid "Idioma definido para"
+msgstr "Idioma definido para"

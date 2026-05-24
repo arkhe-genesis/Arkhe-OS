@@ -1,6 +1,6 @@
 {
   "arkhe_block": 847813,
-  "timestamp": "2026-05-18T13:08:58.328921+00:00",
+  "timestamp": "2026-05-23T22:22:55.721723+00:00",
   "validation": {
     "passed": 53,
     "failed": 1,
@@ -161,7 +161,7 @@
     {
       "status": "PASS",
       "name": "compute_time > 0",
-      "detail": "t=140651.9559ms"
+      "detail": "t=129887.6343ms"
     },
     {
       "status": "PASS",
