@@ -87,7 +87,8 @@ class OpenArkEngine:
     def join_round(self, round_id: str, amount_sats: int,
                    owner_key: str, agent_key: str) -> Dict:
         """Junta-se a um round ARK como participante."""
-        vtxo_id = "VTXO-" + round_id + "-" + self.node_id + "-" + str(int(time.time()))
+        import uuid
+        vtxo_id = "VTXO-" + round_id + "-" + self.node_id + "-" + str(uuid.uuid4())
         vtxo = VTXO(
             vtxo_id=vtxo_id,
             owner_key=owner_key,
@@ -111,7 +112,7 @@ class OpenArkEngine:
     def verify_vtxo_tree(self, vtxo_root: str, merkle_proofs: List[str]) -> Dict:
         """Verifica integridade de VTXO tree via Merkle proofs."""
         # Simula verificação Merkle
-        valid = all(len(p) == 64 for p in merkle_proofs)
+        valid = bool(merkle_proofs) and all(len(p) == 64 for p in merkle_proofs)
         return {
             "root": vtxo_root,
             "proofs_verified": len(merkle_proofs),
@@ -431,7 +432,12 @@ if __name__ == "__main__":
         return base_dir, tmp_file
 
     def generate_canonical_json(self):
-        self.canonize()
+        base_dir, tmp_file = self.canonize()
+        import shutil
+        import os
+        shutil.rmtree(base_dir, ignore_errors=True)
+        try: os.remove(tmp_file)
+        except OSError: pass
 
 if __name__ == "__main__":
     Substrato618Openark().generate_canonical_json()
