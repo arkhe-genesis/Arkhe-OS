@@ -402,3 +402,67 @@ def test_617_f_strings():
 
     assert "f\"" not in content_stripped
     assert "f'" not in content_stripped
+
+def test_619_octra():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_619_octra",
+        "substrates/619-OCTRA/substrato_619_octra.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato619Octra()
+    temp_dir, report_path = canonizer.canonize()
+
+    assert os.path.exists(temp_dir)
+    assert os.path.exists(report_path)
+
+    with open(report_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "619-OCTRA"
+    assert "canonical_seal" in data
+    assert os.path.exists(os.path.join(temp_dir, "arkhe_octra.py"))
+
+def test_619_f_strings():
+    import re
+    file_path = "substrates/619-OCTRA/substrato_619_octra.py"
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), "f-strings found!"
+
+
+def test_621_erdos():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_621_erdos",
+        "substrates/621-ERDOS-UNIT-DISTANCE/substrato_621_erdos.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato621ErdosUnitDistance()
+    temp_dir, report_path = canonizer.generate()
+
+    assert os.path.exists(temp_dir)
+    assert os.path.exists(report_path)
+
+    with open(report_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "621-ERDŐS-UNIT-DISTANCE"
+    assert "canonical_seal" in data
+    assert os.path.exists(os.path.join(temp_dir, "arkhe_unit_distance.py"))
+    assert os.path.exists(os.path.join(temp_dir, "DECREE_621.md"))
+
+def test_621_f_strings():
+    import re
+    file_path = "substrates/621-ERDOS-UNIT-DISTANCE/substrato_621_erdos.py"
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), "f-strings found!"
