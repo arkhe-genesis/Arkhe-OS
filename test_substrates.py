@@ -219,3 +219,91 @@ def test_597_f_strings():
         content = f.read()
     for line in content.split('\n'):
         assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), "f-strings are not allowed: " + line
+
+def test_613_cybersec_fundamentals():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/600-699_advanced/substrato_613_cybersec_fundamentals/substrato_613_cybersec_fundamentals.py"], capture_output=True, text=True)
+    assert result.returncode == 0
+    path = result.stdout.split()[-1]
+    with open(path, "r") as f:
+        data = json.load(f)
+    assert data["phi_c"] >= 0.90
+    assert len(data["canonical_seal"]) == 64
+
+def test_613_f_strings():
+    import os
+    with open("substrates/600-699_advanced/substrato_613_cybersec_fundamentals/substrato_613_cybersec_fundamentals.py", "r") as f:
+        content = f.read()
+    lines = content.split('\n')
+    for line in lines:
+        if "f\"" in line or "f'" in line:
+            import re
+            if re.search(r'f["\'].*?\{.*?\}', line):
+                assert False, "f-string found: {}".format(line)
+
+def test_613_cybersec_fundamentals():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/600-699_advanced/substrato_613_cybersec_fundamentals/substrato_613_cybersec_fundamentals.py"], capture_output=True, text=True)
+    assert result.returncode == 0
+    path = result.stdout.split()[-1]
+    with open(path, "r") as f:
+        data = json.load(f)
+    assert data["phi_c"] >= 0.90
+    assert len(data["canonical_seal"]) == 64
+
+def test_613_f_strings():
+    import os
+    with open("substrates/600-699_advanced/substrato_613_cybersec_fundamentals/substrato_613_cybersec_fundamentals.py", "r") as f:
+        content = f.read()
+    lines = content.split('\n')
+    for line in lines:
+        if "f\"" in line or "f'" in line:
+            import re
+            if re.search(r'f["\'].*?\{.*?\}', line):
+                assert False, "f-string found: {}".format(line)
+
+def test_612_llm_foundations():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/600-699_advanced/substrato_612_llm_foundations/substrato_612_llm_foundations.py"], capture_output=True, text=True)
+    assert result.returncode == 0
+    path = result.stdout.split()[-1]
+    with open(path, "r") as f:
+        data = json.load(f)
+    assert data["phi_c"] >= 0.90
+    assert len(data["canonical_seal"]) == 64
+
+def test_612_f_strings():
+    import os
+    with open("substrates/600-699_advanced/substrato_612_llm_foundations/substrato_612_llm_foundations.py", "r") as f:
+        content = f.read()
+    lines = content.split('\n')
+    for line in lines:
+        if "f\"" in line or "f'" in line:
+            import re
+            if re.search(r'f["\'].*?\{.*?\}', line):
+                assert False, "f-string found: {}".format(line)
+
+def test_613_cybersec_fundamentals():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/600-699_advanced/substrato_613_cybersec_fundamentals/substrato_613_cybersec_fundamentals.py"], capture_output=True, text=True)
+    assert result.returncode == 0
+    path = result.stdout.split()[-1]
+    with open(path, "r") as f:
+        data = json.load(f)
+    assert data["phi_c"] >= 0.90
+    assert len(data["canonical_seal"]) == 64
+
+def test_613_f_strings():
+    import os
+    with open("substrates/600-699_advanced/substrato_613_cybersec_fundamentals/substrato_613_cybersec_fundamentals.py", "r") as f:
+        content = f.read()
+    lines = content.split('\n')
+    for line in lines:
+        if "f\"" in line or "f'" in line:
+            import re
+            if re.search(r'f["\'].*?\{.*?\}', line):
+                assert False, "f-string found: {}".format(line)
