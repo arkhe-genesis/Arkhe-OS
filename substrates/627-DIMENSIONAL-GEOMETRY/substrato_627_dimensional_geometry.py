@@ -127,6 +127,8 @@ class Sphere3D(DimensionalObject):
         self.psi_field = psi_field if psi_field is not None else [random.random() for _ in range(10)]
 
     def phi_measure(self) -> float:
+        if not self.psi_field:
+            return 0.0
         return sum(self.psi_field) / len(self.psi_field) * self.radius
 
     def project_to_3d(self):
@@ -145,7 +147,7 @@ class Tesseract4D(DimensionalObject):
     substrate_link = "229.8-GLOSA"
 
     def __init__(self, weights: List[float] = None):
-        self.weights = weights or [random.gauss(0, 1) for _ in range(16)]
+        self.weights = weights if weights is not None else [random.gauss(0, 1) for _ in range(16)]
 
     def project_to_3d(self) -> Sphere3D:
         # Project 4D cube into 3D sphere by normalizing
@@ -153,6 +155,8 @@ class Tesseract4D(DimensionalObject):
         return Sphere3D(radius=r)
 
     def phi_measure(self) -> float:
+        if not self.weights:
+            return 0.0
         return math.sqrt(sum(w**2 for w in self.weights)) / len(self.weights)
 
     def __repr__(self):
@@ -168,7 +172,7 @@ class Hypersphere5D(DimensionalObject):
     substrate_link = "555-XiM-Embed"
 
     def __init__(self, xi_gradient: List[float] = None):
-        self.xi_gradient = xi_gradient or [random.random() for _ in range(5)]
+        self.xi_gradient = xi_gradient if xi_gradient is not None else [random.random() for _ in range(5)]
 
     def phi_measure(self) -> float:
         # Volume concentrates at surface in 5D
