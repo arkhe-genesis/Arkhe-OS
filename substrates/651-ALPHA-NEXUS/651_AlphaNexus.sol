@@ -81,6 +81,8 @@ contract AlphaNexus {
 
     function invalidateProof(bytes32 proofHash, string calldata reason) external {
         require(proofs[proofHash].timestamp > 0, "Proof not found");
+        require(msg.sender == proofs[proofHash].verifier, "Not authorized");
+        require(proofs[proofHash].isValid, "Already invalid");
         proofs[proofHash].isValid = false;
         successfulProofs--;
         // Log reason to Akashic Anchor via event
