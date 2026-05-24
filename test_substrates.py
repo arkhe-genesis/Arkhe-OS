@@ -143,14 +143,14 @@ def test_621_erdos_unit_distance():
     spec.loader.exec_module(module)
 
     canonizer = module.Substrato621ErdosUnitDistance()
-    path = canonizer.generate_json()
+    temp_dir, path = canonizer.generate()
 
     assert os.path.exists(path)
 
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    assert data["id"] == "621-ERDOS-UNIT-DISTANCE"
+    assert data["id"] == "621-ERDŐS-UNIT-DISTANCE"
 
 def test_621_f_strings():
     import os
@@ -196,6 +196,12 @@ def test_628_f_strings():
     assert not re.search(r'\bf(["\'])', content), "Found f-string in substrato_628_fec_parser.py"
 
 def test_562_stim_qec_simulator():
+    import pytest
+    try:
+        import stim
+    except ImportError:
+        pytest.skip("stim module is not installed")
+
     import importlib.util
     import os
     import json
@@ -589,6 +595,39 @@ def test_substrato_xalgorix():
         content = f.read()
 
     assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
+
+
+def test_632_time_mirror():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_632_time_mirror",
+        "substrates/632-EINSTEIN-ROSEN-TIME-MIRROR/substrato_632_time_mirror.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato632TimeMirror()
+    path = canonizer.generate()[1]
+
+    assert os.path.exists(path)
+
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "632-EINSTEIN-ROSEN-TIME-MIRROR"
+    assert data["status"] == "CANONIZED_CLEAN"
+    assert len(data["canonical_seal"]) == 64
+
+def test_632_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath('substrates/632-EINSTEIN-ROSEN-TIME-MIRROR/substrato_632_time_mirror.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert not re.search(r'\bf(["\'])', content), "Found f-string in substrato_632_time_mirror.py"
 
 if __name__ == '__main__':
     pytest.main(['-v', 'test_substrates.py'])
