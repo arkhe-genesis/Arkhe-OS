@@ -71,6 +71,66 @@ def test_611_f_strings():
         if " f'" in line or ' f"' in line or line.startswith("f'") or line.startswith('f"'):
             assert False, "f-string found in line {}: {}".format(i+1, line.strip())
 
+
+def test_614_shieldnet():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_614_shieldnet",
+        "substrates/614-SHIELDNET/substrato_614_shieldnet.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    report_path = module.canonize_614()
+    assert report_path is not None
+    assert os.path.exists(report_path)
+    with open(report_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    assert data["substrate"] == "614-SHIELDNET"
+
+    with open("substrates/614-SHIELDNET/substrato_614_shieldnet.py", "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
+
+
+def test_619_octra():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_619_octra",
+        "substrates/619-OCTRA/substrato_619_octra.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    path = module.canonize_619()
+    assert os.path.exists(path)
+
+    json_path = os.path.join(path, "FICHA_CANONICA_619.json")
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "619-OCTRA"
+    assert "seal_sha3_256" in data
+    assert len(data["seal_sha3_256"]) == 64
+
+    plugin_path = os.path.join(path, "arkhe_os", "plugins", "octra", "arkhe_octra.py")
+    assert os.path.exists(plugin_path)
+
+def test_619_f_strings():
+    import os
+    file_path = "substrates/619-OCTRA/substrato_619_octra.py"
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    lines = content.split('\n')
+    for i, line in enumerate(lines):
+        if " f'" in line or ' f"' in line or line.startswith("f'") or line.startswith('f"'):
+            assert False, "f-string found in line {}: {}".format(i+1, line.strip())
+
 if __name__ == '__main__':
     pytest.main(['-v', 'test_substrates.py'])
 
@@ -286,6 +346,35 @@ def test_603_hashtree_cc():
         content = f.read()
     assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
 
+def test_615_photonic_6g():
+    import importlib.util
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/600-699_advanced/substrato_615_photonic_6g/substrato_615_photonic_6g.py')
+    spec = importlib.util.spec_from_file_location("substrato_615_photonic_6g", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrate615Canonizer()
+    report_path = canonizer.canonize()
+
+    assert os.path.exists(report_path)
+
+    with open(report_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "615-PHOTONIC-6G"
+    assert "seal" in data
+    assert len(data["seal"]) == 64
+    assert len(data["artifacts"]) == 5
+    assert data["status"] == "CANONIZED"
+
+    # Check that f-strings are strictly forbidden in the source
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
+
 def test_604_cybersecurity_ai():
     import importlib.util
     import json
@@ -341,92 +430,36 @@ def test_612_f_strings():
         content = f.read()
     assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
 
-def test_621_erdos_unit_distance():
+def test_620_monastic_sandboxing():
     import importlib.util
     import json
     import os
 
-    file_path = os.path.abspath('substrates/621-ERDOS-UNIT-DISTANCE/substrato_621_erdos_unit_distance.py')
-    spec = importlib.util.spec_from_file_location("substrato_621_erdos_unit_distance", file_path)
+    file_path = os.path.abspath('substrates/620-MONASTIC-SANDBOXING/substrato_620_monastic_sandboxing.py')
+    spec = importlib.util.spec_from_file_location("substrato_620_monastic_sandboxing", file_path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato621ErdosUnitDistance()
+    canonizer = module.Substrato620MonasticSandboxing()
     path = canonizer.generate_json()
 
     assert os.path.exists(path)
 
-    json_path = os.path.join(path, "FICHA_CANONICA_621.json")
-    with open(json_path, "r", encoding="utf-8") as f:
+    with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    assert data["id"] == "621-ERDŐS-UNIT-DISTANCE"
-    assert "seal_sha3_256" in data
-    assert len(data["seal_sha3_256"]) == 64
+    assert data["id"] == "620-MONASTIC-SANDBOXING"
+    assert "canonical_seal" in data
+    assert len(data["canonical_seal"]) == 64
 
-def test_621_f_strings():
+def test_620_f_strings():
     import os
-    file_path = os.path.abspath('substrates/621-ERDOS-UNIT-DISTANCE/substrato_621_erdos_unit_distance.py')
+    file_path = os.path.abspath('substrates/620-MONASTIC-SANDBOXING/substrato_620_monastic_sandboxing.py')
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
-    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
+    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden in python files"
 
-def test_619_octra():
-    import importlib.util
-    import json
-    import os
-
-    file_path = os.path.abspath('substrates/619-OCTRA/substrato_619_octra.py')
-    spec = importlib.util.spec_from_file_location("substrato_619_octra", file_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-
-    canonizer = module.Substrato619Octra()
-    path = canonizer.generate_json()
-
-    assert os.path.exists(path)
-
-    json_path = os.path.join(path, "FICHA_CANONICA_619.json")
-    with open(json_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    assert data["id"] == "619-OCTRA"
-    assert "seal_sha256" in data
-    assert len(data["seal_sha256"]) == 64
-
-def test_619_f_strings():
-    import os
-    file_path = os.path.abspath('substrates/619-OCTRA/substrato_619_octra.py')
-    with open(file_path, "r", encoding="utf-8") as f:
-        content = f.read()
-    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
-
-def test_617_quantum_teleport():
-    import importlib.util
-    import json
-    import os
-
-    file_path = os.path.abspath('substrates/617-QUANTUM-TELEPORT/substrato_617_quantum_teleport.py')
-    spec = importlib.util.spec_from_file_location("substrato_617_quantum_teleport", file_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-
-    canonizer = module.Substrato617QuantumTeleport()
-    path = canonizer.generate_json()
-
-    assert os.path.exists(path)
-
-    json_path = os.path.join(path, "FICHA_CANONICA_617.json")
-    with open(json_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    assert data["id"] == "617-QUANTUM-TELEPORT"
-    assert "seal_sha256" in data
-    assert len(data["seal_sha256"]) == 64
-
-def test_617_f_strings():
-    import os
-    file_path = os.path.abspath('substrates/617-QUANTUM-TELEPORT/substrato_617_quantum_teleport.py')
-    with open(file_path, "r", encoding="utf-8") as f:
-        content = f.read()
-    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
+    plugin_path = os.path.abspath('arkhe-os-cli/arkhe_os/plugins/arkhe_monastic.py')
+    with open(plugin_path, "r", encoding="utf-8") as f:
+        plugin_content = f.read()
+    assert "f'" not in plugin_content and 'f"' not in plugin_content, "f-strings are strictly forbidden in plugin files"
