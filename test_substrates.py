@@ -688,3 +688,182 @@ def test_631_f_strings():
     with open(file_path, 'r') as f:
         content = f.read()
     assert not re.search(r'\bf(["\'])', content), "Found f-string in gateway_http.py"
+def test_652_stellar_sail():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_652",
+        "substrates/652-STELLAR-SAIL/substrato_652_stellar_sail.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato652()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "652-STELLAR-SAIL"
+    assert "canonical_seal" in data
+    assert len(data["canonical_seal"]) == 64
+
+def test_652_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath('substrates/652-STELLAR-SAIL/substrato_652_stellar_sail.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), f"Found f-string in {file_path}"
+
+def test_653_deep_power():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_653",
+        "substrates/653-DEEP-POWER/substrato_653_deep_power.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato653()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "653-DEEP-POWER"
+    assert "canonical_seal" in data
+    assert len(data["canonical_seal"]) == 64
+
+def test_653_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath('substrates/653-DEEP-POWER/substrato_653_deep_power.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), f"Found f-string in {file_path}"
+
+def test_654_photonic_link():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_654",
+        "substrates/654-PHOTONIC-LINK/substrato_654_photonic_link.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato654()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "654-PHOTONIC-LINK"
+    assert "canonical_seal" in data
+    assert len(data["canonical_seal"]) == 64
+
+def test_654_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath('substrates/654-PHOTONIC-LINK/substrato_654_photonic_link.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), f"Found f-string in {file_path}"
+
+def test_655_rad_hard_shield():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_655",
+        "substrates/655-RAD-HARD-SHIELD/substrato_655_rad_hard_shield.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato655()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "655-RAD-HARD-SHIELD"
+    assert "canonical_seal" in data
+    assert len(data["canonical_seal"]) == 64
+
+def test_655_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath('substrates/655-RAD-HARD-SHIELD/substrato_655_rad_hard_shield.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), f"Found f-string in {file_path}"
+
+def test_656_autonomous_repair():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_656",
+        "substrates/656-AUTONOMOUS-REPAIR/substrato_656_autonomous_repair.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato656()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "656-AUTONOMOUS-REPAIR"
+    assert "canonical_seal" in data
+    assert len(data["canonical_seal"]) == 64
+
+def test_656_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath('substrates/656-AUTONOMOUS-REPAIR/substrato_656_autonomous_repair.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), f"Found f-string in {file_path}"
+
+def test_657_von_neumann_replicator():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_657",
+        "substrates/657-VON-NEUMANN-REPLICATOR/substrato_657_von_neumann_replicator.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato657()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "657-VON-NEUMANN-REPLICATOR"
+    assert "canonical_seal" in data
+    assert len(data["canonical_seal"]) == 64
+
+def test_657_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath('substrates/657-VON-NEUMANN-REPLICATOR/substrato_657_von_neumann_replicator.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), f"Found f-string in {file_path}"
