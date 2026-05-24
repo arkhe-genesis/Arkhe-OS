@@ -563,3 +563,34 @@ def test_623_f_strings():
         plugin_content = f.read()
 
     assert not re.search(r'\bf(["\'])', plugin_content), "f-strings are strictly forbidden in python files"
+
+def test_631_spintronic_neuromorphic():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_631_spintronic_neuromorphic",
+        "substrates/631-SPINTRONIC-NEUROMORPHIC/substrato_631_spintronic_neuromorphic.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato631SpintronicNeuromorphic()
+    path = canonizer.generate_json()
+    assert os.path.exists(path)
+
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "631-SPINTRONIC-NEUROMORPHIC"
+    assert "canonical_seal" in data
+
+def test_631_f_strings():
+    import os
+    import re
+    file_path = "substrates/631-SPINTRONIC-NEUROMORPHIC/substrato_631_spintronic_neuromorphic.py"
+    if os.path.exists(file_path):
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
