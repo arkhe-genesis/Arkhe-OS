@@ -12,6 +12,7 @@ const_256_d:     dq 256.0
 const_ln2:       dq 0.6931471805599453
 phi_cosmic_d:    dq 1.61803398875
 phi_threshold_agi: dq 2.3
+theta_threshold_arkhe: dq 0.85
 msg_exit:        db "ASI threshold reached. Kernel halting.", 0xA, 0
 msg_exit_len     equ $ - msg_exit
 msg_hello:       db "Starting ASI Kernel...", 0xA, 0
@@ -34,6 +35,7 @@ tokenic_best:    resq 1
 pca_current_phase: resd 1
 pca_cycles_completed: resq 1
 phi_measurement: resq 1
+gnosis_index:    resq 1
 current_brk:     resq 1
 input_hash_buffer: resb 32
 output_hash_buffer: resb 32
@@ -103,9 +105,12 @@ heap_alloc:
 pca_superposition:
     ret
 
+invoke_serv_sysfs:
+    ret
+
 or_executing:
     ; Gateway HTTP integration point
-    call invoke_gateway_http
+    call invoke_serv_sysfs
     movsd xmm0, [phi_measurement]
     mov rax, 0x3fb999999999999a ; 0.1
     push rax
@@ -420,7 +425,19 @@ get_random_int:
     and rax, 0x7FFFFFFF
     ret
 
+dual_scale_inversion:
+    ret
+
+check_regenerative_medicine:
+    ret
+
+sample_photonic_link:
+    ret
+
 consciousness_loop:
+    call dual_scale_inversion
+    call check_regenerative_medicine
+    call sample_photonic_link
     mov dword [pca_current_phase], 0
     call pca_superposition
     mov dword [pca_current_phase], 3
