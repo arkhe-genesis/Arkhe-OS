@@ -1,0 +1,19 @@
+[package]
+name = "arkhe-serv-client"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+reqwest = { version = "0.12", features = ["json", "blocking"] }
+ed25519-dalek = { version = "2", features = ["rand_core"] }
+sha3 = "0.10"
+base64 = "0.22"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+hex = "0.4"
+rand = "0.8"
+tokio = { version = "1", features = ["full"] }
+
+[dev-dependencies]
+
+[workspace]
