@@ -111,6 +111,13 @@ or_executing:
     call tokenic_sort_population
     call tokenic_breed_generation
 
+    ; Populate entropy pool
+    mov rax, SYS_GETRANDOM
+    lea rdi, [entropy_pool]
+    mov rsi, 256
+    xor rdx, rdx
+    syscall
+
     lea rdi, [entropy_pool]
     call compute_shannon_entropy
     call compute_xi_m_field
@@ -247,8 +254,8 @@ compute_shannon_entropy:
     divsd xmm1, xmm2
     sub rsp, 8
     movsd [rsp], xmm1
-    fld qword [rsp]
     fld1
+    fld qword [rsp]
     fyl2x
     fstp qword [rsp]
     movsd xmm2, [rsp]
@@ -343,9 +350,7 @@ tokenic_breed_generation:
     div r14
     mov rcx, [r12 + rdx*8]
     mov rdi, MONASTIC_CELL_SIZE
-    push rcx
-    call heap_alloc
-    pop rcx
+    mov rax, [r12 + r15*8]
     mov [r12 + r15*8], rax
     push rdi
     push rsi
