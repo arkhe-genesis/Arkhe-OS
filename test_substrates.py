@@ -596,5 +596,41 @@ def test_substrato_xalgorix():
 
     assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
 
+
+def test_643_photonic_backbone():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_643_photonic_backbone",
+        "substrates/643-PHOTONIC-BACKBONE/substrato_643_photonic_backbone.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    path = module.canonize_substrate()
+    assert os.path.exists(path)
+
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "643-PHOTONIC-BACKBONE"
+    assert "seal" in data
+
+def test_643_f_strings():
+    import os
+    import re
+    file_path = "substrates/643-PHOTONIC-BACKBONE/substrato_643_photonic_backbone.py"
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
+
+    plugin_path = "arkhe-os-cli/arkhe_os/plugins/arkhe_photon.py"
+    with open(plugin_path, "r", encoding="utf-8") as f:
+        plugin_content = f.read()
+
+    assert not re.search(r'\bf(["\'])', plugin_content), "f-strings are strictly forbidden in plugin files"
+
 if __name__ == '__main__':
     pytest.main(['-v', 'test_substrates.py'])
