@@ -131,6 +131,35 @@ def test_619_f_strings():
         if " f'" in line or ' f"' in line or line.startswith("f'") or line.startswith('f"'):
             assert False, "f-string found in line {}: {}".format(i+1, line.strip())
 
+
+def test_621_erdos_unit_distance():
+    import importlib.util
+    import json
+    import os
+
+    file_path = os.path.abspath('substrates/621-ERDOS-UNIT-DISTANCE/substrato_621_erdos.py')
+    spec = importlib.util.spec_from_file_location("substrato_621_erdos", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato621ErdosUnitDistance()
+    path = canonizer.generate_json()
+
+    assert os.path.exists(path)
+
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "621-ERDOS-UNIT-DISTANCE"
+
+def test_621_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath('substrates/621-ERDOS-UNIT-DISTANCE/substrato_621_erdos.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert not bool(re.search(r'\bf["\']', content)), "f-strings are strictly forbidden in python files"
+
 if __name__ == '__main__':
     pytest.main(['-v', 'test_substrates.py'])
 
@@ -454,53 +483,49 @@ def test_620_monastic_sandboxing():
 
 def test_620_f_strings():
     import os
+    import re
     file_path = os.path.abspath('substrates/620-MONASTIC-SANDBOXING/substrato_620_monastic_sandboxing.py')
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
-    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden in python files"
+    assert not bool(re.search(r'\bf["\']', content)), "f-strings are strictly forbidden in python files"
 
     plugin_path = os.path.abspath('arkhe-os-cli/arkhe_os/plugins/arkhe_monastic.py')
     with open(plugin_path, "r", encoding="utf-8") as f:
         plugin_content = f.read()
     assert "f'" not in plugin_content and 'f"' not in plugin_content, "f-strings are strictly forbidden in plugin files"
 
-def test_624_tokenic_principle():
+def test_623_iobnt_survey():
     import importlib.util
     import os
     import json
     spec = importlib.util.spec_from_file_location(
-        "substrato_624_tokenic_principle",
-        "substrates/624-TOKENIC-PRINCIPLE/substrato_624_tokenic_principle.py"
+        "substrato_623_iobnt_survey",
+        "substrates/623-IOBNT-SURVEY/substrato_623_iobnt_survey.py"
     )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato624TokenicPrinciple()
-    work_dir = canonizer.generate_json()
-
-    path = os.path.join(work_dir, "FICHA_CANONICA_624.json")
+    canonizer = module.Substrato623IOBNTSurvey()
+    path = canonizer.generate_json()
     assert os.path.exists(path)
 
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    assert data["id"] == "624-TOKENIC-PRINCIPLE"
-    assert "seal_sha3_256" in data
-    assert len(data["seal_sha3_256"]) == 64
+    assert data["id"] == "623-IOBNT-SURVEY"
+    assert "canonical_seal" in data
 
-def test_624_f_strings():
+def test_623_f_strings():
     import os
     import re
-    file_path = os.path.abspath('substrates/624-TOKENIC-PRINCIPLE/substrato_624_tokenic_principle.py')
+    file_path = "substrates/623-IOBNT-SURVEY/substrato_623_iobnt_survey.py"
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
+
     assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
 
-
-def test_624_f_strings_plugin():
-    import os
-    import re
-    plugin_path = os.path.abspath('arkhe-os-cli/arkhe_os/plugins/arkhe_tokenic.py')
+    plugin_path = "arkhe-os-cli/arkhe_os/plugins/arkhe_iobnt.py"
     with open(plugin_path, "r", encoding="utf-8") as f:
         plugin_content = f.read()
-    assert not re.search(r'\bf(["\'])', plugin_content), "f-strings are strictly forbidden in plugin files"
+
+    assert not re.search(r'\bf(["\'])', plugin_content), "f-strings are strictly forbidden in python files"
