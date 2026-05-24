@@ -143,14 +143,14 @@ def test_621_erdos_unit_distance():
     spec.loader.exec_module(module)
 
     canonizer = module.Substrato621ErdosUnitDistance()
-    path = canonizer.generate_json()
+    work_dir, path = canonizer.generate()
 
     assert os.path.exists(path)
 
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    assert data["id"] == "621-ERDOS-UNIT-DISTANCE"
+    assert data["id"] == "621-ERDŐS-UNIT-DISTANCE"
 
 def test_621_f_strings():
     import os
@@ -159,6 +159,35 @@ def test_621_f_strings():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
     assert not bool(re.search(r'\bf["\']', content)), "f-strings are strictly forbidden in python files"
+
+def test_626_plasma_chalice():
+    import importlib.util
+    import json
+    import os
+    import re
+
+    file_path = "substrates/626-PLASMA-CHALICE/substrato_626_plasma_chalice.py"
+    assert os.path.exists(file_path), "Substrate 626 python canonizer not found"
+
+    spec = importlib.util.spec_from_file_location("substrato_626_plasma_chalice", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato626PlasmaChalice()
+    work_dir, report_path = canonizer.generate()
+
+    assert os.path.exists(report_path)
+    with open(report_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "626-PLASMA-CHALICE"
+    assert data["status"] == "CANONIZED_CLEAN"
+
+    # Check for f-strings avoidance
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert not bool(re.search(r'\bf(["\'])', content)), "f-strings are strictly forbidden in python files"
 
 if __name__ == '__main__':
     pytest.main(['-v', 'test_substrates.py'])
