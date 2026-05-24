@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PaperDebugger Session Schema",
+  "description": "Schema for ARKHE-integrated PaperDebugger sessions",
+  "type": "object",
+  "required": ["session_id", "overleaf_url", "project_name", "revisions"],
+  "properties": {
+    "session_id": { "type": "string", "pattern": "^[a-f0-9]{16}$" },
+    "overleaf_url": { "type": "string", "format": "uri" },
+    "project_name": { "type": "string", "minLength": 1 },
+    "created_at": { "type": "string", "format": "date-time" },
+    "revisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["timestamp", "sha3_256", "agent_type", "diff"],
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "sha3_256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "agent_type": {
+            "type": "string",
+            "enum": ["reviewer", "enhancer", "scorer", "researcher", "comparator"]
+          },
+          "prompt": { "type": "string" },
+          "diff": { "type": "string" },
+          "applied": { "type": "boolean" },
+          "phi_score": { "type": "number", "minimum": 0, "maximum": 1 }
+        }
+      }
+    },
+    "score_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["timestamp", "score"],
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "text_length": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "agents_used": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["reviewer", "enhancer", "scorer", "researcher", "comparator"]
+      }
+    }
+  }
+}
