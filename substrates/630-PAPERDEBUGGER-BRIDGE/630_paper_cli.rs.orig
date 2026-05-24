@@ -107,9 +107,7 @@ pub fn handle_paper(cmd: PaperCommands) -> Result<(), String> {
             if !file.exists() {
                 return Err(format!("File not found: {}", file.display()));
             }
-            if !json {
-                println!("🔍 [630→Reviewer] Running AAAI-style critique...");
-            }
+            println!("🔍 [630→Reviewer] Running AAAI-style critique...");
 
             let mut python_cmd = Command::new("python3");
             python_cmd.arg(&bridge_path).arg("critique").arg(&file);
@@ -135,9 +133,7 @@ pub fn handle_paper(cmd: PaperCommands) -> Result<(), String> {
             }
 
             if output.status.success() {
-                if !json {
-                    println!("✅ [630→Reviewer] Critique complete");
-                }
+                println!("✅ [630→Reviewer] Critique complete");
                 Ok(())
             } else {
                 Err("[630→Reviewer] Critique failed".to_string())
@@ -148,9 +144,7 @@ pub fn handle_paper(cmd: PaperCommands) -> Result<(), String> {
             if !file.exists() {
                 return Err(format!("File not found: {}", file.display()));
             }
-            if !json {
-                println!("✨ [630→Enhancer] Running XtraGPT enhancement...");
-            }
+            println!("✨ [630→Enhancer] Running XtraGPT enhancement...");
 
             let mut python_cmd = Command::new("python3");
             python_cmd.arg(&bridge_path).arg("enhance").arg(&file);
@@ -175,9 +169,7 @@ pub fn handle_paper(cmd: PaperCommands) -> Result<(), String> {
             }
 
             if output.status.success() {
-                if !json {
-                    println!("✅ [630→Enhancer] Enhancement complete");
-                }
+                println!("✅ [630→Enhancer] Enhancement complete");
                 Ok(())
             } else {
                 Err("[630→Enhancer] Enhancement failed".to_string())
@@ -186,9 +178,7 @@ pub fn handle_paper(cmd: PaperCommands) -> Result<(), String> {
 
         PaperCommands::Research { query, json } => {
             let query_str = query.join(" ");
-            if !json {
-                println!("📚 [630→Researcher] Searching literature: '{}'...", query_str);
-            }
+            println!("📚 [630→Researcher] Searching literature: '{}'...", query_str);
 
             let mut python_cmd = Command::new("python3");
             python_cmd.arg(&bridge_path).arg("research").arg(&query_str);
@@ -210,9 +200,7 @@ pub fn handle_paper(cmd: PaperCommands) -> Result<(), String> {
             }
 
             if output.status.success() {
-                if !json {
-                    println!("✅ [630→Researcher] Literature search complete");
-                }
+                println!("✅ [630→Researcher] Literature search complete");
                 Ok(())
             } else {
                 Err("[630→Researcher] Search failed".to_string())
@@ -223,9 +211,7 @@ pub fn handle_paper(cmd: PaperCommands) -> Result<(), String> {
             if !file.exists() {
                 return Err(format!("File not found: {}", file.display()));
             }
-            if !json {
-                println!("📊 [630→Scorer] Evaluating document quality...");
-            }
+            println!("📊 [630→Scorer] Evaluating document quality...");
 
             let mut python_cmd = Command::new("python3");
             python_cmd.arg(&bridge_path).arg("score").arg(&file);
@@ -247,9 +233,7 @@ pub fn handle_paper(cmd: PaperCommands) -> Result<(), String> {
             }
 
             if output.status.success() {
-                if !json {
-                    println!("✅ [630→Scorer] Evaluation complete");
-                }
+                println!("✅ [630→Scorer] Evaluation complete");
                 Ok(())
             } else {
                 Err("[630→Scorer] Evaluation failed".to_string())
@@ -309,9 +293,7 @@ pub fn handle_paper(cmd: PaperCommands) -> Result<(), String> {
             if !paper_b.exists() {
                 return Err(format!("Paper B not found: {}", paper_b.display()));
             }
-            if !json {
-                println!("⚖️  [630] Comparing papers...");
-            }
+            println!("⚖️  [630] Comparing papers...");
 
             let mut python_cmd = Command::new("python3");
             python_cmd
@@ -338,9 +320,7 @@ pub fn handle_paper(cmd: PaperCommands) -> Result<(), String> {
             }
 
             if output.status.success() {
-                if !json {
-                    println!("✅ [630] Comparison complete");
-                }
+                println!("✅ [630] Comparison complete");
                 Ok(())
             } else {
                 Err("[630] Comparison failed".to_string())
