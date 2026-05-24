@@ -32,6 +32,8 @@ def test_563_ftqc_unified():
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         import json
+        import json
+        import json
         data = json.load(f)
     assert data["metadata"]["substrate"] == "563-FTQC-UNIFIED"
     assert data["metadata"]["phi_c"] == 0.983889
@@ -53,6 +55,8 @@ def test_611_codegraph():
     assert os.path.exists(path)
 
     with open(path, "r") as f:
+        import json
+        import json
         data = json.load(f)
 
     assert data["substrate"] == "611-CODEGRAPH"
@@ -87,6 +91,8 @@ def test_614_shieldnet():
     assert report_path is not None
     assert os.path.exists(report_path)
     with open(report_path, "r", encoding="utf-8") as f:
+        import json
+        import json
         data = json.load(f)
     assert data["substrate"] == "614-SHIELDNET"
 
@@ -111,6 +117,8 @@ def test_619_octra():
 
     json_path = os.path.join(path, "FICHA_CANONICA_619.json")
     with open(json_path, "r", encoding="utf-8") as f:
+        import json
+        import json
         data = json.load(f)
 
     assert data["id"] == "619-OCTRA"
@@ -148,6 +156,8 @@ def test_621_erdos_unit_distance():
     assert os.path.exists(path)
 
     with open(path, "r", encoding="utf-8") as f:
+        import json
+        import json
         data = json.load(f)
 
     assert data["id"] == "621-ERDŐS-UNIT-DISTANCE"
@@ -176,6 +186,7 @@ def test_627_f_strings():
     with open(substrato_627_tse_fcc_parser.__file__, "r", encoding="utf-8") as f:
         content = f.read()
     import re
+    import re
     assert not re.search(r'\bf(["\'])', content), "Found f-string in substrato_627_tse_fcc_parser.py"
 
 def test_628_fec_parser():
@@ -192,6 +203,7 @@ def test_628_f_strings():
     import substrato_628_fec_parser
     with open(substrato_628_fec_parser.__file__, "r", encoding="utf-8") as f:
         content = f.read()
+    import re
     import re
     assert not re.search(r'\bf(["\'])', content), "Found f-string in substrato_628_fec_parser.py"
 
@@ -214,6 +226,8 @@ def test_562_stim_qec_simulator():
     path, _ = module.Substrato562StimQecSimulator().canonize()
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
+        import json
+        import json
         import json
         data = json.load(f)
     assert data.get("metadata", data).get("phi_c", data.get("phi_c")) == 0.999000
@@ -243,6 +257,8 @@ def test_563_ftqc_unified():
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         import json
+        import json
+        import json
         data = json.load(f)
     assert data["metadata"]["phi_c"] == 0.983889
     assert data["metadata"]["seal"] == "66896068625b33aa280e522878bda3989beab1be2dcf58c378c1e5c777047a93"
@@ -270,6 +286,8 @@ def test_569_teleport_quantum_link():
 
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
+        import json
+        import json
         import json
         data = json.load(f)
 
@@ -312,6 +330,8 @@ def test_arkhe_unified():
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         import json
+        import json
+        import json
         data = json.load(f)
 
     assert data["metadata"]["substrate"] == "ARKHE-UNIFIED"
@@ -344,6 +364,8 @@ def test_595_iris_alpha():
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         import json
+        import json
+        import json
         data = json.load(f)
 
     assert data["metadata"]["id"] == "595-IRIS-ALPHA"
@@ -374,6 +396,8 @@ def test_597_biollm():
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         import json
+        import json
+        import json
         data = json.load(f)
 
     assert data["metadata"]["id"] == "597-BIOLLM"
@@ -403,6 +427,8 @@ def test_603_hashtree_cc():
 
     assert os.path.exists(path)
     with open(path, "r", encoding="utf-8") as f:
+        import json
+        import json
         data = json.load(f)
 
     assert data["id"] == "603-HASHTREE-CC"
@@ -429,6 +455,8 @@ def test_615_photonic_6g():
     assert os.path.exists(report_path)
 
     with open(report_path, "r", encoding="utf-8") as f:
+        import json
+        import json
         data = json.load(f)
 
     assert data["id"] == "615-PHOTONIC-6G"
@@ -457,6 +485,8 @@ def test_604_cybersecurity_ai():
 
     assert os.path.exists(path)
     with open(path, "r", encoding="utf-8") as f:
+        import json
+        import json
         data = json.load(f)
 
     assert data["id"] == "604-CYBERSECURITY-AI"
@@ -484,6 +514,8 @@ def test_612_llm_foundations():
 
     json_path = os.path.join(path, "FICHA_CANONICA_612.json")
     with open(json_path, "r", encoding="utf-8") as f:
+        import json
+        import json
         data = json.load(f)
 
     assert data["id"] == "612-LLM-FOUNDATIONS"
@@ -513,6 +545,8 @@ def test_620_monastic_sandboxing():
     assert os.path.exists(path)
 
     with open(path, "r", encoding="utf-8") as f:
+        import json
+        import json
         data = json.load(f)
 
     assert data["id"] == "620-MONASTIC-SANDBOXING"
@@ -548,6 +582,8 @@ def test_623_iobnt_survey():
     assert os.path.exists(path)
 
     with open(path, "r", encoding="utf-8") as f:
+        import json
+        import json
         data = json.load(f)
 
     assert data["id"] == "623-IOBNT-SURVEY"
@@ -560,12 +596,14 @@ def test_623_f_strings():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
 
+    import re
     assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
 
     plugin_path = "arkhe-os-cli/arkhe_os/plugins/arkhe_iobnt.py"
     with open(plugin_path, "r", encoding="utf-8") as f:
         plugin_content = f.read()
 
+    import re
     assert not re.search(r'\bf(["\'])', plugin_content), "f-strings are strictly forbidden in python files"
 
 def test_substrato_xalgorix():
@@ -584,6 +622,8 @@ def test_substrato_xalgorix():
 
     assert os.path.exists(path)
     with open(path, "r", encoding="utf-8") as f:
+        import json
+        import json
         data = json.load(f)
 
     assert data["Title"] == "Xalgorix - The Most Powerful Open-Source AI Pentesting Agent"
@@ -594,6 +634,7 @@ def test_substrato_xalgorix():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
 
+    import re
     assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
 
 
