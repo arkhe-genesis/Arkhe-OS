@@ -41,7 +41,7 @@ class DimensionalObject:
 
     def anchor_to_temporalchain(self) -> str:
         \"\"\"Anchors the object state immutably.\"\"\"
-        state = str(self).encode()
+        state = str(self.__dict__).encode()
         seal = hashlib.sha3_256(state).hexdigest()
         return "9018.block#{seal}".format(seal=int(seal[:16], 16) % 10**6)
 
@@ -124,7 +124,7 @@ class Sphere3D(DimensionalObject):
 
     def __init__(self, radius: float = 1.0, psi_field: List[float] = None):
         self.radius = radius
-        self.psi_field = psi_field or [random.random() for _ in range(10)]
+        self.psi_field = psi_field if psi_field is not None else [random.random() for _ in range(10)]
 
     def phi_measure(self) -> float:
         return sum(self.psi_field) / len(self.psi_field) * self.radius
@@ -274,13 +274,13 @@ class E8Lattice(DimensionalObject):
 
     def phi_measure(self) -> float:
         if not self.roots: return 0.0
-        return min(1.0, len(self.roots) / 240) * 0.98
+        return min(1.0, len(self.roots) / self.num_roots) * 0.98
 
     def is_complete(self) -> bool:
-        return len(self.roots) >= 240
+        return len(self.roots) >= self.num_roots
 
     def __repr__(self):
-        return "E8Lattice(substrates={num}/240, kisses={kisses})".format(num=len(self.roots), kisses=self.kissing_number())
+        return "E8Lattice(substrates={num}/{total}, kisses={kisses})".format(num=len(self.roots), total=self.num_roots, kisses=self.kissing_number())
 
 # ==============================================================================
 # 9D \\u2014 PRINGLE (Augmentatist Multiverse)
