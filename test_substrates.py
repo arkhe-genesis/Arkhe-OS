@@ -392,3 +392,10 @@ def test_612_f_strings():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
     assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
+
+def test_618_openark_f_strings():
+    import os
+    file_path = os.path.abspath('arkhe-os-cli/arkhe_os/plugins/arkhe_openark.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
