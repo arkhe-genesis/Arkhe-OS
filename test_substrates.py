@@ -563,3 +563,27 @@ def test_623_f_strings():
         plugin_content = f.read()
 
     assert not re.search(r'\bf(["\'])', plugin_content), "f-strings are strictly forbidden in python files"
+
+def test_631_openserv_gateway():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        'substrato_631_openserv_gateway',
+        'substrates/631-OPENSERV-GATEWAY/substrato_631_openserv_gateway.py'
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato631OpenServGateway()
+    temp_dir, report_path = canonizer.generate()
+
+    with open(report_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data['id'] == '631-OPENSERV-GATEWAY'
+    assert 'canonical_seal' in data
+
+    assert os.path.exists(os.path.join(temp_dir, 'core_kernel/src/main.rs'))
+    assert os.path.exists(os.path.join(temp_dir, 'python_gateway/gateway.py'))
+    assert os.path.exists(os.path.join(temp_dir, 'rust_gateway/src/main.rs'))
