@@ -1015,7 +1015,7 @@ def test_pvac_f_strings():
         'substrates/s/801_convergence_event/substrato_801_convergence_event.py',
         'substrates/t/824_magalu_aws_bridge/substrato_824_magalu_aws_bridge.py',
         'substrates/t/825_parametric_memory_engine/substrato_825_parametric_memory_engine.py',
-        'substrates/t/827_bo_gallium_discovery/substrato_827_bo_gallium_discovery.py'
+        'substrates/t/826_gnn_isomorphism_finder/substrato_826_gnn_isomorphism_finder.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
@@ -1301,3 +1301,25 @@ def test_827_bo_gallium_discovery():
         content = f.read()
 
     assert "f\"" not in content and "f'" not in content, "f-strings are not allowed in canonizer scripts"
+
+def test_substrato_826_gnn_isomorphism_finder():
+    import importlib.util
+    import os
+
+    spec = importlib.util.spec_from_file_location(
+        "substrato_826_gnn_isomorphism_finder",
+        "substrates/t/826_gnn_isomorphism_finder/substrato_826_gnn_isomorphism_finder.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    path, seal, payload = module.canonize()
+
+    assert seal == "326e115286c3734a60eab2db26e020e01216ec07e1bdf7369624201ef3db27e0"
+    assert payload["id"] == "826-GNN-ISOMORPHISM-FINDER"
+
+    import ast
+    with open("substrates/t/826_gnn_isomorphism_finder/substrato_826_gnn_isomorphism_finder.py", "r") as f:
+        tree = ast.parse(f.read())
+        for node in ast.walk(tree):
+            assert not isinstance(node, ast.JoinedStr), "f-strings are not allowed in canonizer"
