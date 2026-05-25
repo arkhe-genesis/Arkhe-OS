@@ -1062,3 +1062,31 @@ def test_719_theological_quantum_coherence():
         content = f.read()
     import re
     assert not re.search(r'f["\']', content), "f-strings are strictly forbidden in canonizer scripts."
+
+def test_substrato_academic_research_skills():
+    import importlib.util
+    import json
+    import os
+    import re
+
+    file_path = os.path.abspath('substrates/400-499_advanced/substrato_Imbad0202_academic_research_skills/substrato_Imbad0202_academic_research_skills.py')
+    spec = importlib.util.spec_from_file_location("substrato_Imbad0202_academic_research_skills", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.SubstratoImbad0202AcademicResearchSkills()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["Title"] == "Academic Research Skills for Claude Code"
+    assert "Description" in data
+    assert "Features" in data
+    assert "Architecture" in data
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
