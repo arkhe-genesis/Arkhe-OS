@@ -1182,7 +1182,7 @@ def test_substrato_807_arkhe_runtime():
         data = json.load(f)
 
     assert data["id"] == "807-ARKHE-RUNTIME"
-    assert data["seal"] == "41a8cef41b9cdc60014ab462bfdbe1b3a6193f3d8910c38f6cd0f4e31634cd92"
+    assert data["seal"] == "e7b2389a5cd922945e50f38d5f7c6f617e010720b4b14b2dcab47709267ca837"
 
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()

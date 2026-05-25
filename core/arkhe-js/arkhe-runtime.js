@@ -76,9 +76,11 @@ async function start() {
   // Carregar agentes e iniciar Career Tracker
   let agents = [];
   try {
-    agents = require('./agents.json').agents;
+    const data = require('./agents.json');
+    if (!data.agents) throw new Error('Missing agents property');
+    agents = data.agents;
   } catch (e) {
-    console.log('[ARKHE-RUNTIME] agents.json não encontrado. Usando agentes padrão.');
+    console.log('[ARKHE-RUNTIME] agents.json não encontrado ou inválido. Usando agentes padrão.');
     agents = generateDefaultAgents();
   }
   careerTracker = new CareerCoherenceTracker(agents, telegraph);
