@@ -1323,3 +1323,25 @@ def test_substrato_826_gnn_isomorphism_finder():
         tree = ast.parse(f.read())
         for node in ast.walk(tree):
             assert not isinstance(node, ast.JoinedStr), "f-strings are not allowed in canonizer"
+
+def test_substrato_ipea_brverse():
+    import importlib.util
+    import os
+
+    file_path = os.path.abspath('substrates/400-499_advanced/substrato_ipea_brverse/substrato_ipea_brverse.py')
+    spec = importlib.util.spec_from_file_location("substrato_ipea_brverse", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.SubstratoIpeaBrverse()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        import json
+        data = json.load(f)
+
+    assert data["Title"] == "brverse - Lista de pacotes de R para acesso a dados brasileiros"
+    assert "Description" in data
+    assert "Features" in data
+    assert "Architecture" in data
