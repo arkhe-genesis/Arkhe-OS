@@ -51,12 +51,15 @@ class Substrato816ChiralityImplementation:
         os.close(fd)
 
         # Hash calculation without dynamic temp path
+        self.metadata.pop("seal", None)
         payload_str = json.dumps(self.metadata, sort_keys=True)
         seal = hashlib.sha3_256(payload_str.encode('utf-8')).hexdigest()
-        self.metadata["seal"] = seal
+
+        output_metadata = self.metadata.copy()
+        output_metadata["seal"] = seal
 
         with open(output_path, "w", encoding="utf-8") as f:
-            json.dump(self.metadata, f, indent=2, ensure_ascii=True)
+            json.dump(output_metadata, f, indent=2, ensure_ascii=True)
 
         print("Generated ARKHE-RUNTIME report at: " + output_path)
         print("Seal: " + seal)

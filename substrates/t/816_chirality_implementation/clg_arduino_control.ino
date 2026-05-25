@@ -100,7 +100,7 @@ bool isSynchronized() {
   int phaseDiff = readPhaseDifference();
   // XOR output ≈ 0V quando fases iguais, ≈ VCC/2 quando opostas
   // Em 5V com ADC 10-bit: 0V → 0, 2.5V → ~512
-  return phaseDiff < SYNC_THRESHOLD;
+  return (phaseDiff < SYNC_THRESHOLD) || (abs(phaseDiff - 512) < SYNC_THRESHOLD);
 }
 
 void runFullTest() {
