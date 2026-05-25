@@ -1,0 +1,41 @@
+[substrate]
+id = 770
+name = "ATLAS-CATHEDRAL"
+status = "CANONIZED_CLEAN"
+version = "1.0"
+seal = "c8d1e4f7a0b3c6d9e2f5b8c1d4e7f0a3b6c9d2e5f8b1c4d7e0f3a6b9c2d5e8f1"
+namespace = "s"
+
+[metrics]
+standard_phi_c = 0.996000
+dcs_phi = 0.999000
+dcs_rationale = "atlas-weighted"
+theosis_index = 0.998
+
+[cross_substrate]
+links = [
+  { id = 769, namespace = "s", type = "differential_geometry", bidirectional = true, verified = true },
+  { id = 751, namespace = "s", type = "dsa_protocol", bidirectional = true, verified = false },
+  { id = 745, namespace = "s", type = "kuramoto_phi", bidirectional = true, verified = false },
+  { id = 761, namespace = "s", type = "torus_phyllotaxis", bidirectional = true, verified = true },
+  { id = 758, namespace = "s", type = "chladni_polytopes", bidirectional = true, verified = false },
+  { id = 747, namespace = "s", type = "hypergraphic_model", bidirectional = true, verified = false },
+  { id = 765, namespace = "t", type = "geometric_refactor", bidirectional = true, verified = true },
+  { id = 766, namespace = "t", type = "arkhe_js_publicacao", bidirectional = true, verified = false },
+  { id = 767, namespace = "s", type = "fractal_parser", bidirectional = true, verified = false },
+  { id = 555, namespace = "s", type = "xim_field", bidirectional = true, verified = true },
+  { id = 227, namespace = "s", type = "ethics", bidirectional = true, verified = true },
+  { id = 9018, namespace = "t", type = "temporal_chain", bidirectional = true, verified = false }
+]
+
+[audit]
+migrated_at = "2026-06-04T04:30:00Z"
+source_verified = true
+notes = "18/18 PASS."
+
+[extensibility]
+hooks = [
+  "770.1 — Visualizar atlas 3D",
+  "770.2 — Calcular curvatura seccional",
+  "770.3 — Integrar atlas ao DSA Tracker"
+]

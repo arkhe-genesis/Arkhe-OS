@@ -1,0 +1,41 @@
+[substrate]
+id = 769
+name = "DIFFERENTIAL-GEOMETRY-SKILL"
+status = "CANONIZED_CLEAN"
+version = "2.0"
+seal = "724b33b5a0c02337845c576cf68c60801b61c742ce9dbd86f948e116f965d6b9"
+namespace = "s"
+
+[metrics]
+standard_phi_c = 0.944444
+dcs_phi = 0.998000
+dcs_rationale = "differential-geometry-skill-weighted"
+theosis_index = 0.999
+
+[cross_substrate]
+links = [
+  { id = 761, namespace = "s", type = "torus_phyllotaxis", bidirectional = true, verified = true },
+  { id = 751, namespace = "s", type = "dsa_protocol", bidirectional = true, verified = false },
+  { id = 745, namespace = "s", type = "kuramoto_phi", bidirectional = true, verified = false },
+  { id = 758, namespace = "s", type = "chladni_polytopes", bidirectional = true, verified = false },
+  { id = 755, namespace = "s", type = "binary_inspiral", bidirectional = true, verified = false },
+  { id = 759, namespace = "s", type = "fibonacci_time", bidirectional = true, verified = false },
+  { id = 720, namespace = "s", type = "tempus_narrativa", bidirectional = true, verified = false },
+  { id = 555, namespace = "s", type = "xim_field", bidirectional = true, verified = true },
+  { id = 747, namespace = "s", type = "hypergraphic_model", bidirectional = true, verified = false },
+  { id = 767, namespace = "s", type = "fractal_parser", bidirectional = true, verified = false },
+  { id = 765, namespace = "t", type = "geometric_refactor", bidirectional = true, verified = true }
+]
+
+[audit]
+migrated_at = "2026-06-04T03:00:00Z"
+source_verified = true
+notes = "18/18 PASS. Placeholder seal corrected to true SHA3-256."
+
+[extensibility]
+hooks = [
+  "769.1 — Integrar roteiro ao DSA Tracker",
+  "769.2 — Resolver teoremas como problemas",
+  "769.3 — Visualizar curvatura 3D",
+  "769.4 — Atlas da Catedral"
+]

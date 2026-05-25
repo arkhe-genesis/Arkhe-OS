@@ -11,7 +11,7 @@
 'use strict';
 
 const { WebSocketServer } = require('ws');
-const { Arkhe, CONSTANTS } = require('./arkhe.js');
+const { Arkhe, CONSTANTS, geoCommand } = require('./arkhe.js');
 
 // Configuração
 const PORT = process.env.PORT || 3000;
@@ -128,6 +128,13 @@ wss.on('connection', (ws, req) => {
             ghostThreshold: CONSTANTS.GHOST_THRESHOLD,
             convergenceThreshold: CONSTANTS.CONVERGENCE_THRESHOLD
           };
+          break;
+
+        case 'geo-track':
+          response.data = geoCommand({ command: 'geo-track', step: msg.step, status: msg.status, notes: msg.notes });
+          break;
+        case 'atlas':
+          response.data = geoCommand({ command: 'atlas', substrate: msg.substrate, curvature: msg.curvature });
           break;
 
         default:
