@@ -1022,6 +1022,9 @@ def test_pvac_f_strings():
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
             content = f.read()
+            # Strict mode verification: We use regex to only match f-strings (f"..." or f'...'),
+            # making sure we match a boundary before 'f' to avoid matching inside variable names or hashes
+            assert not re.search(r"\bf[\"']", content), f"f-strings are not allowed in canonizer scripts: {filepath}"
 
 def test_substrato_831_story_ip_chain_bridge():
     import importlib.util
