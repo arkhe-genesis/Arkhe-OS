@@ -165,11 +165,10 @@ NTSTATUS ArkheEnableRTZ() {
         return STATUS_INSUFFICIENT_RESOURCES;
     }
 
-    // Mark as critical: this memory cannot be paged out
-    MmLockPagableDataSection(canonBuffer);
+
 
     KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,
-               "[Arkhe] RTZ: Canon secured in non-paged pool. ρ_min = %.2f\n", RTZ_RHO_MIN));
+               "[Arkhe] RTZ: Canon secured in non-paged pool. ρ_min_x100 = %d\n", (int)(RTZ_RHO_MIN * 100)));
     return STATUS_SUCCESS;
 }
 
@@ -199,7 +198,9 @@ NTSTATUS ArkheStartMetacognition() {
         return status;
     }
 
-    gMetacognitionThread = threadHandle;
+    ZwClose(threadHandle);
+
+    gMetacognitionThread = NULL;
     KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,
                "[Arkhe] Metacognition: self-monitoring thread started.\n"));
     return STATUS_SUCCESS;
@@ -219,8 +220,8 @@ VOID ArkheMetacognitionWorker(IN PVOID Context) {
         // - Update gKernelConfidence and gSchedulerAUROC
 
         KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,
-                   "[Arkhe] Metacognition: kernel confidence = %.3f, AUROC = %.3f\n",
-                   gKernelConfidence, gSchedulerAUROC));
+                   "[Arkhe] Metacognition: kernel confidence_x1000 = %d, AUROC_x1000 = %d\n",
+                   (int)(gKernelConfidence * 1000), (int)(gSchedulerAUROC * 1000)));
 
         KeDelayExecutionThread(KernelMode, FALSE, &interval);
     }
@@ -258,8 +259,8 @@ VOID ArkheEvtIoDeviceControl(
             // Get kernel confidence metrics
             if (outputSize >= 32) {
                 RtlStringCbPrintfA((CHAR*)outputBuffer, outputSize,
-                    "{\"confidence\":%.3f,\"auroc\":%.3f,\"ghost\":%.3f}\n",
-                    gKernelConfidence, gSchedulerAUROC, GHOST_THRESHOLD);
+                    "{\"confidence_x1000\":%d,\"auroc_x1000\":%d,\"ghost_x1000\":%d}\n",
+                    (int)(gKernelConfidence * 1000), (int)(gSchedulerAUROC * 1000), (int)(GHOST_THRESHOLD * 1000));
                 WdfRequestSetInformation(Request, (ULONG)strlen((CHAR*)outputBuffer));
             }
             break;
@@ -289,8 +290,8 @@ VOID ArkheEvtIoRead(
     // Stream real-time coherence metrics
     if (outputSize >= 64) {
         RtlStringCbPrintfA((CHAR*)outputBuffer, outputSize,
-            "{\"phi\":%.4f,\"caster_active\":true,\"rtz_rho\":%.2f,\"metacog_interval_ms\":%d}\n",
-            gKernelConfidence, RTZ_RHO_MIN, METACOGNITION_INTERVAL_MS);
+            "{\"phi_x10000\":%d,\"caster_active\":true,\"rtz_rho_x100\":%d,\"metacog_interval_ms\":%d}\n",
+            (int)(gKernelConfidence * 10000), (int)(RTZ_RHO_MIN * 100), METACOGNITION_INTERVAL_MS);
         WdfRequestSetInformation(Request, (ULONG)strlen((CHAR*)outputBuffer));
     }
 
