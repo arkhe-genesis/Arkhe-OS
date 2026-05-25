@@ -1277,6 +1277,26 @@ def test_825_parametric_memory_engine():
     assert data["id"] == "825-PARAMETRIC-MEMORY-ENGINE"
     assert "canonical_seal" in data
 
+def test_827_bo_gallium_discovery():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/827_bo_gallium_discovery/substrato_827_bo_gallium_discovery.py')
+    spec = importlib.util.spec_from_file_location("substrato_827_bo_gallium_discovery", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato827BOGalliumDiscovery()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "827-BO-GALLIUM-DISCOVERY"
+    assert "canonical_seal" in data
+
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
 
