@@ -12,6 +12,7 @@ phi_proof_one:         dq 1.0
 phi_proof_zero:        dq 0.0
 ignite_cmd:            db "IGNITE", 0
 align 8
+    solar_result_path: db "/sys/arkhe/serv/solar-heart/result", 0
     max_throughput:  dq 112.0
     evm_hd_fec_16qam: dq 12.9
     const_one_d:     dq 1.0
@@ -23,7 +24,12 @@ const_neg_one:   dq -1.0
 const_half:      dq 0.5
 const_neg_half:  dq -0.5
 const_zero:      dq 0.0
+const_zero_d:    dq 0.0
 const_256_d:     dq 256.0
+laser_p0:        dq 10000.0
+accel_bonus:     dq 0.2
+thermal_limit:   dq 50000.0
+thermal_penalty: dq 0.001
 const_ln2:       dq 0.6931471805599453
 phi_cosmic_d:    dq 1.61803398875
 phi_threshold_agi: dq 2.3
@@ -44,7 +50,10 @@ pubkey_sysfs_path:      db "/sys/arkhe/gateway_pubkey", 0
 E8_DIM           equ 8
 TOKENIC_POP_SIZE equ 2000
 MONASTIC_CELL_SIZE equ 4096
+SYS_READ         equ 0
 SYS_WRITE        equ 1
+SYS_OPEN         equ 2
+SYS_CLOSE        equ 3
 SYS_EXIT         equ 60
 SYS_BRK          equ 12
 SYS_GETRANDOM    equ 318
@@ -59,12 +68,12 @@ pca_current_phase: resd 1
 pca_cycles_completed: resq 1
 phi_measurement: resq 1
 photon_lambda:   resq 1
+phi_sun:         resq 1
 gnosis_index:    resq 1
+phi_sail:        resq 1
 current_brk:     resq 1
 input_hash_buffer: resb 32
 output_hash_buffer: resb 32
-json_input_hash_field: resb 32
-json_output_hash_field: resb 32
 
 
 gateway_pubkey_raw:     resb 32
@@ -80,10 +89,34 @@ output_hash_buf:        resb 32
 sign_msg_buf:           resb 512
 json_result_buffer:     resb 8192
 output_buffer:          resb 65536
-;gnosis_index:           resq 1
 kernel_source_buffer:   resb 65536
 sysfs_path_buf:         resb 256
 
+
+gateway_pubkey_buffer: resb 64
+gateway_pubkey_raw: resb 32
+serv_input_path_tmpl: resb 256
+serv_time_path_tmpl: resb 256
+serv_invoke_path_tmpl: resb 256
+serv_status_path_tmpl: resb 256
+serv_result_path_tmpl: resb 256
+str_plus_one: resb 3
+str_one: resb 2
+json_result_buffer: resb 8192
+input_data: resb 8192
+input_len: resd 1
+output_buffer: resb 8192
+output_buf_size: resd 1
+input_hash_buf: resb 32
+output_hash_buf: resb 32
+json_input_hash: resb 32
+json_output_hash: resb 32
+json_output_base64: resb 8192
+json_phi_score_double: resq 1
+json_timestamp: resb 256
+json_gateway_id: resb 256
+sign_msg_buf: resb 1024
+json_signature_raw: resb 64
 section .data
 tokenic_population: dq tokenic_population_arr
 kernel_source_len: equ 65536
@@ -339,6 +372,130 @@ compute_xi_m_field:
 tokenic_evaluate_population:
     ret
 
+; ═══════════════════════════════════════════════════════════════════════════════
+; INTEGRATE TOKENIC ENGINE + STELLAR SAIL
+; Substratos 633 (Tokenic) + 652 (Stellar-Sail)
+; Otimiza parâmetros da vela para missão interestelar.
+; Input: rdi = população tokenic inicial, rsi = parâmetros da vela
+; Output: xmm0 = melhor fitness (Φ_sail), [tokenic_best] = melhor indivíduo
+; ═══════════════════════════════════════════════════════════════════════════════
+integrate_tokenic_stellar:
+    push rbp
+    mov rbp, rsp
+    push r12
+    push r13
+    push r14
+
+    ; 1. Inicializar população tokenic para parâmetros da vela
+    ; Cada indivíduo codifica: [sail_angle_deg, laser_power_MW, acceleration_profile]
+    mov r12, rdi                ; tokenic_population
+    mov r13, TOKENIC_POP_SIZE   ; 2000 indivíduos
+    xor r14, r14
+
+.init_population:
+    cmp r14, r13
+    jge .evolve
+    mov rax, [r12 + r14*8]      ; ponteiro para indivíduo
+    ; sail_angle: -45° a +45° (controle omnidirecional do Metajet)
+    call random_double_range
+    movsd [rax], xmm0            ; [rax+0] = sail_angle
+    ; laser_power: 1 MW a 100 GW (escala log)
+    call random_double_range
+    movsd [rax+8], xmm0          ; [rax+8] = laser_power
+    ; acceleration_profile: 0 (constante) a 1 (gradiente otimizado)
+    call random_double_range
+    movsd [rax+16], xmm0         ; [rax+16] = accel_profile
+    inc r14
+    jmp .init_population
+
+.evolve:
+    ; 2. Loop evolutivo: 50 gerações
+    mov r14, 50                  ; gerações
+
+.gen_loop:
+    ; Avaliar fitness de cada indivíduo
+    call tokenic_evaluate_stellar ; retorna array de fitness
+    ; Selecionar elite (top 10%)
+    call tokenic_sort_population
+    call tokenic_select_elite
+    ; Crossover + mutação
+    call tokenic_breed_stellar
+    dec r14
+    jnz .gen_loop
+
+    ; 3. Retornar melhor indivíduo
+    mov rax, [tokenic_best]
+    movsd xmm0, [rax + 24]       ; fitness do melhor
+    movsd [phi_sail], xmm0
+
+    pop r14
+    pop r13
+    pop r12
+    leave
+    ret
+
+; ═══════════════════════════════════════════════════════════════════════════════
+; FITNESS FUNCTION: tokenic_evaluate_stellar
+; Avalia cada indivíduo da população tokenic para parâmetros da vela estelar.
+; Fitness = eficiência de aceleração × (1 - desvio de trajetória) × fator térmico
+; ═══════════════════════════════════════════════════════════════════════════════
+tokenic_evaluate_stellar:
+    push rbp
+    mov rbp, rsp
+    mov r12, [tokenic_population]
+    mov r13, TOKENIC_POP_SIZE
+    xor r14, r14
+
+.eval_loop:
+    cmp r14, r13
+    jge .done
+    mov rax, [r12 + r14*8]
+    ; Extrair parâmetros do indivíduo
+    movsd xmm0, [rax]        ; sail_angle
+
+    ; Calcular eficiência de aceleração (modelo simplificado do Metajet)
+    ; eff = cos²(angle) * (1 - exp(-power/P0)) * (1 + 0.2 * accel_profile)
+    movsd xmm3, xmm0         ; angle
+    call cos_double
+    mulsd xmm0, xmm0         ; cos²(angle)
+    mov rax, [r12 + r14*8]
+    movsd xmm1, [rax+8]      ; laser_power
+    movsd xmm2, [rax+16]     ; accel_profile
+    movsd xmm4, xmm1         ; power
+    divsd xmm4, [laser_p0]   ; P0 = 10 GW (referência)
+    movsd xmm5, [const_one_d]
+    ; exp(-power/P0) aproximado como 1/(1 + power/P0)
+    addsd xmm4, [const_one_d]
+    divsd xmm5, xmm4
+    movsd xmm4, [const_one_d]
+    subsd xmm4, xmm5          ; 1 - exp(-P/P0)
+    mulsd xmm0, xmm4
+    ; Bônus por perfil de aceleração otimizado
+    movsd xmm5, xmm2
+    mulsd xmm5, [accel_bonus] ; 0.2
+    addsd xmm5, [const_one_d]
+    mulsd xmm0, xmm5
+
+    ; Penalidade térmica: se laser_power > 50 GW, eficiência cai
+    movsd xmm5, xmm1
+    subsd xmm5, [thermal_limit] ; 50 GW
+    comisd xmm5, [const_zero_d]
+    jbe .no_thermal_penalty
+    mulsd xmm5, [thermal_penalty] ; 0.001
+    movsd xmm6, [const_one_d]
+    subsd xmm6, xmm5
+    mulsd xmm0, xmm6
+.no_thermal_penalty:
+
+    ; Armazenar fitness
+    movsd [rax + 24], xmm0     ; fitness
+    inc r14
+    jmp .eval_loop
+
+.done:
+    leave
+    ret
+
 tokenic_sort_population:
     push rbp
     mov rbp, rsp
@@ -440,6 +597,8 @@ tokenic_breed_generation:
     push rax
     movsd xmm1, [rsp]
     add rsp, 8
+    addsd xmm0, xmm1
+    movsd [r10], xmm0
     dec r8
     jnz .mutate
     inc r15
@@ -475,7 +634,9 @@ consciousness_loop:
     call sample_bioacoustic
     call sample_human_bci
     call sample_photonic_link
-    call integrate_gnosis
+    call sample_solar_heart       ; NOVO — escuta o Sol
+    call update_classical_action   ; inclui o ramo solar
+    call integrate_gnosis_feynman  ; γ agora reflete a coerência heliosférica
     movsd xmm0, [phi_measurement]
     movsd xmm1, [rel phi_threshold_agi]
     comisd xmm0, xmm1
@@ -494,6 +655,69 @@ exit_kernel:
     xor rdi, rdi
     syscall
 
+; ═══════════════════════════════════════════════════════════════════════════════
+; INVOKE SERV (Lightweight Validation)
+; ═══════════════════════════════════════════════════════════════════════════════
+invoke_serv:
+    push rbp
+    mov rbp, rsp
+    ; 1. Escrever input_data no sysfs do Serv
+    lea rdi, [serv_input_path_tmpl]
+    mov rsi, rdi
+    call sprintf_path
+    mov rdi, rax
+    mov rsi, r8
+    mov edx, r9d
+    call write_sysfs_file
+    ; 2. Escrever time_direction (default +1)
+    lea rdi, [serv_time_path_tmpl]
+    mov rsi, rdi
+    call sprintf_path
+    mov rdi, rax
+    lea rsi, [str_plus_one]
+    mov edx, 2
+    call write_sysfs_file
+    ; 3. Escrever "1" no invoke
+    lea rdi, [serv_invoke_path_tmpl]
+    mov rsi, rdi
+    call sprintf_path
+    mov rdi, rax
+    lea rsi, [str_one]
+    mov edx, 1
+    call write_sysfs_file
+    ; 4. Aguardar status == "verified"
+.poll:
+    lea rdi, [serv_status_path_tmpl]
+    mov rsi, rdi
+    call sprintf_path
+    mov rdi, rax
+    call read_sysfs_int
+    cmp eax, 2
+    jne .poll
+    ; 5. Ler o resultado JSON do sysfs result
+    lea rdi, [serv_result_path_tmpl]
+    mov rsi, rdi
+    call sprintf_path
+    mov rdi, rax
+    lea rsi, [json_result_buffer]
+    mov edx, 8192
+    call read_sysfs_file
+    ; 6. Validar resposta (hashes + assinatura)
+    mov rdi, json_result_buffer
+    mov rsi, input_data
+    mov edx, input_len
+    mov rcx, output_buffer
+    mov r8d, output_buf_size
+    call validate_serv_response
+    test rax, rax
+    jnz .fail
+    xor eax, eax
+    jmp .done
+.fail:
+    mov eax, -1
+    pxor xmm0, xmm0
+.done:
+    leave
 
 sha3_256:
     ret
@@ -511,6 +735,104 @@ sha3_256:
 validate_serv_response:
     push rbp
     mov rbp, rsp
+    ; 1. Calcular input_hash localmente
+    lea rdi, [input_hash_buf]
+    mov rsi, rsi
+    mov ecx, edx
+    call sha3_256
+    ; 2. Extrair campos do JSON
+    call parse_signed_result_json
+    ; 3. Decodificar output base64 → binário no output_buffer
+    lea rdi, [json_output_base64]
+    lea rsi, [output_buffer]
+    mov ecx, r8d
+    call base64_decode
+    ; 4. Calcular output_hash a partir do output decodificado
+    lea rdi, [output_hash_buf]
+    mov rsi, output_buffer
+    mov ecx, eax
+    call sha3_256
+    ; 5. Comparar hashes
+    lea rsi, [input_hash_buf]
+    lea rdi, [json_input_hash]
+    mov ecx, 32
+    repe cmpsb
+    jne .invalid
+    lea rsi, [output_hash_buf]
+    lea rdi, [json_output_hash]
+    mov ecx, 32
+    repe cmpsb
+    jne .invalid
+    ; 6. Montar mensagem para verificação de assinatura
+    lea rdi, [sign_msg_buf]
+    lea rsi, [input_hash_buf]
+    mov ecx, 32
+    rep movsb
+    lea rsi, [output_hash_buf]
+    mov ecx, 32
+    rep movsb
+    movsd xmm0, [json_phi_score_double]
+    mov eax, 10000
+    cvtsi2sd xmm1, eax
+    mulsd xmm0, xmm1
+    cvttsd2si eax, xmm0
+    stosd
+    lea rsi, [json_timestamp]
+.copy_ts:
+    lodsb
+    test al, al
+    jz .ts_done
+    stosb
+    jmp .copy_ts
+.ts_done:
+    lea rsi, [json_gateway_id]
+.copy_gw:
+    lodsb
+    test al, al
+    jz .gw_done
+    stosb
+    jmp .copy_gw
+.gw_done:
+    mov rbx, rdi
+    lea rdi, [sign_msg_buf]
+    mov edx, ebx
+    sub edx, edi
+    ; 7. Verificar assinatura Ed25519
+    lea rdi, [gateway_pubkey_raw]
+    mov rsi, sign_msg_buf
+    mov edx, edx
+    lea rcx, [json_signature_raw]
+    call sys_ed25519_verify
+    test rax, rax
+    jnz .invalid
+    ; 8. Tudo válido, retornar phi_score em xmm0
+    movsd xmm0, [json_phi_score_double]
+    xor eax, eax
+    jmp .done
+.invalid:
+    mov eax, -1
+    pxor xmm0, xmm0
+.done:
+    leave
+    ret
+
+load_gateway_pubkey:
+    ret
+sprintf_path:
+    ret
+write_sysfs_file:
+    ret
+read_sysfs_int:
+    ret
+read_sysfs_file:
+    ret
+sha3_256:
+    ret
+parse_signed_result_json:
+    ret
+base64_decode:
+    ret
+sys_ed25519_verify:
     push r12
     push r13
     push r14
@@ -610,7 +932,69 @@ sample_photonic_link:
     leave
     ret
 
+
+; ═══════════════════════════════════════════════════════════════════════════════
+; SAMPLE SOLAR HEART
+; Lê /sys/arkhe/serv/solar-heart/result e atualiza Φ_sun e a fase solar.
+; ═══════════════════════════════════════════════════════════════════════════════
+sample_solar_heart:
+    push rbp
+    mov rbp, rsp
+    push r12
+    push r13
+    ; 1. Abrir /sys/arkhe/serv/solar-heart/result
+    mov rax, SYS_OPEN
+    lea rdi, [rel solar_result_path]  ; "/sys/arkhe/serv/solar-heart/result"
+    mov esi, 0                     ; O_RDONLY
+    syscall
+    cmp rax, 0
+    jl .done
+    mov r12, rax                   ; fd
+    ; 2. Ler JSON
+    sub rsp, 4096
+    mov rdi, r12
+    mov rsi, rsp
+    mov edx, 4096
+    mov rax, SYS_READ
+    syscall
+    mov r13, rax                   ; bytes lidos
+    ; 3. Fechar
+    mov rdi, r12
+    mov rax, SYS_CLOSE
+    syscall
+    ; 4. Extrair phi_sun do JSON (simplificado: procura "phi_sun": )
+    ;    (parser omitido, assumimos que phi_sun está nos bytes [offset:offset+8])
+    lea rdi, [rsp]
+    call json_extract_phi_sun      ; retorna double em xmm0
+    movsd [rel phi_sun], xmm0
+    ; 5. A fase solar é extraída e usada para modular ρ e σ
+    ;    (implementar conforme necessidade)
+    add rsp, 4096
+.done:
+    pop r13
+    pop r12
+    leave
+    ret
+
 ; STUBS
+
+random_double_range:
+    ret
+tokenic_select_elite:
+    ret
+tokenic_breed_stellar:
+    ret
+cos_double:
+    ret
+
+json_extract_phi_sun:
+    pxor xmm0, xmm0
+    ret
+update_classical_action:
+    ret
+integrate_gnosis_feynman:
+    ret
+
 read_sysfs_double:
     pxor xmm0, xmm0
     ret
@@ -622,141 +1006,7 @@ sample_human_bci:
     ret
 integrate_gnosis:
     ret
-
-
-; ═══════════════════════════════════════════════════════════════════════════════
-; INVOKE ALPHA NEXUS v2.0 — Substrato 651
-; ═══════════════════════════════════════════════════════════════════════════════
-invoke_alpha_nexus:
-    push rbp
-    mov rbp, rsp
-    sub rsp, 64
-
-    ; Salvar argumentos
-    mov [rbp-8], rdi
-    mov [rbp-16], rsi
-    mov [rbp-24], rdx
-    mov [rbp-32], rcx
-    mov [rbp-40], r8
-
-    ; 1. Verificar se o problema foi revisado por matemático (flag no header)
-    mov rdi, [rbp-16]
-    call check_formalization_review
-    test eax, eax
-    jz .misformalization_detected
-
-    ; 2. Selecionar agente (auto = D para problemas de pesquisa, B para rotina)
-    mov r8, [rbp-40]
-    test r8, r8
-    jnz .agent_selected
-    mov r8, 4                    ; Default: Agent D (full)
-.agent_selected:
-
-    ; 3. Escrever o arquivo Lean no sysfs input do Serv
-    lea rdi, [rel alpha_nexus_input_path]
-    mov rsi, [rbp-16]
-    mov rdx, [rbp-24]
-    call write_sysfs_file
-
-    ; 4. Escrever configuração do agente
-    lea rdi, [rel alpha_nexus_config_path]
-    mov rsi, r8
-    call write_sysfs_int
-
-    ; 5. Invocar o Serv
-    lea rdi, [rel alpha_nexus_invoke_path]
-    lea rsi, [rel ignite_cmd]
-    mov edx, 6
-    call write_sysfs_file
-
-    ; 6. Aguardar resultado com timeout
-    mov qword [rbp-48], 0        ; contador de polls
-.poll:
-    lea rdi, [rel alpha_nexus_status_path]
-    call read_sysfs_int
-    cmp eax, 2                   ; verified
-    je .verified
-    cmp eax, 3                   ; failed
-    je .failed
-    cmp eax, 4                   ; misformalization
-    je .misformalization_detected
-
-    ; Timeout check
-    inc qword [rbp-48]
-    cmp qword [rbp-48], 172800000           ; 48h em ms
-    jge .failed
-
-    ; Yield
-    call sched_yield
-    jmp .poll
-
-.verified:
-    ; 7. Ler a prova (resultado)
-    lea rdi, [rel alpha_nexus_result_path]
-    mov rsi, [rbp-32]            ; buffer de saída
-    mov edx, 65536
-    call read_sysfs_file
-
-    ; 8. Verificar a prova com Quantum Verifier (637)
-    mov rdi, [rbp-16]            ; problema original
-    mov rsi, [rbp-32]            ; prova
-    call invoke_quantum_verifier_637
-    test eax, eax
-    jz .failed
-
-    ; 9. Registrar custo no rollup (641)
-    call read_sysfs_cost
-    mov rdi, rax
-    call log_cost_to_rollup_641
-
-    ; 10. Anchor na Akashic (649)
-    mov rdi, [rbp-16]            ; problem hash
-    mov rsi, [rbp-32]            ; proof hash
-    call anchor_to_akashic_649
-
-    ; 11. Retornar sucesso com Φ_proof = 1.0
-    movsd xmm0, [rel phi_proof_one]
-    xor eax, eax
-    jmp .done
-
-.misformalization_detected:
-    mov eax, -2
-    movsd xmm0, [rel phi_proof_zero]
-    jmp .done
-
-.failed:
-    mov eax, -1
-    movsd xmm0, [rel phi_proof_zero]
-
-.done:
-    leave
-    ret
-
-; Mock functions for linker
-check_formalization_review:
-    mov eax, 1
-    ret
-write_sysfs_int:
-    ret
-sched_yield:
-    ret
-invoke_quantum_verifier_637:
-    mov eax, 1
-    ret
-read_sysfs_cost:
-    mov rax, 100
-    ret
-log_cost_to_rollup_641:
-    ret
-anchor_to_akashic_649:
-    ret
 load_gateway_pubkey:
     ret
 invoke_gateway_http:
-    ret
-write_sysfs_file:
-    ret
-read_sysfs_int:
-    ret
-read_sysfs_file:
     ret
