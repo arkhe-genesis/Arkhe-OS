@@ -154,9 +154,16 @@ impl SageMakerProxy {
     }
 
     fn aes_gcm_decrypt(&self, ciphertext: &[u8], key: &[u8; 32], nonce: &[u8; 12]) -> anyhow::Result<Vec<u8>> {
-        // Simplificado: produção requer verificação de tag AEAD
-        let plaintext_len = ciphertext.len().saturating_sub(12);
-        Ok(ciphertext[..plaintext_len].to_vec())
+        let unbound = UnboundKey::new(&AES_256_GCM, key)
+            .map_err(|_| anyhow::anyhow!("invalid AES-256 key"))?;
+        let opening_key = ring::aead::LessSafeKey::new(unbound);
+        let nonce_val = Nonce::assume_unique_for_key(*nonce);
+
+        let mut in_out = ciphertext.to_vec();
+        let decrypted_slice = opening_key.open_in_place(nonce_val, ring::aead::Aad::empty(), &mut in_out)
+            .map_err(|_| anyhow::anyhow!("decryption failed"))?;
+
+        Ok(decrypted_slice.to_vec())
     }
 
     // --- Métodos privados de storage ---
