@@ -1136,3 +1136,28 @@ def test_substrato_766_trapdoor_countermeasure():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
     assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
+
+def test_substrato_804_ecosystem_roles():
+    import re
+    import importlib.util
+    file_path = os.path.abspath('substrates/t/804_ecosystem_roles/substrato_804_ecosystem_roles.py')
+    spec = importlib.util.spec_from_file_location("substrato_804_ecosystem_roles", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato804EcosystemRoles()
+    json_path = canonizer.generate_json()
+    assert os.path.exists(json_path)
+
+    with open(json_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["id"] == "804-ECOSYSTEM-ROLES"
+    assert "seal" in data
+    assert "domains" in data
+    assert "core" in data["domains"]
+    assert "quantum" in data["domains"]
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+        assert not re.search(r'f["\']', content), "Found f-string in canonizer file"
