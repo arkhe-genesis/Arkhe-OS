@@ -126,16 +126,16 @@ class K8sCoherenceSimulator:
         for rec in self.history:
             status = "💥 COLAPSO" if rec["collapsed"] else "✓ COERENTE"
             lines.append(
-                "%4d | %6d | %s%% | "
-                "%s | %s | %7d | %s" % (
+                "%4d | %6d | %6.1f%% | "
+                "%8.4f | %6.1f | %7d | %s" % (
                 rec['step'], rec['load'], rec['failure_rate'] * 100.0,
                 rec['r'], rec['cpu_avg'], rec['healthy_pods'], status)
             )
         lines.append("")
-        lines.append("Ghost Threshold (γ): %s.GHOST_THRESHOLD)
+        lines.append("Ghost Threshold (γ): %s" % self.GHOST_THRESHOLD)
         if any(r["collapsed"] for r in self.history):
             first = next(r for r in self.history if r["collapsed"])
-            lines.append("Colapso detectado no step %sailure_rate'] * 100.0))
+            lines.append("Colapso detectado no step %s, failure_rate: %s%%" % (first['step'], first['failure_rate'] * 100.0))
         else:
             lines.append("Colapso NÃO detectado dentro do range de carga testado.")
         return "\\n".join(lines)
@@ -148,8 +148,8 @@ def main():
 
     if any(r["collapsed"] for r in experiment):
         first_colapse = next(r for r in experiment if r["collapsed"])
-        print("\\n[VALIDAÇÃO] Threshold γ=%sirst_colapse['load']))
-        print("[VALIDAÇÃO] Healthy pods no colapso: %sirst_colapse['total_pods']))
+        print("\\n[VALIDAÇÃO] Threshold γ=%s, load=%s" % (sim.GHOST_THRESHOLD, first_colapse['load']))
+        print("[VALIDAÇÃO] Healthy pods no colapso: %s/%s" % (first_colapse['healthy_pods'], first_colapse['total_pods']))
         print("[VALIDAÇÃO] Ghost Threshold VALIDADO para burst automático.")
     else:
         print("\\n[ALERTA] Não foi possível validar o threshold no range de carga testado.")
@@ -261,7 +261,7 @@ func (p *MagaluAWSProvider) CreatePod(ctx context.Context, pod *corev1.Pod) erro
 	}
 
 	// Coherence sufficient — reject so scheduler keeps the pod local.
-	return fmt.Errorf("coherence sufficient (r=%s >= %s), use native scheduler", r, GhostThreshold)
+	return fmt.Errorf("coherence sufficient (r=%.4f >= %.4f), use native scheduler", r, GhostThreshold)
 }
 
 // GetPods returns pods currently running in burst (AWS Fargate).
@@ -291,7 +291,7 @@ func (p *MagaluAWSProvider) ghostThresholdAlert(r float64) {
 	count := p.ghostBreaches
 	p.mu.Unlock()
 
-	fmt.Printf("🚨 GHOST THRESHOLD BREACHED [#%d]: r=%s < %s | BURSTING TO AWS FARGATE\\n",
+	fmt.Printf("🚨 GHOST THRESHOLD BREACHED [#%d]: r=%.4f < %.4f | BURSTING TO AWS FARGATE\\n",
 		count, r, GhostThreshold)
 }
 

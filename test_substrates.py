@@ -1017,6 +1017,7 @@ def test_pvac_f_strings():
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
             content = f.read()
+        assert not re.search(r'\bf(["\'])', content), f"f-strings are strictly forbidden in python files ({filepath})"
 
 def test_718_quasi_substratos():
     import importlib.util
