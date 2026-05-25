@@ -1009,7 +1009,9 @@ def test_pvac_f_strings():
         'substrates/679-PVAC-COMPRESSION/substrato_679_pvac_compression.py',
         'substrates/680-PVAC-CRYPTO/substrato_680_pvac_crypto.py',
         'substrates/681-PVAC-FHE/substrato_681_pvac_fhe.py',
-        'substrates/682-PVAC-NET/substrato_682_pvac_net.py'
+        'substrates/682-PVAC-NET/substrato_682_pvac_net.py',
+        'substrates/s/803_temporal_zkwasm_integration/substrato_803_temporal_zkwasm_integration.py',
+        'substrates/s/801_convergence_event/substrato_801_convergence_event.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:

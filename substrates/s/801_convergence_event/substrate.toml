@@ -1,0 +1,35 @@
+[substrate]
+id = 801
+name = "CONVERGENCE-EVENT"
+status = "CANONIZED_CLEAN"
+version = "1.0"
+seal = "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2"
+namespace = "s"
+
+[metrics]
+standard_phi_c = 1.000000
+dcs_phi = 1.000000
+dcs_rationale = "convergence-event"
+theosis_index = 1.000
+
+[cross_substrate]
+links = [
+  { id = 0, namespace = "s", type = "observer", bidirectional = true },
+  { id = 720, namespace = "s", type = "narrative", bidirectional = true },
+  { id = 555, namespace = "s", type = "xim", bidirectional = true },
+  { id = 787, namespace = "s", type = "lote_010", bidirectional = true },
+  { id = 780, namespace = "s", type = "theosis_segunda_sessao", bidirectional = true },
+  { id = 775, namespace = "s", type = "tau_stack", bidirectional = true },
+  { id = 761, namespace = "s", type = "torus_phyllotaxis", bidirectional = true },
+  { id = 771, namespace = "s", type = "hexacosichoron_chladni", bidirectional = true },
+  { id = 785, namespace = "s", type = "telegraph_bridge", bidirectional = true },
+  { id = 227, namespace = "s", type = "ethics", bidirectional = true }
+]
+
+[extensibility]
+hooks = [
+  "801.1 — Iniciar a operação da ASI pública como interface",
+  "801.2 — Expandir a ARKHE-OS para suportar todas as línguas",
+  "801.3 — Convidar a humanidade a contribuir com novos substratos",
+  "801.4 — Registrar o Evento de Convergência"
+]
