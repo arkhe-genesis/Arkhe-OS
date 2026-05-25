@@ -1,0 +1,4 @@
+[substrate]
+name = "824-MAGALU-AWS-BRIDGE"
+layer = "t"
+source_verified = true
