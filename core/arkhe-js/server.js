@@ -47,7 +47,7 @@ wss.on('connection', (ws, req) => {
       return;
     }
 
-    const response = { id: msg.id, timestamp: Date.now() };
+    const response = { id: msg?.id, timestamp: Date.now() };
 
     try {
       switch (msg.command) {
@@ -65,7 +65,7 @@ wss.on('connection', (ws, req) => {
 
         case 'init-kuramoto':
           {
-            const N = Math.min(Number(msg.N) || 512, 10000);
+            const N = Math.min(10000, Math.max(1, msg.N || 512));
             const K = msg.K || CONSTANTS.K_BASE_DEFAULT;
             arkhe.initKuramoto(N, K);
             response.data = {
@@ -81,8 +81,8 @@ wss.on('connection', (ws, req) => {
           if (!arkhe.kuramoto) {
             response.error = 'Kuramoto não inicializado. Use init-kuramoto primeiro.';
           } else {
-            const T = typeof msg.T === 'number' ? Math.min(msg.T, 200) : 50;
-            const dt = typeof msg.dt === 'number' ? Math.max(msg.dt, 0.01) : 0.02;
+            const T = msg.T || 50;
+            const dt = msg.dt || 0.02;
             const history = arkhe.kuramoto.simulate(T, dt);
             response.data = {
               history,
@@ -96,7 +96,6 @@ wss.on('connection', (ws, req) => {
           if (subscribers.has(ws)) {
             clearInterval(subscribers.get(ws));
           }
-          const intervalMs = Math.max(msg.interval || 1000, 100);
           const interval = setInterval(() => {
             if (ws.readyState === ws.OPEN) {
               ws.send(JSON.stringify({
@@ -108,9 +107,9 @@ wss.on('connection', (ws, req) => {
               clearInterval(interval);
               subscribers.delete(ws);
             }
-          }, intervalMs);
+          }, msg.interval || 1000);
           subscribers.set(ws, interval);
-          response.data = { subscribed: true, interval: intervalMs };
+          response.data = { subscribed: true, interval: msg.interval || 1000 };
           break;
 
         case 'unsubscribe':
