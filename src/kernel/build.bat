@@ -17,7 +17,7 @@ if not exist "%VSINSTALLDIR%" (
     echo [ERRO] Visual Studio 2022 não encontrado.
     echo Instale o Visual Studio 2022 com o Windows Driver Kit.
     pause
-    exit /b 1
+    goto :eof
 )
 
 REM Setup environment
@@ -25,7 +25,7 @@ call "%VSINSTALLDIR%\Common7\Tools\VsDevCmd.bat" -arch=amd64 -host_arch=amd64
 if errorlevel 1 (
     echo [ERRO] Falha ao configurar ambiente de desenvolvimento.
     pause
-    exit /b 1
+    goto :eof
 )
 
 REM Create build directory
@@ -39,7 +39,7 @@ if errorlevel 1 (
     echo [ERRO] Falha na configuração do CMake.
     cd ..
     pause
-    exit /b 1
+    goto :eof
 )
 
 REM Build
@@ -49,7 +49,7 @@ if errorlevel 1 (
     echo [ERRO] Falha na compilação.
     cd ..
     pause
-    exit /b 1
+    goto :eof
 )
 
 REM Locate output
@@ -62,7 +62,7 @@ if exist "Release\Arkhe.sys" (
     echo [ERRO] Arkhe.sys não encontrado na saída do build.
     cd ..
     pause
-    exit /b 1
+    goto :eof
 )
 
 cd ..

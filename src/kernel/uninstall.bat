@@ -4,7 +4,7 @@ net session >nul 2>&1
 if errorlevel 1 (
     echo [ERRO] Execute como Administrador.
     pause
-    exit /b 1
+    goto :eof
 )
 sc stop Arkhe >nul 2>&1
 sc delete Arkhe >nul 2>&1

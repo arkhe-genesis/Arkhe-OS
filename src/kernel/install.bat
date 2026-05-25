@@ -14,14 +14,14 @@ if errorlevel 1 (
     echo [ERRO] Este script requer privilégios de Administrador.
     echo Clique com o botão direito e execute como Administrador.
     pause
-    exit /b 1
+    goto :eof
 )
 
 REM Verificar se o driver existe
 if not exist "Arkhe.sys" (
     echo [ERRO] Arkhe.sys não encontrado. Execute build.bat primeiro.
     pause
-    exit /b 1
+    goto :eof
 )
 
 REM Ativar testsigning (necessário para drivers não assinados)
@@ -36,7 +36,7 @@ if errorlevel 1 (
     set /p REBOOT=
     if /i "%REBOOT%"=="S" shutdown /r /t 10
     pause
-    exit /b 0
+    goto :eof
 )
 
 REM Remover driver existente (se houver)
@@ -50,7 +50,7 @@ copy /Y Arkhe.sys %windir%\system32\drivers\Arkhe.sys
 if errorlevel 1 (
     echo [ERRO] Falha ao copiar Arkhe.sys.
     pause
-    exit /b 1
+    goto :eof
 )
 
 REM Criar serviço do driver
@@ -59,7 +59,7 @@ sc create Arkhe type=kernel start=demand binPath="%windir%\system32\drivers\Arkh
 if errorlevel 1 (
     echo [ERRO] Falha ao criar serviço do driver.
     pause
-    exit /b 1
+    goto :eof
 )
 
 REM Iniciar o driver
@@ -69,7 +69,7 @@ if errorlevel 1 (
     echo [ERRO] Falha ao iniciar o driver.
     echo Verifique o Event Viewer para detalhes.
     pause
-    exit /b 1
+    goto :eof
 )
 
 REM Verificar status
@@ -87,4 +87,4 @@ echo ╚════════════════════════
 echo.
 
 pause
-exit /b 0
+goto :eof

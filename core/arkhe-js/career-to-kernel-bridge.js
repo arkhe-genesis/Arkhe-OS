@@ -6,14 +6,14 @@
 const ffi = require('ffi-napi');
 const ref = require('ref-napi');
 const CareerCoherenceTracker = require('./career-coherence-tracker.js');
-const agents = require('./agents-extended.json').agents;
+const agents = require('./agents.json').agents;
 
 const tracker = new CareerCoherenceTracker(agents);
 
 // IOCTL code for updating agent coherence
 const IOCTL_ARKHE_UPDATE_COHERENCE = 0x802;
-const CTL_CODE = (deviceType, function_code, method, access) =>
-    ((deviceType) << 16) | ((access) << 14) | ((function_code) << 2) | (method);
+const CTL_CODE = (deviceType, functionCode, method, access) =>
+    ((deviceType) << 16) | ((access) << 14) | ((functionCode) << 2) | (method);
 
 const ioctlCode = CTL_CODE(0x22, 0x802, 0, 2); // FILE_DEVICE_UNKNOWN, METHOD_BUFFERED, FILE_WRITE_ACCESS
 
