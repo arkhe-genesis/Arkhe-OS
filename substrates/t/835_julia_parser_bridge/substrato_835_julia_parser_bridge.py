@@ -26,11 +26,38 @@ class JuliaParser:
         }
         return result
 
+    def _find_matching_end(self, code: str, start_idx: int) -> int:
+        depth = 1
+        pos = start_idx
+        pattern = re.compile(
+            r'(?:#=(?:.|\n)*?=#)|'
+            r'(?:#.*)|'
+            r'(?:\"\"\"(?:.|\n)*?\"\"\")|'
+            r'(?:\"(?:\\.|[^\\\"])*\")|'
+            r'\b(function|macro|struct|module|if|for|while|try|quote|let|begin|do)\b|'
+            r'\b(end)\b'
+        )
+        while depth > 0 and pos < len(code):
+            match = pattern.search(code, pos)
+            if not match:
+                break
+            if match.group(1):
+                depth += 1
+            elif match.group(2):
+                depth -= 1
+            pos = match.end()
+            if depth == 0:
+                return match.start()
+        return len(code)
+
     def _parse_functions(self, code: str) -> List[Dict]:
         functions = []
-        pattern = r'function\s+(\w+)\s*\((.*?)\)(.*?)end'
-        for match in re.finditer(pattern, code, re.DOTALL):
-            name, args, body = match.groups()
+        pattern = r'function\s+(\w+)\s*\((.*?)\)'
+        for match in re.finditer(pattern, code):
+            name, args = match.groups()
+            start_idx = match.end()
+            end_idx = self._find_matching_end(code, start_idx)
+            body = code[start_idx:end_idx]
             functions.append({
                 'name': name,
                 'args': [a.strip() for a in args.split(',') if a.strip()],
@@ -52,9 +79,12 @@ class JuliaParser:
 
     def _parse_macros(self, code: str) -> List[Dict]:
         macros = []
-        pattern = r'macro\s+(\w+)\s*\((.*?)\)(.*?)end'
-        for match in re.finditer(pattern, code, re.DOTALL):
-            name, args, body = match.groups()
+        pattern = r'macro\s+(\w+)\s*\((.*?)\)'
+        for match in re.finditer(pattern, code):
+            name, args = match.groups()
+            start_idx = match.end()
+            end_idx = self._find_matching_end(code, start_idx)
+            body = code[start_idx:end_idx]
             macros.append({
                 'name': name,
                 'args': [a.strip() for a in args.split(',') if a.strip()],
@@ -64,9 +94,12 @@ class JuliaParser:
 
     def _parse_types(self, code: str) -> List[Dict]:
         types = []
-        struct_pattern = r'struct\s+(\w+)(.*?)end'
-        for match in re.finditer(struct_pattern, code, re.DOTALL):
-            name, body = match.groups()
+        struct_pattern = r'struct\s+(\w+)'
+        for match in re.finditer(struct_pattern, code):
+            name = match.group(1)
+            start_idx = match.end()
+            end_idx = self._find_matching_end(code, start_idx)
+            body = code[start_idx:end_idx]
             types.append({
                 'name': name,
                 'kind': 'struct',
@@ -95,9 +128,12 @@ class JuliaParser:
 
     def _parse_modules(self, code: str) -> List[Dict]:
         modules = []
-        pattern = r'module\s+(\w+)(.*?)end'
-        for match in re.finditer(pattern, code, re.DOTALL):
-            name, body = match.groups()
+        pattern = r'module\s+(\w+)'
+        for match in re.finditer(pattern, code):
+            name = match.group(1)
+            start_idx = match.end()
+            end_idx = self._find_matching_end(code, start_idx)
+            body = code[start_idx:end_idx]
             modules.append({
                 'name': name,
                 'body': body.strip()
@@ -141,6 +177,11 @@ class JuliaParser:
                 'kind': typ['kind'],
                 'fields': typ.get('fields', []),
                 'is_mutable': False
+            })
+        for mod in parsed['modules']:
+            ir['modules'].append({
+                'name': mod['name'],
+                'body': mod['body']
             })
         return ir
 
@@ -195,7 +236,7 @@ class Substrate835JuliaParserBridge:
 def main():
     import argparse
     parser = argparse.ArgumentParser(description='Julia-Parser ARKHE')
-    parser.add_argument('--file', help='Arquivo .jl para parse')
+    parser.add_argument('file', nargs='?', help='Arquivo .jl para parse')
     parser.add_argument('--json', action='store_true', help='Output JSON')
     parser.add_argument('--ir', action='store_true', help='Output ARKHE IR')
     parser.add_argument('--canonize', action='store_true', help='Canonize substrate')
