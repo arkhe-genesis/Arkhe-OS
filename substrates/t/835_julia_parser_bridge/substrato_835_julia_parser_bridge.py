@@ -26,6 +26,26 @@ class JuliaParser:
         }
         return result
 
+    def _parse_args(self, args_str: str) -> List[str]:
+        args = []
+        current = []
+        depth = 0
+        for char in args_str:
+            if char in '({[':
+                depth += 1
+                current.append(char)
+            elif char in ')}]':
+                depth -= 1
+                current.append(char)
+            elif char == ',' and depth == 0:
+                args.append(''.join(current).strip())
+                current = []
+            else:
+                current.append(char)
+        if current:
+            args.append(''.join(current).strip())
+        return [a for a in args if a]
+
     def _find_matching_end(self, code: str, start_idx: int) -> int:
         depth = 1
         pos = start_idx
@@ -60,7 +80,7 @@ class JuliaParser:
             body = code[start_idx:end_idx]
             functions.append({
                 'name': name,
-                'args': [a.strip() for a in args.split(',') if a.strip()],
+                'args': self._parse_args(args),
                 'body': body.strip(),
                 'line': code[:match.start()].count(chr(10)) + 1
             })
@@ -70,7 +90,7 @@ class JuliaParser:
             if name not in [f['name'] for f in functions]:
                 functions.append({
                     'name': name,
-                    'args': [a.strip() for a in args.split(',') if a.strip()],
+                    'args': self._parse_args(args),
                     'body': body.strip(),
                     'line': code[:match.start()].count(chr(10)) + 1,
                     'short_form': True
@@ -87,7 +107,7 @@ class JuliaParser:
             body = code[start_idx:end_idx]
             macros.append({
                 'name': name,
-                'args': [a.strip() for a in args.split(',') if a.strip()],
+                'args': self._parse_args(args),
                 'body': body.strip()
             })
         return macros
