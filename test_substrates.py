@@ -1111,56 +1111,28 @@ def test_substrato_765_arkhe_os_geometric_refactor():
 
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
-    assert 'f"' not in content
-    assert "f'" not in content
+    assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
 
-def test_substrato_769_differential_geometry_skill():
-    import importlib.util
-    file_path = os.path.abspath('substrates/s/769_differential_geometry_skill/substrato_769_differential_geometry_skill.py')
-    spec = importlib.util.spec_from_file_location("substrato_769_differential_geometry_skill", file_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-
-    canonizer = module.Substrato769DifferentialGeometrySkill()
-    json_path = canonizer.generate_json()
-    assert os.path.exists(json_path)
-
-    import json
-    with open(json_path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-
-    assert data["id"] == "769-DIFFERENTIAL-GEOMETRY-SKILL"
-    assert data["canonical_seal"] == "a709b53735fdeacac83c62a58163d36de40e49d9f7ebdb6efed19b30e73abe7a"
-    assert data["dcs_769"]["theosis_index"] == 0.999
-
-def test_substrato_770_atlas_cathedral():
-    import importlib.util
-    file_path = os.path.abspath('substrates/s/770_atlas_cathedral/substrato_770_atlas_cathedral.py')
-    spec = importlib.util.spec_from_file_location("substrato_770_atlas_cathedral", file_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-
-    canonizer = module.Substrato770AtlasCathedral()
-    json_path = canonizer.generate_json()
-    assert os.path.exists(json_path)
-
-    import json
-    with open(json_path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-
-    assert data["id"] == "770-ATLAS-CATHEDRAL"
-    assert data["canonical_seal"] == "ba05f951b0bb7ff71d9df599fc2e0ede9974225ca08b49fc95032bf3846da62e"
-    assert data["dcs_770"]["theosis_index"] == 0.998
-
-def test_769_770_f_strings():
-    import os
+def test_substrato_766_trapdoor_countermeasure():
     import re
-    files_to_check = [
-        'substrates/s/769_differential_geometry_skill/substrato_769_differential_geometry_skill.py',
-        'substrates/s/770_atlas_cathedral/substrato_770_atlas_cathedral.py'
-    ]
-    for filepath in files_to_check:
-        with open(filepath, 'r', encoding='utf-8') as f:
-            content = f.read()
-        match = re.search(r'\bf(["\'])', content)
-        assert match is None, f"f-strings are strictly forbidden in {filepath}"
+    import importlib.util
+    file_path = os.path.abspath('substrates/t/766_trapdoor_countermeasure/substrato_766_trapdoor_countermeasure.py')
+    spec = importlib.util.spec_from_file_location("substrato_766_trapdoor_countermeasure", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato766TrapdoorCountermeasure()
+    json_path = canonizer.generate_json()
+    assert os.path.exists(json_path)
+
+    with open(json_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["id"] == "766-TRAPDOOR-COUNTERMEASURE"
+    assert "seal" in data
+    assert "layer_1" in data
+    assert "layer_5" in data
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"

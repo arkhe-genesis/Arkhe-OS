@@ -139,14 +139,41 @@ export interface ArkheFullStatus {
   constants: typeof CONSTANTS;
 }
 
+export interface ArkheSecurityStatus {
+  threatsBlocked: number;
+  packagesQuarantined: string[];
+  iocsDetected: string[];
+  aiConfigsClean: boolean;
+  runtimeEvents: string[];
+  lastScan: string;
+}
+
+export class ArkheSecurity {
+  strictMode: boolean;
+  aiConfigScan: boolean;
+  runtimeMonitor: boolean;
+  ciGate: boolean;
+  status(): ArkheSecurityStatus;
+  enableTrapdoorCountermeasures(config?: TrapdoorConfig): ArkheSecurity;
+}
+
+export interface TrapdoorConfig {
+  strictMode?: boolean;
+  aiConfigScan?: boolean;
+  runtimeMonitor?: boolean;
+  ciGate?: boolean;
+}
+
 export class Arkhe {
   polytope: XiMPolytope;
   kuramoto: KuramotoHypergraph | null;
   dsaTracker: DSACoherenceTracker;
+  security?: ArkheSecurity;
   version: string;
 
   constructor();
   initKuramoto(N?: number, K?: number): KuramotoHypergraph;
+
   status(): ArkheFullStatus;
   command(command: string, args?: any): any;
 }
