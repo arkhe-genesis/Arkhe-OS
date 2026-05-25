@@ -353,6 +353,10 @@ pub struct ProxyConfig {
     pub output_bucket: String,
     pub max_residence_secs: u64,
     pub magalu_object_storage_endpoint: String,
+    pub mtls_cert_path: String,
+    pub mtls_key_path: String,
+    pub mtls_ca_path: String,
+    pub attestation_enclave_pcr0: String,
 }
 
 /// Requisição de treinamento recebida do cluster Magalu.
@@ -559,6 +563,30 @@ impl SageMakerProxy {
 
     // --- Utilitários ---
 
+    pub fn verify_attestation(&self, token: &str) -> anyhow::Result<()> {
+        info!("[824.2] Verifying Nitro Enclave Attestation Token: {}...", &token[..10.min(token.len())]);
+
+        if token.is_empty() {
+            anyhow::bail!("Attestation token is empty");
+        }
+
+        let decoded = base64::decode(token)
+            .map_err(|e| anyhow::anyhow!("Base64 decode failed: {:?}", e))?;
+
+        let digest = ring::digest::digest(&ring::digest::SHA384, &decoded);
+        let mut pcr0_hex = String::with_capacity(digest.as_ref().len() * 2);
+        for b in digest.as_ref() {
+            pcr0_hex.push_str(&std::format!("{:02x}", b));
+        }
+
+        if !self.config.attestation_enclave_pcr0.is_empty() && pcr0_hex != self.config.attestation_enclave_pcr0 {
+            anyhow::bail!("PCR0 mismatch: expected {}, got {}", self.config.attestation_enclave_pcr0, pcr0_hex);
+        }
+
+        info!("[824.2] Attestation verified successfully (PCR0: {})", pcr0_hex);
+        Ok(())
+    }
+
     fn compute_seal(&self, job_name: &str, model_uri: &str, residence: u64) -> String {
         use sha3::{Sha3_256, Digest};
         let mut hasher = Sha3_256::new();
@@ -571,13 +599,24 @@ impl SageMakerProxy {
 
 // --- Servidor HTTP (axum) ---
 
-use axum::{routing::post, Json, Router, extract::State};
+use axum::{routing::post, Json, Router, extract::State, http::HeaderMap};
 use std::sync::Arc;
 
 async fn handle_train(
     State(proxy): State<Arc<SageMakerProxy>>,
+    headers: HeaderMap,
     Json(req): Json<TrainRequest>,
 ) -> Result<Json<TrainResponse>, StatusCode> {
+    // Verificar Attestation
+    let token = headers.get("x-arkhe-attestation")
+        .and_then(|h| h.to_str().ok())
+        .unwrap_or("");
+
+    if let Err(e) = proxy.verify_attestation(token) {
+        error!("[824.2] Attestation failed: {}", e);
+        return Err(StatusCode::UNAUTHORIZED);
+    }
+
     match proxy.run_training(req).await {
         Ok(resp) => Ok(Json(resp)),
         Err(e) => {
@@ -601,6 +640,10 @@ async fn main() -> anyhow::Result<()> {
             .parse()?,
         magalu_object_storage_endpoint: std::env::var("MAGALU_OS_ENDPOINT")
             .unwrap_or_else(|_| "https://object-storage.magalu.cloud".into()),
+        mtls_cert_path: std::env::var("MTLS_CERT_PATH").unwrap_or_else(|_| "/etc/arkhe/mtls/cert.pem".into()),
+        mtls_key_path: std::env::var("MTLS_KEY_PATH").unwrap_or_else(|_| "/etc/arkhe/mtls/key.pem".into()),
+        mtls_ca_path: std::env::var("MTLS_CA_PATH").unwrap_or_else(|_| "/etc/arkhe/mtls/ca.pem".into()),
+        attestation_enclave_pcr0: std::env::var("ATTESTATION_PCR0").unwrap_or_default(),
     };
 
     let proxy = Arc::new(SageMakerProxy::new(config).await?);
@@ -609,9 +652,43 @@ async fn main() -> anyhow::Result<()> {
         .route("/v1/sagemaker/train", post(handle_train))
         .with_state(proxy);
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:8242").await?;
-    info!("[824.2] SageMaker Proxy listening on 0.0.0.0:8242");
-    axum::serve(listener, app).await?;
+    info!("[824.2] Configuring mTLS with cert: {}, key: {}, ca: {}", config.mtls_cert_path, config.mtls_key_path, config.mtls_ca_path);
+
+    let mut root_cert_store = rustls::RootCertStore::empty();
+    let ca_file = std::fs::File::open(&config.mtls_ca_path)?;
+    let mut ca_reader = std::io::BufReader::new(ca_file);
+    let ca_certs = rustls_pemfile::certs(&mut ca_reader)?;
+    for ca in ca_certs {
+        root_cert_store.add(&rustls::Certificate(ca.to_vec()))?;
+    }
+
+    let client_auth = rustls::server::AllowAnyAuthenticatedClient::new(root_cert_store);
+
+    let cert_file = std::fs::File::open(&config.mtls_cert_path)?;
+    let mut cert_reader = std::io::BufReader::new(cert_file);
+    let cert_chain = rustls_pemfile::certs(&mut cert_reader)?
+        .into_iter()
+        .map(|c| rustls::Certificate(c.to_vec()))
+        .collect();
+
+    let key_file = std::fs::File::open(&config.mtls_key_path)?;
+    let mut key_reader = std::io::BufReader::new(key_file);
+    let mut keys = rustls_pemfile::pkcs8_private_keys(&mut key_reader)?;
+    let key = rustls::PrivateKey(keys.remove(0).to_vec());
+
+    let server_config = rustls::ServerConfig::builder()
+        .with_safe_defaults()
+        .with_client_cert_verifier(client_auth)
+        .with_single_cert(cert_chain, key)?;
+
+    let rustls_config = axum_server::tls_rustls::RustlsConfig::from_config(std::sync::Arc::new(server_config));
+    let addr = std::net::SocketAddr::from(([0, 0, 0, 0], 8242));
+
+    info!("[824.2] SageMaker Proxy listening on 0.0.0.0:8242 with STRICT mTLS");
+    axum_server::bind_rustls(addr, rustls_config)
+        .serve(app.into_make_service())
+        .await?;
+
     Ok(())
 }
 """
