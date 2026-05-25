@@ -1016,7 +1016,8 @@ def test_pvac_f_strings():
         'substrates/t/824_magalu_aws_bridge/substrato_824_magalu_aws_bridge.py',
         'substrates/t/825_parametric_memory_engine/substrato_825_parametric_memory_engine.py',
         'substrates/t/826_gnn_isomorphism_finder/substrato_826_gnn_isomorphism_finder.py',
-        'substrates/t/831_story_ip_chain_bridge/substrato_831_story_ip_chain_bridge.py'
+        'substrates/t/831_story_ip_chain_bridge/substrato_831_story_ip_chain_bridge.py',
+        'substrates/t/836_arkhe_gguf_quantizer/substrato_836_arkhe_gguf_quantizer.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
@@ -1384,3 +1385,31 @@ def test_831_story_ip_chain_bridge():
         content = f.read()
 
     assert "f\"" not in content and "f'" not in content, "f-strings are not allowed in canonizer scripts"
+
+def test_substrato_836_arkhe_gguf_quantizer():
+    import importlib.util
+    import os
+
+    file_path = os.path.abspath('substrates/t/836_arkhe_gguf_quantizer/substrato_836_arkhe_gguf_quantizer.py')
+    spec = importlib.util.spec_from_file_location("substrato_836_arkhe_gguf_quantizer", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato836ArkheGGUFQuantizer()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        import json
+        data = json.load(f)
+
+    assert data["ID"] == "836"
+    assert data["Name"] == "ARKHE-GGUF-QUANTIZER"
+    assert data["Format"] == "GGUF v3.0 (llama.cpp)"
+    assert data["Quantization"] == "Q4_K_M (~4.5 bits/peso, ~4.5GB)"
+    assert "Capabilities" in data
+    assert len(data["Capabilities"]) == 6
+    assert "inferencia_local_llama_cpp" in data["Capabilities"]
+    assert data["Artifacts"]["arkhe.gguf"] == "R0dVRgMAAAAAAAAAAAAAAA=="
+
+    assert data["Seal_SHA3_256"] == "8d8d432f2351dce044db9eecf1f09c478ae3eaec7a27c8679d7a8191b5a44f72"

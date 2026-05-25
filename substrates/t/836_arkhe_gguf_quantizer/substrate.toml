@@ -1,0 +1,5 @@
+[substrate]
+id = "836"
+name = "ARKHE-GGUF-QUANTIZER"
+namespace = "t"
+source_verified = true
