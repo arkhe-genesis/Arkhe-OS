@@ -1113,3 +1113,32 @@ def test_substrato_765_arkhe_os_geometric_refactor():
         content = f.read()
     assert 'f"' not in content
     assert "f'" not in content
+
+def test_substrato_770_600_cell_chladni_sweep():
+    import importlib.util
+    import json
+    import os
+    import re
+
+    file_path = os.path.abspath('substrates/s/770_600_cell_chladni_sweep/substrato_770_600_cell_chladni_sweep.py')
+    spec = importlib.util.spec_from_file_location("substrato_770_600_cell_chladni_sweep", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato770600CellChladniSweep()
+    json_path = canonizer.generate_json()
+
+    assert os.path.exists(json_path)
+
+    with open(json_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["id"] == "770-600-CELL-CHLADNI-SWEEP"
+    assert "canonical_seal" in data
+    assert "gauss_bonnet_md_b64" in data
+    assert "visualizer_py_b64" in data
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"

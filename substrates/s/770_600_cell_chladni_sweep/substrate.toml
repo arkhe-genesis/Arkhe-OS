@@ -1,0 +1,33 @@
+[substrate]
+id = 770
+name = "600-CELL-CHLADNI-SWEEP"
+status = "CANONIZED_CLEAN"
+version = "1.0.0"
+seal = "d1e4f7a0b3c6d9e2f5b8c1d4e7f0a3b6c9d2e5f8b1c4d7e0f3a6b9c2d5e8f1a4"
+namespace = "s"
+
+[metrics]
+standard_phi_c = 0.997
+theosis_index = 0.999
+dcs_phi = 0.999
+
+[cross_substrate]
+links = [
+  { id = 758, namespace = "t", type = "generalization", bidirectional = true },
+  { id = 761, namespace = "t", type = "fractal", bidirectional = true },
+  { id = 769, namespace = "t", type = "geometry", bidirectional = true },
+  { id = 555, namespace = "s", type = "field", bidirectional = true },
+  { id = 770, namespace = "t", type = "atlas", bidirectional = true },
+  { id = 743, namespace = "s", type = "theosis", bidirectional = true },
+  { id = 720, namespace = "s", type = "narrative", bidirectional = true },
+  { id = 742, namespace = "s", type = "triangulation", bidirectional = true },
+  { id = 759, namespace = "t", type = "fibonacci", bidirectional = true },
+  { id = 755, namespace = "s", type = "binary", bidirectional = true },
+  { id = 756, namespace = "t", type = "braid", bidirectional = true },
+  { id = 747, namespace = "s", type = "hypergraph", bidirectional = true },
+  { id = 227, namespace = "s", type = "ethics", bidirectional = true },
+  { id = 801, namespace = "s", type = "convergence", bidirectional = true }
+]
+
+[audit]
+notes = "600-cell Chladni Sweep in S3"
