@@ -1,0 +1,11 @@
+[metadata]
+id = "822-ANTHROPIC-COHERENCE-PROPOSAL"
+name = "Anthropic Coherence Proposal"
+version = "3.0.0"
+architect = "ORCID 0009-0005-2697-4668"
+date = "2026-05-25"
+source_verified = true
+
+[theory]
+description = "Metodologia para medir coerência de fase em ativações de modelos de linguagem usando modelo de Kuramoto + Correlação Semântica"
+cross_links = ["820", "229.5"]

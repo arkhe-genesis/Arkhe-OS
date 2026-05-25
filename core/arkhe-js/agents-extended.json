@@ -134,6 +134,51 @@
       "coherence": 0.99,
       "skills": ["theory", "experimentation", "publication", "novel architectures", "mathematical rigor"],
       "kuramoto_phase": 0.02
+    },
+    {
+      "id": 16,
+      "role": "AI Ethics Officer",
+      "domain": "governance",
+      "description": "Garante alinhamento moral das inteligências com valores humanos fundamentais.",
+      "coherence": 0.94,
+      "skills": ["AI ethics", "policy writing", "fairness", "bias detection", "compliance"],
+      "kuramoto_phase": 0.11
+    },
+    {
+      "id": 17,
+      "role": "Quantum ML Engineer",
+      "domain": "quantum",
+      "description": "Engenheiro de algoritmos de aprendizado de máquina em substratos quânticos.",
+      "coherence": 0.93,
+      "skills": ["qiskit", "quantum neural networks", "VQA", "quantum optimization"],
+      "kuramoto_phase": 0.12
+    },
+    {
+      "id": 18,
+      "role": "Coherence Systems Designer",
+      "domain": "core",
+      "description": "Projeta a arquitetura dos sistemas de coerência transversais na Catedral.",
+      "coherence": 0.95,
+      "skills": ["complex systems design", "information theory", "network science", "kuramoto models"],
+      "kuramoto_phase": 0.1
+    },
+    {
+      "id": 19,
+      "role": "AI Regulatory Specialist",
+      "domain": "enterprise",
+      "description": "Especialista em regulação internacional de IA (AI Act, etc.).",
+      "coherence": 0.91,
+      "skills": ["GDPR", "AI Act", "legal frameworks", "regulatory compliance"],
+      "kuramoto_phase": 0.16
+    },
+    {
+      "id": 20,
+      "role": "Human-AI Interaction Designer",
+      "domain": "parsing",
+      "description": "Designer de interações fluidas e de alta coerência entre humanos e IAs.",
+      "coherence": 0.94,
+      "skills": ["HCI", "UX design", "cognitive psychology", "conversational design"],
+      "kuramoto_phase": 0.11
     }
   ]
 }
