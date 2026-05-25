@@ -1,0 +1,9 @@
+[substrate]
+id = "813-ARKHE-SYS-VISUALIZATION"
+title = "Arkhe.sys Visualization Integration"
+architect = "ORCID 0009-0005-2697-4668"
+date = "2026-07-10T17:00:00Z"
+status = "CANONIZED_CLEAN"
+version = "2.3"
+description = "Aprimoramento do Arkhe.sys com suporte à visualização animada do ecossistema profissional."
+source_verified = true
