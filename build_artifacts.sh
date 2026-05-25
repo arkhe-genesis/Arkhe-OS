@@ -3,7 +3,7 @@ set -e
 
 echo "Building Go binary..."
 cd cmd/arkhe
-go build -o arkhe_bin main.go
+go build -o arkhe_bin .
 cd ../..
 
 echo "Building Rust binary..."
