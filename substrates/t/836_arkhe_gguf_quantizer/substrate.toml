@@ -1,5 +1,10 @@
-[substrate]
+[metadata]
 id = "836"
 name = "ARKHE-GGUF-QUANTIZER"
 namespace = "t"
+version = "1.0.0"
+author = "Arkhe OS"
+
+[invariants]
 source_verified = true
+no_f_strings = true
