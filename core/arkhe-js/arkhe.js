@@ -191,4 +191,54 @@ class Arkhe {
   }
 }
 
-module.exports = { Arkhe, XiMPolytope, KuramotoHypergraph, DSACoherenceTracker, CONSTANTS };
+// ═══════════════════════════════════════════════════════════════════
+// COMANDOS GEO (Hook 769.1, 769.4)
+// ═══════════════════════════════════════════════════════════════════
+
+const DifferentialGeometryTracker = require('./src/geometry/differential-geometry-tracker.js');
+const CathedralAtlas = require('./src/geometry/atlas.js');
+
+// Inicializar trackers
+const geoTracker = new DifferentialGeometryTracker();
+
+// Dados de exemplo para o atlas (substituir por dados reais do cânone)
+const sampleSubstrates = [
+  { id: 745, name: 'Isomorfismo Kuramoto-Phi', phiC: 0.997 },
+  { id: 769, name: 'Geometria Diferencial', phiC: 0.998 },
+  { id: 751, name: 'DSA Protocol', phiC: 0.994 },
+  { id: 761, name: 'Torus Phyllotaxis', phiC: 0.994 },
+  { id: 227, name: 'Ethics', phiC: 1.000 },
+  { id: 718, name: 'Quasi-Substratos', phiC: 0.984 },
+  { id: 730, name: 'Lote 001', phiC: 0.988 },
+  // ... adicionar todos os 768 substratos
+];
+const atlas = new CathedralAtlas(sampleSubstrates);
+
+// Processar comandos geo
+function geoCommand(args) {
+  // args = { command: 'geo-track' | 'atlas', step: number, status: string, substrate: number, ... }
+  if (args.command === 'geo-track') {
+    if (args.status === 'status') {
+      return geoTracker.status();
+    }
+    if (!args.step) {
+      return { error: 'Especifique --step <1-30>' };
+    }
+    if (!args.status || !['pending', 'studying', 'mastered'].includes(args.status)) {
+      return { error: 'Especifique --status <pending|studying|mastered>' };
+    }
+    return geoTracker.updateStep(args.step, args.status, args.notes || '');
+  }
+  else if (args.command === 'atlas') {
+    if (args.substrate !== undefined) {
+      return atlas.getChart(args.substrate);
+    }
+    if (args.curvature) {
+      return atlas.curvatureList();
+    }
+    return atlas.statistics();
+  }
+  return { error: 'Comando geo desconhecido' };
+}
+
+module.exports = { Arkhe, XiMPolytope, KuramotoHypergraph, DSACoherenceTracker, CONSTANTS, geoCommand, geoTracker, atlas };
