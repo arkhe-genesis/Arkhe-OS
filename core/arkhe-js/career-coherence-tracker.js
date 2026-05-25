@@ -1,3 +1,10 @@
+// ═══════════════════════════════════════════════════════════════════
+// ARKHE CAREER COHERENCE TRACKER — Hook 804.1
+// Substrate: 805-CAREER-COHERENCE-TRACKER
+// Architect: ORCID 0009-0005-2697-4668
+// Date: 2026-07-10
+// ═══════════════════════════════════════════════════════════════════
+
 const { Signal, TOPICS } = require('./telegraph.js');
 
 /**
@@ -77,7 +84,11 @@ class CareerCoherenceTracker {
     const skillRatio = agent.skills.length > 0
       ? agent.masteredSkills.size / agent.skills.length
       : 1;
-    const mastery = (skillRatio + Math.min(agent.projectsCompleted / 10, 1) + Math.min(agent.substratesContributed / 5, 1)) / 3;
+    const mastery = (
+      skillRatio +
+      Math.min(agent.projectsCompleted / 10, 1) +
+      Math.min(agent.substratesContributed / 5, 1)
+    ) / 3;
     const k = 5; // fator de decaimento rápido para convergência visível
     agent.phase = (Math.PI / 2) * Math.exp(-k * mastery);
   }
