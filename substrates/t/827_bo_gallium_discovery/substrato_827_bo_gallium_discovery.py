@@ -21,16 +21,14 @@ class Substrato827BOGalliumDiscovery:
             ]
         }
         self.scripts = {
-            "bo_gallium_discovery.py": '''#!/usr/bin/env python3
-"""
-bo_gallium_discovery.py — Substrato 827 (Research Integration)
-Bayesian Optimization for Ga-Based Semiconductor Discovery
-Based on: ACS Materials Letters (2026) — DOI: 10.1021/acsmaterialslett.5c01482
-Arquiteto: ORCID 0009-0005-2697-4668 | Data: 2026-05-25
-
-Framework: ML-guided Bayesian Optimization with KNN surrogate
-           and SMACT screening for chemical plausibility.
-"""
+            "bo_gallium_discovery.py": """#!/usr/bin/env python3
+# bo_gallium_discovery.py - Substrato 827 (Research Integration)
+# Bayesian Optimization for Ga-Based Semiconductor Discovery
+# Based on: ACS Materials Letters (2026) - DOI: 10.1021/acsmaterialslett.5c01482
+# Arquiteto: ORCID 0009-0005-2697-4668 | Data: 2026-05-25
+#
+# Framework: ML-guided Bayesian Optimization with KNN surrogate
+#            and SMACT screening for chemical plausibility.
 
 import numpy as np
 import pandas as pd
@@ -54,7 +52,7 @@ except ImportError:
 
 
 class ChemicalSpace:
-    """Define o espaco quimico para composicoes de Ga."""
+    # Define o espaco quimico para composicoes de Ga.
 
     # Elementos co-eletronicos comuns para semicondutores de Ga
     COELEMENTS = {
@@ -76,7 +74,7 @@ class ChemicalSpace:
 
     @classmethod
     def get_search_space(cls, max_elements: int = 3) -> List:
-        """Retorna o espaco de busca para BO."""
+        # Retorna o espaco de busca para BO.
         dimensions = []
 
         # Numero de elementos (Ga + coelementos)
@@ -97,10 +95,8 @@ class ChemicalSpace:
 
 
 class KNNSurrogate:
-    """
-    Surrogate model KNN para predicao de band gap.
-    Paper reporta R² = 0.812 como otimo entre multiplos modelos testados.
-    """
+    # Surrogate model KNN para predicao de band gap.
+    # Paper reporta R² = 0.812 como otimo entre multiplos modelos testados.
 
     def __init__(self, n_neighbors: int = 5, weights: str = 'distance'):
         self.model = KNeighborsRegressor(
@@ -112,10 +108,7 @@ class KNNSurrogate:
         self.feature_names = None
 
     def featurize_composition(self, composition: Dict[str, float]) -> np.ndarray:
-        """
-        Extrai features de uma composicao quimica.
-        Features: fracoes atomicas, eletronegatividades, raios atomicos, etc.
-        """
+        # Extrai features de uma composicao quimica.
         from pymatgen.core import Composition, Element
 
         # Criar composicao pymatgen
@@ -130,13 +123,13 @@ class KNNSurrogate:
             'std_atomic_radius': np.std([Element(e).atomic_radius or 0 for e in composition]),
             'mean_ionization': np.mean([Element(e).ionization_energy or 0 for e in composition]),
             'total_electrons': sum([Element(e).Z * composition[e] for e in composition]),
-            'mass_density': comp.density,
+            'molecular_weight': comp.weight,
         }
 
         return np.array(list(features.values()))
 
     def train(self, compositions: List[Dict], band_gaps: List[float]):
-        """Treina o surrogate com dados existentes."""
+        # Treina o surrogate com dados existentes.
         X = np.array([self.featurize_composition(c) for c in compositions])
         y = np.array(band_gaps)
 
@@ -148,10 +141,7 @@ class KNNSurrogate:
         print("[827] KNN Surrogate trained. CV R² = {:.3f} (±{:.3f})".format(scores.mean(), scores.std()))
 
     def predict(self, composition: Dict[str, float]) -> Tuple[float, float]:
-        """
-        Prediz band gap e incerteza (via distancia aos vizinhos).
-        Retorna: (prediction, uncertainty)
-        """
+        # Prediz band gap e incerteza (via distancia aos vizinhos).
         if not self.is_trained:
             raise ValueError("Model not trained")
 
@@ -168,15 +158,12 @@ class KNNSurrogate:
 
 
 class SMACTScreening:
-    """
-    Screening de plausibilidade quimica via SMACT.
-    Enforce: charge balance, elemental feasibility, physical plausibility.
-    """
+    # Screening de plausibilidade quimica via SMACT.
 
     @staticmethod
     def check_charge_balance(composition: Dict[str, float],
                               ox_states: Dict[str, int]) -> bool:
-        """Verifica balanceamento de cargas."""
+        # Verifica balanceamento de cargas.
         total_charge = sum(
             composition[elem] * ox_states.get(elem, 0)
             for elem in composition
@@ -185,12 +172,10 @@ class SMACTScreening:
 
     @staticmethod
     def check_elemental_feasibility(composition: Dict[str, float]) -> bool:
-        """Verifica se elementos sao viaveis para semicondutores."""
-        # Verificar se Ga esta presente
+        # Verifica se elementos sao viaveis para semicondutores.
         if 'Ga' not in composition or composition['Ga'] <= 0:
             return False
 
-        # Verificar se ha pelo menos um anion (O, S, Se, Te, etc.)
         anions = {'O', 'S', 'Se', 'Te', 'N', 'P', 'As', 'Cl', 'Br', 'I', 'F'}
         has_anion = any(elem in anions for elem in composition)
 
@@ -198,7 +183,7 @@ class SMACTScreening:
 
     @staticmethod
     def check_physical_plausibility(composition: Dict[str, float]) -> Dict:
-        """Verifica plausibilidade fisica (raios ionicos, eletronegatividade)."""
+        # Verifica plausibilidade fisica.
         from pymatgen.core import Element
 
         checks = {
@@ -218,10 +203,7 @@ class SMACTScreening:
     @classmethod
     def screen(cls, composition: Dict[str, float],
                ox_states: Dict[str, int]) -> Tuple[bool, Dict]:
-        """
-        Executa screening completo SMACT.
-        Retorna: (is_valid, details)
-        """
+        # Executa screening completo SMACT.
         if not SMACT_AVAILABLE:
             # Fallback simples se SMACT nao instalado
             is_valid = (
@@ -257,10 +239,7 @@ class SMACTScreening:
 
 
 class BayesianOptimizer:
-    """
-    Bayesian Optimization para descoberta inversa de semicondutores de Ga.
-    Target: band gaps de 0.5-3.5 eV.
-    """
+    # Bayesian Optimization para descoberta inversa de semicondutores de Ga.
 
     def __init__(self, surrogate: KNNSurrogate,
                  target_band_gap: float,
@@ -270,11 +249,8 @@ class BayesianOptimizer:
         self.tolerance = tolerance
         self.history = []
 
-    def objective(self, composition: Dict[str, float]) -> float:
-        """
-        Funcao objetivo para BO.
-        Minimiza: |pred_band_gap - target| + penalty_invalid
-        """
+    def objective(self, composition: Dict[str, float], ga_ox_state: int = 3) -> float:
+        # Funcao objetivo para BO.
         # Predicao
         pred, uncertainty = self.surrogate.predict(composition)
 
@@ -285,7 +261,7 @@ class BayesianOptimizer:
         uncertainty_penalty = 0.1 * uncertainty
 
         # SMACT screening
-        ox_states = self._infer_ox_states(composition)
+        ox_states = self._infer_ox_states(composition, ga_ox_state)
         is_valid, details = SMACTScreening.screen(composition, ox_states)
 
         if not is_valid:
@@ -299,6 +275,7 @@ class BayesianOptimizer:
         # Registrar
         self.history.append({
             'composition': composition,
+            'ga_ox_state': ga_ox_state,
             'prediction': pred,
             'uncertainty': uncertainty,
             'error': error,
@@ -308,9 +285,9 @@ class BayesianOptimizer:
 
         return total
 
-    def _infer_ox_states(self, composition: Dict[str, float]) -> Dict[str, int]:
-        """Infere estados de oxidacao (simplificado)."""
-        ox_states = {'Ga': +3}  # Default Ga3+
+    def _infer_ox_states(self, composition: Dict[str, float], ga_ox_state: int = 3) -> Dict[str, int]:
+        # Infere estados de oxidacao (simplificado).
+        ox_states = {'Ga': ga_ox_state}  # Usar o estado do BO ou default
 
         for elem in composition:
             if elem == 'Ga':
@@ -328,10 +305,7 @@ class BayesianOptimizer:
         return ox_states
 
     def optimize(self, n_calls: int = 100, n_random_starts: int = 10) -> Dict:
-        """
-        Executa otimizacao Bayesiana.
-        Retorna: melhor composicao encontrada.
-        """
+        # Executa otimizacao Bayesiana.
         # Espaco de busca
         space = ChemicalSpace.get_search_space(max_elements=2)
 
@@ -340,7 +314,8 @@ class BayesianOptimizer:
         def objective(**params):
             # Converter params para composicao
             composition = self._params_to_composition(params)
-            return self.objective(composition)
+            ga_ox_state = int(params.get('ga_ox_state', 3))
+            return self.objective(composition, ga_ox_state)
 
         # Executar BO
         result = gp_minimize(
@@ -355,9 +330,11 @@ class BayesianOptimizer:
         # Melhor resultado
         best_params = {dim.name: val for dim, val in zip(space, result.x)}
         best_composition = self._params_to_composition(best_params)
+        best_ga_ox_state = int(best_params.get('ga_ox_state', 3))
 
         return {
             'best_composition': best_composition,
+            'best_ga_ox_state': best_ga_ox_state,
             'best_objective': result.fun,
             'predicted_band_gap': self.surrogate.predict(best_composition)[0],
             'n_calls': n_calls,
@@ -366,7 +343,7 @@ class BayesianOptimizer:
         }
 
     def _params_to_composition(self, params: Dict) -> Dict[str, float]:
-        """Converte parametros do BO para composicao quimica."""
+        # Converte parametros do BO para composicao quimica.
         composition = {'Ga': 1.0}  # Base
 
         num_coelements = params.get('num_coelements', 1)
@@ -380,9 +357,19 @@ class BayesianOptimizer:
         return composition
 
 
+class NumpyFloatEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super().default(obj)
+
 def main():
     print("╔════════════════════════════════════════════════════════════╗")
-    print("║   BAYESIAN OPTIMIZATION — SUBSTRATO 827                  ║")
+    print("║   BAYESIAN OPTIMIZATION - SUBSTRATO 827                  ║")
     print("║   Ga-Based Semiconductor Discovery | ξM-Field Materials    ║")
     print("╚════════════════════════════════════════════════════════════╝")
     print("\\n📚 Source: ACS Materials Letters (2026)")
@@ -425,11 +412,11 @@ def main():
     print("   Valid compositions: " + str(result['n_valid']) + "/" + str(result['n_calls']))
 
     # Verificar SMACT
-    ox_states = optimizer._infer_ox_states(result['best_composition'])
+    ox_states = optimizer._infer_ox_states(result['best_composition'], result['best_ga_ox_state'])
     is_valid, details = SMACTScreening.screen(result['best_composition'], ox_states)
     print("\\n🔬 SMACT Screening:")
     print("   Valid: " + str(is_valid))
-    print("   Details: " + json.dumps(details, indent=2))
+    print("   Details: " + json.dumps(details, indent=2, cls=NumpyFloatEncoder))
 
     # Salvar resultado
     output = {
@@ -438,12 +425,12 @@ def main():
         'target_band_gap': target_eg,
         'result': result,
         'seal': hashlib.sha3_256(
-            json.dumps(result['best_composition'], sort_keys=True).encode()
+            json.dumps(result['best_composition'], sort_keys=True, cls=NumpyFloatEncoder).encode()
         ).hexdigest(),
     }
 
     with open('bo_result_827.json', 'w') as f:
-        json.dump(output, f, indent=2)
+        json.dump(output, f, indent=2, cls=NumpyFloatEncoder)
 
     print("\\n💾 Result saved to bo_result_827.json")
     print("🔐 Seal: " + str(output['seal'][:16]) + "...")
@@ -451,7 +438,7 @@ def main():
 
 if __name__ == "__main__":
     main()
-'''
+"""
         }
 
     def canonize(self):
