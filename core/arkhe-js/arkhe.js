@@ -143,10 +143,11 @@ class ArkheSecurity {
   }
 
   enableTrapdoorCountermeasures(config = {}) {
-    this.strictMode = config.strictMode || false;
-    this.aiConfigScan = config.aiConfigScan || false;
-    this.runtimeMonitor = config.runtimeMonitor || false;
-    this.ciGate = config.ciGate || false;
+    const safeConfig = config || {};
+    this.strictMode = safeConfig.strictMode ?? this.strictMode;
+    this.aiConfigScan = safeConfig.aiConfigScan ?? this.aiConfigScan;
+    this.runtimeMonitor = safeConfig.runtimeMonitor ?? this.runtimeMonitor;
+    this.ciGate = safeConfig.ciGate ?? this.ciGate;
     return this;
   }
 
