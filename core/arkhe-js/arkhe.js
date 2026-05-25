@@ -133,18 +133,12 @@ class DSACoherenceTracker {
   }
 }
 
-class Arkhe {
-  constructor() {
-    this.polytope = new XiMPolytope();
-    this.kuramoto = null;
-    this.dsaTracker = new DSACoherenceTracker();
-    this.version = "1.0.0";
+class ArkheSecurity {
+  constructor(arkhe) {
+    this.arkhe = arkhe;
   }
 
-  initKuramoto(N = 10, K = 0.5) {
-    this.kuramoto = new KuramotoHypergraph(N, K);
-    return this.kuramoto;
-  }
+
 
   status() {
     return {
