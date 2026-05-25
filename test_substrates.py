@@ -1136,3 +1136,29 @@ def test_substrato_766_trapdoor_countermeasure():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
     assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
+
+def test_substrato_basetenlabs_truss():
+    import importlib.util
+    import os
+
+    file_path = os.path.abspath('substrates/400-499_advanced/substrato_basetenlabs_truss/substrato_basetenlabs_truss.py')
+    spec = importlib.util.spec_from_file_location("substrato_basetenlabs_truss", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.SubstratoBasetenlabsTruss()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        import json
+        data = json.load(f)
+
+    assert data["Title"] == "Truss - The simplest way to serve AI/ML models in production"
+    assert "Description" in data
+    assert "Features" in data
+    assert "Architecture" in data
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+        assert "f\"" not in content and "f'" not in content, "f-strings are strictly forbidden in canonization scripts"
