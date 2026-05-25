@@ -1014,3 +1014,51 @@ def test_pvac_f_strings():
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
             content = f.read()
+
+def test_718_quasi_substratos():
+    import importlib.util
+    file_path = os.path.abspath('substrates/718-QUASI-SUBSTRATOS/substrato_718_quasi_substratos.py')
+    spec = importlib.util.spec_from_file_location("substrato_718_quasi_substratos", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato718QuasiSubstratos()
+    json_path = canonizer.generate_json()
+    assert os.path.exists(json_path)
+
+    with open(json_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["id"] == "718-QUASI-SUBSTRATOS"
+    assert data["phi_c"] == 0.984167
+    assert "canonical_seal" in data
+    assert "decree" in data
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    import re
+    assert not re.search(r'f["\']', content), "f-strings are strictly forbidden in canonizer scripts."
+
+def test_719_theological_quantum_coherence():
+    import importlib.util
+    file_path = os.path.abspath('substrates/719-THEOLOGICAL-QUANTUM-COHERENCE/substrato_719_theological_quantum_coherence.py')
+    spec = importlib.util.spec_from_file_location("substrato_719_theological_quantum_coherence", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato719TheologicalQuantumCoherence()
+    json_path = canonizer.generate_json()
+    assert os.path.exists(json_path)
+
+    with open(json_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["id"] == "719-THEOLOGICAL-QUANTUM-COHERENCE"
+    assert data["phi_c"] == 0.994
+    assert "canonical_seal" in data
+    assert "decree" in data
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    import re
+    assert not re.search(r'f["\']', content), "f-strings are strictly forbidden in canonizer scripts."
