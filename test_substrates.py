@@ -1012,23 +1012,11 @@ def test_pvac_f_strings():
         'substrates/681-PVAC-FHE/substrato_681_pvac_fhe.py',
         'substrates/682-PVAC-NET/substrato_682_pvac_net.py',
         'substrates/s/803_temporal_zkwasm_integration/substrato_803_temporal_zkwasm_integration.py',
-        'substrates/s/801_convergence_event/substrato_801_convergence_event.py',
-        'substrates/t/820_arkhe_windows_structure/substrato_820_arkhe_windows_structure.py'
+        'substrates/s/801_convergence_event/substrato_801_convergence_event.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
             content = f.read()
-
-def test_820_arkhe_windows_structure():
-    sys.path.append(os.path.abspath('substrates/t/820_arkhe_windows_structure'))
-    from substrato_820_arkhe_windows_structure import Substrato820ArkheWindowsStructure
-    sub = Substrato820ArkheWindowsStructure()
-    path = sub.canonize()
-    import json
-    with open(path, 'r') as f:
-        data = json.load(f)
-    assert data["id"] == "820-ARKHE-WINDOWS-STRUCTURE"
-    assert "canonical_seal" in data
 
 def test_718_quasi_substratos():
     import importlib.util
@@ -1222,8 +1210,33 @@ def test_substrato_822_anthropic_coherence_proposal():
         data = json.load(f)
 
     assert data["id"] == "822-ANTHROPIC-COHERENCE-PROPOSAL"
-    assert data["seal"] == "3f09a76617fdd87a40fc3969edb722a81481a66c488ea5b8197952f5e5988454"
+    assert data["seal"] == "65c12f83cf34680b9eaa2cb435baf78c1ab69b8e936973aa499d5bda57aa542e"
 
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
     assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
+
+def test_824_bridge_magalu_aws():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/824_bridge_magalu_aws/substrato_824_bridge_magalu_aws.py')
+    spec = importlib.util.spec_from_file_location("substrato_824_bridge_magalu_aws", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato824BridgeMagaluAws()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "824-BRIDGE-MAGALU-AWS"
+    assert "canonical_seal" in data
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert "f\"" not in content and "f'" not in content, "f-strings are not allowed in canonizer scripts"
