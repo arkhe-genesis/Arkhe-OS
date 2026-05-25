@@ -1,0 +1,10 @@
+arkhe > CONSOLIDACAO_820: 820 → [823, 584]
+arkhe > RAZAO: Arquitetura de dois niveis ja canonizada em 823 (Rust/kernel) e 584 (CLI/interface)
+arkhe > IMPACTO: Cross-link 824↔820 migrado para 824↔823 e 824↔584
+arkhe > STATUS: 820 DISSOLVIDO, links atualizados
+
+> A partir deste rito, as funcionalidades antes designadas ao Substrato 820 passam a integrar o módulo `823::Moat::Signatory`, com a seguinte API canônica:
+> - `arkhe-cli (584) image sign --key magalu-kms --image registry.magalu.cloud/arkhe/laravel:latest`
+> - `arkhe-cli image verify --key magalu-pub --image registry.magalu.cloud/arkhe/laravel:latest`
+>
+> O admission controller do Bridge (Kyverno) será atualizado para exigir a assinatura `dev.arkhe/supply-chain=823-moat` em todas as imagens executadas nos clusters de burst.

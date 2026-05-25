@@ -1,6 +1,7 @@
 [substrate]
 id = "824-BRIDGE-MAGALU-AWS"
-name = "BRIDGE-MAGALU-AWS"
+title = "Bridge Magalu↔AWS via Virtual Kubelet e SageMaker Proxy"
+architect = "ORCID 0009-0005-2697-4668"
+status = "CANONIZED"
+version = "1.0"
 source_verified = true
-namespace = "t"
-cross_links = ["823", "584"]

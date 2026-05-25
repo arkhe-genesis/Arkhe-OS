@@ -1,0 +1,13 @@
+[substrate]
+id = "826-TRANSDISCIPLINARY-CONCEPT-GRAPH"
+name = "Transdisciplinary Concept Graph"
+architect = "ORCID 0009-0005-2697-4668"
+date = "2026-05-25"
+source_verified = true
+namespace = "t/"
+
+[dependencies]
+python = ">=3.9"
+pytorch = ">=2.0"
+gudhi = ">=3.0"
+numpy = ">=1.20"
