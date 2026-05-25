@@ -1,0 +1,11 @@
+[metadata]
+id = "824-MAGALU-CLOUD-BRIDGE"
+name = "Magalu Cloud Bridge"
+version = "1.0.0"
+architect = "Catedral"
+date = "2026-05-25"
+source_verified = true
+
+[theory]
+description = "Implementação da ponte operacional entre ARKHE e Magalu Cloud para infraestrutura nacional com suporte a IaaS, K8s, e Banco de Dados (PostgreSQL/MySQL)."
+cross_links = ["823", "584", "610", "555", "561", "604"]

@@ -1013,7 +1013,8 @@ def test_pvac_f_strings():
         'substrates/682-PVAC-NET/substrato_682_pvac_net.py',
         'substrates/s/803_temporal_zkwasm_integration/substrato_803_temporal_zkwasm_integration.py',
         'substrates/s/801_convergence_event/substrato_801_convergence_event.py',
-        'substrates/t/820_arkhe_windows_structure/substrato_820_arkhe_windows_structure.py'
+        'substrates/t/820_arkhe_windows_structure/substrato_820_arkhe_windows_structure.py',
+        'substrates/t/824_magalu_cloud_bridge/substrato_824_magalu_cloud_bridge.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
@@ -1223,6 +1224,31 @@ def test_substrato_822_anthropic_coherence_proposal():
 
     assert data["id"] == "822-ANTHROPIC-COHERENCE-PROPOSAL"
     assert data["seal"] == "3f09a76617fdd87a40fc3969edb722a81481a66c488ea5b8197952f5e5988454"
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
+
+def test_substrato_824_magalu_cloud_bridge():
+    import importlib.util
+    import os
+    import json
+    import re
+
+    file_path = os.path.abspath('substrates/t/824_magalu_cloud_bridge/substrato_824_magalu_cloud_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_824_magalu_cloud_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato824MagaluCloudBridge()
+    path = canonizer.generate_report()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "824-MAGALU-CLOUD-BRIDGE"
+    assert data["canonical_seal"] == "ed8cc89db70fc8325e365f13230c6b3ca09904c08443ae9554c3f06ce49375fa"
 
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
