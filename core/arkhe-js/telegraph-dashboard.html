@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARKHE Telegraph — Chladni Cloud Live</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a1a; color: #e0e0e0; font-family: 'Courier New', monospace;
+    display: grid; grid-template-rows: auto 1fr auto; height: 100vh;
+  }
+  header {
+    padding: 1rem; border-bottom: 1px solid #2a2a4a;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  header h1 { font-size: 1.5rem; color: #7ec8e3; }
+  .status-dot {
+    width: 12px; height: 12px; border-radius: 50%; display: inline-block;
+  }
+  .connected { background: #2ecc71; box-shadow: 0 0 8px #2ecc71; }
+  .disconnected { background: #e74c3c; }
+  main {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: auto 1fr;
+    gap: 1rem; padding: 1rem; overflow: auto;
+  }
+  .card {
+    background: #12122a; border: 1px solid #2a2a4a; border-radius: 8px;
+    padding: 1rem;
+  }
+  .card h2 { font-size: 1rem; color: #7ec8e3; margin-bottom: 0.5rem; }
+  .value { font-size: 2.5rem; font-weight: bold; }
+  .phi-value { color: #f1c40f; }
+  .unit { font-size: 0.8rem; color: #888; }
+  .topic-list {
+    grid-column: 1 / -1; max-height: 300px; overflow-y: auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;
+  }
+  .topic-item {
+    display: flex; justify-content: space-between; padding: 0.3rem 0;
+    border-bottom: 1px solid #1a1a3a;
+  }
+  .topic-name { color: #7ec8e3; }
+  .topic-value { color: #f1c40f; }
+  .chladni-canvas {
+    width: 100%; height: 300px; border-radius: 8px;
+    background: radial-gradient(circle, #1a1a4a, #0a0a1a);
+  }
+  footer {
+    padding: 0.5rem 1rem; border-top: 1px solid #2a2a4a;
+    font-size: 0.75rem; color: #666;
+    display: flex; justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>⚡ ARKHE Telegraph — Chladni Cloud Live</h1>
+  <div>
+    <span id="status-dot" class="status-dot disconnected"></span>
+    <span id="status-text">Desconectado</span>
+  </div>
+</header>
+
+<main>
+  <div class="card">
+    <h2>Φ Interop</h2>
+    <div class="value phi-value" id="phi-interop">—</div>
+    <div class="unit">Coerência de Interoperabilidade</div>
+  </div>
+  <div class="card">
+    <h2>r DSA</h2>
+    <div class="value" id="r-dsa" style="color:#3498db;">—</div>
+    <div class="unit">Parâmetro de Ordem do Arquiteto</div>
+  </div>
+  <div class="card">
+    <h2>Limiares</h2>
+    <div>Ghost: <span style="color:#e67e22;">0.577</span></div>
+    <div>Conv: <span style="color:#2ecc71;">0.800</span></div>
+    <div>Total: <span style="color:#f1c40f;">1.000</span></div>
+  </div>
+
+  <canvas class="chladni-canvas" id="chladni-canvas"></canvas>
+
+  <div class="card topic-list" id="topic-list">
+    <h2 style="grid-column:1/-1;">Tópicos Ativos</h2>
+  </div>
+</main>
+
+<footer>
+  <span>Telegraph v1.0 — Substrato 783</span>
+  <span id="msg-count">Mensagens: 0</span>
+</footer>
+
+<script>
+const WS_URL = 'ws://localhost:7474';
+let ws;
+let msgCount = 0;
+const topicValues = {};
+
+function connect() {
+  ws = new WebSocket(WS_URL);
+
+  ws.onopen = () => {
+    document.getElementById('status-dot').className = 'status-dot connected';
+    document.getElementById('status-text').textContent = 'Conectado';
+
+    // Assinar todos os tópicos de coerência
+    ws.send(JSON.stringify({
+      command: 'subscribe',
+      topics: [
+        '/coherence/dsa', '/coherence/geo', '/coherence/kuramoto',
+        '/coherence/interop', '/signal/phi', '/audit/batch'
+      ]
+    }));
+
+    // Solicitar métricas phi imediatamente
+    ws.send(JSON.stringify({ command: 'phi' }));
+  };
+
+  ws.onmessage = (event) => {
+    const msg = JSON.parse(event.data);
+    msgCount++;
+    document.getElementById('msg-count').textContent = `Mensagens: ${msgCount}`;
+
+    if (msg.type === 'signal' && msg.signal) {
+      const { topic, signal } = msg;
+      topicValues[topic] = signal.value;
+      updateDisplay(topic, signal);
+      drawChladni();
+    } else if (msg.type === 'ack' && msg.data) {
+      if (msg.data.phiInterop !== undefined) {
+        document.getElementById('phi-interop').textContent =
+          msg.data.phiInterop.toFixed(4);
+        document.getElementById('r-dsa').textContent =
+          msg.data.rDSA.toFixed(4);
+      }
+    }
+  };
+
+  ws.onclose = () => {
+    document.getElementById('status-dot').className = 'status-dot disconnected';
+    document.getElementById('status-text').textContent = 'Reconectando...';
+    setTimeout(connect, 3000);
+  };
+}
+
+function updateDisplay(topic, signal) {
+  if (topic === '/coherence/interop' || topic === '/signal/phi') {
+    document.getElementById('phi-interop').textContent = signal.value.toFixed(4);
+  }
+  if (topic === '/coherence/dsa') {
+    document.getElementById('r-dsa').textContent = signal.value.toFixed(4);
+  }
+
+  // Atualizar lista de tópicos
+  const topicList = document.getElementById('topic-list');
+  const existing = document.getElementById(`topic-${topic.replace(/\//g, '-')}`);
+  if (existing) {
+    existing.querySelector('.topic-value').textContent = signal.value.toFixed(4);
+  } else {
+    const div = document.createElement('div');
+    div.className = 'topic-item';
+    div.id = `topic-${topic.replace(/\//g, '-')}`;
+    div.innerHTML = `
+      <span class="topic-name">${topic}</span>
+      <span class="topic-value">${signal.value.toFixed(4)}</span>
+    `;
+    topicList.appendChild(div);
+  }
+}
+
+function drawChladni() {
+  const canvas = document.getElementById('chladni-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+
+  const W = canvas.width, H = canvas.height;
+  const phi = parseFloat(document.getElementById('phi-interop').textContent) || 0.5;
+
+  // Desenhar padrão Chladni baseado nos valores de coerência
+  for (let x = 0; x < W; x += 3) {
+    for (let y = 0; y < H; y += 3) {
+      const nx = x / W, ny = y / H;
+      const wave = Math.sin(nx * 12 * phi) * Math.cos(ny * 12 * phi) *
+                   Math.cos((nx + ny) * 20 * phi);
+      const intensity = Math.abs(wave);
+      const hue = 200 + phi * 60; // azul a dourado
+      ctx.fillStyle = `hsla(${hue}, 70%, ${30 + intensity * 40}%, ${0.1 + intensity * 0.5})`;
+      ctx.fillRect(x, y, 3, 3);
+    }
+  }
+}
+
+connect();
+</script>
+</body>
+</html>
