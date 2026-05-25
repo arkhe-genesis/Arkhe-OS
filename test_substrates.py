@@ -1014,7 +1014,7 @@ def test_pvac_f_strings():
         'substrates/s/803_temporal_zkwasm_integration/substrato_803_temporal_zkwasm_integration.py',
         'substrates/s/801_convergence_event/substrato_801_convergence_event.py',
         'substrates/t/824_magalu_aws_bridge/substrato_824_magalu_aws_bridge.py',
-        'substrates/t/826_transdisciplinary_concept_graph/substrato_826_transdisciplinary_concept_graph.py'
+        'substrates/t/825_parametric_memory_engine/substrato_825_parametric_memory_engine.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
@@ -1256,24 +1256,24 @@ def test_824_bridge_magalu_aws():
 
     assert "f\"" not in content and "f'" not in content, "f-strings are not allowed in canonizer scripts"
 
-def test_826_transdisciplinary_concept_graph():
+def test_825_parametric_memory_engine():
     import importlib.util
     import os
     import json
 
-    file_path = os.path.abspath('substrates/t/826_transdisciplinary_concept_graph/substrato_826_transdisciplinary_concept_graph.py')
-    spec = importlib.util.spec_from_file_location("substrato_826_transdisciplinary_concept_graph", file_path)
+    file_path = os.path.abspath('substrates/t/825_parametric_memory_engine/substrato_825_parametric_memory_engine.py')
+    spec = importlib.util.spec_from_file_location("substrato_825_parametric_memory_engine", file_path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato826TransdisciplinaryConceptGraph()
+    canonizer = module.Substrato825ParametricMemoryEngine()
     path = canonizer.canonize()
 
     assert os.path.exists(path)
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    assert data["id"] == "826-TRANSDISCIPLINARY-CONCEPT-GRAPH"
+    assert data["id"] == "825-PARAMETRIC-MEMORY-ENGINE"
     assert "canonical_seal" in data
 
     with open(file_path, "r", encoding="utf-8") as f:
