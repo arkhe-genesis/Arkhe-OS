@@ -176,7 +176,8 @@ class Telegraph extends EventEmitter {
     // Emit internal event for integrations
     this.emit('signal', finalSignal);
 
-    console.log(`[Telegraph] Signal on ${topic}: ${signal.metric}=${signal.value.toFixed(4)}`);
+    const displayValue = typeof signal.value === 'number' ? signal.value.toFixed(4) : signal.value;
+    console.log(`[Telegraph] Signal on ${topic}: ${signal.metric}=${displayValue}`);
     return finalSignal;
   }
 
