@@ -179,6 +179,20 @@ class Telegraph {
 
       this.wss.on('connection', (ws, req) => {
         const clientId = req.socket.remoteAddress;
+
+        // Extract api_key from query params
+        let apiKey = null;
+        try {
+          const url = new URL(req.url, `ws://${req.headers.host}`);
+          apiKey = url.searchParams.get('api_key');
+        } catch (e) {
+          // Fallback if URL parsing fails
+          const match = req.url.match(/[?&]api_key=([^&]+)/);
+          if (match) apiKey = match[1];
+        }
+
+        ws.apiKey = apiKey;
+
         this.metrics.clientsConnected++;
         console.log(`[TELEGRAPH] Cliente conectado: ${clientId}`);
 
@@ -218,6 +232,15 @@ class Telegraph {
           response.error = 'Parâmetros obrigatórios: topic, value';
           break;
         }
+        // Local/internal clients (no apiKey) are fully authorized, external clients are checked
+        if (ws.apiKey !== null && !this.authorizeExternal(ws.apiKey, msg.topic)) {
+          response.error = `Não autorizado a publicar no tópico: ${msg.topic}`;
+          break;
+        } else if (ws.apiKey === null && clientId !== '127.0.0.1' && clientId !== '::1') {
+           // Reject unauthenticated requests from external IP addresses
+           response.error = `Chave de API ausente ou inválida para publicação no tópico: ${msg.topic}`;
+           break;
+        }
         const signal = this.createSignal(
           msg.source || clientId,
           msg.metric || msg.topic.split('/').pop(),
@@ -234,10 +257,21 @@ class Telegraph {
           response.error = 'Parâmetro obrigatório: topics (array)';
           break;
         }
+        const subscribed = [];
         for (const topic of msg.topics) {
+          if (ws.apiKey !== null && !this.authorizeExternal(ws.apiKey, topic)) {
+             continue; // Skip unauthorized topics
+          } else if (ws.apiKey === null && clientId !== '127.0.0.1' && clientId !== '::1') {
+             continue; // Skip if no key and not local
+          }
           this.subscribe(ws, topic);
+          subscribed.push(topic);
         }
-        response.data = { subscribed: msg.topics };
+        if (subscribed.length === 0 && msg.topics.length > 0) {
+           response.error = 'Não autorizado a assinar os tópicos solicitados';
+           break;
+        }
+        response.data = { subscribed: subscribed };
         break;
       }
 
