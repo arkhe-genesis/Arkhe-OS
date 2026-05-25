@@ -236,7 +236,7 @@ class Telegraph {
         if (ws.apiKey !== null && !this.authorizeExternal(ws.apiKey, msg.topic)) {
           response.error = `Não autorizado a publicar no tópico: ${msg.topic}`;
           break;
-        } else if (ws.apiKey === null && clientId !== '127.0.0.1' && clientId !== '::1') {
+        } else if (ws.apiKey === null && clientId !== '127.0.0.1' && clientId !== '::1' && clientId !== '::ffff:127.0.0.1') {
            // Reject unauthenticated requests from external IP addresses
            response.error = `Chave de API ausente ou inválida para publicação no tópico: ${msg.topic}`;
            break;
@@ -261,7 +261,7 @@ class Telegraph {
         for (const topic of msg.topics) {
           if (ws.apiKey !== null && !this.authorizeExternal(ws.apiKey, topic)) {
              continue; // Skip unauthorized topics
-          } else if (ws.apiKey === null && clientId !== '127.0.0.1' && clientId !== '::1') {
+          } else if (ws.apiKey === null && clientId !== '127.0.0.1' && clientId !== '::1' && clientId !== '::ffff:127.0.0.1') {
              continue; // Skip if no key and not local
           }
           this.subscribe(ws, topic);
