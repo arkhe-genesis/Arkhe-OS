@@ -1015,11 +1015,44 @@ def test_pvac_f_strings():
         'substrates/s/801_convergence_event/substrato_801_convergence_event.py',
         'substrates/t/824_magalu_aws_bridge/substrato_824_magalu_aws_bridge.py',
         'substrates/t/825_parametric_memory_engine/substrato_825_parametric_memory_engine.py',
-        'substrates/t/826_gnn_isomorphism_finder/substrato_826_gnn_isomorphism_finder.py'
+        'substrates/t/826_gnn_isomorphism_finder/substrato_826_gnn_isomorphism_finder.py',
+        'substrates/t/831_story_ip_chain_bridge/substrato_831_story_ip_chain_bridge.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
             content = f.read()
+
+def test_substrato_831_story_ip_chain_bridge():
+    import importlib.util
+    import os
+
+    file_path = os.path.abspath('substrates/t/831_story_ip_chain_bridge/substrato_831_story_ip_chain_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_831_story_ip_chain_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato831StoryIPChainBridge()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        import json
+        data = json.load(f)
+
+    assert data["ID"] == "831"
+    assert data["Name"] == "STORY-IP-CHAIN-BRIDGE (SICB)"
+    assert data["Title"] == "Story Consesus Implementation"
+    assert "Golang consensus layer implementation" in data["Description"]
+    assert "Capabilities" in data
+    assert len(data["Capabilities"]) == 5
+    assert "Registro On-Chain de Substratos" in data["Capabilities"][0]
+
+    assert data["Seal_SHA3_256"] == "cf1afd8cb13080fda342a2f4b29c1f65c5894e0ba4b878ba7eac8bda3fa54c73"
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+        assert "f\"" not in content and "f'" not in content, "f-strings are strictly forbidden in canonization scripts"
+
 
 def test_824_magalu_aws_bridge():
     sys.path.append(os.path.abspath('substrates/t/824_magalu_aws_bridge'))
