@@ -54,7 +54,10 @@ class XiMPolytope {
       phase: 'CONVERGÊNCIA AVANÇADA',
       ghostThreshold: CONSTANTS.GHOST_THRESHOLD,
       convergenceThreshold: CONSTANTS.CONVERGENCE_THRESHOLD,
-      domains: Array.from(this.domains.values()),
+      domains: Array.from(this.domains.values()).map(d => ({
+        ...d,
+        modules: d.modules.size
+      })),
       vertices: this.vertices.length
     };
   }

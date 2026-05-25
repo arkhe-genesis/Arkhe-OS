@@ -47,7 +47,7 @@ wss.on('connection', (ws, req) => {
       return;
     }
 
-    const response = { id: msg.id, timestamp: Date.now() };
+    const response = { id: msg?.id, timestamp: Date.now() };
 
     try {
       switch (msg.command) {
@@ -65,7 +65,7 @@ wss.on('connection', (ws, req) => {
 
         case 'init-kuramoto':
           {
-            const N = msg.N || 512;
+            const N = Math.min(10000, Math.max(1, msg.N || 512));
             const K = msg.K || CONSTANTS.K_BASE_DEFAULT;
             arkhe.initKuramoto(N, K);
             response.data = {

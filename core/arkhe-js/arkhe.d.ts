@@ -109,8 +109,8 @@ export interface DSAStatus {
   ghostThreshold: number;
   convergenceThreshold: number;
   patterns: PatternInfo[];
-  strongest: PatternInfo;
-  weakest: PatternInfo;
+  strongest: PatternInfo | null;
+  weakest: PatternInfo | null;
   templatesDue: PatternInfo[];
 }
 
