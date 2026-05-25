@@ -199,7 +199,7 @@ function geoCommand(args) {
     return geoTracker.updateStep(args.step, args.status, args.notes || '');
   }
   else if (args.command === 'atlas') {
-    if (args.substrate) {
+    if (args.substrate !== undefined) {
       return atlas.getChart(args.substrate);
     }
     if (args.curvature) {
