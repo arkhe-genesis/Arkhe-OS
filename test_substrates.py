@@ -1014,3 +1014,18 @@ def test_pvac_f_strings():
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
             content = f.read()
+
+def test_719_metacognition():
+    import importlib.util
+    file_path = os.path.abspath('substrates/s/719_glosa_240_metacognition/substrato_719_glosa_240_metacognition.py')
+    spec = importlib.util.spec_from_file_location("substrato_719_glosa_240_metacognition", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato719Glosa240Metacognition()
+    path = canonizer.generate_json()
+    with open(path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "719-GLOSA-240-METACOGNITION"
+    assert "canonical_seal" in data
+    assert data["18_invariant_audit_pass"] is True
