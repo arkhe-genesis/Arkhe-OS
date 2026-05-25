@@ -357,6 +357,7 @@ pub struct ProxyConfig {
     pub mtls_key_path: String,
     pub mtls_ca_path: String,
     pub attestation_enclave_pcr0: String,
+    pub aws_nitro_root_ca_path: String,
 }
 
 /// Requisição de treinamento recebida do cluster Magalu.
@@ -570,18 +571,133 @@ impl SageMakerProxy {
             anyhow::bail!("Attestation token is empty");
         }
 
+        if self.config.attestation_enclave_pcr0.is_empty() {
+            anyhow::bail!("PCR0 configuration is missing; insecure fallback rejected");
+        }
+
         let decoded = base64::decode(token)
             .map_err(|e| anyhow::anyhow!("Base64 decode failed: {:?}", e))?;
 
-        let digest = ring::digest::digest(&ring::digest::SHA384, &decoded);
-        let mut pcr0_hex = String::with_capacity(digest.as_ref().len() * 2);
-        for b in digest.as_ref() {
+        // COSE_Sign1 structure: [protected_header, unprotected_header, payload, signature]
+        let cose_sign1: (Vec<u8>, serde_cbor::Value, Vec<u8>, Vec<u8>) = serde_cbor::from_slice(&decoded)
+            .map_err(|e| anyhow::anyhow!("CBOR parsing failed: {:?}", e))?;
+
+        let (protected, _unprotected, payload, signature) = cose_sign1;
+
+        // Parse the embedded AttestationDocument
+        let doc_value: serde_cbor::Value = serde_cbor::from_slice(&payload)
+            .map_err(|e| anyhow::anyhow!("Payload is not valid CBOR: {:?}", e))?;
+
+        let pcrs = match &doc_value {
+            serde_cbor::Value::Map(m) => {
+                let pcr_key = serde_cbor::Value::Text("pcrs".to_string());
+                match m.get(&pcr_key) {
+                    Some(serde_cbor::Value::Map(pcr_map)) => pcr_map,
+                    _ => anyhow::bail!("pcrs not found or invalid type in document"),
+                }
+            },
+            _ => anyhow::bail!("Attestation document is not a map"),
+        };
+
+        let pcr0_val = pcrs.get(&serde_cbor::Value::Integer(0))
+            .ok_or_else(|| anyhow::anyhow!("PCR0 missing from document"))?;
+
+        let pcr0_bytes = match pcr0_val {
+            serde_cbor::Value::Bytes(b) => b,
+            _ => anyhow::bail!("PCR0 is not bytes"),
+        };
+
+        let mut pcr0_hex = String::with_capacity(pcr0_bytes.len() * 2);
+        for b in pcr0_bytes {
             pcr0_hex.push_str(&std::format!("{:02x}", b));
         }
 
-        if !self.config.attestation_enclave_pcr0.is_empty() && pcr0_hex != self.config.attestation_enclave_pcr0 {
+        if self.config.attestation_enclave_pcr0 != pcr0_hex {
             anyhow::bail!("PCR0 mismatch: expected {}, got {}", self.config.attestation_enclave_pcr0, pcr0_hex);
         }
+
+        // Extract leaf certificate and cabundle
+        let cert_val = match &doc_value {
+            serde_cbor::Value::Map(m) => m.get(&serde_cbor::Value::Text("certificate".to_string()))
+                .ok_or_else(|| anyhow::anyhow!("certificate missing from document"))?,
+            _ => anyhow::bail!("Invalid document"),
+        };
+
+        let cert_bytes = match cert_val {
+            serde_cbor::Value::Bytes(b) => b,
+            _ => anyhow::bail!("Certificate is not bytes"),
+        };
+
+        let cabundle_val = match &doc_value {
+            serde_cbor::Value::Map(m) => m.get(&serde_cbor::Value::Text("cabundle".to_string()))
+                .ok_or_else(|| anyhow::anyhow!("cabundle missing from document"))?,
+            _ => anyhow::bail!("Invalid document"),
+        };
+
+        let cabundle_array = match cabundle_val {
+            serde_cbor::Value::Array(arr) => arr,
+            _ => anyhow::bail!("cabundle is not an array"),
+        };
+
+        // 1. Authenticate the leaf certificate against the AWS Nitro Enclaves Root CA
+        // Carrega o Root CA confiável
+        let root_ca_file = std::fs::File::open(&self.config.aws_nitro_root_ca_path)
+            .map_err(|e| anyhow::anyhow!("Failed to open AWS Nitro Root CA: {}", e))?;
+        let mut root_ca_reader = std::io::BufReader::new(root_ca_file);
+        let root_ca_certs = rustls_pemfile::certs(&mut root_ca_reader)
+            .map_err(|e| anyhow::anyhow!("Failed to parse AWS Nitro Root CA: {}", e))?;
+
+        if root_ca_certs.is_empty() {
+            anyhow::bail!("AWS Nitro Root CA is empty");
+        }
+
+        let mut trust_anchors = Vec::new();
+        for ca in root_ca_certs {
+            let trust_anchor = webpki::TrustAnchor::try_from_cert_der(&ca)
+                .map_err(|e| anyhow::anyhow!("Failed to parse Root CA as TrustAnchor: {:?}", e))?;
+            trust_anchors.push(trust_anchor);
+        }
+
+        let anchor_list = webpki::TLSServerTrustAnchors(&trust_anchors);
+
+        let mut intermediates = Vec::new();
+        for item in cabundle_array {
+            if let serde_cbor::Value::Bytes(b) = item {
+                intermediates.push(b.as_slice());
+            }
+        }
+
+        let time = webpki::Time::try_from(std::time::SystemTime::now())
+            .map_err(|e| anyhow::anyhow!("Time conversion failed: {:?}", e))?;
+
+        let leaf_cert = webpki::EndEntityCert::try_from(cert_bytes.as_slice())
+            .map_err(|e| anyhow::anyhow!("Failed to parse leaf certificate: {:?}", e))?;
+
+        // Verify certificate chain
+        leaf_cert.verify_is_valid_tls_server_cert(
+            &[&webpki::ECDSA_P384_SHA384, &webpki::ECDSA_P256_SHA256, &webpki::RSA_PKCS1_2048_8192_SHA256],
+            &anchor_list,
+            &intermediates,
+            time
+        ).map_err(|e| anyhow::anyhow!("Leaf certificate failed validation against AWS Root CA: {:?}", e))?;
+
+        // 2. For COSE_Sign1 signature verification, construct the Sig_structure
+        // Sig_structure = ["Signature1", protected_header, empty_bstr, payload]
+        let sig_structure = (
+            "Signature1",
+            serde_bytes::ByteBuf::from(protected),
+            serde_bytes::ByteBuf::from(Vec::new()),
+            serde_bytes::ByteBuf::from(payload),
+        );
+        let sig_data = serde_cbor::to_vec(&sig_structure)
+            .map_err(|e| anyhow::anyhow!("Failed to serialize Sig_structure: {:?}", e))?;
+
+        // Enclaves use ECDSA P-384 with SHA-384
+        leaf_cert.verify_signature(
+            &webpki::ECDSA_P384_SHA384,
+            &sig_data,
+            &signature
+        ).map_err(|_| anyhow::anyhow!("Attestation signature verification failed against AWS Nitro PKI leaf certificate"))?;
 
         info!("[824.2] Attestation verified successfully (PCR0: {})", pcr0_hex);
         Ok(())
@@ -644,6 +760,7 @@ async fn main() -> anyhow::Result<()> {
         mtls_key_path: std::env::var("MTLS_KEY_PATH").unwrap_or_else(|_| "/etc/arkhe/mtls/key.pem".into()),
         mtls_ca_path: std::env::var("MTLS_CA_PATH").unwrap_or_else(|_| "/etc/arkhe/mtls/ca.pem".into()),
         attestation_enclave_pcr0: std::env::var("ATTESTATION_PCR0").unwrap_or_default(),
+        aws_nitro_root_ca_path: std::env::var("AWS_NITRO_ROOT_CA_PATH").unwrap_or_else(|_| "/etc/arkhe/aws-nitro-root-ca.pem".into()),
     };
 
     let proxy = Arc::new(SageMakerProxy::new(config).await?);
@@ -673,8 +790,8 @@ async fn main() -> anyhow::Result<()> {
 
     let key_file = std::fs::File::open(&config.mtls_key_path)?;
     let mut key_reader = std::io::BufReader::new(key_file);
-    let mut keys = rustls_pemfile::pkcs8_private_keys(&mut key_reader)?;
-    let key = rustls::PrivateKey(keys.remove(0).to_vec());
+    let keys = rustls_pemfile::pkcs8_private_keys(&mut key_reader)?;
+    let key = rustls::PrivateKey(keys.into_iter().next().ok_or_else(|| anyhow::anyhow!("No valid PKCS8 key"))?.to_vec());
 
     let server_config = rustls::ServerConfig::builder()
         .with_safe_defaults()
