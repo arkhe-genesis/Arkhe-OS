@@ -48,9 +48,9 @@ class TelegraphBridge {
   // Publicar do barramento interno para o externo
   forwardToExternal(topic, signal) {
     if (this.externalWs && this.externalWs.readyState === WebSocket.OPEN) {
-      const externalTopic = Object.keys(this.topicMap).find(k => this.topicMap[k] === topic);
+      const externalTopic = this.topicMap[topic];
       if (externalTopic) {
-        this.externalWs.send(JSON.stringify({ type: 'signal', topic, signal }));
+        this.externalWs.send(JSON.stringify({ type: 'signal', topic: externalTopic, signal }));
       }
     }
   }

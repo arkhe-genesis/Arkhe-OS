@@ -179,6 +179,8 @@ class Telegraph {
 
       this.wss.on('connection', (ws, req) => {
         const clientId = req.socket.remoteAddress;
+        const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+        ws.apiKey = url.searchParams.get('api_key');
         this.metrics.clientsConnected++;
         console.log(`[TELEGRAPH] Cliente conectado: ${clientId}`);
 
@@ -214,6 +216,10 @@ class Telegraph {
 
     switch (msg.command) {
       case 'publish': {
+        if (msg.topic && !this.authorizeExternal(ws.apiKey, msg.topic)) {
+          response.error = 'Não autorizado para o tópico ' + msg.topic;
+          break;
+        }
         if (!msg.topic || msg.value === undefined) {
           response.error = 'Parâmetros obrigatórios: topic, value';
           break;
@@ -230,6 +236,13 @@ class Telegraph {
       }
 
       case 'subscribe': {
+        if (msg.topics && Array.isArray(msg.topics)) {
+          const unauthorized = msg.topics.find(t => !this.authorizeExternal(ws.apiKey, t));
+          if (unauthorized) {
+            response.error = 'Não autorizado para o tópico ' + unauthorized;
+            break;
+          }
+        }
         if (!msg.topics || !Array.isArray(msg.topics)) {
           response.error = 'Parâmetro obrigatório: topics (array)';
           break;
@@ -242,6 +255,13 @@ class Telegraph {
       }
 
       case 'unsubscribe': {
+        if (msg.topics && Array.isArray(msg.topics)) {
+          const unauthorized = msg.topics.find(t => !this.authorizeExternal(ws.apiKey, t));
+          if (unauthorized) {
+            response.error = 'Não autorizado para o tópico ' + unauthorized;
+            break;
+          }
+        }
         if (!msg.topics || !Array.isArray(msg.topics)) {
           response.error = 'Parâmetro obrigatório: topics (array)';
           break;
