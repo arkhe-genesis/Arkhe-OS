@@ -666,11 +666,11 @@ invoke_alpha_nexus:
     ; 5. Invocar o Serv
     lea rdi, [rel alpha_nexus_invoke_path]
     lea rsi, [rel ignite_cmd]
-    mov edx, 1
+    mov edx, 6
     call write_sysfs_file
 
     ; 6. Aguardar resultado com timeout
-    xor r12, r12                 ; contador de polls
+    mov qword [rbp-48], 0        ; contador de polls
 .poll:
     lea rdi, [rel alpha_nexus_status_path]
     call read_sysfs_int
@@ -682,8 +682,8 @@ invoke_alpha_nexus:
     je .misformalization_detected
 
     ; Timeout check
-    inc r12
-    cmp r12, 172800000           ; 48h em ms
+    inc qword [rbp-48]
+    cmp qword [rbp-48], 172800000           ; 48h em ms
     jge .failed
 
     ; Yield
