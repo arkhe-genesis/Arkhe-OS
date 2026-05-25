@@ -1017,11 +1017,14 @@ def test_pvac_f_strings():
         'substrates/t/825_parametric_memory_engine/substrato_825_parametric_memory_engine.py',
         'substrates/t/826_gnn_isomorphism_finder/substrato_826_gnn_isomorphism_finder.py',
         'substrates/t/831_story_ip_chain_bridge/substrato_831_story_ip_chain_bridge.py',
-        'substrates/t/836_arkhe_gguf_quantizer/substrato_836_arkhe_gguf_quantizer.py'
+        'substrates/t/836_julia_parser/substrato_836_julia_parser.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
             content = f.read()
+            # Strict mode verification: We use regex to only match f-strings (f"..." or f'...'),
+            # making sure we match a boundary before 'f' to avoid matching inside variable names or hashes
+            assert not re.search(r"\bf[\"']", content), f"f-strings are not allowed in canonizer scripts: {filepath}"
 
 def test_substrato_831_story_ip_chain_bridge():
     import importlib.util
@@ -1047,8 +1050,26 @@ def test_substrato_831_story_ip_chain_bridge():
     assert "Capabilities" in data
     assert len(data["Capabilities"]) == 5
     assert "Registro On-Chain de Substratos" in data["Capabilities"][0]
-
     assert data["Seal_SHA3_256"] == "cf1afd8cb13080fda342a2f4b29c1f65c5894e0ba4b878ba7eac8bda3fa54c73"
+
+def test_substrato_836_julia_parser():
+    import importlib.util
+    import os
+
+    file_path = os.path.abspath('substrates/t/836_julia_parser/substrato_836_julia_parser.py')
+    spec = importlib.util.spec_from_file_location("substrato_836_julia_parser", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato836JuliaParser()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        import json
+        data = json.load(f)
+    assert data["ID"] == "836"
+    assert data["canonical_seal"] == "e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5"
 
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
@@ -1386,27 +1407,28 @@ def test_831_story_ip_chain_bridge():
 
     assert "f\"" not in content and "f'" not in content, "f-strings are not allowed in canonizer scripts"
 
-def test_substrato_836_arkhe_gguf_quantizer():
+def test_834_wdf_driver_fabric():
     import importlib.util
     import os
+    import json
+    import ast
 
-    file_path = os.path.abspath('substrates/t/836_arkhe_gguf_quantizer/substrato_836_arkhe_gguf_quantizer.py')
-    spec = importlib.util.spec_from_file_location("substrato_836_arkhe_gguf_quantizer", file_path)
+    file_path = os.path.abspath('substrates/t/834_wdf_driver_fabric/substrato_834_wdf_driver_fabric.py')
+    spec = importlib.util.spec_from_file_location("substrato_834_wdf_driver_fabric", file_path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato836ArkheGGUFQuantizer()
+    canonizer = module.Substrato834WDFDriverFabric()
     path = canonizer.canonize()
 
     assert os.path.exists(path)
     with open(path, "r", encoding="utf-8") as f:
-        import json
         data = json.load(f)
 
-    assert data["ID"] == "836"
-    assert data["Name"] == "ARKHE-GGUF-QUANTIZER"
-    assert data["canonical_seal"] == "STRICT-MODE-PRE-ASSIGNED"
+    assert data["ID"] == "834"
+    assert data["Canonical_Seal"] == "b8c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1"
 
     with open(file_path, "r", encoding="utf-8") as f:
-        content = f.read()
-        assert "f\"" not in content and "f'" not in content, "f-strings are strictly forbidden in canonization scripts"
+        tree = ast.parse(f.read())
+        for node in ast.walk(tree):
+            assert not isinstance(node, ast.JoinedStr), "f-strings are not allowed in canonizer"
