@@ -1,0 +1,67 @@
+; ═══════════════════════════════════════════════════════════════════
+; ARKHE.INF — Driver Installation File
+; Substrate 810 — Arkhe Kernel Module
+; ═══════════════════════════════════════════════════════════════════
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = System
+ClassGuid   = {4d36e97d-e325-11ce-bfc1-08002be10318}
+Provider    = %ManufacturerName%
+CatalogFile = Arkhe.cat
+DriverVer   = 07/10/2026,1.0.0.0
+PnpLockdown = 1
+
+[DestinationDirs]
+DefaultDestDir = 12 ; %windir%\system32\drivers
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+Arkhe.sys = 1,,
+
+; ═══════════════════════════════════════════════════════════════════
+; Manufacturer Section
+; ═══════════════════════════════════════════════════════════════════
+
+[Manufacturer]
+%ManufacturerName%=Standard,NTamd64
+
+[Standard.NTamd64]
+%Arkhe.DeviceDesc%=Arkhe_Device, Root\Arkhe
+
+; ═══════════════════════════════════════════════════════════════════
+; Device Installation
+; ═══════════════════════════════════════════════════════════════════
+
+[Arkhe_Device.NT]
+CopyFiles = Arkhe_CopyFiles
+
+[Arkhe_CopyFiles]
+Arkhe.sys
+
+; ═══════════════════════════════════════════════════════════════════
+; Services
+; ═══════════════════════════════════════════════════════════════════
+
+[Arkhe_Device.NT.Services]
+AddService = Arkhe, %SPSVCINST_ASSOCSERVICE%, Arkhe_Service
+
+[Arkhe_Service]
+DisplayName    = %Arkhe.ServiceName%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\Arkhe.sys
+
+; ═══════════════════════════════════════════════════════════════════
+; Strings
+; ═══════════════════════════════════════════════════════════════════
+
+[Strings]
+ManufacturerName      = "ARKHE CATHEDRAL"
+DiskName              = "Arkhe Driver Disk"
+Arkhe.DeviceDesc      = "ARKHE Kernel Module (ξM-field)"
+Arkhe.ServiceName     = "ARKHE Cathedral Driver"
+SPSVCINST_ASSOCSERVICE = 0x00000002
