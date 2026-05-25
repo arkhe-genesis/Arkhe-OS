@@ -218,8 +218,8 @@ class TokenicEngine:
         try:
             with open(os.path.join(sys_dir, "sgrna_phi"), "w") as f:
                 f.write("{0:.4f}".format(self.best_fitness))
-        except FileNotFoundError:
-            print("[633] Warning: Sysfs interface not found. Kernel module may not be loaded.")
+        except OSError as e:
+            print("[633] Warning: Failed to write to sysfs ({0}). Kernel module may not be loaded or permissions are missing.".format(e))
 
         print("[633] sgRNA design complete. Φ_sgrna = {0:.4f}".format(self.best_fitness))
         return report

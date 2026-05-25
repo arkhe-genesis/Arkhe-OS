@@ -226,8 +226,8 @@ class GenomeIntegrityVerifier:
         try:
             with open(os.path.join(sys_dir, "quantum_phi"), "w") as f:
                 f.write("{0:.4f}".format(phi_quantum))
-        except FileNotFoundError:
-            print("[637] Warning: Sysfs interface not found. Kernel module may not be loaded.")
+        except OSError as e:
+            print("[637] Warning: Failed to write to sysfs ({0}). Kernel module may not be loaded or permissions are missing.".format(e))
 
         print("[637] Quantum verification complete. Φ_quantum = {0:.4f}".format(phi_quantum))
         return report
