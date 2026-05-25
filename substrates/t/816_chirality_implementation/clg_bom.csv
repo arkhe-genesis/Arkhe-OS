@@ -1,0 +1,21 @@
+Reference,Quantity,Value,Footprint,Manufacturer,MPN,Notes
+U1,1,NE555P,DIP-8,Texas Instruments,NE555P,Oscilador mestre
+U2,1,NE555P,DIP-8,Texas Instruments,NE555P,Oscilador escravo
+U3,1,74HC74,DIP-14,Nexperia,74HC74N,Flip-flop D input
+U4,1,74HC04,DIP-14,Nexperia,74HC04N,Inversor para fase π
+U5,1,74HC86,DIP-14,Nexperia,74HC86N,XOR detector de fase
+U6,1,CD4066,DIP-14,Texas Instruments,CD4066BE,Chave analógica H-bridge
+R1-R2,2,4.7k,Axial,Yageo,CFR-25JT-52-4K7,Tempo 555 mestre/escravo
+R3-R4,2,4.7k,Axial,Yageo,CFR-25JT-52-4K7,Tempo 555 mestre/escravo
+R5-R6,2,10k,Axial,Yageo,CFR-25JT-52-10K,Rede RC acoplamento
+R7,1,100k,Axial,Yageo,CFR-25JT-52-100K,Injeção escravo
+R8,1,10k,Axial,Yageo,CFR-25JT-52-10K,Filtro XOR
+C1-C2,2,10n,Ceramic 5mm,Murata,RDER71H103K0M1H03A,Tempo 555
+C3-C4,2,100p,Ceramic 5mm,Murata,RDER71H101K0M1H03A,Acoplamento
+C5,1,1u,Electrolytic 5mm,Panasonic,ECA-1HM010,Filtragem XOR
+C6-C7,2,100n,Ceramic 5mm,Murata,RDER71H104K0M1H03A,Desacoplamento
+Q1-Q4,4,2N7000,TO-92,ON Semiconductor,2N7000,H-bridge (alternativa ao 4066)
+D1-D4,4,1N4148,DO-35,ON Semiconductor,1N4148,Proteção H-bridge
+J1,1,USB-B,USB-B,Generic,USB-B-5P,Alimentação +5V
+J2-J3,2,PinHeader 1x2,PinHeader,Generic,PZ254V-11-02P,Probes θ_in / θ_out
+PCB1,1,CLG-816-RevA,100x60mm,Custom,CLG-816-RevA,PCB dupla face FR4

@@ -1189,3 +1189,33 @@ def test_substrato_807_arkhe_runtime():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
     assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
+
+def test_substrato_816_chirality_implementation():
+    import importlib.util
+    import os
+    import json
+    import re
+
+    file_path = os.path.abspath('substrates/t/816_chirality_implementation/substrato_816_chirality_implementation.py')
+    spec = importlib.util.spec_from_file_location("substrato_816_chirality_implementation", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato816ChiralityImplementation()
+    path = canonizer.generate_report()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "816-CHIRALITY-IMPLEMENTATION"
+    assert "seal" in data
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
+
+    kuramoto_path = os.path.abspath('substrates/t/816_chirality_implementation/chiral_kuramoto_v2.py')
+    with open(kuramoto_path, "r", encoding="utf-8") as f:
+        kuramoto_content = f.read()
+    assert not re.search(r'\bf(["\'])', kuramoto_content), "f-strings are strictly forbidden in python files"
