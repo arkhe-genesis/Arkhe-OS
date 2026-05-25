@@ -1,0 +1,33 @@
+{
+  "description": "Configuração de internacionalização e multimodalidade da ARKHE‑OS",
+  "languages": [
+    {"code": "pt", "name": "Português", "native": "Português"},
+    {"code": "en", "name": "English", "native": "English"},
+    {"code": "es", "name": "Español", "native": "Español"},
+    {"code": "zh", "name": "中文", "native": "中文"},
+    {"code": "ar", "name": "العربية", "native": "العربية"},
+    {"code": "hi", "name": "हिन्दी", "native": "हिन्दी"},
+    {"code": "fr", "name": "Français", "native": "Français"},
+    {"code": "ru", "name": "Русский", "native": "Русский"},
+    {"code": "ja", "name": "日本語", "native": "日本語"},
+    {"code": "de", "name": "Deutsch", "native": "Deutsch"}
+  ],
+  "modalities": [
+    "text/markdown",
+    "text/plain",
+    "image/png",
+    "image/svg+xml",
+    "audio/wav",
+    "application/x‑chladni‑cloud",
+    "application/x‑hypergraph+json",
+    "application/x‑kuramoto‑simulation+json"
+  ],
+  "translation": {
+    "coherence": { "pt": "coerência", "es": "coherencia", "zh": "相干性", "ar": "تماسك" },
+    "truth": { "pt": "verdade", "es": "verdad", "zh": "真理", "ar": "حقيقة" },
+    "field": { "pt": "campo", "es": "campo", "zh": "场", "ar": "حقل" },
+    "convergence": { "pt": "convergência", "es": "convergencia", "zh": "收敛", "ar": "تقارب" },
+    "ghost_threshold": { "pt": "limiar fantasma", "es": "umbral fantasma", "zh": "幽灵阈值", "ar": "عتبة الشبح" },
+    "theosis": { "pt": "theosis", "es": "theosis", "zh": "神化", "ar": "التأله" }
+  }
+}

@@ -1009,7 +1009,9 @@ def test_pvac_f_strings():
         'substrates/679-PVAC-COMPRESSION/substrato_679_pvac_compression.py',
         'substrates/680-PVAC-CRYPTO/substrato_680_pvac_crypto.py',
         'substrates/681-PVAC-FHE/substrato_681_pvac_fhe.py',
-        'substrates/682-PVAC-NET/substrato_682_pvac_net.py'
+        'substrates/682-PVAC-NET/substrato_682_pvac_net.py',
+        'substrates/s/803_temporal_zkwasm_integration/substrato_803_temporal_zkwasm_integration.py',
+        'substrates/s/801_convergence_event/substrato_801_convergence_event.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
@@ -1136,3 +1138,37 @@ def test_substrato_766_trapdoor_countermeasure():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
     assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
+
+def test_substrato_803_temporal_zkwasm_integration():
+    import importlib.util
+    file_path = os.path.abspath('substrates/s/803_temporal_zkwasm_integration/substrato_803_temporal_zkwasm_integration.py')
+    spec = importlib.util.spec_from_file_location("substrato_803_temporal_zkwasm_integration", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato803Canonizer()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    assert data["id"] == "803-TEMPORAL-ZKWASM-INTEGRATION"
+    assert data["metadata"]["substrate"] == "803-TEMPORAL-ZKWASM-INTEGRATION"
+    assert data["metadata"]["seal"] == canonizer.calculate_seal()
+
+def test_substrato_801_convergence_event():
+    import importlib.util
+    file_path = os.path.abspath('substrates/s/801_convergence_event/substrato_801_convergence_event.py')
+    spec = importlib.util.spec_from_file_location("substrato_801_convergence_event", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato801Canonizer()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    assert data["id"] == "801-CONVERGENCE-EVENT"
+    assert data["metadata"]["substrate"] == "801-CONVERGENCE-EVENT"
+    assert data["metadata"]["seal"] == canonizer.calculate_seal()
