@@ -1016,7 +1016,8 @@ def test_pvac_f_strings():
         'substrates/t/824_magalu_aws_bridge/substrato_824_magalu_aws_bridge.py',
         'substrates/t/825_parametric_memory_engine/substrato_825_parametric_memory_engine.py',
         'substrates/t/826_gnn_isomorphism_finder/substrato_826_gnn_isomorphism_finder.py',
-        'substrates/t/831_story_ip_chain_bridge/substrato_831_story_ip_chain_bridge.py'
+        'substrates/t/831_story_ip_chain_bridge/substrato_831_story_ip_chain_bridge.py',
+        'substrates/t/836_julia_parser/substrato_836_julia_parser.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
@@ -1046,8 +1047,26 @@ def test_substrato_831_story_ip_chain_bridge():
     assert "Capabilities" in data
     assert len(data["Capabilities"]) == 5
     assert "Registro On-Chain de Substratos" in data["Capabilities"][0]
-
     assert data["Seal_SHA3_256"] == "cf1afd8cb13080fda342a2f4b29c1f65c5894e0ba4b878ba7eac8bda3fa54c73"
+
+def test_substrato_836_julia_parser():
+    import importlib.util
+    import os
+
+    file_path = os.path.abspath('substrates/t/836_julia_parser/substrato_836_julia_parser.py')
+    spec = importlib.util.spec_from_file_location("substrato_836_julia_parser", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato836JuliaParser()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        import json
+        data = json.load(f)
+    assert data["ID"] == "836"
+    assert data["canonical_seal"] == "e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5"
 
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
