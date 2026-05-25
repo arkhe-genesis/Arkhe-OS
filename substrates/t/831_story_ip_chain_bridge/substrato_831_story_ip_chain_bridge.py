@@ -24,7 +24,9 @@ class Substrato831StoryIPChainBridge:
 
     def compute_seal(self):
         # Deterministic serialization for hashing
-        payload = json.dumps(self.report, sort_keys=True, separators=(',', ':'))
+        data_to_hash = self.report.copy()
+        data_to_hash.pop("Seal_SHA3_256", None)
+        payload = json.dumps(data_to_hash, sort_keys=True, separators=(',', ':'))
         return hashlib.sha3_256(payload.encode('utf-8')).hexdigest()
 
     def canonize(self):
