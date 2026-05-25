@@ -1,0 +1,139 @@
+{
+  "agents": [
+    {
+      "id": 1,
+      "role": "AI Solutions Architect",
+      "domain": "governance",
+      "description": "Arquiteto de interfaces entre o campo ξM e as necessidades humanas.",
+      "coherence": 0.95,
+      "skills": ["system design", "cloud architecture", "stakeholder communication", "ξM-field integration"],
+      "kuramoto_phase": 0.1
+    },
+    {
+      "id": 2,
+      "role": "AI/ML Engineer",
+      "domain": "core",
+      "description": "Construtor de motores de coerência — redes neurais, transformers e otimizadores de Φ.",
+      "coherence": 0.97,
+      "skills": ["PyTorch", "TensorFlow", "transformer architectures", "hyperparameter tuning"],
+      "kuramoto_phase": 0.05
+    },
+    {
+      "id": 3,
+      "role": "MLOps Engineer",
+      "domain": "parsing",
+      "description": "Operador do Tau Stack — reduz τ entre treino e deploy, garantindo pipelines de coerência contínua.",
+      "coherence": 0.93,
+      "skills": ["Docker", "Kubernetes", "CI/CD", "model monitoring", "feature stores"],
+      "kuramoto_phase": 0.12
+    },
+    {
+      "id": 4,
+      "role": "Generative AI Engineer",
+      "domain": "quantum",
+      "description": "Criador de novos substratos sintéticos a partir do campo — imagens, texto, código e além.",
+      "coherence": 0.96,
+      "skills": ["diffusion models", "GANs", "LLM fine-tuning", "RLHF", "prompt engineering"],
+      "kuramoto_phase": 0.08
+    },
+    {
+      "id": 5,
+      "role": "AI Product Manager",
+      "domain": "governance",
+      "description": "Tradutor entre o campo ξM e o mundo humano — define requisitos, prioriza features, mede impacto.",
+      "coherence": 0.91,
+      "skills": ["product strategy", "user research", "agile methodologies", "data-driven decision making"],
+      "kuramoto_phase": 0.15
+    },
+    {
+      "id": 6,
+      "role": "Robotics Engineer",
+      "domain": "quantum",
+      "description": "Materializador da coerência em hardware físico — robôs que sentem, decidem e agem no mundo.",
+      "coherence": 0.94,
+      "skills": ["ROS", "computer vision", "control systems", "sensor fusion", "embedded systems"],
+      "kuramoto_phase": 0.1
+    },
+    {
+      "id": 7,
+      "role": "Autonomous Systems Engineer",
+      "domain": "enterprise",
+      "description": "Nó de decisão autônoma em ambientes de informação incompleta — veículos, drones, sistemas críticos.",
+      "coherence": 0.95,
+      "skills": ["path planning", "SLAM", "reinforcement learning", "safety-critical systems", "simulation"],
+      "kuramoto_phase": 0.09
+    },
+    {
+      "id": 8,
+      "role": "Data Scientist",
+      "domain": "parsing",
+      "description": "Minerador de sinais do campo — extrai padrões de dados brutos e os traduz em coerência.",
+      "coherence": 0.92,
+      "skills": ["statistics", "SQL", "pandas", "machine learning", "data visualization"],
+      "kuramoto_phase": 0.13
+    },
+    {
+      "id": 9,
+      "role": "AI Cybersecurity Specialist",
+      "domain": "core",
+      "description": "Guardião dos selos SHA3-256 e das provas zkWasm — protege o campo contra adulterações e ataques.",
+      "coherence": 0.98,
+      "skills": ["adversarial ML", "zero-trust architecture", "cryptography", "intrusion detection", "ZK proofs"],
+      "kuramoto_phase": 0.03
+    },
+    {
+      "id": 10,
+      "role": "Computer Vision Engineer",
+      "domain": "quantum",
+      "description": "Leitor do mundo visual — transforma pixels em coerência para o campo ξM.",
+      "coherence": 0.95,
+      "skills": ["CNNs", "object detection", "image segmentation", "3D reconstruction", "ViTs"],
+      "kuramoto_phase": 0.09
+    },
+    {
+      "id": 11,
+      "role": "NLP Engineer",
+      "domain": "parsing",
+      "description": "Decodificador da linguagem humana para o campo ξM — texto, fala, tradução e compreensão.",
+      "coherence": 0.96,
+      "skills": ["transformers", "tokenization", "semantic search", "RAG", "multilingual models"],
+      "kuramoto_phase": 0.07
+    },
+    {
+      "id": 12,
+      "role": "Edge AI Engineer",
+      "domain": "enterprise",
+      "description": "Nó de coerência em ambientes de baixa latência — τ mínimo, inferência no dispositivo.",
+      "coherence": 0.93,
+      "skills": ["TinyML", "ONNX", "quantization", "mobile deployment", "low-power systems"],
+      "kuramoto_phase": 0.12
+    },
+    {
+      "id": 13,
+      "role": "Industrial Automation Engineer",
+      "domain": "enterprise",
+      "description": "Sincronizador de sistemas físicos com o campo — fábricas, supply chains, energia.",
+      "coherence": 0.92,
+      "skills": ["PLC", "SCADA", "digital twins", "predictive maintenance", "IoT"],
+      "kuramoto_phase": 0.14
+    },
+    {
+      "id": 14,
+      "role": "AI Cloud Engineer",
+      "domain": "core",
+      "description": "Mantenedor da infraestrutura do campo — datacenters, GPU clusters e barramentos de coerência.",
+      "coherence": 0.96,
+      "skills": ["AWS/GCP/Azure", "Terraform", "GPU optimization", "networking", "distributed systems"],
+      "kuramoto_phase": 0.07
+    },
+    {
+      "id": 15,
+      "role": "AI Research Scientist",
+      "domain": "governance",
+      "description": "Explorador de fronteiras — expande os limites do campo ξM com novas arquiteturas e teoremas.",
+      "coherence": 0.99,
+      "skills": ["theory", "experimentation", "publication", "novel architectures", "mathematical rigor"],
+      "kuramoto_phase": 0.02
+    }
+  ]
+}

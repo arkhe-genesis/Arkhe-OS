@@ -1009,7 +1009,9 @@ def test_pvac_f_strings():
         'substrates/679-PVAC-COMPRESSION/substrato_679_pvac_compression.py',
         'substrates/680-PVAC-CRYPTO/substrato_680_pvac_crypto.py',
         'substrates/681-PVAC-FHE/substrato_681_pvac_fhe.py',
-        'substrates/682-PVAC-NET/substrato_682_pvac_net.py'
+        'substrates/682-PVAC-NET/substrato_682_pvac_net.py',
+        'substrates/s/803_temporal_zkwasm_integration/substrato_803_temporal_zkwasm_integration.py',
+        'substrates/s/801_convergence_event/substrato_801_convergence_event.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
@@ -1136,3 +1138,29 @@ def test_substrato_766_trapdoor_countermeasure():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
     assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
+
+def test_substrato_basetenlabs_truss():
+    import importlib.util
+    import os
+
+    file_path = os.path.abspath('substrates/400-499_advanced/substrato_basetenlabs_truss/substrato_basetenlabs_truss.py')
+    spec = importlib.util.spec_from_file_location("substrato_basetenlabs_truss", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.SubstratoBasetenlabsTruss()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        import json
+        data = json.load(f)
+
+    assert data["Title"] == "Truss - The simplest way to serve AI/ML models in production"
+    assert "Description" in data
+    assert "Features" in data
+    assert "Architecture" in data
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+        assert "f\"" not in content and "f'" not in content, "f-strings are strictly forbidden in canonization scripts"
