@@ -1111,5 +1111,28 @@ def test_substrato_765_arkhe_os_geometric_refactor():
 
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
-    assert 'f"' not in content
-    assert "f'" not in content
+    assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
+
+def test_substrato_766_trapdoor_countermeasure():
+    import re
+    import importlib.util
+    file_path = os.path.abspath('substrates/t/766_trapdoor_countermeasure/substrato_766_trapdoor_countermeasure.py')
+    spec = importlib.util.spec_from_file_location("substrato_766_trapdoor_countermeasure", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato766TrapdoorCountermeasure()
+    json_path = canonizer.generate_json()
+    assert os.path.exists(json_path)
+
+    with open(json_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["id"] == "766-TRAPDOOR-COUNTERMEASURE"
+    assert "seal" in data
+    assert "layer_1" in data
+    assert "layer_5" in data
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"

@@ -10,6 +10,12 @@ try {
   assert.equal(status.version, "1.0.0");
   assert.equal(status.constants.PHI.toFixed(3), "1.618");
 
+  // Test TrapDoor Countermeasures Integration
+  arkhe.security.enableTrapdoorCountermeasures({ strictMode: true });
+  const secStatus = arkhe.security.status();
+  assert.equal(secStatus.threatsBlocked, 0);
+  assert.equal(arkhe.security.strictMode, true);
+
   console.log("arkhe.js tests passed.");
 } catch (e) {
   console.error("Test failed", e);
