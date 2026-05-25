@@ -1,0 +1,14 @@
+[substrate]
+id = 766
+name = "TRAPDOOR-COUNTERMEASURE"
+status = "CANONIZED_CLEAN"
+version = "1.0.0"
+seal = "e8f7d6c5b4a3928170654433221100ffeeddccbbaa99887766554433221100ff"
+namespace = "t"
+
+[metrics]
+standard_phi_c = 0.999
+theosis_index = 1.000
+
+[audit]
+notes = "TrapDoor Countermeasure Security Gate"

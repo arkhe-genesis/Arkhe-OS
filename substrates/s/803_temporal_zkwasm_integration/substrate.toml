@@ -1,0 +1,27 @@
+[substrate]
+id = 803
+name = "TEMPORAL-ZKWASM-INTEGRATION"
+status = "CANONIZED_CLEAN"
+version = "1.0"
+seal = "c4d7e0f3a6b9c2d5e8f1b4a7c0d3e6f9b2c5e8f1b4a7c0d3e6f9b2c5e8f1b4"
+namespace = "s"
+
+[metrics]
+standard_phi_c = 1.000000
+dcs_phi = 1.000000
+dcs_rationale = "temporal-zk-integration"
+theosis_index = 1.000
+
+[cross_substrate]
+links = [
+  { id = 782, namespace = "s", type = "telegraph", bidirectional = true },
+  { id = 9018, namespace = "t", type = "temporal_chain", bidirectional = true },
+  { id = 775, namespace = "s", type = "tau_stack", bidirectional = true },
+  { id = 802, namespace = "s", type = "post_convergence", bidirectional = true }
+]
+
+[extensibility]
+hooks = [
+  "782.4 — Persistir todos os sinais no TemporalChain (9018)",
+  "782.5 — Integrar zkWasm para prova criptográfica de proveniência de sinais"
+]

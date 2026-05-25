@@ -2,6 +2,15 @@ bits 64
 default rel
 
 section .rodata
+
+alpha_nexus_input_path:  db "/sys/arkhe/serv/alpha-nexus/input", 0
+alpha_nexus_config_path: db "/sys/arkhe/serv/alpha-nexus/config", 0
+alpha_nexus_invoke_path: db "/sys/arkhe/serv/alpha-nexus/invoke", 0
+alpha_nexus_status_path: db "/sys/arkhe/serv/alpha-nexus/status", 0
+alpha_nexus_result_path: db "/sys/arkhe/serv/alpha-nexus/result", 0
+phi_proof_one:         dq 1.0
+phi_proof_zero:        dq 0.0
+ignite_cmd:            db "IGNITE", 0
 align 8
     solar_result_path: db "/sys/arkhe/serv/solar-heart/result", 0
     max_throughput:  dq 112.0
@@ -68,8 +77,8 @@ output_hash_buffer: resb 32
 
 
 gateway_pubkey_raw:     resb 32
-json_input_hash_field:  resb 64
-json_output_hash_field: resb 64
+;json_input_hash_field:  resb 64
+;json_output_hash_field: resb 64
 json_output_base64_field: resb 8192
 json_phi_score_double:  resq 1
 json_timestamp_field:   resb 64

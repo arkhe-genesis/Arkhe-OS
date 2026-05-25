@@ -32,7 +32,7 @@ class DSAAgenticAdapter {
     // O agente publica em /agent/query/dsa, o adaptador responde em /agent/response/dsa
     // Isso é tratado pelo próprio Telegraph via subscribe
     if (this.telegraph) {
-      const ws = { send: (data) => console.log('[AGENT] Resposta:', data) }; // placeholder real
+      const ws = { readyState: 1, send: (data) => console.log('[AGENT] Resposta:', data) }; // placeholder real
       this.telegraph.subscribe(ws, '/agent/query/dsa');
       // Na implementação real, o Telegraph chamaria handleQuery ao receber mensagens
     }

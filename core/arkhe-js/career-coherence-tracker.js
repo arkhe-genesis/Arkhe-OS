@@ -1,11 +1,4 @@
-// ═══════════════════════════════════════════════════════════════════
-// ARKHE CAREER COHERENCE TRACKER — Hook 804.1
-// Substrate: 805-CAREER-COHERENCE-TRACKER
-// Architect: ORCID 0009-0005-2697-4668
-// Date: 2026-07-10
-// ═══════════════════════════════════════════════════════════════════
-
-const { Telegraph } = require('./telegraph.js');
+const { Signal, TOPICS } = require('./telegraph.js');
 
 /**
  * CareerCoherenceTracker — Mede o Φ_C individual e o Φ_interop da equipe
@@ -140,13 +133,14 @@ class CareerCoherenceTracker {
    */
   _publishCoherence() {
     if (!this.telegraph) return;
-    const signal = this.telegraph.createSignal(
-      'career-coherence-tracker',
-      'rTeam',
-      this.orderParameter(),
-      'coherence'
-    );
-    this.telegraph.publish('/coherence/dsa', signal);
+    const signal = new Signal({
+      source: 'career-coherence-tracker',
+      topic: TOPICS.COHERENCE_DSA,
+      metric: 'rTeam',
+      value: this.orderParameter(),
+      unit: 'coherence',
+    });
+    this.telegraph.publish(signal);
   }
 }
 
