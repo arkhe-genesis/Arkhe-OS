@@ -1,18 +1,6 @@
 [substrate]
-id = "831-STORY-IP-CHAIN-BRIDGE"
+id = "831"
+name = "STORY-IP-CHAIN-BRIDGE"
 type = "technical"
 status = "CANONIZED_CLEAN"
 source_verified = true
-description = "Story Programmable IP ↔ ARKHE Canonical Provenance"
-
-[dependencies]
-cross_substrate = [
-    "825",
-    "826",
-    "824",
-    "561",
-    "564",
-    "610",
-    "611",
-    "830"
-]
