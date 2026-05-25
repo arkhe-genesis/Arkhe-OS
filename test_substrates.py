@@ -1162,3 +1162,28 @@ def test_substrato_basetenlabs_truss():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
         assert "f\"" not in content and "f'" not in content, "f-strings are strictly forbidden in canonization scripts"
+
+def test_substrato_807_arkhe_runtime():
+    import importlib.util
+    import os
+    import json
+    import re
+
+    file_path = os.path.abspath('substrates/t/807_arkhe_runtime/substrato_807_arkhe_runtime.py')
+    spec = importlib.util.spec_from_file_location("substrato_807_arkhe_runtime", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.SubstratoArkheRuntime()
+    path = canonizer.generate_report()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "807-ARKHE-RUNTIME"
+    assert data["seal"] == "41a8cef41b9cdc60014ab462bfdbe1b3a6193f3d8910c38f6cd0f4e31634cd92"
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
