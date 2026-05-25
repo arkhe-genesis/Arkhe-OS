@@ -47,6 +47,11 @@ wss.on('connection', (ws, req) => {
       return;
     }
 
+    if (!msg || typeof msg !== 'object') {
+      ws.send(JSON.stringify({ error: 'Mensagem deve ser um objeto JSON válido.' }));
+      return;
+    }
+
     const response = { id: msg.id, timestamp: Date.now() };
 
     try {
@@ -81,8 +86,8 @@ wss.on('connection', (ws, req) => {
           if (!arkhe.kuramoto) {
             response.error = 'Kuramoto não inicializado. Use init-kuramoto primeiro.';
           } else {
-            const T = msg.T || 50;
-            const dt = msg.dt || 0.02;
+            const T = Math.min(msg.T || 50, 1000);
+            const dt = Math.max(msg.dt || 0.02, 0.001);
             const history = arkhe.kuramoto.simulate(T, dt);
             response.data = {
               history,
