@@ -1022,6 +1022,9 @@ def test_pvac_f_strings():
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
             content = f.read()
+            # Strict mode verification: We use regex to only match f-strings (f"..." or f'...'),
+            # making sure we match a boundary before 'f' to avoid matching inside variable names or hashes
+            assert not re.search(r"\bf[\"']", content), f"f-strings are not allowed in canonizer scripts: {filepath}"
 
 def test_substrato_831_story_ip_chain_bridge():
     import importlib.util
@@ -1403,3 +1406,29 @@ def test_831_story_ip_chain_bridge():
         content = f.read()
 
     assert "f\"" not in content and "f'" not in content, "f-strings are not allowed in canonizer scripts"
+
+def test_834_wdf_driver_fabric():
+    import importlib.util
+    import os
+    import json
+    import ast
+
+    file_path = os.path.abspath('substrates/t/834_wdf_driver_fabric/substrato_834_wdf_driver_fabric.py')
+    spec = importlib.util.spec_from_file_location("substrato_834_wdf_driver_fabric", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato834WDFDriverFabric()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["ID"] == "834"
+    assert data["Canonical_Seal"] == "b8c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1"
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        tree = ast.parse(f.read())
+        for node in ast.walk(tree):
+            assert not isinstance(node, ast.JoinedStr), "f-strings are not allowed in canonizer"
