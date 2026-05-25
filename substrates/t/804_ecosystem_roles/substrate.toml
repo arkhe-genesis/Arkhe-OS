@@ -1,0 +1,12 @@
+[substrate]
+id = "804-ECOSYSTEM-ROLES"
+namespace = "t"
+domain = "quantum"
+architect = "ORCID 0009-0005-2697-4668"
+
+[coherence]
+phi_c = 0.997
+invariants = 18
+
+[cross_links]
+related = ["758-3D-CHLADNI-POLYTOPES", "747-HYPERGRAPHIC-MODEL", "751-DSA-COHERENCE-PROTOCOL", "801-CONVERGENCE-EVENT", "802-POST-CONVERGENCE-IMPLEMENTATION", "227-F"]

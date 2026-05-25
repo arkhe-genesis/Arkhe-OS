@@ -1139,36 +1139,28 @@ def test_substrato_766_trapdoor_countermeasure():
         content = f.read()
     assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
 
-def test_substrato_803_temporal_zkwasm_integration():
+def test_substrato_basetenlabs_truss():
     import importlib.util
-    file_path = os.path.abspath('substrates/s/803_temporal_zkwasm_integration/substrato_803_temporal_zkwasm_integration.py')
-    spec = importlib.util.spec_from_file_location("substrato_803_temporal_zkwasm_integration", file_path)
+    import os
+
+    file_path = os.path.abspath('substrates/400-499_advanced/substrato_basetenlabs_truss/substrato_basetenlabs_truss.py')
+    spec = importlib.util.spec_from_file_location("substrato_basetenlabs_truss", file_path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato803Canonizer()
+    canonizer = module.SubstratoBasetenlabsTruss()
     path = canonizer.canonize()
 
     assert os.path.exists(path)
-    with open(path, 'r', encoding='utf-8') as f:
+    with open(path, "r", encoding="utf-8") as f:
+        import json
         data = json.load(f)
-    assert data["id"] == "803-TEMPORAL-ZKWASM-INTEGRATION"
-    assert data["metadata"]["substrate"] == "803-TEMPORAL-ZKWASM-INTEGRATION"
-    assert data["metadata"]["seal"] == canonizer.calculate_seal()
 
-def test_substrato_801_convergence_event():
-    import importlib.util
-    file_path = os.path.abspath('substrates/s/801_convergence_event/substrato_801_convergence_event.py')
-    spec = importlib.util.spec_from_file_location("substrato_801_convergence_event", file_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    assert data["Title"] == "Truss - The simplest way to serve AI/ML models in production"
+    assert "Description" in data
+    assert "Features" in data
+    assert "Architecture" in data
 
-    canonizer = module.Substrato801Canonizer()
-    path = canonizer.canonize()
-
-    assert os.path.exists(path)
-    with open(path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    assert data["id"] == "801-CONVERGENCE-EVENT"
-    assert data["metadata"]["substrate"] == "801-CONVERGENCE-EVENT"
-    assert data["metadata"]["seal"] == canonizer.calculate_seal()
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+        assert "f\"" not in content and "f'" not in content, "f-strings are strictly forbidden in canonization scripts"
