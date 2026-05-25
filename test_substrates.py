@@ -1356,3 +1356,31 @@ def test_substrato_826_gnn_isomorphism_finder():
         tree = ast.parse(f.read())
         for node in ast.walk(tree):
             assert not isinstance(node, ast.JoinedStr), "f-strings are not allowed in canonizer"
+
+def test_831_story_ip_chain_bridge():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/831_story_ip_chain_bridge/substrato_831_story_ip_chain_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_831_story_ip_chain_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato831StoryIPChainBridge()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "831-STORY-IP-CHAIN-BRIDGE"
+    assert data["canonical_seal"] == "5236d82d72b4a84f84f314325cd0725176e454a43ab75823ec5c248096d016b6"
+    assert data["invariants"]["passes"] == 17
+    assert data["invariants"]["warns"] == 1
+    assert data["invariants"]["fails"] == 0
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert "f\"" not in content and "f'" not in content, "f-strings are not allowed in canonizer scripts"
