@@ -144,9 +144,12 @@ impl SageMakerProxy {
         self.rng.fill(&mut nonce_bytes)
             .map_err(|e| anyhow::anyhow!("nonce RNG: {:?}", e))?;
         let nonce = Nonce::assume_unique_for_key(nonce_bytes);
-        // Simplificado: em produção, usar ring::aead::SealingKey com Aad::empty()
+        let sealing_key = ring::aead::LessSafeKey::new(unbound);
+
         let mut ciphertext = plaintext.to_vec();
-        ciphertext.extend_from_slice(&nonce_bytes);
+        sealing_key.seal_in_place_append_tag(nonce, ring::aead::Aad::empty(), &mut ciphertext)
+            .map_err(|_| anyhow::anyhow!("encryption failed"))?;
+
         Ok((ciphertext, nonce_bytes))
     }
 
@@ -224,7 +227,22 @@ impl SageMakerProxy {
     async fn poll_job_completion(&self, job_name: &str, max_wait: Duration) -> anyhow::Result<bool> {
         let deadline = Instant::now() + max_wait;
         while Instant::now() < deadline {
-            // TODO: DescribeTrainingJob
+            let resp = self.sm.describe_training_job()
+                .training_job_name(job_name)
+                .send()
+                .await;
+
+            if let Ok(job_status) = resp {
+                if let Some(status) = job_status.training_job_status {
+                    if status == aws_sdk_sagemaker::types::TrainingJobStatus::Completed {
+                        return Ok(true);
+                    } else if status == aws_sdk_sagemaker::types::TrainingJobStatus::Failed ||
+                              status == aws_sdk_sagemaker::types::TrainingJobStatus::Stopped {
+                        return Ok(false);
+                    }
+                }
+            }
+
             tokio::time::sleep(Duration::from_secs(60)).await;
         }
         Ok(false) // stub: timeout

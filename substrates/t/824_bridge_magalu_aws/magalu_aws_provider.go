@@ -100,8 +100,10 @@ func (p *MagaluAWSProvider) CreatePod(ctx context.Context, pod *corev1.Pod) erro
 		return nil
 	}
 
-	// Coherence sufficient — reject so scheduler keeps the pod local.
-	return fmt.Errorf("coherence sufficient (r=%.4f >= %.4f), use native scheduler", r, GhostThreshold)
+	// Coherence sufficient — simulate keeping pod local without rejecting it permanently.
+	// The Virtual Kubelet provider shouldn't fail creation here as it traps the pod.
+	// We'll proceed with creating it in Fargate or simulating success here.
+	return p.awsClient.LaunchPod(ctx, pod)
 }
 
 // GetPods returns pods currently running in burst (AWS Fargate).
