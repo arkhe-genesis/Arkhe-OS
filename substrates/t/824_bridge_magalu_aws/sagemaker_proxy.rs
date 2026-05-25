@@ -146,20 +146,30 @@ impl SageMakerProxy {
         let nonce = Nonce::assume_unique_for_key(nonce_bytes);
         let sealing_key = ring::aead::LessSafeKey::new(unbound);
 
-        let mut ciphertext = plaintext.to_vec();
-        sealing_key.seal_in_place_append_tag(nonce, ring::aead::Aad::empty(), &mut ciphertext)
+        let mut in_out = plaintext.to_vec();
+        sealing_key.seal_in_place_append_tag(nonce, ring::aead::Aad::empty(), &mut in_out)
             .map_err(|_| anyhow::anyhow!("encryption failed"))?;
 
-        Ok((ciphertext, nonce_bytes))
+        let mut final_ciphertext = nonce_bytes.to_vec();
+        final_ciphertext.extend_from_slice(&in_out);
+
+        Ok((final_ciphertext, nonce_bytes))
     }
 
-    fn aes_gcm_decrypt(&self, ciphertext: &[u8], key: &[u8; 32], nonce: &[u8; 12]) -> anyhow::Result<Vec<u8>> {
+    fn aes_gcm_decrypt(&self, ciphertext: &[u8], key: &[u8; 32], _nonce: &[u8; 12]) -> anyhow::Result<Vec<u8>> {
+        if ciphertext.len() < 12 {
+            anyhow::bail!("ciphertext too short");
+        }
+        let (nonce_bytes, actual_ciphertext) = ciphertext.split_at(12);
+        let mut nonce_arr = [0u8; 12];
+        nonce_arr.copy_from_slice(nonce_bytes);
+
         let unbound = UnboundKey::new(&AES_256_GCM, key)
             .map_err(|_| anyhow::anyhow!("invalid AES-256 key"))?;
         let opening_key = ring::aead::LessSafeKey::new(unbound);
-        let nonce_val = Nonce::assume_unique_for_key(*nonce);
+        let nonce_val = Nonce::assume_unique_for_key(nonce_arr);
 
-        let mut in_out = ciphertext.to_vec();
+        let mut in_out = actual_ciphertext.to_vec();
         let decrypted_slice = opening_key.open_in_place(nonce_val, ring::aead::Aad::empty(), &mut in_out)
             .map_err(|_| anyhow::anyhow!("decryption failed"))?;
 
