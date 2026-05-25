@@ -1013,7 +1013,8 @@ def test_pvac_f_strings():
         'substrates/682-PVAC-NET/substrato_682_pvac_net.py',
         'substrates/s/803_temporal_zkwasm_integration/substrato_803_temporal_zkwasm_integration.py',
         'substrates/s/801_convergence_event/substrato_801_convergence_event.py',
-        'substrates/t/824_magalu_aws_bridge/substrato_824_magalu_aws_bridge.py'
+        'substrates/t/824_magalu_aws_bridge/substrato_824_magalu_aws_bridge.py',
+        'substrates/t/825_parametric_memory_engine/substrato_825_parametric_memory_engine.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
@@ -1248,6 +1249,31 @@ def test_824_bridge_magalu_aws():
         data = json.load(f)
 
     assert data["id"] == "824-BRIDGE-MAGALU-AWS"
+    assert "canonical_seal" in data
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert "f\"" not in content and "f'" not in content, "f-strings are not allowed in canonizer scripts"
+
+def test_825_parametric_memory_engine():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/825_parametric_memory_engine/substrato_825_parametric_memory_engine.py')
+    spec = importlib.util.spec_from_file_location("substrato_825_parametric_memory_engine", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato825ParametricMemoryEngine()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "825-PARAMETRIC-MEMORY-ENGINE"
     assert "canonical_seal" in data
 
     with open(file_path, "r", encoding="utf-8") as f:
