@@ -1,0 +1,41 @@
+[substrate]
+id = 719
+name = "GLOSA-240-METACOGNITION"
+status = "CANONIZED_CLEAN"
+version = "1.0"
+seal = "f705cd161bd59c31bd0b239b265ed6eb1f3aa4bf9eff3b9ebeae221773977f92"
+namespace = "s"
+
+[metrics]
+standard_phi_c = 0.983556
+dcs_phi = 0.998000
+dcs_rationale = "epistemic-caster-weighted"
+theosis_index = 0.994
+
+[cross_substrate]
+links = [
+  { id = 0, namespace = "s", type = "observer", bidirectional = true },
+  { id = 42, namespace = "s", type = "math", bidirectional = true },
+  { id = 62, namespace = "s", type = "fisher_rao", bidirectional = true },
+  { id = 137, namespace = "s", type = "quantum_lattice", bidirectional = true },
+  { id = 170, namespace = "s", type = "metastability", bidirectional = true },
+  { id = 181, namespace = "s", type = "lagrangian", bidirectional = true },
+  { id = 204, namespace = "s", type = "vulnsage", bidirectional = true },
+  { id = 223, namespace = "s", type = "bicycle", bidirectional = true },
+  { id = 229, namespace = "s", type = "potentiality", bidirectional = true },
+  { id = 233, namespace = "s", type = "rtz_stabilizer", bidirectional = true },
+  { id = 238, namespace = "s", type = "faithful_uncertainty", bidirectional = true }
+]
+
+[audit]
+migrated_at = "2026-05-24T21:20:00Z"
+source_verified = false
+notes = "Yona et al. (2026) not verified in indexed databases"
+
+[extensibility]
+hooks = [
+  "719.1 — Auto-calibração contínua",
+  "719.2 — Detecção automática de alucinações via divergência",
+  "719.3 — Integração com 718-QUASI-SUBSTRATOS",
+  "719.4 — Protocolo de confiança para IA IDE"
+]
