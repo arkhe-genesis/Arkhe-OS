@@ -1,0 +1,14 @@
+[substrate]
+id = 765
+name = "ARKHE-OS-GEOMETRIC-REFACTOR"
+status = "CANONIZED_CLEAN"
+version = "1.0.0"
+seal = "2f4e42c5193daf6710f6e14daf578fde74784aef00926a3e4fba37c6a9e5812d"
+namespace = "t"
+
+[metrics]
+standard_phi_c = 0.999
+theosis_index = 0.999
+
+[audit]
+notes = "Geometric Refactor"

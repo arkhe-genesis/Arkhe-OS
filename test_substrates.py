@@ -1090,3 +1090,26 @@ def test_substrato_academic_research_skills():
         content = f.read()
 
     assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
+
+def test_substrato_765_arkhe_os_geometric_refactor():
+    import importlib.util
+    file_path = os.path.abspath('substrates/t/765_arkhe_os_geometric_refactor/substrato_765_arkhe_os_geometric_refactor.py')
+    spec = importlib.util.spec_from_file_location("substrato_765_arkhe_os_geometric_refactor", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato765ArkheOsGeometricRefactor()
+    json_path = canonizer.generate_json()
+    assert os.path.exists(json_path)
+
+    with open(json_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["id"] == "765-ARKHE-OS-GEOMETRIC-REFACTOR"
+    assert "canonical_seal" in data
+    assert "arkhe_js" in data
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert 'f"' not in content
+    assert "f'" not in content
