@@ -43,14 +43,16 @@ echo "[PHASE 1] Creating unified substrate namespace..."
 #   t/   — Technical substrates (quantum, genomics, parsing)
 #   e/   — Enterprise substrates (banking, compliance)
 
-mkdir -p substrates/{s,t,e}/archive
-mkdir -p src/substrates/{s,t,e}
-mkdir -p tests/{unit,interop}
-mkdir -p docs/{glosas,theology,physics,robotics,privacy,api,enterprise}
-mkdir -p scripts/{build,audit,deploy,generate}
-mkdir -p config
-mkdir -p data/{akashic,xim_field,genesis,genomic}
-mkdir -p tools/{arkhe-cli,patch_manager,fuzzer,qnc,polyglot}
+if [ "$DRY_RUN" = "false" ]; then
+    mkdir -p substrates/{s,t,e}/archive
+    mkdir -p src/substrates/{s,t,e}
+    mkdir -p tests/{unit,interop}
+    mkdir -p docs/{glosas,theology,physics,robotics,privacy,api,enterprise}
+    mkdir -p scripts/{build,audit,deploy,generate}
+    mkdir -p config
+    mkdir -p data/{akashic,xim_field,genesis,genomic}
+    mkdir -p tools/{arkhe-cli,patch_manager,fuzzer,qnc,polyglot}
+fi
 
 # Phase 2: Migrate existing repo folders to technical namespace
 echo ""
@@ -87,7 +89,7 @@ if [ -d "docs" ] && [ ! -e "docs/docs" ]; then
     [ "$DRY_RUN" = "false" ] && {
         mkdir -p docs/api docs/plugins docs/architecture
         # Move existing docs to appropriate subfolders
-        for doc in docs/*.md docs/*.rst 2>/dev/null; do
+        for doc in docs/*.md docs/*.rst; do
             [ -f "$doc" ] && git mv "$doc" docs/architecture/ 2>/dev/null || true
         done
     }
@@ -98,7 +100,7 @@ if [ -d "scripts" ]; then
     echo "  REORG: scripts/ → internal structure updated"
     [ "$DRY_RUN" = "false" ] && {
         mkdir -p scripts/build scripts/audit scripts/deploy
-        for script in scripts/*.sh scripts/*.py 2>/dev/null; do
+        for script in scripts/*.sh scripts/*.py; do
             [ -f "$script" ] || continue
             if [[ "$(basename "$script")" =~ (build|compile|make) ]]; then
                 git mv "$script" scripts/build/ 2>/dev/null || true
@@ -123,6 +125,7 @@ echo "[PHASE 3] Generating substrate.toml for technical substrates..."
 
 # 91 — Paper Quantum Genomics
 if [ -d "substrates/t/91_paper_quantum_genomics" ]; then
+if [ "$DRY_RUN" = "false" ]; then
     cat > substrates/t/91_paper_quantum_genomics/substrate.toml <<'INNER_EOF'
 [substrate]
 id = 91
@@ -155,11 +158,13 @@ hooks = [
   "91.2 — Reproducibility package",
 ]
 INNER_EOF
+fi
     echo "  Generated: substrates/t/91_paper_quantum_genomics/substrate.toml"
 fi
 
 # 6061 — Polymath Polyglot Parser
 if [ -d "substrates/t/6061_polymath_polyglot_parser" ]; then
+if [ "$DRY_RUN" = "false" ]; then
     cat > substrates/t/6061_polymath_polyglot_parser/substrate.toml <<'INNER_EOF'
 [substrate]
 id = 6061
@@ -190,11 +195,13 @@ hooks = [
   "6061.2 — Semantic preservation proof",
 ]
 INNER_EOF
+fi
     echo "  Generated: substrates/t/6061_polymath_polyglot_parser/substrate.toml"
 fi
 
 # 6176-6180 — Quantum Neural Coding
 if [ -d "substrates/t/6176_6180_quantum_neural_coding" ]; then
+if [ "$DRY_RUN" = "false" ]; then
     cat > substrates/t/6176_6180_quantum_neural_coding/substrate.toml <<'INNER_EOF'
 [substrate]
 id = 6176
@@ -227,6 +234,7 @@ hooks = [
   "6176.2 — Radiation resistance prediction",
 ]
 INNER_EOF
+fi
     echo "  Generated: substrates/t/6176_6180_quantum_neural_coding/substrate.toml"
 fi
 
@@ -236,6 +244,7 @@ echo "[PHASE 4] Creating session substrate namespace (227-719)..."
 
 # Create placeholder directories for session substrates
 for id in 227 556 624 670 686 706 713 714 715 716 717 718 719; do
+if [ "$DRY_RUN" = "false" ]; then
     mkdir -p "substrates/s/${id}_placeholder"
     cat > "substrates/s/${id}_placeholder/substrate.toml" <<INNER_EOF
 [substrate]
@@ -263,6 +272,7 @@ notes = "Session substrate from 2026-05-24. Decree file needs to be uploaded."
 [extensibility]
 hooks = []
 INNER_EOF
+fi
     echo "  Created placeholder: substrates/s/${id}_placeholder/"
 done
 
@@ -270,6 +280,7 @@ done
 echo ""
 echo "[PHASE 5] Generating unified architecture document..."
 
+if [ "$DRY_RUN" = "false" ]; then
 cat > ARCHITECTURE.md <<'INNER_EOF'
 # ARKHE OS Architecture
 
@@ -352,6 +363,7 @@ All documentation uses 3-level confidence protocol:
 - **INFERE**: Intermediate, inference from canon
 - **ESPECULA**: Low, speculative/hypothetical
 INNER_EOF
+fi
 
 echo "  Generated: ARCHITECTURE.md"
 
