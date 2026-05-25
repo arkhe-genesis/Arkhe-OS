@@ -1202,3 +1202,28 @@ def test_substrato_807_arkhe_runtime():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
     assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
+
+def test_substrato_822_anthropic_coherence_proposal():
+    import importlib.util
+    import os
+    import json
+    import re
+
+    file_path = os.path.abspath('substrates/t/822_anthropic_coherence_proposal/substrato_822_anthropic_coherence_proposal.py')
+    spec = importlib.util.spec_from_file_location("substrato_822_anthropic_coherence_proposal", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.SubstratoAnthropicCoherenceProposal()
+    path = canonizer.generate_report()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "822-ANTHROPIC-COHERENCE-PROPOSAL"
+    assert data["seal"] == "3f09a76617fdd87a40fc3969edb722a81481a66c488ea5b8197952f5e5988454"
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
