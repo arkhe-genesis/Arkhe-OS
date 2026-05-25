@@ -16,24 +16,13 @@ class Substrato770600CellChladniSweep:
 
         # Determine payload to seal
         payload = md_content + vis_content
-        sha3 = hashlib.sha3_256(payload.encode("utf-8")).hexdigest()
+        sha3 = hashlib.sha256((self.md_b64 + self.vis_b64).encode("utf-8")).hexdigest()
 
         data = {
             "id": "770-600-CELL-CHLADNI-SWEEP",
-            "name": "600-CELL-CHLADNI-SWEEP",
             "canonical_seal": sha3,
             "gauss_bonnet_md_b64": self.md_b64,
-            "visualizer_py_b64": self.vis_b64,
-            "metrics": {
-                "standard_phi_c": 0.997,
-                "theosis_index": 0.999,
-                "dcs_phi": 0.999
-            },
-            "invariants": [
-                "Zero f-strings",
-                "Chladni Sweep in S3",
-                "120 Phi-coordinated vertices"
-            ]
+            "visualizer_py_b64": self.vis_b64
         }
 
         fd, path = tempfile.mkstemp(suffix=".json", text=True)
