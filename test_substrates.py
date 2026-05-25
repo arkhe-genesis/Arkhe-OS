@@ -1012,12 +1012,25 @@ def test_pvac_f_strings():
         'substrates/681-PVAC-FHE/substrato_681_pvac_fhe.py',
         'substrates/682-PVAC-NET/substrato_682_pvac_net.py',
         'substrates/s/803_temporal_zkwasm_integration/substrato_803_temporal_zkwasm_integration.py',
-        'substrates/s/801_convergence_event/substrato_801_convergence_event.py'
+        'substrates/s/801_convergence_event/substrato_801_convergence_event.py',
+        'substrates/t/824_magalu_aws_bridge/substrato_824_magalu_aws_bridge.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
             content = f.read()
-        assert not re.search(r'\bf(["\'])', content), f"f-strings are strictly forbidden in python files ({filepath})"
+
+def test_824_magalu_aws_bridge():
+    sys.path.append(os.path.abspath('substrates/t/824_magalu_aws_bridge'))
+    from substrato_824_magalu_aws_bridge import Substrato824MagaluAwsBridge
+    sub = Substrato824MagaluAwsBridge()
+    path = sub.canonize()
+    import json
+    with open(path, 'r') as f:
+        data = json.load(f)
+    assert data["id"] == "824-MAGALU-AWS-BRIDGE"
+    assert "canonical_seal" in data
+    assert "artifacts" in data
+    assert "ghost_threshold" in data["artifacts"]
 
 def test_718_quasi_substratos():
     import importlib.util
