@@ -127,15 +127,19 @@ class ConceptGraph:
         # Criar nós
         for node_id, node in self.nodes.items():
             props = json.dumps(node.properties)
+            safe_label = node.label.replace("'", "\\'")
+            safe_id = node_id.replace("'", "\\'")
             commands.append(
                 "CREATE (:" + node.discipline.capitalize() + " " +
-                "{id: '" + node_id + "', label: '" + node.label + "', properties: " + props + "})"
+                "{id: '" + safe_id + "', label: '" + safe_label + "', properties: " + props + "})"
             )
 
         # Criar arestas
         for edge in self.edges:
+            safe_source = edge.source.replace("'", "\\'")
+            safe_target = edge.target.replace("'", "\\'")
             commands.append(
-                "MATCH (a {id: '" + edge.source + "'}), (b {id: '" + edge.target + "'}) " +
+                "MATCH (a {id: '" + safe_source + "'}), (b {id: '" + safe_target + "'}) " +
                 "CREATE (a)-[:" + edge.relation.upper() + " " +
                 "{weight: " + str(edge.weight) + "}]->(b)"
             )
