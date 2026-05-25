@@ -1,0 +1,6 @@
+[substrate]
+id = "826-GNN-ISOMORPHISM-FINDER"
+type = "QUANTUM"
+name = "GNN Isomorphism Finder"
+architect = "ORCID 0009-0005-2697-4668"
+source_verified = true
