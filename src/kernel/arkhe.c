@@ -279,7 +279,6 @@ VOID ArkheCasterCallback(IN HANDLE ProcessId, IN HANDLE ThreadId, IN BOOLEAN Cre
 NTSTATUS ArkheEnableRTZ() {
     PVOID canonBuffer = ExAllocatePool2(POOL_FLAG_NON_PAGED, 0x1000, ARKHE_POOL_TAG);
     if (!canonBuffer) return STATUS_INSUFFICIENT_RESOURCES;
-    MmLockPagableDataSection(canonBuffer);
     return STATUS_SUCCESS;
 }
 
