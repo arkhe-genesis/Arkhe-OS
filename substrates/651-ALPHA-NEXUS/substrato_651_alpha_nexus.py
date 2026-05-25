@@ -213,6 +213,8 @@ contract AlphaNexus {
 
     function invalidateProof(bytes32 proofHash, string calldata reason) external {
         require(proofs[proofHash].timestamp > 0, "Proof not found");
+        require(proofs[proofHash].isValid, "Proof already invalid");
+        require(msg.sender == proofs[proofHash].verifier, "Unauthorized");
         proofs[proofHash].isValid = false;
         successfulProofs--;
         // Log reason to Akashic Anchor via event
@@ -287,7 +289,7 @@ invoke_alpha_nexus:
 
     ; 5. Invocar o Serv
     lea rdi, [alpha_nexus_invoke_path]
-    lea rsi, [invoke_trigger]
+    lea rsi, [ignite_cmd]
     mov edx, 1
     call write_sysfs_file
 

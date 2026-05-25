@@ -160,7 +160,7 @@ def test_621_erdos_unit_distance():
         import json
         data = json.load(f)
 
-    assert data["id"] == "621-ERDŐS-UNIT-DISTANCE"
+    assert data["id"] == "621-ERDOS-UNIT-DISTANCE"
 
 def test_621_f_strings():
     import os
@@ -688,3 +688,31 @@ def test_631_f_strings():
     with open(file_path, 'r') as f:
         content = f.read()
     assert not re.search(r'\bf(["\'])', content), "Found f-string in gateway_http.py"
+
+def test_651_alpha_nexus():
+    """
+    Test Substrate 651-ALPHA-NEXUS compilation and JSON output.
+    """
+    import os, json, re, importlib.util, pytest
+
+    script = os.path.join("substrates", "651-ALPHA-NEXUS", "substrato_651_alpha_nexus.py")
+    if not os.path.exists(script):
+        pytest.skip(f"Substrate 651 script {script} not found.")
+
+    spec = importlib.util.spec_from_file_location("substrato_651_alpha_nexus", script)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    canonizer = module.Substrato651AlphaNexus()
+    temp_dir, output_path = canonizer.generate()
+
+    assert os.path.exists(output_path), "JSON output not produced."
+
+    with open(output_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "651-ALPHA-NEXUS"
+
+    # Verify absence of f-strings in canonizer source
+    with open(script, "r", encoding="utf-8") as f:
+        source_code = f.read()
+    assert not re.search(r'\bf(["\'])', source_code), "f-string detected in Substrate 651"
