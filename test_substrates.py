@@ -1013,21 +1013,21 @@ def test_pvac_f_strings():
         'substrates/682-PVAC-NET/substrato_682_pvac_net.py',
         'substrates/s/803_temporal_zkwasm_integration/substrato_803_temporal_zkwasm_integration.py',
         'substrates/s/801_convergence_event/substrato_801_convergence_event.py',
-        'substrates/t/820_arkhe_windows_structure/substrato_820_arkhe_windows_structure.py'
+        'substrates/t/824_bridge_magalu_aws/substrato_824_bridge_magalu_aws.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
             content = f.read()
 
-def test_820_arkhe_windows_structure():
-    sys.path.append(os.path.abspath('substrates/t/820_arkhe_windows_structure'))
-    from substrato_820_arkhe_windows_structure import Substrato820ArkheWindowsStructure
-    sub = Substrato820ArkheWindowsStructure()
+def test_824_bridge_magalu_aws():
+    sys.path.append(os.path.abspath('substrates/t/824_bridge_magalu_aws'))
+    from substrato_824_bridge_magalu_aws import Substrato824BridgeMagaluAws
+    sub = Substrato824BridgeMagaluAws()
     path = sub.canonize()
     import json
     with open(path, 'r') as f:
         data = json.load(f)
-    assert data["id"] == "820-ARKHE-WINDOWS-STRUCTURE"
+    assert data["id"] == "824-BRIDGE-MAGALU-AWS"
     assert "canonical_seal" in data
 
 def test_718_quasi_substratos():

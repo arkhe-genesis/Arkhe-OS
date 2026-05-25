@@ -1,0 +1,6 @@
+[substrate]
+id = "824-BRIDGE-MAGALU-AWS"
+name = "BRIDGE-MAGALU-AWS"
+source_verified = true
+namespace = "t"
+cross_links = ["823", "584"]
