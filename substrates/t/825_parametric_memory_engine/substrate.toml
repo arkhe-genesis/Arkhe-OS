@@ -1,0 +1,6 @@
+[substrate]
+id = "825-PARAMETRIC-MEMORY-ENGINE"
+type = "technical"
+name = "Parametric Memory Engine"
+description = "Implementação do Parametric Memory Engine via Gradient Accumulator, GAS Controller, Divergence Monitor e Model Version Manager."
+source_verified = true

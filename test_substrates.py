@@ -1254,3 +1254,19 @@ def test_824_bridge_magalu_aws():
         content = f.read()
 
     assert "f\"" not in content and "f'" not in content, "f-strings are not allowed in canonizer scripts"
+
+
+def test_825_parametric_memory_engine():
+    import importlib
+    Substrato825ParametricMemoryEngine = importlib.import_module("substrates.t.825_parametric_memory_engine.substrato_825_parametric_memory_engine").Substrato825ParametricMemoryEngine
+    substrate = Substrato825ParametricMemoryEngine()
+    substrate.load_files()
+    path, seal = substrate.generate_report()
+    assert seal == "9cab82d19665dc79bcaec6e1df4ce241b9c903e06bff35506d165e6038b89efb"
+
+def test_825_f_strings():
+    import ast
+    with open('substrates/t/825_parametric_memory_engine/substrato_825_parametric_memory_engine.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
