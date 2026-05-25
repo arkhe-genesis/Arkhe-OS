@@ -41,7 +41,7 @@ class GINIsomorphismNet(nn.Module):
             nn.Linear(hidden_channels, hidden_channels),
         )
         self.convs.append(GINConv(mlp))
-        self.batch_norms.append(nn.BatchNorm1d(hidden_channels))
+        self.batch_norms.append(nn.LayerNorm(hidden_channels))
 
         # Camadas intermediárias
         for _ in range(num_layers - 1):
@@ -51,7 +51,7 @@ class GINIsomorphismNet(nn.Module):
                 nn.Linear(hidden_channels, hidden_channels),
             )
             self.convs.append(GINConv(mlp))
-            self.batch_norms.append(nn.BatchNorm1d(hidden_channels))
+            self.batch_norms.append(nn.LayerNorm(hidden_channels))
 
         # Projeção para embedding de grafo
         self.graph_embedding = nn.Sequential(

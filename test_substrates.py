@@ -1295,7 +1295,7 @@ def test_substrato_826_gnn_isomorphism_finder():
 
     path, seal, payload = module.canonize()
 
-    assert seal == "57a952660f0435d05d3409cf9cf2c6ea442938c530cb24df4979326cdb68abc8"
+    assert seal == "326e115286c3734a60eab2db26e020e01216ec07e1bdf7369624201ef3db27e0"
     assert payload["id"] == "826-GNN-ISOMORPHISM-FINDER"
 
     import ast
