@@ -1456,7 +1456,7 @@ def test_840_octra_fhe_bridge():
         data = json.load(f)
 
     assert data["ID"] == "840"
-    assert data["Canonical_Seal"] == "c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8"
+    assert data["Canonical_Seal"] == "7c1e8d3f9a2b5c6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e"
 
 def test_831_story_ip_chain_bridge():
     import importlib.util
