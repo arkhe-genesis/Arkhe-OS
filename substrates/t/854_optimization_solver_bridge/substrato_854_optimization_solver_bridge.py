@@ -56,6 +56,9 @@ class ArkheOptimizationBridge:
         # Resolver com solver escolhido (GLPK, CPLEX, etc.)
         prob.solve(self._get_solver())
 
+        if LpStatus[prob.status] != "Optimal":
+            raise ValueError("Solver failed with status {}".format(LpStatus[prob.status]))
+
         allocation = {sid: int(value(pod_vars[sid])) for sid in substrates}
         objective = value(prob.objective)
         seal = hashlib.sha3_256(str(allocation).encode()).hexdigest()[:16]

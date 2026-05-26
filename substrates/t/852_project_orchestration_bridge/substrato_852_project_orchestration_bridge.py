@@ -57,11 +57,16 @@ class ProjectOrchestrationAdapter:
 
         tasks = []
         for task_elem in root.findall('.//p:Task', ns):
-            uid = int(task_elem.find('p:UID', ns).text)
-            name = task_elem.find('p:Name', ns).text or ""
-            start = task_elem.find('p:Start', ns).text or ""
-            finish = task_elem.find('p:Finish', ns).text or ""
-            pct = int(task_elem.find('p:PercentComplete', ns).text or "0")
+            uid_elem = task_elem.find('p:UID', ns)
+            uid = int(uid_elem.text) if uid_elem is not None and uid_elem.text else 0
+            name_elem = task_elem.find('p:Name', ns)
+            name = name_elem.text if name_elem is not None and name_elem.text else ""
+            start_elem = task_elem.find('p:Start', ns)
+            start = start_elem.text if start_elem is not None and start_elem.text else ""
+            finish_elem = task_elem.find('p:Finish', ns)
+            finish = finish_elem.text if finish_elem is not None and finish_elem.text else ""
+            pct_elem = task_elem.find('p:PercentComplete', ns)
+            pct = int(pct_elem.text) if pct_elem is not None and pct_elem.text else 0
 
             predecessors = []
             for pred in task_elem.findall('.//p:PredecessorLink/p:PredecessorUID', ns):

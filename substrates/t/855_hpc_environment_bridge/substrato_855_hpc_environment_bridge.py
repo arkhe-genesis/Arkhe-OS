@@ -57,8 +57,9 @@ export ARKHE_PHI_C=0.998
 # Executar o payload
 {5}
 \"\"\".format(substrate_id, self.partition, self.nodes, self.gpus, seal, payload_script)
-        script_path = "/tmp/arkhe_job_{}.sh".format(substrate_id)
-        with open(script_path, 'w') as f:
+        import tempfile
+        fd, script_path = tempfile.mkstemp(prefix="arkhe_job_{}_".format(substrate_id), suffix=".sh", dir="/tmp")
+        with os.fdopen(fd, 'w') as f:
             f.write(sbatch_script)
 
         # Submeter ao Slurm
