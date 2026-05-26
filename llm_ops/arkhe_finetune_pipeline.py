@@ -237,11 +237,14 @@ class ArkheFineTuner:
             self.tokenizer,
             max_length=self.config.max_seq_length,
         )
-        hf_dataset = HFDataset.from_dict({
-            "input_ids": [d["input_ids"].tolist() for d in dataset],
-            "attention_mask": [d["attention_mask"].tolist() for d in dataset],
-            "labels": [d["labels"].tolist() for d in dataset],
-        })
+        def gen():
+            for d in dataset:
+                yield {
+                    "input_ids": d["input_ids"].tolist(),
+                    "attention_mask": d["attention_mask"].tolist(),
+                    "labels": d["labels"].tolist(),
+                }
+        hf_dataset = HFDataset.from_generator(gen)
         training_args = TrainingArguments(
             output_dir=self.config.output_dir,
             num_train_epochs=self.config.num_epochs,
