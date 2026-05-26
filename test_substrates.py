@@ -1018,7 +1018,8 @@ def test_pvac_f_strings():
         'substrates/t/826_gnn_isomorphism_finder/substrato_826_gnn_isomorphism_finder.py',
         'substrates/t/831_story_ip_chain_bridge/substrato_831_story_ip_chain_bridge.py',
         'substrates/t/836_julia_parser/substrato_836_julia_parser.py',
-        'substrates/t/837_gno_land_integration/substrato_837_gno_land_integration.py'
+        'substrates/t/837_gno_land_integration/substrato_837_gno_land_integration.py',
+        'substrates/t/840_octra_fhe_bridge/substrato_840_octra_fhe_bridge.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
@@ -1512,3 +1513,24 @@ def test_substrato_tsotchke_eshkol():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
     assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
+
+def test_840_octra_fhe_bridge():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/840_octra_fhe_bridge/substrato_840_octra_fhe_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_840_octra_fhe_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato840OctraFheBridge()
+    path = canonizer.canonize()
+
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["ID"] == "840"
+    assert data["Name"] == "OCTRA-FHE-BRIDGE"
+    assert "Canonical_Seal" in data
+    assert data["Status"] == "CANONIZED_CLEAN"
