@@ -1021,8 +1021,20 @@ def test_pvac_f_strings():
         'substrates/t/837_gno_land_integration/substrato_837_gno_land_integration.py',
         'substrates/t/840_octra_fhe_bridge/substrato_840_octra_fhe_bridge.py',
         'substrates/400-499_advanced/substrato_gonka_ai_gonka/substrato_gonka_ai_gonka.py',
-        'substrates/t/846_enterprise_architecture_bridge/substrato_846_enterprise_architecture_bridge.py'
-    ]
+        'substrates/t/846_enterprise_architecture_bridge/substrato_846_enterprise_architecture_bridge.py',
+
+        'substrates/t/856_quantum_computing_bridge/substrato_856_quantum_computing_bridge.py',
+        'substrates/t/857_neuromorphic_hardware_bridge/substrato_857_neuromorphic_hardware_bridge.py',
+        'substrates/t/859_biological_computing_bridge/substrato_859_biological_computing_bridge.py',
+        'substrates/t/862_polaritonic_computing_bridge/substrato_862_polaritonic_computing_bridge.py',
+        'substrates/t/863_secops_guardian_bridge/substrato_863_secops_guardian_bridge.py',
+        'substrates/t/864_eip8272_recent_roots_bridge/substrato_864_eip8272_recent_roots_bridge.py',
+        'substrates/t/865_cohesion_engine/substrato_865_cohesion_engine.py',
+        'substrates/t/870_blockchain_z_glm/substrato_870_blockchain_z_glm.py',
+
+        'substrates/t/860_consciousness_simulation_bridge/substrato_860_consciousness_simulation_bridge.py',
+        'substrates/t/861_un_20_governance_bridge/substrato_861_un_20_governance_bridge.py',
+]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
             content = f.read()
@@ -1657,3 +1669,174 @@ def test_substrato_846_enterprise_architecture_bridge():
     assert "code_base64" in data
 
     os.remove(path)
+
+def test_substrato_862_polaritonic_computing_bridge():
+    import importlib.util
+    import os
+
+    file_path = os.path.abspath('substrates/t/862_polaritonic_computing_bridge/substrato_862_polaritonic_computing_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_862_polaritonic_computing_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato_862_polaritonic_computing_bridge()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        import json
+        data = json.load(f)
+
+    assert data["id"] == "862-POLARITONIC-COMPUTING-BRIDGE"
+
+def test_substrato_863_secops_guardian_bridge():
+    import importlib.util
+    import os
+
+    file_path = os.path.abspath('substrates/t/863_secops_guardian_bridge/substrato_863_secops_guardian_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_863_secops_guardian_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato_863_secops_guardian_bridge()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        import json
+        data = json.load(f)
+
+    assert data["id"] == "863-SECOPS-GUARDIAN-BRIDGE"
+
+def test_substrato_864_eip8272_recent_roots_bridge():
+    import importlib.util
+    import os
+
+    file_path = os.path.abspath('substrates/t/864_eip8272_recent_roots_bridge/substrato_864_eip8272_recent_roots_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_864_eip8272_recent_roots_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato_864_eip8272_recent_roots_bridge()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        import json
+        data = json.load(f)
+
+    assert data["id"] == "864-EIP8272-RECENT-ROOTS-BRIDGE"
+
+def test_substrato_865_cohesion_engine():
+    import importlib.util
+    import os
+
+    file_path = os.path.abspath('substrates/t/865_cohesion_engine/substrato_865_cohesion_engine.py')
+    spec = importlib.util.spec_from_file_location("substrato_865_cohesion_engine", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato_865_cohesion_engine()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        import json
+        data = json.load(f)
+
+    assert data["id"] == "865-COHESION-ENGINE"
+
+def test_substrato_870_blockchain_z_glm():
+    import importlib.util
+    import os
+
+    file_path = os.path.abspath('substrates/t/870_blockchain_z_glm/substrato_870_blockchain_z_glm.py')
+    spec = importlib.util.spec_from_file_location("substrato_870_blockchain_z_glm", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato_870_blockchain_z_glm()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        import json
+        data = json.load(f)
+
+    assert data["id"] == "870-BLOCKCHAIN-Z-GLM"
+
+def test_substrato_856_quantum_computing_bridge():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/856_quantum_computing_bridge/substrato_856_quantum_computing_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_856_quantum_computing_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato_856_quantum_computing_bridge()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "856-QUANTUM-COMPUTING-BRIDGE"
+
+def test_substrato_857_neuromorphic_hardware_bridge():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/857_neuromorphic_hardware_bridge/substrato_857_neuromorphic_hardware_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_857_neuromorphic_hardware_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato_857_neuromorphic_hardware_bridge()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "857-NEUROMORPHIC-HARDWARE-BRIDGE"
+
+def test_substrato_859_biological_computing_bridge():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/859_biological_computing_bridge/substrato_859_biological_computing_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_859_biological_computing_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato_859_biological_computing_bridge()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "859-BIOLOGICAL-COMPUTING-BRIDGE"
+
+def test_substrato_861_un_20_governance_bridge():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/861_un_20_governance_bridge/substrato_861_un_20_governance_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_861_un_20_governance_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato_861_un_20_governance_bridge()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["ID"] == "861"
