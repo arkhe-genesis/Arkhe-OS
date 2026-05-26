@@ -1463,3 +1463,31 @@ def test_834_wdf_driver_fabric():
         tree = ast.parse(f.read())
         for node in ast.walk(tree):
             assert not isinstance(node, ast.JoinedStr), "f-strings are not allowed in canonizer"
+
+
+def test_substrato_tsotchke_eshkol():
+    import importlib.util
+    import os
+    import re
+
+    file_path = os.path.abspath('substrates/400-499_advanced/substrato_tsotchke_eshkol/substrato_tsotchke_eshkol.py')
+    spec = importlib.util.spec_from_file_location("substrato_tsotchke_eshkol", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.SubstratoTsotchkeEshkol()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        import json
+        data = json.load(f)
+
+    assert data["Title"] == "Eshkol - A Programming Language for Mathematical Computing"
+    assert "Description" in data
+    assert "Features" in data
+    assert "Architecture" in data
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
