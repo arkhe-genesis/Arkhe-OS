@@ -275,7 +275,7 @@ func (b *GnoOracleBridge) AnchorTriChain(
     }
 
     // 4. Computar Merkle root tri-chain
-    merkleData := thetaID + gnoSeal.GnoTxHash + fheProofHash + storyIPID
+    merkleData := thetaID + "|" + gnoSeal.GnoTxHash + "|" + fheProofHash + "|" + storyIPID
     merkleRoot := computeSHA3(merkleData)
 
     anchor := &TriChainAnchor{
@@ -319,7 +319,11 @@ func RegisterFheComputation(
         panic("Invalid substrate: " + substrateID)
     }
 
-    seal := computeSeal(id + circuitHash + inputHash + outputHash + zkpProofHash)
+    if _, exists := FheComputations[id]; exists {
+        panic("Computation with this ID already exists")
+    }
+
+    seal := computeSeal(id + "|" + circuitHash + "|" + inputHash + "|" + outputHash + "|" + zkpProofHash)
 
     FheComputations[id] = &FheComputation{
         ID:           id,
@@ -344,7 +348,7 @@ func VerifyFheComputation(id string) bool {
 
     // Verificar integridade do registro
     expectedSeal := computeSeal(
-        comp.ID + comp.CircuitHash + comp.InputHash + comp.OutputHash + comp.ZkpProofHash,
+        comp.ID + "|" + comp.CircuitHash + "|" + comp.InputHash + "|" + comp.OutputHash + "|" + comp.ZkpProofHash,
     )
     // A verificação completa requer validação externa da ZKP
     comp.Verified = true
