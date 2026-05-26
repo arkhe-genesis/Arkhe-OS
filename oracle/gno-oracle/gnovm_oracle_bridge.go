@@ -12,7 +12,7 @@ package main
 
 import (
 	"bytes"
-	"crypto/sha256"
+	"golang.org/x/crypto/sha3"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -250,7 +250,7 @@ func (b *GnoOracleBridge) AnchorToGno(thetaID string, blockData string, phiC flo
 // ============================================================
 
 func computeSHA3(data string) string {
-	h := sha256.New()
+	h := sha3.New256()
 	h.Write([]byte(data))
 	return fmt.Sprintf("%x", h.Sum(nil))
 }
