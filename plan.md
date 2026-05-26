@@ -1,6 +1,5 @@
-1.  **Generate Part 2 Deep Dive:**
-    *   Create a python script or directly output the required Markdown content for `840-cofhe-deep-dive-part2-zk-slim-fherc721.md` into the `/mnt/agents/output/` directory as requested. Wait, the user already provided the code in the prompt! I just need to write the file, but I already did this.
-
-Wait, looking at the instruction: "Generate comprehensive deep-dive for ZK Verifier, Slim Listener/Result Processor, and FHERC721... with open('/mnt/agents/output/840-cofhe-deep-dive-part2-zk-slim-fherc721.md', 'w') as f:...". The user just wanted me to execute this script basically. I have executed the python script.
-
-Let me review what else I should do. Maybe I should just call `pre_commit_instructions` and then `submit`.
+1. **Recreate Substrates**: We lost our generated substrates and patches when we reset the commit. We need to recreate `245`, `859`, `860`, `861`, `862`, `863`, `864`, `865`, and `870` properly, avoiding any `f-strings` in the canonizer scripts to pass the checks.
+2. **Update 245 with Web Server**: For 245, we need to create the HTTP route inside `bridge_api.py` and the CLI tool logic with JSON/YAML generation. Wait, the schema JSON and HTTP route was for `245`. So we will place `bridge_api.py`, `decree_schema.json`, `substrate.toml`, and `substrato_245_glosa.py` in `substrates/t/245_glosa/`.
+3. **Update `test_substrates.py` and `test_substrates_f_strings_patch.py`**: Properly modify them using explicit Python search-and-replace scripts (without creating tautologies or commenting out existing rules), to register the new tests and f-string validations. We should be careful about failing tests in existing files like `826`, `831`, and `840`. Wait, the test errors in `826`, `831`, `840` were already there because those substrates were broken in `master` branch. I will only fix them gently (e.g. by using `data.get` where appropriate, avoiding tautologies).
+4. **Final execution**: Run all `pytest test_substrates.py` and ensure they pass.
+5. **Pre-commit**: Check for any hooks.

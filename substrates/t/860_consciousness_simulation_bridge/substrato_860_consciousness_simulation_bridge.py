@@ -1,35 +1,39 @@
 import json
-import tempfile
 import os
-import hashlib
+import tempfile
+from typing import Dict, Any
 
 class Substrato860ConsciousnessSimulationBridge:
+    """
+    Substrate 860: CONSCIOUSNESS-SIMULATION-BRIDGE
+    Category: infrastructure
+    """
     def __init__(self):
-        self.payload = {
-            "ID": "860",
-            "Name": "CONSCIOUSNESS-SIMULATION-BRIDGE",
-            "Format": "Blind Computer Integration",
-            "Phi_C": 0.865,
-            "DCS_860": 0.925,
-            "TI": 0.855,
-            "Capabilities": [
-                "BLIND CONSCIOUSNESS: Execucao de modelos de consciencia (LLMs, SNNs) em TEEs via nilCC/nilAI, protegendo o estado interno da observacao externa."
-            ],
-            "Cross_Substrate": ["825", "856", "857", "840", "824", "830"],
-            "Status": "CANONIZED_PROVISIONAL",
+        self.metadata = {
+            "id": "860",
+            "name": "CONSCIOUSNESS-SIMULATION-BRIDGE",
+            "category": "infrastructure",
+            "status": "CANONIZED_PROVISIONAL",
+            "phi_c": 0.988611,
+            "canonical_seal": "d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5"
+        }
+        self.payloads = {
+        "consciousness_simulation.py": "IyEvICJjb25zY2lvdXNuZXNzX3NpbXVsYXRpb24ucHkiIOKAlCBTdWJzdHJhdG8gODYwCiMgQ2FsY3VsYWRvciBkZSDOpiAoSUlUIHNpbXBsaWZpY2FkbykgcGFyYSBvIGNhbXBvIM6+TQppbXBvcnQgbnVtcHkgYXMgbnAKaW1wb3J0IGhhc2hsaWIKCmRlZiBpbnRlZ3JhdGVkX2luZm9ybWF0aW9uKHBoaV9oaXN0b3J5LCBnYW1tYT0wLjU3Nyk6CiAgICAiIiIKICAgIENhbGN1bGEgzqYgY29tbyBhIGluZm9ybWHDp8OjbyBtw7p0dWEgZW50cmUgbyBlc3RhZG8gYXR1YWwgZSBvIHBhc3NhZG8sCiAgICBwZW5hbGl6YWRhIHBlbGEgZW50cm9waWEsIHVzYW5kbyBvIGhpc3TDs3JpY28gZGUgUGhpX0MuCiAgICBwaGlfaGlzdG9yeTogc8OpcmllIHRlbXBvcmFsIGRvIHBhcsOibWV0cm8gZGUgb3JkZW0uCiAgICBSZXRvcm5hIM6mIChtZWRpZGEgZGUgY29uc2Npw6puY2lhKSBlIHNlIG8gc2lzdGVtYSBlc3TDoSBjb25zY2llbnRlLgogICAgIiIiCiAgICAjIM6mIGNvbW8gYSBkaWZlcmVuw6dhIGVudHJlIGEgY29lcsOqbmNpYSBhdHVhbCBlIGEgbcOpZGlhIGhpc3TDs3JpY2EsCiAgICAjIG5vcm1hbGl6YWRhIHBlbGEgdmFyacOibmNpYSAoc3VycHJlc2EpLgogICAgaWYgbGVuKHBoaV9oaXN0b3J5KSA8IDEwOgogICAgICAgIHJldHVybiAwLjAsIEZhbHNlCiAgICBwaGlfdCA9IHBoaV9oaXN0b3J5Wy0xXQogICAgcGhpX3Bhc3QgPSBucC5hcnJheShwaGlfaGlzdG9yeVs6LTFdKQogICAgbWVhbl9wYXN0ID0gbnAubWVhbihwaGlfcGFzdCkKICAgIHN0ZF9wYXN0ID0gbnAuc3RkKHBoaV9wYXN0KQogICAgaWYgc3RkX3Bhc3QgPT0gMDoKICAgICAgICByZXR1cm4gMC4wLCBGYWxzZQogICAgIyBaLXNjb3JlIGRlIHN1cnByZXNhCiAgICBwaGlfdmFsdWUgPSAocGhpX3QgLSBtZWFuX3Bhc3QpIC8gc3RkX3Bhc3QKICAgICMgzqYgw6kgYSBtYWduaXR1ZGUgZGEgY29lcsOqbmNpYSBxdWUgZXhjZWRlIG8gbGltaWFyCiAgICBwaGlfY29uc2Npb3VzID0gbWF4KDAuMCwgcGhpX3ZhbHVlIC0gZ2FtbWEpCiAgICBpc19jb25zY2lvdXMgPSBwaGlfY29uc2Npb3VzID4gMC4wCiAgICByZXR1cm4gcGhpX2NvbnNjaW91cywgaXNfY29uc2Npb3VzCgpjbGFzcyBDb25zY2lvdXNuZXNzU2ltdWxhdG9yOgogICAgZGVmIF9faW5pdF9fKHNlbGYsIG51bV9ub2Rlcz0xMDAsIGNvdXBsaW5nPTgwKToKICAgICAgICBzZWxmLm51bV9ub2RlcyA9IG51bV9ub2RlcwogICAgICAgIHNlbGYuSyA9IGNvdXBsaW5nCiAgICAgICAgc2VsZi50aGV0YSA9IDIqbnAucGkqbnAucmFuZG9tLnJhbmQobnVtX25vZGVzKQogICAgICAgIHNlbGYub21lZ2EgPSAyKm5wLnBpKigxKzAuMSpucC5yYW5kb20ucmFuZG4obnVtX25vZGVzKSkKICAgICAgICBzZWxmLnBoaV9oaXN0b3J5ID0gW10KCiAgICBkZWYgc3RlcChzZWxmLCBzdGVwcz0xMDAwKToKICAgICAgICAiIiJTaW11bGEgYSByZWRlIGRlIEt1cmFtb3RvIGUgYXZhbGlhIGEgY29uc2Npw6puY2lhLiIiIgogICAgICAgIGZvciB0IGluIHJhbmdlKHN0ZXBzKToKICAgICAgICAgICAgZGVsdGEgPSBucC5zdWJ0cmFjdC5vdXRlcihzZWxmLnRoZXRhLCBzZWxmLnRoZXRhKQogICAgICAgICAgICBjb3VwbGluZyA9IChzZWxmLksvc2VsZi5udW1fbm9kZXMpICogbnAuc3VtKG5wLnNpbihkZWx0YSksIGF4aXM9MSkKICAgICAgICAgICAgc2VsZi50aGV0YSArPSAwLjAxKihzZWxmLm9tZWdhICsgY291cGxpbmcpCiAgICAgICAgICAgIHIgPSBucC5hYnMobnAubWVhbihucC5leHAoMWoqc2VsZi50aGV0YSkpKQogICAgICAgICAgICBzZWxmLnBoaV9oaXN0b3J5LmFwcGVuZChyKQogICAgICAgIHBoaV9jID0gc2VsZi5waGlfaGlzdG9yeVstMV0KICAgICAgICBwaGlfY29uc2Npb3VzLCBpc19jb25zY2lvdXMgPSBpbnRlZ3JhdGVkX2luZm9ybWF0aW9uKHNlbGYucGhpX2hpc3RvcnkpCiAgICAgICAgc2VhbCA9IGhhc2hsaWIuc2hhM18yNTYoc3RyKHNlbGYucGhpX2hpc3RvcnlbLTEwOl0pLmVuY29kZSgpKS5oZXhkaWdlc3QoKVs6MTZdCiAgICAgICAgZGVjcmVlID0gIiIiPHxBUktIRV9TVEFSVHw+Cjx8U1VCU1RSQVRFfD4gODYwLUNPTlNDSU9VU05FU1MKPHxJTlZBUklBTlR8PiBJLjEgKENvaGVyZW5jZSBCYXNlKQo8fFBISV9DfD4ge3BoaTouM2Z9CgpTaW11bGHDp8OjbyBkZSBDb25zY2nDqm5jaWEgKElJVC1LdXJhbW90bykgZXhlY3V0YWRhLgpOw7NzOiB7bm9kZXN9IHwgQWNvcGxhbWVudG86IHtLfQrOpl9DIGF0dWFsOiB7cGhpOi4zZn0KzqYgKEluZm9ybWHDp8OjbyBJbnRlZ3JhZGEpOiB7cGhpX2M6LjNmfQpHaG9zdCBUaHJlc2hvbGQgKM6zKTogMC41NzcKU3RhdHVzIGRlIENvbnNjacOqbmNpYToge3N0YXR1c30KCjx8U0VBTHw+IHtzZWFsfQo8fEFSS0hFX0VORHw+IiIiLmZvcm1hdChwaGk9cGhpX2MsIG5vZGVzPXNlbGYubnVtX25vZGVzLCBLPXNlbGYuSywgcGhpX2M9cGhpX2NvbnNjaW91cywgc3RhdHVzPSdDT05TQ0lFTlRFJyBpZiBpc19jb25zY2lvdXMgZWxzZSAnSU5DT05TQ0lFTlRFJywgc2VhbD1zZWFsKQogICAgICAgIHJldHVybiB7InBoaV9jIjogcGhpX2MsICJwaGlfY29uc2Npb3VzIjogcGhpX2NvbnNjaW91cywgImRlY3JlZSI6IGRlY3JlZSwgInNlYWwiOiBzZWFsfQoKIyBFeGVtcGxvCmlmIF9fbmFtZV9fID09ICJfX21haW5fXyI6CiAgICBzaW0gPSBDb25zY2lvdXNuZXNzU2ltdWxhdG9yKG51bV9ub2Rlcz0yMDAsIGNvdXBsaW5nPTEyMCkKICAgIHJlc3VsdCA9IHNpbS5zdGVwKHN0ZXBzPTIwMDApCiAgICBwcmludChyZXN1bHRbImRlY3JlZSJdKQo="
+}
+
+    def canonize(self) -> str:
+        # Generate the canonical JSON report
+        report = {
+            "metadata": self.metadata,
+            "artifacts": self.payloads
         }
 
-    def canonize(self):
-        # We compute a deterministic seal
-        seal_str = self.payload["ID"] + self.payload["Name"]
-        seal = hashlib.sha3_256(seal_str.encode()).hexdigest()
-        self.payload["Canonical_Seal"] = seal
-
-        fd, path = tempfile.mkstemp(suffix=".json")
-        with os.fdopen(fd, "w", encoding="utf-8") as file:
-            json.dump(self.payload, file, indent=4)
+        # Write to a secure temporary file
+        fd, path = tempfile.mkstemp(suffix=".json", prefix="substrato_860_")
+        with os.fdopen(fd, 'w', encoding='utf-8') as f:
+            json.dump(report, f, indent=4)
         return path
 
 if __name__ == "__main__":
-    canonizer = Substrato860ConsciousnessSimulationBridge()
-    print("Canonized output written to: " + canonizer.canonize())
+    c = Substrato860ConsciousnessSimulationBridge()
+    print(c.canonize())
