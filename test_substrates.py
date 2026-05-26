@@ -1017,7 +1017,8 @@ def test_pvac_f_strings():
         'substrates/t/825_parametric_memory_engine/substrato_825_parametric_memory_engine.py',
         'substrates/t/826_gnn_isomorphism_finder/substrato_826_gnn_isomorphism_finder.py',
         'substrates/t/831_story_ip_chain_bridge/substrato_831_story_ip_chain_bridge.py',
-        'substrates/t/836_julia_parser/substrato_836_julia_parser.py'
+        'substrates/t/836_julia_parser/substrato_836_julia_parser.py',
+        'substrates/400-499_advanced/substrato_tsotchke_eshkol/substrato_tsotchke_eshkol.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
@@ -1463,3 +1464,25 @@ def test_834_wdf_driver_fabric():
         tree = ast.parse(f.read())
         for node in ast.walk(tree):
             assert not isinstance(node, ast.JoinedStr), "f-strings are not allowed in canonizer"
+
+def test_substrato_tsotchke_eshkol():
+    import importlib.util
+    import os
+
+    file_path = os.path.abspath('substrates/400-499_advanced/substrato_tsotchke_eshkol/substrato_tsotchke_eshkol.py')
+    spec = importlib.util.spec_from_file_location("substrato_tsotchke_eshkol", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.SubstratoTsotchkeEshkol()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        import json
+        data = json.load(f)
+
+    assert data["Title"] == "Eshkol"
+    assert "Description" in data
+    assert "Features" in data
+    assert "Architecture" in data
