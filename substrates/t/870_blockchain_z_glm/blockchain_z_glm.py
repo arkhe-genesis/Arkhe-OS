@@ -263,6 +263,9 @@ class GLMConsensusProtocol:
     def vote(self, validator_idx: int, proposal_id: int, support: bool):
         if proposal_id >= len(self.proposal_pool):
             return
+        if validator_idx in self.votes.setdefault(proposal_id, set()):
+            return
+        self.votes[proposal_id].add(validator_idx)
         proposal = self.proposal_pool[proposal_id]
         if validator_idx < self.engine.n and proposal["proposer"] < self.engine.n:
             phase_diff = abs(self.engine.phases[validator_idx] - self.engine.phases[proposal["proposer"]])
