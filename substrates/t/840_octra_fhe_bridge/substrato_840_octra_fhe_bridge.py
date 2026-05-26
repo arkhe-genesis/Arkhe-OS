@@ -340,16 +340,19 @@ func RegisterFheComputation(
     return seal
 }
 
-func VerifyFheComputation(id string) bool {
+func VerifyFheComputation(id string, providedSeal string) bool {
     comp, ok := FheComputations[id]
     if !ok {
         return false
     }
 
     // Verificar integridade do registro
-    _ = computeSeal(
+    expectedSeal := computeSeal(
         comp.ID + "|" + comp.CircuitHash + "|" + comp.InputHash + "|" + comp.OutputHash + "|" + comp.ZkpProofHash,
     )
+    if expectedSeal != providedSeal {
+        return false
+    }
     // A verificação completa requer validação externa da ZKP
     comp.Verified = true
     return true
