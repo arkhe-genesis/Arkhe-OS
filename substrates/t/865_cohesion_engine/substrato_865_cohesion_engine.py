@@ -3,27 +3,27 @@ import base64
 import tempfile
 import os
 
-class Substrato_864_eip8272_recent_roots_bridge:
+class Substrato_865_cohesion_engine:
     def __init__(self):
-        self.id = "864-EIP8272-RECENT-ROOTS-BRIDGE"
+        self.id = "865-COHESION-ENGINE"
 
         # Read the adapters
         try:
-            with open(os.path.join(os.path.dirname(__file__), "eip8272_verifier.py"), "r", encoding="utf-8") as f:
+            with open(os.path.join(os.path.dirname(__file__), "cohesion_engine.py"), "r", encoding="utf-8") as f:
                 self.b64_adapter = base64.b64encode(f.read().encode()).decode()
         except Exception:
             self.b64_adapter = ""
 
     def canonize(self):
         # Strict mode: use pre-defined seal
-        seal = "d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1"
+        seal = "f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1"
 
         report = {
             "id": self.id,
             "status": "CANONIZED_PROVISIONAL",
             "canonical_seal": seal,
             "adapter_source": {
-                "eip8272_verifier": self.b64_adapter
+                "cohesion_engine": self.b64_adapter
             }
         }
 

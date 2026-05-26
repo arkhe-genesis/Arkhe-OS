@@ -1,15 +1,3 @@
 [substrate]
-id = "860"
-name = "CONSCIOUSNESS-SIMULATION-BRIDGE"
-version = "1.0.0"
-type = "bridge"
+id = "860-CONSCIOUSNESS-SIMULATION-BRIDGE"
 source_verified = true
-
-[metrics]
-phi_c = 0.865
-dcs = 0.925
-ti = 0.855
-
-[dependencies]
-arkhe_os = ">=2.0"
-nillion_sdk = "latest"
