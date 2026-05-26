@@ -136,7 +136,7 @@ class EnterpriseArchitectureBridge:
         doc += "ARCHITECTURE DEFINITION DOCUMENT\\n"
         doc += "Framework: TOGAF 10 + Zachman 6x6\\n\\n"
         for sid in substrate_ids:
-            cell = "846-SYS-FUNC"  # placeholder
+            cell = "846-SYST-HOW"  # placeholder
             mapping = self.map_to_arkhe_substrate(sid, cell)
             doc += "- Substrate " + str(sid) + " -> Cell " + mapping['zachman_cell'] + "\\n"
         doc += "\\n<|SEAL|> " + hashlib.sha3_256(doc.encode()).hexdigest()[:32] + "\\n"
