@@ -12,8 +12,8 @@ Compression=lzma2
 SolidCompression=yes
 OutputDir=.\output
 OutputBaseFilename=ARKHE-OS-6.1.0-win64
-ArchitecturesInstallIn64BitMode=x64compatible
-ArchitecturesAllowed=x64compatible
+ArchitecturesInstallIn64BitMode=x64compatible arm64
+ArchitecturesAllowed=x64compatible arm64
 LicenseFile=..\..\LICENSE
 
 [Languages]
@@ -79,7 +79,7 @@ Filename: "{app}\docs\README.md"; Description: "View main documentation"; Flags:
 [Code]
 function InitializeSetup: Boolean;
 begin
-  if not Is64BitInstallMode then begin
+  if not Is64BitInstallMode and (ProcessorArchitecture = paX64 or ProcessorArchitecture = paARM64) then begin
     MsgBox('ARKHE OS requires a 64-bit Windows system.', mbError, MB_OK);
     Result := False;
     Exit;
