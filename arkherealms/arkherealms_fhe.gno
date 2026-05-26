@@ -1,0 +1,69 @@
+// arkherealms_fhe.gno
+// Extensao do realm ARKHE para computacoes FHE
+// Substrato 840.5
+
+package arkherealms
+
+import (
+    "time"
+)
+
+type FheComputation struct {
+    ID           string
+    CircuitHash  string
+    InputHash    string
+    OutputHash   string
+    ZkpProofHash string
+    MerkleRoot   string
+    SubstrateID  string
+    Timestamp    int64
+    Verified     bool
+    Seal         string
+}
+
+var (
+    FheComputations = make(map[string]*FheComputation)
+)
+
+func RegisterFheComputation(
+    id, circuitHash, inputHash, outputHash, zkpProofHash, merkleRoot, substrateID string,
+) string {
+    if !VerifySubstrate(substrateID) {
+        panic("Invalid substrate: " + substrateID)
+    }
+
+    seal := computeSeal(id + circuitHash + inputHash + outputHash + zkpProofHash)
+
+    FheComputations[id] = &FheComputation{
+        ID:           id,
+        CircuitHash:  circuitHash,
+        InputHash:    inputHash,
+        OutputHash:   outputHash,
+        ZkpProofHash: zkpProofHash,
+        MerkleRoot:   merkleRoot,
+        SubstrateID:  substrateID,
+        Timestamp:    time.Now().Unix(),
+        Verified:     false,
+        Seal:         seal,
+    }
+
+    return seal
+}
+
+func VerifyFheComputation(id string) bool {
+    comp, ok := FheComputations[id]
+    if !ok {
+        return false
+    }
+
+    // Verificar integridade do registro
+    expectedSeal := computeSeal(
+        comp.ID + comp.CircuitHash + comp.InputHash + comp.OutputHash + comp.ZkpProofHash,
+    )
+    // A verificacao completa requer validacao externa da ZKP
+    if expectedSeal != comp.Seal {
+        return false
+    }
+    comp.Verified = true
+    return true
+}
