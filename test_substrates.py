@@ -1018,7 +1018,8 @@ def test_pvac_f_strings():
         'substrates/t/826_gnn_isomorphism_finder/substrato_826_gnn_isomorphism_finder.py',
         'substrates/t/831_story_ip_chain_bridge/substrato_831_story_ip_chain_bridge.py',
         'substrates/t/836_julia_parser/substrato_836_julia_parser.py',
-        'substrates/t/837_gno_land_integration/substrato_837_gno_land_integration.py'
+        'substrates/t/837_gno_land_integration/substrato_837_gno_land_integration.py',
+        'substrates/t/841_web3_ontology_bridge/substrato_841_web3_ontology_bridge.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
@@ -1521,3 +1522,30 @@ def test_substrato_tsotchke_eshkol():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
     assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
+
+def test_substrato_841_web3_ontology_bridge():
+    import json
+    import os
+    import importlib.util
+    import sys
+
+    # Add the substrate directory to path to allow importing if necessary
+    substrate_dir = 'substrates/t/841_web3_ontology_bridge'
+
+    # Run the canonizer script
+    spec = importlib.util.spec_from_file_location("substrato_841", os.path.join(substrate_dir, "substrato_841_web3_ontology_bridge.py"))
+    module = importlib.util.module_from_spec(spec)
+    sys.modules["substrato_841"] = module
+    spec.loader.exec_module(module)
+
+    # Generate the report
+    report = module.generate_report()
+
+    assert report["substrate_id"] == "841"
+    assert report["name"] == "WEB3-ONTOLOGY-BRIDGE"
+    assert report["status"] == "PROPOSED"
+    assert report["canonical_seal"] == "8410000000000000000000000000000000000000000000000000000000000000"
+
+    assert "ArkheOntologyRegistry.sol" in report["artifacts"]
+    assert "ontology_dkg_client.ts" in report["artifacts"]
+    assert "ontology.ttl" in report["artifacts"]
