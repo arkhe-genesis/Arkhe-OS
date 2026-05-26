@@ -122,7 +122,7 @@ contract OctraZKVerifier {
     /**
      * @dev Atualiza endereço do ZK Verifier signer (governança)
      */
-    function updateZKVerifierSigner(address newSigner) external {
+    function updateZKVerifierSigner(address newSigner) external onlyOwner {
         // Requer GOV-840-001
         zkVerifierSigner = newSigner;
         emit ZKVerifierSignerUpdated(newSigner);
@@ -735,7 +735,7 @@ export class SlimListenerClient {
     const response = await fetch(`${this.fheosEndpoint}/execute`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(request),
+      body: JSON.stringify(request, (_, v) => typeof v === 'bigint' ? v.toString() : v),
     });
 
     if (!response.ok) {
