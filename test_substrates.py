@@ -1589,6 +1589,28 @@ def test_substrato_841_web3_ontology_bridge():
     assert "Canonical_Seal" in data
     assert "Artifacts" in data
 
+def test_860_consciousness_simulation_bridge():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/860_consciousness_simulation_bridge/substrato_860_consciousness_simulation_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_860_consciousness_simulation_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato860ConsciousnessSimulationBridge()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["ID"] == "860"
+    assert data["Name"] == "CONSCIOUSNESS-SIMULATION-BRIDGE"
+    assert "Canonical_Seal" in data
+    assert "Capabilities" in data
+
 def test_substrato_gonka_ai_gonka():
     import importlib.util
     import os
