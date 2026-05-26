@@ -609,7 +609,7 @@ impl SageMakerProxy {
 
         let mut pcr0_hex = String::with_capacity(pcr0_bytes.len() * 2);
         for b in pcr0_bytes {
-            pcr0_hex.push_str(&std::format!("{:02x}", b));
+            pcr0_hex.push_str(&format!("{:02x}", b));
         }
 
         if self.config.attestation_enclave_pcr0 != pcr0_hex {
@@ -742,6 +742,12 @@ impl SageMakerProxy {
 
         if !is_trusted {
             anyhow::bail!("Leaf certificate failed cryptographic validation against AWS Root CA");
+        }
+
+        // Validate expiration of the ephemeral leaf certificate
+        let now = x509_parser::time::ASN1Time::now();
+        if parsed_leaf.validity.not_before > now || parsed_leaf.validity.not_after < now {
+            anyhow::bail!("Leaf certificate is expired or not yet valid");
         }
 
         let pub_key_bytes = parsed_leaf.public_key().subject_public_key.as_ref();
