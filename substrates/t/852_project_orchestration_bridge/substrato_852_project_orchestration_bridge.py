@@ -58,7 +58,9 @@ class ProjectOrchestrationAdapter:
         tasks = []
         for task_elem in root.findall('.//p:Task', ns):
             uid_elem = task_elem.find('p:UID', ns)
-            uid = int(uid_elem.text) if uid_elem is not None and uid_elem.text else 0
+            if uid_elem is None or not uid_elem.text:
+                raise ValueError("Task is missing a valid UID")
+            uid = int(uid_elem.text)
             name_elem = task_elem.find('p:Name', ns)
             name = name_elem.text if name_elem is not None and name_elem.text else ""
             start_elem = task_elem.find('p:Start', ns)
