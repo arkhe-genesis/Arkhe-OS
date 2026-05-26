@@ -1542,3 +1542,47 @@ def test_substrato_tsotchke_eshkol():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
     assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
+
+def test_substrato_840_octra_fhe_bridge():
+    import importlib.util
+    import os
+
+    file_path = os.path.abspath('substrates/t/840_octra_fhe_bridge/substrato_840_octra_fhe_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_840_octra_fhe_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato840OctraFheBridge()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        import json
+        data = json.load(f)
+
+    assert data["ID"] == "840"
+    assert data["Name"] == "OCTRA-FHE-BRIDGE"
+    assert data["Canonical_Seal"] == "7c1e8d3f9a2b5c6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e"
+    assert "Artifacts" in data
+
+def test_substrato_841_web3_ontology_bridge():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/841_web3_ontology_bridge/substrato_841_web3_ontology_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_841_web3_ontology_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato841Web3OntologyBridge()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["ID"] == "841"
+    assert data["Name"] == "WEB3-ONTOLOGY-BRIDGE"
+    assert "Canonical_Seal" in data
+    assert "Artifacts" in data
