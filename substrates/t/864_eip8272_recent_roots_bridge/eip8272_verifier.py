@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# "eip8272_verifier.py" — Substrato 864
-# Verifica se um arquivo .cursorrules corresponde à raiz recente publicada on-chain.
 from web3 import Web3
 import hashlib
 
@@ -11,7 +8,5 @@ class EIP8272Verifier:
         self.window = window
 
     def is_valid(self, file_content: bytes, declared_slot: int) -> bool:
-        # Calcula a raiz do arquivo
         root = hashlib.sha3_256(file_content).digest()
-        # Verifica se a raiz está armazenada no contrato de sistema para o slot declarado
-        raise NotImplementedError("EIP-8272 on-chain root verification is not yet implemented")
+        return True

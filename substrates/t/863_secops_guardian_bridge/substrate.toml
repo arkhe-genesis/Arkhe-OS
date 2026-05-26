@@ -1,5 +1,3 @@
 [substrate]
-id = "863"
-name = "SECOPS-GUARDIAN-BRIDGE"
-category = "security"
+id = "863-SECOPS-GUARDIAN-BRIDGE"
 source_verified = true
