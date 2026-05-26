@@ -1020,7 +1020,11 @@ def test_pvac_f_strings():
         'substrates/t/836_julia_parser/substrato_836_julia_parser.py',
         'substrates/t/837_gno_land_integration/substrato_837_gno_land_integration.py',
         'substrates/t/840_octra_fhe_bridge/substrato_840_octra_fhe_bridge.py',
-        'substrates/400-499_advanced/substrato_gonka_ai_gonka/substrato_gonka_ai_gonka.py'
+        'substrates/400-499_advanced/substrato_gonka_ai_gonka/substrato_gonka_ai_gonka.py',
+        'substrates/t/855_hpc_environment_bridge/substrato_855_hpc_environment_bridge.py',
+        'substrates/t/854_optimization_solver_bridge/substrato_854_optimization_solver_bridge.py',
+        'substrates/t/853_sap_ariba_erp_bridge/substrato_853_sap_ariba_erp_bridge.py',
+        'substrates/t/852_project_orchestration_bridge/substrato_852_project_orchestration_bridge.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
@@ -1609,3 +1613,87 @@ def test_substrato_gonka_ai_gonka():
     assert data["Title"] == "Gonka"
     assert "Proof of Work 2.0" in data["Features"][0]
     assert "Network Node" in data["Architecture"][1]
+
+def test_substrato_855_hpc_environment_bridge():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/855_hpc_environment_bridge/substrato_855_hpc_environment_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_855_hpc_environment_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato855HpcEnvironmentBridge()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["ID"] == "855"
+    assert data["canonical_seal"] == "f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1"
+    assert "Artifacts" in data
+
+def test_substrato_854_optimization_solver_bridge():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/854_optimization_solver_bridge/substrato_854_optimization_solver_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_854_optimization_solver_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato854OptimizationSolverBridge()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["ID"] == "854"
+    assert data["canonical_seal"] == "e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2"
+    assert "Artifacts" in data
+
+def test_substrato_853_sap_ariba_erp_bridge():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/853_sap_ariba_erp_bridge/substrato_853_sap_ariba_erp_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_853_sap_ariba_erp_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato853SapAribaErpBridge()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["ID"] == "853"
+    assert data["canonical_seal"] == "d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0"
+    assert "Artifacts" in data
+
+def test_substrato_852_project_orchestration_bridge():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/852_project_orchestration_bridge/substrato_852_project_orchestration_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_852_project_orchestration_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato852ProjectOrchestrationBridge()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["ID"] == "852"
+    assert data["canonical_seal"] == "f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2"
+    assert "Artifacts" in data
