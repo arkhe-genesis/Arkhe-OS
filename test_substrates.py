@@ -1311,7 +1311,10 @@ def test_824_bridge_magalu_aws():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
 
-    assert "f\"" not in content and "f'" not in content, "f-strings are not allowed in canonizer scripts"
+    import ast
+    tree = ast.parse(content)
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr), "f-strings are not allowed in canonizer scripts"
 
 def test_substrato_821_olah_vatican_convergence():
     import importlib.util
@@ -1387,7 +1390,10 @@ def test_827_bo_gallium_discovery():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
 
-    assert "f\"" not in content and "f'" not in content, "f-strings are not allowed in canonizer scripts"
+    import ast
+    tree = ast.parse(content)
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr), "f-strings are not allowed in canonizer scripts"
 
 def test_substrato_826_gnn_isomorphism_finder():
     import importlib.util
@@ -1457,7 +1463,10 @@ def test_831_story_ip_chain_bridge():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
 
-    assert "f\"" not in content and "f'" not in content, "f-strings are not allowed in canonizer scripts"
+    import ast
+    tree = ast.parse(content)
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr), "f-strings are not allowed in canonizer scripts"
 
 def test_834_wdf_driver_fabric():
     import importlib.util
