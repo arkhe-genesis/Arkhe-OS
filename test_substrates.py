@@ -770,7 +770,7 @@ def test_652_stellar_sail():
         data = json.load(f)
     assert data["id"] == "652-STELLAR-SAIL"
     assert data["status"] == "CANONIZED_CLEAN"
-    # assert data["canonical_seal"] == "7e0e83d408b96c9196a5b3c4163274b598ff2ed64e7ba2a0b4dc767e795f6687"
+    # assert data.get("Canonical_Seal", data.get("Seal_SHA3_256", data.get("canonical_seal"))) == "7e0e83d408b96c9196a5b3c4163274b598ff2ed64e7ba2a0b4dc767e795f6687"
 
 import os
 import re
@@ -797,7 +797,7 @@ def test_653_deep_power():
         data = json.load(f)
     assert data["id"] == "653-DEEP-POWER"
     assert data["status"] == "CANONIZED_CLEAN"
-    # assert data["canonical_seal"] == "35023ca74363ba6d00bd3ae4606295e06ab249c1e835fe792a2eb9179be55ba9"
+    # assert data.get("Canonical_Seal", data.get("Seal_SHA3_256", data.get("canonical_seal"))) == "35023ca74363ba6d00bd3ae4606295e06ab249c1e835fe792a2eb9179be55ba9"
 
 import os
 import re
@@ -824,7 +824,7 @@ def test_654_photonic_link():
         data = json.load(f)
     assert data["id"] == "654-PHOTONIC-LINK"
     assert data["status"] == "CANONIZED_CLEAN"
-    # assert data["canonical_seal"] == "6fb66b574db9d00a6c68622d13844dac33f5c994191674b61a5d539066765b97"
+    # assert data.get("Canonical_Seal", data.get("Seal_SHA3_256", data.get("canonical_seal"))) == "6fb66b574db9d00a6c68622d13844dac33f5c994191674b61a5d539066765b97"
 
 import os
 import re
@@ -851,7 +851,7 @@ def test_655_rad_hard_shield():
         data = json.load(f)
     assert data["id"] == "655-RAD-HARD-SHIELD"
     assert data["status"] == "CANONIZED_CLEAN"
-    # assert data["canonical_seal"] == "686bcb793e823d8db37491db1c331e50507a3910c152a60e7040dbba56dfa33d"
+    # assert data.get("Canonical_Seal", data.get("Seal_SHA3_256", data.get("canonical_seal"))) == "686bcb793e823d8db37491db1c331e50507a3910c152a60e7040dbba56dfa33d"
 
 import os
 import re
@@ -878,7 +878,7 @@ def test_656_autonomous_repair():
         data = json.load(f)
     assert data["id"] == "656-AUTONOMOUS-REPAIR"
     assert data["status"] == "CANONIZED_CLEAN"
-    # assert data["canonical_seal"] == "ba92805c1ee20740c712fa1e88dfd4806b3d492b72863bbe98194eebe39ee2ad"
+    # assert data.get("Canonical_Seal", data.get("Seal_SHA3_256", data.get("canonical_seal"))) == "ba92805c1ee20740c712fa1e88dfd4806b3d492b72863bbe98194eebe39ee2ad"
 
 import os
 import re
@@ -905,7 +905,7 @@ def test_657_von_neumann_replicator():
         data = json.load(f)
     assert data["id"] == "657-VON-NEUMANN-REPLICATOR"
     assert data["status"] == "CANONIZED_CLEAN"
-    # assert data["canonical_seal"] == "0baee14685aeea8ee21e63ea66bdb286c0662b2691d5bebb3b8bd3a9fa03f1ef"
+    # assert data.get("Canonical_Seal", data.get("Seal_SHA3_256", data.get("canonical_seal"))) == "0baee14685aeea8ee21e63ea66bdb286c0662b2691d5bebb3b8bd3a9fa03f1ef"
 
 import os
 import re
@@ -934,7 +934,7 @@ def test_636_mobile_cathedral():
     assert data["id"] == "636-MOBILE-CATHEDRAL"
     assert data["status"] == "CANONIZED_CLEAN"
     assert data["phi_c"] == 0.988611
-    # assert data["canonical_seal"] == "e8e7ce2be6c12e7d3d3ed5a7625b6170467a11c40ca4eeff9d94008b45967c7c"
+    # assert data.get("Canonical_Seal", data.get("Seal_SHA3_256", data.get("canonical_seal"))) == "e8e7ce2be6c12e7d3d3ed5a7625b6170467a11c40ca4eeff9d94008b45967c7c"
     assert data["metadata"]["emi_shielding"] == "PENDING_PHYSICAL_CONSTRUCTION"
     assert data["metadata"]["simulated_flight"] == "PASS"
     assert data["metadata"]["phi_mobility"] == 0.990
@@ -974,7 +974,7 @@ def test_substrato_680_pvac_crypto():
         data = json.load(f)
     assert data["id"] == "680-PVAC-CRYPTO"
     assert "canonical_seal" in data
-    # assert data["canonical_seal"] == "c22661bebfaf4f556cb2e953006aa8821db493fbc02f55bdbbe8cbeb51a93e14"
+    # assert data.get("Canonical_Seal", data.get("Seal_SHA3_256", data.get("canonical_seal"))) == "c22661bebfaf4f556cb2e953006aa8821db493fbc02f55bdbbe8cbeb51a93e14"
 
 def test_substrato_681_pvac_fhe():
     import sys
@@ -987,7 +987,7 @@ def test_substrato_681_pvac_fhe():
         data = json.load(f)
     assert data["id"] == "681-PVAC-FHE"
     assert "canonical_seal" in data
-    # assert data["canonical_seal"] == "93ace50b959cc8f6bd6fb39786e1aba0df2954ff3a558477a0dabb4c23128a0f"
+    # assert data.get("Canonical_Seal", data.get("Seal_SHA3_256", data.get("canonical_seal"))) == "93ace50b959cc8f6bd6fb39786e1aba0df2954ff3a558477a0dabb4c23128a0f"
 
 def test_substrato_682_pvac_net():
     import sys
@@ -1000,7 +1000,7 @@ def test_substrato_682_pvac_net():
         data = json.load(f)
     assert data["id"] == "682-PVAC-NET"
     assert "canonical_seal" in data
-    # assert data["canonical_seal"] == "cc539320f1cbdd2922bd9fdf6d327611f48e273ee617e7c6dc3a45152c11392c"
+    # assert data.get("Canonical_Seal", data.get("Seal_SHA3_256", data.get("canonical_seal"))) == "cc539320f1cbdd2922bd9fdf6d327611f48e273ee617e7c6dc3a45152c11392c"
 
 
 def test_pvac_f_strings():
@@ -1090,7 +1090,7 @@ def test_substrato_836_julia_parser():
         import json
         data = json.load(f)
     assert data["ID"] == "836"
-    assert data["canonical_seal"] == "e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5"
+    assert data.get("Canonical_Seal", data.get("Seal_SHA3_256", data.get("canonical_seal"))) == "e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5"
 
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
@@ -1527,7 +1527,7 @@ def test_834_wdf_driver_fabric():
         data = json.load(f)
 
     assert data["ID"] == "834"
-    assert data["Canonical_Seal"] == "b8c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1"
+    assert data.get("Canonical_Seal", data.get("Seal_SHA3_256", data.get("canonical_seal"))) == "b8c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1"
 
     with open(file_path, "r", encoding="utf-8") as f:
         tree = ast.parse(f.read())
@@ -1650,7 +1650,7 @@ def test_substrato_846_enterprise_architecture_bridge():
         data = json.load(f)
 
     assert data["id"] == "846-ENTERPRISE-ARCHITECTURE-BRIDGE"
-    assert data["canonical_seal"] == "b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8"
+    assert data.get("Canonical_Seal", data.get("Seal_SHA3_256", data.get("canonical_seal"))) == "b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8"
     assert data["status"] == "CANONIZED_PROVISIONAL"
     assert "826 (DIT)" in data["cross_links"]
     assert "code_base64" in data
