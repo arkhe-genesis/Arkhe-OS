@@ -1020,7 +1020,16 @@ def test_pvac_f_strings():
         'substrates/t/836_julia_parser/substrato_836_julia_parser.py',
         'substrates/t/837_gno_land_integration/substrato_837_gno_land_integration.py',
         'substrates/t/840_octra_fhe_bridge/substrato_840_octra_fhe_bridge.py',
-        'substrates/400-499_advanced/substrato_gonka_ai_gonka/substrato_gonka_ai_gonka.py'
+        'substrates/400-499_advanced/substrato_gonka_ai_gonka/substrato_gonka_ai_gonka.py',
+        'substrates/t/861_un_20_governance_bridge/substrato_861_un_20_governance_bridge.py',
+        'substrates/t/860_consciousness_simulation_bridge/substrato_860_consciousness_simulation_bridge.py',
+        'substrates/t/859_biological_computing_bridge/substrato_859_biological_computing_bridge.py',
+        'substrates/t/856_quantum_computing_bridge/substrato_856_quantum_computing_bridge.py',
+        'substrates/t/857_neuromorphic_hardware_bridge/substrato_857_neuromorphic_hardware_bridge.py',
+        'substrates/t/855_hpc_environment_bridge/substrato_855_hpc_environment_bridge.py',
+        'substrates/t/854_optimization_solver_bridge/substrato_854_optimization_solver_bridge.py',
+        'substrates/t/853_sap_ariba_erp_bridge/substrato_853_sap_ariba_erp_bridge.py',
+        'substrates/t/852_project_orchestration_bridge/substrato_852_project_orchestration_bridge.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
@@ -1609,3 +1618,120 @@ def test_substrato_gonka_ai_gonka():
     assert data["Title"] == "Gonka"
     assert "Proof of Work 2.0" in data["Features"][0]
     assert "Network Node" in data["Architecture"][1]
+
+def test_861_un_20_governance_bridge():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("substrato", "substrates/t/861_un_20_governance_bridge/substrato_861_un_20_governance_bridge.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    sub = module.Substrato_861_un_20_governance_bridge()
+    path = sub.canonize()
+    import json
+    with open(path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "861-UN-20-GOVERNANCE-BRIDGE"
+    assert data["canonical_seal"] == "e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6"
+
+def test_860_consciousness_simulation_bridge():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("substrato", "substrates/t/860_consciousness_simulation_bridge/substrato_860_consciousness_simulation_bridge.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    sub = module.Substrato_860_consciousness_simulation_bridge()
+    path = sub.canonize()
+    import json
+    with open(path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "860-CONSCIOUSNESS-SIMULATION-BRIDGE"
+    assert data["canonical_seal"] == "d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5"
+
+def test_859_biological_computing_bridge():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("substrato", "substrates/t/859_biological_computing_bridge/substrato_859_biological_computing_bridge.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    sub = module.Substrato_859_biological_computing_bridge()
+    path = sub.canonize()
+    import json
+    with open(path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "859-BIOLOGICAL-COMPUTING-BRIDGE"
+    assert data["canonical_seal"] == "c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4"
+
+def test_856_quantum_computing_bridge():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("substrato", "substrates/t/856_quantum_computing_bridge/substrato_856_quantum_computing_bridge.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    sub = module.Substrato_856_quantum_computing_bridge()
+    path = sub.canonize()
+    import json
+    with open(path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "856-QUANTUM-COMPUTING-BRIDGE"
+    assert data["canonical_seal"] == "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1"
+
+def test_857_neuromorphic_hardware_bridge():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("substrato", "substrates/t/857_neuromorphic_hardware_bridge/substrato_857_neuromorphic_hardware_bridge.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    sub = module.Substrato_857_neuromorphic_hardware_bridge()
+    path = sub.canonize()
+    import json
+    with open(path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "857-NEUROMORPHIC-HARDWARE-BRIDGE"
+    assert data["canonical_seal"] == "b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3"
+
+def test_855_hpc_environment_bridge():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("substrato", "substrates/t/855_hpc_environment_bridge/substrato_855_hpc_environment_bridge.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    sub = module.Substrato_855_hpc_environment_bridge()
+    path = sub.canonize()
+    import json
+    with open(path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "855-HPC-ENVIRONMENT-BRIDGE"
+    assert data["canonical_seal"] == "f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1"
+
+def test_854_optimization_solver_bridge():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("substrato", "substrates/t/854_optimization_solver_bridge/substrato_854_optimization_solver_bridge.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    sub = module.Substrato_854_optimization_solver_bridge()
+    path = sub.canonize()
+    import json
+    with open(path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "854-OPTIMIZATION-SOLVER-BRIDGE"
+    assert data["canonical_seal"] == "e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2"
+
+def test_853_sap_ariba_erp_bridge():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("substrato", "substrates/t/853_sap_ariba_erp_bridge/substrato_853_sap_ariba_erp_bridge.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    sub = module.Substrato_853_sap_ariba_erp_bridge()
+    path = sub.canonize()
+    import json
+    with open(path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "853-SAP-ARIBA-ERP-BRIDGE"
+    assert data["canonical_seal"] == "d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0"
+
+def test_852_project_orchestration_bridge():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("substrato", "substrates/t/852_project_orchestration_bridge/substrato_852_project_orchestration_bridge.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    sub = module.Substrato_852_project_orchestration_bridge()
+    path = sub.canonize()
+    import json
+    with open(path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "852-PROJECT-ORCHESTRATION-BRIDGE"
+    assert data["canonical_seal"] == "f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2"
