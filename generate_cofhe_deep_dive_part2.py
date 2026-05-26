@@ -122,7 +122,7 @@ contract OctraZKVerifier {
     /**
      * @dev Atualiza endereço do ZK Verifier signer (governança)
      */
-    function updateZKVerifierSigner(address newSigner) external onlyOwner {
+    function updateZKVerifierSigner(address newSigner) external onlyZKVerifierSigner {
         // Requer GOV-840-001
         zkVerifierSigner = newSigner;
         emit ZKVerifierSignerUpdated(newSigner);
