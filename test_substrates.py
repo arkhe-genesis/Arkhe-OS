@@ -1638,7 +1638,7 @@ def test_substrato_846_enterprise_architecture_bridge():
     import json
 
     file_path = os.path.abspath('substrates/t/846_enterprise_architecture_bridge/substrato_846_enterprise_architecture_bridge.py')
-    spec = importlib.util.spec_from_file_location("substrato_846_enterprise_architecture_bridge", file_path)
+    spec = importlib.util.spec_from_file_location("substrato_846_enterprise_architecture_bridge", 'substrates/t/846_enterprise_architecture_bridge/substrato_846_enterprise_architecture_bridge.py')
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
