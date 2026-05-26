@@ -1456,7 +1456,7 @@ def test_840_octra_fhe_bridge():
         data = json.load(f)
 
     assert data["ID"] == "840"
-    assert data["Canonical_Seal"] == "7c1e8d3f9a2b5c6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e"
+    assert data["Canonical_Seal"] == "adf5f2b3e6e9e105a2f958c0f05a2e0b2bf1158ba08c585b86f246e38425cc84"
 
 def test_831_story_ip_chain_bridge():
     import importlib.util
@@ -1562,7 +1562,7 @@ def test_substrato_840_octra_fhe_bridge():
 
     assert data["ID"] == "840"
     assert data["Name"] == "OCTRA-FHE-BRIDGE"
-    assert data["Canonical_Seal"] == "7c1e8d3f9a2b5c6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e"
+    assert data["Canonical_Seal"] == "adf5f2b3e6e9e105a2f958c0f05a2e0b2bf1158ba08c585b86f246e38425cc84"
     assert "Artifacts" in data
 
 def test_substrato_841_web3_ontology_bridge():

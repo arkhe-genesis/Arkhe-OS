@@ -36,7 +36,7 @@ class Substrato840OctraFheBridge:
         # definitive SHA3-256 seal (e.g., from an uploaded artifact v2.0), do not recalculate the hash dynamically
         # from the payload. Explicitly assign the `canonical_seal` in the JSON report to the provided value
         # to match verification tests and prevent overwriting the canonical seal.
-        self.canonical_seal = "7c1e8d3f9a2b5c6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e"
+        self.canonical_seal = "adf5f2b3e6e9e105a2f958c0f05a2e0b2bf1158ba08c585b86f246e38425cc84"
 
     def canonize(self):
         self.payload["Canonical_Seal"] = self.canonical_seal
