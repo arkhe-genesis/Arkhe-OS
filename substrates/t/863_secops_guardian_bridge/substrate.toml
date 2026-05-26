@@ -1,0 +1,5 @@
+[substrate]
+id = "863"
+name = "SECOPS-GUARDIAN-BRIDGE"
+type = "SecOps"
+source_verified = true

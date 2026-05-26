@@ -1,0 +1,5 @@
+[substrate]
+id = "864"
+name = "EIP-8272-RECENT-ROOTS-BRIDGE"
+type = "SecOps-Root"
+source_verified = true
