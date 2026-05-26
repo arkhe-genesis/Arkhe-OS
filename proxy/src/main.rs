@@ -202,41 +202,28 @@ async fn proxy_request(
             let status = backend_resp.status();
             let latency_ms = t0.elapsed().as_millis() as u64;
 
-            match backend_resp.bytes().await {
-                Ok(resp_bytes) => {
-                    // Try to extract token count for metrics
-                    let tokens = if let Ok(json) =
-                        serde_json::from_slice::<serde_json::Value>(&resp_bytes)
-                    {
-                        json.get("tokens_predicted")
-                            .and_then(|v| v.as_u64())
-                            .unwrap_or(0)
-                    } else {
-                        0
-                    };
+            let content_type = backend_resp
+                .headers()
+                .get(reqwest::header::CONTENT_TYPE)
+                .and_then(|v| v.to_str().ok())
+                .unwrap_or("application/json")
+                .to_owned();
 
-                    if status.is_success() {
-                        state.metrics.record_ok(latency_ms, tokens);
-                    } else {
-                        state.metrics.record_err();
-                    }
-
-                    HttpResponse::build(
-                        actix_web::http::StatusCode::from_u16(status.as_u16())
-                            .unwrap_or(actix_web::http::StatusCode::INTERNAL_SERVER_ERROR),
-                    )
-                    .content_type("application/json")
-                    .body(resp_bytes)
-                }
-                Err(e) => {
-                    state.metrics.record_err();
-                    log::error!("Failed to read backend response: {}", e);
-                    HttpResponse::BadGateway().json(serde_json::json!({
-                        "error": "backend_read_error",
-                        "detail": e.to_string(),
-                    }))
-                }
+            if status.is_success() {
+                // We cannot easily parse tokens from a stream without buffering,
+                // so we approximate or skip token count here, but we record the OK request.
+                state.metrics.record_ok(latency_ms, 0);
+            } else {
+                state.metrics.record_err();
             }
+
+            let mut builder = HttpResponse::build(
+                actix_web::http::StatusCode::from_u16(status.as_u16())
+                    .unwrap_or(actix_web::http::StatusCode::INTERNAL_SERVER_ERROR),
+            );
+            builder.content_type(content_type);
+
+            builder.streaming(backend_resp.bytes_stream())
         }
         Err(e) => {
             state.metrics.record_err();
