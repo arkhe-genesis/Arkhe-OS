@@ -1,0 +1,15 @@
+{
+    "go_binaries": [
+        "cmd/arkhe/arkhe_bin"
+    ],
+    "rust_binaries": [
+        "target/release/libscripts.rlib"
+    ],
+    "python_substrates": [
+        "substrates/9012_arkhe_ipython/dist/arkhe_ipython-1.0.0-py3-none-any.whl"
+    ],
+    "gguf_artifacts": [
+        "build/arkhe.gguf",
+        "build/arkhe_gguf_manifest.json"
+    ]
+}
