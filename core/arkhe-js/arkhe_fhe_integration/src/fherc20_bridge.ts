@@ -7,7 +7,7 @@ import { privateKeyToAccount } from 'viem/accounts';
 import { ThresholdNetworkClient } from './threshold_client';
 
 const FHERC20_ABI = [
-  'function shieldFromOctra(string circleId, tuple(uint256 ctHash, bytes signature) encryptedAmount, uint64 publicAmount) returns (uint256)',
+  'function shieldFromOctra(string circleId, uint64 publicAmount) returns (uint256)',
   'function confidentialCircleTransfer(string fromCircle, string toCircle, tuple(uint256 ctHash, bytes signature) encryptedAmount) returns (uint256)',
   'function unshieldToOctra(string circleId, uint64 plaintextAmount, bytes thresholdSignature)',
   'function circleIndicatorOf(string circleId) view returns (uint256)',
@@ -41,15 +41,12 @@ export class OctraFHERC20Client {
     circleId: string,
     publicAmount: bigint
   ): Promise<{ handle: bigint; txHash: `0x${string}` }> {
-    // 1. Criptografa amount off-chain
-    const encryptedAmount = await this.cofheClient.encryptUint64(publicAmount);
-
-    // 2. Chama shieldFromOctra
+    // 1. Chama shieldFromOctra
     const tx = await this.cofheClient.writeContract({
       address: this.tokenContract,
       abi: FHERC20_ABI,
       functionName: 'shieldFromOctra',
-      args: [circleId, encryptedAmount, publicAmount],
+      args: [circleId, publicAmount],
     });
 
     const receipt = await tx.wait();

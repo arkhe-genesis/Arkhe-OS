@@ -56,7 +56,6 @@ contract OctraFHERC20 is FHERC20 {
      */
     function shieldFromOctra(
         string calldata circleId,
-        InEuint64 memory encryptedAmount,
         uint64 publicAmount
     ) external returns (euint64) {
         require(circleOwners[circleId] == msg.sender, "Not circle owner");
@@ -65,7 +64,7 @@ contract OctraFHERC20 is FHERC20 {
         require(publicToken.transferFrom(msg.sender, address(this), publicAmount), "Transfer failed");
 
         // 2. Converte para FHERC20 cifrado
-        euint64 encryptedBalance = FHE.asEuint64(encryptedAmount);
+        euint64 encryptedBalance = FHE.asEuint64(publicAmount);
 
         // 3. Aplica taxa de bridge (2% Royalty Catedral)
         euint64 fee = FHE.div(
@@ -112,7 +111,8 @@ contract OctraFHERC20 is FHERC20 {
 
         // Adiciona ao receiver
         euint64 toBalance = circleBridgeBalances[toCircle];
-        circleBridgeBalances[toCircle] = FHE.add(toBalance, amount);
+        euint64 amountToTransfer = FHE.select(hasEnough, amount, FHE.asEuint64(0));
+        circleBridgeBalances[toCircle] = FHE.add(toBalance, amountToTransfer);
 
         // Atualiza indicadores
         _updateCircleIndicator(fromCircle, false);
