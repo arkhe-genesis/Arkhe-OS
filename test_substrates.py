@@ -1018,7 +1018,8 @@ def test_pvac_f_strings():
         'substrates/t/826_gnn_isomorphism_finder/substrato_826_gnn_isomorphism_finder.py',
         'substrates/t/831_story_ip_chain_bridge/substrato_831_story_ip_chain_bridge.py',
         'substrates/t/836_julia_parser/substrato_836_julia_parser.py',
-        'substrates/t/837_gno_land_integration/substrato_837_gno_land_integration.py'
+        'substrates/t/837_gno_land_integration/substrato_837_gno_land_integration.py',
+        'substrates/t/840_octra_fhe_bridge/substrato_840_octra_fhe_bridge.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
@@ -1436,6 +1437,26 @@ def test_837_gno_land_integration():
 
     assert data["ID"] == "837"
     assert "Canonical_Seal" in data
+
+def test_840_octra_fhe_bridge():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/840_octra_fhe_bridge/substrato_840_octra_fhe_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_840_octra_fhe_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato840OctraFheBridge()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["ID"] == "840"
+    assert data["Canonical_Seal"] == "c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8"
 
 def test_831_story_ip_chain_bridge():
     import importlib.util
