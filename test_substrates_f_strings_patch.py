@@ -33,3 +33,10 @@ def test_870_f_strings():
         tree = ast.parse(f.read())
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr)
+
+def test_870_g_f_strings():
+    import glob
+    for filepath in glob.glob("substrates/t/870_g_arkhe_http_gateway/*.py"):
+        with open(filepath, 'r') as f:
+            content = f.read()
+            assert "f\"" not in content, f"f-strings are strictly prohibited in the codebase. Found in {filepath}"

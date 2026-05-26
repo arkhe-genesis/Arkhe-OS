@@ -2005,3 +2005,22 @@ def test_864_eip8272_recent_roots_bridge():
     path = canonizer.canonize()
 
     assert os.path.exists(path)
+
+def test_870_g_arkhe_http_gateway():
+    file_path = os.path.abspath('substrates/t/870_g_arkhe_http_gateway/substrato_870_g_arkhe_http_gateway.py')
+    spec = importlib.util.spec_from_file_location("substrato_870_g_arkhe_http_gateway", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato_870_g_arkhe_http_gateway()
+    report_path = canonizer.canonize()
+
+    with open(report_path, "r") as f:
+        data = json.load(f)
+
+    assert data["id"] == "870-G-ARKHE-HTTP-GATEWAY"
+    assert data["status"] in ["CANONIZED", "CANONIZED_PROVISIONAL"]
+    # assert data.get("Canonical_Seal", data.get("Seal_SHA3_256", data.get("canonical_seal"))) == "b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4"
+
+    # Strict string assertions
+    assert "f\"" not in open(file_path).read()
