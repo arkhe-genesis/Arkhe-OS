@@ -1021,7 +1021,8 @@ def test_pvac_f_strings():
         'substrates/t/837_gno_land_integration/substrato_837_gno_land_integration.py',
         'substrates/t/840_octra_fhe_bridge/substrato_840_octra_fhe_bridge.py',
         'substrates/400-499_advanced/substrato_gonka_ai_gonka/substrato_gonka_ai_gonka.py',
-        'substrates/t/846_enterprise_architecture_bridge/substrato_846_enterprise_architecture_bridge.py'
+        'substrates/t/846_enterprise_architecture_bridge/substrato_846_enterprise_architecture_bridge.py',
+        'substrates/t/870_blockchain_z_glm/substrato_870_blockchain_z_glm.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
@@ -1639,7 +1640,7 @@ def test_substrato_846_enterprise_architecture_bridge():
     import json
 
     file_path = os.path.abspath('substrates/t/846_enterprise_architecture_bridge/substrato_846_enterprise_architecture_bridge.py')
-    spec = importlib.util.spec_from_file_location("substrato_846_enterprise_architecture_bridge", file_path)
+    spec = importlib.util.spec_from_file_location("substrato_846_enterprise_architecture_bridge", 'substrates/t/846_enterprise_architecture_bridge/substrato_846_enterprise_architecture_bridge.py')
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
@@ -1657,3 +1658,24 @@ def test_substrato_846_enterprise_architecture_bridge():
     assert "code_base64" in data
 
     os.remove(path)
+
+def test_substrato_870_blockchain_z_glm():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/870_blockchain_z_glm/substrato_870_blockchain_z_glm.py')
+    spec = importlib.util.spec_from_file_location("substrato_870_blockchain_z_glm", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato_870_blockchain_z_glm()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["id"] == "870-BLOCKCHAIN-Z-GLM"
+    assert data["status"] == "CANONIZED_PROVISIONAL"
+    assert data["canonical_seal"] == "e67abcb870af7c766242a0a01076598b3f5ec17c14a0f651df880f69e20de244"
