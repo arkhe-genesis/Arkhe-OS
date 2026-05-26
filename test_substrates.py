@@ -1312,6 +1312,37 @@ def test_824_bridge_magalu_aws():
 
     assert "f\"" not in content and "f'" not in content, "f-strings are not allowed in canonizer scripts"
 
+def test_substrato_821_olah_vatican_convergence():
+    import importlib.util
+    import os
+    import json
+    import base64
+
+    file_path = os.path.abspath('substrates/t/821_olah_vatican_convergence/substrato_821_olah_vatican_convergence.py')
+    spec = importlib.util.spec_from_file_location("substrato_821_olah_vatican_convergence", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato821OlahVaticanConvergence()
+    report_path = canonizer.generate_report()
+
+    assert os.path.exists(report_path)
+    with open(report_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["metadata"]["id"] == "821-OLAH-VATICAN-CONVERGENCE"
+    assert data["seal"] == "7a3f9e2b1c8d4e5f6a0b9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7"
+
+    # Verify decree content
+    decree_text = base64.b64decode(data["decree_base64"]).decode("utf-8")
+    assert "SUBSTRATO 821 — OLAH-VATICAN CONVERGENCE" in decree_text
+
+    # Check for f-strings in canonizer
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    import re
+    assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in Substrate 821"
+
 def test_825_parametric_memory_engine():
     import importlib.util
     import os
