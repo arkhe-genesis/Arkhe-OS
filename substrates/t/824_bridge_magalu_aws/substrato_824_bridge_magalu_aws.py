@@ -661,25 +661,87 @@ impl SageMakerProxy {
         let parsed_leaf = x509_parser::parse_x509_certificate(cert_bytes.as_slice())
             .map_err(|e| anyhow::anyhow!("Failed to parse leaf certificate: {:?}", e))?.1;
 
-        // Verify certificate chain manually using ring since webpki enforces TLS EKU
-        // For PoC, we will simulate the cryptographic chain verification mapping
-        // In a real environment, we use ring to verify `tbs_certificate` signature.
+        // Implement cryptographic chain verification using ring.
+        // We verify that parsed_leaf is signed by an intermediate or root,
+        // and any intermediate is signed by the trusted AWS Nitro Root CA.
+
         let mut current_cert = parsed_leaf.clone();
-        let mut chain_verified = false;
+        let mut is_trusted = false;
 
-        // Iterar verificando a cadeia: Leaf -> Intermediates -> Root
-        let mut all_possible_issuers = intermediates.clone();
-        all_possible_issuers.extend(root_ca_certs.into_iter().map(|c| c.to_vec()));
+        // Limitar profundidade da cadeia para evitar loops infinitos
+        for _ in 0..10 {
+            // Check if current_cert is directly signed by any trusted Root CA
+            let mut signed_by_root = false;
+            for root_der in &root_ca_certs {
+                if let Ok((_, root_cert)) = x509_parser::parse_x509_certificate(root_der) {
+                    if current_cert.issuer() == root_cert.subject() {
+                        let issuer_pub_key = root_cert.public_key().subject_public_key.as_ref();
+                        let unparsed_key = ring::signature::UnparsedPublicKey::new(
+                            &ring::signature::RSA_PKCS1_2048_8192_SHA256, // AWS Root is usually RSA
+                            issuer_pub_key
+                        );
+                        if unparsed_key.verify(current_cert.tbs_certificate.as_ref(), current_cert.signature_value.as_ref()).is_ok() {
+                            signed_by_root = true;
+                            break;
+                        }
+                        // Fallback para ECDSA caso a AWS mude o Root
+                        let unparsed_key_ecdsa = ring::signature::UnparsedPublicKey::new(
+                            &ring::signature::ECDSA_P384_SHA384_ASN1,
+                            issuer_pub_key
+                        );
+                        if unparsed_key_ecdsa.verify(current_cert.tbs_certificate.as_ref(), current_cert.signature_value.as_ref()).is_ok() {
+                            signed_by_root = true;
+                            break;
+                        }
+                    }
+                }
+            }
 
-        // Em um sistema real, extrairiamos o algoritmo de assinatura do certificado (ex: RSA_PKCS1_2048_8192_SHA256)
-        // e usariamos ring::signature::UnparsedPublicKey::new(...) para verificar o tbs_certificate.
-        // Simulando a validacao matematica estrita para satisfazer a arquitetura PoC:
-        if !all_possible_issuers.is_empty() {
-            chain_verified = true;
+            if signed_by_root {
+                is_trusted = true;
+                break;
+            }
+
+            // Check if signed by an intermediate
+            let mut signed_by_intermediate = false;
+            let mut next_cert = None;
+            for inter_der in &intermediates {
+                if let Ok((_, inter_cert)) = x509_parser::parse_x509_certificate(inter_der) {
+                    if current_cert.issuer() == inter_cert.subject() {
+                        let issuer_pub_key = inter_cert.public_key().subject_public_key.as_ref();
+                        // Intermediates for Nitro are typically ECDSA P-384
+                        let unparsed_key = ring::signature::UnparsedPublicKey::new(
+                            &ring::signature::ECDSA_P384_SHA384_ASN1,
+                            issuer_pub_key
+                        );
+                        if unparsed_key.verify(current_cert.tbs_certificate.as_ref(), current_cert.signature_value.as_ref()).is_ok() {
+                            signed_by_intermediate = true;
+                            next_cert = Some(inter_cert);
+                            break;
+                        }
+                        // Fallback RSA
+                        let unparsed_key_rsa = ring::signature::UnparsedPublicKey::new(
+                            &ring::signature::RSA_PKCS1_2048_8192_SHA256,
+                            issuer_pub_key
+                        );
+                        if unparsed_key_rsa.verify(current_cert.tbs_certificate.as_ref(), current_cert.signature_value.as_ref()).is_ok() {
+                            signed_by_intermediate = true;
+                            next_cert = Some(inter_cert);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if signed_by_intermediate {
+                current_cert = next_cert.unwrap();
+            } else {
+                break; // No signer found, chain is broken
+            }
         }
 
-        if !chain_verified {
-            anyhow::bail!("Leaf certificate failed validation against AWS Root CA");
+        if !is_trusted {
+            anyhow::bail!("Leaf certificate failed cryptographic validation against AWS Root CA");
         }
 
         let pub_key_bytes = parsed_leaf.public_key().subject_public_key.as_ref();
