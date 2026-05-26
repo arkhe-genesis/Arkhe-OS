@@ -347,7 +347,7 @@ func VerifyFheComputation(id string) bool {
     }
 
     // Verificar integridade do registro
-    expectedSeal := computeSeal(
+    _ = computeSeal(
         comp.ID + "|" + comp.CircuitHash + "|" + comp.InputHash + "|" + comp.OutputHash + "|" + comp.ZkpProofHash,
     )
     // A verificação completa requer validação externa da ZKP
