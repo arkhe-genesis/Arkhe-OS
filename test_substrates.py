@@ -1019,7 +1019,8 @@ def test_pvac_f_strings():
         'substrates/t/831_story_ip_chain_bridge/substrato_831_story_ip_chain_bridge.py',
         'substrates/t/836_julia_parser/substrato_836_julia_parser.py',
         'substrates/t/837_gno_land_integration/substrato_837_gno_land_integration.py',
-        'substrates/t/840_octra_fhe_bridge/substrato_840_octra_fhe_bridge.py'
+        'substrates/t/840_octra_fhe_bridge/substrato_840_octra_fhe_bridge.py',
+        'substrates/400-499_advanced/substrato_gonka_ai_gonka/substrato_gonka_ai_gonka.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
@@ -1586,3 +1587,25 @@ def test_substrato_841_web3_ontology_bridge():
     assert data["Name"] == "WEB3-ONTOLOGY-BRIDGE"
     assert "Canonical_Seal" in data
     assert "Artifacts" in data
+
+def test_substrato_gonka_ai_gonka():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_gonka_ai_gonka",
+        os.path.abspath('substrates/400-499_advanced/substrato_gonka_ai_gonka/substrato_gonka_ai_gonka.py')
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.SubstratoGonkaAiGonka()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["Title"] == "Gonka"
+    assert "Proof of Work 2.0" in data["Features"][0]
+    assert "Network Node" in data["Architecture"][1]

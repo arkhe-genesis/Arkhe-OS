@@ -19,3 +19,10 @@ def test_825_f_strings():
         tree = ast.parse(f.read())
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr)
+
+def test_gonka_f_strings():
+    import ast
+    with open('substrates/400-499_advanced/substrato_gonka_ai_gonka/substrato_gonka_ai_gonka.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
