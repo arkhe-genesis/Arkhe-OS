@@ -28,6 +28,7 @@ contract ArkheOntologyRegistry {
     mapping(uint256 => SubstrateEntry) public substrates;
     mapping(uint256 => mapping(uint256 => bool)) public crossLinks; // id1 -> id2 -> verified
     mapping(bytes32 => bool) public usedNonces;
+    uint256[] public registeredIds;
 
     // Ontologia OWL (armazenada como IPFS hash)
     mapping(string => string) public owlOntologyIPFS; // nome -> IPFS hash
@@ -56,6 +57,7 @@ contract ArkheOntologyRegistry {
         InEuint256 memory encryptedSeal,
         InEuint64 memory encryptedPhi
     ) external {
+        require(!substrates[id].exists, "Substrate already exists");
         euint256 seal = FHE.asEuint256(encryptedSeal);
         euint64 phi = FHE.asEuint64(encryptedPhi);
 
@@ -76,6 +78,8 @@ contract ArkheOntologyRegistry {
         // ACL: apenas este contrato pode acessar selo real
         FHE.allowThis(sealHandle);
         FHE.allowThis(phiHandle);
+
+        registeredIds.push(id);
 
         emit SubstrateRegistered(id, name, status);
     }
@@ -149,13 +153,14 @@ contract ArkheOntologyRegistry {
     ) external view returns (uint256[] memory) {
         // Em produção: integrar com The Graph ou subgraph
         // Simplificado: retorna todos (filtrar off-chain)
-        uint256[] memory result = new uint256[](1000);
+        uint256[] memory result = new uint256[](registeredIds.length);
         uint256 count = 0;
 
-        for (uint256 i = 0; i < 1000; i++) {
-            if (substrates[i].exists &&
-                keccak256(bytes(substrates[i].status)) == keccak256(bytes(status))) {
-                result[count] = i;
+        for (uint256 i = 0; i < registeredIds.length; i++) {
+            uint256 id = registeredIds[i];
+            if (substrates[id].exists &&
+                keccak256(bytes(substrates[id].status)) == keccak256(bytes(status))) {
+                result[count] = id;
                 count++;
             }
         }
