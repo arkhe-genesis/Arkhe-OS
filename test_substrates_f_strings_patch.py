@@ -26,3 +26,52 @@ def test_841_f_strings():
         tree = ast.parse(f.read())
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr)
+
+def test_863_f_strings():
+    import ast
+    with open('substrates/t/863_secops_guardian_bridge/substrato_863_secops_guardian_bridge.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
+
+def test_864_f_strings():
+    import ast
+    with open('substrates/t/864_eip8272_recent_roots_bridge/substrato_864_eip8272_recent_roots_bridge.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
+
+def test_862_f_strings():
+    import ast
+    with open('substrates/t/862_polaritonic_computing_bridge/substrato_862_polaritonic_computing_bridge.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
+
+def test_856_f_strings():
+    import ast
+    with open('substrates/t/856_quantum_computing_bridge/substrato_856_quantum_computing_bridge.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
+
+def test_853_f_strings():
+    import ast
+    with open('substrates/t/853_sap_ariba_erp_bridge/substrato_853_sap_ariba_erp_bridge.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
+
+def test_870_f_strings():
+    import ast
+    with open('substrates/t/870_blockchain_z_glm/substrato_870_blockchain_z_glm.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
+
+def test_245_f_strings():
+    import ast
+    with open('substrates/t/245_glosa_245/substrato_245_glosa_245.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
