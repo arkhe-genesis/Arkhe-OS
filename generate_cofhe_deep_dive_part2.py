@@ -87,13 +87,14 @@ pragma solidity ^0.8.25;
 
 import "@fhenixprotocol/cofhe-contracts/FHE.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @title OctraZKVerifier
  * @dev Integra ZK Verifier Fhenix com Octra HFHE para validação de inputs
  * Substrate 840+ — ZK Verification Module
  */
-contract OctraZKVerifier {
+contract OctraZKVerifier is Ownable {
     using ECDSA for bytes32;
 
     // Endereço público do ZK Verifier (predeterminado)
@@ -115,14 +116,14 @@ contract OctraZKVerifier {
         _;
     }
 
-    constructor(address _zkVerifierSigner) {
+    constructor(address _zkVerifierSigner) Ownable(msg.sender) {
         zkVerifierSigner = _zkVerifierSigner;
     }
 
     /**
      * @dev Atualiza endereço do ZK Verifier signer (governança)
      */
-    function updateZKVerifierSigner(address newSigner) external onlyZKVerifierSigner {
+    function updateZKVerifierSigner(address newSigner) external onlyOwner {
         // Requer GOV-840-001
         zkVerifierSigner = newSigner;
         emit ZKVerifierSignerUpdated(newSigner);
@@ -465,7 +466,6 @@ type FHEOperationResult struct {
 }
 
 // SlimListener monitora eventos on-chain
-type SlimListener monitora eventos on-chain
 type SlimListener struct {
 	client          *ethclient.Client
 	contractAddress common.Address
