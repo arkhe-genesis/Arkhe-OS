@@ -43,9 +43,11 @@ def network_watch():
 def publish_roots(filepath):
     """Publica a raiz de integridade de um arquivo no EIP-8272."""
     from web3 import Web3
+    hasher = hashlib.sha3_256()
     with open(filepath, "rb") as f:
-        content = f.read()
-    root = hashlib.sha3_256(content).digest()
+        for chunk in iter(lambda: f.read(4096), b""):
+            hasher.update(chunk)
+    root = hasher.digest()
     click.echo("Raiz publicada: {0}... para o arquivo {1}".format(root.hex()[:32], filepath))
 
 @cli.command()

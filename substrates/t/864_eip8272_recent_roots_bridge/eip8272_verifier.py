@@ -14,6 +14,4 @@ class EIP8272Verifier:
         # Calcula a raiz do arquivo
         root = hashlib.sha3_256(file_content).digest()
         # Verifica se a raiz está armazenada no contrato de sistema para o slot declarado
-        # ... (lógica de consulta ao storage do RECENT_ROOT_ADDRESS)
-        # Se válido e recente, retorna True
-        return True  # stub
+        raise NotImplementedError("EIP-8272 on-chain root verification is not yet implemented")

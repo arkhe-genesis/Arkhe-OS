@@ -96,6 +96,7 @@ class KuramotoBlockchainEngine:
         gas_used = sum(tx["gas_limit"] for tx in included_txs)
         self.total_gas_used += gas_used
 
+        iteration = -1
         for iteration in range(max_iterations):
             self.kuramoto_step(dt=0.01)
             phi_c = self.compute_phi_c()
