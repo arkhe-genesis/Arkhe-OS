@@ -10,7 +10,7 @@ app = Flask(__name__)
 # --- HTTP Route ---
 @app.route('/publish', methods=['POST'])
 def http_publish():
-    data = request.json
+    data = request.get_json(silent=True) or {}
     sequence = data.get('sequence')
     if not sequence:
         return jsonify({"error": "sequence is required"}), 400
