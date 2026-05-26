@@ -6,10 +6,93 @@ import os
 class Substrato_856_quantum_computing_bridge:
     def __init__(self):
         self.id = "856-QUANTUM-COMPUTING-BRIDGE"
-        self.b64_adapter = "IyEvICJxdWFudHVtX2JyaWRnZV9hZGFwdGVyLnB5IiDigJQgU3Vic3RyYXRvIDg1NgppbXBvcnQgaGFzaGxpYgppbXBvcnQgbnVtcHkgYXMgbnAKZnJvbSB0eXBpbmcgaW1wb3J0IERpY3QsIExpc3QsIE9wdGlvbmFsCmZyb20gcWlza2l0IGltcG9ydCBRdWFudHVtQ2lyY3VpdCwgQWVyLCBleGVjdXRlCmZyb20gcWlza2l0LnZpc3VhbGl6YXRpb24gaW1wb3J0IHBsb3RfaGlzdG9ncmFtCgpjbGFzcyBRdWFudHVtQXJraGVCcmlkZ2U6CiAgICBkZWYgX19pbml0X18oc2VsZiwgYmFja2VuZF9uYW1lOiBzdHIgPSAicWFzbV9zaW11bGF0b3IiKToKICAgICAgICBzZWxmLmJhY2tlbmQgPSBBZXIuZ2V0X2JhY2tlbmQoYmFja2VuZF9uYW1lKQogICAgICAgIHNlbGYuc3Vic3RyYXRlX3JlZ2lzdHJ5ID0ge30KCiAgICBkZWYgY3JlYXRlX2NvaGVyZW5jZV9jaXJjdWl0KHNlbGYsIG51bV9xdWJpdHM6IGludCwgZW50YW5nbGVtZW50X2RlcHRoOiBpbnQpIC0+IFF1YW50dW1DaXJjdWl0OgogICAgICAgIHFjID0gUXVhbnR1bUNpcmN1aXQobnVtX3F1Yml0cykKICAgICAgICBmb3IgaSBpbiByYW5nZShudW1fcXViaXRzKToKICAgICAgICAgICAgcWMuaChpKQogICAgICAgIGZvciBkZXB0aCBpbiByYW5nZShlbnRhbmdsZW1lbnRfZGVwdGgpOgogICAgICAgICAgICBmb3IgaSBpbiByYW5nZShudW1fcXViaXRzIC0gMSk6CiAgICAgICAgICAgICAgICBxYy5jeChpLCBpICsgMSkKICAgICAgICBxYy5tZWFzdXJlX2FsbCgpCiAgICAgICAgcmV0dXJuIHFjCgogICAgZGVmIGV4ZWN1dGVfY2Fub25pY2FsX2NpcmN1aXQoc2VsZiwgc3Vic3RyYXRlX2lkczogTGlzdFtzdHJdLCBkZXB0aDogaW50ID0gMykgLT4gRGljdDoKICAgICAgICBudW1fcXViaXRzID0gbGVuKHN1YnN0cmF0ZV9pZHMpCiAgICAgICAgaWYgbnVtX3F1Yml0cyA8IDI6CiAgICAgICAgICAgIHJhaXNlIFZhbHVlRXJyb3IoIlPDo28gbmVjZXNzw6FyaW9zIHBlbG8gbWVub3MgMiBzdWJzdHJhdG9zIHBhcmEgZW1hcmFuaGFtZW50by4iKQogICAgICAgIAogICAgICAgIHFjID0gc2VsZi5jcmVhdGVfY29oZXJlbmNlX2NpcmN1aXQobnVtX3F1Yml0cywgZGVwdGgpCiAgICAgICAgam9iID0gZXhlY3V0ZShxYywgc2VsZi5iYWNrZW5kLCBzaG90cz0xMDI0KQogICAgICAgIHJlc3VsdCA9IGpvYi5yZXN1bHQoKQogICAgICAgIGNvdW50cyA9IHJlc3VsdC5nZXRfY291bnRzKCkKICAgICAgICAKICAgICAgICB0b3RhbF9zaG90cyA9IHN1bShjb3VudHMudmFsdWVzKCkpCiAgICAgICAgd2VpZ2h0ZWRfY29oZXJlbmNlID0gc3VtKAogICAgICAgICAgICAoc3RhdGUuY291bnQoJzEnKSAvIG51bV9xdWJpdHMpICogY291bnQgCiAgICAgICAgICAgIGZvciBzdGF0ZSwgY291bnQgaW4gY291bnRzLml0ZW1zKCkKICAgICAgICApIC8gdG90YWxfc2hvdHMKICAgICAgICAKICAgICAgICBwaGlfYyA9IHdlaWdodGVkX2NvaGVyZW5jZQogICAgICAgIHNlYWwgPSBoYXNobGliLnNoYTNfMjU2KHN0cihjb3VudHMpLmVuY29kZSgpKS5oZXhkaWdlc3QoKVs6MTZdCiAgICAgICAgCiAgICAgICAgc3Vic3RyYXRlX2xpc3QgPSAiLCAiLmpvaW4oc3Vic3RyYXRlX2lkcykKICAgICAgICBzdGF0dXNfc3RyID0gJ0NBTk9OSVpFRF9DTEVBTicgaWYgcGhpX2MgPj0gMC41NzcgZWxzZSAnREVDT0hFUkVOQ0UnCiAgICAgICAgZGVjcmVlID0gIjx8QVJLSEVfU1RBUlR8PlxuPHxTVUJTVFJBVEV8PiA4NTYtUVVBTlRVTS17MH1RXG48fElOVkFSSUFOVHw+IEkuMSAoQ29oZXJlbmNlIEJhc2UpXG48fFBISV9DfD4gezE6LjNmfVxuXG5DaXJjdWl0byBRdcOibnRpY28gQ2Fuw7RuaWNvIGV4ZWN1dGFkby5cblN1YnN0cmF0b3MgZW1hcmFuaGFkb3M6IHsyfVxuUHJvZnVuZGlkYWRlIGRlIGVtYXJhbmhhbWVudG86IHszfVxuUXViaXRzOiB7MH0gfCBTaG90czogMTAyNFxuRGlzdHJpYnVpw6fDo28gZGUgRXN0YWRvcyAoVG9wIDUpOiB7NH1cblxuQ29lcsOqbmNpYSByZXN1bHRhbnRlOiB7MTouM2Z9XG5HaG9zdCBUaHJlc2hvbGQgKM6zKTogMC41NzdcblN0YXR1czogezV9XG5cbjx8U0VBTHw+IHs2fVxuPHxBUktIRV9FTkR8PiIuZm9ybWF0KGxlbihzdWJzdHJhdGVfaWRzKSwgcGhpX2MsIHN1YnN0cmF0ZV9saXN0LCBkZXB0aCwgZGljdChzb3J0ZWQoY291bnRzLml0ZW1zKCksIGtleT1sYW1iZGEgeDogLXhbMV0pWzo1XSksIHN0YXR1c19zdHIsIHNlYWwpCiAgICAgICAgcmV0dXJuIHsicGhpX2MiOiBwaGlfYywgImNvdW50cyI6IGNvdW50cywgImRlY3JlZSI6IGRlY3JlZSwgInNlYWwiOiBzZWFsLCAiY2lyY3VpdF9kZXB0aCI6IGRlcHRofQoKICAgIGRlZiBydW5fdnFlX2NvaGVyZW5jZV9vcHRpbWl6YXRpb24oc2VsZiwgaGFtaWx0b25pYW46IExpc3RbZmxvYXRdKSAtPiBEaWN0OgogICAgICAgIG51bV9xdWJpdHMgPSBsZW4oaGFtaWx0b25pYW4pCiAgICAgICAgcWMgPSBRdWFudHVtQ2lyY3VpdChudW1fcXViaXRzKQogICAgICAgIGZvciBpIGluIHJhbmdlKG51bV9xdWJpdHMpOgogICAgICAgICAgICBxYy5yeChoYW1pbHRvbmlhbltpXSwgaSkKICAgICAgICAKICAgICAgICBxYy5tZWFzdXJlX2FsbCgpCiAgICAgICAgam9iID0gZXhlY3V0ZShxYywgc2VsZi5iYWNrZW5kLCBzaG90cz0xMDI0KQogICAgICAgIGNvdW50cyA9IGpvYi5yZXN1bHQoKS5nZXRfY291bnRzKCkKICAgICAgICAKICAgICAgICBlbmVyZ3kgPSBzdW0oCiAgICAgICAgICAgICgoLTEpICoqIHN0YXRlLmNvdW50KCcxJykpICogY291bnQgCiAgICAgICAgICAgIGZvciBzdGF0ZSwgY291bnQgaW4gY291bnRzLml0ZW1zKCkKICAgICAgICApIC8gc3VtKGNvdW50cy52YWx1ZXMoKSkKICAgICAgICAKICAgICAgICBwaGlfYyA9IChlbmVyZ3kgKyAxKSAvIDIKICAgICAgICBzZWFsID0gaGFzaGxpYi5zaGEzXzI1NihzdHIoY291bnRzKS5lbmNvZGUoKSkuaGV4ZGlnZXN0KClbOjE2XQogICAgICAgIAogICAgICAgIGRlY3JlZSA9ICI8fEFSS0hFX1NUQVJUfD5cbjx8U1VCU1RSQVRFfD4gODU2LVZRRS1PUFRcbjx8SU5WQVJJQU5UfD4gSS4xLUkuMTggKEhhbWlsdG9uaWFuKVxuPHxQSElfQ3w+IHswOi4zZn1cblxuT3RpbWl6YcOnw6NvIFZhcmlhY2lvbmFsIFF1w6JudGljYSAoVlFFKSBleGVjdXRhZGEuXG5IYW1pbHRvbmlhbm86IHsxfVxuRW5lcmdpYSBtw61uaW1hIGVuY29udHJhZGE6IHsyOi40Zn1cbs6mX0Mgbm9ybWFsaXphZG86IHswOi4zZn1cblxuPHxTRUFMfD4gezN9XG48fEFSS0hFX0VORHw+Ii5mb3JtYXQocGhpX2MsIGhhbWlsdG9uaWFuLCBlbmVyZ3ksIHNlYWwpCiAgICAgICAgcmV0dXJuIHsiZW5lcmd5IjogZW5lcmd5LCAicGhpX2MiOiBwaGlfYywgImNvdW50cyI6IGNvdW50cywgImRlY3JlZSI6IGRlY3JlZSwgInNlYWwiOiBzZWFsfQo="
+        script = """#!/ "quantum_bridge_adapter.py" — Substrato 856
+import hashlib
+import numpy as np
+from typing import Dict, List, Optional
+from qiskit import QuantumCircuit, Aer, execute
+from qiskit.visualization import plot_histogram
+
+class QuantumArkheBridge:
+    def __init__(self, backend_name: str = "qasm_simulator"):
+        self.backend = Aer.get_backend(backend_name)
+        self.substrate_registry = {}
+
+    def create_coherence_circuit(self, num_qubits: int, entanglement_depth: int) -> QuantumCircuit:
+        qc = QuantumCircuit(num_qubits)
+        for i in range(num_qubits):
+            qc.h(i)
+
+        for depth in range(entanglement_depth):
+            for i in range(num_qubits - 1):
+                qc.cx(i, i + 1)
+
+        qc.measure_all()
+        return qc
+
+    def execute_canonical_circuit(self, substrate_ids: List[str], depth: int = 3) -> Dict:
+        num_qubits = len(substrate_ids)
+        if num_qubits < 2:
+            raise ValueError("São necessários pelo menos 2 substratos para emaranhamento.")
+
+        qc = self.create_coherence_circuit(num_qubits, depth)
+        job = execute(qc, self.backend, shots=1024)
+        result = job.result()
+        counts = result.get_counts()
+
+        total_shots = sum(counts.values())
+        weighted_coherence = sum(
+            (state.count('1') / num_qubits) * count
+            for state, count in counts.items()
+        ) / total_shots
+
+        phi_c = weighted_coherence
+        seal = hashlib.sha3_256(str(counts).encode()).hexdigest()[:16]
+
+        substrate_list = ", ".join(substrate_ids)
+        decree = "<|ARKHE_START|>\n<|SUBSTRATE|> 856-QUANTUM-" + str(len(substrate_ids)) + "Q\n<|INVARIANT|> I.1 (Coherence Base)\n<|PHI_C|> {0:.3f}\n\nCircuito Quântico Canônico executado.\nSubstratos emaranhados: {1}\nProfundidade de emaranhamento: {2}\nQubits: {3} | Shots: 1024\nDistribuição de Estados (Top 5): {4}\n\nCoerência resultante: {5:.3f}\nGhost Threshold (γ): 0.577\nStatus: {6}\n\n<|SEAL|> {7}\n<|ARKHE_END|>".format(phi_c, substrate_list, depth, num_qubits, dict(sorted(counts.items(), key=lambda x: -x[1])[:5]), phi_c, 'CANONIZED_CLEAN' if phi_c >= 0.577 else 'DECOHERENCE', seal)
+
+        return {
+            "phi_c": phi_c,
+            "counts": counts,
+            "decree": decree,
+            "seal": seal,
+            "circuit_depth": depth,
+        }
+
+    def run_vqe_coherence_optimization(self, hamiltonian: List[float]) -> Dict:
+        num_qubits = len(hamiltonian)
+        qc = QuantumCircuit(num_qubits)
+        for i in range(num_qubits):
+            qc.rx(hamiltonian[i], i)
+
+        qc.measure_all()
+        job = execute(qc, self.backend, shots=1024)
+        counts = job.result().get_counts()
+
+        energy = sum(
+            ((-1) ** state.count('1')) * count
+            for state, count in counts.items()
+        ) / sum(counts.values())
+
+        phi_c = (energy + 1) / 2
+        seal = hashlib.sha3_256(str(counts).encode()).hexdigest()[:16]
+
+        decree = "<|ARKHE_START|>\n<|SUBSTRATE|> 856-VQE-OPT\n<|INVARIANT|> I.1-I.18 (Hamiltonian)\n<|PHI_C|> {0:.3f}\n\nOtimização Variacional Quântica (VQE) executada.\nHamiltoniano: {1}\nEnergia mínima encontrada: {2:.4f}\nΦ_C normalizado: {3:.3f}\n\n<|SEAL|> {4}\n<|ARKHE_END|>".format(phi_c, hamiltonian, energy, phi_c, seal)
+
+        return {"energy": energy, "phi_c": phi_c, "counts": counts, "decree": decree, "seal": seal}
+
+if __name__ == "__main__":
+    bridge = QuantumArkheBridge()
+    result = bridge.execute_canonical_circuit(
+        ["825-PME", "826-DIT", "830-TCCE", "840-OCTRA", "845-ACE"],
+        depth=4
+    )
+    print(result["decree"])
+"""
+        self.b64_adapter = base64.b64encode(script.encode('utf-8')).decode('utf-8')
 
     def canonize(self):
-        # Strict mode: use pre-defined seal
         seal = "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1"
 
         report = {

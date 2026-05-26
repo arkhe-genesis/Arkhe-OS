@@ -6,10 +6,71 @@ import os
 class Substrato_859_biological_computing_bridge:
     def __init__(self):
         self.id = "859-BIOLOGICAL-COMPUTING-BRIDGE"
-        self.b64_adapter = "IyEvICJiaW9sb2dpY2FsX2NvbXB1dGluZ19icmlkZ2UucHkiIOKAlCBTdWJzdHJhdG8gODU5CmltcG9ydCBudW1weSBhcyBucApmcm9tIHNjaXB5LmludGVncmF0ZSBpbXBvcnQgc29sdmVfaXZwCmltcG9ydCBoYXNobGliCgpjbGFzcyBSZXByZXNzaWxhdG9yOgogICAgZGVmIF9faW5pdF9fKHNlbGYsIGFscGhhPTEwMCwgYmV0YT0xLCBuPTIsIGdhbW1hPTEpOgogICAgICAgIHNlbGYuYWxwaGEgPSBhbHBoYQogICAgICAgIHNlbGYuYmV0YSA9IGJldGEKICAgICAgICBzZWxmLm4gPSBuCiAgICAgICAgc2VsZi5nYW1tYSA9IGdhbW1hCgogICAgZGVmIG9kZV9yZXByZXNzaWxhdG9yKHNlbGYsIHQsIHkpOgogICAgICAgIG1fQSwgcF9BLCBtX0IsIHBfQiwgbV9DLCBwX0MgPSB5CiAgICAgICAgZl9BID0gc2VsZi5hbHBoYSAvICgxICsgKHBfQyAvIHNlbGYuYmV0YSkqKnNlbGYubikKICAgICAgICBmX0IgPSBzZWxmLmFscGhhIC8gKDEgKyAocF9BIC8gc2VsZi5iZXRhKSoqc2VsZi5uKQogICAgICAgIGZfQyA9IHNlbGYuYWxwaGEgLyAoMSArIChwX0IgLyBzZWxmLmJldGEpKipzZWxmLm4pCiAgICAgICAgZG1BID0gLXNlbGYuZ2FtbWEgKiBtX0EgKyBmX0EKICAgICAgICBkbUIgPSAtc2VsZi5nYW1tYSAqIG1fQiArIGZfQgogICAgICAgIGRtQyA9IC1zZWxmLmdhbW1hICogbV9DICsgZl9DCiAgICAgICAgZHBBID0gLXNlbGYuZ2FtbWEgKiBwX0EgKyBzZWxmLmdhbW1hICogbV9BCiAgICAgICAgZHBCID0gLXNlbGYuZ2FtbWEgKiBwX0IgKyBzZWxmLmdhbW1hICogbV9CCiAgICAgICAgZHBDID0gLXNlbGYuZ2FtbWEgKiBwX0MgKyBzZWxmLmdhbW1hICogbV9DCiAgICAgICAgcmV0dXJuIFtkbUEsIGRwQSwgZG1CLCBkcEIsIGRtQywgZHBDXQoKICAgIGRlZiBzaW11bGF0ZShzZWxmLCBUPTIwMCwgZHQ9MC4xKToKICAgICAgICB0X2V2YWwgPSBucC5hcmFuZ2UoMCwgVCwgZHQpCiAgICAgICAgeTAgPSBucC5hcnJheShbMC4xLCAwLjIsIDAuMywgMC4xLCAwLjIsIDAuNV0pCiAgICAgICAgc29sID0gc29sdmVfaXZwKHNlbGYub2RlX3JlcHJlc3NpbGF0b3IsIFswLCBUXSwgeTAsIHRfZXZhbD10X2V2YWwsIG1ldGhvZD0nUks0NScpCiAgICAgICAgcEEgPSBzb2wueVsxXQogICAgICAgIHBCID0gc29sLnlbM10KICAgICAgICBwQyA9IHNvbC55WzVdCiAgICAgICAgcmV0dXJuIHNvbC50LCBwQSwgcEIsIHBDCgpjbGFzcyBCaW9sb2dpY2FsQXJraGVCcmlkZ2U6CiAgICBkZWYgX19pbml0X18oc2VsZik6CiAgICAgICAgc2VsZi5jaXJjdWl0ID0gUmVwcmVzc2lsYXRvcigpCgogICAgZGVmIG1lYXN1cmVfYmlvbG9naWNhbF9jb2hlcmVuY2Uoc2VsZikgLT4gZGljdDoKICAgICAgICB0LCBwQSwgcEIsIHBDID0gc2VsZi5jaXJjdWl0LnNpbXVsYXRlKFQ9MTUwKQogICAgICAgIGRlZiBzeW5jX2luZGV4KHgsIHkpOgogICAgICAgICAgICB4X25vcm0gPSAoeCAtIG5wLm1lYW4oeCkpIC8gbnAuc3RkKHgpCiAgICAgICAgICAgIHlfbm9ybSA9ICh5IC0gbnAubWVhbih5KSkgLyBucC5zdGQoeSkKICAgICAgICAgICAgcmV0dXJuIG5wLmNvcnJjb2VmKHhfbm9ybSwgeV9ub3JtKVswLDFdCgogICAgICAgIHN5bmNfQUIgPSBzeW5jX2luZGV4KHBBWy01MDA6XSwgcEJbLTUwMDpdKQogICAgICAgIHN5bmNfQkMgPSBzeW5jX2luZGV4KHBCWy01MDA6XSwgcENbLTUwMDpdKQogICAgICAgIHN5bmNfQ0EgPSBzeW5jX2luZGV4KHBDWy01MDA6XSwgcEFbLTUwMDpdKQogICAgICAgIHBoaV9jID0gKHN5bmNfQUIgKyBzeW5jX0JDICsgc3luY19DQSkgLyAzCiAgICAgICAgcGhpX2MgPSBtYXgoMC4wLCBwaGlfYykKCiAgICAgICAgc3RhdHVzID0gIkNPSEVSRU5UIiBpZiBwaGlfYyA+PSAwLjU3NyBlbHNlICJERUNPSEVSRU5DRSIKICAgICAgICBzZWFsID0gaGFzaGxpYi5zaGEzXzI1NihzdHIocGhpX2MpLmVuY29kZSgpKS5oZXhkaWdlc3QoKVs6MTZdCiAgICAgICAgZGVjcmVlID0gIjx8QVJLSEVfU1RBUlR8PlxuPHxTVUJTVFJBVEV8PiA4NTktUkVQUkVTU0lMQVRPUlxuPHxJTlZBUklBTlR8PiBJLjEgKENvaGVyZW5jZSBCYXNlKVxuPHxQSElfQ3w+IHswOi4zZn1cblxuQ2lyY3VpdG8gQmlvbMOzZ2ljbyBSZXByZXNzaWxhZG9yIGV4ZWN1dGFkby5cbkdlbmVzOiBBLCBCLCBDIChvc2NpbGFkb3IgZGUgdHLDqnMgbsOzcylcblNpbmNyb25pYSBtw6lkaWEgKM6mX0MpOiB7MDouM2Z9XG5HaG9zdCBUaHJlc2hvbGQgKM6zKTogMC41NzcgfCBTdGF0dXM6IHsxfVxuXG48fFNFQUx8PiB7Mn1cbjx8QVJLSEVfRU5EfD4iLmZvcm1hdChwaGlfYywgc3RhdHVzLCBzZWFsKQogICAgICAgIHJldHVybiB7InBoaV9jIjogcGhpX2MsICJkZWNyZWUiOiBkZWNyZWUsICJzZWFsIjogc2VhbH0K"
+        script = """#!/ "biological_computing_bridge.py" — Substrato 859
+import numpy as np
+from scipy.integrate import solve_ivp
+import hashlib
+
+class Repressilator:
+    def __init__(self, alpha=100, beta=1, n=2, gamma=1):
+        self.alpha = alpha
+        self.beta = beta
+        self.n = n
+        self.gamma = gamma
+
+    def ode_repressilator(self, t, y):
+        m_A, p_A, m_B, p_B, m_C, p_C = y
+        f_A = self.alpha / (1 + (p_C / self.beta)**self.n)
+        f_B = self.alpha / (1 + (p_A / self.beta)**self.n)
+        f_C = self.alpha / (1 + (p_B / self.beta)**self.n)
+
+        dmA = -self.gamma * m_A + f_A
+        dmB = -self.gamma * m_B + f_B
+        dmC = -self.gamma * m_C + f_C
+        dpA = -self.gamma * p_A + self.gamma * m_A
+        dpB = -self.gamma * p_B + self.gamma * m_B
+        dpC = -self.gamma * p_C + self.gamma * m_C
+        return [dmA, dpA, dmB, dpB, dmC, dpC]
+
+    def simulate(self, T=200, dt=0.1):
+        t_eval = np.arange(0, T, dt)
+        y0 = np.array([0.1, 0.2, 0.3, 0.1, 0.2, 0.5])
+        sol = solve_ivp(self.ode_repressilator, [0, T], y0, t_eval=t_eval, method='RK45')
+        pA = sol.y[1]
+        pB = sol.y[3]
+        pC = sol.y[5]
+        return sol.t, pA, pB, pC
+
+class BiologicalArkheBridge:
+    def __init__(self):
+        self.circuit = Repressilator()
+
+    def measure_biological_coherence(self) -> dict:
+        t, pA, pB, pC = self.circuit.simulate(T=150)
+        def sync_index(x, y):
+            x_norm = (x - np.mean(x)) / np.std(x)
+            y_norm = (y - np.mean(y)) / np.std(y)
+            return np.corrcoef(x_norm, y_norm)[0,1]
+
+        sync_AB = sync_index(pA[-500:], pB[-500:])
+        sync_BC = sync_index(pB[-500:], pC[-500:])
+        sync_CA = sync_index(pC[-500:], pA[-500:])
+        phi_c = (sync_AB + sync_BC + sync_CA) / 3
+        phi_c = max(0.0, phi_c)
+
+        status = "COHERENT" if phi_c >= 0.577 else "DECOHERENCE"
+        seal = hashlib.sha3_256(str(phi_c).encode()).hexdigest()[:16]
+        decree = "<|ARKHE_START|>\n<|SUBSTRATE|> 859-REPRESSILATOR\n<|INVARIANT|> I.1 (Coherence Base)\n<|PHI_C|> {0:.3f}\n\nCircuito Biológico Repressilador executado.\nGenes: A, B, C (oscilador de três nós)\nSincronia média (Φ_C): {1:.3f}\nGhost Threshold (γ): 0.577 | Status: {2}\n\n<|SEAL|> {3}\n<|ARKHE_END|>".format(phi_c, phi_c, status, seal)
+        return {"phi_c": phi_c, "decree": decree, "seal": seal}
+
+if __name__ == "__main__":
+    bridge = BiologicalArkheBridge()
+    result = bridge.measure_biological_coherence()
+    print(result["decree"])
+"""
+        self.b64_adapter = base64.b64encode(script.encode('utf-8')).decode('utf-8')
 
     def canonize(self):
-        # Strict mode: use pre-defined seal
         seal = "c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4"
 
         report = {
