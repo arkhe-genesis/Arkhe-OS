@@ -5,21 +5,20 @@ import os
 class SubstratoTsotchkeEshkol:
     def canonize(self):
         report = {
-            "Title": "Eshkol",
-            "Description": "Eshkol is a Scheme-based programming language that unifies functional programming with native automatic differentiation, providing a mathematically rigorous foundation for gradient-based optimization, numerical simulation, and machine learning research. Built on Homotopy Type Theory foundations and compiled to native code via LLVM, Eshkol delivers mathematical correctness and deterministic performance without sacrificing the elegance of homoiconic Lisp syntax.",
+            "Title": "Eshkol - A Programming Language for Mathematical Computing",
+            "Description": "Eshkol is a Scheme-based programming language that unifies functional programming with native automatic differentiation. It serves as a substrato de computação simbólica, backend para o Assistant canônico e módulo de diferenciação automática para o fine-tuning pipeline.",
             "Features": [
-                "True automatic differentiation - Not numerical approximation. Exact symbolic, forward-mode, and reverse-mode AD with full vector calculus (∇, ∇·, ∇×, ∇²)",
-                "Zero-overhead abstractions - Type-level proofs erase at compile time. Arena allocation is O(1). No runtime penalties for safety",
-                "Deterministic performance - No garbage collector means no unpredictable pauses. Critical for real-time systems and production ML",
-                "Native compilation - LLVM backend generates machine code competitive with hand-written C while preserving high-level expressiveness",
-                "Mathematical rigor - HoTT type foundations ensure correctness properties are mathematically provable, not just tested"
+                "True automatic differentiation: Exact symbolic, forward-mode, and reverse-mode AD with full vector calculus.",
+                "Zero-overhead abstractions: Arena allocation is O(1). No runtime penalties for safety.",
+                "Deterministic performance: No garbage collector.",
+                "Native compilation: LLVM backend generates machine code.",
+                "Web platform: Compiles to WebAssembly with 59 DOM bindings.",
+                "Mathematical rigor: HoTT type foundations ensure correctness properties are mathematically provable."
             ],
             "Architecture": [
-                "C17 runtime, C++20 compiler implementation",
-                "LLVM 21 backend with native code generation and JIT support",
-                "Arena-based allocation with deterministic cleanup",
-                "HoTT-based gradual typing with dependent type support",
-                "Forward/reverse/symbolic AD modes with nested computation"
+                "Compiler Architecture: Recursive descent parser, HoTT type checker, modular LLVM backend, Arena memory allocator.",
+                "Runtime Representation: 16-byte tagged structures with 8-bit type tags.",
+                "AD System: Forward-mode (Dual Numbers), Reverse-mode (Computational Graphs), Symbolic Mode."
             ]
         }
 

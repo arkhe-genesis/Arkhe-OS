@@ -1,49 +1,62 @@
-mkdir -p arkhe_os/starter/shared
-mkdir -p arkhe-starter-java-spring/src/main/java/com/arkhe/banking/config
-mkdir -p arkhe-starter-java-spring/src/main/java/com/arkhe/banking/controller
-mkdir -p arkhe-starter-java-spring/src/main/java/com/arkhe/banking/service
-mkdir -p arkhe-starter-java-spring/src/main/java/com/arkhe/banking/model
-mkdir -p arkhe-starter-java-spring/src/main/java/com/arkhe/banking/predicate
-mkdir -p arkhe-starter-java-spring/src/main/java/com/arkhe/banking/aspect
-mkdir -p arkhe-starter-java-spring/src/main/resources/predicates
-mkdir -p arkhe-starter-java-spring/src/main/resources/zinc
-mkdir -p arkhe-starter-java-spring/src/test/java/com/arkhe/banking/compliance
-mkdir -p arkhe-starter-java-spring/src/test/java/com/arkhe/banking/integration
-mkdir -p arkhe-starter-java-spring/docker/k8s
-mkdir -p arkhe-starter-java-spring/.github/workflows
-mkdir -p arkhe-starter-java-spring/scripts
+#!/bin/bash
+# ============================================================
+# setup.sh — Download and build llama.cpp
+# Usage: ./setup.sh [--cuda] [--metal]
+# ============================================================
+set -euo pipefail
 
-mkdir -p arkhe-starter-python-fastapi/src/arkhe_banking/api/v1/endpoints
-mkdir -p arkhe-starter-python-fastapi/src/arkhe_banking/core
-mkdir -p arkhe-starter-python-fastapi/src/arkhe_banking/models
-mkdir -p arkhe-starter-python-fastapi/src/arkhe_banking/services
-mkdir -p arkhe-starter-python-fastapi/src/arkhe_banking/predicates
-mkdir -p arkhe-starter-python-fastapi/src/arkhe_banking/utils
-mkdir -p arkhe-starter-python-fastapi/tests/unit
-mkdir -p arkhe-starter-python-fastapi/tests/integration
-mkdir -p arkhe-starter-python-fastapi/docker/k8s
-mkdir -p arkhe-starter-python-fastapi/notebooks
-mkdir -p arkhe-starter-python-fastapi/.github/workflows
-mkdir -p arkhe-starter-python-fastapi/scripts
+LLAMA_CPP_PATH="${LLAMA_CPP_PATH:-./llama.cpp}"
+BUILD_TYPE="cpu"    # cpu | cuda | metal | vulkan
 
-mkdir -p arkhe-starter-csharp-aspnet/src/Arkhe.Banking.Api/Controllers
-mkdir -p arkhe-starter-csharp-aspnet/src/Arkhe.Banking.Api/Middleware
-mkdir -p arkhe-starter-csharp-aspnet/src/Arkhe.Banking.Api/Services
-mkdir -p arkhe-starter-csharp-aspnet/src/Arkhe.Banking.Api/Models
-mkdir -p arkhe-starter-csharp-aspnet/src/Arkhe.Banking.Api/Predicates
-mkdir -p arkhe-starter-csharp-aspnet/src/Arkhe.Banking.Core/Interfaces
-mkdir -p arkhe-starter-csharp-aspnet/src/Arkhe.Banking.Core/Extensions
-mkdir -p arkhe-starter-csharp-aspnet/src/Arkhe.Banking.Shared/Models
-mkdir -p arkhe-starter-csharp-aspnet/src/Arkhe.Banking.Shared/Utils
-mkdir -p arkhe-starter-csharp-aspnet/tests/Arkhe.Banking.Api.Tests/Controllers
-mkdir -p arkhe-starter-csharp-aspnet/tests/Arkhe.Banking.Api.Tests/Integration
-mkdir -p arkhe-starter-csharp-aspnet/tests/Arkhe.Banking.Core.Tests/Predicates
-mkdir -p arkhe-starter-csharp-aspnet/tests/Arkhe.Banking.Core.Tests/Services
-mkdir -p arkhe-starter-csharp-aspnet/azure/bicep/modules
-mkdir -p arkhe-starter-csharp-aspnet/azure/bicep/parameters
-mkdir -p arkhe-starter-csharp-aspnet/azure/pipelines
-mkdir -p arkhe-starter-csharp-aspnet/azure/policies
-mkdir -p arkhe-starter-csharp-aspnet/docker/k8s
-mkdir -p arkhe-starter-csharp-aspnet/scripts
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --cuda)   BUILD_TYPE="cuda"; shift ;;
+        --metal)  BUILD_TYPE="metal"; shift ;;
+        --vulkan) BUILD_TYPE="vulkan"; shift ;;
+        *) echo "Unknown option: $1"; exit 1 ;;
+    esac
+done
 
-mkdir -p scripts
+echo "=== llama.cpp setup (backend: $BUILD_TYPE) ==="
+
+# Clone if not present
+if [[ ! -d "$LLAMA_CPP_PATH" ]]; then
+    echo "[1/3] Cloning llama.cpp..."
+    git clone --depth 1 https://github.com/ggerganov/llama.cpp "$LLAMA_CPP_PATH"
+else
+    echo "[1/3] llama.cpp already present, pulling latest..."
+    git -C "$LLAMA_CPP_PATH" pull --ff-only
+fi
+
+# Configure cmake flags
+CMAKE_ARGS="-DLLAMA_BUILD_SERVER=ON"
+case "$BUILD_TYPE" in
+    cuda)   CMAKE_ARGS="$CMAKE_ARGS -DGGML_CUDA=ON" ;;
+    metal)  CMAKE_ARGS="$CMAKE_ARGS -DGGML_METAL=ON" ;;
+    vulkan) CMAKE_ARGS="$CMAKE_ARGS -DGGML_VULKAN=ON" ;;
+esac
+
+# Build
+echo "[2/3] Building llama.cpp (this may take a few minutes)..."
+cmake -B "$LLAMA_CPP_PATH/build" "$LLAMA_CPP_PATH" $CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
+cmake --build "$LLAMA_CPP_PATH/build" --config Release -j "$(nproc)"
+
+# Verify
+SERVER_BIN="$LLAMA_CPP_PATH/build/bin/llama-server"
+if [[ -f "$SERVER_BIN" ]]; then
+    echo "[3/3] Build successful: $SERVER_BIN"
+    "$SERVER_BIN" --version 2>&1 | head -1
+else
+    echo "[ERROR] Build failed: $SERVER_BIN not found"
+    exit 1
+fi
+
+mkdir -p models logs
+
+echo ""
+echo "=== Setup complete ==="
+echo "Next steps:"
+echo "  1. Place a .gguf model in ./models/"
+echo "     Example: huggingface-cli download bartowski/Meta-Llama-3-8B-Instruct-GGUF --include '*.Q4_K_M.gguf' --local-dir ./models"
+echo "  2. Start the server:"
+echo "     MODEL_PATH=./models/your-model.gguf ./scripts/server.sh"

@@ -1,0 +1,8 @@
+[substrate]
+id = "870-BLOCKCHAIN-Z-GLM"
+name = "Blockchain Z (GLM)"
+category = "blockchain"
+architect = "Rafael Oliveira"
+orcid = "0009-0005-2697-4668"
+version = "870.1.0"
+source_verified = true

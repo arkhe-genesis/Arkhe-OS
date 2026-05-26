@@ -19,3 +19,24 @@ def test_825_f_strings():
         tree = ast.parse(f.read())
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr)
+
+def test_841_f_strings():
+    import ast
+    with open('substrates/t/841_web3_ontology_bridge/substrato_841_web3_ontology_bridge.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
+
+def test_870_f_strings():
+    import ast
+    with open('substrates/t/870_blockchain_z_glm/substrato_870_blockchain_z_glm.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
+
+def test_870_g_f_strings():
+    import glob
+    for filepath in glob.glob("substrates/t/870_g_arkhe_http_gateway/*.py"):
+        with open(filepath, 'r') as f:
+            content = f.read()
+            assert "f\"" not in content, f"f-strings are strictly prohibited in the codebase. Found in {filepath}"

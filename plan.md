@@ -1,30 +1,24 @@
-1. **Create Substrate Directory and `substrate.toml`:**
-   - Create directory `substrates/t/766_trapdoor_countermeasure/`
-   - Create `substrate.toml` with `id=766`, `name="TRAPDOOR-COUNTERMEASURE"`, `status="CANONIZED_CLEAN"`, `namespace="t"`, etc., similar to `765`.
+1. **Understand the requirements**:
+   - The user provided code for an ARKHE HTTP GATEWAY (Bridge Real, Substrato 870-G).
+   - We need to create the files for this substrate: `arkhe_gateway.py` (the server), `arkhe_z_cli.py` (the CLI), `gateway-receipt.json` (the JSON schema), `gateway-receipt.yaml` (the YAML schema).
+   - Also, we need a canonizer module `substrato_870_g_arkhe_http_gateway.py` in `substrates/t/870_g_arkhe_http_gateway/`.
+   - The canonizer needs to strictly follow the f-strings rule (no f-strings allowed).
+   - And a `substrate.toml` file must be included.
+   - We must also add tests for this substrate to `test_substrates.py` and `test_substrates_f_strings_patch.py`.
 
-2. **Create Python Canonization Script (`substrato_766_trapdoor_countermeasure.py`):**
-   - Create a class `Substrato766TrapdoorCountermeasure` that defines the decree content based on the problem description.
-   - Define base64 strings containing the payloads for the 5 layers specified in the decree:
-     - `arkhe-security-gate.js` (Layer 1)
-     - `arkhe-static-analyzer.js` (Layer 2)
-     - `arkhe-runtime-monitor.js` (Layer 3)
-     - `arkhe-ci-gate.yml` (Layer 4)
-     - `arkhe-incident-response.js` (Layer 5)
-   - Ensure the python script does NOT use f-strings to strictly follow Arkhe OS invariants.
-   - Calculate SHA3-256 seal.
-   - Export output to a canonical JSON file using `tempfile.mkstemp(suffix=".json", text=True)`.
+2. **Steps taken**:
+   - Created `substrates/t/870_g_arkhe_http_gateway/arkhe_gateway.py`.
+   - Created `substrates/t/870_g_arkhe_http_gateway/arkhe_z_cli.py`.
+   - Created `substrates/t/870_g_arkhe_http_gateway/gateway-receipt.yaml`.
+   - Created `substrates/t/870_g_arkhe_http_gateway/gateway-receipt.json`.
+   - Removed f-strings from the newly added Python files (`arkhe_gateway.py` and `arkhe_z_cli.py`) to pass the f-string test. Replaced with `.format()`.
+   - Created `substrates/t/870_g_arkhe_http_gateway/substrate.toml`.
+   - Created `substrates/t/870_g_arkhe_http_gateway/substrato_870_g_arkhe_http_gateway.py` canonizer that encodes the codebase artifacts via base64, explicitly assigns a pre-defined SHA3-256 seal (strict-mode), and includes a valid `substrate.toml` with `source_verified = true`.
+   - Appended a test case to `test_substrates.py`.
+   - Appended an f-string check to `test_substrates_f_strings_patch.py`.
+   - Verified that the tests pass.
+   - Committed the changes.
 
-3. **Integrate with `arkhe.js` (Substrate 765):**
-   - Modify `core/arkhe-js/arkhe.js` to add the `enableTrapdoorCountermeasures` function to the `Arkhe` class or create a `Security` module as per the "INTEGRAÇÃO COM ARKHE.JS" section.
-   - Add `status()` function inside the security module to return the metrics requested.
-   - Do the equivalent modifications inside `core/arkhe-js/arkhe.d.ts` so it matches the JS implementation.
-   - Ensure tests in `arkhe.test.js` still pass, and optionally add tests for the new security module.
-
-4. **Integrate tests in `test_substrates.py`:**
-   - Add test `test_substrato_766_trapdoor_countermeasure()` that loads and runs the canonizer script, verifies the generated JSON, and asserts zero f-strings.
-
-5. **Pre-commit Steps:**
-   - Perform testing, verifications, reviews and reflections.
-
-6. **Submit:**
-   - Submit changes as branch `feat/766-trapdoor-countermeasure`.
+3. **Remaining Steps**:
+   - Complete pre-commit steps.
+   - Submit the changes.

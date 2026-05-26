@@ -21,7 +21,8 @@ OutputBaseFilename=ArkheOS-Full-{#MyAppVersion}-Windows-x64
 Compression=lzma2/ultra64
 SolidCompression=yes
 WizardStyle=modern
-ArchitecturesInstallIn64BitMode=x64
+ArchitecturesInstallIn64BitMode=x64 arm64
+ArchitecturesAllowed=x64 arm64
 PrivilegesRequired=admin
 
 [Languages]
