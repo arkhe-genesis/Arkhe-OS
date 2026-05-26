@@ -1,39 +1,34 @@
 import json
-import os
+import base64
 import tempfile
-from typing import Dict, Any
+import os
 
-class Substrato865CohesionEngine:
-    """
-    Substrate 865: COHESION-ENGINE
-    Category: infrastructure
-    """
+class Substrato_865_cohesion_engine:
     def __init__(self):
-        self.metadata = {
-            "id": "865",
-            "name": "COHESION-ENGINE",
-            "category": "infrastructure",
-            "status": "CANONIZED_PROVISIONAL",
-            "phi_c": 0.988611,
-            "canonical_seal": "f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1"
-        }
-        self.payloads = {
-        "cohesion_engine.py": "IyEvICJjb2hlc2lvbl9lbmdpbmUucHkiIOKAlCBTdWJzdHJhdG8gODY1CiMgQW5hbGlzYSBvIHJlZ2lzdHJvIGRlIHN1YnN0cmF0b3MsIGlkZW50aWZpY2EgdmF6aW9zIGUgZ2VyYSBkZWNyZXRvcyBkZSBpbnRlZ3Jhw6fDo28KaW1wb3J0IGpzb24KaW1wb3J0IGhhc2hsaWIKZnJvbSBpdGVydG9vbHMgaW1wb3J0IGNvbWJpbmF0aW9ucwoKIyBTaW11bGHDp8OjbyBkbyByZWdpc3RybyBkZSBzdWJzdHJhdG9zIChjYXJyZWdhcmlhIGRlIHVtIGFycXVpdm8gY2Fuw7RuaWNvKQpTVUJTVFJBVEVfUkVHSVNUUlkgPSB7CiAgICAiODI1IjogeyJuYW1lIjogIlBhcmFtZXRyaWMgTWVtb3J5IEVuZ2luZSIsICJjYXRlZ29yeSI6ICJjb2duaXRpb24iLCAibGlua3MiOiBbIjgyNCIsICI4MjYiLCAiODMwIiwgIjg0NSIsICI4NTciLCAiODY0Il19LAogICAgIjgyNiI6IHsibmFtZSI6ICJEZXRlY3RvciBvZiBJc29tb3JwaGlzbXMiLCAiY2F0ZWdvcnkiOiAiY29nbml0aW9uIiwgImxpbmtzIjogWyI4MjUiLCAiODM1IiwgIjg1NyJdfSwKICAgICI4NDUiOiB7Im5hbWUiOiAiQWN0aW9uIENvbnRleHQgRW5naW5lIiwgImNhdGVnb3J5IjogImNvZ25pdGlvbiIsICJsaW5rcyI6IFsiODI1IiwgIjgyNiIsICI4MzAiXX0sCiAgICAiODUzIjogeyJuYW1lIjogIlNBUC9BUklCQS1FUlAtQlJJREdFIiwgImNhdGVnb3J5IjogImVudGVycHJpc2UiLCAibGlua3MiOiBbIjgyNCIsICI4NDYiLCAiODUyIl19LAogICAgIjg0NyI6IHsibmFtZSI6ICJMZWFuSVgtRUFNLUJyaWRnZSIsICJjYXRlZ29yeSI6ICJlbnRlcnByaXNlIiwgImxpbmtzIjogWyI4NDYiLCAiODUyIl19LAogICAgIjg1OSI6IHsibmFtZSI6ICJCaW9sb2dpY2FsLUNvbXB1dGluZy1CcmlkZ2UiLCAiY2F0ZWdvcnkiOiAiaGFyZHdhcmUiLCAibGlua3MiOiBbIjgyNCIsICI4MjUiLCAiODMwIiwgIjg0NSJdfSwKICAgICI4NTYiOiB7Im5hbWUiOiAiUXVhbnR1bS1Db21wdXRpbmctQnJpZGdlIiwgImNhdGVnb3J5IjogImhhcmR3YXJlIiwgImxpbmtzIjogWyI4MjQiLCAiODI1IiwgIjgyNiIsICI4NDAiXX0sCiAgICAiODYzIjogeyJuYW1lIjogIlNlY09wcy1HdWFyZGlhbi1CcmlkZ2UiLCAiY2F0ZWdvcnkiOiAic2VjdXJpdHkiLCAibGlua3MiOiBbIjgyNCIsICI4MzIiLCAiODY0Il19LAogICAgIjg2NCI6IHsibmFtZSI6ICJFSVAtODI3Mi1SZWNlbnQtUm9vdHMtQnJpZGdlIiwgImNhdGVnb3J5IjogInNlY3VyaXR5IiwgImxpbmtzIjogWyI4MjQiLCAiODMyIiwgIjg2MyJdfSwKICAgICMgLi4uIHRvZG9zIG9zIG91dHJvcyBzdWJzdHJhdG9zCn0KClJFUVVJUkVEX0NBVEVHT1JJRVMgPSB7CiAgICAoImVudGVycHJpc2UiLCAiZW50ZXJwcmlzZSIpOiAiSW50ZWdyYXRpb24gb2YgZW50ZXJwcmlzZSBkYXRhIChlLmcuLCBTQVAgdG8gTGVhbklYKSIsCiAgICAoImNvZ25pdGlvbiIsICJoYXJkd2FyZSIpOiAiSGFyZHdhcmUgYWNjZWxlcmF0aW9uIGZvciBjb2duaXRpdmUgdGFza3MiLAogICAgKCJzZWN1cml0eSIsICJjb2duaXRpb24iKTogIkFkdmVyc2FyaWFsIHJvYnVzdG5lc3Mgb2YgbGVhcm5pbmciLAogICAgKCJoYXJkd2FyZSIsICJzZWN1cml0eSIpOiAiUGh5c2ljYWwgc2VjdXJpdHkgb2YgaGFyZHdhcmUgcGxhdGZvcm1zIiwKfQoKY2xhc3MgQ29oZXNpb25FbmdpbmU6CiAgICBkZWYgX19pbml0X18oc2VsZik6CiAgICAgICAgc2VsZi5zdWJzdHJhdGVzID0gU1VCU1RSQVRFX1JFR0lTVFJZCiAgICAgICAgc2VsZi5nYXBzID0gW10KCiAgICBkZWYgZmluZF9nYXBzKHNlbGYpOgogICAgICAgIGZvciAoaWQxLCBzMSksIChpZDIsIHMyKSBpbiBjb21iaW5hdGlvbnMoc2VsZi5zdWJzdHJhdGVzLml0ZW1zKCksIDIpOgogICAgICAgICAgICBpZiBpZDIgbm90IGluIHMxWyJsaW5rcyJdIGFuZCBpZDEgbm90IGluIHMyWyJsaW5rcyJdOgogICAgICAgICAgICAgICAgY2F0X3BhaXIgPSB0dXBsZShzb3J0ZWQoW3MxWyJjYXRlZ29yeSJdLCBzMlsiY2F0ZWdvcnkiXV0pKQogICAgICAgICAgICAgICAgcmVhc29uID0gUkVRVUlSRURfQ0FURUdPUklFUy5nZXQoY2F0X3BhaXIsIE5vbmUpCiAgICAgICAgICAgICAgICBpZiByZWFzb246CiAgICAgICAgICAgICAgICAgICAgc2VsZi5nYXBzLmFwcGVuZCgoaWQxLCBpZDIsIHMxWyJuYW1lIl0sIHMyWyJuYW1lIl0sIHJlYXNvbikpCgogICAgZGVmIGdlbmVyYXRlX2ludGVncmF0aW9uX2RlY3JlZXMoc2VsZik6CiAgICAgICAgZGVjcmVlcyA9IFtdCiAgICAgICAgZm9yIGlkMSwgaWQyLCBuYW1lMSwgbmFtZTIsIHJlYXNvbiBpbiBzZWxmLmdhcHM6CiAgICAgICAgICAgIHNlYWwgPSBoYXNobGliLnNoYTNfMjU2KCJ7fS17fSIuZm9ybWF0KGlkMSwgaWQyKS5lbmNvZGUoKSkuaGV4ZGlnZXN0KClbOjE2XQogICAgICAgICAgICBkZWNyZWUgPSAiIiI8fEFSS0hFX1NUQVJUfD4KPHxTVUJTVFJBVEV8PiA4NjUtQ09IRVNJT04te2lkMX0te2lkMn0KPHxJTlZBUklBTlR8PiBJLjMgKENyb3NzLVN1YnN0cmF0ZSBJbnRlcm9wZXJhYmlsaXR5KQo8fFBISV9DfD4gMC44NTAKCkJyaWRnZSBwcm9wb3N0YToge24xfSDihpQge24yfQpSYXrDo286IHtyfQoKQcOnw6NvOiBJbXBsZW1lbnRhciBtw7NkdWxvIGRlIGludGVncmHDp8OjbyBjb25mb3JtZSBlc3BlY2lmaWNhw6fDo28gZG8gQ29oZXNpb24gRW5naW5lLgoKPHxTRUFMfD4ge3NlYWx9Cjx8QVJLSEVfRU5EfD4iIiIuZm9ybWF0KGlkMT1pZDEsIGlkMj1pZDIsIG4xPW5hbWUxLCBuMj1uYW1lMiwgcj1yZWFzb24sIHNlYWw9c2VhbCkKICAgICAgICAgICAgZGVjcmVlcy5hcHBlbmQoZGVjcmVlKQogICAgICAgIHJldHVybiBkZWNyZWVzCgppZiBfX25hbWVfXyA9PSAiX19tYWluX18iOgogICAgZW5naW5lID0gQ29oZXNpb25FbmdpbmUoKQogICAgZW5naW5lLmZpbmRfZ2FwcygpCiAgICBmb3IgZCBpbiBlbmdpbmUuZ2VuZXJhdGVfaW50ZWdyYXRpb25fZGVjcmVlcygpOgogICAgICAgIHByaW50KGQpCg=="
-}
+        self.id = "865-COHESION-ENGINE"
 
-    def canonize(self) -> str:
-        # Generate the canonical JSON report
+        # Read the adapters
+        try:
+            with open(os.path.join(os.path.dirname(__file__), "cohesion_engine.py"), "r", encoding="utf-8") as f:
+                self.b64_adapter = base64.b64encode(f.read().encode()).decode()
+        except Exception:
+            self.b64_adapter = ""
+
+    def canonize(self):
+        # Strict mode: use pre-defined seal
+        seal = "f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1"
+
         report = {
-            "metadata": self.metadata,
-            "artifacts": self.payloads
+            "id": self.id,
+            "status": "CANONIZED_PROVISIONAL",
+            "canonical_seal": seal,
+            "adapter_source": {
+                "cohesion_engine": self.b64_adapter
+            }
         }
 
-        # Write to a secure temporary file
-        fd, path = tempfile.mkstemp(suffix=".json", prefix="substrato_865_")
-        with os.fdopen(fd, 'w', encoding='utf-8') as f:
-            json.dump(report, f, indent=4)
-        return path
+        fd, path = tempfile.mkstemp(suffix=".json")
+        with os.fdopen(fd, 'w') as f:
+            json.dump(report, f)
 
-if __name__ == "__main__":
-    c = Substrato865CohesionEngine()
-    print(c.canonize())
+        return path
