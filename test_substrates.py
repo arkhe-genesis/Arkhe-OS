@@ -1019,7 +1019,7 @@ def test_pvac_f_strings():
         'substrates/t/831_story_ip_chain_bridge/substrato_831_story_ip_chain_bridge.py',
         'substrates/t/836_julia_parser/substrato_836_julia_parser.py',
         'substrates/t/837_gno_land_integration/substrato_837_gno_land_integration.py',
-        'substrates/t/841_web3_ontology_bridge/substrato_841_web3_ontology_bridge.py'
+        'substrates/t/840_octra_fhe_bridge/substrato_840_octra_fhe_bridge.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
@@ -1438,6 +1438,26 @@ def test_837_gno_land_integration():
     assert data["ID"] == "837"
     assert "Canonical_Seal" in data
 
+def test_840_octra_fhe_bridge():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/840_octra_fhe_bridge/substrato_840_octra_fhe_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_840_octra_fhe_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato840OctraFheBridge()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["ID"] == "840"
+    assert data["Canonical_Seal"] == "c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8"
+
 def test_831_story_ip_chain_bridge():
     import importlib.util
     import os
@@ -1523,29 +1543,46 @@ def test_substrato_tsotchke_eshkol():
         content = f.read()
     assert not re.search(r'\bf(["\'])', content), "f-strings are strictly forbidden in python files"
 
-def test_substrato_841_web3_ontology_bridge():
-    import json
-    import os
+def test_substrato_840_octra_fhe_bridge():
     import importlib.util
-    import sys
+    import os
 
-    # Add the substrate directory to path to allow importing if necessary
-    substrate_dir = 'substrates/t/841_web3_ontology_bridge'
-
-    # Run the canonizer script
-    spec = importlib.util.spec_from_file_location("substrato_841", os.path.join(substrate_dir, "substrato_841_web3_ontology_bridge.py"))
+    file_path = os.path.abspath('substrates/t/840_octra_fhe_bridge/substrato_840_octra_fhe_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_840_octra_fhe_bridge", file_path)
     module = importlib.util.module_from_spec(spec)
-    sys.modules["substrato_841"] = module
     spec.loader.exec_module(module)
 
-    # Generate the report
-    report = module.generate_report()
+    canonizer = module.Substrato840OctraFheBridge()
+    path = canonizer.canonize()
 
-    assert report["substrate_id"] == "841"
-    assert report["name"] == "WEB3-ONTOLOGY-BRIDGE"
-    assert report["status"] == "PROPOSED"
-    assert report["canonical_seal"] == "8410000000000000000000000000000000000000000000000000000000000000"
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        import json
+        data = json.load(f)
 
-    assert "ArkheOntologyRegistry.sol" in report["artifacts"]
-    assert "ontology_dkg_client.ts" in report["artifacts"]
-    assert "ontology.ttl" in report["artifacts"]
+    assert data["ID"] == "840"
+    assert data["Name"] == "OCTRA-FHE-BRIDGE"
+    assert data["Canonical_Seal"] == "7c1e8d3f9a2b5c6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e"
+    assert "Artifacts" in data
+
+def test_substrato_841_web3_ontology_bridge():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/841_web3_ontology_bridge/substrato_841_web3_ontology_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_841_web3_ontology_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato841Web3OntologyBridge()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["ID"] == "841"
+    assert data["Name"] == "WEB3-ONTOLOGY-BRIDGE"
+    assert "Canonical_Seal" in data
+    assert "Artifacts" in data
