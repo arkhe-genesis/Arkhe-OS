@@ -20,9 +20,9 @@ def test_825_f_strings():
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr)
 
-def test_gonka_f_strings():
+def test_841_f_strings():
     import ast
-    with open('substrates/400-499_advanced/substrato_gonka_ai_gonka/substrato_gonka_ai_gonka.py', 'r') as f:
+    with open('substrates/t/841_web3_ontology_bridge/substrato_841_web3_ontology_bridge.py', 'r') as f:
         tree = ast.parse(f.read())
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr)
