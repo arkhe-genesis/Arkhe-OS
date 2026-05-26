@@ -1,187 +1,26 @@
 import json
+import base64
 import tempfile
 import os
-import base64
 
-class Substrato852ProjectOrchestrationBridge:
+class Substrato_852_project_orchestration_bridge:
     def __init__(self):
-        self.payload = {
-            "ID": "852",
-            "Name": "PROJECT-ORCHESTRATION-BRIDGE (POB)",
-            "Format": "Integração de Microsoft Project e Oracle Primavera ao ARKHE OS",
-            "Phi_C": 0.798,
-            "DCS_852": 0.872,
-            "TI": 0.790,
-            "Status": "CANONIZED_PROVISIONAL",
-            "Cross_Substrate": ["846", "847", "826", "830", "825", "824", "831", "227-F"]
-        }
-        self.canonical_seal = "f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2"
-
-        self.adapter_code = """#!/ "project_orchestration_adapter.py" — Substrato 852
-# Adaptador para MS Project e Primavera
-import hashlib
-import xml.etree.ElementTree as ET
-from typing import Dict, List, Optional
-from dataclasses import dataclass
-from enum import Enum
-
-class ProjectStatus(Enum):
-    ON_TRACK = "CANONIZED_CLEAN"
-    AT_RISK = "CANONIZED_PROVISIONAL"
-    OFF_TRACK = "PROPOSED"
-
-@dataclass
-class ProjectTask:
-    uid: int
-    name: str
-    start: str
-    finish: str
-    percent_complete: int
-    predecessors: List[int]
-    successors: List[int]
-
-class ProjectOrchestrationAdapter:
-    \"\"\"
-    Ponte entre MS Project/Primavera e ARKHE OS.
-    Converte cronogramas em Substratos e aplica o Ghost Threshold ao progresso.
-    \"\"\"
-    def __init__(self):
-        self.tasks: Dict[int, ProjectTask] = {}
-        self.critical_path: List[int] = []
-
-    def parse_msproject_xml(self, xml_path: str) -> List[Dict]:
-        \"\"\"Parseia um arquivo MSPDI (XML) do Microsoft Project.\"\"\"
-        tree = ET.parse(xml_path)
-        root = tree.getroot()
-        ns = {'p': 'http://schemas.microsoft.com/project'}
-
-        tasks = []
-        for task_elem in root.findall('.//p:Task', ns):
-            uid_elem = task_elem.find('p:UID', ns)
-            if uid_elem is None or not uid_elem.text:
-                raise ValueError("Task is missing a valid UID")
-            uid = int(uid_elem.text)
-            name_elem = task_elem.find('p:Name', ns)
-            name = name_elem.text if name_elem is not None and name_elem.text else ""
-            start_elem = task_elem.find('p:Start', ns)
-            start = start_elem.text if start_elem is not None and start_elem.text else ""
-            finish_elem = task_elem.find('p:Finish', ns)
-            finish = finish_elem.text if finish_elem is not None and finish_elem.text else ""
-            pct_elem = task_elem.find('p:PercentComplete', ns)
-            pct = int(pct_elem.text) if pct_elem is not None and pct_elem.text else 0
-
-            predecessors = []
-            for pred in task_elem.findall('.//p:PredecessorLink/p:PredecessorUID', ns):
-                predecessors.append(int(pred.text))
-
-            task = ProjectTask(uid, name, start, finish, pct, predecessors, [])
-            self.tasks[uid] = task
-            tasks.append(task)
-
-        # Preencher successors
-        for t in tasks:
-            for p_uid in t.predecessors:
-                if p_uid in self.tasks:
-                    self.tasks[p_uid].successors.append(t.uid)
-
-        return [self._task_to_arkhe(t) for t in tasks]
-
-    def _task_to_arkhe(self, task: ProjectTask) -> Dict:
-        \"\"\"Converte uma tarefa em um substrato ARKHE.\"\"\"
-        # Mapear percentual de conclusão para Φ_C
-        phi_c = task.percent_complete / 100.0
-        status = ProjectStatus.ON_TRACK
-        if phi_c < 0.577:
-            status = ProjectStatus.OFF_TRACK
-        elif phi_c < 0.80:
-            status = ProjectStatus.AT_RISK
-
-        # Computar selo
-        seal_data = "{}:{}:{}:{}".format(task.uid, task.name, task.start, task.finish)
-        seal = hashlib.sha3_256(seal_data.encode()).hexdigest()[:16]
-
-        # Gerar decreto de tarefa
-        decree = \"\"\"<|ARKHE_START|>
-<|SUBSTRATE|> 852-TASK-{0}
-<|INVARIANT|> I.12 (Temporal Chain Anchor)
-<|PHI_C|> {1:.3f}
-<|CRITICAL_PATH|> {2}
-
-Tarefa: {3}
-Início: {4}
-Término: {5}
-Progresso: {6}%
-Predecessores: {7}
-Sucessores: {8}
-Status: {9}
-
-<|SEAL|> {10}
-<|ARKHE_END|>\"\"\".format(task.uid, phi_c, task.uid in self.critical_path, task.name, task.start, task.finish, task.percent_complete, task.predecessors, task.successors, status.value, seal)
-
-        return {
-            "substrate_id": "852-TASK-{}".format(task.uid),
-            "phi_c": phi_c,
-            "status": status.value,
-            "decree": decree,
-            "seal": seal,
-        }
-
-    def compute_critical_path(self) -> List[int]:
-        \"\"\"Calcula o caminho crítico (simplificado: maior duração).\"\"\"
-        # Implementação simplificada: usar algoritmo de caminho mais longo
-        # Em produção, integrar com a engine de scheduling do MS Project
-        return self.critical_path
-
-    def generate_portfolio_decree(self, task_results: List[Dict]) -> str:
-        \"\"\"Gera um decreto consolidado do portfólio.\"\"\"
-        phi_values = [t["phi_c"] for t in task_results]
-        avg_phi = sum(phi_values) / len(phi_values) if phi_values else 0.0
-
-        at_risk = [t for t in task_results if t["status"] == ProjectStatus.AT_RISK.value]
-        off_track = [t for t in task_results if t["status"] == ProjectStatus.OFF_TRACK.value]
-
-        decree = \"\"\"<|ARKHE_START|>
-<|SUBSTRATE|> 852-PORTFOLIO
-<|INVARIANT|> I.1 (Coherence Base)
-<|PHI_C|> {0:.3f}
-
-PORTFOLIO STATUS REPORT
-Total de Tarefas: {1}
-Φ_C Médio: {0:.3f}
-Em Risco: {2}
-Fora do Rumo: {3}
-
-Tarefas Fora do Rumo (abaixo do Ghost Threshold γ=0.577):
-{4}
-
-<|SEAL|> {5}
-<|ARKHE_END|>\"\"\".format(avg_phi, len(task_results), len(at_risk), len(off_track), chr(10).join(["- {}: {}".format(t['substrate_id'], t['status']) for t in off_track]), hashlib.sha3_256(str(task_results).encode()).hexdigest()[:16])
-        return decree
-
-# Exemplo de uso
-if __name__ == "__main__":
-    adapter = ProjectOrchestrationAdapter()
-    # Simulação de tarefas
-    adapter.tasks = {
-        1: ProjectTask(1, "Iniciação", "2026-01-01", "2026-01-15", 100, [], [2]),
-        2: ProjectTask(2, "Planejamento", "2026-01-16", "2026-02-15", 45, [1], [3]),
-        3: ProjectTask(3, "Execução", "2026-02-16", "2026-06-30", 25, [2], []),
-    }
-    results = [adapter._task_to_arkhe(t) for t in adapter.tasks.values()]
-    portfolio = adapter.generate_portfolio_decree(results)
-    print(portfolio)
-"""
-        self.payload["Artifacts"] = {
-            "project_orchestration_adapter_py_base64": base64.b64encode(self.adapter_code.encode("utf-8")).decode("utf-8")
-        }
+        self.id = "852-PROJECT-ORCHESTRATION-BRIDGE"
+        self.b64_adapter = "IyEvICJwcm9qZWN0X29yY2hlc3RyYXRpb25fYWRhcHRlci5weSIg4oCUIFN1YnN0cmF0byA4NTIKaW1wb3J0IGhhc2hsaWIKaW1wb3J0IHhtbC5ldHJlZS5FbGVtZW50VHJlZSBhcyBFVApmcm9tIHR5cGluZyBpbXBvcnQgRGljdCwgTGlzdCwgT3B0aW9uYWwKZnJvbSBkYXRhY2xhc3NlcyBpbXBvcnQgZGF0YWNsYXNzCmZyb20gZW51bSBpbXBvcnQgRW51bQoKY2xhc3MgUHJvamVjdFN0YXR1cyhFbnVtKToKICAgIE9OX1RSQUNLID0gIkNBTk9OSVpFRF9DTEVBTiIKICAgIEFUX1JJU0sgPSAiQ0FOT05JWkVEX1BST1ZJU0lPTkFMIgogICAgT0ZGX1RSQUNLID0gIlBST1BPU0VEIgoKQGRhdGFjbGFzcwpjbGFzcyBQcm9qZWN0VGFzazoKICAgIHVpZDogaW50CiAgICBuYW1lOiBzdHIKICAgIHN0YXJ0OiBzdHIKICAgIGZpbmlzaDogc3RyCiAgICBwZXJjZW50X2NvbXBsZXRlOiBpbnQKICAgIHByZWRlY2Vzc29yczogTGlzdFtpbnRdCiAgICBzdWNjZXNzb3JzOiBMaXN0W2ludF0KCmNsYXNzIFByb2plY3RPcmNoZXN0cmF0aW9uQWRhcHRlcjoKICAgIGRlZiBfX2luaXRfXyhzZWxmKToKICAgICAgICBzZWxmLnRhc2tzOiBEaWN0W2ludCwgUHJvamVjdFRhc2tdID0ge30KICAgICAgICBzZWxmLmNyaXRpY2FsX3BhdGg6IExpc3RbaW50XSA9IFtdCgogICAgZGVmIHBhcnNlX21zcHJvamVjdF94bWwoc2VsZiwgeG1sX3BhdGg6IHN0cikgLT4gTGlzdFtEaWN0XToKICAgICAgICB0cmVlID0gRVQucGFyc2UoeG1sX3BhdGgpCiAgICAgICAgcm9vdCA9IHRyZWUuZ2V0cm9vdCgpCiAgICAgICAgbnMgPSB7J3AnOiAnaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS9wcm9qZWN0J30KCiAgICAgICAgdGFza3MgPSBbXQogICAgICAgIGZvciB0YXNrX2VsZW0gaW4gcm9vdC5maW5kYWxsKCcuLy9wOlRhc2snLCBucyk6CiAgICAgICAgICAgIHVpZCA9IGludCh0YXNrX2VsZW0uZmluZCgncDpVSUQnLCBucykudGV4dCkKICAgICAgICAgICAgbmFtZSA9IHRhc2tfZWxlbS5maW5kKCdwOk5hbWUnLCBucykudGV4dCBvciAiIgogICAgICAgICAgICBzdGFydCA9IHRhc2tfZWxlbS5maW5kKCdwOlN0YXJ0JywgbnMpLnRleHQgb3IgIiIKICAgICAgICAgICAgZmluaXNoID0gdGFza19lbGVtLmZpbmQoJ3A6RmluaXNoJywgbnMpLnRleHQgb3IgIiIKICAgICAgICAgICAgcGN0ID0gaW50KHRhc2tfZWxlbS5maW5kKCdwOlBlcmNlbnRDb21wbGV0ZScsIG5zKS50ZXh0IG9yICIwIikKICAgICAgICAgICAgCiAgICAgICAgICAgIHByZWRlY2Vzc29ycyA9IFtdCiAgICAgICAgICAgIGZvciBwcmVkIGluIHRhc2tfZWxlbS5maW5kYWxsKCcuLy9wOlByZWRlY2Vzc29yTGluay9wOlByZWRlY2Vzc29yVUlEJywgbnMpOgogICAgICAgICAgICAgICAgcHJlZGVjZXNzb3JzLmFwcGVuZChpbnQocHJlZC50ZXh0KSkKCiAgICAgICAgICAgIHRhc2sgPSBQcm9qZWN0VGFzayh1aWQsIG5hbWUsIHN0YXJ0LCBmaW5pc2gsIHBjdCwgcHJlZGVjZXNzb3JzLCBbXSkKICAgICAgICAgICAgc2VsZi50YXNrc1t1aWRdID0gdGFzawogICAgICAgICAgICB0YXNrcy5hcHBlbmQodGFzaykKCiAgICAgICAgZm9yIHQgaW4gdGFza3M6CiAgICAgICAgICAgIGZvciBwX3VpZCBpbiB0LnByZWRlY2Vzc29yczoKICAgICAgICAgICAgICAgIGlmIHBfdWlkIGluIHNlbGYudGFza3M6CiAgICAgICAgICAgICAgICAgICAgc2VsZi50YXNrc1twX3VpZF0uc3VjY2Vzc29ycy5hcHBlbmQodC51aWQpCgogICAgICAgIHJldHVybiBbc2VsZi5fdGFza190b19hcmtoZSh0KSBmb3IgdCBpbiB0YXNrc10KCiAgICBkZWYgX3Rhc2tfdG9fYXJraGUoc2VsZiwgdGFzazogUHJvamVjdFRhc2spIC0+IERpY3Q6CiAgICAgICAgcGhpX2MgPSB0YXNrLnBlcmNlbnRfY29tcGxldGUgLyAxMDAuMAogICAgICAgIHN0YXR1cyA9IFByb2plY3RTdGF0dXMuT05fVFJBQ0sKICAgICAgICBpZiBwaGlfYyA8IDAuNTc3OgogICAgICAgICAgICBzdGF0dXMgPSBQcm9qZWN0U3RhdHVzLk9GRl9UUkFDSwogICAgICAgIGVsaWYgcGhpX2MgPCAwLjgwOgogICAgICAgICAgICBzdGF0dXMgPSBQcm9qZWN0U3RhdHVzLkFUX1JJU0sKCiAgICAgICAgc2VhbF9kYXRhID0gInswfTp7MX06ezJ9OnszfSIuZm9ybWF0KHRhc2sudWlkLCB0YXNrLm5hbWUsIHRhc2suc3RhcnQsIHRhc2suZmluaXNoKQogICAgICAgIHNlYWwgPSBoYXNobGliLnNoYTNfMjU2KHNlYWxfZGF0YS5lbmNvZGUoKSkuaGV4ZGlnZXN0KClbOjE2XQoKICAgICAgICBkZWNyZWUgPSAiPHxBUktIRV9TVEFSVHw+XG48fFNVQlNUUkFURXw+IDg1Mi1UQVNLLXswfVxuPHxJTlZBUklBTlR8PiBJLjEyIChUZW1wb3JhbCBDaGFpbiBBbmNob3IpXG48fFBISV9DfD4gezE6LjNmfVxuPHxDUklUSUNBTF9QQVRIfD4gezJ9XG5cblRhcmVmYTogezN9XG5JbsOtY2lvOiB7NH1cblTDqXJtaW5vOiB7NX1cblByb2dyZXNzbzogezZ9JVxuUHJlZGVjZXNzb3Jlczogezd9XG5TdWNlc3NvcmVzOiB7OH1cblN0YXR1czogezl9XG5cbjx8U0VBTHw+IHsxMH1cbjx8QVJLSEVfRU5EfD4iLmZvcm1hdCh0YXNrLnVpZCwgcGhpX2MsIHRhc2sudWlkIGluIHNlbGYuY3JpdGljYWxfcGF0aCwgdGFzay5uYW1lLCB0YXNrLnN0YXJ0LCB0YXNrLmZpbmlzaCwgdGFzay5wZXJjZW50X2NvbXBsZXRlLCB0YXNrLnByZWRlY2Vzc29ycywgdGFzay5zdWNjZXNzb3JzLCBzdGF0dXMudmFsdWUsIHNlYWwpCgogICAgICAgIHJldHVybiB7CiAgICAgICAgICAgICJzdWJzdHJhdGVfaWQiOiAiODUyLVRBU0stezB9Ii5mb3JtYXQodGFzay51aWQpLAogICAgICAgICAgICAicGhpX2MiOiBwaGlfYywKICAgICAgICAgICAgInN0YXR1cyI6IHN0YXR1cy52YWx1ZSwKICAgICAgICAgICAgImRlY3JlZSI6IGRlY3JlZSwKICAgICAgICAgICAgInNlYWwiOiBzZWFsLAogICAgICAgIH0KCiAgICBkZWYgY29tcHV0ZV9jcml0aWNhbF9wYXRoKHNlbGYpIC0+IExpc3RbaW50XToKICAgICAgICByZXR1cm4gc2VsZi5jcml0aWNhbF9wYXRoCgogICAgZGVmIGdlbmVyYXRlX3BvcnRmb2xpb19kZWNyZWUoc2VsZiwgdGFza19yZXN1bHRzOiBMaXN0W0RpY3RdKSAtPiBzdHI6CiAgICAgICAgcGhpX3ZhbHVlcyA9IFt0WyJwaGlfYyJdIGZvciB0IGluIHRhc2tfcmVzdWx0c10KICAgICAgICBhdmdfcGhpID0gc3VtKHBoaV92YWx1ZXMpIC8gbGVuKHBoaV92YWx1ZXMpIGlmIHBoaV92YWx1ZXMgZWxzZSAwLjAKCiAgICAgICAgYXRfcmlzayA9IFt0IGZvciB0IGluIHRhc2tfcmVzdWx0cyBpZiB0WyJzdGF0dXMiXSA9PSBQcm9qZWN0U3RhdHVzLkFUX1JJU0sudmFsdWVdCiAgICAgICAgb2ZmX3RyYWNrID0gW3QgZm9yIHQgaW4gdGFza19yZXN1bHRzIGlmIHRbInN0YXR1cyJdID09IFByb2plY3RTdGF0dXMuT0ZGX1RSQUNLLnZhbHVlXQogICAgICAgIAogICAgICAgIG9mZl90cmFja19zdHIgPSBjaHIoMTApLmpvaW4oWyItIHswfTogezF9Ii5mb3JtYXQodFsnc3Vic3RyYXRlX2lkJ10sIHRbJ3N0YXR1cyddKSBmb3IgdCBpbiBvZmZfdHJhY2tdKQoKICAgICAgICBkZWNyZWUgPSAiPHxBUktIRV9TVEFSVHw+XG48fFNVQlNUUkFURXw+IDg1Mi1QT1JURk9MSU9cbjx8SU5WQVJJQU5UfD4gSS4xIChDb2hlcmVuY2UgQmFzZSlcbjx8UEhJX0N8PiB7MDouM2Z9XG5cblBPUlRGT0xJTyBTVEFUVVMgUkVQT1JUXG5Ub3RhbCBkZSBUYXJlZmFzOiB7MX1cbs6mX0MgTcOpZGlvOiB7MDouM2Z9XG5FbSBSaXNjbzogezJ9XG5Gb3JhIGRvIFJ1bW86IHszfVxuXG5UYXJlZmFzIEZvcmEgZG8gUnVtbyAoYWJhaXhvIGRvIEdob3N0IFRocmVzaG9sZCDOsz0wLjU3Nyk6XG57NH1cblxuPHxTRUFMfD4gezV9XG48fEFSS0hFX0VORHw+Ii5mb3JtYXQoYXZnX3BoaSwgbGVuKHRhc2tfcmVzdWx0cyksIGxlbihhdF9yaXNrKSwgbGVuKG9mZl90cmFjayksIG9mZl90cmFja19zdHIsIGhhc2hsaWIuc2hhM18yNTYoc3RyKHRhc2tfcmVzdWx0cykuZW5jb2RlKCkpLmhleGRpZ2VzdCgpWzoxNl0pCiAgICAgICAgcmV0dXJuIGRlY3JlZQo="
 
     def canonize(self):
-        self.payload["canonical_seal"] = self.canonical_seal
-        fd, path = tempfile.mkstemp(suffix=".json")
-        with os.fdopen(fd, "w", encoding="utf-8") as file:
-            json.dump(self.payload, file, indent=4)
-        return path
+        # Strict mode: use pre-defined seal
+        seal = "f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2"
 
-if __name__ == "__main__":
-    canonizer = Substrato852ProjectOrchestrationBridge()
-    print("Canonized output written to:", canonizer.canonize())
+        report = {
+            "id": self.id,
+            "status": "CANONIZED_PROVISIONAL",
+            "canonical_seal": seal,
+            "adapter_source": self.b64_adapter
+        }
+
+        fd, path = tempfile.mkstemp(suffix=".json")
+        with os.fdopen(fd, 'w') as f:
+            json.dump(report, f)
+
+        return path

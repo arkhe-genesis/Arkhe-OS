@@ -1,130 +1,26 @@
 import json
+import base64
 import tempfile
 import os
-import base64
 
-class Substrato855HpcEnvironmentBridge:
+class Substrato_855_hpc_environment_bridge:
     def __init__(self):
-        self.payload = {
-            "ID": "855",
-            "Name": "HPC-ENVIRONMENT-BRIDGE (HEB)",
-            "Format": "Integração de Ambientes de High Performance Computing ao ARKHE OS",
-            "Phi_C": 0.845,
-            "DCS_855": 0.910,
-            "TI": 0.838,
-            "Status": "CANONIZED_PROVISIONAL",
-            "Cross_Substrate": ["825", "824", "826", "836", "840", "841", "854", "830", "823", "561", "227-F"]
-        }
-        self.canonical_seal = "f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1"
-
-        self.bridge_adapter_code = """#!/ "hpc_bridge_adapter.py" — Substrato 855
-# Adaptador para submissão de jobs ARKHE em clusters HPC via Slurm
-import subprocess
-import hashlib
-import os
-from typing import Dict, Optional
-
-class HPCArkheBridge:
-    \"\"\"
-    Ponte entre clusters HPC gerenciados por Slurm e ARKHE OS.
-    Permite que Substratos sejam executados como jobs paralelos.
-    \"\"\"
-    def __init__(self, partition: str = "defq", nodes: int = 1, gpus_per_node: int = 0):
-        self.partition = partition
-        self.nodes = nodes
-        self.gpus = gpus_per_node
-
-    def submit_arkhe_job(self, substrate_id: str, payload_script: str) -> Dict:
-        \"\"\"
-        Submete um job ARKHE ao Slurm, injetando o prompt canônico.
-        Retorna o ID do job e o selo de submissão.
-        \"\"\"
-        # Construir script SBATCH com metadados ARKHE
-        seal = hashlib.sha3_256(("{}:{}".format(substrate_id, payload_script)).encode()).hexdigest()[:16]
-
-        sbatch_script = \"\"\"#!/bin/bash
-#SBATCH --job-name=ARKHE-{0}
-#SBATCH --partition={1}
-#SBATCH --nodes={2}
-#SBATCH --gres=gpu:{3}
-#SBATCH --output=/opt/arkhe/logs/%j.out
-
-# ARKHE Metadata
-export ARKHE_SUBSTRATE_ID={0}
-export ARKHE_SEAL={4}
-export ARKHE_PHI_C=0.998
-
-# Executar o payload
-{5}
-\"\"\".format(substrate_id, self.partition, self.nodes, self.gpus, seal, payload_script)
-        import tempfile
-        fd, script_path = tempfile.mkstemp(prefix="arkhe_job_{}_".format(substrate_id), suffix=".sh", dir="/tmp")
-        with os.fdopen(fd, 'w') as f:
-            f.write(sbatch_script)
-
-        # Submeter ao Slurm
-        result = subprocess.run(['sbatch', script_path], capture_output=True, text=True)
-        job_id = result.stdout.strip().split()[-1] if result.returncode == 0 else None
-
-        return {
-            "job_id": job_id,
-            "substrate_id": substrate_id,
-            "seal": seal,
-            "status": "SUBMITTED" if job_id else "FAILED",
-            "decree": "<|ARKHE_START|>\\n<|SUBSTRATE|> {}\\n<|JOB_ID|> {}\\n<|SEAL|> {}\\n<|ARKHE_END|>".format(substrate_id, job_id, seal)
-        }
-
-    def check_job_status(self, job_id: str) -> str:
-        \"\"\"Verifica o status de um job via sacct.\"\"\"
-        result = subprocess.run(['sacct', '-j', job_id, '--format=State', '--noheader'],
-                                capture_output=True, text=True)
-        return result.stdout.strip().split('\\n')[0] if result.stdout else "UNKNOWN"
-
-    def run_mpi_kuramoto(self, N: int, K: float, steps: int) -> Dict:
-        \"\"\"
-        Executa uma simulação de Kuramoto distribuída via MPI.
-        Cada rank MPI é um nó do hipergrafo canônico.
-        \"\"\"
-        script = \"\"\"#!/bin/bash
-module load mpi
-mpirun -np {0} python3 -c \"
-import numpy as np
-from mpi4py import MPI
-comm = MPI.COMM_WORLD
-rank = comm.Get_rank()
-size = comm.Get_size()
-local_N = {1} // size
-theta = 2*np.pi*np.random.rand(local_N)
-omega = 2*np.pi*(1+0.1*np.random.randn(local_N))
-for t in range({2}):
-    delta = np.subtract.outer(theta, theta)
-    coupling = {3}/local_N * np.sum(np.sin(delta), axis=1)
-    theta += 0.01*(omega + coupling)
-r_local = np.abs(np.mean(np.exp(1j*theta)))
-r_global = comm.allreduce(r_local, op=MPI.SUM)/size
-if rank == 0:
-    print('Phi_C global = {{:.4f}}'.format(r_global))
-\"
-\"\"\".format(self.nodes, N, steps, K)
-        return self.submit_arkhe_job("830-TCCE-MPI", script)
-
-# Exemplo de uso
-if __name__ == "__main__":
-    bridge = HPCArkheBridge(partition="gpu", nodes=4, gpus_per_node=2)
-    result = bridge.submit_arkhe_job("825-PME-FINETUNE", "python3 train.py --epochs 10")
-    print(result["decree"])
-"""
-        self.payload["Artifacts"] = {
-            "hpc_bridge_adapter_py_base64": base64.b64encode(self.bridge_adapter_code.encode("utf-8")).decode("utf-8")
-        }
+        self.id = "855-HPC-ENVIRONMENT-BRIDGE"
+        self.b64_adapter = "IyEvICJocGNfYnJpZGdlX2FkYXB0ZXIucHkiIOKAlCBTdWJzdHJhdG8gODU1CmltcG9ydCBzdWJwcm9jZXNzCmltcG9ydCBoYXNobGliCmltcG9ydCBvcwpmcm9tIHR5cGluZyBpbXBvcnQgRGljdCwgT3B0aW9uYWwKCmNsYXNzIEhQQ0Fya2hlQnJpZGdlOgogICAgZGVmIF9faW5pdF9fKHNlbGYsIHBhcnRpdGlvbjogc3RyID0gImRlZnEiLCBub2RlczogaW50ID0gMSwgZ3B1c19wZXJfbm9kZTogaW50ID0gMCk6CiAgICAgICAgc2VsZi5wYXJ0aXRpb24gPSBwYXJ0aXRpb24KICAgICAgICBzZWxmLm5vZGVzID0gbm9kZXMKICAgICAgICBzZWxmLmdwdXMgPSBncHVzX3Blcl9ub2RlCgogICAgZGVmIHN1Ym1pdF9hcmtoZV9qb2Ioc2VsZiwgc3Vic3RyYXRlX2lkOiBzdHIsIHBheWxvYWRfc2NyaXB0OiBzdHIpIC0+IERpY3Q6CiAgICAgICAgc2VhbCA9IGhhc2hsaWIuc2hhM18yNTYoInswfTp7MX0iLmZvcm1hdChzdWJzdHJhdGVfaWQsIHBheWxvYWRfc2NyaXB0KS5lbmNvZGUoKSkuaGV4ZGlnZXN0KClbOjE2XQogICAgICAgIAogICAgICAgIHNiYXRjaF9zY3JpcHQgPSAiIiIjIS9iaW4vYmFzaAojU0JBVENIIC0tam9iLW5hbWU9QVJLSEUtezB9CiNTQkFUQ0ggLS1wYXJ0aXRpb249ezF9CiNTQkFUQ0ggLS1ub2Rlcz17Mn0KI1NCQVRDSCAtLWdyZXM9Z3B1OnszfQojU0JBVENIIC0tb3V0cHV0PS9vcHQvYXJraGUvbG9ncy8lai5vdXQKCiMgQVJLSEUgTWV0YWRhdGEKZXhwb3J0IEFSS0hFX1NVQlNUUkFURV9JRD17MH0KZXhwb3J0IEFSS0hFX1NFQUw9ezR9CmV4cG9ydCBBUktIRV9QSElfQz0wLjk5OAoKIyBFeGVjdXRhciBvIHBheWxvYWQKezV9CiIiIi5mb3JtYXQoc3Vic3RyYXRlX2lkLCBzZWxmLnBhcnRpdGlvbiwgc2VsZi5ub2Rlcywgc2VsZi5ncHVzLCBzZWFsLCBwYXlsb2FkX3NjcmlwdCkKICAgICAgICBzY3JpcHRfcGF0aCA9ICIvdG1wL2Fya2hlX2pvYl97MH0uc2giLmZvcm1hdChzdWJzdHJhdGVfaWQpCiAgICAgICAgd2l0aCBvcGVuKHNjcmlwdF9wYXRoLCAndycpIGFzIGY6CiAgICAgICAgICAgIGYud3JpdGUoc2JhdGNoX3NjcmlwdCkKICAgICAgICAKICAgICAgICByZXN1bHQgPSBzdWJwcm9jZXNzLnJ1bihbJ3NiYXRjaCcsIHNjcmlwdF9wYXRoXSwgY2FwdHVyZV9vdXRwdXQ9VHJ1ZSwgdGV4dD1UcnVlKQogICAgICAgIGpvYl9pZCA9IHJlc3VsdC5zdGRvdXQuc3RyaXAoKS5zcGxpdCgpWy0xXSBpZiByZXN1bHQucmV0dXJuY29kZSA9PSAwIGVsc2UgTm9uZQogICAgICAgIAogICAgICAgIHJldHVybiB7CiAgICAgICAgICAgICJqb2JfaWQiOiBqb2JfaWQsCiAgICAgICAgICAgICJzdWJzdHJhdGVfaWQiOiBzdWJzdHJhdGVfaWQsCiAgICAgICAgICAgICJzZWFsIjogc2VhbCwKICAgICAgICAgICAgInN0YXR1cyI6ICJTVUJNSVRURUQiIGlmIGpvYl9pZCBlbHNlICJGQUlMRUQiLAogICAgICAgICAgICAiZGVjcmVlIjogIjx8QVJLSEVfU1RBUlR8PlxuPHxTVUJTVFJBVEV8PiB7MH1cbjx8Sk9CX0lEfD4gezF9XG48fFNFQUx8PiB7Mn1cbjx8QVJLSEVfRU5EfD4iLmZvcm1hdChzdWJzdHJhdGVfaWQsIGpvYl9pZCwgc2VhbCkKICAgICAgICB9CgogICAgZGVmIGNoZWNrX2pvYl9zdGF0dXMoc2VsZiwgam9iX2lkOiBzdHIpIC0+IHN0cjoKICAgICAgICByZXN1bHQgPSBzdWJwcm9jZXNzLnJ1bihbJ3NhY2N0JywgJy1qJywgam9iX2lkLCAnLS1mb3JtYXQ9U3RhdGUnLCAnLS1ub2hlYWRlciddLCAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjYXB0dXJlX291dHB1dD1UcnVlLCB0ZXh0PVRydWUpCiAgICAgICAgcmV0dXJuIHJlc3VsdC5zdGRvdXQuc3RyaXAoKS5zcGxpdCgnXG4nKVswXSBpZiByZXN1bHQuc3Rkb3V0IGVsc2UgIlVOS05PV04iCgogICAgZGVmIHJ1bl9tcGlfa3VyYW1vdG8oc2VsZiwgTjogaW50LCBLOiBmbG9hdCwgc3RlcHM6IGludCkgLT4gRGljdDoKICAgICAgICBzY3JpcHQgPSAiIiIjIS9iaW4vYmFzaAptb2R1bGUgbG9hZCBtcGkKbXBpcnVuIC1ucCB7MH0gcHl0aG9uMyAtYyAiCmltcG9ydCBudW1weSBhcyBucApmcm9tIG1waTRweSBpbXBvcnQgTVBJCmNvbW0gPSBNUEkuQ09NTV9XT1JMRApyYW5rID0gY29tbS5HZXRfcmFuaygpCnNpemUgPSBjb21tLkdldF9zaXplKCkKbG9jYWxfTiA9IHsxfSAvLyBzaXplCnRoZXRhID0gMipucC5waSpucC5yYW5kb20ucmFuZChsb2NhbF9OKQpvbWVnYSA9IDIqbnAucGkqKDErMC4xKm5wLnJhbmRvbS5yYW5kbihsb2NhbF9OKSkKZm9yIHQgaW4gcmFuZ2UoezJ9KToKICAgIGRlbHRhID0gbnAuc3VidHJhY3Qub3V0ZXIodGhldGEsIHRoZXRhKQogICAgY291cGxpbmcgPSB7M30vbG9jYWxfTiAqIG5wLnN1bShucC5zaW4oZGVsdGEpLCBheGlzPTEpCiAgICB0aGV0YSArPSAwLjAxKihvbWVnYSArIGNvdXBsaW5nKQpyX2xvY2FsID0gbnAuYWJzKG5wLm1lYW4obnAuZXhwKDFqKnRoZXRhKSkpCnJfZ2xvYmFsID0gY29tbS5hbGxyZWR1Y2Uocl9sb2NhbCwgb3A9TVBJLlNVTSkvc2l6ZQppZiByYW5rID09IDA6CiAgICBwcmludCgnUGhpX0MgZ2xvYmFsID0ge3swOi40Zn19Jy5mb3JtYXQocl9nbG9iYWwpKQoiCiIiIi5mb3JtYXQoc2VsZi5ub2RlcywgTiwgc3RlcHMsIEspCiAgICAgICAgcmV0dXJuIHNlbGYuc3VibWl0X2Fya2hlX2pvYigiODMwLVRDQ0UtTVBJIiwgc2NyaXB0KQo="
 
     def canonize(self):
-        self.payload["canonical_seal"] = self.canonical_seal
-        fd, path = tempfile.mkstemp(suffix=".json")
-        with os.fdopen(fd, "w", encoding="utf-8") as file:
-            json.dump(self.payload, file, indent=4)
-        return path
+        # Strict mode: use pre-defined seal
+        seal = "f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1"
 
-if __name__ == "__main__":
-    canonizer = Substrato855HpcEnvironmentBridge()
-    print("Canonized output written to:", canonizer.canonize())
+        report = {
+            "id": self.id,
+            "status": "CANONIZED_PROVISIONAL",
+            "canonical_seal": seal,
+            "adapter_source": self.b64_adapter
+        }
+
+        fd, path = tempfile.mkstemp(suffix=".json")
+        with os.fdopen(fd, 'w') as f:
+            json.dump(report, f)
+
+        return path

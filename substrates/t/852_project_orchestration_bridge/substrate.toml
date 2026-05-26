@@ -1,5 +1,3 @@
-[substrate]
-id = "852"
-name = "PROJECT-ORCHESTRATION-BRIDGE (POB)"
-version = "v1.0"
+name = "852-PROJECT-ORCHESTRATION-BRIDGE"
+version = "1.0.0"
 source_verified = true
