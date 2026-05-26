@@ -1017,7 +1017,8 @@ def test_pvac_f_strings():
         'substrates/t/825_parametric_memory_engine/substrato_825_parametric_memory_engine.py',
         'substrates/t/826_gnn_isomorphism_finder/substrato_826_gnn_isomorphism_finder.py',
         'substrates/t/831_story_ip_chain_bridge/substrato_831_story_ip_chain_bridge.py',
-        'substrates/t/836_julia_parser/substrato_836_julia_parser.py'
+        'substrates/t/836_julia_parser/substrato_836_julia_parser.py',
+        'substrates/t/837_gno_land_integration/substrato_837_gno_land_integration.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
@@ -1409,6 +1410,26 @@ def test_substrato_826_gnn_isomorphism_finder():
         tree = ast.parse(f.read())
         for node in ast.walk(tree):
             assert not isinstance(node, ast.JoinedStr), "f-strings are not allowed in canonizer"
+
+def test_837_gno_land_integration():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/837_gno_land_integration/substrato_837_gno_land_integration.py')
+    spec = importlib.util.spec_from_file_location("substrato_837_gno_land_integration", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato837GnoLandIntegration()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["ID"] == "837"
+    assert "Canonical_Seal" in data
 
 def test_831_story_ip_chain_bridge():
     import importlib.util
