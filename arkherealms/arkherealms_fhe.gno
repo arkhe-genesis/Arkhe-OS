@@ -18,6 +18,7 @@ type FheComputation struct {
     SubstrateID  string
     Timestamp    int64
     Verified     bool
+    Seal         string
 }
 
 var (
@@ -43,6 +44,7 @@ func RegisterFheComputation(
         SubstrateID:  substrateID,
         Timestamp:    time.Now().Unix(),
         Verified:     false,
+        Seal:         seal,
     }
 
     return seal
@@ -59,8 +61,9 @@ func VerifyFheComputation(id string) bool {
         comp.ID + comp.CircuitHash + comp.InputHash + comp.OutputHash + comp.ZkpProofHash,
     )
     // A verificacao completa requer validacao externa da ZKP
-    if expectedSeal != "" { // just to use the variable
-        comp.Verified = true
+    if expectedSeal != comp.Seal {
+        return false
     }
+    comp.Verified = true
     return true
 }

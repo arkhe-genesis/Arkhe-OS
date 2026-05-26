@@ -53,7 +53,7 @@ class ArkheGnoClient {
     async getSubstrate(id) {
         const result = await this.provider.evaluateExpression(
             this.realmPath,
-            `GetStatus("${id}")`
+            `GetStatus(${JSON.stringify(id)})`
         );
         return result;
     }
@@ -62,7 +62,7 @@ class ArkheGnoClient {
     async getPhiC(id) {
         const result = await this.provider.evaluateExpression(
             this.realmPath,
-            `GetPhiC("${id}")`
+            `GetPhiC(${JSON.stringify(id)})`
         );
         return parseFloat(result);
     }

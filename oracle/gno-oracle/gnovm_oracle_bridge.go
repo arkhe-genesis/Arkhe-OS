@@ -12,6 +12,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -249,9 +250,9 @@ func (b *GnoOracleBridge) AnchorToGno(thetaID string, blockData string, phiC flo
 // ============================================================
 
 func computeSHA3(data string) string {
-	// In production: use crypto/sha3
-	// This is a simplified version
-	return fmt.Sprintf("sha3-256-%x", len(data))
+	h := sha256.New()
+	h.Write([]byte(data))
+	return fmt.Sprintf("%x", h.Sum(nil))
 }
 
 // ============================================================

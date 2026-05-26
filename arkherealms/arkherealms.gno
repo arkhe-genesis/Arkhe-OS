@@ -56,6 +56,7 @@ var (
 	TemporalChain   = make(map[string]*TemporalBlock)
 	LastBlockSeal   = "genesis"
 	ArchitectORCID  = "0009-0005-2697-4668"
+	ArchitectAddress = "g1jg8mtutu9rxjt99xrvcceapqndddf5hl5kqqv"
 	GhostThreshold  = 0.577350269
 	ArkheVersion    = "inf.Omega"
 )
@@ -98,7 +99,7 @@ func UpdateSubstrateStatus(id string, status string) {
 	}
 
 	// Only architect can update
-	if std.GetOrigCaller().String() != ArchitectORCID {
+	if std.GetOrigCaller().String() != ArchitectAddress {
 		panic("Unauthorized: only architect can update status")
 	}
 
@@ -142,7 +143,8 @@ func IssueDecree(substrateID string, content string) string {
 		panic("Invalid substrate: " + substrateID)
 	}
 
-	decreeID := substrateID + "-" + time.Now().Format("20060102-150405")
+	contentHash := computeSeal(content)
+	decreeID := substrateID + "-" + time.Now().Format("20060102-150405") + "-" + contentHash[:8]
 	seal := computeSeal(decreeID + ":" + content)
 
 	Decrees[decreeID] = &Decree{
@@ -214,11 +216,17 @@ func GetTemporalChain() []*TemporalBlock {
 	var chain []*TemporalBlock
 	currentSeal := "genesis"
 
-	// Build chain in order (simplified - in production use AVL tree)
+	byPrev := make(map[string]*TemporalBlock)
 	for _, block := range TemporalChain {
-		if block.PrevSeal == currentSeal {
+		byPrev[block.PrevSeal] = block
+	}
+
+	for {
+		if block, ok := byPrev[currentSeal]; ok {
 			chain = append(chain, block)
 			currentSeal = block.Seal
+		} else {
+			break
 		}
 	}
 
