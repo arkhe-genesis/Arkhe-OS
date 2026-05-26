@@ -1,0 +1,5 @@
+[substrate]
+id = "840"
+name = "OCTRA-FHE-BRIDGE"
+version = "v1.0"
+source_verified = true

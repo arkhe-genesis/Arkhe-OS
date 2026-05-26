@@ -1017,7 +1017,8 @@ def test_pvac_f_strings():
         'substrates/t/825_parametric_memory_engine/substrato_825_parametric_memory_engine.py',
         'substrates/t/826_gnn_isomorphism_finder/substrato_826_gnn_isomorphism_finder.py',
         'substrates/t/831_story_ip_chain_bridge/substrato_831_story_ip_chain_bridge.py',
-        'substrates/t/836_julia_parser/substrato_836_julia_parser.py'
+        'substrates/t/836_julia_parser/substrato_836_julia_parser.py',
+        'substrates/t/832_gno_land_bridge/substrato_832_gno_land_bridge.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
@@ -1310,7 +1311,10 @@ def test_824_bridge_magalu_aws():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
 
-    assert "f\"" not in content and "f'" not in content, "f-strings are not allowed in canonizer scripts"
+    import ast
+    tree = ast.parse(content)
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr), "f-strings are not allowed in canonizer scripts"
 
 def test_substrato_821_olah_vatican_convergence():
     import importlib.util
@@ -1386,7 +1390,10 @@ def test_827_bo_gallium_discovery():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
 
-    assert "f\"" not in content and "f'" not in content, "f-strings are not allowed in canonizer scripts"
+    import ast
+    tree = ast.parse(content)
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr), "f-strings are not allowed in canonizer scripts"
 
 def test_substrato_826_gnn_isomorphism_finder():
     import importlib.util
@@ -1436,7 +1443,10 @@ def test_831_story_ip_chain_bridge():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
 
-    assert "f\"" not in content and "f'" not in content, "f-strings are not allowed in canonizer scripts"
+    import ast
+    tree = ast.parse(content)
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr), "f-strings are not allowed in canonizer scripts"
 
 def test_834_wdf_driver_fabric():
     import importlib.util
@@ -1463,3 +1473,59 @@ def test_834_wdf_driver_fabric():
         tree = ast.parse(f.read())
         for node in ast.walk(tree):
             assert not isinstance(node, ast.JoinedStr), "f-strings are not allowed in canonizer"
+
+def test_832_gno_land_bridge():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/832_gno_land_bridge/substrato_832_gno_land_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_832_gno_land_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato832GnoLandBridge()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["ID"] == "832"
+    assert data["canonical_seal"] == "856d8aba19b6f795f34464c2e7a4d1c6dc41c7b6afda9f0ce30584855c8e629f"
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    import ast
+    tree = ast.parse(content)
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr), "f-strings are not allowed in canonizer scripts"
+
+def test_840_octra_fhe_bridge():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/840_octra_fhe_bridge/substrato_840_octra_fhe_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_840_octra_fhe_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato840OctraFheBridge()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["ID"] == "840"
+    assert data["canonical_seal"] == "c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8"
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    import ast
+    tree = ast.parse(content)
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr), "f-strings are not allowed in canonizer scripts"
