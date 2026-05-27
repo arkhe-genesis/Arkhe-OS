@@ -2024,3 +2024,60 @@ def test_870_g_arkhe_http_gateway():
 
     # Strict string assertions
     assert "f\"" not in open(file_path).read()
+
+
+def test_substrato_898():
+    import os
+    import sys
+    sys.path.append(os.path.abspath('substrates/t/898_kolmogorov_weight_theorem'))
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('substrato_898', os.path.abspath('substrates/t/898_kolmogorov_weight_theorem/substrato_898.py'))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    Substrato898KolmogorovWeightTheorem = module.Substrato898KolmogorovWeightTheorem
+    s = Substrato898KolmogorovWeightTheorem()
+    info = eval(s.get_info())
+    seal = info.get('Canonical_Seal', info.get('Seal_SHA3_256', info.get('canonical_seal')))
+    assert seal == s.seal
+
+def test_substrato_899():
+    import os
+    import sys
+    sys.path.append(os.path.abspath('substrates/t/899_lightclock_harmony_principle'))
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('substrato_899', os.path.abspath('substrates/t/899_lightclock_harmony_principle/substrato_899.py'))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    Substrato899LightclockHarmonyPrinciple = module.Substrato899LightclockHarmonyPrinciple
+    s = Substrato899LightclockHarmonyPrinciple()
+    info = eval(s.get_info())
+    seal = info.get('Canonical_Seal', info.get('Seal_SHA3_256', info.get('canonical_seal')))
+    assert seal == s.seal
+
+def test_substrato_900():
+    import os
+    import sys
+    sys.path.append(os.path.abspath('substrates/t/900_peptide_saas_principle'))
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('substrato_900', os.path.abspath('substrates/t/900_peptide_saas_principle/substrato_900.py'))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    Substrato900PeptideSaaSPrinciple = module.Substrato900PeptideSaaSPrinciple
+    s = Substrato900PeptideSaaSPrinciple()
+    info = eval(s.get_info())
+    seal = info.get('Canonical_Seal', info.get('Seal_SHA3_256', info.get('canonical_seal')))
+    assert seal == s.seal
+
+def test_substrato_901():
+    import os
+    import sys
+    sys.path.append(os.path.abspath('substrates/t/901_ai_capability_hierarchy'))
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('substrato_901', os.path.abspath('substrates/t/901_ai_capability_hierarchy/substrato_901.py'))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    Substrato901AICapabilityHierarchy = module.Substrato901AICapabilityHierarchy
+    s = Substrato901AICapabilityHierarchy()
+    info = eval(s.get_info())
+    seal = info.get('Canonical_Seal', info.get('Seal_SHA3_256', info.get('canonical_seal')))
+    assert seal == s.seal
