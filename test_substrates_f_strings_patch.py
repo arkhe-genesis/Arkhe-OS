@@ -53,3 +53,12 @@ def test_pvac_f_strings_898_899_900():
             content = f.read()
             assert 'f"' not in content, f"Found f-string in {file}"
             assert "f'" not in content, f"Found f-string in {file}"
+
+def test_917_f_strings_patch():
+    import os
+    file_path = os.path.abspath('substrates/t/917_google_grounding_layer/substrato_917_google_grounding_layer.py')
+    with open(file_path, "r") as f:
+        content = f.read()
+    # verify no f-strings
+    assert 'f"' not in content, "f-strings are not allowed in substrate 917"
+    assert "f'" not in content, "f-strings are not allowed in substrate 917"

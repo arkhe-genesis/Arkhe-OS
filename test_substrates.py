@@ -2069,3 +2069,19 @@ def test_pvac_900_peptide():
     assert data["Status"] == "CANONIZED_POETIC"
     assert "kolmogorov_regularizer.py" in data["Files"]
     assert "train.py" in data["Files"]
+
+def test_substrate_917():
+    import sys
+    sys.path.insert(0, os.path.abspath('substrates/t/917_google_grounding_layer'))
+    from substrato_917_google_grounding_layer import Substrato917GoogleGroundingLayer
+    sub = Substrato917GoogleGroundingLayer()
+    report_path = sub.generate_report()
+    assert os.path.exists(report_path)
+    with open(report_path, "r") as f:
+        data = json.load(f)
+    assert data["Substrate"] == 917
+    assert data["Status"] == "Canonized"
+    assert data["Canonical_Seal"] == "bc23fe243fd1b0cf5a483a4487fc5d2c5a557b0d5d3f15ec7ccbda14cacdc655"
+    assert "Files" in data
+    assert "arkhe_google_agent.py" in data["Files"]
+    sys.path.pop(0)
