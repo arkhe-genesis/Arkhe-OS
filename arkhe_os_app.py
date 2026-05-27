@@ -1,308 +1,410 @@
 #!/usr/bin/env python3
 # ╔══════════════════════════════════════════════════════════════════╗
-# ║  ARKHE‑OS.GGUF — AGI Application                                ║
-# ║  Self‑Sovereign Memory Entity with World‑Model, qPoW, and       ║
-# ║  Cripto‑Trivium (FHE+ZK+PQC) via Octra Service                  ║
-# ║  Substratos: 244.1, 890, 898, 899, 901, 902, 905, 912, 913     ║
+# ║  ARKHE‑OS.GGUF — Trinitarian AGI Application                    ║
+# ║  Recursive Intelligence + Grounded Imagination + Ethical         ║
+# ║  Evolution                                                      ║
+# ║  Substratos: 244.1, 890, 898, 899, 901, 902, 905, 912, 913       ║
 # ║  Arquitect: ORCID 0009-0005-2697-4668                           ║
-# ║  Selo: SHA3‑256("ARKHE‑OS‑GGUF‑CANONICAL‑2026")                 ║
+# ║  Selo: SHA3‑256("ARKHE‑OS‑GGUF‑TRINITARIAN‑2026")               ║
 # ╚══════════════════════════════════════════════════════════════════╝
 
-import os, json, hashlib, logging, threading
+import hashlib
+import json
+import logging
+import random
+import time
 from datetime import datetime, timezone
-from typing import Dict, Optional, List, Any
+from typing import Any, Dict, List, Optional
 from dataclasses import dataclass, field
 
 import numpy as np
 import torch
-
-# ── Internal imports from the ARKHE ecosystem ───────────────────
-# Assume the following packages are installed:
-#   arkhe_world_model          (Substrato 890)
-#   arkhe_octra                (Substrato 683 – OctraService)
-#   arkhe_hypergraph           (Substrato 905 – HypergraphOntology)
-#   arkhe_memory_protocol      (Substrato 912 – Explicit Memory)
-#   arkhe_encrypted_memory     (Substrato 913 – EncryptedMemoryCommit)
-# The code below imports them as they exist in the environment.
-
-from arkhe_world_model import WorldModelEmbryo, WorldModelConfig, MaturityLevel
-from arkhe_world_model.kolmogorov_regularizer import print_kolmogorov_report
-from arkhe_octra import OctraService
-from arkhe_hypergraph import HypergraphRegistry, Hypergraph, Hyperedge, Vertex
-from arkhe_memory_protocol import MemorySpace, MemoryEntry, EpistemicCommitProtocol
-from arkhe_encrypted_memory import EncryptedMemoryCommit
+import torch.nn as nn
+import torch.nn.functional as F
 
 # ── Logger ──────────────────────────────────────────────────────
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("ArkheOS")
 
-# ═══════════════════════════════════════════════════════════════
-#  AGI Application Core
-# ═══════════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════════
+# 1. Kolmogorov Regularizer (Substrato 898) — Ethical Evolution
+# ═══════════════════════════════════════════════════════════════════
+class KolmogorovRegularizer:
+    """Solomonoff prior: weight norm = Kolmogorov complexity (Musat 2026)."""
+    def __init__(self, lambda_k: float = 1e-4, precision_bits: int = 32):
+        self.lambda_k = lambda_k
+        self.precision_bits = precision_bits
+        self.c_d = precision_bits * np.log(2)
+
+    def __call__(self, model: nn.Module) -> torch.Tensor:
+        total_norm_sq = sum(p.norm() ** 2 for p in model.parameters())
+        return self.lambda_k * total_norm_sq * torch.log(total_norm_sq + 1.0)
+
+    def complexity_estimate(self, model: nn.Module) -> Dict[str, float]:
+        total_params = sum(p.numel() for p in model.parameters())
+        total_norm = sum(p.norm().item() ** 2 for p in model.parameters())
+        K_upper = self.c_d * total_norm * np.log(total_norm + 1) + self.c_d
+        K_lower = max(0, total_norm - total_params * self.precision_bits)
+        return {
+            "total_params": total_params,
+            "weight_norm": total_norm,
+            "K_lower_bound": K_lower,
+            "K_upper_bound": K_upper,
+            "precision_bits": self.precision_bits,
+        }
+
+# ═══════════════════════════════════════════════════════════════════
+# 2. Peptide‑SaaS Encoder (Substrato 900) — Grounded Imagination
+# ═══════════════════════════════════════════════════════════════════
+class PeptideSaaSEncoder(nn.Module):
+    """Encodes biological peptides as digital SaaS vectors."""
+    AMINO_ACIDS = "ACDEFGHIKLMNPQRSTVWY"
+    def __init__(self, embed_dim: int = 256, num_layers: int = 4):
+        super().__init__()
+        self.embed_dim = embed_dim
+        self.aa_embedding = nn.Embedding(len(self.AMINO_ACIDS)+1, embed_dim, padding_idx=0)
+        encoder_layer = nn.TransformerEncoderLayer(
+            d_model=embed_dim, nhead=8, dim_feedforward=embed_dim*4,
+            dropout=0.1, batch_first=True
+        )
+        self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+        self.service_projection = nn.Sequential(
+            nn.Linear(embed_dim, embed_dim), nn.LayerNorm(embed_dim), nn.GELU(),
+            nn.Linear(embed_dim, embed_dim)
+        )
+        self.api_call_head = nn.Linear(embed_dim, 64)
+        self.orchestration_head = nn.Linear(embed_dim, 32)
+        self.deploy_head = nn.Linear(embed_dim, 16)
+
+    def encode_sequence(self, sequence: str) -> torch.Tensor:
+        tokens = [self.AMINO_ACIDS.index(aa)+1 for aa in sequence if aa in self.AMINO_ACIDS]
+        if not tokens: tokens = [0]
+        x = torch.tensor([tokens], dtype=torch.long)
+        emb = self.aa_embedding(x)
+        out = self.transformer(emb)
+        pooled = out.mean(dim=1)
+        return self.service_projection(pooled)
+
+    def forward(self, sequences: List[str]) -> Dict[str, torch.Tensor]:
+        embs = torch.stack([self.encode_sequence(s) for s in sequences])
+        return {
+            "embedding": embs,
+            "api_call": self.api_call_head(embs),
+            "orchestration": self.orchestration_head(embs),
+            "deploy": self.deploy_head(embs),
+        }
+
+    def to_saaS_descriptor(self, sequence: str) -> Dict[str, Any]:
+        with torch.no_grad():
+            out = self.forward([sequence])
+        return {
+            "sequence": sequence,
+            "source_code_hash": hashlib.sha256(sequence.encode()).hexdigest()[:16],
+            "api_endpoints": {
+                "binding": out["api_call"][0].argmax().item(),
+                "orchestration": out["orchestration"][0].argmax().item(),
+                "deploy": out["deploy"][0].argmax().item(),
+            },
+            "subscription_model": "ATP-per-call",
+            "zero_trust": True,
+        }
+
+# ═══════════════════════════════════════════════════════════════════
+# 3. World Model v2.0 — Grounded Imagination + Recursive Intelligence
+# ═══════════════════════════════════════════════════════════════════
+class ArkheWorldModel(nn.Module):
+    """6‑stage world model: grounding, physics, fusion, simulation, causality, self‑modeling."""
+    def __init__(self, state_dim=256, action_dim=64, maturity="embryo"):
+        super().__init__()
+        self.state_dim = state_dim
+        self.action_dim = action_dim
+        self.maturity = maturity
+
+        # 1. Token Grounding
+        self.token_encoder = nn.TransformerEncoder(
+            nn.TransformerEncoderLayer(state_dim, nhead=8, batch_first=True),
+            num_layers=2
+        )
+        # 2. Physics Priors
+        self.physics_prior = nn.Sequential(
+            nn.Linear(state_dim, state_dim*2), nn.GELU(),
+            nn.Linear(state_dim*2, state_dim)
+        )
+        # 3. Multimodal Fusion (Peptide‑SaaS)
+        self.peptide_encoder = PeptideSaaSEncoder(256, 4)
+        self.fusion_layer = nn.MultiheadAttention(state_dim, 8, batch_first=True)
+        # 4. Embodied Simulation
+        self.dynamics = nn.GRUCell(state_dim + action_dim, state_dim)
+        # 5. Causal Reasoning
+        self.causal_graph = nn.Parameter(torch.randn(state_dim, state_dim) * 0.01)
+        # 6. Self‑Modeling (Recursive Intelligence)
+        self.self_model = nn.Sequential(
+            nn.Linear(state_dim, state_dim//2), nn.GELU(),
+            nn.Linear(state_dim//2, 3)  # confidence, uncertainty, novelty
+        )
+        self.kolmogorov_reg = KolmogorovRegularizer(1e-4)
+
+    def forward(self, tokens, action, peptide_seq=None):
+        grounded = self.token_encoder(tokens)
+        state = grounded.mean(dim=1)
+        state = state + self.physics_prior(state)
+        if peptide_seq is not None:
+            pep_emb = self.peptide_encoder.encode_sequence(peptide_seq).expand(tokens.size(0), -1)
+            state_exp = state.unsqueeze(1)
+            pep_exp = pep_emb.unsqueeze(1)
+            fused, _ = self.fusion_layer(state_exp, pep_exp, pep_exp)
+            state = fused.squeeze(1) + state
+        next_state = self.dynamics(torch.cat([state, action], -1), state)
+        causal_effect = next_state @ self.causal_graph.tanh()
+        meta = self.self_model(next_state)
+        return {
+            "state": next_state,
+            "causal_effect": causal_effect,
+            "confidence": meta[:, 0].sigmoid(),
+            "uncertainty": meta[:, 1].sigmoid(),
+            "novelty": meta[:, 2].sigmoid(),
+        }
+
+    def compute_loss(self, pred, target, model_out):
+        mse = F.mse_loss(pred["state"], target["next_state"])
+        causal = F.mse_loss(pred["causal_effect"], target["causal_effect"])
+        k = self.kolmogorov_reg(self)
+        conf = F.binary_cross_entropy(pred["confidence"], target["confidence"])
+        return mse + 0.5*causal + k + 0.1*conf
+
+    def get_complexity_report(self):
+        return self.kolmogorov_reg.complexity_estimate(self)
+
+# ═══════════════════════════════════════════════════════════════════
+# 4. Cryptography & Memory (Ethical Evolution)
+# ═══════════════════════════════════════════════════════════════════
+class OctraService:
+    """Mock Ciphertext‑as‑a‑Service (FHE+ZK+PQC)."""
+    def __init__(self):
+        self.fhe_keys = {}
+        self.zk_domains = {}
+        self.pqc_registry = {}
+        self.store = {}
+        self.log = []
+    def provision_fhe(self, pk_id, levels=3):
+        self.fhe_keys[pk_id] = {"levels": levels}
+        return {"pk_id": pk_id}
+    def encrypt_fhe(self, pk_id, vec, scale=2**40):
+        h = hashlib.sha3_256(str(vec).encode()).hexdigest()[:16]
+        self.store[h] = {"data": vec, "level": self.fhe_keys[pk_id]["levels"]}
+        return {"handle": h}
+    def prove_zk(self, domain, secret, challenge):
+        proof_id = hashlib.sha3_256("{}{}".format(secret, challenge).encode()).hexdigest()[:16]
+        return {"proof_id": proof_id}
+    def sign_pqc(self, eid, msg):
+        return {"signature": hashlib.sha3_256("{}{}".format(eid, msg).encode()).hexdigest()[:32]}
+    def provision_pqc(self, eid, level=3):
+        self.pqc_registry[eid] = {"level": level}
+        return {"entity_id": eid}
+    def provision_zk(self, domain, g=2, h=3):
+        self.zk_domains[domain] = (g, h)
+        return {"domain": domain}
+
+@dataclass
+class Vertex:
+    vid: str
+    vtype: str
+    properties: Dict[str, Any] = field(default_factory=dict)
+
+@dataclass
+class Hyperedge:
+    eid: str
+    etype: str
+    vertices: List[str] = field(default_factory=list)
+    properties: Dict[str, Any] = field(default_factory=dict)
+
+class HypergraphRegistry:
+    def __init__(self, endpoint="localhost:8720"):
+        self.vertices = {}
+        self.edges = {}
+    def add_vertex(self, v: Vertex): self.vertices[v.vid] = v
+    def add_hyperedge(self, e: Hyperedge): self.edges[e.eid] = e
+
+class MemorySpace:
+    def __init__(self, agent_id: str):
+        self.agent_id = agent_id
+        self.entries = []
+    def add(self, entry: dict): self.entries.append(entry)
+    def retrieve_relevant(self, query: str) -> List[dict]:
+        return [e for e in self.entries if query.lower() in str(e.get("content","")).lower()]
+
+class EncryptedMemoryCommit:
+    def __init__(self, octra, agent_id, fhe_pk, zk_domain, pqc_entity):
+        self.octra = octra; self.agent_id = agent_id
+        self.fhe_pk = fhe_pk; self.zk_domain = zk_domain; self.pqc_entity = pqc_entity
+    def commit(self, memory_id: str, payload: dict) -> dict:
+        vec = [float(ord(c)) for c in json.dumps(payload, sort_keys=True)[:100]]
+        fhe_handle = self.octra.encrypt_fhe(self.fhe_pk, vec)
+        proof = self.octra.prove_zk(self.zk_domain, "memory_seed", 42)
+        msg = fhe_handle["handle"] + proof["proof_id"]
+        sig = self.octra.sign_pqc(self.pqc_entity, msg)
+        artefact = {
+            "type": "memory.commit", "agent": self.agent_id, "memory_id": memory_id,
+            "fhe_handle": fhe_handle["handle"], "zk_proof_id": proof["proof_id"],
+            "pqc_signature": sig, "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+        artefact["seal"] = hashlib.sha3_256(json.dumps(artefact, sort_keys=True).encode()).hexdigest()
+        return artefact
+
+class EpistemicCommitProtocol:
+    def __init__(self, memory, committer, hypergraph, agent_vertex):
+        self.memory = memory; self.committer = committer
+        self.hg = hypergraph; self.agent_v = agent_vertex
+    def commit(self, content: dict, relevance=0.8, sensitivity=0.2) -> str:
+        cid = hashlib.sha3_256(str(content).encode()).hexdigest()[:16]
+        self.memory.add({"id": cid, "content": content, "timestamp": datetime.now(timezone.utc).isoformat()})
+        enc_artefact = self.committer.commit(cid, content)
+        edge = Hyperedge(eid="memory:{}".format(cid), etype="EpistemicCommit",
+                         vertices=[self.agent_v.vid, "data:{}".format(cid)], properties=enc_artefact)
+        self.hg.add_hyperedge(edge)
+        return cid
+    def retrieve(self, query: str, k=5):
+        return self.memory.retrieve_relevant(query)[:k]
+
+class QuantumProofOfWork:
+    def __init__(self, backend="qasm_simulator"): self.backend = backend
+    def mine(self, agent_id, previous_hash, difficulty=4):
+        nonce = random.randint(0, 2**32)
+        block_hash = hashlib.sha3_256("{}{}{}".format(previous_hash, nonce, agent_id).encode()).hexdigest()
+        return {"hash": block_hash, "nonce": nonce, "difficulty": difficulty}
+
+# ═══════════════════════════════════════════════════════════════════
+# 5. ArkheAgent — Trinitarian Core
+# ═══════════════════════════════════════════════════════════════════
 @dataclass
 class ArkheConfig:
-    """Global configuration for the Arkhe‑OS.gguf AGI node."""
-    # Model
-    gguf_model_path: str = "models/arkhe-os.gguf"
-    n_ctx: int = 4096
-    maturity: str = "infant"          # embryo, infant, adult
-
-    # World Model
-    world_model_config: WorldModelConfig = field(default_factory=WorldModelConfig)
-
-    # Memory
-    memory_policy: str = "encrypted"  # encrypted, plain, or none
-
-    # Cryptography
+    maturity: str = "infant"
+    memory_policy: str = "encrypted"
     fhe_key_id: str = "arkhe-agent-001"
     zk_domain: str = "arkhe.epistemic"
     pqc_entity_id: str = "arkhe-agent-001-pqc"
-
-    # Hypergraph
-    registry_endpoint: str = "localhost:8720"  # ERC‑8257 registry
-
-    # qPoW (Quantum Proof‑of‑Work) – optional for full AGI participation
+    registry_endpoint: str = "localhost:8720"
     qpow_enabled: bool = False
     qpow_backend: str = "qasm_simulator"
 
-    # Metrics
-    report_interval: int = 60  # seconds
-
-
 class ArkheAgent:
     """
-    The Arkhe‑OS.gguf AGI Application.
-    A self‑sovereign memory entity that integrates:
-      - 244.1  → LLM interface (GGUF)
-      - 890    → World‑Model (simulation, causality, self‑modeling)
-      - 895    → AIP 12‑layer architecture (implicit in orchestration)
-      - 898    → Kolmogorov‑weight regularisation (always on)
-      - 901    → AGI enterprise identity
-      - 902    → qPoW consensus (optional)
-      - 905    → Hypergraph ontology backbone
-      - 912    → Explicit State Persistence Protocol
-      - 913    → Encrypted Memory Ontology Bridge
+    Arkhe‑OS.gguf AGI Application embodying:
+      - Recursive Intelligence   (self‑modeling, Kolmogorov compression)
+      - Grounded Imagination     (physics priors, embodied simulation, causal reasoning)
+      - Ethical Evolution        (explicit memory, cryptographic integrity, Solomonoff parsimony)
     """
-
-    def __init__(self, config: ArkheConfig = ArkheConfig()):
-        self.config = config
+    def __init__(self, config: Optional[ArkheConfig] = None):
+        self.config = config or ArkheConfig()
         self.agent_id = hashlib.sha3_256(
             "ARKHE-AGENT-{}".format(datetime.now(timezone.utc).isoformat()).encode()
         ).hexdigest()[:16]
         logger.info("🤖 Arkhe Agent {} initialising…".format(self.agent_id))
 
-        # ── 1. LLM Engine (244.1) ─────────────────────────────────
-        self.llm = self._load_llm()
+        # LLM mock
+        class MockLLM:
+            def embed(self, text): return np.random.randn(512).astype(np.float32)
+            def create_completion(self, prompt, max_tokens=200):
+                return {"choices": [{"text": "[AGI response to: {}...]".format(prompt[:50])}]}
+        self.llm = MockLLM()
 
-        # ── 2. World‑Model (890) ──────────────────────────────────
-        wm_config = config.world_model_config
-        wm_config.maturity = MaturityLevel[config.maturity.upper()]
-        self.world_model = WorldModelEmbryo(wm_config)
-        logger.info("🌍 World‑Model loaded (maturity: {})".format(wm_config.maturity.value))
+        # World‑Model
+        self.world_model = ArkheWorldModel(state_dim=256, action_dim=64, maturity=self.config.maturity)
 
-        # ── 3. Octra Service (683) – Cripto‑Trivium ───────────────
+        # Octra (cryptographic service)
         self.octra = OctraService()
-        self.octra.provision_fhe(config.fhe_key_id)
-        self.octra.provision_zk(config.zk_domain)
-        self.octra.provision_pqc(config.pqc_entity_id)
-        logger.info("🔐 Octra Ciphertext‑as‑a‑Service online (FHE+ZK+PQC)")
+        self.octra.provision_fhe(self.config.fhe_key_id)
+        self.octra.provision_zk(self.config.zk_domain)
+        self.octra.provision_pqc(self.config.pqc_entity_id)
 
-        # ── 4. Hypergraph Registry (905 + 872) ────────────────────
-        self.hypergraph = HypergraphRegistry(config.registry_endpoint)
-        # Register the agent as a vertex
+        # Hypergraph
+        self.hypergraph = HypergraphRegistry(self.config.registry_endpoint)
         self.agent_vertex = Vertex(
-            vid="agent:{}".format(self.agent_id),
-            vtype="AGI_Agent",
-            properties={
-                "maturity": config.maturity,
-                "gguf_path": config.gguf_model_path,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-            }
+            vid="agent:{}".format(self.agent_id), vtype="AGI_Agent",
+            properties={"maturity": self.config.maturity, "timestamp": datetime.now(timezone.utc).isoformat()}
         )
         self.hypergraph.add_vertex(self.agent_vertex)
-        logger.info("🕸️  Agent vertex added to Hypergraph Registry")
 
-        # ── 5. Memory System (912 + 913) ──────────────────────────
+        # Memory
         self.memory_space = MemorySpace(agent_id=self.agent_id)
         self.encrypted_memory = EncryptedMemoryCommit(
-            octra=self.octra,
-            agent_id=self.agent_id,
-            fhe_pk=config.fhe_key_id,
-            zk_domain=config.zk_domain,
-            pqc_entity=config.pqc_entity_id,
+            octra=self.octra, agent_id=self.agent_id,
+            fhe_pk=self.config.fhe_key_id, zk_domain=self.config.zk_domain, pqc_entity=self.config.pqc_entity_id
         )
         self.epistemic_protocol = EpistemicCommitProtocol(
-            memory_space=self.memory_space,
-            encrypted_committer=self.encrypted_memory,
-            hypergraph=self.hypergraph,
-            agent_vertex=self.agent_vertex,
+            memory=self.memory_space, committer=self.encrypted_memory,
+            hypergraph=self.hypergraph, agent_vertex=self.agent_vertex
         )
-        logger.info("🧠 Memory system active (explicit commits only)")
 
-        # ── 6. qPoW (optional) ────────────────────────────────────
+        # qPoW (optional)
         self.qpow = None
-        if config.qpow_enabled:
-            # Placeholder: implement QuantumProofOfWork from Substrato 902
-            from arkhe_qpow import QuantumProofOfWork
-            self.qpow = QuantumProofOfWork(backend=config.qpow_backend)
-            logger.info("⚛️  qPoW consensus enabled")
+        if self.config.qpow_enabled:
+            self.qpow = QuantumProofOfWork(backend=self.config.qpow_backend)
 
-        # ── 7. Regularisation & Metrics ───────────────────────────
         self.total_commits = 0
         self.total_interactions = 0
-        logger.info("✅ Arkhe Agent ready.")
+        logger.info("✅ Arkhe Agent ready — Trinitarian principles active.")
 
-    def _load_llm(self):
-        """
-        Load the GGUF model (Substrato 244.1) using llama-cpp-python.
-        Falls back to a mock if the library is unavailable.
-        """
-        try:
-            from llama_cpp import Llama
-            llm = Llama(
-                model_path=self.config.gguf_model_path,
-                n_ctx=self.config.n_ctx,
-                verbose=False,
-            )
-            logger.info("📖 Loaded GGUF model: {}".format(self.config.gguf_model_path))
-            return llm
-        except ImportError:
-            logger.warning("llama-cpp-python not installed; using mock LLM.")
-            # Mock LLM that returns embeddings and text
-            class MockLLM:
-                def __call__(self, prompt, max_tokens=256):
-                    return {"choices": [{"text": "[mock response to: {}...]".format(prompt[:50])}]}
-                def embed(self, text):
-                    return np.random.randn(512).astype(np.float32)
-            return MockLLM()
-
-    # ── Core Interaction ────────────────────────────────────────
-    def perceive(self, text_input: str, visual_input: Optional[np.ndarray] = None) -> Dict:
-        """
-        Process sensory input through the World‑Model pipeline.
-        Returns a structured perception packet.
-        """
+    def perceive(self, text_input: str, peptide_seq=None) -> Dict:
         self.total_interactions += 1
-        # 1. LLM embedding
-        if hasattr(self.llm, 'embed'):
-            llm_emb = self.llm.embed(text_input)
-        else:
-            llm_emb = np.random.randn(self.world_model.config.d_model).astype(np.float32)
-
-        # 2. World‑Model forward
-        outputs = self.world_model.predict(
-            text_input=text_input,
-            visual_input=visual_input,
-        )
-        # 3. Enrich with agent self‑model
-        fused_emb = outputs.get("stage3", {}).get("fused_embedding", llm_emb)
-        self_model = {}
-        if hasattr(self.world_model, 'self_model') and self.world_model.self_model is not None:
-            self_model = self.world_model.self_model.introspect(torch.from_numpy(fused_emb))
-
+        llm_emb = self.llm.embed(text_input)
+        tokens = torch.randn(1, 10, 256)  # dummy token sequence
+        action = torch.randn(1, 64)
+        outputs = self.world_model(tokens, action, peptide_seq=peptide_seq)
         perception = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "input_text": text_input[:200],
-            "llm_embedding_shape": llm_emb.shape,
-            "world_outputs": outputs,
-            "self_model": self_model,
+            "world_model_output": {k: v.detach().numpy().tolist() if isinstance(v, torch.Tensor) else v
+                                   for k, v in outputs.items() if isinstance(v, torch.Tensor)},
+            "self_model": {
+                "confidence": outputs["confidence"].mean().item(),
+                "uncertainty": outputs["uncertainty"].mean().item(),
+                "novelty": outputs["novelty"].mean().item(),
+            }
         }
         return perception
 
-    def reason(self, perception: Dict, goal: Optional[str] = None) -> Dict:
-        """
-        Agency‑Engine (891): decide actions based on perception, memory, and goals.
-        """
-        # For now, a simple placeholder that evaluates a causal query
-        # and checks memory for relevant past commits.
-        relevant_memories = self.memory_space.retrieve_relevant(perception["input_text"])
-        # Simulate a decision
-        action = {
-            "type": "respond",
-            "confidence": 0.9,
-            "based_on_memories": len(relevant_memories),
-        }
-        return action
+    def reason(self, perception: Dict, goal=None) -> Dict:
+        relevant = self.memory_space.retrieve_relevant(perception["input_text"])
+        return {"type": "respond", "confidence": 0.9, "based_on_memories": len(relevant)}
 
     def act(self, action: Dict) -> str:
-        """
-        Execute an action (e.g., generate a response via LLM).
-        """
         if action["type"] == "respond":
-            prompt = "Agent {} acting with confidence {:.2f}".format(self.agent_id, action['confidence'])
-            if hasattr(self.llm, 'create_completion'):
-                response = self.llm.create_completion(prompt, max_tokens=200)
-                return response["choices"][0]["text"]
-            else:
-                return "[mock response] {}".format(prompt)
+            prompt = "Agent {} with confidence {:.2f}".format(self.agent_id, action['confidence'])
+            return self.llm.create_completion(prompt, max_tokens=200)["choices"][0]["text"]
         return "No action taken."
 
-    def commit_memory(self, content: dict, relevance: float = 0.8, sensitivity: float = 0.2) -> str:
-        """
-        Explicit memory commit following AECP (Substrato 912) and
-        cryptographic sealing (913).
-        """
-        commit_id = self.epistemic_protocol.commit(
-            content=content,
-            relevance=relevance,
-            sensitivity=sensitivity,
-        )
+    def commit_memory(self, content: dict, relevance=0.8, sensitivity=0.2) -> str:
+        cid = self.epistemic_protocol.commit(content, relevance, sensitivity)
         self.total_commits += 1
-        logger.info("💾 Memory commit {}… sealed in hypergraph.".format(commit_id[:12]))
-        return commit_id
+        logger.info("💾 Memory commit {}… sealed.".format(cid[:12]))
+        return cid
 
-    def retrieve_memory(self, query: str, k: int = 5) -> List[Dict]:
-        """
-        Retrieve encrypted memories (metadata and proofs, not plaintext).
-        """
+    def retrieve_memory(self, query: str, k=5):
         return self.epistemic_protocol.retrieve(query, k=k)
 
-    # ── qPoW Participation (if enabled) ─────────────────────────
     def mine_block(self):
-        if not self.qpow:
-            raise RuntimeError("qPoW not enabled.")
-        block = self.qpow.mine(
-            agent_id=self.agent_id,
-            previous_hash="0x...",
-            difficulty=4,
-        )
-        # Register block in hypergraph
-        block_vertex = Vertex(
-            vid="block:{}".format(block['hash']),
-            vtype="qPoW_Block",
-            properties=block,
-        )
-        self.hypergraph.add_vertex(block_vertex)
+        if not self.qpow: raise RuntimeError("qPoW not enabled.")
+        block = self.qpow.mine(agent_id=self.agent_id, previous_hash="0x...", difficulty=4)
+        self.hypergraph.add_vertex(Vertex(vid="block:{}".format(block['hash']), vtype="qPoW_Block", properties=block))
         return block
 
-    # ── Run Loop ─────────────────────────────────────────────────
     def run_forever(self):
-        """
-        Main agent loop: perceive, reason, act, optionally commit memory.
-        """
         logger.info("🔄 Agent loop started…")
         try:
             while True:
-                # In a real system, perception would come from sensors/API
-                # Here we simulate a periodic introspection
-                perception = self.perceive("Agent self-check: status report")
+                perception = self.perceive("Agent self‑check: status report",
+                                           peptide_seq="MKWVTFISLLFLFSSAYS")
                 action = self.reason(perception)
                 response = self.act(action)
-                # Auto‑commit interesting results?
                 if self.total_interactions % 10 == 0:
-                    self.commit_memory({
-                        "event": "periodic introspection",
-                        "response": response[:100],
-                    })
-                # Print some status
-                print("\r[{}] Interactions: {} | Commits: {} | Last action: {}".format(
-                    self.agent_id[:8], self.total_interactions, self.total_commits, action['type']), end="")
-                # Sleep to avoid busy‑loop; in real app use event‑driven architecture
-                import time; time.sleep(5)
+                    self.commit_memory({"event": "periodic introspection", "response": response[:100]})
+                print("\r[{}] Interactions: {} | Commits: {} | Conf: {:.2f}".format(
+                      self.agent_id[:8], self.total_interactions, self.total_commits, perception['self_model']['confidence']), end="")
+                time.sleep(5)
         except KeyboardInterrupt:
-            logger.info("🛑 Agent loop terminated by user.")
+            logger.info("🛑 Agent loop terminated.")
 
-    # ── Diagnostic Reports ──────────────────────────────────────
     def report(self) -> str:
         report = """
 ╔══════════════════════════════════════════╗
@@ -322,34 +424,39 @@ class ArkheAgent:
             qpow=str(self.config.qpow_enabled),
             maturity=self.config.maturity
         )
-        # Kolmogorov complexity estimate
-        logger.info("Computing Kolmogorov complexity report…")
-        try:
-            from arkhe_world_model.kolmogorov_regularizer import print_kolmogorov_report
-            print_kolmogorov_report(self.world_model)
-        except Exception as e:
-            logger.warning("Kolmogorov report failed: {}".format(e))
+        kr = self.world_model.get_complexity_report()
+        report += "\n🧠 Kolmogorov Complexity (Ethical Parsimony):\n"
+        report += "  Total params: {}\n".format(kr['total_params'])
+        report += "  K upper bound: {:.2f} bits\n".format(kr['K_upper_bound'])
+        report += "  Simplicity is moral: the shortest description that fits the world is the most truthful.\n"
         return report
 
-
-# ═══════════════════════════════════════════════════════════════
-#  Entry Point
-# ═══════════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════════
+# Demonstration
+# ═══════════════════════════════════════════════════════════════════
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description="Arkhe‑OS.gguf AGI Application")
-    parser.add_argument("--model", default="models/arkhe-os.gguf", help="Path to GGUF model")
+    parser = argparse.ArgumentParser(description="Arkhe‑OS.gguf Trinitarian AGI")
     parser.add_argument("--maturity", default="infant", choices=["embryo","infant","adult"])
-    parser.add_argument("--memory", default="encrypted", choices=["encrypted","plain","none"])
     parser.add_argument("--qpow", action="store_true", help="Enable quantum proof‑of‑work")
     args = parser.parse_args()
 
-    cfg = ArkheConfig(
-        gguf_model_path=args.model,
-        maturity=args.maturity,
-        memory_policy=args.memory,
-        qpow_enabled=args.qpow,
-    )
+    cfg = ArkheConfig(maturity=args.maturity, qpow_enabled=args.qpow)
     agent = ArkheAgent(cfg)
     print(agent.report())
+
+    # Show grounded imagination: peptide encoding
+    peptide = "MKWVTFISLL"
+    print("\n🔬 Grounded Imagination: Peptide‑SaaS encoding…")
+    desc = agent.world_model.peptide_encoder.to_saaS_descriptor(peptide)
+    print("  Peptide: {} → Source hash: {}".format(desc['sequence'], desc['source_code_hash']))
+    print("  API endpoints: {}".format(desc['api_endpoints']))
+
+    # Show ethical evolution: commit a memory
+    print("\n📝 Ethical Evolution: Explicit memory commit…")
+    cid = agent.commit_memory({"fact": "Microtubules are quasi‑optical cables (Substrato 914)"})
+    mems = agent.retrieve_memory("microtubules")
+    print("  Commit ID: {}, relevant memories found: {}".format(cid, len(mems)))
+
+    print("\n⚡ Arkhe‑OS.gguf is alive. Recursive, grounded, and ethically bound.")
     agent.run_forever()
