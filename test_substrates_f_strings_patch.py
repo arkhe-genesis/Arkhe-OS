@@ -53,14 +53,17 @@ def test_pvac_f_strings_898_899_900():
             content = f.read()
             assert 'f"' not in content, f"Found f-string in {file}"
             assert "f'" not in content, f"Found f-string in {file}"
-def test_pvac_f_strings_913():
+
+def test_pvac_f_strings_905_909():
     import os
     files_to_check = [
-        "substrates/t/913_encrypted_memory_ontology_bridge/substrato_913_encrypted_memory_ontology_bridge.py",
-        "substrates/t/913_encrypted_memory_ontology_bridge/encrypted_memory.py",
+        "substrates/t/905_crops_local_ai_stack/substrato_905_crops_local_ai_stack.py",
+        "substrates/t/906_lucebox_inference_engine/substrato_906_lucebox_inference_engine.py",
+        "substrates/t/907_voxterm_audio_privacy/substrato_907_voxterm_audio_privacy.py",
+        "substrates/t/908_leanstral_fv_bridge/substrato_908_leanstral_fv_bridge.py",
+        "substrates/t/909_zk_remote_llm/substrato_909_zk_remote_llm.py",
     ]
     for file in files_to_check:
         with open(file, 'r') as f:
             content = f.read()
-            assert 'f"' not in content, "Found f-string in " + file
-            assert "f'" not in content, "Found f-string in " + file
+            assert 'f"' not in content, f"Found f-string in {file}"

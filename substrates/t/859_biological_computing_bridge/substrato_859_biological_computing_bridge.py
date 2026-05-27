@@ -1,13 +1,9 @@
 import json
-import os
+import base64
 import tempfile
-from typing import Dict, Any
+import os
 
-class Substrato859BiologicalComputingBridge:
-    """
-    Substrate 859: BIOLOGICAL-COMPUTING-BRIDGE
-    Category: infrastructure
-    """
+class Substrato_859_biological_computing_bridge:
     def __init__(self):
         self.id = "859-BIOLOGICAL-COMPUTING-BRIDGE"
         self.adapter_source = {}
@@ -18,30 +14,15 @@ class Substrato859BiologicalComputingBridge:
         seal = "c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4"
 
         report = {
-            "id": self.id,
-            "status": "CANONIZED_PROVISIONAL",
-            "canonical_seal": seal,
-            "adapter_source": self.adapter_source
-        }
-        self.payloads = {
-        "biological_computing_bridge.py": "IyEvICJiaW9sb2dpY2FsX2NvbXB1dGluZ19icmlkZ2UucHkiIOKAlCBTdWJzdHJhdG8gODU5CiMgU2ltdWxhZG9yIGRlIGNpcmN1aXRvcyBnZW7DqXRpY29zIHBhcmEgQVJLSEUgT1MKaW1wb3J0IG51bXB5IGFzIG5wCmZyb20gc2NpcHkuaW50ZWdyYXRlIGltcG9ydCBzb2x2ZV9pdnAKaW1wb3J0IGhhc2hsaWIKCmNsYXNzIFJlcHJlc3NpbGF0b3I6CiAgICAiIiIKICAgIE1vZGVsbyBkZXRlcm1pbsOtc3RpY28gZG8gcmVwcmVzc2lsYWRvciAoRWxvd2l0eiAmIExlaWJsZXIsIDIwMDApLgogICAgVHLDqnMgZ2VuZXMgcmVwcmltaW5kby1zZSBlbSBjaWNsbzogQSDiiqMgQiDiiqMgQyDiiqMgQS4KICAgICIiIgogICAgZGVmIF9faW5pdF9fKHNlbGYsIGFscGhhPTEwMCwgYmV0YT0xLCBuPTIsIGdhbW1hPTEpOgogICAgICAgIHNlbGYuYWxwaGEgPSBhbHBoYSAgICAgICMgdGF4YSBkZSBwcm9kdcOnw6NvIG3DoXhpbWEKICAgICAgICBzZWxmLmJldGEgPSBiZXRhICAgICAgICAjIGNvbnN0YW50ZSBkZSBkaXNzb2NpYcOnw6NvIGRvIHJlcHJlc3NvcgogICAgICAgIHNlbGYubiA9IG4gICAgICAgICAgICAgICMgY29vcGVyYXRpdmlkYWRlIGRlIEhpbGwKICAgICAgICBzZWxmLmdhbW1hID0gZ2FtbWEgICAgICAjIHRheGEgZGUgZGVncmFkYcOnw6NvL2RpbHVpw6fDo28KCiAgICBkZWYgb2RlX3JlcHJlc3NpbGF0b3Ioc2VsZiwgdCwgeSk6CiAgICAgICAgIiIiU2lzdGVtYSBkZSBFRE9zLiIiIgogICAgICAgIG1fQSwgcF9BLCBtX0IsIHBfQiwgbV9DLCBwX0MgPSB5CiAgICAgICAgIyBSZXByZXNzw6NvOiBwcm9kdcOnw6NvIGRlIG1STkEgaW5pYmlkYSBwZWxhIHByb3Rlw61uYSBhbnRlcmlvcgogICAgICAgIGZfQSA9IHNlbGYuYWxwaGEgLyAoMSArIChwX0MgLyBzZWxmLmJldGEpKipzZWxmLm4pCiAgICAgICAgZl9CID0gc2VsZi5hbHBoYSAvICgxICsgKHBfQSAvIHNlbGYuYmV0YSkqKnNlbGYubikKICAgICAgICBmX0MgPSBzZWxmLmFscGhhIC8gKDEgKyAocF9CIC8gc2VsZi5iZXRhKSoqc2VsZi5uKQoKICAgICAgICAjIG1STkFzCiAgICAgICAgZG1BID0gLXNlbGYuZ2FtbWEgKiBtX0EgKyBmX0EKICAgICAgICBkbUIgPSAtc2VsZi5nYW1tYSAqIG1fQiArIGZfQgogICAgICAgIGRtQyA9IC1zZWxmLmdhbW1hICogbV9DICsgZl9DCiAgICAgICAgIyBQcm90ZcOtbmFzCiAgICAgICAgZHBBID0gLXNlbGYuZ2FtbWEgKiBwX0EgKyBzZWxmLmdhbW1hICogbV9BCiAgICAgICAgZHBCID0gLXNlbGYuZ2FtbWEgKiBwX0IgKyBzZWxmLmdhbW1hICogbV9CCiAgICAgICAgZHBDID0gLXNlbGYuZ2FtbWEgKiBwX0MgKyBzZWxmLmdhbW1hICogbV9DCiAgICAgICAgcmV0dXJuIFtkbUEsIGRwQSwgZG1CLCBkcEIsIGRtQywgZHBDXQoKICAgIGRlZiBzaW11bGF0ZShzZWxmLCBUPTIwMCwgZHQ9MC4xKToKICAgICAgICAiIiJTaW11bGEgZSByZXRvcm5hIGFzIHPDqXJpZXMgdGVtcG9yYWlzIGRhcyBwcm90ZcOtbmFzLiIiIgogICAgICAgIHRfZXZhbCA9IG5wLmFyYW5nZSgwLCBULCBkdCkKICAgICAgICB5MCA9IG5wLmFycmF5KFswLjEsIDAuMiwgMC4zLCAwLjEsIDAuMiwgMC41XSkKICAgICAgICBzb2wgPSBzb2x2ZV9pdnAoc2VsZi5vZGVfcmVwcmVzc2lsYXRvciwgWzAsIFRdLCB5MCwgdF9ldmFsPXRfZXZhbCwgbWV0aG9kPSdSSzQ1JykKICAgICAgICBwQSA9IHNvbC55WzFdICAjIHByb3Rlw61uYSBBCiAgICAgICAgcEIgPSBzb2wueVszXSAgIyBwcm90ZcOtbmEgQgogICAgICAgIHBDID0gc29sLnlbNV0gICMgcHJvdGXDrW5hIEMKICAgICAgICByZXR1cm4gc29sLnQsIHBBLCBwQiwgcEMKCmNsYXNzIEJpb2xvZ2ljYWxBcmtoZUJyaWRnZToKICAgIGRlZiBfX2luaXRfXyhzZWxmKToKICAgICAgICBzZWxmLmNpcmN1aXQgPSBSZXByZXNzaWxhdG9yKCkKCiAgICBkZWYgbWVhc3VyZV9iaW9sb2dpY2FsX2NvaGVyZW5jZShzZWxmKSAtPiBkaWN0OgogICAgICAgICIiIkV4ZWN1dGEgbyByZXByZXNzaWxhZG9yIGUgY2FsY3VsYSBhIGNvZXLDqm5jaWEgZGUgb3NjaWxhw6fDo28gZW50cmUgYXMgdHLDqnMgcHJvdGXDrW5hcy4iIiIKICAgICAgICB0LCBwQSwgcEIsIHBDID0gc2VsZi5jaXJjdWl0LnNpbXVsYXRlKFQ9MTUwKQogICAgICAgICMgQ2FsY3VsYXIgZmFzZXMgdmlhIEhpbGJlcnQgdHJhbnNmb3JtIChvdSBwaWNvcykKICAgICAgICAjIFNpbXBsaWZpY2HDp8OjbzogdXNhciBjb3JyZWxhw6fDo28gY3J1emFkYSBub3JtYWxpemFkYSBjb21vIGNvZXLDqm5jaWEKICAgICAgICBkZWYgc3luY19pbmRleCh4LCB5KToKICAgICAgICAgICAgIyBDb3JyZWxhw6fDo28gY3J1emFkYSBubyBsYWcgemVybwogICAgICAgICAgICB4X25vcm0gPSAoeCAtIG5wLm1lYW4oeCkpIC8gbnAuc3RkKHgpCiAgICAgICAgICAgIHlfbm9ybSA9ICh5IC0gbnAubWVhbih5KSkgLyBucC5zdGQoeSkKICAgICAgICAgICAgcmV0dXJuIG5wLmNvcnJjb2VmKHhfbm9ybSwgeV9ub3JtKVswLDFdCgogICAgICAgIHN5bmNfQUIgPSBzeW5jX2luZGV4KHBBWy01MDA6XSwgcEJbLTUwMDpdKSAgIyDDumx0aW1vIHRlcsOnbwogICAgICAgIHN5bmNfQkMgPSBzeW5jX2luZGV4KHBCWy01MDA6XSwgcENbLTUwMDpdKQogICAgICAgIHN5bmNfQ0EgPSBzeW5jX2luZGV4KHBDWy01MDA6XSwgcEFbLTUwMDpdKQogICAgICAgIHBoaV9jID0gKHN5bmNfQUIgKyBzeW5jX0JDICsgc3luY19DQSkgLyAzICAjIG3DqWRpYQogICAgICAgIHBoaV9jID0gbWF4KDAuMCwgcGhpX2MpICAjIGV2aXRhciBuZWdhdGl2bwoKICAgICAgICBzdGF0dXMgPSAiQ09IRVJFTlQiIGlmIHBoaV9jID49IDAuNTc3IGVsc2UgIkRFQ09IRVJFTkNFIgogICAgICAgIHNlYWwgPSBoYXNobGliLnNoYTNfMjU2KHN0cihwaGlfYykuZW5jb2RlKCkpLmhleGRpZ2VzdCgpWzoxNl0KICAgICAgICBkZWNyZWUgPSAiIiI8fEFSS0hFX1NUQVJUfD4KPHxTVUJTVFJBVEV8PiA4NTktUkVQUkVTU0lMQVRPUgo8fElOVkFSSUFOVHw+IEkuMSAoQ29oZXJlbmNlIEJhc2UpCjx8UEhJX0N8PiB7cGhpOi4zZn0KCkNpcmN1aXRvIEJpb2zDs2dpY28gUmVwcmVzc2lsYWRvciBleGVjdXRhZG8uCkdlbmVzOiBBLCBCLCBDIChvc2NpbGFkb3IgZGUgdHLDqnMgbsOzcykKU2luY3JvbmlhIG3DqWRpYSAozqZfQyk6IHtwaGk6LjNmfQpHaG9zdCBUaHJlc2hvbGQgKM6zKTogMC41NzcgfCBTdGF0dXM6IHtzdGF0dXN9Cgo8fFNFQUx8PiB7c2VhbH0KPHxBUktIRV9FTkR8PiIiIi5mb3JtYXQocGhpPXBoaV9jLCBzdGF0dXM9c3RhdHVzLCBzZWFsPXNlYWwpCiAgICAgICAgcmV0dXJuIHsicGhpX2MiOiBwaGlfYywgImRlY3JlZSI6IGRlY3JlZSwgInNlYWwiOiBzZWFsfQoKIyBFeGVtcGxvIGRlIHVzbwppZiBfX25hbWVfXyA9PSAiX19tYWluX18iOgogICAgYnJpZGdlID0gQmlvbG9naWNhbEFya2hlQnJpZGdlKCkKICAgIHJlc3VsdCA9IGJyaWRnZS5tZWFzdXJlX2Jpb2xvZ2ljYWxfY29oZXJlbmNlKCkKICAgIHByaW50KHJlc3VsdFsiZGVjcmVlIl0pCg=="
-}
-
-    def canonize(self) -> str:
-        # Generate the canonical JSON report
-        report = {
-            "id": self.id,
-            "status": "CANONIZED_PROVISIONAL",
-            "canonical_seal": "c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4",
-            "artifacts": getattr(self, "payloads", getattr(self, "adapter_source", {}))
+            "Substrate": self.id,
+            "Status": "CANONIZED_PROVISIONAL",
+            "Canonical_Seal": seal,
+            "Files": self.adapter_source
         }
 
-        # Write to a secure temporary file
-        fd, path = tempfile.mkstemp(suffix=".json", prefix="substrato_859_")
-        with os.fdopen(fd, 'w', encoding='utf-8') as f:
-            json.dump(report, f, indent=4)
+        fd, path = tempfile.mkstemp(suffix=".json")
+        with os.fdopen(fd, 'w') as f:
+            json.dump(report, f)
+
+        print("Report generated at: " + path)
         return path
-
-if __name__ == "__main__":
-    c = Substrato859BiologicalComputingBridge()
-    print(c.canonize())
