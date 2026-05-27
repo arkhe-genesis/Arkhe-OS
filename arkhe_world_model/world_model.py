@@ -218,6 +218,7 @@ class WorldModelEmbryo(nn.Module):
             "substrate": "890",
             "seal": __import__("os").environ.get("ARKHE_SEAL"),
         }
+        checkpoint["config"] = __import__("dataclasses").asdict(checkpoint["config"])
         torch.save(checkpoint, path)
 
     def load(self, path: str):
