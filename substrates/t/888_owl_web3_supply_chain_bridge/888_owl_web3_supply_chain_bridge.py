@@ -92,8 +92,8 @@ class ChainOfTrust:
             deps = [deps]  # normalizar se vier como objeto único
         for dep in deps:
             dep_name = dep.get("sdx:artifactName") or dep.get("name")
-            if dep_name and dep_name not in self.verified:
-                # Verificar se a dependência tem selo no registo
+            if dep_name:
+                # Sempre verificar o selo contra o registo, independentemente do cache
                 if dep_name not in registry:
                     self.failures.append({"artifact": dep_name, "reason": "Dependency not in registry"})
                     self.verified[dep_name] = False
@@ -105,6 +105,12 @@ class ChainOfTrust:
                     self.verified[dep_name] = False
                     self.verified[name] = False
                     return False
+
+                # Verificar se o artefato foi previamente rejeitado
+                if dep_name in self.verified and not self.verified[dep_name]:
+                    self.verified[name] = False
+                    return False
+
                 self.verified[dep_name] = True
 
         self.verified[name] = True
