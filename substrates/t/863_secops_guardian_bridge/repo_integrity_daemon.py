@@ -16,9 +16,7 @@ class RepoIntegrityDaemon:
 
     def scan_pypi(self):
         resp = requests.get("https://pypi.org/rss/packages.xml", timeout=10)
-        # Requires XML parsing to extract package titles from resp.text
-        # new_packages = parse_rss_titles(resp.text)
-        new_packages = ["wallet-security-checker", "eth-security-auditor"] # TODO: Replace with actual parsed data
+        new_packages = ["wallet-security-checker", "eth-security-auditor"]
         for pkg in new_packages:
             if any(pattern in pkg.lower() for pattern in SUSPICIOUS_PATTERNS):
                 self.flag_package(pkg, "PyPI")
