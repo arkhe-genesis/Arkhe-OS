@@ -40,3 +40,17 @@ def test_870_g_f_strings():
         with open(filepath, 'r') as f:
             content = f.read()
             assert "f\"" not in content, f"f-strings are strictly prohibited in the codebase. Found in {filepath}"
+
+def test_894_f_strings():
+    import ast
+    with open('substrates/t/894_arkhe_ontology_sdk/substrato_894_arkhe_ontology_sdk.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
+
+def test_895_f_strings():
+    import ast
+    with open('substrates/t/895_arkhe_aip_ontology_architecture/substrato_895_arkhe_aip_ontology_architecture.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)

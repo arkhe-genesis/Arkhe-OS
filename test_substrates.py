@@ -2024,3 +2024,46 @@ def test_870_g_arkhe_http_gateway():
 
     # Strict string assertions
     assert "f\"" not in open(file_path).read()
+
+
+def test_substrato_894_arkhe_ontology_sdk():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/894_arkhe_ontology_sdk/substrato_894_arkhe_ontology_sdk.py')
+    spec = importlib.util.spec_from_file_location("substrato_894_arkhe_ontology_sdk", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato_894_arkhe_ontology_sdk()
+    output_path = canonizer.canonize()
+
+    with open(output_path, 'r') as f:
+        data = json.load(f)
+
+    assert data["id"] == "894-ARKHE-ONTOLOGY-SDK"
+    assert data["status"] == "CANONIZED_PROVISIONAL"
+    assert data.get("canonical_seal") is not None
+    assert data["Phi_C"] == 0.85
+
+def test_substrato_895_arkhe_aip_ontology_architecture():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/895_arkhe_aip_ontology_architecture/substrato_895_arkhe_aip_ontology_architecture.py')
+    spec = importlib.util.spec_from_file_location("substrato_895_arkhe_aip_ontology_architecture", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato_895_arkhe_aip_ontology_architecture()
+    output_path = canonizer.canonize()
+
+    with open(output_path, 'r') as f:
+        data = json.load(f)
+
+    assert data["id"] == "895-ARKHE-AIP-ONTOLOGY-ARCHITECTURE"
+    assert data["status"] == "CANONIZED_PROVISIONAL"
+    assert data.get("canonical_seal") is not None
+    assert data["Phi_C"] == 0.90
