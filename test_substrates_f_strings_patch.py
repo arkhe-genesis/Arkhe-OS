@@ -67,3 +67,7 @@ def test_pvac_f_strings_905_909():
         with open(file, 'r') as f:
             content = f.read()
             assert 'f"' not in content, f"Found f-string in {file}"
+def test_substrate_918_f_strings():
+    with open("substrates/t/918_qemu_orchestration/substrate_918_qemu_orchestration.py", "r") as f:
+        content = f.read()
+    assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
