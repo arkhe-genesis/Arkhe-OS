@@ -40,3 +40,16 @@ def test_870_g_f_strings():
         with open(filepath, 'r') as f:
             content = f.read()
             assert "f\"" not in content, f"f-strings are strictly prohibited in the codebase. Found in {filepath}"
+
+def test_pvac_f_strings_898_899_900():
+    import os
+    files_to_check = [
+        "substrates/t/898_kolmogorov_weight/substrato_898.py",
+        "substrates/t/899_lightclock_harmony/substrato_899.py",
+        "substrates/t/900_peptide_saas/substrato_900.py",
+    ]
+    for file in files_to_check:
+        with open(file, 'r') as f:
+            content = f.read()
+            assert 'f"' not in content, f"Found f-string in {file}"
+            assert "f'" not in content, f"Found f-string in {file}"

@@ -2024,3 +2024,48 @@ def test_870_g_arkhe_http_gateway():
 
     # Strict string assertions
     assert "f\"" not in open(file_path).read()
+
+def test_pvac_898_kolmogorov():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/t/898_kolmogorov_weight/substrato_898.py"], capture_output=True, text=True)
+    assert result.returncode == 0
+
+    path = result.stdout.split("Report generated at: ")[1].strip()
+    with open(path, "r") as f:
+        data = json.load(f)
+
+    assert data["Substrate"] == "898-KOLMOGOROV-WEIGHT"
+    assert data["Status"] == "CANONIZED"
+    assert "kolmogorov_regularizer.py" in data["Files"]
+    assert "train.py" in data["Files"]
+
+def test_pvac_899_lightclock():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/t/899_lightclock_harmony/substrato_899.py"], capture_output=True, text=True)
+    assert result.returncode == 0
+
+    path = result.stdout.split("Report generated at: ")[1].strip()
+    with open(path, "r") as f:
+        data = json.load(f)
+
+    assert data["Substrate"] == "899-LIGHTCLOCK-HARMONY"
+    assert data["Status"] == "CANONIZED_POETIC"
+    assert "kolmogorov_regularizer.py" in data["Files"]
+    assert "train.py" in data["Files"]
+
+def test_pvac_900_peptide():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/t/900_peptide_saas/substrato_900.py"], capture_output=True, text=True)
+    assert result.returncode == 0
+
+    path = result.stdout.split("Report generated at: ")[1].strip()
+    with open(path, "r") as f:
+        data = json.load(f)
+
+    assert data["Substrate"] == "900-PEPTIDE-SAAS-PRINCIPLE"
+    assert data["Status"] == "CANONIZED_POETIC"
+    assert "kolmogorov_regularizer.py" in data["Files"]
+    assert "train.py" in data["Files"]
