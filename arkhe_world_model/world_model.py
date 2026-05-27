@@ -216,7 +216,7 @@ class WorldModelEmbryo(nn.Module):
             "training_history": self._training_history,
             "is_trained": self._is_trained,
             "substrate": "890",
-            "seal": "8d4e2f1a9c3b7e5d",
+            "seal": __import__("os").environ.get("ARKHE_SEAL"),
         }
         torch.save(checkpoint, path)
 
