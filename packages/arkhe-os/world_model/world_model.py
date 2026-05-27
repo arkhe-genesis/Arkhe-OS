@@ -377,9 +377,15 @@ class WorldModelEmbryo(nn.Module):
     # ── Persistence ────────────────────────────────────────────
 
     def save(self, path: str):
-        """Salva estado completo do World Model."""
+        """Salva estado completo do World Model de forma segura."""
+        # Convert config dataclass to dict to avoid UnpicklingError with weights_only=True
+        from dataclasses import asdict
+        config_dict = asdict(self.config)
+        # Convert enums to their primitive values
+        config_dict["maturity"] = self.config.maturity.value
+
         checkpoint = {
-            "config": self.config,
+            "config": config_dict,
             "maturity": self.maturity.value,
             "state_dict": self.state_dict(),
             "training_history": self._training_history,
@@ -391,10 +397,13 @@ class WorldModelEmbryo(nn.Module):
         print(f"[890] World Model salvo: {path}")
 
     def load(self, path: str):
-        """Carrega estado completo do World Model."""
+        """Carrega estado completo do World Model de forma segura."""
         checkpoint = torch.load(path, weights_only=True)
         self.load_state_dict(checkpoint["state_dict"])
         self._training_history = checkpoint.get("training_history", [])
         self._is_trained = checkpoint.get("is_trained", False)
+
+        # If we need to restore config, we would do it here using the dict
+        # but since init takes care of it, we just load state_dict
         print(f"[890] World Model carregado: {path}")
         print(f"[890] Treinado: {self._is_trained} | Histórico: {len(self._training_history)} runs")
