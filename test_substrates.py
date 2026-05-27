@@ -1703,7 +1703,7 @@ def test_861_un_20_governance_bridge():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato_861_un_20_governance_bridge()
+    canonizer = module.Substrato861Un20GovernanceBridge()
     path = canonizer.canonize()
 
     assert os.path.exists(path)
@@ -1739,7 +1739,7 @@ def test_859_biological_computing_bridge():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato_859_biological_computing_bridge()
+    canonizer = module.Substrato859BiologicalComputingBridge()
     path = canonizer.canonize()
 
     assert os.path.exists(path)
@@ -1775,7 +1775,7 @@ def test_857_neuromorphic_hardware_bridge():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato_857_neuromorphic_hardware_bridge()
+    canonizer = module.Substrato857NeuromorphicHardwareBridge()
     path = canonizer.canonize()
 
     assert os.path.exists(path)
@@ -1793,7 +1793,7 @@ def test_856_quantum_computing_bridge():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato_856_quantum_computing_bridge()
+    canonizer = module.Substrato856QuantumComputingBridge()
     path = canonizer.canonize()
 
     assert os.path.exists(path)
@@ -1811,7 +1811,7 @@ def test_855_hpc_environment_bridge():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato_855_hpc_environment_bridge()
+    canonizer = module.Substrato855HpcEnvironmentBridge()
     path = canonizer.canonize()
 
     assert os.path.exists(path)
