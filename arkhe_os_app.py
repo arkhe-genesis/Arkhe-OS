@@ -269,9 +269,12 @@ class EpistemicCommitProtocol:
 class QuantumProofOfWork:
     def __init__(self, backend="qasm_simulator"): self.backend = backend
     def mine(self, agent_id, previous_hash, difficulty=4):
-        nonce = random.randint(0, 2**32)
-        block_hash = hashlib.sha3_256("{}{}{}".format(previous_hash, nonce, agent_id).encode()).hexdigest()
-        return {"hash": block_hash, "nonce": nonce, "difficulty": difficulty}
+        target = "0" * difficulty
+        while True:
+            nonce = random.randint(0, 2**32)
+            block_hash = hashlib.sha3_256("{}{}{}".format(previous_hash, nonce, agent_id).encode()).hexdigest()
+            if block_hash.startswith(target):
+                return {"hash": block_hash, "nonce": nonce, "difficulty": difficulty}
 
 # ═══════════════════════════════════════════════════════════════════
 # 5. ArkheAgent — Trinitarian Core
@@ -348,7 +351,8 @@ class ArkheAgent:
     def perceive(self, text_input: str, peptide_seq=None) -> Dict:
         self.total_interactions += 1
         llm_emb = self.llm.embed(text_input)
-        tokens = torch.randn(1, 10, 256)  # dummy token sequence
+        # Reshape the 512-dim embedding to (1, 2, 256) to act as dummy tokens for the world model
+        tokens = torch.from_numpy(llm_emb).view(1, -1, 256)
         action = torch.randn(1, 64)
         outputs = self.world_model(tokens, action, peptide_seq=peptide_seq)
         perception = {
