@@ -399,7 +399,7 @@ class WorldModelEmbryo(nn.Module):
     def load(self, path: str):
         """Carrega estado completo do World Model de forma segura."""
         checkpoint = torch.load(path, weights_only=True)
-        self.load_state_dict(checkpoint["state_dict"])
+        self.load_state_dict(checkpoint["state_dict"], strict=False)
         self._training_history = checkpoint.get("training_history", [])
         self._is_trained = checkpoint.get("is_trained", False)
 
