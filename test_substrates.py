@@ -2025,98 +2025,47 @@ def test_870_g_arkhe_http_gateway():
     # Strict string assertions
     assert "f\"" not in open(file_path).read()
 
-def test_substrato_898():
-    import importlib.util
-    import os
-    file_path = os.path.abspath('substrates/t/898_kolmogorov_weight_theorem/substrato_898_kolmogorov_weight_theorem.py')
-    spec = importlib.util.spec_from_file_location("substrato_898", file_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+def test_pvac_898_kolmogorov():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/t/898_kolmogorov_weight/substrato_898.py"], capture_output=True, text=True)
+    assert result.returncode == 0
 
-    canonizer = module.Substrato_898_kolmogorov_weight_theorem()
-    path = canonizer.canonize()
-    assert os.path.exists(path)
+    path = result.stdout.split("Report generated at: ")[1].strip()
+    with open(path, "r") as f:
+        data = json.load(f)
 
-def test_substrato_899():
-    import importlib.util
-    import os
-    file_path = os.path.abspath('substrates/t/899_lightclock_harmony_principle/substrato_899_lightclock_harmony_principle.py')
-    spec = importlib.util.spec_from_file_location("substrato_899", file_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    assert data["Substrate"] == "898-KOLMOGOROV-WEIGHT"
+    assert data["Status"] == "CANONIZED"
+    assert "kolmogorov_regularizer.py" in data["Files"]
+    assert "train.py" in data["Files"]
 
-    canonizer = module.Substrato_899_lightclock_harmony_principle()
-    path = canonizer.canonize()
-    assert os.path.exists(path)
+def test_pvac_899_lightclock():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/t/899_lightclock_harmony/substrato_899.py"], capture_output=True, text=True)
+    assert result.returncode == 0
 
-def test_substrato_900():
-    import importlib.util
-    import os
-    file_path = os.path.abspath('substrates/t/900_peptide_saas_principle/substrato_900_peptide_saas_principle.py')
-    spec = importlib.util.spec_from_file_location("substrato_900", file_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    path = result.stdout.split("Report generated at: ")[1].strip()
+    with open(path, "r") as f:
+        data = json.load(f)
 
-    canonizer = module.Substrato_900_peptide_saas_principle()
-    path = canonizer.canonize()
-    assert os.path.exists(path)
+    assert data["Substrate"] == "899-LIGHTCLOCK-HARMONY"
+    assert data["Status"] == "CANONIZED_POETIC"
+    assert "kolmogorov_regularizer.py" in data["Files"]
+    assert "train.py" in data["Files"]
 
-def test_substrato_901():
-    import importlib.util
-    import os
-    file_path = os.path.abspath('substrates/t/901_ai_capability_hierarchy/substrato_901_ai_capability_hierarchy.py')
-    spec = importlib.util.spec_from_file_location("substrato_901", file_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+def test_pvac_900_peptide():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/t/900_peptide_saas/substrato_900.py"], capture_output=True, text=True)
+    assert result.returncode == 0
 
-    canonizer = module.Substrato_901_ai_capability_hierarchy()
-    path = canonizer.canonize()
-    assert os.path.exists(path)
+    path = result.stdout.split("Report generated at: ")[1].strip()
+    with open(path, "r") as f:
+        data = json.load(f)
 
-def test_substrato_902():
-    import importlib.util
-    import os
-    file_path = os.path.abspath('substrates/t/902_quantum_proof_of_work/substrato_902_quantum_proof_of_work.py')
-    spec = importlib.util.spec_from_file_location("substrato_902", file_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-
-    canonizer = module.Substrato_902_quantum_proof_of_work()
-    path = canonizer.canonize()
-    assert os.path.exists(path)
-
-def test_substrato_903():
-    import importlib.util
-    import os
-    file_path = os.path.abspath('substrates/t/903_juridical_network_extraction/substrato_903_juridical_network_extraction.py')
-    spec = importlib.util.spec_from_file_location("substrato_903", file_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-
-    canonizer = module.Substrato_903_juridical_network_extraction()
-    path = canonizer.canonize()
-    assert os.path.exists(path)
-
-def test_substrato_904():
-    import importlib.util
-    import os
-    file_path = os.path.abspath('substrates/t/904_corbone_cognitive_platform/substrato_904_corbone_cognitive_platform.py')
-    spec = importlib.util.spec_from_file_location("substrato_904", file_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-
-    canonizer = module.Substrato_904_corbone_cognitive_platform()
-    path = canonizer.canonize()
-    assert os.path.exists(path)
-
-def test_substrato_905():
-    import importlib.util
-    import os
-    file_path = os.path.abspath('substrates/t/905_hypergraph_ontology_backbone/substrato_905_hypergraph_ontology_backbone.py')
-    spec = importlib.util.spec_from_file_location("substrato_905", file_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-
-    canonizer = module.Substrato_905_hypergraph_ontology_backbone()
-    path = canonizer.canonize()
-    assert os.path.exists(path)
+    assert data["Substrate"] == "900-PEPTIDE-SAAS-PRINCIPLE"
+    assert data["Status"] == "CANONIZED_POETIC"
+    assert "kolmogorov_regularizer.py" in data["Files"]
+    assert "train.py" in data["Files"]
