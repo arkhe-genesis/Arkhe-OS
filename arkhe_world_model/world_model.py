@@ -221,7 +221,7 @@ class WorldModelEmbryo(nn.Module):
         torch.save(checkpoint, path)
 
     def load(self, path: str):
-        checkpoint = torch.load(path)
+        checkpoint = torch.load(path, weights_only=True)
         self.load_state_dict(checkpoint["state_dict"])
         self._training_history = checkpoint.get("training_history", [])
         self._is_trained = checkpoint.get("is_trained", False)
