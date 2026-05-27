@@ -128,8 +128,8 @@ class SelfModelingModule(nn.Module):
             self_model = self.forward(fused_embedding)
 
         confidence = float(self_model["confidence"]) if self_model["confidence"].dim() == 0 else float(self_model["confidence"][0])
-        capabilities = self_model["capabilities"].numpy() if self_model["capabilities"].dim() == 1 else self_model["capabilities"][0].numpy()
-        uncertainty = self_model["uncertainty"].numpy() if self_model["uncertainty"].dim() == 1 else self_model["uncertainty"][0].numpy()
+        capabilities = self_model["capabilities"].detach().cpu().numpy() if self_model["capabilities"].dim() == 1 else self_model["capabilities"][0].detach().cpu().numpy()
+        uncertainty = self_model["uncertainty"].detach().cpu().numpy() if self_model["uncertainty"].dim() == 1 else self_model["uncertainty"][0].detach().cpu().numpy()
 
         capability_names = [
             "Token Grounding",
