@@ -53,3 +53,14 @@ def test_pvac_f_strings_898_899_900():
             content = f.read()
             assert 'f"' not in content, f"Found f-string in {file}"
             assert "f'" not in content, f"Found f-string in {file}"
+def test_pvac_f_strings_913():
+    import os
+    files_to_check = [
+        "substrates/t/913_encrypted_memory_ontology_bridge/substrato_913_encrypted_memory_ontology_bridge.py",
+        "substrates/t/913_encrypted_memory_ontology_bridge/encrypted_memory.py",
+    ]
+    for file in files_to_check:
+        with open(file, 'r') as f:
+            content = f.read()
+            assert 'f"' not in content, "Found f-string in " + file
+            assert "f'" not in content, "Found f-string in " + file

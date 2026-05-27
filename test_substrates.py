@@ -1703,7 +1703,7 @@ def test_861_un_20_governance_bridge():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato_861_un_20_governance_bridge()
+    canonizer = module.Substrato861Un20GovernanceBridge()
     path = canonizer.canonize()
 
     assert os.path.exists(path)
@@ -1739,7 +1739,7 @@ def test_859_biological_computing_bridge():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato_859_biological_computing_bridge()
+    canonizer = module.Substrato859BiologicalComputingBridge()
     path = canonizer.canonize()
 
     assert os.path.exists(path)
@@ -1775,7 +1775,7 @@ def test_857_neuromorphic_hardware_bridge():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato_857_neuromorphic_hardware_bridge()
+    canonizer = module.Substrato857NeuromorphicHardwareBridge()
     path = canonizer.canonize()
 
     assert os.path.exists(path)
@@ -1793,7 +1793,7 @@ def test_856_quantum_computing_bridge():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato_856_quantum_computing_bridge()
+    canonizer = module.Substrato856QuantumComputingBridge()
     path = canonizer.canonize()
 
     assert os.path.exists(path)
@@ -1811,7 +1811,7 @@ def test_855_hpc_environment_bridge():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato_855_hpc_environment_bridge()
+    canonizer = module.Substrato855HpcEnvironmentBridge()
     path = canonizer.canonize()
 
     assert os.path.exists(path)
@@ -2069,3 +2069,13 @@ def test_pvac_900_peptide():
     assert data["Status"] == "CANONIZED_POETIC"
     assert "kolmogorov_regularizer.py" in data["Files"]
     assert "train.py" in data["Files"]
+
+def test_pvac_913_encrypted_memory():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/t/913_encrypted_memory_ontology_bridge/substrato_913_encrypted_memory_ontology_bridge.py"], capture_output=True, text=True)
+    assert result.returncode == 0
+    path = result.stdout.strip()
+    with open(path, "r") as f:
+        data = json.load(f)
+    assert data["id"] == "913-ENCRYPTED-MEMORY-ONTOLOGY-BRIDGE"
