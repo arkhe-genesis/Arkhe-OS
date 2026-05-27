@@ -961,7 +961,7 @@ def test_substrato_679_pvac_compression():
         data = json.load(f)
     assert data["id"] == "679-PVAC-COMPRESSION"
     assert "canonical_seal" in data
-    # assert data["canonical_seal"] == "d77ed28d7f9a1e3c5b8f2a4d6e0c9b1a3f5e7d2c4a6b8f0e2d4c6a8b0f2e4d6c8a0b2f4"
+    # assert data.get("canonical_seal", data.get("Canonical_Seal")) == "d77ed28d7f9a1e3c5b8f2a4d6e0c9b1a3f5e7d2c4a6b8f0e2d4c6a8b0f2e4d6c8a0b2f4"
 
 def test_substrato_680_pvac_crypto():
     import sys
@@ -1105,7 +1105,7 @@ def test_824_magalu_aws_bridge():
     import json
     with open(path, 'r') as f:
         data = json.load(f)
-    assert data["id"] == "824-MAGALU-AWS-BRIDGE"
+    assert data.get("id", data.get("Substrate")) == "824-MAGALU-AWS-BRIDGE"
     assert "canonical_seal" in data
     assert "artifacts" in data
     assert "ghost_threshold" in data["artifacts"]
@@ -1276,7 +1276,7 @@ def test_substrato_807_arkhe_runtime():
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    assert data["id"] == "807-ARKHE-RUNTIME"
+    assert data.get("id", data.get("Substrate")) == "807-ARKHE-RUNTIME"
     assert data["seal"] == "e7b2389a5cd922945e50f38d5f7c6f617e010720b4b14b2dcab47709267ca837"
 
     with open(file_path, "r", encoding="utf-8") as f:
@@ -1301,7 +1301,7 @@ def test_substrato_822_anthropic_coherence_proposal():
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    assert data["id"] == "822-ANTHROPIC-COHERENCE-PROPOSAL"
+    assert data.get("id", data.get("Substrate")) == "822-ANTHROPIC-COHERENCE-PROPOSAL"
     assert data["seal"] == "65c12f83cf34680b9eaa2cb435baf78c1ab69b8e936973aa499d5bda57aa542e"
 
     with open(file_path, "r", encoding="utf-8") as f:
@@ -1325,7 +1325,7 @@ def test_824_bridge_magalu_aws():
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    assert data["id"] == "824-BRIDGE-MAGALU-AWS"
+    assert data.get("id", data.get("Substrate")) == "824-BRIDGE-MAGALU-AWS"
     assert "canonical_seal" in data
 
     with open(file_path, "r", encoding="utf-8") as f:
@@ -1384,7 +1384,7 @@ def test_825_parametric_memory_engine():
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    assert data["id"] == "825-PARAMETRIC-MEMORY-ENGINE"
+    assert data.get("id", data.get("Substrate")) == "825-PARAMETRIC-MEMORY-ENGINE"
     assert "canonical_seal" in data
 
 def test_827_bo_gallium_discovery():
@@ -1404,7 +1404,7 @@ def test_827_bo_gallium_discovery():
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    assert data["id"] == "827-BO-GALLIUM-DISCOVERY"
+    assert data.get("id", data.get("Substrate")) == "827-BO-GALLIUM-DISCOVERY"
     assert "canonical_seal" in data
 
     with open(file_path, "r", encoding="utf-8") as f:
@@ -1494,8 +1494,8 @@ def test_831_story_ip_chain_bridge():
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    # assert data["id"] == "831-STORY-IP-CHAIN-BRIDGE"
-    # assert data["canonical_seal"] == "5236d82d72b4a84f84f314325cd0725176e454a43ab75823ec5c248096d016b6"
+    # assert data.get("id", data.get("Substrate")) == "831-STORY-IP-CHAIN-BRIDGE"
+    # assert data.get("canonical_seal", data.get("Canonical_Seal")) == "5236d82d72b4a84f84f314325cd0725176e454a43ab75823ec5c248096d016b6"
     # assert data["invariants"]["passes"] == 17
     # assert data["invariants"]["warns"] == 1
     # assert data["invariants"]["fails"] == 0
@@ -1649,7 +1649,7 @@ def test_substrato_846_enterprise_architecture_bridge():
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    assert data["id"] == "846-ENTERPRISE-ARCHITECTURE-BRIDGE"
+    assert data.get("id", data.get("Substrate")) == "846-ENTERPRISE-ARCHITECTURE-BRIDGE"
     assert data.get("Canonical_Seal", data.get("Seal_SHA3_256", data.get("canonical_seal"))) == "b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8"
     assert data["status"] == "CANONIZED_PROVISIONAL"
     assert "826 (DIT)" in data["cross_links"]
@@ -1673,8 +1673,8 @@ def test_863_secops_guardian_bridge():
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    assert data["id"] == "863-SECOPS-GUARDIAN-BRIDGE"
-    assert data["canonical_seal"] == "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1"
+    assert data.get("id", data.get("Substrate")) == "863-SECOPS-GUARDIAN-BRIDGE"
+    assert data.get("canonical_seal", data.get("Canonical_Seal")) == "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1"
 
 def test_862_polaritonic_computing_bridge():
     import importlib.util
@@ -1691,8 +1691,8 @@ def test_862_polaritonic_computing_bridge():
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    assert data["id"] == "862-POLARITONIC-COMPUTING-BRIDGE"
-    assert data["canonical_seal"] == "f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7"
+    assert data.get("id", data.get("Substrate")) == "862-POLARITONIC-COMPUTING-BRIDGE"
+    assert data.get("canonical_seal", data.get("Canonical_Seal")) == "f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7"
 
 def test_861_un_20_governance_bridge():
     import importlib.util
@@ -1709,8 +1709,8 @@ def test_861_un_20_governance_bridge():
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    assert data["id"] == "861-UN-20-GOVERNANCE-BRIDGE"
-    assert data["canonical_seal"] == "e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6"
+    assert data.get("id", data.get("Substrate")) == "861-UN-20-GOVERNANCE-BRIDGE"
+    assert data.get("canonical_seal", data.get("Canonical_Seal")) == "e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6"
 
 def test_860_consciousness_simulation_bridge():
     import importlib.util
@@ -1727,8 +1727,8 @@ def test_860_consciousness_simulation_bridge():
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    assert data["id"] == "860-CONSCIOUSNESS-SIMULATION-BRIDGE"
-    assert data["canonical_seal"] == "d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5"
+    assert data.get("id", data.get("Substrate")) == "860-CONSCIOUSNESS-SIMULATION-BRIDGE"
+    assert data.get("canonical_seal", data.get("Canonical_Seal")) == "d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5"
 
 def test_859_biological_computing_bridge():
     import importlib.util
@@ -1745,8 +1745,8 @@ def test_859_biological_computing_bridge():
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    assert data["id"] == "859-BIOLOGICAL-COMPUTING-BRIDGE"
-    assert data["canonical_seal"] == "c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4"
+    assert data.get("id", data.get("Substrate")) == "859-BIOLOGICAL-COMPUTING-BRIDGE"
+    assert data.get("canonical_seal", data.get("Canonical_Seal")) == "c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4"
 
 def test_856_857_quantum_neuromorphic_convergence():
     import importlib.util
@@ -1763,8 +1763,8 @@ def test_856_857_quantum_neuromorphic_convergence():
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    assert data["id"] == "856-857-QUANTUM-NEUROMORPHIC-CONVERGENCE"
-    assert data["canonical_seal"] == "d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4"
+    assert data.get("id", data.get("Substrate")) == "856-857-QUANTUM-NEUROMORPHIC-CONVERGENCE"
+    assert data.get("canonical_seal", data.get("Canonical_Seal")) == "d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4"
 
 def test_857_neuromorphic_hardware_bridge():
     import importlib.util
@@ -1781,8 +1781,8 @@ def test_857_neuromorphic_hardware_bridge():
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    assert data["id"] == "857-NEUROMORPHIC-HARDWARE-BRIDGE"
-    assert data["canonical_seal"] == "b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3"
+    assert data.get("id", data.get("Substrate")) == "857-NEUROMORPHIC-HARDWARE-BRIDGE"
+    assert data.get("canonical_seal", data.get("Canonical_Seal")) == "b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3"
 
 def test_856_quantum_computing_bridge():
     import importlib.util
@@ -1799,8 +1799,8 @@ def test_856_quantum_computing_bridge():
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    assert data["id"] == "856-QUANTUM-COMPUTING-BRIDGE"
-    assert data["canonical_seal"] == "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1"
+    assert data.get("id", data.get("Substrate")) == "856-QUANTUM-COMPUTING-BRIDGE"
+    assert data.get("canonical_seal", data.get("Canonical_Seal")) == "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1"
 
 def test_855_hpc_environment_bridge():
     import importlib.util
@@ -1817,8 +1817,8 @@ def test_855_hpc_environment_bridge():
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    assert data["id"] == "855-HPC-ENVIRONMENT-BRIDGE"
-    assert data["canonical_seal"] == "f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1"
+    assert data.get("id", data.get("Substrate")) == "855-HPC-ENVIRONMENT-BRIDGE"
+    assert data.get("canonical_seal", data.get("Canonical_Seal")) == "f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1"
 
 def test_854_optimization_solver_bridge():
     import importlib.util
@@ -1835,8 +1835,8 @@ def test_854_optimization_solver_bridge():
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    assert data["id"] == "854-OPTIMIZATION-SOLVER-BRIDGE"
-    assert data["canonical_seal"] == "e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2"
+    assert data.get("id", data.get("Substrate")) == "854-OPTIMIZATION-SOLVER-BRIDGE"
+    assert data.get("canonical_seal", data.get("Canonical_Seal")) == "e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2"
 
 def test_853_sap_ariba_erp_bridge():
     import importlib.util
@@ -1853,8 +1853,8 @@ def test_853_sap_ariba_erp_bridge():
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    assert data["id"] == "853-SAP-ARIBA-ERP-BRIDGE"
-    assert data["canonical_seal"] == "d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0"
+    assert data.get("id", data.get("Substrate")) == "853-SAP-ARIBA-ERP-BRIDGE"
+    assert data.get("canonical_seal", data.get("Canonical_Seal")) == "d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0"
 
 def test_852_project_orchestration_bridge():
     import importlib.util
@@ -1871,8 +1871,8 @@ def test_852_project_orchestration_bridge():
     assert os.path.exists(path)
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    assert data["id"] == "852-PROJECT-ORCHESTRATION-BRIDGE"
-    assert data["canonical_seal"] == "f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2"
+    assert data.get("id", data.get("Substrate")) == "852-PROJECT-ORCHESTRATION-BRIDGE"
+    assert data.get("canonical_seal", data.get("Canonical_Seal")) == "f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2"
 
 
 
@@ -2018,7 +2018,7 @@ def test_870_g_arkhe_http_gateway():
     with open(report_path, "r") as f:
         data = json.load(f)
 
-    assert data["id"] == "870-G-ARKHE-HTTP-GATEWAY"
+    assert data.get("id", data.get("Substrate")) == "870-G-ARKHE-HTTP-GATEWAY"
     assert data["status"] in ["CANONIZED", "CANONIZED_PROVISIONAL"]
     # assert data.get("Canonical_Seal", data.get("Seal_SHA3_256", data.get("canonical_seal"))) == "b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4"
 
@@ -2069,3 +2069,138 @@ def test_pvac_900_peptide():
     assert data["Status"] == "CANONIZED_POETIC"
     assert "kolmogorov_regularizer.py" in data["Files"]
     assert "train.py" in data["Files"]
+
+def test_pvac_905_crops():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/t/905_crops_local_ai_stack/substrato_905_crops_local_ai_stack.py"], capture_output=True, text=True)
+    assert result.returncode == 0
+
+    path = result.stdout.strip()
+    if "Report generated at: " in path:
+        path = path.split("Report generated at: ")[1].strip()
+        with open(path, "r") as f:
+            data = json.load(f)
+    else:
+        # Import directly to run since it didn't print
+        import importlib.util
+        import os
+        from importlib.machinery import SourceFileLoader
+        module_path = "substrates/t/905_crops_local_ai_stack/substrato_905_crops_local_ai_stack.py"
+        module = SourceFileLoader("module", module_path).load_module()
+        class_name = "Substrato_905_crops_local_ai_stack"
+        instance = getattr(module, class_name)()
+        path = instance.canonize()
+        with open(path, "r") as f:
+            data = json.load(f)
+
+    assert data["Substrate"] == "905-CROPS-LOCAL-AI-STACK"
+    assert data["Canonical_Seal"] == "fcee477ca4042c770a3c51295168257d9fe7c85ea7d3858a96dc5989c3b61e1e"
+
+def test_pvac_906_lucebox():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/t/906_lucebox_inference_engine/substrato_906_lucebox_inference_engine.py"], capture_output=True, text=True)
+    assert result.returncode == 0
+
+    path = result.stdout.strip()
+    if "Report generated at: " in path:
+        path = path.split("Report generated at: ")[1].strip()
+        with open(path, "r") as f:
+            data = json.load(f)
+    else:
+        # Import directly to run since it didn't print
+        import importlib.util
+        import os
+        from importlib.machinery import SourceFileLoader
+        module_path = "substrates/t/906_lucebox_inference_engine/substrato_906_lucebox_inference_engine.py"
+        module = SourceFileLoader("module", module_path).load_module()
+        class_name = "Substrato_906_lucebox_inference_engine"
+        instance = getattr(module, class_name)()
+        path = instance.canonize()
+        with open(path, "r") as f:
+            data = json.load(f)
+
+    assert data["Substrate"] == "906-LUCEBOX-INFERENCE-ENGINE"
+    assert data["Canonical_Seal"] == "fcee477ca4042c770a3c51295168257d9fe7c85ea7d3858a96dc5989c3b61e1e"
+
+def test_pvac_907_voxterm():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/t/907_voxterm_audio_privacy/substrato_907_voxterm_audio_privacy.py"], capture_output=True, text=True)
+    assert result.returncode == 0
+
+    path = result.stdout.strip()
+    if "Report generated at: " in path:
+        path = path.split("Report generated at: ")[1].strip()
+        with open(path, "r") as f:
+            data = json.load(f)
+    else:
+        # Import directly to run since it didn't print
+        import importlib.util
+        import os
+        from importlib.machinery import SourceFileLoader
+        module_path = "substrates/t/907_voxterm_audio_privacy/substrato_907_voxterm_audio_privacy.py"
+        module = SourceFileLoader("module", module_path).load_module()
+        class_name = "Substrato_907_voxterm_audio_privacy"
+        instance = getattr(module, class_name)()
+        path = instance.canonize()
+        with open(path, "r") as f:
+            data = json.load(f)
+
+    assert data["Substrate"] == "907-VOXTERM-AUDIO-PRIVACY"
+    assert data["Canonical_Seal"] == "fcee477ca4042c770a3c51295168257d9fe7c85ea7d3858a96dc5989c3b61e1e"
+
+def test_pvac_908_leanstral():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/t/908_leanstral_fv_bridge/substrato_908_leanstral_fv_bridge.py"], capture_output=True, text=True)
+    assert result.returncode == 0
+
+    path = result.stdout.strip()
+    if "Report generated at: " in path:
+        path = path.split("Report generated at: ")[1].strip()
+        with open(path, "r") as f:
+            data = json.load(f)
+    else:
+        # Import directly to run since it didn't print
+        import importlib.util
+        import os
+        from importlib.machinery import SourceFileLoader
+        module_path = "substrates/t/908_leanstral_fv_bridge/substrato_908_leanstral_fv_bridge.py"
+        module = SourceFileLoader("module", module_path).load_module()
+        class_name = "Substrato_908_leanstral_fv_bridge"
+        instance = getattr(module, class_name)()
+        path = instance.canonize()
+        with open(path, "r") as f:
+            data = json.load(f)
+
+    assert data["Substrate"] == "908-LEANSTRAL-FV-BRIDGE"
+    assert data["Canonical_Seal"] == "fcee477ca4042c770a3c51295168257d9fe7c85ea7d3858a96dc5989c3b61e1e"
+
+def test_pvac_909_zk_remote():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/t/909_zk_remote_llm/substrato_909_zk_remote_llm.py"], capture_output=True, text=True)
+    assert result.returncode == 0
+
+    path = result.stdout.strip()
+    if "Report generated at: " in path:
+        path = path.split("Report generated at: ")[1].strip()
+        with open(path, "r") as f:
+            data = json.load(f)
+    else:
+        # Import directly to run since it didn't print
+        import importlib.util
+        import os
+        from importlib.machinery import SourceFileLoader
+        module_path = "substrates/t/909_zk_remote_llm/substrato_909_zk_remote_llm.py"
+        module = SourceFileLoader("module", module_path).load_module()
+        class_name = "Substrato_909_zk_remote_llm"
+        instance = getattr(module, class_name)()
+        path = instance.canonize()
+        with open(path, "r") as f:
+            data = json.load(f)
+
+    assert data["Substrate"] == "909-ZK-REMOTE-LLM"
+    assert data["Canonical_Seal"] == "fcee477ca4042c770a3c51295168257d9fe7c85ea7d3858a96dc5989c3b61e1e"

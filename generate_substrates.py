@@ -3,6 +3,157 @@ import base64
 
 # Define substrates and their canonical seal
 substrates = {
+
+    "905": {
+        "dir": "905_crops_local_ai_stack",
+        "class_name": "Substrato_905_crops_local_ai_stack",
+        "id": "905-CROPS-LOCAL-AI-STACK",
+        "seal": "fcee477ca4042c770a3c51295168257d9fe7c85ea7d3858a96dc5989c3b61e1e",
+        "files": {
+            "crops_stack.py": r'''#!/ "crops_stack.py"
+import json
+import hashlib
+
+class CropsLocalAIStack:
+    def __init__(self):
+        self.components = [
+            "messaging-daemon",
+            "llama-server",
+            "bubblewrap",
+            "NixOS"
+        ]
+        self.description = "Self-sovereign local AI infrastructure: llama-server + messaging-daemon + sandboxing"
+
+    def get_info(self):
+        return {
+            "id": "905-CROPS-LOCAL-AI-STACK",
+            "phi_c": 0.88,
+            "components": self.components,
+            "description": self.description
+        }
+'''
+        }
+    },
+    "906": {
+        "dir": "906_lucebox_inference_engine",
+        "class_name": "Substrato_906_lucebox_inference_engine",
+        "id": "906-LUCEBOX-INFERENCE-ENGINE",
+        "seal": "fcee477ca4042c770a3c51295168257d9fe7c85ea7d3858a96dc5989c3b61e1e",
+        "files": {
+            "lucebox_engine.py": r'''#!/ "lucebox_engine.py"
+import json
+import hashlib
+
+class LuceboxInferenceEngine:
+    def __init__(self):
+        self.components = [
+            "Megakernel",
+            "DFlash+DDTree",
+            "PFlash",
+            "TQ3_0 KV cache"
+        ]
+        self.description = "Hand-tuned per-GPU inference optimizations: Megakernel, DFlash, PFlash"
+
+    def get_info(self):
+        return {
+            "id": "906-LUCEBOX-INFERENCE-ENGINE",
+            "phi_c": 0.92,
+            "components": self.components,
+            "description": self.description
+        }
+'''
+        }
+    },
+    "907": {
+        "dir": "907_voxterm_audio_privacy",
+        "class_name": "Substrato_907_voxterm_audio_privacy",
+        "id": "907-VOXTERM-AUDIO-PRIVACY",
+        "seal": "fcee477ca4042c770a3c51295168257d9fe7c85ea7d3858a96dc5989c3b61e1e",
+        "files": {
+            "voxterm_privacy.py": r'''#!/ "voxterm_privacy.py"
+import json
+import hashlib
+
+class VoxTermAudioPrivacy:
+    def __init__(self):
+        self.components = [
+            "Real-time STT",
+            "Speaker diarization",
+            "P2P LAN sharing",
+            "AES-256"
+        ]
+        self.description = "Local-first voice transcription with P2P collaborative diarization"
+
+    def get_info(self):
+        return {
+            "id": "907-VOXTERM-AUDIO-PRIVACY",
+            "phi_c": 0.85,
+            "components": self.components,
+            "description": self.description
+        }
+'''
+        }
+    },
+    "908": {
+        "dir": "908_leanstral_fv_bridge",
+        "class_name": "Substrato_908_leanstral_fv_bridge",
+        "id": "908-LEANSTRAL-FV-BRIDGE",
+        "seal": "fcee477ca4042c770a3c51295168257d9fe7c85ea7d3858a96dc5989c3b61e1e",
+        "files": {
+            "leanstral_bridge.py": r'''#!/ "leanstral_bridge.py"
+import json
+import hashlib
+
+class LeanstralFVBridge:
+    def __init__(self):
+        self.components = [
+            "Lean proof assistant",
+            "Application-specific tuning",
+            "<70GB deployment"
+        ]
+        self.description = "Domain-specific fine-tuned models for secure code generation and formal verification"
+
+    def get_info(self):
+        return {
+            "id": "908-LEANSTRAL-FV-BRIDGE",
+            "phi_c": 0.91,
+            "components": self.components,
+            "description": self.description
+        }
+'''
+        }
+    },
+    "909": {
+        "dir": "909_zk_remote_llm",
+        "class_name": "Substrato_909_zk_remote_llm",
+        "id": "909-ZK-REMOTE-LLM",
+        "seal": "fcee477ca4042c770a3c51295168257d9fe7c85ea7d3858a96dc5989c3b61e1e",
+        "files": {
+            "zk_remote_llm.py": r'''#!/ "zk_remote_llm.py"
+import json
+import hashlib
+
+class ZKRemoteLLM:
+    def __init__(self):
+        self.components = [
+            "ZK-API",
+            "Openanonymity",
+            "Mixnets",
+            "TEE",
+            "FHE future"
+        ]
+        self.description = "Privacy-preserving remote inference with ZK proofs + mixnets + TEE fallback"
+
+    def get_info(self):
+        return {
+            "id": "909-ZK-REMOTE-LLM",
+            "phi_c": 0.87,
+            "components": self.components,
+            "description": self.description
+        }
+'''
+        }
+    },
     "863": {
         "dir": "863_secops_guardian_bridge",
         "class_name": "Substrato_863_secops_guardian_bridge",
@@ -867,16 +1018,17 @@ class {sub['class_name']}:
         seal = "{sub['seal']}"
 
         report = {{
-            "id": self.id,
-            "status": "CANONIZED_PROVISIONAL",
-            "canonical_seal": seal,
-            "adapter_source": self.adapter_source
+            "Substrate": self.id,
+            "Status": "CANONIZED_PROVISIONAL",
+            "Canonical_Seal": seal,
+            "Files": self.adapter_source
         }}
 
         fd, path = tempfile.mkstemp(suffix=".json")
         with os.fdopen(fd, 'w') as f:
             json.dump(report, f)
 
+        print("Report generated at: " + path)
         return path
 """
     canonizer_file = f"substrato_{sub['dir']}.py"
