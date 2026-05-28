@@ -2373,3 +2373,26 @@ def test_933_brazilian_financial_infrastructure_bridge():
     assert "Canonical_Seal" in data
     assert "Files" in data
     assert "substrate_933_bfi_bridge.py" in data["Files"]
+import pytest
+import os
+import sys
+
+def test_substrate_923_2_vulnerability_temporalchain():
+    sys.path.insert(0, os.path.abspath('substrates/t/923_2_vulnerability_temporalchain'))
+    import substrato_923_2_vulnerability_temporalchain
+    import json
+    import tempfile
+
+    payload = {
+        "Substrate": "923.2-Vulnerability-TemporalChain",
+        "Status": "Canonized",
+        "Files": list(substrato_923_2_vulnerability_temporalchain.get_b64_artifacts().keys())
+    }
+    expected_seal = substrato_923_2_vulnerability_temporalchain.compute_seal(payload)
+
+    # Run the canonical check
+    assert expected_seal == "4db7660d0818c9f436a224cd75b20b8525eafa7c70c1f7ea1c6517769efaa0c8"
+
+    with open("substrates/t/923_2_vulnerability_temporalchain/substrato_923_2_vulnerability_temporalchain.py", "r") as f:
+        content = f.read()
+    assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
