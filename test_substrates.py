@@ -1037,8 +1037,8 @@ def test_pvac_f_strings():
         'substrates/t/863_secops_guardian_bridge/substrato_863_secops_guardian_bridge.py',
         'substrates/t/864_eip8272_recent_roots_bridge/substrato_864_eip8272_recent_roots_bridge.py',
         'substrates/t/865_cohesion_engine/substrato_865_cohesion_engine.py',
-        'substrates/t/870_blockchain_z_glm/substrato_870_blockchain_z_glm.py'
-
+        'substrates/t/870_blockchain_z_glm/substrato_870_blockchain_z_glm.py',
+        'substrates/t/927_permaweb_bridge/substrato_927_permaweb_bridge.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
@@ -2247,3 +2247,21 @@ def test_substrate_919_omni_substrate():
     assert data["Status"] == "Canonized"
     assert "arkhe_omni_agent.py" in data["Files"]
     assert "Canonical_Seal" in data
+
+def test_927_permaweb_bridge():
+    import importlib.util
+    import os
+    import json
+    file_path = os.path.abspath('substrates/t/927_permaweb_bridge/substrato_927_permaweb_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_927_permaweb_bridge", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato927PermawebBridge()
+    result = canonizer.canonize()
+
+    assert result['Substrate'] == '927'
+    assert result['Status'] == 'Canonized'
+    assert 'Canonical_Seal' in result
+    assert result['Canonical_Seal'] == 'db6debcb8b2f4b7e81e04d6627a8e822b3fe76a8187a032ee422a0c153514e9b'
+    assert len(result['Files']) == 2
