@@ -521,7 +521,7 @@ class PermawebBridge:
         # Spawn AOS process if not exists
         if agent_id not in self._process_registry:
             spawn_result = self.aos.spawn_aos("arkhe-{0}".format(agent_id))
-            if "error" in spawn_result:
+            if "error" in spawn_result and "id" not in spawn_result:
                 return spawn_result
             self._process_registry[agent_id] = {"process_id": spawn_result.get("id")}
 

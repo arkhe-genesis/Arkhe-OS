@@ -24,7 +24,7 @@ class Substrato929ArkheAsAndroidOs:
             "Artifacts": get_b64_artifacts()
         }
         seal = compute_seal(payload)
-        payload["Canonical_Seal"] = "87323b8f54b730c9c47880dfcd7fc7ec56f69520bdbf4ddb6e18c88441c30599"
+        payload["Canonical_Seal"] = seal
 
         fd, path = tempfile.mkstemp(suffix=".json", prefix="substrate_929_")
         with os.fdopen(fd, "w") as f:
