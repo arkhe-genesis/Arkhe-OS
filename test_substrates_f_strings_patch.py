@@ -94,3 +94,10 @@ def test_substrate_931_f_strings():
         with open(file_path, "r") as f:
             content = f.read()
         assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+def test_substrate_260_f_strings():
+    import os
+    file_path = "substrates/t/260_arkhe_jax/substrato_260_arkhe_jax.py"
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            content = f.read()
+        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."

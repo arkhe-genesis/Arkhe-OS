@@ -1703,7 +1703,7 @@ def test_861_un_20_governance_bridge():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato861Un20GovernanceBridge()
+    canonizer = module.Substrato_861_un_20_governance_bridge()
     path = canonizer.canonize()
 
     assert os.path.exists(path)
@@ -1739,7 +1739,7 @@ def test_859_biological_computing_bridge():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato859BiologicalComputingBridge()
+    canonizer = module.Substrato_859_biological_computing_bridge()
     path = canonizer.canonize()
 
     assert os.path.exists(path)
@@ -1775,7 +1775,7 @@ def test_857_neuromorphic_hardware_bridge():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato857NeuromorphicHardwareBridge()
+    canonizer = module.Substrato_857_neuromorphic_hardware_bridge()
     path = canonizer.canonize()
 
     assert os.path.exists(path)
@@ -1793,7 +1793,7 @@ def test_856_quantum_computing_bridge():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato856QuantumComputingBridge()
+    canonizer = module.Substrato_856_quantum_computing_bridge()
     path = canonizer.canonize()
 
     assert os.path.exists(path)
@@ -1811,7 +1811,7 @@ def test_855_hpc_environment_bridge():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato855HpcEnvironmentBridge()
+    canonizer = module.Substrato_855_hpc_environment_bridge()
     path = canonizer.canonize()
 
     assert os.path.exists(path)
@@ -2350,3 +2350,29 @@ def test_substrate_931_interfold_bridge():
     assert canonical_seal is not None
 
     os.remove(json_path)
+
+def test_substrate_260_arkhe_jax():
+    import os
+    import sys
+    import json
+    import subprocess
+
+    script_path = "substrates/t/260_arkhe_jax/substrato_260_arkhe_jax.py"
+    if not os.path.exists(script_path):
+        assert False, f"Substrate 260 script not found at {script_path}"
+
+    result = subprocess.run([sys.executable, script_path], capture_output=True, text=True)
+    assert result.returncode == 0, f"Script failed with output: {result.stderr}"
+
+    output_line = [line for line in result.stdout.split('\n') if "Report generated at:" in line][0]
+    json_path = output_line.split("Report generated at:")[1].strip()
+
+    with open(json_path, 'r') as f:
+        data = json.load(f)
+
+    assert data["Substrate"] == 260
+    assert data["Status"] == "CANONIZED_PROVISIONAL"
+    assert "arkhe_jax_core.py" in data["Files"]
+
+    canonical_seal = data.get("Canonical_Seal", data.get("Seal_SHA3_256", data.get("canonical_seal")))
+    assert canonical_seal is not None
