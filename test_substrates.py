@@ -2350,3 +2350,26 @@ def test_substrate_931_interfold_bridge():
     assert canonical_seal is not None
 
     os.remove(json_path)
+
+def test_933_brazilian_financial_infrastructure_bridge():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_933_brazilian_financial_infrastructure_bridge",
+        os.path.abspath("substrates/t/933_brazilian_financial_infrastructure_bridge/substrato_933_brazilian_financial_infrastructure_bridge.py")
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    path = module.canonize()
+    assert os.path.exists(path)
+
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["Substrate"] == "933"
+    assert data["Status"] == "CANONIZED_PROVISIONAL"
+    assert "Canonical_Seal" in data
+    assert "Files" in data
+    assert "substrate_933_bfi_bridge.py" in data["Files"]
