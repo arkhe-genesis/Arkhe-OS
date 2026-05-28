@@ -71,3 +71,9 @@ def test_substrate_918_f_strings():
     with open("substrates/t/918_qemu_orchestration/substrate_918_qemu_orchestration.py", "r") as f:
         content = f.read()
     assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_924_f_strings():
+    import re
+    with open("substrates/t/924_compound_motion_dynamics/substrate_924_compound_motion_dynamics.py", 'r') as f:
+        content = f.read()
+    assert not re.search(r"\bf[\"']", content), f"f-strings are not allowed in canonizer scripts"
