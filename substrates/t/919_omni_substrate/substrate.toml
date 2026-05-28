@@ -1,6 +1,11 @@
 [substrate]
-id = 919
-name = "Omni-Substrate"
-status = "CANONIZED_PROVISIONAL"
-version = "2.0.0"
+id = "919-OMNI-SUBSTRATE"
+name = "ArkheOmniAgent Consolidation"
+version = "1.0.0"
+author = "Arkhe OS Contributors"
+description = "Mega-consolidation of 20+ substrates into a single ArkheOmniAgent"
+
+[metadata]
+category = "consolidation"
+type = "agent"
 source_verified = true

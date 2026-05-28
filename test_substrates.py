@@ -2229,16 +2229,21 @@ def test_substrate_918_qemu_orchestration():
         content = f.read()
     assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
 
-def test_substrate_919():
-    import subprocess
+def test_substrate_919_omni_substrate():
+    import sys
+    import os
+    sys.path.insert(0, os.path.abspath('substrates/t/919_omni_substrate'))
+    import substrato_919_omni_substrate
     import json
-    result = subprocess.run(
-        ["python3", "substrates/t/919_omni_substrate/substrato_919_omni_substrate.py"],
-        capture_output=True, text=True, check=True
-    )
-    json_path = result.stdout.strip()
-    with open(json_path) as f:
+
+    canonizer = substrato_919_omni_substrate.Substrato919OmniSubstrate()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r") as f:
         data = json.load(f)
+
     assert data["Substrate"] == "919-OMNI-SUBSTRATE"
-    assert data["Status"] == "CANONIZED_PROVISIONAL"
+    assert data["Status"] == "Canonized"
+    assert "arkhe_omni_agent.py" in data["Files"]
     assert "Canonical_Seal" in data

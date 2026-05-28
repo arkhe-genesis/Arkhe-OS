@@ -71,12 +71,7 @@ def test_substrate_918_f_strings():
     with open("substrates/t/918_qemu_orchestration/substrate_918_qemu_orchestration.py", "r") as f:
         content = f.read()
     assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
-
-def test_919_omni_substrate_f_strings():
-    import os
-    filepath = 'substrates/t/919_omni_substrate/substrato_919_omni_substrate.py'
-    if os.path.exists(filepath):
-        with open(filepath, 'r') as f:
-            content = f.read()
-            assert 'f"' not in content
-            assert 'f\'' not in content
+def test_substrate_919_f_strings():
+    with open("substrates/t/919_omni_substrate/substrato_919_omni_substrate.py", "r") as f:
+        content = f.read()
+    assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
