@@ -2283,3 +2283,41 @@ def test_substrate_917_google_grounding_layer():
     assert data["Status"] == "Canonized"
     assert "arkhe_google_agent.py" in data["Files"]
     assert "Canonical_Seal" in data
+
+def test_substrate_929_arkhe_android_os():
+    import sys
+    import os
+    import json
+    import subprocess
+
+    script_path = os.path.join(os.path.dirname(__file__), 'substrates', 't', '929_arkhe_android_os_bridge', 'substrato_929_arkhe_android_os_bridge.py')
+    assert os.path.exists(script_path), f"Script not found at {script_path}"
+
+    result = subprocess.run([sys.executable, script_path], capture_output=True, text=True)
+    assert result.returncode == 0, f"Script failed with output: {result.stderr}"
+
+    try:
+        data = json.loads(result.stdout)
+    except json.JSONDecodeError:
+        assert False, f"Failed to parse JSON output: {result.stdout}"
+
+    assert data.get('Substrate') == '929'
+    assert data.get('Status') == 'CANONIZED'
+
+    seal = data.get('Canonical_Seal', data.get('Seal_SHA3_256', data.get('canonical_seal')))
+    assert seal == '8ff194dfd667de94750f2d635da184af7b5ab7f564427f1caa6ed78aa3aae071'
+
+    files = data.get('Files', {})
+    assert 'arkhe_android_os.py' in files
+
+    # Verify no f-strings are used
+    with open(script_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+        import ast
+        try:
+            tree = ast.parse(content)
+            for node in ast.walk(tree):
+                if isinstance(node, ast.JoinedStr):
+                    assert False, "f-strings are strictly prohibited in substrate canonization"
+        except SyntaxError:
+            pass
