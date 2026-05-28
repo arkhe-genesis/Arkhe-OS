@@ -52,12 +52,12 @@ class ChromeDevToolsBridge:
         }
 
         if command == "Page.navigate":
-            url = params.get("url", "about:blank")
-            logger.info("Navigating to " + url)
+            url = params.get("url") or "about:blank"
+            logger.info("Navigating to " + str(url))
             response["result"] = {"frameId": "12345.1", "loaderId": "12345.2"}
         elif command == "Runtime.evaluate":
-            expression = params.get("expression", "")
-            logger.info("Evaluating script: " + expression[:50] + "...")
+            expression = params.get("expression") or ""
+            logger.info("Evaluating script: " + str(expression)[:50] + "...")
             response["result"] = {
                 "result": {
                     "type": "string",
