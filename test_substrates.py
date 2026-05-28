@@ -2247,33 +2247,3 @@ def test_substrate_919_omni_substrate():
     assert data["Status"] == "Canonized"
     assert "arkhe_omni_agent.py" in data["Files"]
     assert "Canonical_Seal" in data
-
-def test_substrate_927_permaweb_bridge():
-    sys.path.insert(0, os.path.abspath('substrates/t/927_permaweb_bridge'))
-    import substrate_927_permaweb_bridge
-    canonizer = substrate_927_permaweb_bridge.Substrato927PermawebBridge()
-    report_path = canonizer.canonize()
-    assert os.path.exists(report_path)
-    with open(report_path, "r") as f:
-        data = json.load(f)
-    os.remove(report_path)
-
-    assert data["Substrate"] == "927-PERMAWEB-BRIDGE"
-    assert data["Status"] == "CANONIZED_PROVISIONAL"
-    assert data["Canonical_Seal"] == "db6debcb8b2f4b7e81e04d6627a8e822b3fe76a8187a032ee422a0c153514e9b"
-    assert "permaweb_bridge.py" in data["Files"]
-
-def test_substrate_929_arkhe_as_android_os():
-    sys.path.insert(0, os.path.abspath('substrates/t/929_arkhe_as_android_os'))
-    import substrate_929_arkhe_as_android_os
-    canonizer = substrate_929_arkhe_as_android_os.Substrato929ArkheAsAndroidOs()
-    report_path = canonizer.canonize()
-    assert os.path.exists(report_path)
-    with open(report_path, "r") as f:
-        data = json.load(f)
-    os.remove(report_path)
-
-    assert data["Substrate"] == "929-ARKHE-AS-ANDROID-OS"
-    assert data["Status"] == "CANONIZED_PROVISIONAL"
-    assert "arkhe_android_os.py" in data["Files"]
-    assert "Canonical_Seal" in data

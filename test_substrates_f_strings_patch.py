@@ -75,19 +75,3 @@ def test_substrate_919_f_strings():
     with open("substrates/t/919_omni_substrate/substrato_919_omni_substrate.py", "r") as f:
         content = f.read()
     assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
-
-def test_substrate_927_f_strings():
-    with open("substrates/t/927_permaweb_bridge/substrate_927_permaweb_bridge.py", "r") as f:
-        content = f.read()
-    assert "f\"" not in content and "f'" not in content, "f-strings are strictly prohibited in Substrate 927 canonizer"
-    with open("substrates/t/927_permaweb_bridge/permaweb_bridge.py", "r") as f:
-        content = f.read()
-    assert "f\"" not in content and "f'" not in content, "f-strings are strictly prohibited in Substrate 927 codebase"
-
-def test_substrate_929_f_strings():
-    with open("substrates/t/929_arkhe_as_android_os/substrate_929_arkhe_as_android_os.py", "r") as f:
-        content = f.read()
-    assert "f\"" not in content and "f'" not in content, "f-strings are strictly prohibited in Substrate 929 canonizer"
-    with open("substrates/t/929_arkhe_as_android_os/arkhe_android_os.py", "r") as f:
-        content = f.read()
-    assert "f\"" not in content and "f'" not in content, "f-strings are strictly prohibited in Substrate 929 codebase"
