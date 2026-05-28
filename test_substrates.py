@@ -2247,3 +2247,39 @@ def test_substrate_919_omni_substrate():
     assert data["Status"] == "Canonized"
     assert "arkhe_omni_agent.py" in data["Files"]
     assert "Canonical_Seal" in data
+def test_substrate_926_chrome_devtools():
+    import sys
+    import os
+    sys.path.insert(0, os.path.abspath('substrates/t/926_chrome_devtools_mcp_bridge'))
+    import substrato_926_chrome_devtools_mcp_bridge
+    import json
+
+    canonizer = substrato_926_chrome_devtools_mcp_bridge.ChromeDevToolsBridge()
+    path = canonizer.generate_report()
+
+    assert os.path.exists(path)
+    with open(path, "r") as f:
+        data = json.load(f)
+
+    assert data["Substrate"] == 926
+    assert data["Status"] == "Canonized"
+    assert "chrome_devtools_bridge.py" in data["Files"]
+    assert "Canonical_Seal" in data
+def test_substrate_917_google_grounding_layer():
+    import sys
+    import os
+    sys.path.insert(0, os.path.abspath('substrates/t/917_google_grounding_layer'))
+    import substrato_917_google_grounding_layer
+    import json
+
+    canonizer = substrato_917_google_grounding_layer.Substrato917GoogleGroundingLayer()
+    path = canonizer.generate_report()
+
+    assert os.path.exists(path)
+    with open(path, "r") as f:
+        data = json.load(f)
+
+    assert data["Substrate"] == 917
+    assert data["Status"] == "Canonized"
+    assert "arkhe_google_agent.py" in data["Files"]
+    assert "Canonical_Seal" in data
