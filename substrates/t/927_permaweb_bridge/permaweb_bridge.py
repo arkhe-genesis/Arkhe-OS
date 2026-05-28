@@ -523,6 +523,8 @@ class PermawebBridge:
             spawn_result = self.aos.spawn_aos("arkhe-{0}".format(agent_id))
             if "error" in spawn_result and "id" not in spawn_result:
                 return spawn_result
+            if spawn_result.get("status") == "mock_spawned" and "error" in spawn_result:
+                return spawn_result
             self._process_registry[agent_id] = {"process_id": spawn_result.get("id")}
 
         self.aos.process_id = self._process_registry[agent_id]["process_id"]
