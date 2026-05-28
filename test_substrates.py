@@ -2204,3 +2204,26 @@ def test_pvac_909_zk_remote():
 
     assert data["Substrate"] == "909-ZK-REMOTE-LLM"
     assert data["Canonical_Seal"] == "fcee477ca4042c770a3c51295168257d9fe7c85ea7d3858a96dc5989c3b61e1e"
+
+def test_pvac_257_rootless_language():
+    import subprocess
+    import json
+    import os
+    import re
+
+    file_path = os.path.abspath('substrates/t/257_rootless_language_protocol/substrato_257_rootless_language_protocol.py')
+    result = subprocess.run(["python3", file_path], capture_output=True, text=True)
+    assert result.returncode == 0
+
+    path = result.stdout.split("Report generated at: ")[1].strip()
+    with open(path, "r") as f:
+        data = json.load(f)
+
+    assert data["Substrate"] == 257
+    assert data["Status"] == "Canonized"
+    assert "protocolo_257.py" in data["Files"]
+    assert data["Canonical_Seal"] == "c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9"
+
+    with open(file_path, "r") as f:
+        content = f.read()
+    assert not re.search(r"\bf[\"']", content), "f-strings are not allowed in Substrate 257"
