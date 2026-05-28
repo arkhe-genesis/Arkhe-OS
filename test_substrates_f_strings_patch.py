@@ -105,3 +105,16 @@ def test_933_f_strings():
         tree = ast.parse(f.read())
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr)
+
+def test_pvac_f_strings_940_943():
+    import os
+    files_to_check = [
+        "substrates/t/940_claude_harness_adapter/substrato_940_claude_harness_adapter.py",
+        "substrates/t/941_cognitive_effort_controller/substrato_941_cognitive_effort_controller.py",
+        "substrates/t/942_catedral_code_agent/substrato_942_catedral_code_agent.py",
+        "substrates/t/943_visual_ontology_layer/substrato_943_visual_ontology_layer.py",
+    ]
+    for file in files_to_check:
+        with open(file, 'r') as f:
+            content = f.read()
+            assert 'f"' not in content, f"Found f-string in {file}"
