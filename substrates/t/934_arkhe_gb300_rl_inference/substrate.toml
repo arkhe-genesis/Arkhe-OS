@@ -1,0 +1,6 @@
+[substrate]
+id = "934"
+name = "ARKHE-GB300-RL-INFERENCE"
+version = "1.0.0"
+description = "Inference Stack em C para RL de alta velocidade em cluster GB300"
+tags = ["RL", "GB300", "Blackwell", "CUDA", "C"]
