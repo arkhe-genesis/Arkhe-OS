@@ -2204,3 +2204,27 @@ def test_pvac_909_zk_remote():
 
     assert data["Substrate"] == "909-ZK-REMOTE-LLM"
     assert data["Canonical_Seal"] == "fcee477ca4042c770a3c51295168257d9fe7c85ea7d3858a96dc5989c3b61e1e"
+
+def test_substrate_918_qemu_orchestration():
+    import sys
+    import os
+    sys.path.insert(0, os.path.abspath('substrates/t/918_qemu_orchestration'))
+    import substrate_918_qemu_orchestration
+    import json
+    import tempfile
+
+    payload = {
+        "Substrate": "918-QEMU",
+        "Status": "Canonized",
+        "Files": list(substrate_918_qemu_orchestration.get_b64_artifacts().keys())
+    }
+    expected_seal = substrate_918_qemu_orchestration.compute_seal(payload)
+
+    # We should run the script's main logic but redirect stdout
+    # or just rely on the manual check here.
+    assert expected_seal == "577cc0fa8db89a6f9e5ac817fadd965bdb2186e61f1b88530de7185c4f98e9b6"
+
+    # Also check the script's content to ensure it does not contain f-strings
+    with open("substrates/t/918_qemu_orchestration/substrate_918_qemu_orchestration.py", "r") as f:
+        content = f.read()
+    assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
