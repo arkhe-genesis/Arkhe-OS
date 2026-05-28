@@ -36,8 +36,8 @@ class Substrato919OmniSubstrate:
 
         payload_data["Canonical_Seal"] = seal
 
-        _, tmp_path = tempfile.mkstemp(suffix=".json")
-        with open(tmp_path, "w") as f:
+        fd, tmp_path = tempfile.mkstemp(suffix=".json")
+        with os.fdopen(fd, "w") as f:
             json.dump(payload_data, f, indent=4)
 
         return tmp_path
