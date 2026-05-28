@@ -2283,3 +2283,28 @@ def test_substrate_917_google_grounding_layer():
     assert data["Status"] == "Canonized"
     assert "arkhe_google_agent.py" in data["Files"]
     assert "Canonical_Seal" in data
+
+def test_substrate_929_arkhe_android_os():
+    import sys
+    import os
+    import json
+    import hashlib
+    sys.path.insert(0, os.path.abspath('substrates/t/929_arkhe_android_os'))
+    import substrato_929_arkhe_android_os
+
+    bridge = substrato_929_arkhe_android_os.ArkheAndroidOSBridge()
+    report_path = bridge.generate_report()
+
+    with open(report_path, "r") as f:
+        data = json.load(f)
+
+    assert data["Substrate"] == 929
+
+    seal = data.pop("Canonical_Seal")
+    expected_seal = hashlib.sha3_256(json.dumps(data, sort_keys=True).encode()).hexdigest()
+    assert seal == expected_seal
+
+    # put it back for potential subsequent checks
+    data["Canonical_Seal"] = seal
+
+    assert data["Canonical_Seal"] == bridge.canonical_seal

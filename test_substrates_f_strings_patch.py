@@ -79,3 +79,11 @@ def test_substrate_926_f_strings():
     with open("substrates/t/926_chrome_devtools_mcp_bridge/substrato_926_chrome_devtools_mcp_bridge.py", "r") as f:
         content = f.read()
     assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_substrate_929_f_strings():
+    with open("substrates/t/929_arkhe_android_os/substrato_929_arkhe_android_os.py", "r") as f:
+        content = f.read()
+    # Basic check to make sure f-strings are not present (ignoring literal 'f"' just matching actual usage)
+    import re
+    if re.search(r'f["\']', content):
+        assert False, "f-strings found in 929_arkhe_android_os!"
