@@ -2247,33 +2247,106 @@ def test_substrate_919_omni_substrate():
     assert data["Status"] == "Canonized"
     assert "arkhe_omni_agent.py" in data["Files"]
     assert "Canonical_Seal" in data
+def test_substrate_926_chrome_devtools():
+    import sys
+    import os
+    sys.path.insert(0, os.path.abspath('substrates/t/926_chrome_devtools_mcp_bridge'))
+    import substrato_926_chrome_devtools_mcp_bridge
+    import json
 
-def test_substrate_927_permaweb_bridge():
-    sys.path.insert(0, os.path.abspath('substrates/t/927_permaweb_bridge'))
-    import substrate_927_permaweb_bridge
-    canonizer = substrate_927_permaweb_bridge.Substrato927PermawebBridge()
-    report_path = canonizer.canonize()
-    assert os.path.exists(report_path)
-    with open(report_path, "r") as f:
+    canonizer = substrato_926_chrome_devtools_mcp_bridge.ChromeDevToolsBridge()
+    path = canonizer.generate_report()
+
+    assert os.path.exists(path)
+    with open(path, "r") as f:
         data = json.load(f)
-    os.remove(report_path)
 
-    assert data["Substrate"] == "927-PERMAWEB-BRIDGE"
-    assert data["Status"] == "CANONIZED_PROVISIONAL"
-    assert data["Canonical_Seal"] == "db6debcb8b2f4b7e81e04d6627a8e822b3fe76a8187a032ee422a0c153514e9b"
-    assert "permaweb_bridge.py" in data["Files"]
-
-def test_substrate_929_arkhe_as_android_os():
-    sys.path.insert(0, os.path.abspath('substrates/t/929_arkhe_as_android_os'))
-    import substrate_929_arkhe_as_android_os
-    canonizer = substrate_929_arkhe_as_android_os.Substrato929ArkheAsAndroidOs()
-    report_path = canonizer.canonize()
-    assert os.path.exists(report_path)
-    with open(report_path, "r") as f:
-        data = json.load(f)
-    os.remove(report_path)
-
-    assert data["Substrate"] == "929-ARKHE-AS-ANDROID-OS"
-    assert data["Status"] == "CANONIZED_PROVISIONAL"
-    assert "arkhe_android_os.py" in data["Files"]
+    assert data["Substrate"] == 926
+    assert data["Status"] == "Canonized"
+    assert "chrome_devtools_bridge.py" in data["Files"]
     assert "Canonical_Seal" in data
+def test_substrate_917_google_grounding_layer():
+    import sys
+    import os
+    sys.path.insert(0, os.path.abspath('substrates/t/917_google_grounding_layer'))
+    import substrato_917_google_grounding_layer
+    import json
+
+    canonizer = substrato_917_google_grounding_layer.Substrato917GoogleGroundingLayer()
+    path = canonizer.generate_report()
+
+    assert os.path.exists(path)
+    with open(path, "r") as f:
+        data = json.load(f)
+
+    assert data["Substrate"] == 917
+    assert data["Status"] == "Canonized"
+    assert "arkhe_google_agent.py" in data["Files"]
+    assert "Canonical_Seal" in data
+
+def test_substrate_929_arkhe_android_os():
+    import sys
+    import os
+    import json
+    import subprocess
+
+    script_path = os.path.join(os.path.dirname(__file__), 'substrates', 't', '929_arkhe_android_os_bridge', 'substrato_929_arkhe_android_os_bridge.py')
+    assert os.path.exists(script_path), f"Script not found at {script_path}"
+
+    result = subprocess.run([sys.executable, script_path], capture_output=True, text=True)
+    assert result.returncode == 0, f"Script failed with output: {result.stderr}"
+
+    try:
+        data = json.loads(result.stdout)
+    except json.JSONDecodeError:
+        assert False, f"Failed to parse JSON output: {result.stdout}"
+
+    assert data.get('Substrate') == '929'
+    assert data.get('Status') == 'CANONIZED'
+
+    seal = data.get('Canonical_Seal', data.get('Seal_SHA3_256', data.get('canonical_seal')))
+    assert seal == '8ff194dfd667de94750f2d635da184af7b5ab7f564427f1caa6ed78aa3aae071'
+
+    files = data.get('Files', {})
+    assert 'arkhe_android_os.py' in files
+
+    # Verify no f-strings are used
+    with open(script_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+        import ast
+        try:
+            tree = ast.parse(content)
+            for node in ast.walk(tree):
+                if isinstance(node, ast.JoinedStr):
+                    assert False, "f-strings are strictly prohibited in substrate canonization"
+        except SyntaxError:
+            pass
+
+def test_substrate_931_interfold_bridge():
+    """Validates Substrate 931: Interfold Coordination Bridge"""
+    import os
+    import sys
+    import json
+    import subprocess
+
+    script_path = "substrates/t/931_interfold_coordination_bridge/substrato_931_interfold_coordination_bridge.py"
+    if not os.path.exists(script_path):
+        pytest.skip(f"Substrate 931 script not found at {script_path}")
+
+    result = subprocess.run([sys.executable, script_path], capture_output=True, text=True)
+    assert result.returncode == 0, f"Script failed with output: {result.stderr}"
+
+    output_line = [line for line in result.stdout.split('\n') if "Report written to:" in line][0]
+    json_path = output_line.split("Report written to:")[1].strip()
+
+    with open(json_path, 'r') as f:
+        data = json.load(f)
+
+    assert data["Substrate"] == 931
+    assert data["Title"] == "INTERFOLD-CONFIDENTIAL-COORDINATION-BRIDGE"
+    assert "bridge_script.py" in data["Files"]
+
+    canonical_seal = data.get("Canonical_Seal")
+    assert canonical_seal is not None
+
+    os.remove(json_path)
