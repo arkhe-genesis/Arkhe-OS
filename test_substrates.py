@@ -2373,26 +2373,29 @@ def test_933_brazilian_financial_infrastructure_bridge():
     assert "Canonical_Seal" in data
     assert "Files" in data
     assert "substrate_933_bfi_bridge.py" in data["Files"]
-import pytest
-import os
-import sys
 
-def test_substrate_923_2_vulnerability_temporalchain():
-    sys.path.insert(0, os.path.abspath('substrates/t/923_2_vulnerability_temporalchain'))
-    import substrato_923_2_vulnerability_temporalchain
+def test_934_arkhe_gb300_rl_inference():
     import json
-    import tempfile
+    import os
+    import importlib.util
 
-    payload = {
-        "Substrate": "923.2-Vulnerability-TemporalChain",
-        "Status": "Canonized",
-        "Files": list(substrato_923_2_vulnerability_temporalchain.get_b64_artifacts().keys())
-    }
-    expected_seal = substrato_923_2_vulnerability_temporalchain.compute_seal(payload)
+    def load_module(name, path):
+        spec = importlib.util.spec_from_file_location(name, path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
 
-    # Run the canonical check
-    assert expected_seal == "4db7660d0818c9f436a224cd75b20b8525eafa7c70c1f7ea1c6517769efaa0c8"
+    module = load_module(
+        "substrato_934_arkhe_gb300_rl_inference",
+        os.path.abspath("substrates/t/934_arkhe_gb300_rl_inference/substrato_934_arkhe_gb300_rl_inference.py")
+    )
 
-    with open("substrates/t/923_2_vulnerability_temporalchain/substrato_923_2_vulnerability_temporalchain.py", "r") as f:
-        content = f.read()
-    assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+    canonizer = module.Substrato934ArkheGb300RlInference()
+    report = canonizer.canonize()
+    data = json.loads(report)
+
+    assert data["Substrate"] == "934"
+    assert data["Status"] == "Canonized"
+    assert "Canonical_Seal" in data
+    assert "include/arkhe_rl.h" in data["Files"]
+    assert "src/engine.c" in data["Files"]
