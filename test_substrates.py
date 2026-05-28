@@ -2373,3 +2373,29 @@ def test_933_brazilian_financial_infrastructure_bridge():
     assert "Canonical_Seal" in data
     assert "Files" in data
     assert "substrate_933_bfi_bridge.py" in data["Files"]
+
+def test_934_arkhe_gb300_rl_inference():
+    import json
+    import os
+    import importlib.util
+
+    def load_module(name, path):
+        spec = importlib.util.spec_from_file_location(name, path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
+    module = load_module(
+        "substrato_934_arkhe_gb300_rl_inference",
+        os.path.abspath("substrates/t/934_arkhe_gb300_rl_inference/substrato_934_arkhe_gb300_rl_inference.py")
+    )
+
+    canonizer = module.Substrato934ArkheGb300RlInference()
+    report = canonizer.canonize()
+    data = json.loads(report)
+
+    assert data["Substrate"] == "934"
+    assert data["Status"] == "Canonized"
+    assert "Canonical_Seal" in data
+    assert "include/arkhe_rl.h" in data["Files"]
+    assert "src/engine.c" in data["Files"]
