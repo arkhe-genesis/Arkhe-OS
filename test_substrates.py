@@ -2350,3 +2350,17 @@ def test_substrate_931_interfold_bridge():
     assert canonical_seal is not None
 
     os.remove(json_path)
+
+def test_substrate_261_arkhe_brasil_finance():
+    """Test Substrate 261 (ARKHE-BRASIL-FINANCE) canonization."""
+    script_path = "substrates/t/261_arkhe_brasil_finance/substrato_261_arkhe_brasil_finance.py"
+    assert os.path.exists(script_path), f"{script_path} must exist"
+
+    result = subprocess.run([sys.executable, script_path], capture_output=True, text=True)
+    assert result.returncode == 0, f"Script failed with error: {result.stderr}"
+
+    data = json.loads(result.stdout)
+    assert "Substrate" in data
+    assert data["Substrate"] == "261_arkhe_brasil_finance"
+    seal = data.get("Canonical_Seal", data.get("Seal_SHA3_256", data.get("canonical_seal")))
+    assert seal == "f9fa264ea4bdff2ee104d986e3827eb823a2439909a50e658c1965ebbe787db1", "Seal mismatch"

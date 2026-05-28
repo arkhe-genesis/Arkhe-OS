@@ -94,3 +94,11 @@ def test_substrate_931_f_strings():
         with open(file_path, "r") as f:
             content = f.read()
         assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_substrate_261_f_strings():
+    """Verify that Substrate 261 does not contain f-strings."""
+    script_path = "substrates/t/261_arkhe_brasil_finance/substrato_261_arkhe_brasil_finance.py"
+    with open(script_path, "r") as f:
+        content = f.read()
+    assert 'f"' not in content, f"{script_path} contains f-strings"
+    assert "f'" not in content, f"{script_path} contains f-strings"
