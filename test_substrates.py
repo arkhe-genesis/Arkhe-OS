@@ -2399,3 +2399,26 @@ def test_934_arkhe_gb300_rl_inference():
     assert "Canonical_Seal" in data
     assert "include/arkhe_rl.h" in data["Files"]
     assert "src/engine.c" in data["Files"]
+
+def test_substrate_944():
+    import subprocess
+    import json
+    # Run the canonizer
+    result = subprocess.run(
+        ["python3", "substrates/t/944_glasswing_sentinel/substrato_944_glasswing_sentinel.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    assert "Substrate 944 canonized at:" in result.stdout
+
+    # Extract path
+    path = result.stdout.split("Substrate 944 canonized at: ")[1].split("\n")[0].strip()
+
+    with open(path, "r") as f:
+        data = json.load(f)
+
+    assert data["Substrate"] == "944"
+    assert data["Status"] == "Canonized"
+    assert "glasswing_sentinel.py" in data["Files"]
+    assert "Canonical_Seal" in data
