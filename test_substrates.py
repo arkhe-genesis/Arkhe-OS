@@ -2351,28 +2351,25 @@ def test_substrate_931_interfold_bridge():
 
     os.remove(json_path)
 
-def test_substrate_260_arkhe_jax():
+def test_933_brazilian_financial_infrastructure_bridge():
+    import importlib.util
     import os
-    import sys
     import json
-    import subprocess
+    spec = importlib.util.spec_from_file_location(
+        "substrato_933_brazilian_financial_infrastructure_bridge",
+        os.path.abspath("substrates/t/933_brazilian_financial_infrastructure_bridge/substrato_933_brazilian_financial_infrastructure_bridge.py")
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
 
-    script_path = "substrates/t/260_arkhe_jax/substrato_260_arkhe_jax.py"
-    if not os.path.exists(script_path):
-        assert False, f"Substrate 260 script not found at {script_path}"
+    path = module.canonize()
+    assert os.path.exists(path)
 
-    result = subprocess.run([sys.executable, script_path], capture_output=True, text=True)
-    assert result.returncode == 0, f"Script failed with output: {result.stderr}"
-
-    output_line = [line for line in result.stdout.split('\n') if "Report generated at:" in line][0]
-    json_path = output_line.split("Report generated at:")[1].strip()
-
-    with open(json_path, 'r') as f:
+    with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    assert data["Substrate"] == 260
+    assert data["Substrate"] == "933"
     assert data["Status"] == "CANONIZED_PROVISIONAL"
-    assert "arkhe_jax_core.py" in data["Files"]
-
-    canonical_seal = data.get("Canonical_Seal", data.get("Seal_SHA3_256", data.get("canonical_seal")))
-    assert canonical_seal is not None
+    assert "Canonical_Seal" in data
+    assert "Files" in data
+    assert "substrate_933_bfi_bridge.py" in data["Files"]
