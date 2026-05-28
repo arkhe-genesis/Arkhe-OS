@@ -2321,3 +2321,32 @@ def test_substrate_929_arkhe_android_os():
                     assert False, "f-strings are strictly prohibited in substrate canonization"
         except SyntaxError:
             pass
+
+def test_substrate_931_interfold_bridge():
+    """Validates Substrate 931: Interfold Coordination Bridge"""
+    import os
+    import sys
+    import json
+    import subprocess
+
+    script_path = "substrates/t/931_interfold_coordination_bridge/substrato_931_interfold_coordination_bridge.py"
+    if not os.path.exists(script_path):
+        pytest.skip(f"Substrate 931 script not found at {script_path}")
+
+    result = subprocess.run([sys.executable, script_path], capture_output=True, text=True)
+    assert result.returncode == 0, f"Script failed with output: {result.stderr}"
+
+    output_line = [line for line in result.stdout.split('\n') if "Report written to:" in line][0]
+    json_path = output_line.split("Report written to:")[1].strip()
+
+    with open(json_path, 'r') as f:
+        data = json.load(f)
+
+    assert data["Substrate"] == 931
+    assert data["Title"] == "INTERFOLD-CONFIDENTIAL-COORDINATION-BRIDGE"
+    assert "bridge_script.py" in data["Files"]
+
+    canonical_seal = data.get("Canonical_Seal")
+    assert canonical_seal is not None
+
+    os.remove(json_path)

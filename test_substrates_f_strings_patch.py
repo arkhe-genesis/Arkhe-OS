@@ -86,3 +86,11 @@ def test_substrate_929_f_strings():
         with open(file_path, "r") as f:
             content = f.read()
         assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_substrate_931_f_strings():
+    import os
+    file_path = "substrates/t/931_interfold_coordination_bridge/substrato_931_interfold_coordination_bridge.py"
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            content = f.read()
+        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
