@@ -75,3 +75,7 @@ def test_substrate_919_f_strings():
     with open("substrates/t/919_omni_substrate/substrato_919_omni_substrate.py", "r") as f:
         content = f.read()
     assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+def test_substrate_927_f_strings():
+    with open("substrates/t/927_permaweb_bridge/substrato_927_permaweb_bridge.py", "r") as f:
+        content = f.read()
+    assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
