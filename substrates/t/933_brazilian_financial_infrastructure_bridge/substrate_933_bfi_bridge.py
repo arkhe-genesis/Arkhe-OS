@@ -43,7 +43,7 @@ class BfiBridge:
         # Placeholder: long-poll ou WebSocket para a API do BCB
         while True:
             try:
-                response = requests.get(self.config.spi_api_endpoint + "/events")
+                response = requests.get(self.config.spi_api_endpoint + "/events", timeout=10)
                 if response.ok:
                     for event in response.json()["events"]:
                         # Converter para peptídeo e registar
