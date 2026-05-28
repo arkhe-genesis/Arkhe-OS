@@ -2228,3 +2228,17 @@ def test_substrate_918_qemu_orchestration():
     with open("substrates/t/918_qemu_orchestration/substrate_918_qemu_orchestration.py", "r") as f:
         content = f.read()
     assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_substrate_919():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/919_omni_substrate/substrato_919_omni_substrate.py"],
+        capture_output=True, text=True, check=True
+    )
+    json_path = result.stdout.strip()
+    with open(json_path) as f:
+        data = json.load(f)
+    assert data["Substrate"] == "919-OMNI-SUBSTRATE"
+    assert data["Status"] == "CANONIZED_PROVISIONAL"
+    assert "Canonical_Seal" in data
