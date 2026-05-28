@@ -21,6 +21,7 @@ import urllib.request
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 from dataclasses import dataclass, field
+from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
 import torch
@@ -84,7 +85,7 @@ class PeptideSaaSEncoder(nn.Module):
     def encode_sequence(self, sequence: str) -> torch.Tensor:
         tokens = [self.AMINO_ACIDS.index(aa)+1 for aa in sequence if aa in self.AMINO_ACIDS]
         if not tokens: tokens = [0]
-        x = torch.tensor([tokens], dtype=torch.long)
+        x = torch.tensor([tokens], dtype=torch.long, device=self.aa_embedding.weight.device)
         emb = self.aa_embedding(x)
         out = self.transformer(emb)
         pooled = out.mean(dim=1)
@@ -321,9 +322,10 @@ class GoogleGroundingLayer:
             with urllib.request.urlopen(req, timeout=15) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
             self.session_queries += 1
-            self.total_results_fetched += len(data.get("items", []))
-            return {"query": query, "engine": engine, "results": data.get("items", []), "total_results": len(data.get("items", [])), "mock": False}
-        except Exception: return self._mock_search(query, engine, num_results)
+            items = data.get("items", [])
+            self.total_results_fetched += len(items)
+            return {"query": query, "engine": engine, "results": items, "total_results": len(items), "mock": False}
+        except Exception as e: return {"query": query, "engine": engine, "results": [], "total_results": 0, "mock": False, "error": str(e)}
 
     def _serpapi_search(self, query, engine, num_results):
         try:
@@ -336,7 +338,7 @@ class GoogleGroundingLayer:
             results = data.get("organic_results", [])[:num_results]
             self.total_results_fetched += len(results)
             return {"query": query, "engine": engine, "results": results, "total_results": len(results), "mock": False}
-        except Exception: return self._mock_search(query, engine, num_results)
+        except Exception as e: return {"query": query, "engine": engine, "results": [], "total_results": 0, "mock": False, "error": str(e)}
 
     def synthesize_context(self, search_results: Dict, max_snippets: int = 3) -> str:
         if not search_results.get("results"): return ""
@@ -452,6 +454,7 @@ class ArkheAgent:
         self.config = config or ArkheConfig()
         self.agent_id = hashlib.sha3_256(("ARKHE-AGENT-" + datetime.now(timezone.utc).isoformat()).encode()).hexdigest()[:16]
         logger.info("🤖 Arkhe Agent {} initialising…".format(self.agent_id))
+        self.executor = ThreadPoolExecutor(max_workers=4)
 
         class MockLLM:
             def embed(self, text): return np.random.randn(512).astype(np.float32)
@@ -475,9 +478,13 @@ class ArkheAgent:
         web_context_emb = None; synthesized_context = ""
         if self.google and (self.config.google_auto_ground or web_query):
             query = web_query or text_input; eng = engine or self.config.google_default_engine
-            results = self.google.search(query, engine=eng, num_results=self.config.google_max_results)
-            self.total_web_queries += 1; synthesized_context = self.google.synthesize_context(results)
-            web_context_emb = torch.from_numpy(self.llm.embed(synthesized_context)).float().unsqueeze(0)
+            future = self.executor.submit(self.google.search, query, engine=eng, num_results=self.config.google_max_results)
+            try:
+                results = future.result(timeout=25)
+                self.total_web_queries += 1; synthesized_context = self.google.synthesize_context(results)
+                web_context_emb = torch.from_numpy(self.llm.embed(synthesized_context)).float().unsqueeze(0)
+            except Exception as e:
+                logger.error("Web search timed out or failed: {}".format(e))
         tokens = torch.from_numpy(llm_emb).view(1, -1, 256)
         action = torch.randn(1, 64)
         outputs = self.world_model(tokens, action, peptide_seq=peptide_seq, web_context=web_context_emb)
