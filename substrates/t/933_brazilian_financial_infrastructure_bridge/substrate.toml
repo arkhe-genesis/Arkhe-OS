@@ -1,0 +1,11 @@
+[substrate]
+id = 933
+name = "Brazilian Financial Infrastructure Bridge"
+status = "canonized_provisional"
+
+[metadata]
+phi_c = 0.96
+theosis = 0.98
+
+[files]
+canonizer = "substrato_933_brazilian_financial_infrastructure_bridge.py"
