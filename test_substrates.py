@@ -2228,3 +2228,28 @@ def test_substrate_918_qemu_orchestration():
     with open("substrates/t/918_qemu_orchestration/substrate_918_qemu_orchestration.py", "r") as f:
         content = f.read()
     assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_substrate_919_omni_substrate():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/919_omni_substrate/substrato_919_omni_substrate.py')
+    spec = importlib.util.spec_from_file_location("substrato_919_omni_substrate", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato919OmniSubstrate()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["Substrate"] == "919-OMNI-SUBSTRATE"
+    assert data["Status"] == "Canonized"
+
+    # We should also check the generated code for f-strings
+    import base64
+    content = base64.b64decode(data["Files"]["omni_substrate.py"]).decode('utf-8')
+    assert 'f"' not in content and "f'" not in content, "f-strings are not allowed in canonizer scripts"
