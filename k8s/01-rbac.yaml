@@ -1,0 +1,7 @@
+# k8s/01-rbac.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: arkhe-cathedral-sa
+  namespace: arkhe-cathedral
+automountServiceAccountToken: false

@@ -1,0 +1,33 @@
+# k8s/40-networkpolicy.yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: temporalchain-policy
+  namespace: arkhe-cathedral
+spec:
+  podSelector:
+    matchLabels:
+      app: temporalchain
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          substrate: "891"  # Agency only
+    - podSelector:
+        matchLabels:
+          substrate: "912"  # EpistemicCommit
+    ports:
+    - protocol: TCP
+      port: 50051
+  egress:
+  - to:
+    - namespaceSelector: {}
+      podSelector:
+        matchLabels:
+          app: base-l2-node  # L2 RPC nodes
+    ports:
+    - protocol: TCP
+      port: 8545
