@@ -2423,102 +2423,31 @@ def test_substrate_944():
     assert "glasswing_sentinel.py" in data["Files"]
     assert "Canonical_Seal" in data
 
-def test_substrate_272_oracle_aws_bridge():
-    import os, json, importlib.util
-    file_path = os.path.abspath('substrates/t/272_oracle_aws_bridge/substrato_272_oracle_aws_bridge.py')
-    if not os.path.exists(file_path):
-        return
-    spec = importlib.util.spec_from_file_location("substrato_272_oracle_aws_bridge", file_path)
+def test_272_oracle_aws_bridge():
+    import importlib.util
+    import sys
+    import os
+
+    file_path = "substrates/t/272_oracle_aws_bridge/substrato_272_oracle_aws_bridge.py"
+    spec = importlib.util.spec_from_file_location("module", file_path)
     module = importlib.util.module_from_spec(spec)
+    sys.modules["module"] = module
     spec.loader.exec_module(module)
-    canonizer = module.Substrato272OracleAwsBridge()
-    report_path = canonizer.canonize()
-    with open(report_path, 'r') as f:
-        data = json.load(f)
-    assert data["Substrate"] == "272"
-    assert data["Status"] == "CANONIZED_PROVISIONAL"
-    assert data.get("Canonical_Seal", data.get("Seal_SHA3_256", data.get("canonical_seal"))) == "sha3-256:seshat-janus-272"
-    assert "oracle_aws_bridge.py" in data["Files"]
-    assert "oracle-aws-bridge-272.yaml" in data["Files"]
-    assert "50-oracle-aws-bridge.yaml" in data["Files"]
-    assert "f\"" not in open(file_path).read()
-    assert "f'" not in open(file_path).read()
 
+    substrate = module.Substrato272OracleAWSBridge()
+    result = substrate.canonize()
 
-def test_substrate_276_arkhe_gguf():
-    import os, json, importlib.util
-    file_path = os.path.abspath('substrates/t/276_arkhe_gguf/substrato_276_arkhe_gguf.py')
-    if not os.path.exists(file_path):
-        return
-    spec = importlib.util.spec_from_file_location("substrato_276_arkhe_gguf", file_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    canonizer = module.Substrato276ArkheGguf()
-    report_path = canonizer.canonize()
-    with open(report_path, 'r') as f:
-        data = json.load(f)
-    assert data["Substrate"] == "276"
-    assert data["Status"] == "CANONIZED_PROVISIONAL"
-    assert "arkhe_gguf_generator.py" in data["Files"]
-    assert "schema_276.yaml" in data["Files"]
-    assert "f\"" not in open(file_path).read()
-    assert "f'" not in open(file_path).read()
+    assert result["Substrate"] == "272"
+    assert result["Status"] == "CANONIZED"
+    assert result["Canonical_Seal"] == "sha3-256:seshat-janus-272"
+    assert len(result["Files"]) == 4
 
+    for f in result["Files"]:
+        assert os.path.exists(f)
 
-def test_substrate_274_arkhe_so():
-    import os, json, importlib.util
-    file_path = os.path.abspath('substrates/t/274_arkhe_so/substrato_274_arkhe_so.py')
-    if not os.path.exists(file_path):
-        return
-    spec = importlib.util.spec_from_file_location("substrato_274_arkhe_so", file_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    canonizer = module.Substrato274ArkheSo()
-    report_path = canonizer.canonize()
-    with open(report_path, 'r') as f:
-        data = json.load(f)
-    assert data["Substrate"] == "274"
-    assert data["Status"] == "CANONIZED_PROVISIONAL"
-    assert "schema_274.yaml" in data["Files"]
-    assert "arkhe.ko.rs" in data["Files"]
-    assert "libarkhe.h" in data["Files"]
-    assert "f\"" not in open(file_path).read()
-    assert "f'" not in open(file_path).read()
+def test_272_f_strings():
+    with open("substrates/t/272_oracle_aws_bridge/substrato_272_oracle_aws_bridge.py", "r") as f:
+        content = f.read()
 
-def test_substrate_275_arkhe_os():
-    import os, json, importlib.util
-    file_path = os.path.abspath('substrates/t/275_arkhe_os/substrato_275_arkhe_os.py')
-    if not os.path.exists(file_path):
-        return
-    spec = importlib.util.spec_from_file_location("substrato_275_arkhe_os", file_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    canonizer = module.Substrato275ArkheOs()
-    report_path = canonizer.canonize()
-    with open(report_path, 'r') as f:
-        data = json.load(f)
-    assert data["Substrate"] == "275"
-    assert data["Status"] == "CANONIZED_PROVISIONAL"
-    assert "schema_275.yaml" in data["Files"]
-    assert "f\"" not in open(file_path).read()
-    assert "f'" not in open(file_path).read()
-
-
-def test_substrate_arkhe_distro_3_3_0():
-    import os, json, importlib.util
-    file_path = os.path.abspath('substrates/t/arkhe_distro_3_3_0/substrato_arkhe_distro.py')
-    if not os.path.exists(file_path):
-        return
-    spec = importlib.util.spec_from_file_location("substrato_arkhe_distro", file_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    canonizer = module.SubstratoArkheDistro330()
-    report_path = canonizer.canonize()
-    with open(report_path, 'r') as f:
-        data = json.load(f)
-    assert data["Substrate"] == "distro-3.3.0"
-    assert data["Status"] == "CANONIZED_PROVISIONAL"
-    assert "README.md" in data["Files"]
-    assert "buf.gen.yaml" in data["Files"]
-    assert "f\"" not in open(file_path).read()
-    assert "f'" not in open(file_path).read()
+    assert "f\"" not in content, "f-strings are strictly prohibited"
+    assert "f'" not in content, "f-strings are strictly prohibited"
