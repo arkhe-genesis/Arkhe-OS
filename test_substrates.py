@@ -2451,3 +2451,26 @@ def test_272_f_strings():
 
     assert "f\"" not in content, "f-strings are strictly prohibited"
     assert "f'" not in content, "f-strings are strictly prohibited"
+
+def test_substrate_563_1():
+    import subprocess
+    import json
+    # Run the canonizer
+    result = subprocess.run(
+        ["python3", "substrates/t/563_1_cortexmae_bridge/substrato_563_1_cortexmae_bridge.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    assert "Substrate 563.1 canonized at:" in result.stdout
+
+    # Extract path
+    path = result.stdout.split("Substrate 563.1 canonized at: ")[1].split("\n")[0].strip()
+
+    with open(path, "r") as f:
+        data = json.load(f)
+
+    assert data["Substrate"] == "563.1"
+    assert data["Status"] == "Canonized"
+    assert "Canonical_Seal" in data
+    assert "cortexmae_bridge.py" in data["Files"]
