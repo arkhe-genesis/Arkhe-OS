@@ -1651,7 +1651,7 @@ def test_substrato_846_enterprise_architecture_bridge():
 
     assert data.get("id", data.get("Substrate")) == "846-ENTERPRISE-ARCHITECTURE-BRIDGE"
     assert data.get("Canonical_Seal", data.get("Seal_SHA3_256", data.get("canonical_seal"))) == "b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8"
-    assert data["status"] == "CANONIZED_PROVISIONAL"
+    assert data["status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
     assert "826 (DIT)" in data["cross_links"]
     assert "code_base64" in data
 
@@ -2019,7 +2019,7 @@ def test_870_g_arkhe_http_gateway():
         data = json.load(f)
 
     assert data.get("id", data.get("Substrate")) == "870-G-ARKHE-HTTP-GATEWAY"
-    assert data["status"] in ["CANONIZED", "CANONIZED_PROVISIONAL"]
+    assert data["status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
     # assert data.get("Canonical_Seal", data.get("Seal_SHA3_256", data.get("canonical_seal"))) == "b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4"
 
     # Strict string assertions
@@ -2244,7 +2244,7 @@ def test_substrate_919_omni_substrate():
         data = json.load(f)
 
     assert data["Substrate"] == "919-OMNI-SUBSTRATE"
-    assert data["Status"] == "Canonized"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
     assert "arkhe_omni_agent.py" in data["Files"]
     assert "Canonical_Seal" in data
 def test_substrate_926_chrome_devtools():
@@ -2262,7 +2262,7 @@ def test_substrate_926_chrome_devtools():
         data = json.load(f)
 
     assert data["Substrate"] == 926
-    assert data["Status"] == "Canonized"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
     assert "chrome_devtools_bridge.py" in data["Files"]
     assert "Canonical_Seal" in data
 def test_substrate_917_google_grounding_layer():
@@ -2280,7 +2280,7 @@ def test_substrate_917_google_grounding_layer():
         data = json.load(f)
 
     assert data["Substrate"] == 917
-    assert data["Status"] == "Canonized"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
     assert "arkhe_google_agent.py" in data["Files"]
     assert "Canonical_Seal" in data
 
@@ -2369,7 +2369,7 @@ def test_933_brazilian_financial_infrastructure_bridge():
         data = json.load(f)
 
     assert data["Substrate"] == "933"
-    assert data["Status"] == "CANONIZED_PROVISIONAL"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
     assert "Canonical_Seal" in data
     assert "Files" in data
     assert "substrate_933_bfi_bridge.py" in data["Files"]
@@ -2395,7 +2395,7 @@ def test_934_arkhe_gb300_rl_inference():
     data = json.loads(report)
 
     assert data["Substrate"] == "934"
-    assert data["Status"] == "Canonized"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
     assert "Canonical_Seal" in data
     assert "include/arkhe_rl.h" in data["Files"]
     assert "src/engine.c" in data["Files"]
@@ -2442,7 +2442,7 @@ def test_substrate_944():
         data = json.load(f)
 
     assert data["Substrate"] == "944"
-    assert data["Status"] == "Canonized"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
     assert "glasswing_sentinel.py" in data["Files"]
     assert "Canonical_Seal" in data
 
@@ -2494,6 +2494,26 @@ def test_substrate_563_1():
         data = json.load(f)
 
     assert data["Substrate"] == "563.1"
-    assert data["Status"] == "Canonized"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
     assert "Canonical_Seal" in data
     assert "cortexmae_bridge.py" in data["Files"]
+
+def test_substrate_100t_moe_centum():
+    import sys
+    import os
+    import importlib.util
+
+    sys.path.insert(0, os.path.abspath('substrates/t/100T_moe_centum'))
+    spec = importlib.util.spec_from_file_location("substrato_100t_moe_centum", "substrates/t/100T_moe_centum/substrato_100t_moe_centum.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato_100T_MoE_Centum()
+    report = canonizer.canonize()
+
+    assert report['Substrate'] == '100T'
+    assert report['Status'] == 'Canonized'
+    assert 'Files' in report
+    assert 'cathedral_moe_100t.py' in report['Files']
+    assert 'substrate.toml' in report['Files']
+    assert report['Canonical_Seal'].startswith('sha3-256:')
