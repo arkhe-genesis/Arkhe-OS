@@ -1,0 +1,4 @@
+[substrate]
+id = "268"
+name = "Edge Filter Controller (FPGA Hardware Layer)"
+status = "CANONIZED_PROVISIONAL"
