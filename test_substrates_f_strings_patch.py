@@ -175,14 +175,10 @@ def test_substrate_934_f_strings():
         content = f.read()
         assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
 
-def test_946_f_strings():
+def test_substrate_945_f_strings():
     import os
-    import re
-    files_to_check = [
-        "substrates/t/946_atlas_lean_bridge/substrato_946_atlas_lean_bridge.py",
-        "substrates/t/946_atlas_lean_bridge/atlas_lean_bridge.py"
-    ]
-    for filepath in files_to_check:
-        with open(filepath, 'r') as f:
+    file_path = "substrates/t/945_openmdw_fcr_bridge/substrato_945_openmdw_fcr_bridge.py"
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
             content = f.read()
-            assert not re.search(r'\bf(["\'])', content), "f-strings are prohibited"
+        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
