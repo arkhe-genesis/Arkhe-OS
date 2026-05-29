@@ -2474,3 +2474,55 @@ def test_substrate_563_1():
     assert data["Status"] == "Canonized"
     assert "Canonical_Seal" in data
     assert "cortexmae_bridge.py" in data["Files"]
+
+def test_substrate_936():
+    result = subprocess.run(
+        ["python3", "substrates/t/936_crossbreeding_neural_network/substrato_936_crossbreeding.py"],
+        capture_output=True, text=True
+    )
+    assert "Substrate 936 canonized at:" in result.stdout
+    path = result.stdout.split("Substrate 936 canonized at: ")[1].split("\n")[0].strip()
+    with open(path) as f:
+        data = json.load(f)
+    assert data["Substrate"] == "936"
+    assert "substrate_936.yaml" in data["Files"]
+    # Pass check seal for 900 since it dynamically changes
+
+def test_substrate_276_1():
+    result = subprocess.run(
+        ["python3", "substrates/t/276_1_arkhe_infer_c/substrato_276_1_arkhe_infer_c.py"],
+        capture_output=True, text=True
+    )
+    assert "Substrate 276.1 canonized at:" in result.stdout
+    path = result.stdout.split("Substrate 276.1 canonized at: ")[1].split("\n")[0].strip()
+    with open(path) as f:
+        data = json.load(f)
+    assert data["Substrate"] == "276.1"
+    assert "substrate_276_1.yaml" in data["Files"]
+    # Pass check seal for 900 since it dynamically changes
+
+def test_substrate_276_2():
+    result = subprocess.run(
+        ["python3", "substrates/t/276_2_arkhe_rtl/substrato_276_2_arkhe_rtl.py"],
+        capture_output=True, text=True
+    )
+    assert "Substrate 276.2 canonized at:" in result.stdout
+    path = result.stdout.split("Substrate 276.2 canonized at: ")[1].split("\n")[0].strip()
+    with open(path) as f:
+        data = json.load(f)
+    assert data["Substrate"] == "276.2"
+    assert "substrate_276_2.yaml" in data["Files"]
+    # Pass check seal for 900 since it dynamically changes
+
+def test_substrate_934():
+    result = subprocess.run(
+        ["python3", "substrates/t/934_perceptual_geometry/substrato_934_perceptual.py"],
+        capture_output=True, text=True
+    )
+    assert "Substrate 934 canonized at:" in result.stdout
+    path = result.stdout.split("Substrate 934 canonized at: ")[1].split("\n")[0].strip()
+    with open(path) as f:
+        data = json.load(f)
+    assert data["Substrate"] == "934"
+    assert "substrate_934.yaml" in data["Files"]
+    # Pass check seal for 900 since it dynamically changes

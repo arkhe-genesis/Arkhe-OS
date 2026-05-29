@@ -135,3 +135,31 @@ def test_substrate_563_1_f_strings():
         tree = ast.parse(f.read())
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr), "f-strings found in 563.1!"
+
+def test_substrate_936_f_strings():
+    import ast
+    with open('substrates/t/936_crossbreeding_neural_network/substrato_936_crossbreeding.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr), "f-strings found in 936!"
+
+def test_substrate_276_1_f_strings():
+    import ast
+    with open('substrates/t/276_1_arkhe_infer_c/substrato_276_1_arkhe_infer_c.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr), "f-strings found in 276.1!"
+
+def test_substrate_276_2_f_strings():
+    import ast
+    with open('substrates/t/276_2_arkhe_rtl/substrato_276_2_arkhe_rtl.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr), "f-strings found in 276.2!"
+
+def test_substrate_934_f_strings():
+    import ast
+    with open('substrates/t/934_perceptual_geometry/substrato_934_perceptual.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr), "f-strings found in 934!"
