@@ -1,0 +1,9 @@
+{
+    "Substrate": "945",
+    "Status": "CANONIZED",
+    "Canonical_Seal": "sha3-256:9243c64010de8baccd608a97a50f90c68d9992a27135788608829e8fcdc6b302",
+    "Files": [
+        "openmdw_fcr_bridge.py",
+        "substrate.toml"
+    ]
+}
