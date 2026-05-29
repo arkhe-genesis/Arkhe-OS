@@ -50,6 +50,7 @@ spec:
             configMapKeyRef:
               name: arkhe-schemas
               key: l2-contract-address
+              optional: true
         - name: L2_RPC_URL
           valueFrom:
             secretKeyRef:

@@ -18,7 +18,7 @@ def validate_schema(file_path):
         print(f"Warning: Expected 10 eras, found {len(eras)}.")
 
     print("Ontological validation passed.")
-    print("Odometer:", data["metadata"]["odometer"])
+    print("Odometer:", data.get("metadata", {}).get("odometer", "unknown"))
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
