@@ -120,6 +120,14 @@ def test_substrate_923_2_f_strings():
             content = f.read()
         assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
 
+def test_substrate_100T_f_strings():
+    import os
+    file_path = "substrates/t/100T_moe_centum/substrato_100t_moe_centum.py"
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            content = f.read()
+        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
 def test_substrate_944_f_strings():
     import os
     file_path = "substrates/t/944_glasswing_sentinel/substrato_944_glasswing_sentinel.py"
