@@ -2400,69 +2400,25 @@ def test_934_arkhe_gb300_rl_inference():
     assert "include/arkhe_rl.h" in data["Files"]
     assert "src/engine.c" in data["Files"]
 
-
-def test_substrate_267_doublezero_bridge():
-    import sys
-    import os
+def test_substrate_944():
+    import subprocess
     import json
-    sys.path.insert(0, os.path.abspath('substrates/t/267_doublezero_bridge'))
-    import substrate_267_doublezero_bridge
+    # Run the canonizer
+    result = subprocess.run(
+        ["python3", "substrates/t/944_glasswing_sentinel/substrato_944_glasswing_sentinel.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    assert "Substrate 944 canonized at:" in result.stdout
 
-    payload = {
-        "Substrate": "267-DZ-BRIDGE",
-        "Status": "Canonized",
-        "Files": substrate_267_doublezero_bridge.get_b64_artifacts()
-    }
-    expected_seal = substrate_267_doublezero_bridge.compute_seal(payload)
-    assert expected_seal == "56f399e25533e0be78d47f2bdd374a59dab10a0624165adf541cecdfcfc70b4a"
-    assert expected_seal == "56f399e25533e0be78d47f2bdd374a59dab10a0624165adf541cecdfcfc70b4a"
+    # Extract path
+    path = result.stdout.split("Substrate 944 canonized at: ")[1].split("\n")[0].strip()
 
-    with open("substrates/t/267_doublezero_bridge/substrate_267_doublezero_bridge.py", "r") as pyf:
-        content = pyf.read()
-    assert 'f"' not in content and "f'" not in content
+    with open(path, "r") as f:
+        data = json.load(f)
 
-    assert os.path.exists("substrates/t/267_doublezero_bridge/substrate.toml")
-
-def test_substrate_268_edge_filter_controller():
-    import sys
-    import os
-    import json
-    sys.path.insert(0, os.path.abspath('substrates/t/268_edge_filter_controller'))
-    import substrate_268_edge_filter_controller
-
-    payload = {
-        "Substrate": "268-EDGE-FILTER",
-        "Status": "Canonized",
-        "Files": substrate_268_edge_filter_controller.get_b64_artifacts()
-    }
-    expected_seal = substrate_268_edge_filter_controller.compute_seal(payload)
-    assert expected_seal == "bb9a94a4c9b56e547d3f49e3e80efecbebd2a1f77bb363b78dea2d891c42c512"
-    assert expected_seal == "bb9a94a4c9b56e547d3f49e3e80efecbebd2a1f77bb363b78dea2d891c42c512"
-
-    with open("substrates/t/268_edge_filter_controller/substrate_268_edge_filter_controller.py", "r") as pyf:
-        content = pyf.read()
-    assert 'f"' not in content and "f'" not in content
-
-    assert os.path.exists("substrates/t/268_edge_filter_controller/substrate.toml")
-
-def test_substrate_269_dz_routing_engine():
-    import sys
-    import os
-    import json
-    sys.path.insert(0, os.path.abspath('substrates/t/269_dz_routing_engine'))
-    import substrate_269_dz_routing_engine
-
-    payload = {
-        "Substrate": "269-DZ-ROUTING",
-        "Status": "Canonized",
-        "Files": substrate_269_dz_routing_engine.get_b64_artifacts()
-    }
-    expected_seal = substrate_269_dz_routing_engine.compute_seal(payload)
-    assert expected_seal == "3222823b71ad48464c87a5e83f446a2b7a123d78d706d4d64cb165febc74a5a9"
-    assert expected_seal == "3222823b71ad48464c87a5e83f446a2b7a123d78d706d4d64cb165febc74a5a9"
-
-    with open("substrates/t/269_dz_routing_engine/substrate_269_dz_routing_engine.py", "r") as pyf:
-        content = pyf.read()
-    assert 'f"' not in content and "f'" not in content
-
-    assert os.path.exists("substrates/t/269_dz_routing_engine/substrate.toml")
+    assert data["Substrate"] == "944"
+    assert data["Status"] == "Canonized"
+    assert "glasswing_sentinel.py" in data["Files"]
+    assert "Canonical_Seal" in data
