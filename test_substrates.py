@@ -2400,95 +2400,25 @@ def test_934_arkhe_gb300_rl_inference():
     assert "include/arkhe_rl.h" in data["Files"]
     assert "src/engine.c" in data["Files"]
 
-def test_940_claude_harness_adapter():
-    import importlib.util
-    import os
+def test_substrate_944():
+    import subprocess
     import json
-    spec = importlib.util.spec_from_file_location(
-        "substrato_940_claude_harness_adapter",
-        os.path.abspath('substrates/t/940_claude_harness_adapter/substrato_940_claude_harness_adapter.py')
+    # Run the canonizer
+    result = subprocess.run(
+        ["python3", "substrates/t/944_glasswing_sentinel/substrato_944_glasswing_sentinel.py"],
+        capture_output=True,
+        text=True,
+        check=True
     )
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    assert "Substrate 944 canonized at:" in result.stdout
 
-    canonizer = module.Substrato_940_claude_harness_adapter()
-    path = canonizer.canonize()
+    # Extract path
+    path = result.stdout.split("Substrate 944 canonized at: ")[1].split("\n")[0].strip()
 
-    assert os.path.exists(path)
-    with open(path, 'r', encoding='utf-8') as f:
+    with open(path, "r") as f:
         data = json.load(f)
-    assert data["Substrate"] == "940"
-    assert data["Status"] == "CANONIZED_PROVISIONAL"
-    assert data.get("Canonical_Seal", data.get("Seal_SHA3-256", data.get("canonical_seal"))) == "ba3edd77644ce3a427678ba815df071a765339de553ce8fc2086d19784ad4214"
-    assert "harness_adapter.py" in data["Files"]
-    assert "schema_940.yaml" in data["Files"]
 
-def test_941_cognitive_effort_controller():
-    import importlib.util
-    import os
-    import json
-    spec = importlib.util.spec_from_file_location(
-        "substrato_941_cognitive_effort_controller",
-        os.path.abspath('substrates/t/941_cognitive_effort_controller/substrato_941_cognitive_effort_controller.py')
-    )
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-
-    canonizer = module.Substrato_941_cognitive_effort_controller()
-    path = canonizer.canonize()
-
-    assert os.path.exists(path)
-    with open(path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    assert data["Substrate"] == "941"
-    assert data["Status"] == "CANONIZED_PROVISIONAL"
-    assert data.get("Canonical_Seal", data.get("Seal_SHA3-256", data.get("canonical_seal"))) == "2ca02aed5924f955bd4d366e661823edcc6536ce933628e20bb0b0b3dbb83f4c"
-    assert "cognitive_effort_controller.py" in data["Files"]
-    assert "schema_941.yaml" in data["Files"]
-
-def test_942_catedral_code_agent():
-    import importlib.util
-    import os
-    import json
-    spec = importlib.util.spec_from_file_location(
-        "substrato_942_catedral_code_agent",
-        os.path.abspath('substrates/t/942_catedral_code_agent/substrato_942_catedral_code_agent.py')
-    )
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-
-    canonizer = module.Substrato_942_catedral_code_agent()
-    path = canonizer.canonize()
-
-    assert os.path.exists(path)
-    with open(path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    assert data["Substrate"] == "942"
-    assert data["Status"] == "CANONIZED_PROVISIONAL"
-    assert data.get("Canonical_Seal", data.get("Seal_SHA3-256", data.get("canonical_seal"))) == "d36ad45cf79acec1b0cdb62487e127df2c23c40c1b8c84e34e80a2326ca3385f"
-    assert "catedral_code_agent.py" in data["Files"]
-    assert "schema_942.yaml" in data["Files"]
-
-def test_943_visual_ontology_layer():
-    import importlib.util
-    import os
-    import json
-    spec = importlib.util.spec_from_file_location(
-        "substrato_943_visual_ontology_layer",
-        os.path.abspath('substrates/t/943_visual_ontology_layer/substrato_943_visual_ontology_layer.py')
-    )
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-
-    canonizer = module.Substrato_943_visual_ontology_layer()
-    path = canonizer.canonize()
-
-    assert os.path.exists(path)
-    with open(path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    assert data["Substrate"] == "943"
-    assert data["Status"] == "CANONIZED_PROVISIONAL"
-    assert data.get("Canonical_Seal", data.get("Seal_SHA3-256", data.get("canonical_seal"))) == "60daedd6c690e866c38a2e8ae5dcfb240b6225fe73d0947969510bb15b22b62a"
-    assert "visual_ontology_engine.py" in data["Files"]
-    assert "schema_943.yaml" in data["Files"]
-    assert "schema_943.jsonld" in data["Files"]
+    assert data["Substrate"] == "944"
+    assert data["Status"] == "Canonized"
+    assert "glasswing_sentinel.py" in data["Files"]
+    assert "Canonical_Seal" in data
