@@ -1,5 +1,3 @@
-[metadata]
-substrate = "563.1"
-name = "CortexMAE-Bridge"
-version = "1.0.0"
+[substrate]
+id = "563.1"
 source_verified = true

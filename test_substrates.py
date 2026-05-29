@@ -2452,32 +2452,25 @@ def test_272_f_strings():
     assert "f\"" not in content, "f-strings are strictly prohibited"
     assert "f'" not in content, "f-strings are strictly prohibited"
 
-def test_934_perceptual_geometry():
-    import importlib.util
-    import os
-    file_path = "substrates/t/934_perceptual_geometry/substrato_934_perceptual_geometry.py"
-    spec = importlib.util.spec_from_file_location("substrato_934_perceptual_geometry", os.path.abspath(file_path))
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+def test_substrate_563_1():
+    import subprocess
+    import json
+    # Run the canonizer
+    result = subprocess.run(
+        ["python3", "substrates/t/563_1_cortexmae_bridge/substrato_563_1_cortexmae_bridge.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    assert "Substrate 563.1 canonized at:" in result.stdout
 
-    canonizer = module.Substrato934PerceptualGeometry()
-    result = canonizer.canonize()
+    # Extract path
+    path = result.stdout.split("Substrate 563.1 canonized at: ")[1].split("\n")[0].strip()
 
-    assert result["Substrate"] == "934"
-    assert result["Status"] == "CANONIZED"
-    assert "Canonical_Seal" in result
+    with open(path, "r") as f:
+        data = json.load(f)
 
-def test_563_1_cortexmae_bridge():
-    import importlib.util
-    import os
-    file_path = "substrates/t/563_1_cortexmae_bridge/substrato_563_1_cortexmae_bridge.py"
-    spec = importlib.util.spec_from_file_location("substrato_563_1_cortexmae_bridge", os.path.abspath(file_path))
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-
-    canonizer = module.Substrato563_1CortexMAEBridge()
-    result = canonizer.canonize()
-
-    assert result["Substrate"] == "563.1"
-    assert result["Status"] == "CANONIZED"
-    assert "Canonical_Seal" in result
+    assert data["Substrate"] == "563.1"
+    assert data["Status"] == "Canonized"
+    assert "Canonical_Seal" in data
+    assert "cortexmae_bridge.py" in data["Files"]

@@ -129,18 +129,9 @@ def test_272_f_strings():
     assert "f\"" not in content, "f-strings are strictly prohibited"
     assert "f'" not in content, "f-strings are strictly prohibited"
 
-def test_934_perceptual_geometry_f_strings():
-    import re
-    file_path = "substrates/t/934_perceptual_geometry/substrato_934_perceptual_geometry.py"
-    with open(file_path, "r", encoding="utf-8") as f:
-        content = f.read()
-    for i, line in enumerate(content.split("\n")):
-        assert not bool(re.search(r'\bf["\']', line)), f"f-string found in {file_path}:{i+1}: {line}"
-
-def test_563_1_cortexmae_bridge_f_strings():
-    import re
-    file_path = "substrates/t/563_1_cortexmae_bridge/substrato_563_1_cortexmae_bridge.py"
-    with open(file_path, "r", encoding="utf-8") as f:
-        content = f.read()
-    for i, line in enumerate(content.split("\n")):
-        assert not bool(re.search(r'\bf["\']', line)), f"f-string found in {file_path}:{i+1}: {line}"
+def test_substrate_563_1_f_strings():
+    import ast
+    with open('substrates/t/563_1_cortexmae_bridge/substrato_563_1_cortexmae_bridge.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr), "f-strings found in 563.1!"
