@@ -2545,3 +2545,37 @@ def test_substrate_945():
     assert "Canonical_Seal" in data
     assert "openmdw_fcr_bridge.py" in data["Files"]
     assert "substrate.toml" in data["Files"]
+
+def test_953_tanmatra():
+    import importlib.util
+    file_path = os.path.abspath('substrates/t/953_tanmatra/substrato_953_tanmatra.py')
+    spec = importlib.util.spec_from_file_location("substrato_953_tanmatra", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato953Tanmatra()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    assert data["metadata"]["id"] == "953"
+    assert data["metadata"]["status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+
+
+def test_955_safe_core_pqc():
+    import importlib.util
+    file_path = os.path.abspath('substrates/t/955_safe_core_pqc/substrato_955_safe_core_pqc.py')
+    spec = importlib.util.spec_from_file_location("substrato_955_safe_core_pqc", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato955SafeCorePqc()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    assert data["metadata"]["id"] == "955"
+    assert data["metadata"]["status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert data["Canonical_Seal"] == "955-SAFE-CORE-PQC-RISCV64-PQC-ISA-KYBER-DILITHIUM-SPHINCS-NTRU-2026-05-29"

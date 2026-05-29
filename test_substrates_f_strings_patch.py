@@ -182,3 +182,17 @@ def test_substrate_945_f_strings():
         with open(file_path, "r") as f:
             content = f.read()
         assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_953_f_strings():
+    import ast
+    with open('substrates/t/953_tanmatra/substrato_953_tanmatra.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
+
+def test_955_f_strings():
+    import ast
+    with open('substrates/t/955_safe_core_pqc/substrato_955_safe_core_pqc.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
