@@ -2423,19 +2423,31 @@ def test_substrate_944():
     assert "glasswing_sentinel.py" in data["Files"]
     assert "Canonical_Seal" in data
 
-def test_900_linearidade_1_900_canonizer():
+def test_272_oracle_aws_bridge():
     import importlib.util
-    file_path = os.path.abspath('substrates/t/900_linearidade_1_900_canonizer/substrato_900_linearidade.py')
-    spec = importlib.util.spec_from_file_location("substrato_900_linearidade", file_path)
+    import sys
+    import os
+
+    file_path = "substrates/t/272_oracle_aws_bridge/substrato_272_oracle_aws_bridge.py"
+    spec = importlib.util.spec_from_file_location("module", file_path)
     module = importlib.util.module_from_spec(spec)
+    sys.modules["module"] = module
     spec.loader.exec_module(module)
 
-    canonizer = module.Substrato_900_linearidade_1_900_canonizer()
-    report = canonizer.canonize()
+    substrate = module.Substrato272OracleAWSBridge()
+    result = substrate.canonize()
 
-    assert report["Substrate"] == "900-LINEARIDADE-1-900"
-    assert report["Status"] == "CANONIZED"
-    assert "Canonical_Seal" in report
-    assert len(report["Files"]) == 1
-    assert report["Files"][0]["filename"] == "arkhe_linearidade_1_900.md"
-    assert report["Files"][0]["seal"] == report["Canonical_Seal"]
+    assert result["Substrate"] == "272"
+    assert result["Status"] == "CANONIZED"
+    assert result["Canonical_Seal"] == "sha3-256:seshat-janus-272"
+    assert len(result["Files"]) == 4
+
+    for f in result["Files"]:
+        assert os.path.exists(f)
+
+def test_272_f_strings():
+    with open("substrates/t/272_oracle_aws_bridge/substrato_272_oracle_aws_bridge.py", "r") as f:
+        content = f.read()
+
+    assert "f\"" not in content, "f-strings are strictly prohibited"
+    assert "f'" not in content, "f-strings are strictly prohibited"
