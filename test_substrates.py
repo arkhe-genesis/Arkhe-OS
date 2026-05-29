@@ -2545,3 +2545,24 @@ def test_substrate_945():
     assert "Canonical_Seal" in data
     assert "openmdw_fcr_bridge.py" in data["Files"]
     assert "substrate.toml" in data["Files"]
+
+def test_954_axiarchy():
+    import importlib.util
+    file_path = os.path.abspath('substrates/t/954_axiarchy/substrato_954_axiarchy.py')
+    spec = importlib.util.spec_from_file_location("substrato_954_axiarchy", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato_954_axiarchy()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        import json
+        data = json.load(f)
+    assert data["Substrate"] == "954-AXIARCHY"
+    assert data["Status"] in ["CANONIZED_PROVISIONAL", "CANONIZED"]
+    assert "Files" in data
+    assert "axiarchy.py" in data["Files"]
+    assert "axiarchy_954.lean" in data["Files"]
+    assert "substrate.toml" in data["Files"]
