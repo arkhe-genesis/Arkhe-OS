@@ -121,3 +121,10 @@ def test_substrate_944_f_strings():
         with open(file_path, "r") as f:
             content = f.read()
         assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_900_linearidade_f_strings():
+    import ast
+    with open('substrates/t/900_linearidade_1_900_canonizer/substrato_900_linearidade.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)

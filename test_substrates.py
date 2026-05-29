@@ -2422,3 +2422,20 @@ def test_substrate_944():
     assert data["Status"] == "Canonized"
     assert "glasswing_sentinel.py" in data["Files"]
     assert "Canonical_Seal" in data
+
+def test_900_linearidade_1_900_canonizer():
+    import importlib.util
+    file_path = os.path.abspath('substrates/t/900_linearidade_1_900_canonizer/substrato_900_linearidade.py')
+    spec = importlib.util.spec_from_file_location("substrato_900_linearidade", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato_900_linearidade_1_900_canonizer()
+    report = canonizer.canonize()
+
+    assert report["Substrate"] == "900-LINEARIDADE-1-900"
+    assert report["Status"] == "CANONIZED"
+    assert "Canonical_Seal" in report
+    assert len(report["Files"]) == 1
+    assert report["Files"][0]["filename"] == "arkhe_linearidade_1_900.md"
+    assert report["Files"][0]["seal"] == report["Canonical_Seal"]
