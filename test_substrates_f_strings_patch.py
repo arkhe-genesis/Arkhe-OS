@@ -128,3 +128,10 @@ def test_272_f_strings():
 
     assert "f\"" not in content, "f-strings are strictly prohibited"
     assert "f'" not in content, "f-strings are strictly prohibited"
+
+def test_substrate_563_1_f_strings():
+    import ast
+    with open('substrates/t/563_1_cortexmae_bridge/substrato_563_1_cortexmae_bridge.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr), "f-strings found in 563.1!"
