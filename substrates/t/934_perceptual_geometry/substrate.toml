@@ -1,5 +1,12 @@
-[metadata]
-substrate = "934"
+[substrate]
+id = "934"
 name = "PERCEPTUAL-GEOMETRY-EMERGENCE"
-version = "1.0.0"
-source_verified = true
+type = "Cognição/Percepção"
+era = "6"
+deity = "Athena"
+status = "CANONIZED_PROVISIONAL"
+source = "arXiv:2605.27970v1 [cs.AI]"
+date = "2026-05-29"
+
+[architect]
+orcid = "0009-0005-2697-4668"
