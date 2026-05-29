@@ -73,6 +73,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: arkhe-api-gateway
+            name: brasilfinance
             port:
               number: 8080
