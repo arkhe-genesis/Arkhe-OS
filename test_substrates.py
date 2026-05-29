@@ -2494,3 +2494,31 @@ def test_substrate_100t_moe_centum():
     assert 'cathedral_moe_100t.py' in report['Files']
     assert 'substrate.toml' in report['Files']
     assert report['Canonical_Seal'].startswith('sha3-256:')
+
+def test_substrate_945():
+    import json
+    import os
+    import importlib.util
+
+    def load_module(name, path):
+        spec = importlib.util.spec_from_file_location(name, path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
+    module = load_module(
+        "substrato_945_openmdw_fcr_bridge",
+        os.path.abspath("substrates/t/945_openmdw_fcr_bridge/substrato_945_openmdw_fcr_bridge.py")
+    )
+
+    canonizer = module.Substrato945OpenMDWFCRBridge()
+    report_path = canonizer.canonize()
+
+    with open(report_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["Substrate"] == "945"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "Canonical_Seal" in data
+    assert "openmdw_fcr_bridge.py" in data["Files"]
+    assert "substrate.toml" in data["Files"]
