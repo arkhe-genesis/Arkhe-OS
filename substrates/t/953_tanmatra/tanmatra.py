@@ -93,5 +93,7 @@ class TanmatraInterface:
                 proof = await verifier.verify_action(action, {}, {})
                 if not proof.kernel_checked:
                     raise PermissionError("Action rejected by Axiarchy")
+            else:
+                raise PermissionError("Axiarchy verifier (954) is required but missing")
         # Dispatch to hardware drivers
         return {"status": "executed", "action_id": str(uuid.uuid4())}

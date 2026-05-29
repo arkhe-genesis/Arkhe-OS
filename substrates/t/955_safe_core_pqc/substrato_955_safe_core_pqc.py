@@ -27,7 +27,13 @@ class Substrato955SafeCorePqc:
             self.toml_b64 = base64.b64encode(f.read().encode("utf-8")).decode("utf-8")
 
     def get_canonical_seal(self):
-        return "955-SAFE-CORE-PQC-RISCV64-PQC-ISA-KYBER-DILITHIUM-SPHINCS-NTRU-2026-05-29"
+        data_to_seal = {
+            "metadata": self.metadata,
+            "payload_b64": self.payload_b64,
+            "toml_b64": self.toml_b64
+        }
+        canonical_str = json.dumps(data_to_seal, sort_keys=True, separators=(',', ':'))
+        return hashlib.sha3_256(canonical_str.encode('utf-8')).hexdigest()
 
     def canonize(self):
         seal = self.get_canonical_seal()
