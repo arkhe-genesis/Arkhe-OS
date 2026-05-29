@@ -121,3 +121,10 @@ def test_substrate_944_f_strings():
         with open(file_path, "r") as f:
             content = f.read()
         assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_272_f_strings():
+    with open("substrates/t/272_oracle_aws_bridge/substrato_272_oracle_aws_bridge.py", "r") as f:
+        content = f.read()
+
+    assert "f\"" not in content, "f-strings are strictly prohibited"
+    assert "f'" not in content, "f-strings are strictly prohibited"
