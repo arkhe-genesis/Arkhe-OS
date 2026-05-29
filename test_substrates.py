@@ -2517,3 +2517,26 @@ def test_substrate_100t_moe_centum():
     assert 'cathedral_moe_100t.py' in report['Files']
     assert 'substrate.toml' in report['Files']
     assert report['Canonical_Seal'].startswith('sha3-256:')
+
+def test_substrate_946_atlas_lean_bridge():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_946_atlas_lean_bridge",
+        os.path.abspath("substrates/t/946_atlas_lean_bridge/substrato_946_atlas_lean_bridge.py")
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato_946_atlas_lean_bridge()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["Substrate"] == "946-ATLAS-LEAN-BRIDGE"
+    assert data["Status"] in ["CANONIZED_CLEAN", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "Canonical_Seal" in data
+    assert "Files" in data

@@ -174,3 +174,16 @@ def test_substrate_934_f_strings():
     with open('substrates/t/934_perceptual_geometry/substrato_934_perceptual_geometry.py', 'r') as f:
         content = f.read()
         assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_946_f_strings():
+    import os
+    import re
+    files_to_check = [
+        "substrates/t/946_atlas_lean_bridge/substrato_946_atlas_lean_bridge.py",
+        "substrates/t/946_atlas_lean_bridge/atlas_lean_bridge.py"
+    ]
+    for filepath in files_to_check:
+        if os.path.exists(filepath):
+            with open(filepath, 'r') as f:
+                content = f.read()
+                assert not re.search(r'\bf(["\'])', content), "f-strings are prohibited"
