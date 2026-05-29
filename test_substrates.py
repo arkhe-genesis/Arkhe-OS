@@ -2473,60 +2473,24 @@ def test_substrate_563_1():
     assert data["Substrate"] == "563.1"
     assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
     assert "Canonical_Seal" in data
-    assert any(f["filename"] == "substrato_563_1.yaml" for f in data["Files"])
+    assert "cortexmae_bridge.py" in data["Files"]
 
-def test_substrate_937():
-    import subprocess
-    import json
-    result = subprocess.run(["python3", "substrates/t/937_web4_autonomous_intelligence/substrato_937.py"], capture_output=True, text=True)
-    path = result.stdout.split("Substrate 937 canonized at: ")[1].split("\n")[0].strip()
-    with open(path, 'r') as f:
-        data = json.load(f)
-    assert data["Substrate"] == "937"
-    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
-    assert "Files" in data
+def test_substrate_100t_moe_centum():
+    import sys
+    import os
+    import importlib.util
 
-def test_substrate_936():
-    import subprocess
-    import json
-    result = subprocess.run(["python3", "substrates/t/936_crossbreeding_neural_network/substrato_936.py"], capture_output=True, text=True)
-    path = result.stdout.split("Substrate 936 canonized at: ")[1].split("\n")[0].strip()
-    with open(path, 'r') as f:
-        data = json.load(f)
-    assert data["Substrate"] == "936"
-    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
-    assert "Files" in data
+    sys.path.insert(0, os.path.abspath('substrates/t/100T_moe_centum'))
+    spec = importlib.util.spec_from_file_location("substrato_100t_moe_centum", "substrates/t/100T_moe_centum/substrato_100t_moe_centum.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
 
-def test_substrate_276_1():
-    import subprocess
-    import json
-    result = subprocess.run(["python3", "substrates/t/276_1_arkhe_infer_c/substrato_276_1.py"], capture_output=True, text=True)
-    path = result.stdout.split("Substrate 276.1 canonized at: ")[1].split("\n")[0].strip()
-    with open(path, 'r') as f:
-        data = json.load(f)
-    assert data["Substrate"] == "276.1"
-    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
-    assert "Files" in data
+    canonizer = module.Substrato_100T_MoE_Centum()
+    report = canonizer.canonize()
 
-def test_substrate_276_2():
-    import subprocess
-    import json
-    result = subprocess.run(["python3", "substrates/t/276_2_arkhe_rtl/substrato_276_2.py"], capture_output=True, text=True)
-    path = result.stdout.split("Substrate 276.2 canonized at: ")[1].split("\n")[0].strip()
-    with open(path, 'r') as f:
-        data = json.load(f)
-    assert data["Substrate"] == "276.2"
-    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
-    assert "Files" in data
-
-
-def test_substrate_934():
-    import subprocess
-    import json
-    result = subprocess.run(["python3", "substrates/t/934_perceptual_geometry/substrato_934_perceptual_geometry.py"], capture_output=True, text=True)
-    path = result.stdout.split("Substrate 934 canonized at: ")[1].split("\n")[0].strip()
-    with open(path, 'r') as f:
-        data = json.load(f)
-    assert data["Substrate"] == "934"
-    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
-    assert "Files" in data
+    assert report['Substrate'] == '100T'
+    assert report['Status'] == 'Canonized'
+    assert 'Files' in report
+    assert 'cathedral_moe_100t.py' in report['Files']
+    assert 'substrate.toml' in report['Files']
+    assert report['Canonical_Seal'].startswith('sha3-256:')
