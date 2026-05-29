@@ -135,3 +135,11 @@ def test_substrate_563_1_f_strings():
         tree = ast.parse(f.read())
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr), "f-strings found in 563.1!"
+
+def test_substrate_945_f_strings():
+    import os
+    file_path = "substrates/t/945_vyper_evolution_engine/substrato_945_vyper_evolution_engine.py"
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            content = f.read()
+        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."

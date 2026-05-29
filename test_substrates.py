@@ -2474,3 +2474,26 @@ def test_substrate_563_1():
     assert data["Status"] == "Canonized"
     assert "Canonical_Seal" in data
     assert "cortexmae_bridge.py" in data["Files"]
+
+def test_substrate_945():
+    import subprocess
+    import json
+    # Run the canonizer
+    result = subprocess.run(
+        ["python3", "substrates/t/945_vyper_evolution_engine/substrato_945_vyper_evolution_engine.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    assert "Substrate 945 canonized at:" in result.stdout
+
+    # Extract path
+    path = result.stdout.split("Substrate 945 canonized at: ")[1].split("\n")[0].strip()
+
+    with open(path, "r") as f:
+        data = json.load(f)
+
+    assert data["Substrate"] == "945"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "vyupgrade_bridge.py" in data["Files"]
+    assert "Canonical_Seal" in data
