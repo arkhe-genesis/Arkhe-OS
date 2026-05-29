@@ -135,3 +135,28 @@ def test_substrate_563_1_f_strings():
         tree = ast.parse(f.read())
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr), "f-strings found in 563.1!"
+
+def test_substrate_937_f_strings():
+    with open('substrates/t/937_web4_autonomous_intelligence/substrato_937.py', 'r') as f:
+        content = f.read()
+        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_substrate_936_f_strings():
+    with open('substrates/t/936_crossbreeding_neural_network/substrato_936.py', 'r') as f:
+        content = f.read()
+        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_substrate_276_1_f_strings():
+    with open('substrates/t/276_1_arkhe_infer_c/substrato_276_1.py', 'r') as f:
+        content = f.read()
+        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_substrate_276_2_f_strings():
+    with open('substrates/t/276_2_arkhe_rtl/substrato_276_2.py', 'r') as f:
+        content = f.read()
+        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_substrate_934_f_strings():
+    with open('substrates/t/934_perceptual_geometry/substrato_934_perceptual_geometry.py', 'r') as f:
+        content = f.read()
+        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
