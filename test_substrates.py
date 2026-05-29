@@ -2400,6 +2400,29 @@ def test_934_arkhe_gb300_rl_inference():
     assert "include/arkhe_rl.h" in data["Files"]
     assert "src/engine.c" in data["Files"]
 
+def test_substrate_100T():
+    import subprocess
+    import json
+    # Run the canonizer
+    result = subprocess.run(
+        ["python3", "substrates/t/100T_moe_centum/substrato_100t_moe_centum.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    assert "Substrate 100T canonized at:" in result.stdout
+
+    # Extract path
+    path = result.stdout.split("Substrate 100T canonized at: ")[1].split("\n")[0].strip()
+
+    with open(path, "r") as f:
+        data = json.load(f)
+
+    assert data["Substrate"] == "100T"
+    assert data["Status"] == "Canonized"
+    assert "cathedral_moe_100t.py" in data["Files"]
+    assert "substrate.toml" in data["Files"]
+
 def test_substrate_944():
     import subprocess
     import json
