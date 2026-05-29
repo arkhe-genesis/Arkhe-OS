@@ -113,3 +113,35 @@ def test_substrate_923_2_f_strings():
         with open(file_path, "r") as f:
             content = f.read()
         assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+
+def test_substrate_267_f_strings():
+    with open("substrates/t/267_doublezero_bridge/substrate_267_doublezero_bridge.py", "r") as pyf:
+        content = pyf.read()
+    assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_substrate_268_f_strings():
+    with open("substrates/t/268_edge_filter_controller/substrate_268_edge_filter_controller.py", "r") as pyf:
+        content = pyf.read()
+    assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_substrate_269_f_strings():
+    with open("substrates/t/269_dz_routing_engine/substrate_269_dz_routing_engine.py", "r") as pyf:
+        content = pyf.read()
+    assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+
+def test_substrate_267_f_strings():
+    with open("substrates/t/267_doublezero_bridge/substrate_267_doublezero_bridge.py", "r") as pyf:
+        content = pyf.read()
+    assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_substrate_268_f_strings():
+    with open("substrates/t/268_edge_filter_controller/substrate_268_edge_filter_controller.py", "r") as pyf:
+        content = pyf.read()
+    assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_substrate_269_f_strings():
+    with open("substrates/t/269_dz_routing_engine/substrate_269_dz_routing_engine.py", "r") as pyf:
+        content = pyf.read()
+    assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
