@@ -2545,3 +2545,20 @@ def test_substrate_945():
     assert "Canonical_Seal" in data
     assert "openmdw_fcr_bridge.py" in data["Files"]
     assert "substrate.toml" in data["Files"]
+
+def test_substrate_949():
+    import importlib.util
+    import json
+    spec = importlib.util.spec_from_file_location('module', 'substrates/t/949_interaction_hotspots/substrato_949_interaction_hotspots.py')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato_949_Interaction_Hotspots()
+    report_json = canonizer.canonize()
+    report = json.loads(report_json)
+
+    assert report['Substrate'] == '949'
+    assert report['Status'] in ['CANONIZED', 'CANONIZED_PROVISIONAL', 'Canonized']
+    assert report['Canonical_Seal'].startswith('sha3-256:')
+    assert 'interaction_hotspots.py' in report['Files']
+    assert 'substrate.toml' in report['Files']
