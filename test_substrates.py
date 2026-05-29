@@ -2474,3 +2474,23 @@ def test_substrate_563_1():
     assert data["Status"] == "Canonized"
     assert "Canonical_Seal" in data
     assert "cortexmae_bridge.py" in data["Files"]
+
+def test_substrate_100t_moe_centum():
+    import sys
+    import os
+    import importlib.util
+
+    sys.path.insert(0, os.path.abspath('substrates/t/100T_moe_centum'))
+    spec = importlib.util.spec_from_file_location("substrato_100t_moe_centum", "substrates/t/100T_moe_centum/substrato_100t_moe_centum.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato_100T_MoE_Centum()
+    report = canonizer.canonize()
+
+    assert report['Substrate'] == '100T'
+    assert report['Status'] == 'Canonized'
+    assert 'Files' in report
+    assert 'cathedral_moe_100t.py' in report['Files']
+    assert 'substrate.toml' in report['Files']
+    assert report['Canonical_Seal'].startswith('sha3-256:')
