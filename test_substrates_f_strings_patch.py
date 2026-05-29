@@ -183,7 +183,6 @@ def test_946_f_strings():
         "substrates/t/946_atlas_lean_bridge/atlas_lean_bridge.py"
     ]
     for filepath in files_to_check:
-        if os.path.exists(filepath):
-            with open(filepath, 'r') as f:
-                content = f.read()
-                assert not re.search(r'\bf(["\'])', content), "f-strings are prohibited"
+        with open(filepath, 'r') as f:
+            content = f.read()
+            assert not re.search(r'\bf(["\'])', content), "f-strings are prohibited"
