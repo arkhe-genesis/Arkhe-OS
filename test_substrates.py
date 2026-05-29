@@ -2422,3 +2422,32 @@ def test_substrate_944():
     assert data["Status"] == "Canonized"
     assert "glasswing_sentinel.py" in data["Files"]
     assert "Canonical_Seal" in data
+
+def test_272_oracle_aws_bridge():
+    import importlib.util
+    import sys
+    import os
+
+    file_path = "substrates/t/272_oracle_aws_bridge/substrato_272_oracle_aws_bridge.py"
+    spec = importlib.util.spec_from_file_location("module", file_path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules["module"] = module
+    spec.loader.exec_module(module)
+
+    substrate = module.Substrato272OracleAWSBridge()
+    result = substrate.canonize()
+
+    assert result["Substrate"] == "272"
+    assert result["Status"] == "CANONIZED"
+    assert result["Canonical_Seal"] == "sha3-256:seshat-janus-272"
+    assert len(result["Files"]) == 4
+
+    for f in result["Files"]:
+        assert os.path.exists(f)
+
+def test_272_f_strings():
+    with open("substrates/t/272_oracle_aws_bridge/substrato_272_oracle_aws_bridge.py", "r") as f:
+        content = f.read()
+
+    assert "f\"" not in content, "f-strings are strictly prohibited"
+    assert "f'" not in content, "f-strings are strictly prohibited"
