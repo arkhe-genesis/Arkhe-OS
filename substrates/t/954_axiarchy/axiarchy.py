@@ -109,8 +109,8 @@ class AxiarchyVerifier:
                     "action_type": action.get("type"),
                     "principles": ["P1", "P2", "P3", "P4", "P5", "P6", "P7"],
                     "seal": proof.seal,
-                },
-                "954",
+                    "substrate": "954",
+                }
             )
 
         return proof
