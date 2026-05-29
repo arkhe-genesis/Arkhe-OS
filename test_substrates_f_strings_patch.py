@@ -121,3 +121,48 @@ def test_substrate_944_f_strings():
         with open(file_path, "r") as f:
             content = f.read()
         assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_substrate_272_oracle_aws_bridge_f_strings():
+    import os
+    file_path = os.path.abspath('substrates/t/272_oracle_aws_bridge/substrato_272_oracle_aws_bridge.py')
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as f:
+            content = f.read()
+        assert 'f"' not in content
+        assert "f'" not in content
+
+def test_substrate_276_arkhe_gguf_f_strings():
+    import os
+    file_path = os.path.abspath('substrates/t/276_arkhe_gguf/substrato_276_arkhe_gguf.py')
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as f:
+            content = f.read()
+        assert 'f"' not in content
+        assert "f'" not in content
+
+def test_substrate_274_arkhe_so_f_strings():
+    import os
+    file_path = os.path.abspath('substrates/t/274_arkhe_so/substrato_274_arkhe_so.py')
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as f:
+            content = f.read()
+        assert 'f"' not in content
+        assert "f'" not in content
+
+def test_substrate_275_arkhe_os_f_strings():
+    import os
+    file_path = os.path.abspath('substrates/t/275_arkhe_os/substrato_275_arkhe_os.py')
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as f:
+            content = f.read()
+        assert 'f"' not in content
+        assert "f'" not in content
+
+def test_substrate_arkhe_distro_3_3_0_f_strings():
+    import os
+    file_path = os.path.abspath('substrates/t/arkhe_distro_3_3_0/substrato_arkhe_distro.py')
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as f:
+            content = f.read()
+        assert 'f"' not in content
+        assert "f'" not in content
