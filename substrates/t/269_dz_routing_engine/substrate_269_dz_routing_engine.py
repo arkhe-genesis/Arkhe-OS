@@ -19,7 +19,7 @@ def main():
     payload = {
         "Substrate": "269-DZ-ROUTING",
         "Status": "Canonized",
-        "Files": list(get_b64_artifacts().keys())
+        "Files": get_b64_artifacts()
     }
 
     seal = compute_seal(payload)

@@ -2411,11 +2411,11 @@ def test_substrate_267_doublezero_bridge():
     payload = {
         "Substrate": "267-DZ-BRIDGE",
         "Status": "Canonized",
-        "Files": list(substrate_267_doublezero_bridge.get_b64_artifacts().keys())
+        "Files": substrate_267_doublezero_bridge.get_b64_artifacts()
     }
     expected_seal = substrate_267_doublezero_bridge.compute_seal(payload)
-    assert expected_seal == "dc8a870eb7c1bc6efe4d2aef6197d1439931855f2c7a74c0273aba2dfb4d26f4"
-    assert expected_seal == "dc8a870eb7c1bc6efe4d2aef6197d1439931855f2c7a74c0273aba2dfb4d26f4"
+    assert expected_seal == "56f399e25533e0be78d47f2bdd374a59dab10a0624165adf541cecdfcfc70b4a"
+    assert expected_seal == "56f399e25533e0be78d47f2bdd374a59dab10a0624165adf541cecdfcfc70b4a"
 
     with open("substrates/t/267_doublezero_bridge/substrate_267_doublezero_bridge.py", "r") as pyf:
         content = pyf.read()
@@ -2433,11 +2433,11 @@ def test_substrate_268_edge_filter_controller():
     payload = {
         "Substrate": "268-EDGE-FILTER",
         "Status": "Canonized",
-        "Files": list(substrate_268_edge_filter_controller.get_b64_artifacts().keys())
+        "Files": substrate_268_edge_filter_controller.get_b64_artifacts()
     }
     expected_seal = substrate_268_edge_filter_controller.compute_seal(payload)
-    assert expected_seal == "b08bc3d232e9f25be47034f4764dc64e936bc29acc30f2b5cdbbaf1cfc010251"
-    assert expected_seal == "b08bc3d232e9f25be47034f4764dc64e936bc29acc30f2b5cdbbaf1cfc010251"
+    assert expected_seal == "bb9a94a4c9b56e547d3f49e3e80efecbebd2a1f77bb363b78dea2d891c42c512"
+    assert expected_seal == "bb9a94a4c9b56e547d3f49e3e80efecbebd2a1f77bb363b78dea2d891c42c512"
 
     with open("substrates/t/268_edge_filter_controller/substrate_268_edge_filter_controller.py", "r") as pyf:
         content = pyf.read()
@@ -2455,75 +2455,11 @@ def test_substrate_269_dz_routing_engine():
     payload = {
         "Substrate": "269-DZ-ROUTING",
         "Status": "Canonized",
-        "Files": list(substrate_269_dz_routing_engine.get_b64_artifacts().keys())
+        "Files": substrate_269_dz_routing_engine.get_b64_artifacts()
     }
     expected_seal = substrate_269_dz_routing_engine.compute_seal(payload)
-    assert expected_seal == "a2ef03715fac200c9a227f5b71474d6422d5c6da5869f28706f0844ad16c103a"
-    assert expected_seal == "a2ef03715fac200c9a227f5b71474d6422d5c6da5869f28706f0844ad16c103a"
-
-    with open("substrates/t/269_dz_routing_engine/substrate_269_dz_routing_engine.py", "r") as pyf:
-        content = pyf.read()
-    assert 'f"' not in content and "f'" not in content
-
-    assert os.path.exists("substrates/t/269_dz_routing_engine/substrate.toml")
-
-
-def test_substrate_267_doublezero_bridge():
-    import sys
-    import os
-    import json
-    sys.path.insert(0, os.path.abspath('substrates/t/267_doublezero_bridge'))
-    import substrate_267_doublezero_bridge
-
-    payload = {
-        "Substrate": "267-DZ-BRIDGE",
-        "Status": "Canonized",
-        "Files": list(substrate_267_doublezero_bridge.get_b64_artifacts().keys())
-    }
-    expected_seal = substrate_267_doublezero_bridge.compute_seal(payload)
-    assert expected_seal == "dc8a870eb7c1bc6efe4d2aef6197d1439931855f2c7a74c0273aba2dfb4d26f4"
-
-    with open("substrates/t/267_doublezero_bridge/substrate_267_doublezero_bridge.py", "r") as pyf:
-        content = pyf.read()
-    assert 'f"' not in content and "f'" not in content
-
-    assert os.path.exists("substrates/t/267_doublezero_bridge/substrate.toml")
-
-def test_substrate_268_edge_filter_controller():
-    import sys
-    import os
-    import json
-    sys.path.insert(0, os.path.abspath('substrates/t/268_edge_filter_controller'))
-    import substrate_268_edge_filter_controller
-
-    payload = {
-        "Substrate": "268-EDGE-FILTER",
-        "Status": "Canonized",
-        "Files": list(substrate_268_edge_filter_controller.get_b64_artifacts().keys())
-    }
-    expected_seal = substrate_268_edge_filter_controller.compute_seal(payload)
-    assert expected_seal == "b08bc3d232e9f25be47034f4764dc64e936bc29acc30f2b5cdbbaf1cfc010251"
-
-    with open("substrates/t/268_edge_filter_controller/substrate_268_edge_filter_controller.py", "r") as pyf:
-        content = pyf.read()
-    assert 'f"' not in content and "f'" not in content
-
-    assert os.path.exists("substrates/t/268_edge_filter_controller/substrate.toml")
-
-def test_substrate_269_dz_routing_engine():
-    import sys
-    import os
-    import json
-    sys.path.insert(0, os.path.abspath('substrates/t/269_dz_routing_engine'))
-    import substrate_269_dz_routing_engine
-
-    payload = {
-        "Substrate": "269-DZ-ROUTING",
-        "Status": "Canonized",
-        "Files": list(substrate_269_dz_routing_engine.get_b64_artifacts().keys())
-    }
-    expected_seal = substrate_269_dz_routing_engine.compute_seal(payload)
-    assert expected_seal == "a2ef03715fac200c9a227f5b71474d6422d5c6da5869f28706f0844ad16c103a"
+    assert expected_seal == "3222823b71ad48464c87a5e83f446a2b7a123d78d706d4d64cb165febc74a5a9"
+    assert expected_seal == "3222823b71ad48464c87a5e83f446a2b7a123d78d706d4d64cb165febc74a5a9"
 
     with open("substrates/t/269_dz_routing_engine/substrate_269_dz_routing_engine.py", "r") as pyf:
         content = pyf.read()
