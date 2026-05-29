@@ -182,3 +182,11 @@ def test_substrate_945_f_strings():
         with open(file_path, "r") as f:
             content = f.read()
         assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_substrate_958_f_strings():
+    import os
+    file_path = "substrates/t/958_clarity_gate/substrato_958_clarity_gate.py"
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            content = f.read()
+        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."

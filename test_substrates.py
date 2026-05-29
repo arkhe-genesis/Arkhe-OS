@@ -2545,3 +2545,31 @@ def test_substrate_945():
     assert "Canonical_Seal" in data
     assert "openmdw_fcr_bridge.py" in data["Files"]
     assert "substrate.toml" in data["Files"]
+
+def test_substrate_958():
+    import json
+    import os
+    import importlib.util
+
+    def load_module(name, path):
+        spec = importlib.util.spec_from_file_location(name, path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
+    module = load_module(
+        "substrato_958_clarity_gate",
+        os.path.abspath("substrates/t/958_clarity_gate/substrato_958_clarity_gate.py")
+    )
+
+    canonizer = module.Substrato_958_clarity_gate()
+    report_path = canonizer.canonize()
+
+    with open(report_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data["Substrate"] == "958-CLARITY-GATE"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "Canonical_Seal" in data
+    assert "clarity_gate.py" in data["Files"]
+    assert "substrate.toml" in data["Files"]
