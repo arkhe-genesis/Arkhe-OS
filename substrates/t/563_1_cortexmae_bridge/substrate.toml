@@ -1,3 +1,12 @@
 [substrate]
 id = "563.1"
-source_verified = true
+name = "CORTEXMAE-BRIDGE"
+type = "Neuro-AI/Interface"
+era = "6"
+deity = "Athena"
+status = "CANONIZED_PROVISIONAL"
+source = "arXiv:2510.13768v2 [cs.CV] - MedARC"
+date = "2026-05-29"
+
+[architect]
+orcid = "0009-0005-2697-4668"

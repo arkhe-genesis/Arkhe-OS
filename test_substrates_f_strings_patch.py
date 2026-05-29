@@ -87,6 +87,12 @@ def test_substrate_929_f_strings():
             content = f.read()
         assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
 
+def test_100t_moe_centum_f_strings():
+    file_path = "substrates/t/100T_moe_centum/substrato_100t_moe_centum.py"
+    with open(file_path, "r") as f:
+        content = f.read()
+    assert 'f"' not in content and "f'" not in content, f"Substrate 100T MoE Centum contains f-strings!"
+
 def test_substrate_931_f_strings():
     import os
     file_path = "substrates/t/931_interfold_coordination_bridge/substrato_931_interfold_coordination_bridge.py"
@@ -114,6 +120,14 @@ def test_substrate_923_2_f_strings():
             content = f.read()
         assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
 
+def test_substrate_100T_f_strings():
+    import os
+    file_path = "substrates/t/100T_moe_centum/substrato_100t_moe_centum.py"
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            content = f.read()
+        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
 def test_substrate_944_f_strings():
     import os
     file_path = "substrates/t/944_glasswing_sentinel/substrato_944_glasswing_sentinel.py"
@@ -136,10 +150,27 @@ def test_substrate_563_1_f_strings():
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr), "f-strings found in 563.1!"
 
-def test_substrate_945_f_strings():
-    import os
-    file_path = "substrates/t/945_vyper_evolution_engine/substrato_945_vyper_evolution_engine.py"
-    if os.path.exists(file_path):
-        with open(file_path, "r") as f:
-            content = f.read()
+def test_substrate_937_f_strings():
+    with open('substrates/t/937_web4_autonomous_intelligence/substrato_937.py', 'r') as f:
+        content = f.read()
+        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_substrate_936_f_strings():
+    with open('substrates/t/936_crossbreeding_neural_network/substrato_936.py', 'r') as f:
+        content = f.read()
+        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_substrate_276_1_f_strings():
+    with open('substrates/t/276_1_arkhe_infer_c/substrato_276_1.py', 'r') as f:
+        content = f.read()
+        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_substrate_276_2_f_strings():
+    with open('substrates/t/276_2_arkhe_rtl/substrato_276_2.py', 'r') as f:
+        content = f.read()
+        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_substrate_934_f_strings():
+    with open('substrates/t/934_perceptual_geometry/substrato_934_perceptual_geometry.py', 'r') as f:
+        content = f.read()
         assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
