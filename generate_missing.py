@@ -166,7 +166,7 @@ class OracleAwsArkheBridge:
             table="arkhe_knowledge",
             ids=ids,
             vectors=embeddings,
-            metadata=metadatas or [{}] * len(texts)
+            metadata=metadatas if metadatas is not None else [{} for _ in texts]
         )
         # Ancora na TemporalChain (923)
         seal = hashlib.sha3_256(
@@ -292,7 +292,8 @@ metadata:
   labels:
     app: oracle-aws-bridge
     substrate: "272"
-    deity: "Seshat-Janusspec:
+    deity: "Seshat-Janus"
+spec:
   replicas: 2
   selector:
     matchLabels:
