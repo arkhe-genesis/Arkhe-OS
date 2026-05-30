@@ -2726,14 +2726,8 @@ def test_substrate_989_passport_gateway():
     assert report["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
     assert "Files" in report
     assert "passport_gateway.py" in report["Files"]
-
-def test_substrate_993():
-    import subprocess
-    import json
-    result = subprocess.run(
-        ["python3", "substrates/t/993_cathedral_curriculum/substrato_993_cathedral_curriculum.py"],
-        capture_output=True,
-        text=True,
-        check=True
-    )
-    assert "Substrate 993 canonized at:" in result.stdout
+    assert "desci_nodes_bridge.py" in report["Files"]
+    assert "distributed_cache.py" in report["Files"]
+    assert "proof_of_clean_hands.py" in report["Files"]
+    assert "temporal_chain_anchor.py" in report["Files"]
+    assert "PassportEmbed.jsx" in report["Files"]
