@@ -2724,6 +2724,7 @@ def test_substrate_989_passport_gateway():
 
     assert report["Substrate"] == "989-PASSPORT-GATEWAY"
     assert report["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert report["Canonical_Seal"] == "9b6c3d7d8fa5821c4e883d3d7ae97f61e5215ed8ba142c803c9669ff0cefad4f"
     assert "Files" in report
     assert "passport_gateway.py" in report["Files"]
     assert "desci_nodes_bridge.py" in report["Files"]
