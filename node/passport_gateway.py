@@ -302,7 +302,7 @@ class PassportGateway:
         anchor = self.temporal_anchor.anchor_humanity_proof(proof.to_dict())
         proof.temporal_anchor = anchor.temporal_anchor
 
-        await self.cache.set(address, proof.to_dict(), "humanity")
+        await self.cache.set(address, proof.to_dict(), "humanity", ttl=3600)
         return proof
     # ───────────────────────────────────────────────────────────────
     # Integração DAO (979) — verificação de eleitor
