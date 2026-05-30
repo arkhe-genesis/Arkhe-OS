@@ -2401,29 +2401,19 @@ def test_934_arkhe_gb300_rl_inference():
     assert "src/engine.c" in data["Files"]
 
 def test_substrate_100T():
-    import subprocess
-    import json
-    # Run the canonizer
-    result = subprocess.run(
-        ["python3", "substrates/t/100T_moe_centum/substrato_100t_moe_centum.py"],
-        capture_output=True,
-        text=True,
-        check=True
-    )
-    assert "Substrate 100T canonized at:" in result.stdout
-
-    # Extract path
-    path = result.stdout.split("Substrate 100T canonized at: ")[1].split("\n")[0].strip()
-
-    with open(path, "r") as f:
-        data = json.load(f)
-
-    assert data["Substrate"] == "100T"
-    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
-    assert "Canonical_Seal" in data
-
-    # Extract path
-
+        import subprocess
+        import json
+        result = subprocess.run(
+            ["python3", "substrates/t/100T_moe_centum/substrato_100t_moe_centum.py"],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        output = json.loads(result.stdout)
+        assert output["Substrate"] == "100T"
+        assert output["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+        assert "Files" in output
+        assert "cathedral_moe_100t.py" in output["Files"]
 def test_272_oracle_aws_bridge():
     import importlib.util
     import sys
@@ -2717,3 +2707,22 @@ def test_substrate_972():
         check=True
     )
     assert "Substrate 972 canonized at:" in result.stdout
+
+def test_substrate_989_passport_gateway():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/989_passport_gateway/substrato_989_passport_gateway.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+
+    output_path = result.stdout.strip()
+    with open(output_path, "r") as f:
+        report = json.load(f)
+
+    assert report["Substrate"] == "989-PASSPORT-GATEWAY"
+    assert report["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "Files" in report
+    assert "passport_gateway.py" in report["Files"]
