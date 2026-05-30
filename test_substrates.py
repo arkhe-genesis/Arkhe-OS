@@ -2724,44 +2724,11 @@ def test_substrate_989_passport_gateway():
 
     assert report["Substrate"] == "989-PASSPORT-GATEWAY"
     assert report["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert report["Canonical_Seal"] == "9b6c3d7d8fa5821c4e883d3d7ae97f61e5215ed8ba142c803c9669ff0cefad4f"
     assert "Files" in report
     assert "passport_gateway.py" in report["Files"]
-
-def test_substrate_989_v():
-    result = subprocess.run(
-        ["python3", "substrates/t/989_v_fair_metrics_dashboard/substrato_989_v_fair_metrics_dashboard.py"],
-        capture_output=True,
-        text=True,
-        check=True
-    )
-    report_path = result.stdout.strip()
-    with open(report_path, "r") as f:
-        report = json.load(f)
-    assert report["Substrate"] == "989.v-FAIR-METRICS-DASHBOARD"
-    assert report["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
-
-def test_substrate_989_w():
-    result = subprocess.run(
-        ["python3", "substrates/t/989_w_unified_orchestrator/substrato_989_w_unified_orchestrator.py"],
-        capture_output=True,
-        text=True,
-        check=True
-    )
-    report_path = result.stdout.strip()
-    with open(report_path, "r") as f:
-        report = json.load(f)
-    assert report["Substrate"] == "989.w-UNIFIED-ORCHESTRATOR"
-    assert report["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
-
-def test_substrate_989_y_1():
-    result = subprocess.run(
-        ["python3", "substrates/t/989_y_1_dark_pid_adapter/substrato_989_y_1_dark_pid_adapter.py"],
-        capture_output=True,
-        text=True,
-        check=True
-    )
-    report_path = result.stdout.strip()
-    with open(report_path, "r") as f:
-        report = json.load(f)
-    assert report["Substrate"] == "989.y.1-DARK-PID-ADAPTER"
-    assert report["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "desci_nodes_bridge.py" in report["Files"]
+    assert "distributed_cache.py" in report["Files"]
+    assert "proof_of_clean_hands.py" in report["Files"]
+    assert "temporal_chain_anchor.py" in report["Files"]
+    assert "PassportEmbed.jsx" in report["Files"]

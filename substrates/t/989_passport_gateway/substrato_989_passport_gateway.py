@@ -7,7 +7,7 @@ def get_b64_artifacts():
     base_dir = os.path.dirname(__file__)
     node_dir = os.path.abspath(os.path.join(base_dir, "../../../node"))
 
-    # Files to include
+# Files to include
     payload_path = os.path.join(node_dir, "passport_gateway.py")
     api_gateway_path = os.path.join(node_dir, "api_gateway.py")
     server_path = os.path.join(node_dir, "server.py")
@@ -18,7 +18,7 @@ def get_b64_artifacts():
     embed_path = os.path.join(node_dir, "PassportEmbed.jsx")
     schema_path = os.path.join(node_dir, "passport_schema.yaml")
 
-    # Ensure substrate.toml exists
+# Ensure substrate.toml exists
     toml_path = os.path.join(base_dir, "substrate.toml")
     if not os.path.exists(toml_path):
         with open(toml_path, "w") as f:
