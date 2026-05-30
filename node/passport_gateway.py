@@ -79,7 +79,7 @@ class HumanityProof:
             "timestamp": self.timestamp,
         }
         json_str = json.dumps(payload, sort_keys=True, ensure_ascii=False)
-        self.seal = f"HP-{hashlib.sha3_256(json_str.encode()).hexdigest()[:16].upper()}"
+        self.seal = "HP-" + hashlib.sha3_256(json_str.encode()).hexdigest()[:16].upper()
         return self.seal
 
     def to_dict(self) -> Dict[str, Any]:
@@ -148,7 +148,7 @@ class PassportGateway:
         """Obtém score de humanidade via Passport Scorer API."""
         if not self.api_key:
             raise PassportGatewayError("PASSPORT_API_KEY não configurada")
-        url = f"{PASSPORT_BASE_URL}/registry/score/{self.scorer_id}/{address}"
+        url = PASSPORT_BASE_URL + "/registry/score/" + self.scorer_id + "/" + address
         async with self.session.get(url) as resp:
             if resp.status == 200:
                 return await resp.json()
@@ -157,13 +157,13 @@ class PassportGateway:
             if resp.status == 404:
                 return {"score": 0, "status": "NOT_FOUND", "address": address}
             text = await resp.text()
-            raise PassportGatewayError(f"Passport API HTTP {resp.status}: {text}")
+            raise PassportGatewayError("Passport API HTTP " + str(resp.status) + ": " + text)
 
     async def get_passport_stamps(self, address: str) -> List[StampCredential]:
         """Retorna stamps verificados de um endereço EVM."""
         if not self.api_key:
             raise PassportGatewayError("PASSPORT_API_KEY não configurada")
-        url = f"{PASSPORT_BASE_URL}/registry/stamps/{address}"
+        url = PASSPORT_BASE_URL + "/registry/stamps/" + address
         async with self.session.get(url) as resp:
             if resp.status == 200:
                 data = await resp.json()
@@ -182,13 +182,13 @@ class PassportGateway:
             if resp.status == 404:
                 return []
             text = await resp.text()
-            raise PassportGatewayError(f"Passport Stamps HTTP {resp.status}: {text}")
+            raise PassportGatewayError("Passport Stamps HTTP " + str(resp.status) + ": " + text)
 
     async def submit_passport(self, address: str) -> Dict[str, Any]:
         """Submete endereço para scoring (caso ainda não tenha score)."""
         if not self.api_key:
             raise PassportGatewayError("PASSPORT_API_KEY não configurada")
-        url = f"{PASSPORT_BASE_URL}/registry/submit-passport"
+        url = PASSPORT_BASE_URL + "/registry/submit-passport"
         payload = {
             "address": address,
             "scorer_id": self.scorer_id,
@@ -199,14 +199,14 @@ class PassportGateway:
             if resp.status in (200, 201):
                 return await resp.json()
             text = await resp.text()
-            raise PassportGatewayError(f"Submit Passport HTTP {resp.status}: {text}")
+            raise PassportGatewayError("Submit Passport HTTP " + str(resp.status) + ": " + text)
 
     # ───────────────────────────────────────────────────────────────
     # ORCID — Substrato 982
     # ───────────────────────────────────────────────────────────────
     async def get_orcid_record(self, orcid_id: str) -> Dict[str, Any]:
         """Consulta registro público ORCID v3.0."""
-        url = f"{ORCID_BASE_URL}/{orcid_id}/record"
+        url = ORCID_BASE_URL + "/" + orcid_id + "/record"
         headers = {"Accept": "application/json"}
         async with self.session.get(url, headers=headers) as resp:
             if resp.status == 200:
@@ -214,7 +214,7 @@ class PassportGateway:
             if resp.status == 404:
                 return {}
             text = await resp.text()
-            raise PassportGatewayError(f"ORCID HTTP {resp.status}: {text}")
+            raise PassportGatewayError("ORCID HTTP " + str(resp.status) + ": " + text)
 
     async def verify_orcid_link(self, address: str, orcid_id: Optional[str] = None) -> bool:
         """
@@ -318,7 +318,7 @@ class PassportGateway:
             "orcid_verified": proof.orcid_verified,
             "sanctions_clear": proof.sanctions_clear,
             "seal": proof.seal,
-            "substrate": f"{self.SUBSTRATE_ID}.{self.VARIANT}",
+            "substrate": str(self.SUBSTRATE_ID) + "." + self.VARIANT,
         }
 
     # ───────────────────────────────────────────────────────────────
@@ -326,58 +326,4 @@ class PassportGateway:
     # ───────────────────────────────────────────────────────────────
     def generate_report(self) -> str:
         """Gera relatório canônico do substrato."""
-        return f"""
-╔══════════════════════════════════════════════════════════════════╗
-║  ARKHE CATHEDRAL — SUBSTRATO {self.SUBSTRATE_ID}.{self.VARIANT}: PASSPORT-GATEWAY        ║
-║  Themis julga; Athena sabe; Hermes entrega a identidade           ║
-╠══════════════════════════════════════════════════════════════════╣
-  Seal: {self.SEAL}
-  Status: CANONIZED_PROVISIONAL
-  Cross-links: [979, 954, 982, 983, 957, 958, 923, 972, 972.1, 972.4]
-  Deities: Themis, Athena, Hermes
-  Threshold Humanity Score: {MIN_HUMANITY_SCORE}
-  Min Passport Score: {MIN_PASSPORT_SCORE}
-  API Key configurada: {"Sim" if self.api_key else "Não (modo simulação)"}
-  ORCID Client configurado: {"Sim" if self.orcid_client_id else "Não"}
-╚══════════════════════════════════════════════════════════════════╝
-"""
-
-
-# ═══════════════════════════════════════════════════════════════════
-# DEMONSTRAÇÃO
-# ═══════════════════════════════════════════════════════════════════
-
-async def demo():
-    print("=" * 68)
-    print("  ARKHE PASSPORT-GATEWAY — DEMONSTRAÇÃO")
-    print("=" * 68)
-
-    gw = PassportGateway()
-    await gw.start()
-
-    # Teste com endereço mock (sem API key, cai em fallback)
-    print("\\n[1] Verificando endereço mock (modo simulação)...")
-    proof = await gw.is_human("0xArchitect1234567890abcdef", orcid_id="0009-0005-2697-4668")
-    print(f"    is_human: {proof.is_human}")
-    print(f"    score: {proof.score:.2f}")
-    print(f"    seal: {proof.seal}")
-
-    # Verificação DAO
-    print("\\n[2] Verificação de eleitor DAO:")
-    can_vote = await gw.verify_dao_voter("0xAlice1234567890abcdef")
-    print(f"    Pode votar: {can_vote}")
-
-    # Validação Axiarchy
-    print("\\n[3] Validação Axiarchy:")
-    result = await gw.axiarchy_validate("0xAlice1234567890abcdef", "vote")
-    print(f"    approved: {result['approved']}")
-    print(f"    seal: {result['seal']}")
-
-    print("\\n[4] Relatório canônico:")
-    print(gw.generate_report())
-
-    await gw.stop()
-
-
-if __name__ == "__main__":
-    asyncio.run(demo())
+        return "Report: " + str(self.SUBSTRATE_ID) + " " + self.SEAL

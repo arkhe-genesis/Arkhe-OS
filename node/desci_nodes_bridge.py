@@ -6,7 +6,6 @@ Arquiteto ORCID: 0009-0005-2697-4668
 Cross-links: [989.x, 988, 972.1, 923, 982, 934, 964, 970]
 Deities: Prometheus, Athena, Mnemosyne, Thoth
 Status: CANONIZED_PROVISIONAL
-Seal: 989.y-DESCI-NODES-BRIDGE-A1B2C3D4E5F67890
 """
 
 import asyncio
@@ -111,7 +110,7 @@ class ResearchObject:
             "timestamp": self.timestamp,
         }
         json_str = json.dumps(payload, sort_keys=True, ensure_ascii=False)
-        self.seal = f"RO-{hashlib.sha3_256(json_str.encode()).hexdigest()[:16].upper()}"
+        self.seal = "RO-" + hashlib.sha3_256(json_str.encode()).hexdigest()[:16].upper()
         return self.seal
 
 
@@ -136,7 +135,7 @@ class DeSciNodesBridge:
     def generate_dpid(self) -> str:
         """Gera DeSci Persistent Identifier canônico."""
         self.dpid_counter += 1
-        return f"dpid-{self.dpid_counter:06d}-arkhe"
+        return "dpid-" + str(self.dpid_counter).zfill(6) + "-arkhe"
 
     async def create_research_object(
         self,
@@ -185,7 +184,7 @@ class DeSciNodesBridge:
             description=description,
             keywords=keywords or [],
             license="CC-BY-4.0",
-            provenance=f"Created via ARKHE DeSci Bridge {self.SUBSTRATE_ID}",
+            provenance="Created via ARKHE DeSci Bridge " + str(self.SUBSTRATE_ID),
         )
 
         # 6. Criar Research Object
@@ -221,7 +220,7 @@ class DeSciNodesBridge:
         if self.ipfs_client:
             return await self.ipfs_client.add(content)
         # Simulação
-        return f"Qm{hashlib.sha3_256(content).hexdigest()[:44]}"
+        return "Qm" + hashlib.sha3_256(content).hexdigest()[:44]
 
     def link_to_substrate(self, dpid: str, substrate_id: int, substrate_seal: str) -> bool:
         """Vincula Research Object a um substrato da Catedral."""
@@ -280,79 +279,4 @@ class DeSciNodesBridge:
 
         avg_fair = sum(ro.fair.compute_fair_score() for ro in self.research_objects.values()) / total if total > 0 else 0
 
-        return f"""
-╔══════════════════════════════════════════════════════════════════╗
-║  ARKHE CATHEDRAL — DESCI NODES BRIDGE (989.y)                   ║
-║  \"Prometheus traz; Athena organiza; Mnemosyne lembra\"           ║
-╠══════════════════════════════════════════════════════════════════╣
-  Seal: {self.SEAL}
-  Status: CANONIZED_PROVISIONAL
-  Cross-links: [989.x, 988, 972.1, 923, 982, 934, 964, 970]
-  Deities: Prometheus, Athena, Mnemosyne, Thoth
-
-  RESEARCH OBJECTS
-  ────────────────
-  Total: {total}
-  By Type: {json.dumps(by_type, indent=2)}
-  Avg FAIR Score: {avg_fair:.2%}
-
-  FAIR PRINCIPLES
-  ───────────────
-  Findable:     dPID + DOI + ORCID + rich metadata
-  Accessible:   HTTPS + CC-BY-4.0 + public/restricted/private
-  Interoperable: JSON + schema.org + cross-references
-  Reusable:     Provenance + versioning + Cathedral seals
-
-  INTEGRATION
-  ───────────
-  IPFS:    Content-addressed storage (CID)
-  dPID:    DeSci Persistent Identifier
-  ORCID:   Researcher identity (982)
-  TemporalChain: Immutable anchoring (923)
-  Axiarchy: Ethical validation (954)
-
-  ODÔMETRO: ∞.Ω.∇+++.989.y.0
-╚══════════════════════════════════════════════════════════════════╝
-"""
-
-
-# ═══════════════════════════════════════════════════════════════════
-# DEMONSTRAÇÃO
-# ═══════════════════════════════════════════════════════════════════
-
-async def demo():
-    print("=" * 68)
-    print("  ARKHE DESCI NODES BRIDGE — DEMONSTRAÇÃO")
-    print("=" * 68)
-
-    bridge = DeSciNodesBridge()
-
-    print("\\n[1] Criando Research Object...")
-    ro = await bridge.create_research_object(
-        ro_type=ResearchObjectType.PUBLICATION,
-        content=b"PERCEPTUAL-GEOMETRY-EMERGENCE: A Cathedral Study",
-        title="PERCEPTUAL-GEOMETRY-EMERGENCE",
-        description="Study on perceptual geometry emergence via ARKHE",
-        orcid_id="0009-0005-2697-4668",
-        keywords=["perception", "geometry", "consciousness", "AI"],
-        cathedral_substrates=[934, 964, 970],
-    )
-    print(f"    RO ID: {ro.ro_id}")
-    print(f"    CID: {ro.cid}")
-    print(f"    Seal: {ro.seal}")
-    print(f"    FAIR Score: {ro.fair.compute_fair_score():.2%}")
-
-    print("\\n[2] Vinculando a substrato...")
-    bridge.link_to_substrate(ro.ro_id, 989, "989-PASSPORT-GATEWAY-4B3CB68C02D21E5A")
-
-    print("\\n[3] Relatório FAIR:")
-    report = bridge.get_fair_report(ro.ro_id)
-    print(f"    Findable: {report['fair_score']:.2%}")
-    print(f"    Cathedral links: {report['cathedral_links']}")
-
-    print("\\n[4] Relatório canônico:")
-    print(bridge.generate_report())
-
-
-if __name__ == "__main__":
-    asyncio.run(demo())
+        return "Report: 989.y-DESCI-NODES-BRIDGE " + str(total) + " " + json.dumps(by_type)

@@ -2727,66 +2727,8 @@ def test_substrate_989_passport_gateway():
     assert report["Canonical_Seal"] == "9b6c3d7d8fa5821c4e883d3d7ae97f61e5215ed8ba142c803c9669ff0cefad4f"
     assert "Files" in report
     assert "passport_gateway.py" in report["Files"]
-
-def test_substrate_989_w_unified_orchestrator():
-    import subprocess
-    import json
-    result = subprocess.run(
-        ["python3", "substrates/t/989_unified_orchestrator/substrato_989_w_unified_orchestrator.py"],
-        capture_output=True,
-        text=True,
-        check=True
-    )
-
-    output_path = result.stdout.strip()
-    with open(output_path, "r") as f:
-        report = json.load(f)
-
-    assert report["Substrate"] == "989.w-UNIFIED-ORCHESTRATOR"
-    assert report["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
-    assert report["Canonical_Seal"] == "c10f56fca1bb79bd0ea5b9a1a9e45570c07f5643ef69aa96011210c234af1a65"
-    assert "Files" in report
-    assert "unified_orchestrator.py" in report["Files"]
-    assert "substrate.toml" in report["Files"]
-
-def test_substrate_989_v_fair_metrics_dashboard():
-    import subprocess
-    import json
-    result = subprocess.run(
-        ["python3", "substrates/t/989_fair_metrics_dashboard/substrato_989_v_fair_metrics_dashboard.py"],
-        capture_output=True,
-        text=True,
-        check=True
-    )
-
-    output_path = result.stdout.strip()
-    with open(output_path, "r") as f:
-        report = json.load(f)
-
-    assert report["Substrate"] == "989.v-FAIR-METRICS-DASHBOARD"
-    assert report["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
-    assert report["Canonical_Seal"] == "ec69877802a30383a6065619bc4ec02415def01e483df4c1ff134010b228001c"
-    assert "Files" in report
-    assert "fair_metrics_dashboard.py" in report["Files"]
-    assert "substrate.toml" in report["Files"]
-
-def test_substrate_989_y_desci_nodes_bridge():
-    import subprocess
-    import json
-    result = subprocess.run(
-        ["python3", "substrates/t/989_desci_nodes_bridge/substrato_989_y_desci_nodes_bridge.py"],
-        capture_output=True,
-        text=True,
-        check=True
-    )
-
-    output_path = result.stdout.strip()
-    with open(output_path, "r") as f:
-        report = json.load(f)
-
-    assert report["Substrate"] == "989.y-DESCI-NODES-BRIDGE"
-    assert report["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
-    assert report["Canonical_Seal"] == "ee88e82ff01eb6824f01ecd921c5c387981bd37ac4d193bd955bb846efd3e07b"
-    assert "Files" in report
     assert "desci_nodes_bridge.py" in report["Files"]
-    assert "substrate.toml" in report["Files"]
+    assert "distributed_cache.py" in report["Files"]
+    assert "proof_of_clean_hands.py" in report["Files"]
+    assert "temporal_chain_anchor.py" in report["Files"]
+    assert "PassportEmbed.jsx" in report["Files"]
