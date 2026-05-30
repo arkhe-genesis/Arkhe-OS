@@ -1,6 +1,0 @@
-[substrate]
-id = "100T"
-name = "Cathedral-MoE-Centum"
-description = "100T Parameters Mixture of Experts Architecture"
-version = "1.0.0"
-author = "Arkhe OS"

@@ -1,8 +1,0 @@
-[substrate]
-id = "900-LINEARIDADE-1-900"
-name = "Linearidade Coerente Arkhe"
-version = "1.0.0"
-author = "Arkhe Ecosystem"
-description = "Atlas Completo da Catedral: Fundação, Interstícios e Convergência"
-canonical_seal = "SHA3-256(linearidade-1-900) = a1b2c3d4e5f6..."
-dependencies = []
