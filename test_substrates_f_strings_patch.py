@@ -182,3 +182,33 @@ def test_substrate_945_f_strings():
         with open(file_path, "r") as f:
             content = f.read()
         assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_951_f_strings():
+    import ast
+    with open('substrates/t/951_conscious_replay/substrato_951_conscious_replay.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
+
+def test_952_f_strings():
+    import ast
+    with open('substrates/t/952_bindu/substrato_952_bindu.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
+
+def test_954_f_strings():
+    import ast
+    with open('substrates/t/954_axiarchy/substrato_954_axiarchy.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
+
+
+
+def test_964_f_strings():
+    import ast
+    with open('substrates/t/964_omniscient_solver/substrato_964_omniscient_solver.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)

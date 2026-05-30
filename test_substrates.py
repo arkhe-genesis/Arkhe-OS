@@ -2545,3 +2545,60 @@ def test_substrate_945():
     assert "Canonical_Seal" in data
     assert "openmdw_fcr_bridge.py" in data["Files"]
     assert "substrate.toml" in data["Files"]
+
+def test_substrate_951():
+    import importlib.util
+    import os
+    file_path = os.path.abspath('substrates/t/951_conscious_replay/substrato_951_conscious_replay.py')
+    spec = importlib.util.spec_from_file_location("substrato_951_conscious_replay", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    canonizer = module.Substrato_951_conscious_replay()
+    path = canonizer.canonize()
+    with open(path, "r") as json_f:
+        data = json.load(json_f)
+    assert data["Substrate"] == "951"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "CANONIZED_FULL", "Canonized"]
+    assert "Canonical_Seal" in data
+
+def test_substrate_952():
+    import importlib.util
+    import os
+    file_path = os.path.abspath('substrates/t/952_bindu/substrato_952_bindu.py')
+    spec = importlib.util.spec_from_file_location("substrato_952_bindu", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    canonizer = module.Substrato_952_bindu()
+    path = canonizer.canonize()
+    with open(path, "r") as json_f:
+        data = json.load(json_f)
+    assert data["Substrate"] == "952"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "CANONIZED_FULL", "Canonized"]
+    assert "Canonical_Seal" in data
+
+def test_substrate_954():
+    import importlib.util
+    import os
+    file_path = os.path.abspath('substrates/t/954_axiarchy/substrato_954_axiarchy.py')
+    spec = importlib.util.spec_from_file_location("substrato_954_axiarchy", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    canonizer = module.Substrato_954_axiarchy()
+    path = canonizer.canonize()
+    with open(path, "r") as json_f:
+        data = json.load(json_f)
+    assert data["Substrate"] == "954"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "CANONIZED_FULL", "Canonized"]
+    assert "Canonical_Seal" in data
+
+
+
+def test_substrate_964():
+    import importlib.util
+    import os
+    file_path = os.path.abspath('substrates/t/964_omniscient_solver/substrato_964_omniscient_solver.py')
+    spec = importlib.util.spec_from_file_location("substrato_964_omniscient_solver", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    canonizer = module.Substrato_964_omniscient_solver()
+    data = canonizer.canonize()
