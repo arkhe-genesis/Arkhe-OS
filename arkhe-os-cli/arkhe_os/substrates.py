@@ -6,4 +6,5 @@ SUBSTRATES = [
     {"id": "448-BIS-OPT", "name": "MEGAKERNEL-BENCH", "phi_c": "0.7411", "seal": "64e772c4..."},
     {"id": "449", "name": "MEGAKERNEL-DEPLOY", "phi_c": "0.9025", "seal": "8c01dfb2..."},
     {"id": "450", "name": "MEGAKERNEL-PAPER", "phi_c": "0.8800", "seal": "b1b9fae8..."},
+    {"id": "949", "name": "Interaction-Hotspots", "phi_c": "1.0000", "seal": "sha3-256:..."},
 ]

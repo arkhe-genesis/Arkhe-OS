@@ -1,0 +1,5 @@
+[substrate]
+id = "946"
+name = "Atlas Lean Bridge"
+status = "CANONIZED_PROVISIONAL"
+description = "Bridge to the Atlas Lean library"
