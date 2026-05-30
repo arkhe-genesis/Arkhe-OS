@@ -68,13 +68,8 @@ export default function PassportEmbed({
       return;
     }
 
-    // Clarity-Gate check
-    const clarity = checkClarity(address);
-    setClarityScore(clarity.score);
-    if (!clarity.passed) {
-      setError('Clarity-Gate (958): Endereço contém termos proibidos ou não passou no teste de clareza.');
-      return;
-    }
+    // Removed meaningless Clarity-Gate check on EVM address
+    // (If text validation is needed, it must be applied to user-provided descriptive text, not a hex address)
 
     setLoading(true);
     setError(null);
