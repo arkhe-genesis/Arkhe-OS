@@ -181,28 +181,30 @@ class FAIRMetricsDashboard:
             threshold = self.THRESHOLDS[dim]
             if val < threshold:
                 level = AlertLevel.CRITICAL if val < threshold * 0.5 else AlertLevel.WARNING
-                alert = FAIRAlert(
-                    alert_id="ALERT-" + ro_id + "-" + dim.value + "-" + str(int(time.time())),
-                    ro_id=ro_id,
-                    dimension=dim,
-                    level=level,
-                    message=dim.value.upper() + " score " + format(val, '.2f') + " abaixo do threshold " + format(threshold, '.2f'),
-                    current_score=val,
-                    threshold=threshold,
-                )
-                self.alerts.append(alert)
+                if not any(a.ro_id == ro_id and a.dimension == dim and not a.resolved for a in self.alerts):
+                    alert = FAIRAlert(
+                        alert_id="ALERT-" + ro_id + "-" + dim.value + "-" + str(int(time.time())),
+                        ro_id=ro_id,
+                        dimension=dim,
+                        level=level,
+                        message=dim.value.upper() + " score " + format(val, '.2f') + " abaixo do threshold " + format(threshold, '.2f'),
+                        current_score=val,
+                        threshold=threshold,
+                    )
+                    self.alerts.append(alert)
 
         if score.overall < self.THRESHOLDS["overall"]:
-            alert = FAIRAlert(
-                alert_id="ALERT-" + ro_id + "-overall-" + str(int(time.time())),
-                ro_id=ro_id,
-                dimension=FAIRDimension.FINDABLE,
-                level=AlertLevel.CRITICAL,
-                message="Overall FAIR score " + format(score.overall, '.2f') + " abaixo do threshold " + format(self.THRESHOLDS['overall'], '.2f'),
-                current_score=score.overall,
-                threshold=self.THRESHOLDS["overall"],
-            )
-            self.alerts.append(alert)
+            if not any(a.ro_id == ro_id and a.dimension == FAIRDimension.FINDABLE and a.message.startswith("Overall FAIR score") and not a.resolved for a in self.alerts):
+                alert = FAIRAlert(
+                    alert_id="ALERT-" + ro_id + "-overall-" + str(int(time.time())),
+                    ro_id=ro_id,
+                    dimension=FAIRDimension.FINDABLE,
+                    level=AlertLevel.CRITICAL,
+                    message="Overall FAIR score " + format(score.overall, '.2f') + " abaixo do threshold " + format(self.THRESHOLDS['overall'], '.2f'),
+                    current_score=score.overall,
+                    threshold=self.THRESHOLDS["overall"],
+                )
+                self.alerts.append(alert)
 
     def get_ro_dashboard(self, ro_id: str) -> Optional[Dict[str, Any]]:
         if ro_id not in self.scores:

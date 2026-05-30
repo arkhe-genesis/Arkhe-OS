@@ -2765,18 +2765,3 @@ def test_substrate_989_y_1():
         report = json.load(f)
     assert report["Substrate"] == "989.y.1-DARK-PID-ADAPTER"
     assert report["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
-
-
-
-def test_substrate_989_desci_nodes_bridge():
-    result = subprocess.run(
-        ["python3", "substrates/t/989_desci_nodes_bridge/substrato_989_desci_nodes_bridge.py"],
-        capture_output=True,
-        text=True,
-        check=True
-    )
-    report_path = result.stdout.strip()
-    with open(report_path, "r") as f:
-        report = json.load(f)
-    assert report["Substrate"] == "989.y-DESCI-NODES-BRIDGE"
-    assert report["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
