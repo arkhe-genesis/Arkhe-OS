@@ -242,6 +242,9 @@ class CathedralDAOGovernance:
             return False
 
         proposal = self.proposals[proposal_id]
+        if proposal.status != ProposalStatus.VOTING:
+            return False
+
         proposal.compute_totals()
 
         # Calcular poder total possível
@@ -249,7 +252,10 @@ class CathedralDAOGovernance:
         voted_power = proposal.total_for + proposal.total_against
 
         # Verificar quorum
-        proposal.quorum_reached = (voted_power / total_voting_power) >= self.quorum_threshold
+        if total_voting_power > 0:
+            proposal.quorum_reached = (voted_power / total_voting_power) >= self.quorum_threshold
+        else:
+            proposal.quorum_reached = False
 
         # Verificar aprovação
         if proposal.quorum_reached and voted_power > 0:

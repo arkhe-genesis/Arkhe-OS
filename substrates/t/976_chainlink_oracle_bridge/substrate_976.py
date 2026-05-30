@@ -89,7 +89,7 @@ class OracleFeed:
                 median_value = r["value"]
                 break
 
-        self.value = median_value if median_value else sorted_responses[0]["value"]
+        self.value = median_value if median_value is not None else sorted_responses[0]["value"]
         self.validated = True
 
         # Gerar assinatura simulada
@@ -167,6 +167,7 @@ class ChainlinkOracleBridge:
         if not node.is_healthy:
             return False
 
+        self.feeds[feed_id].node_responses = [r for r in self.feeds[feed_id].node_responses if r["node_id"] != node_id]
         self.feeds[feed_id].node_responses.append({
             "node_id": node_id,
             "value": value,

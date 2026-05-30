@@ -214,8 +214,10 @@ class CathedralAsOracle:
 
     def update_accuracy(self, asset: str, realized_price: float):
         """Atualiza acurácia histórica após realização do preço."""
+        if realized_price == 0:
+            return
         for insight in self.insights:
-            if insight.target_asset == asset and insight.horizon_hours <= 24:
+            if insight.target_asset == asset and insight.horizon_hours <= 24 and not getattr(insight, 'evaluated', False):
                 error = abs(insight.prediction - realized_price) / realized_price
                 accuracy = max(0, 1 - error)
 
@@ -226,6 +228,7 @@ class CathedralAsOracle:
                 # Manter apenas últimos 100
                 self.agent_accuracy[insight.generating_agent] = \
                     self.agent_accuracy[insight.generating_agent][-100:]
+                insight.evaluated = True
 
     def generate_report(self) -> str:
         """Gera relatório de produção oracular."""
