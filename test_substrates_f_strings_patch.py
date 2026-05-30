@@ -87,6 +87,30 @@ def test_substrate_929_f_strings():
             content = f.read()
         assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
 
+def test_substrate_989_w_f_strings():
+    import os
+    file_path = "substrates/t/989_unified_orchestrator/substrato_989_w_unified_orchestrator.py"
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            content = f.read()
+        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_substrate_989_v_f_strings():
+    import os
+    file_path = "substrates/t/989_fair_metrics_dashboard/substrato_989_v_fair_metrics_dashboard.py"
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            content = f.read()
+        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_substrate_989_y_f_strings():
+    import os
+    file_path = "substrates/t/989_desci_nodes_bridge/substrato_989_y_desci_nodes_bridge.py"
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            content = f.read()
+        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
 def test_substrate_931_f_strings():
     import os
     file_path = "substrates/t/931_interfold_coordination_bridge/substrato_931_interfold_coordination_bridge.py"
