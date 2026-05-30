@@ -1,0 +1,8 @@
+[substrate]
+id = 970
+name = "ENTERPRISE-MIND"
+type = "Aplicação Empresarial"
+era = "8"
+deity = "Hermes"
+status = "CANONIZED_PROVISIONAL"
+cross_links = [966, 967, 952, 954, 890, 933, 923, 953, 939]

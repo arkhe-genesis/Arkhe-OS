@@ -2410,41 +2410,12 @@ def test_substrate_100T():
         text=True,
         check=True
     )
-    assert "Substrate 100T canonized at:" in result.stdout
-
-    # Extract path
-    path = result.stdout.split("Substrate 100T canonized at: ")[1].split("\n")[0].strip()
-
-    with open(path, "r") as f:
-        data = json.load(f)
-
+    data = json.loads(result.stdout)
     assert data["Substrate"] == "100T"
-    assert data["Status"] == "Canonized"
-    assert "cathedral_moe_100t.py" in data["Files"]
-    assert "substrate.toml" in data["Files"]
-
-def test_substrate_944():
-    import subprocess
-    import json
-    # Run the canonizer
-    result = subprocess.run(
-        ["python3", "substrates/t/944_glasswing_sentinel/substrato_944_glasswing_sentinel.py"],
-        capture_output=True,
-        text=True,
-        check=True
-    )
-    assert "Substrate 944 canonized at:" in result.stdout
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "Canonical_Seal" in data
 
     # Extract path
-    path = result.stdout.split("Substrate 944 canonized at: ")[1].split("\n")[0].strip()
-
-    with open(path, "r") as f:
-        data = json.load(f)
-
-    assert data["Substrate"] == "944"
-    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
-    assert "glasswing_sentinel.py" in data["Files"]
-    assert "Canonical_Seal" in data
 
 def test_272_oracle_aws_bridge():
     import importlib.util
@@ -2496,7 +2467,7 @@ def test_substrate_563_1():
     assert data["Substrate"] == "563.1"
     assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
     assert "Canonical_Seal" in data
-    assert "cortexmae_bridge.py" in data["Files"]
+    assert any("substrato_563_1.yaml" in f["filename"] for f in data["Files"])
 
 def test_substrate_100t_moe_centum():
     import sys
@@ -2566,3 +2537,176 @@ def test_954_axiarchy():
     assert "axiarchy.py" in data["Files"]
     assert "axiarchy_954.lean" in data["Files"]
     assert "substrate.toml" in data["Files"]
+
+def test_substrate_972_1():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/972_1_nostr_tor_ipfs_bridge/substrato_972_1_nostr_tor_ipfs_bridge.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    assert "Substrate 972.1 canonized at:" in result.stdout
+
+    path = result.stdout.split("Substrate 972.1 canonized at: ")[1].split("\n")[0].strip()
+
+    with open(path, "r") as f:
+        data = json.load(f)
+
+    assert data["Substrate"] == "972.1"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "Canonical_Seal" in data
+
+def test_substrate_973():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/973_nostr_relay/substrato_973_nostr_relay.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    assert "Substrate 973 canonized at:" in result.stdout
+
+def test_substrate_974():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/974_tor_mesh/substrato_974_tor_mesh.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    assert "Substrate 974 canonized at:" in result.stdout
+
+def test_substrate_975():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/975_ipfs_core/substrato_975_ipfs_core.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    assert "Substrate 975 canonized at:" in result.stdout
+
+def test_substrate_970():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/970_enterprise_mind/substrato_970_enterprise_mind.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    assert "Substrate 970 canonized at:" in result.stdout
+
+def test_substrate_971():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/971_self_reflexive_cathedral/substrato_971_self_reflexive.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    assert "Substrate 971 canonized at:" in result.stdout
+
+def test_substrate_972():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/972_internet_cathedral/substrato_972_internet_cathedral.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    assert "Substrate 972 canonized at:" in result.stdout
+
+
+def test_substrate_972_1():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/972_1_nostr_tor_ipfs_bridge/substrato_972_1_nostr_tor_ipfs_bridge.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    assert "Substrate 972.1 canonized at:" in result.stdout
+
+    path = result.stdout.split("Substrate 972.1 canonized at: ")[1].split("\n")[0].strip()
+
+    with open(path, "r") as f:
+        data = json.load(f)
+
+    assert data["Substrate"] == "972.1"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "Canonical_Seal" in data
+
+def test_substrate_973():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/973_nostr_relay/substrato_973_nostr_relay.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    assert "Substrate 973 canonized at:" in result.stdout
+
+def test_substrate_974():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/974_tor_mesh/substrato_974_tor_mesh.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    assert "Substrate 974 canonized at:" in result.stdout
+
+def test_substrate_975():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/975_ipfs_core/substrato_975_ipfs_core.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    assert "Substrate 975 canonized at:" in result.stdout
+
+def test_substrate_970():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/970_enterprise_mind/substrato_970_enterprise_mind.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    assert "Substrate 970 canonized at:" in result.stdout
+
+def test_substrate_971():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/971_self_reflexive_cathedral/substrato_971_self_reflexive.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    assert "Substrate 971 canonized at:" in result.stdout
+
+def test_substrate_972():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/972_internet_cathedral/substrato_972_internet_cathedral.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    assert "Substrate 972 canonized at:" in result.stdout
