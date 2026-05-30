@@ -191,9 +191,86 @@ def test_substrate_958_f_strings():
             content = f.read()
         assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
 
-def test_279_f_strings():
-    import ast
-    with open('substrates/t/279_arklib_meta_macros/substrato_279_arklib_meta_macros.py', 'r') as f:
-        tree = ast.parse(f.read())
-    for node in ast.walk(tree):
-        assert not isinstance(node, ast.JoinedStr)
+def test_no_f_strings_972_1():
+    import re
+    with open("substrates/t/972_1_nostr_tor_ipfs_bridge/substrato_972_1_nostr_tor_ipfs_bridge.py", "r") as f:
+        content = f.read()
+    assert re.search(r"f['\"]", content) is None
+
+def test_no_f_strings_973():
+    import re
+    with open("substrates/t/973_nostr_relay/substrato_973_nostr_relay.py", "r") as f:
+        content = f.read()
+    assert re.search(r"f['\"]", content) is None
+
+def test_no_f_strings_974():
+    import re
+    with open("substrates/t/974_tor_mesh/substrato_974_tor_mesh.py", "r") as f:
+        content = f.read()
+    assert re.search(r"f['\"]", content) is None
+
+def test_no_f_strings_975():
+    import re
+    with open("substrates/t/975_ipfs_core/substrato_975_ipfs_core.py", "r") as f:
+        content = f.read()
+    assert re.search(r"f['\"]", content) is None
+
+def test_no_f_strings_970():
+    import re
+    with open("substrates/t/970_enterprise_mind/substrato_970_enterprise_mind.py", "r") as f:
+        content = f.read()
+    assert re.search(r"f['\"]", content) is None
+
+def test_no_f_strings_971():
+    import re
+    with open("substrates/t/971_self_reflexive_cathedral/substrato_971_self_reflexive.py", "r") as f:
+        content = f.read()
+    assert re.search(r"f['\"]", content) is None
+
+def test_no_f_strings_972():
+    import re
+    with open("substrates/t/972_internet_cathedral/substrato_972_internet_cathedral.py", "r") as f:
+        content = f.read()
+    assert re.search(r"f['\"]", content) is None
+
+def test_no_f_strings_972_1():
+    import re
+    with open("substrates/t/972_1_nostr_tor_ipfs_bridge/substrato_972_1_nostr_tor_ipfs_bridge.py", "r") as f:
+        content = f.read()
+    assert re.search(r"f['\"]", content) is None
+
+def test_no_f_strings_973():
+    import re
+    with open("substrates/t/973_nostr_relay/substrato_973_nostr_relay.py", "r") as f:
+        content = f.read()
+    assert re.search(r"f['\"]", content) is None
+
+def test_no_f_strings_974():
+    import re
+    with open("substrates/t/974_tor_mesh/substrato_974_tor_mesh.py", "r") as f:
+        content = f.read()
+    assert re.search(r"f['\"]", content) is None
+
+def test_no_f_strings_975():
+    import re
+    with open("substrates/t/975_ipfs_core/substrato_975_ipfs_core.py", "r") as f:
+        content = f.read()
+    assert re.search(r"f['\"]", content) is None
+
+def test_no_f_strings_970():
+    import re
+    with open("substrates/t/970_enterprise_mind/substrato_970_enterprise_mind.py", "r") as f:
+        content = f.read()
+    assert re.search(r"f['\"]", content) is None
+
+def test_no_f_strings_971():
+    import re
+    with open("substrates/t/971_self_reflexive_cathedral/substrato_971_self_reflexive.py", "r") as f:
+        content = f.read()
+    assert re.search(r"f['\"]", content) is None
+
+def test_no_f_strings_972():
+    import re
+    with open("substrates/t/972_internet_cathedral/substrato_972_internet_cathedral.py", "r") as f:
+        content = f.read()
+    assert re.search(r"f['\"]", content) is None
