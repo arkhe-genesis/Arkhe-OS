@@ -41,17 +41,19 @@ class NostrEvent:
             "protocol": "arkhe-972.1",
             "timestamp": datetime.now(timezone.utc).isoformat(),
         })
+        created_at = int(datetime.now(timezone.utc).timestamp())
+        tags = [["e", "substrate-" + str(substrate_id)]]
         event_id = hashlib.sha256(
-            json.dumps([0, pubkey, datetime.now(timezone.utc).timestamp(), 30078, [], content]).encode()
+            json.dumps([0, pubkey, created_at, 30078, tags, content], separators=(',', ':')).encode()
         ).hexdigest()
         # Assinatura Ed25519 (simulada — em produção usa nacl.signing)
         sig = hashlib.sha3_256((event_id + privkey).encode()).hexdigest()[:128]
         return cls(
             id=event_id,
             pubkey=pubkey,
-            created_at=int(datetime.now(timezone.utc).timestamp()),
+            created_at=created_at,
             kind=30078,  # Custom: ARKHE-SEAL
-            tags=[["e", "substrate-" + str(substrate_id)]],
+            tags=tags,
             content=content,
             sig=sig,
         )

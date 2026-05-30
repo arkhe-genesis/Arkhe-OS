@@ -2410,7 +2410,14 @@ def test_substrate_100T():
         text=True,
         check=True
     )
-    data = json.loads(result.stdout)
+    assert "Substrate 100T canonized at:" in result.stdout
+
+    # Extract path
+    path = result.stdout.split("Substrate 100T canonized at: ")[1].split("\n")[0].strip()
+
+    with open(path, "r") as f:
+        data = json.load(f)
+
     assert data["Substrate"] == "100T"
     assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
     assert "Canonical_Seal" in data
