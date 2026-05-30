@@ -2566,3 +2566,26 @@ def test_954_axiarchy():
     assert "axiarchy.py" in data["Files"]
     assert "axiarchy_954.lean" in data["Files"]
     assert "substrate.toml" in data["Files"]
+
+def test_279_arklib_meta_macros():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_279_arklib_meta_macros",
+        os.path.abspath('substrates/t/279_arklib_meta_macros/substrato_279_arklib_meta_macros.py')
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrato_279_arklib_meta_macros()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    assert data["Substrate"] == "279.4"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "arklib_meta_lib.rs" in data["Files"]
+    assert "asi_self_edit.rs" in data["Files"]

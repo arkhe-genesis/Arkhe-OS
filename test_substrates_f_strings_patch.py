@@ -190,3 +190,10 @@ def test_substrate_958_f_strings():
         with open(file_path, "r") as f:
             content = f.read()
         assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_279_f_strings():
+    import ast
+    with open('substrates/t/279_arklib_meta_macros/substrato_279_arklib_meta_macros.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
