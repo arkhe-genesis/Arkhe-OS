@@ -195,7 +195,7 @@ class TemporalChainAnchor:
             timestamp=anchor.timestamp,
         )
         recomputed.compute_anchor()
-if recomputed.temporal_anchor != anchor.temporal_anchor:
+        if recomputed.temporal_anchor != anchor.temporal_anchor:
             return False
 
         # If signing is enabled, the signature MUST be present and valid

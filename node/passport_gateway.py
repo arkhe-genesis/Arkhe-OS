@@ -20,6 +20,11 @@ from enum import Enum
 
 import aiohttp
 
+# Integracoes
+from temporal_chain_anchor import TemporalChainAnchor
+from proof_of_clean_hands import ProofOfCleanHands
+from distributed_cache import DistributedCache
+
 
 # ═══════════════════════════════════════════════════════════════════
 # Configuração de ambiente
@@ -118,6 +123,9 @@ class PassportGateway:
         self.orcid_client_secret = orcid_client_secret or ORCID_CLIENT_SECRET
         self._session = session
         self._owned_session = session is None
+        self.temporal_anchor = TemporalChainAnchor()
+        self.proof_of_clean_hands = ProofOfCleanHands()
+        self.cache = DistributedCache()
 
     @property
     def session(self) -> aiohttp.ClientSession:
@@ -239,8 +247,20 @@ class PassportGateway:
     ) -> HumanityProof:
         """
         Verifica se endereço é humano via Passport + ORCID.
-        Retorna HumanityProof com seal canônico.
+        Retorna HumanityProof com seal canônico e tenta cache distribuído.
         """
+        cached_proof = await self.cache.get(address, "humanity")
+        if cached_proof:
+            proof_data = cached_proof.copy()
+            if isinstance(proof_data.get("status"), str):
+                proof_data["status"] = VerificationStatus(proof_data["status"])
+
+            new_stamps = []
+            for s in proof_data.get("stamps", []):
+                new_stamps.append(StampCredential(**s) if isinstance(s, dict) else s)
+            proof_data["stamps"] = new_stamps
+            return HumanityProof(**proof_data)
+
         threshold = min_score if min_score is not None else MIN_HUMANITY_SCORE
         raw_score = 0.0
         stamps: List[StampCredential] = []
@@ -260,8 +280,9 @@ class PassportGateway:
         normalized = min(raw_score / MIN_PASSPORT_SCORE, 1.0) if MIN_PASSPORT_SCORE > 0 else 0.0
         orcid_ok = await self.verify_orcid_link(address, orcid_id)
 
-        # Proof of Clean Hands (AML) — simulado; em produção integrar com Individual Verifications
-        sanctions_clear = True
+        # Proof of Clean Hands (AML)
+        check = await self.proof_of_clean_hands.check_address(address)
+        sanctions_clear = check.risk_level.value in ["clear", "low", "medium"]
 
         is_human = (normalized >= threshold) or orcid_ok
 
@@ -277,8 +298,12 @@ class PassportGateway:
             status=status,
         )
         proof.compute_seal()
-        return proof
 
+        anchor = self.temporal_anchor.anchor_humanity_proof(proof.to_dict())
+        proof.temporal_anchor = anchor.temporal_anchor
+
+        await self.cache.set(address, proof.to_dict(), "humanity")
+        return proof
     # ───────────────────────────────────────────────────────────────
     # Integração DAO (979) — verificação de eleitor
     # ───────────────────────────────────────────────────────────────
