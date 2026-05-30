@@ -94,7 +94,8 @@ def main():
     else:
         filepath = "linearidade_1_900_schema.yaml"
     validator = ArkheValidator()
-    validator.validate(filepath)
+    if not validator.validate(filepath):
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
