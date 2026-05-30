@@ -2422,3 +2422,19 @@ def test_substrate_944():
     assert data["Status"] == "Canonized"
     assert "glasswing_sentinel.py" in data["Files"]
     assert "Canonical_Seal" in data
+
+def test_pvac_900_linearidade():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/t/900_linearidade_1_900_canonizer/substrato_900_linearidade.py"], capture_output=True, text=True)
+    assert result.returncode == 0
+
+    path = result.stdout.split("Report written to: ")[1].strip()
+    with open(path, "r") as f:
+        data = json.load(f)
+
+    assert data["Substrate"] == "900-LINEARIDADE-1-900-CANONIZER"
+    assert data["Status"] == "CANONIZED_PROVISIONAL"
+    assert "linearidade_1_900.md" in data["Files"]
+    assert "linearidade_1_900_schema.yaml" in data["Files"]
+    assert "validate_linearidade.py" in data["Files"]
