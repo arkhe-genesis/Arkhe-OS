@@ -81,9 +81,9 @@ export default function PassportEmbed({
     setResult(null);
 
     try {
-      // 1. Verificar humanidade via Passport Gateway (989.x)
+// 1. Verificar humanidade via Passport Gateway (989.x)
       const humanityRes = await fetch(
-        `${apiBaseUrl}/identity/passport?address=${address}${orcidId ? `&orcid_id=${orcidId}` : ''}`
+        `${apiBaseUrl}/identity/passport?address=${encodeURIComponent(address)}${orcidId ? `&orcid_id=${encodeURIComponent(orcidId)}` : ''}`
       );
 
       if (!humanityRes.ok) {
@@ -92,16 +92,16 @@ export default function PassportEmbed({
 
       const humanityData = await humanityRes.json();
 
-      // 2. Verificar Proof of Clean Hands (989.x.1)
+// 2. Verificar Proof of Clean Hands (989.x.1)
       const cleanHandsRes = await fetch(
-        `${apiBaseUrl}/clean-hands/check?address=${address}`
+        `${apiBaseUrl}/clean-hands/check?address=${encodeURIComponent(address)}`
       );
 
       const cleanHandsData = cleanHandsRes.ok ? await cleanHandsRes.json() : { risk_level: 'unknown' };
 
-      // 3. Verificar se pode votar na DAO (979)
+// 3. Verificar se pode votar na DAO (979)
       const daoRes = await fetch(
-        `${apiBaseUrl}/dao/verify-voter?address=${address}`
+        `${apiBaseUrl}/dao/verify-voter?address=${encodeURIComponent(address)}`
       );
 
       const daoData = daoRes.ok ? await daoRes.json() : { can_vote: false };

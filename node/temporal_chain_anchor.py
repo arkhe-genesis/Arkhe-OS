@@ -195,7 +195,16 @@ class TemporalChainAnchor:
             timestamp=anchor.timestamp,
         )
         recomputed.compute_anchor()
-        return recomputed.temporal_anchor == anchor.temporal_anchor
+if recomputed.temporal_anchor != anchor.temporal_anchor:
+            return False
+
+        # If signing is enabled, the signature MUST be present and valid
+        if self.verify_key:
+            if not anchor.orcid_signature:
+                return False
+            return self.verify_signature(recomputed.temporal_anchor, anchor.orcid_signature, self.verify_key.encode().hex())
+
+        return True
 
     def get_chain_summary(self) -> Dict[str, Any]:
         return {
