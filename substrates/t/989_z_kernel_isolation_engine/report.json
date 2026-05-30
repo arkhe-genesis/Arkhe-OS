@@ -1,0 +1,9 @@
+{
+    "Substrate": "989.z-KERNEL-ISOLATION-ENGINE",
+    "Status": "CANONIZED_PROVISIONAL",
+    "Canonical_Seal": "0ad282f76c30c4a0596439cf068729749713513f1ac37a3998790a2ab83aef1e",
+    "Files": {
+        "kernel_isolation_engine.py": "",
+        "substrate.toml": "W3N1YnN0cmF0ZV0KaWQgPSAiOTg5LnoiCm5hbWUgPSAiS2VybmVsIElzb2xhdGlvbiBFbmdpbmUiCg=="
+    }
+}
