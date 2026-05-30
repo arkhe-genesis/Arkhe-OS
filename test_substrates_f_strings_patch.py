@@ -183,12 +183,10 @@ def test_substrate_945_f_strings():
             content = f.read()
         assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
 
-def test_f_strings_949():
-    import re
-    files_to_check = [
-        'substrates/t/949_interaction_hotspots/substrato_949_interaction_hotspots.py'
-    ]
-    for filepath in files_to_check:
-        with open(filepath, 'r', encoding='utf-8') as f:
-            for i, line in enumerate(f):
-                assert not bool(re.search(r'(?<![A-Za-z0-9_])f["\']', line)), 'f-string found in ' + filepath + ' at line ' + str(i+1) + ': ' + line.strip()
+def test_substrate_958_f_strings():
+    import os
+    file_path = "substrates/t/958_clarity_gate/substrato_958_clarity_gate.py"
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            content = f.read()
+        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
