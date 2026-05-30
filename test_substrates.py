@@ -2726,3 +2726,8 @@ def test_substrate_989_passport_gateway():
     assert report["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
     assert "Files" in report
     assert "passport_gateway.py" in report["Files"]
+    assert "desci_nodes_bridge.py" in report["Files"]
+    assert "distributed_cache.py" in report["Files"]
+    assert "proof_of_clean_hands.py" in report["Files"]
+    assert "temporal_chain_anchor.py" in report["Files"]
+    assert "PassportEmbed.jsx" in report["Files"]
