@@ -70,6 +70,7 @@ export default function PassportEmbed({
 
     // Removed meaningless Clarity-Gate check on EVM address
     // (If text validation is needed, it must be applied to user-provided descriptive text, not a hex address)
+    setClarityScore(1);
 
     setLoading(true);
     setError(null);
