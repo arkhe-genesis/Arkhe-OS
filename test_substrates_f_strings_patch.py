@@ -274,3 +274,11 @@ def test_no_f_strings_972():
     with open("substrates/t/972_internet_cathedral/substrato_972_internet_cathedral.py", "r") as f:
         content = f.read()
     assert re.search(r"f['\"]", content) is None
+
+def test_substrate_989_f_strings():
+    import os
+    file_path = "substrates/t/989_passport_gateway/substrato_989_passport_gateway.py"
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            content = f.read()
+        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
