@@ -55,13 +55,7 @@ class APIGateway:
                         await gw.stop()
                 try:
                     proof = loop.run_until_complete(_run_checks())
-                    self.send_json(200, {
-                        "address": proof.address,
-                        "is_human": proof.is_human,
-                        "score": proof.score,
-                        "stamps": proof.stamps,
-                        "orcid_verified": proof.orcid_verified,
-                    })
+                    self.send_json(200, proof.to_dict())
                 except Exception as e:
                     self.send_error(500, str(e))
                 finally:
