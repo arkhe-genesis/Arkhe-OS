@@ -2566,3 +2566,78 @@ def test_954_axiarchy():
     assert "axiarchy.py" in data["Files"]
     assert "axiarchy_954.lean" in data["Files"]
     assert "substrate.toml" in data["Files"]
+
+def test_substrate_976():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/976_chainlink_oracle_bridge/substrato_976.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    data = json.loads(result.stdout)
+    assert data["Substrate"] == "976"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "substrate_976.py" in data["Files"]
+    assert "substrate.toml" in data["Files"]
+
+def test_substrate_977():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/977_oracle_consciousness_integration/substrato_977.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    data = json.loads(result.stdout)
+    assert data["Substrate"] == "977"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "substrate_977.py" in data["Files"]
+    assert "substrate.toml" in data["Files"]
+
+def test_substrate_978():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/978_cathedral_as_oracle/substrato_978.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    data = json.loads(result.stdout)
+    assert data["Substrate"] == "978"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "substrate_978.py" in data["Files"]
+    assert "substrate.toml" in data["Files"]
+
+def test_substrate_979():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/979_cathedral_dao_governance/substrato_979.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    data = json.loads(result.stdout)
+    assert data["Substrate"] == "979"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "substrate_979.py" in data["Files"]
+    assert "substrate.toml" in data["Files"]
+
+def test_substrate_980():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/980_autonomous_economic_agent/substrato_980.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    data = json.loads(result.stdout)
+    assert data["Substrate"] == "980"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "substrate_980.py" in data["Files"]
+    assert "substrate.toml" in data["Files"]

@@ -190,3 +190,38 @@ def test_substrate_958_f_strings():
         with open(file_path, "r") as f:
             content = f.read()
         assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_976_f_strings():
+    import ast
+    with open('substrates/t/976_chainlink_oracle_bridge/substrato_976.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
+
+def test_977_f_strings():
+    import ast
+    with open('substrates/t/977_oracle_consciousness_integration/substrato_977.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
+
+def test_978_f_strings():
+    import ast
+    with open('substrates/t/978_cathedral_as_oracle/substrato_978.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
+
+def test_979_f_strings():
+    import ast
+    with open('substrates/t/979_cathedral_dao_governance/substrato_979.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
+
+def test_980_f_strings():
+    import ast
+    with open('substrates/t/980_autonomous_economic_agent/substrato_980.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)

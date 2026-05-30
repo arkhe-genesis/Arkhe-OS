@@ -1,0 +1,6 @@
+[substrate]
+id = "976"
+name = "CHAINLINK-ORACLE-BRIDGE"
+description = "Chainlink Oracle Bridge"
+version = "1.0.0"
+author = "Arkhe OS"
