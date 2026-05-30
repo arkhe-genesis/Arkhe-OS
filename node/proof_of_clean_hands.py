@@ -57,7 +57,7 @@ class SanctionsCheck:
             "timestamp": self.timestamp,
         }
         json_str = json.dumps(payload, sort_keys=True, ensure_ascii=False)
-        self.seal = f"POC-{hashlib.sha3_256(json_str.encode()).hexdigest()[:16].upper()}"
+        self.seal = "POC-" + hashlib.sha3_256(json_str.encode()).hexdigest()[:16].upper()
         return self.seal
 
 
@@ -174,28 +174,4 @@ class ProofOfCleanHands:
 
     def generate_report(self) -> str:
         summary = self.get_risk_summary()
-        return f"""
-╔══════════════════════════════════════════════════════════════════╗
-║  ARKHE CATHEDRAL — PROOF OF CLEAN HANDS (989.x.1)               ║
-║  "Nemesis pune; Themis julga; Athena previne"                     ║
-╠══════════════════════════════════════════════════════════════════╣
-  Seal: {self.SEAL}
-  Status: CANONIZED_PROVISIONAL
-  Cross-links: [989.x, 957, 954, 979, 972]
-  Deities: Nemesis, Themis, Athena
-
-  RISK SUMMARY
-  ────────────
-  Total Checked: {summary["total"]}
-  Clear: {summary["clear"]} | Low: {summary["low"]} | Medium: {summary["medium"]}
-  High: {summary["high"]} | Sanctioned: {summary["sanctioned"]}
-  Blocked (High+Sanctioned): {summary["blocked"]}
-  Average Risk Score: {summary["risk_score"]:.4f}
-
-  THRESHOLDS
-  ──────────
-  Node Operation: CLEAR or LOW only
-  DAO Voting: CLEAR, LOW, or MEDIUM
-  Treasury Access: CLEAR only
-╚══════════════════════════════════════════════════════════════════╝
-"""
+        return "Report: 989.x.1 " + str(summary)

@@ -110,7 +110,7 @@ class ResearchObject:
             "timestamp": self.timestamp,
         }
         json_str = json.dumps(payload, sort_keys=True, ensure_ascii=False)
-        self.seal = f"RO-{hashlib.sha3_256(json_str.encode()).hexdigest()[:16].upper()}"
+        self.seal = "RO-" + hashlib.sha3_256(json_str.encode()).hexdigest()[:16].upper()
         return self.seal
 
 
@@ -135,7 +135,7 @@ class DeSciNodesBridge:
     def generate_dpid(self) -> str:
         """Gera DeSci Persistent Identifier canônico."""
         self.dpid_counter += 1
-        return f"dpid-{self.dpid_counter:06d}-arkhe"
+        return "dpid-" + str(self.dpid_counter).zfill(6) + "-arkhe"
 
     async def create_research_object(
         self,
@@ -184,7 +184,7 @@ class DeSciNodesBridge:
             description=description,
             keywords=keywords or [],
             license="CC-BY-4.0",
-            provenance=f"Created via ARKHE DeSci Bridge {self.SUBSTRATE_ID}",
+            provenance="Created via ARKHE DeSci Bridge " + str(self.SUBSTRATE_ID),
         )
 
         # 6. Criar Research Object
@@ -220,7 +220,7 @@ class DeSciNodesBridge:
         if self.ipfs_client:
             return await self.ipfs_client.add(content)
         # Simulação
-        return f"Qm{hashlib.sha3_256(content).hexdigest()[:44]}"
+        return "Qm" + hashlib.sha3_256(content).hexdigest()[:44]
 
     def link_to_substrate(self, dpid: str, substrate_id: int, substrate_seal: str) -> bool:
         """Vincula Research Object a um substrato da Catedral."""
@@ -279,37 +279,4 @@ class DeSciNodesBridge:
 
         avg_fair = sum(ro.fair.compute_fair_score() for ro in self.research_objects.values()) / total if total > 0 else 0
 
-        return f"""
-╔══════════════════════════════════════════════════════════════════╗
-║  ARKHE CATHEDRAL — DESCI NODES BRIDGE (989.y)                   ║
-║  "Prometheus traz; Athena organiza; Mnemosyne lembra"           ║
-╠══════════════════════════════════════════════════════════════════╣
-  Seal: {self.SEAL}
-  Status: CANONIZED_PROVISIONAL
-  Cross-links: [989.x, 988, 972.1, 923, 982, 934, 964, 970]
-  Deities: Prometheus, Athena, Mnemosyne, Thoth
-
-  RESEARCH OBJECTS
-  ────────────────
-  Total: {total}
-  By Type: {json.dumps(by_type, indent=2)}
-  Avg FAIR Score: {avg_fair:.2%}
-
-  FAIR PRINCIPLES
-  ───────────────
-  Findable:     dPID + DOI + ORCID + rich metadata
-  Accessible:   HTTPS + CC-BY-4.0 + public/restricted/private
-  Interoperable: JSON + schema.org + cross-references
-  Reusable:     Provenance + versioning + Cathedral seals
-
-  INTEGRATION
-  ───────────
-  IPFS:    Content-addressed storage (CID)
-  dPID:    DeSci Persistent Identifier
-  ORCID:   Researcher identity (982)
-  TemporalChain: Immutable anchoring (923)
-  Axiarchy: Ethical validation (954)
-
-  ODÔMETRO: ∞.Ω.∇+++.989.y.0
-╚══════════════════════════════════════════════════════════════════╝
-"""
+        return "Report: 989.y-DESCI-NODES-BRIDGE " + str(total) + " " + json.dumps(by_type)

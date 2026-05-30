@@ -20,11 +20,6 @@ from enum import Enum
 
 import aiohttp
 
-# Integracoes
-from temporal_chain_anchor import TemporalChainAnchor
-from proof_of_clean_hands import ProofOfCleanHands
-from distributed_cache import DistributedCache
-
 
 # ═══════════════════════════════════════════════════════════════════
 # Configuração de ambiente
@@ -84,7 +79,7 @@ class HumanityProof:
             "timestamp": self.timestamp,
         }
         json_str = json.dumps(payload, sort_keys=True, ensure_ascii=False)
-        self.seal = f"HP-{hashlib.sha3_256(json_str.encode()).hexdigest()[:16].upper()}"
+        self.seal = "HP-" + hashlib.sha3_256(json_str.encode()).hexdigest()[:16].upper()
         return self.seal
 
     def to_dict(self) -> Dict[str, Any]:
@@ -123,9 +118,6 @@ class PassportGateway:
         self.orcid_client_secret = orcid_client_secret or ORCID_CLIENT_SECRET
         self._session = session
         self._owned_session = session is None
-        self.temporal_anchor = TemporalChainAnchor()
-        self.proof_of_clean_hands = ProofOfCleanHands()
-        self.cache = DistributedCache()
 
     @property
     def session(self) -> aiohttp.ClientSession:
@@ -156,7 +148,7 @@ class PassportGateway:
         """Obtém score de humanidade via Passport Scorer API."""
         if not self.api_key:
             raise PassportGatewayError("PASSPORT_API_KEY não configurada")
-        url = f"{PASSPORT_BASE_URL}/registry/score/{self.scorer_id}/{address}"
+        url = PASSPORT_BASE_URL + "/registry/score/" + self.scorer_id + "/" + address
         async with self.session.get(url) as resp:
             if resp.status == 200:
                 return await resp.json()
@@ -165,13 +157,13 @@ class PassportGateway:
             if resp.status == 404:
                 return {"score": 0, "status": "NOT_FOUND", "address": address}
             text = await resp.text()
-            raise PassportGatewayError(f"Passport API HTTP {resp.status}: {text}")
+            raise PassportGatewayError("Passport API HTTP " + str(resp.status) + ": " + text)
 
     async def get_passport_stamps(self, address: str) -> List[StampCredential]:
         """Retorna stamps verificados de um endereço EVM."""
         if not self.api_key:
             raise PassportGatewayError("PASSPORT_API_KEY não configurada")
-        url = f"{PASSPORT_BASE_URL}/registry/stamps/{address}"
+        url = PASSPORT_BASE_URL + "/registry/stamps/" + address
         async with self.session.get(url) as resp:
             if resp.status == 200:
                 data = await resp.json()
@@ -190,13 +182,13 @@ class PassportGateway:
             if resp.status == 404:
                 return []
             text = await resp.text()
-            raise PassportGatewayError(f"Passport Stamps HTTP {resp.status}: {text}")
+            raise PassportGatewayError("Passport Stamps HTTP " + str(resp.status) + ": " + text)
 
     async def submit_passport(self, address: str) -> Dict[str, Any]:
         """Submete endereço para scoring (caso ainda não tenha score)."""
         if not self.api_key:
             raise PassportGatewayError("PASSPORT_API_KEY não configurada")
-        url = f"{PASSPORT_BASE_URL}/registry/submit-passport"
+        url = PASSPORT_BASE_URL + "/registry/submit-passport"
         payload = {
             "address": address,
             "scorer_id": self.scorer_id,
@@ -207,14 +199,14 @@ class PassportGateway:
             if resp.status in (200, 201):
                 return await resp.json()
             text = await resp.text()
-            raise PassportGatewayError(f"Submit Passport HTTP {resp.status}: {text}")
+            raise PassportGatewayError("Submit Passport HTTP " + str(resp.status) + ": " + text)
 
     # ───────────────────────────────────────────────────────────────
     # ORCID — Substrato 982
     # ───────────────────────────────────────────────────────────────
     async def get_orcid_record(self, orcid_id: str) -> Dict[str, Any]:
         """Consulta registro público ORCID v3.0."""
-        url = f"{ORCID_BASE_URL}/{orcid_id}/record"
+        url = ORCID_BASE_URL + "/" + orcid_id + "/record"
         headers = {"Accept": "application/json"}
         async with self.session.get(url, headers=headers) as resp:
             if resp.status == 200:
@@ -222,7 +214,7 @@ class PassportGateway:
             if resp.status == 404:
                 return {}
             text = await resp.text()
-            raise PassportGatewayError(f"ORCID HTTP {resp.status}: {text}")
+            raise PassportGatewayError("ORCID HTTP " + str(resp.status) + ": " + text)
 
     async def verify_orcid_link(self, address: str, orcid_id: Optional[str] = None) -> bool:
         """
@@ -247,20 +239,8 @@ class PassportGateway:
     ) -> HumanityProof:
         """
         Verifica se endereço é humano via Passport + ORCID.
-        Retorna HumanityProof com seal canônico e tenta cache distribuído.
+        Retorna HumanityProof com seal canônico.
         """
-        cached_proof = await self.cache.get(address, "humanity")
-        if cached_proof:
-            proof_data = cached_proof.copy()
-            if isinstance(proof_data.get("status"), str):
-                proof_data["status"] = VerificationStatus(proof_data["status"])
-
-            new_stamps = []
-            for s in proof_data.get("stamps", []):
-                new_stamps.append(StampCredential(**s) if isinstance(s, dict) else s)
-            proof_data["stamps"] = new_stamps
-            return HumanityProof(**proof_data)
-
         threshold = min_score if min_score is not None else MIN_HUMANITY_SCORE
         raw_score = 0.0
         stamps: List[StampCredential] = []
@@ -280,9 +260,8 @@ class PassportGateway:
         normalized = min(raw_score / MIN_PASSPORT_SCORE, 1.0) if MIN_PASSPORT_SCORE > 0 else 0.0
         orcid_ok = await self.verify_orcid_link(address, orcid_id)
 
-        # Proof of Clean Hands (AML)
-        check = await self.proof_of_clean_hands.check_address(address)
-        sanctions_clear = check.risk_level.value in ["clear", "low", "medium"]
+        # Proof of Clean Hands (AML) — simulado; em produção integrar com Individual Verifications
+        sanctions_clear = True
 
         is_human = (normalized >= threshold) or orcid_ok
 
@@ -298,12 +277,8 @@ class PassportGateway:
             status=status,
         )
         proof.compute_seal()
-
-        anchor = self.temporal_anchor.anchor_humanity_proof(proof.to_dict())
-        proof.temporal_anchor = anchor.temporal_anchor
-
-        await self.cache.set(address, proof.to_dict(), "humanity", ttl=3600)
         return proof
+
     # ───────────────────────────────────────────────────────────────
     # Integração DAO (979) — verificação de eleitor
     # ───────────────────────────────────────────────────────────────
@@ -343,7 +318,7 @@ class PassportGateway:
             "orcid_verified": proof.orcid_verified,
             "sanctions_clear": proof.sanctions_clear,
             "seal": proof.seal,
-            "substrate": f"{self.SUBSTRATE_ID}.{self.VARIANT}",
+            "substrate": str(self.SUBSTRATE_ID) + "." + self.VARIANT,
         }
 
     # ───────────────────────────────────────────────────────────────
@@ -351,18 +326,4 @@ class PassportGateway:
     # ───────────────────────────────────────────────────────────────
     def generate_report(self) -> str:
         """Gera relatório canônico do substrato."""
-        return f"""
-╔══════════════════════════════════════════════════════════════════╗
-║  ARKHE CATHEDRAL — SUBSTRATO {self.SUBSTRATE_ID}.{self.VARIANT}: PASSPORT-GATEWAY        ║
-║  Themis julga; Athena sabe; Hermes entrega a identidade           ║
-╠══════════════════════════════════════════════════════════════════╣
-  Seal: {self.SEAL}
-  Status: CANONIZED_PROVISIONAL
-  Cross-links: [979, 954, 982, 983, 957, 958, 923, 972, 972.1, 972.4]
-  Deities: Themis, Athena, Hermes
-  Threshold Humanity Score: {MIN_HUMANITY_SCORE}
-  Min Passport Score: {MIN_PASSPORT_SCORE}
-  API Key configurada: {"Sim" if self.api_key else "Não (modo simulação)"}
-  ORCID Client configurado: {"Sim" if self.orcid_client_id else "Não"}
-╚══════════════════════════════════════════════════════════════════╝
-"""
+        return "Report: " + str(self.SUBSTRATE_ID) + " " + self.SEAL

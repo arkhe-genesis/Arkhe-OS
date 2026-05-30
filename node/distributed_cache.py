@@ -15,6 +15,7 @@ from typing import Dict, Optional, Any, Tuple
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
+from collections import OrderedDict
 
 
 class CacheLayer(Enum):
@@ -51,7 +52,7 @@ class CacheEntry:
             "value_hash": hashlib.sha3_256(json.dumps(self.value, sort_keys=True).encode()).hexdigest()[:16],
         }
         json_str = json.dumps(payload, sort_keys=True, ensure_ascii=False)
-        self.seal = f"CACHE-{hashlib.sha3_256(json_str.encode()).hexdigest()[:16].upper()}"
+        self.seal = "CACHE-" + hashlib.sha3_256(json_str.encode()).hexdigest()[:16].upper()
         return self.seal
 
 
@@ -67,7 +68,7 @@ class DistributedCache:
     MAX_MEMORY_ENTRIES = 1000
 
     def __init__(self, ipfs_client=None, nostr_relay=None):
-        self.memory_cache: Dict[str, CacheEntry] = {}
+        self.memory_cache: OrderedDict[str, CacheEntry] = OrderedDict()
         self.ipfs_client = ipfs_client  # Stub para IPFSStorage (972.1)
         self.nostr_relay = nostr_relay   # Stub para NostrRelay (972.1)
         self.hits = 0
@@ -77,7 +78,7 @@ class DistributedCache:
 
     def _make_key(self, address: str, check_type: str = "humanity") -> str:
         """Gera chave canônica para cache."""
-        return f"{check_type}:{address.lower()}"
+        return check_type + ":" + address.lower()
 
     async def get(self, address: str, check_type: str = "humanity") -> Optional[Any]:
         """
@@ -95,9 +96,7 @@ class DistributedCache:
             if not entry.is_expired:
                 self.hits += 1
                 # Mover para o fim (LRU)
-                # self.memory_cache.move_to_end(key) # dict has no move_to_end in old python, let's keep it simple
-                val = self.memory_cache.pop(key)
-                self.memory_cache[key] = val
+                self.memory_cache.move_to_end(key)
                 return entry.value
             else:
                 # Expirado — remover
@@ -206,8 +205,7 @@ class DistributedCache:
         # LRU eviction
         if len(self.memory_cache) > self.MAX_MEMORY_ENTRIES:
             # Remover o mais antigo (primeiro do dict)
-            oldest = next(iter(self.memory_cache))
-            del self.memory_cache[oldest]
+            self.memory_cache.popitem(last=False)
 
     async def _get_ipfs_cid(self, key: str) -> Optional[str]:
         """Stub: buscar CID do IPFS por chave."""
@@ -258,29 +256,4 @@ class DistributedCache:
 
     def generate_report(self) -> str:
         stats = self.get_stats()
-        return f"""
-╔══════════════════════════════════════════════════════════════════╗
-║  ARKHE CATHEDRAL — DISTRIBUTED CACHE (989.x.3)                  ║
-║  "Hermes entrega; Mnemosyne lembra; Iris espalha"               ║
-╠══════════════════════════════════════════════════════════════════╣
-  Seal: {self.SEAL}
-  Status: CANONIZED_PROVISIONAL
-  Cross-links: [989.x, 972.1, 923, 988]
-  Deities: Hermes, Mnemosyne, Iris
-
-  CONFIGURATION
-  ─────────────
-  Default TTL: {self.DEFAULT_TTL}s (5 min)
-  Max Memory: {self.MAX_MEMORY_ENTRIES} entries
-  Layers: Memory → IPFS → Nostr
-
-  STATISTICS
-  ──────────
-  Memory Entries: {stats["memory_entries"]}/{stats["memory_max"]}
-  Hits: {stats["hits"]} | Misses: {stats["misses"]}
-  Hit Rate: {stats["hit_rate"]:.1%}
-  IPFS Pins: {stats["ipfs_pins"]}
-  Nostr Publishes: {stats["nostr_publishes"]}
-  Avg Entry Age: {stats["avg_entry_age"]}s
-╚══════════════════════════════════════════════════════════════════╝
-"""
+        return "Report: 989.x.3 " + str(stats)

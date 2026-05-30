@@ -68,40 +68,36 @@ export default function PassportEmbed({
       return;
     }
 
-    // Clarity-Gate check
-    const clarity = checkClarity(address);
-    setClarityScore(clarity.score);
-    if (!clarity.passed) {
-      setError('Clarity-Gate (958): Endereço contém termos proibidos ou não passou no teste de clareza.');
-      return;
-    }
+    // Removed meaningless Clarity-Gate check on EVM address
+    // (If text validation is needed, it must be applied to user-provided descriptive text, not a hex address)
+    setClarityScore(1);
 
     setLoading(true);
     setError(null);
     setResult(null);
 
     try {
-// 1. Verificar humanidade via Passport Gateway (989.x)
+      // 1. Verificar humanidade via Passport Gateway (989.x)
       const humanityRes = await fetch(
-        `${apiBaseUrl}/identity/passport?address=${encodeURIComponent(address)}${orcidId ? `&orcid_id=${encodeURIComponent(orcidId)}` : ''}`
+        apiBaseUrl + "/identity/passport?address=" + address + (orcidId ? "&orcid_id=" + orcidId : "")
       );
 
       if (!humanityRes.ok) {
-        throw new Error(`Passport API error: ${humanityRes.status}`);
+        throw new Error("Passport API error: " + humanityRes.status);
       }
 
       const humanityData = await humanityRes.json();
 
-// 2. Verificar Proof of Clean Hands (989.x.1)
+      // 2. Verificar Proof of Clean Hands (989.x.1)
       const cleanHandsRes = await fetch(
-        `${apiBaseUrl}/clean-hands/check?address=${encodeURIComponent(address)}`
+        apiBaseUrl + "/clean-hands/check?address=" + address
       );
 
       const cleanHandsData = cleanHandsRes.ok ? await cleanHandsRes.json() : { risk_level: 'unknown' };
 
-// 3. Verificar se pode votar na DAO (979)
+      // 3. Verificar se pode votar na DAO (979)
       const daoRes = await fetch(
-        `${apiBaseUrl}/dao/verify-voter?address=${encodeURIComponent(address)}`
+        apiBaseUrl + "/dao/verify-voter?address=" + address
       );
 
       const daoData = daoRes.ok ? await daoRes.json() : { can_vote: false };
@@ -122,7 +118,7 @@ export default function PassportEmbed({
         clarityScore,
         timestamp: new Date().toISOString(),
         substrate: "989.x",
-        seal: `VERIFY-${humanityData.seal?.replace('HP-', '') || 'UNKNOWN'}`,
+        seal: "VERIFY-" + (humanityData.seal?.replace('HP-', '') || 'UNKNOWN'),
       };
 
       setResult(verificationResult);
@@ -182,7 +178,7 @@ export default function PassportEmbed({
       fontFamily: "'Cinzel', 'Georgia', serif",
       backgroundColor: t.bg,
       color: t.text,
-      border: `2px solid ${t.border}`,
+      border: "2px solid " + t.border,
       borderRadius: '8px',
       padding: '24px',
       maxWidth: '480px',
@@ -249,7 +245,7 @@ export default function PassportEmbed({
             padding: '10px 12px',
             backgroundColor: t.accent,
             color: t.text,
-            border: `1px solid ${t.border}`,
+            border: "1px solid " + t.border,
             borderRadius: '4px',
             fontFamily: "'Courier New', monospace",
             fontSize: '0.9rem',
@@ -278,7 +274,7 @@ export default function PassportEmbed({
             padding: '10px 12px',
             backgroundColor: t.accent,
             color: t.text,
-            border: `1px solid ${t.border}`,
+            border: "1px solid " + t.border,
             borderRadius: '4px',
             fontFamily: "'Courier New', monospace",
             fontSize: '0.9rem',
@@ -318,8 +314,8 @@ export default function PassportEmbed({
         <div style={{
           marginTop: '16px',
           padding: '12px',
-          backgroundColor: `${t.error}20`,
-          border: `1px solid ${t.error}`,
+          backgroundColor: t.error + "20",
+          border: "1px solid " + t.error,
           borderRadius: '4px',
           color: t.error,
           fontSize: '0.85rem',
@@ -334,7 +330,7 @@ export default function PassportEmbed({
           marginTop: '16px',
           padding: '16px',
           backgroundColor: t.accent,
-          border: `1px solid ${result.isHuman ? t.success : t.warning}`,
+          border: "1px solid " + (result.isHuman ? t.success : t.warning),
           borderRadius: '4px',
         }}>
           <h3 style={{
@@ -349,7 +345,7 @@ export default function PassportEmbed({
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
               <span>Score:</span>
               <span style={{ color: result.humanityScore >= 0.75 ? t.success : t.warning }}>
-                {(result.humanityScore * 100).toFixed(1)}%
+                {(result.humanityScore * 100).toFixed(1) + "%"}
               </span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
@@ -376,7 +372,7 @@ export default function PassportEmbed({
             <div style={{
               marginTop: '12px',
               paddingTop: '8px',
-              borderTop: `1px solid ${t.border}`,
+              borderTop: "1px solid " + t.border,
               fontSize: '0.7rem',
               opacity: 0.7,
               wordBreak: 'break-all',
