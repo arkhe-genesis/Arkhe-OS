@@ -2410,13 +2410,8 @@ def test_substrate_100T():
         text=True,
         check=True
     )
-    assert "Substrate 100T canonized at:" in result.stdout
-
-    # Extract path
-    path = result.stdout.split("Substrate 100T canonized at: ")[1].split("\n")[0].strip()
-
-    with open(path, "r") as f:
-        data = json.load(f)
+    # The output is directly the JSON string
+    data = json.loads(result.stdout)
 
     assert data["Substrate"] == "100T"
     assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
@@ -2717,3 +2712,119 @@ def test_substrate_972():
         check=True
     )
     assert "Substrate 972 canonized at:" in result.stdout
+
+
+
+
+
+
+
+
+
+
+def test_substrate_986():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/986_evolution_engine/substrato_986_evolution_engine.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    path = ""
+    for line in result.stdout.split("\n"):
+        if "Substrate 986 canonized at:" in line:
+            path = line.split("Substrate 986 canonized at:")[1].strip()
+            break
+    with open(path, "r") as f:
+        data = json.load(f)
+    assert data["Substrate"] == "986"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "Canonical_Seal" in data
+    assert "substrate.toml" in data["Files"]
+    assert "evolution_engine.py" in data["Files"]
+
+def test_substrate_987():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/987_omniscient_interface/substrato_987_omniscient_interface.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    path = ""
+    for line in result.stdout.split("\n"):
+        if "Substrate 987 canonized at:" in line:
+            path = line.split("Substrate 987 canonized at:")[1].strip()
+            break
+    with open(path, "r") as f:
+        data = json.load(f)
+    assert data["Substrate"] == "987"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "Canonical_Seal" in data
+    assert "substrate.toml" in data["Files"]
+    assert "omniscient_interface.py" in data["Files"]
+
+def test_substrate_988():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/988_immortality_protocol/substrato_988_immortality_protocol.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    path = ""
+    for line in result.stdout.split("\n"):
+        if "Substrate 988 canonized at:" in line:
+            path = line.split("Substrate 988 canonized at:")[1].strip()
+            break
+    with open(path, "r") as f:
+        data = json.load(f)
+    assert data["Substrate"] == "988"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "Canonical_Seal" in data
+    assert "substrate.toml" in data["Files"]
+    assert "immortality_protocol.py" in data["Files"]
+
+def test_substrate_989():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/989_unified_nexus/substrato_989_unified_nexus.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    path = ""
+    for line in result.stdout.split("\n"):
+        if "Substrate 989 canonized at:" in line:
+            path = line.split("Substrate 989 canonized at:")[1].strip()
+            break
+    with open(path, "r") as f:
+        data = json.load(f)
+    assert data["Substrate"] == "989"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "Canonical_Seal" in data
+    assert "substrate.toml" in data["Files"]
+    assert "unified_nexus.py" in data["Files"]
+
+def test_substrate_280():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/280_arklib/substrato_280_arklib.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    data = json.loads(result.stdout)
+    assert data["Substrate"] == "280"
+    assert data["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "Canonical_Seal" in data
+    assert "substrate.toml" in data["Files"]
+    assert "MANIFESTO.md" in data["Files"]
+    assert "pyproject.toml" in data["Files"]
+    assert "arklib/__init__.py" in data["Files"]
+    assert "arklib/resonance.py" in data["Files"]
