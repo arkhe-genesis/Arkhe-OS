@@ -274,3 +274,31 @@ def test_no_f_strings_972():
     with open("substrates/t/972_internet_cathedral/substrato_972_internet_cathedral.py", "r") as f:
         content = f.read()
     assert re.search(r"f['\"]", content) is None
+
+def test_no_fstrings_986():
+    import os
+    file_path = os.path.abspath('substrates/t/986_evolution_engine/substrato_986_evolution_engine.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    assert 'f"' not in content and "f'" not in content, "f-strings found in substrates/t/986_evolution_engine/substrato_986_evolution_engine.py"
+
+def test_no_fstrings_987():
+    import os
+    file_path = os.path.abspath('substrates/t/987_omniscient_interface/substrato_987_omniscient_interface.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    assert 'f"' not in content and "f'" not in content, "f-strings found in substrates/t/987_omniscient_interface/substrato_987_omniscient_interface.py"
+
+def test_no_fstrings_988():
+    import os
+    file_path = os.path.abspath('substrates/t/988_immortality_protocol/substrato_988_immortality_protocol.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    assert 'f"' not in content and "f'" not in content, "f-strings found in substrates/t/988_immortality_protocol/substrato_988_immortality_protocol.py"
+
+def test_no_fstrings_989():
+    import os
+    file_path = os.path.abspath('substrates/t/989_unified_nexus/substrato_989_unified_nexus.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    assert 'f"' not in content and "f'" not in content, "f-strings found in substrates/t/989_unified_nexus/substrato_989_unified_nexus.py"
