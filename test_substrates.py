@@ -2756,3 +2756,15 @@ def test_substrate_998():
         check=True
     )
     assert "Substrate 998 canonized at:" in result.stdout
+
+def test_substrate_1007_jules_training():
+    import subprocess
+    import json
+    import os
+    canonizer = "substrates/t/1007_jules_training/substrato_1007_jules_training.py"
+    assert os.path.exists(canonizer)
+    result = subprocess.run(["python3", canonizer], capture_output=True, text=True)
+    assert result.returncode == 0
+    output = result.stdout
+    report = json.loads(output)
+    assert report.get("status", "") in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]

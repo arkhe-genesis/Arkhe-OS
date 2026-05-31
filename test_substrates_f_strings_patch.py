@@ -255,3 +255,12 @@ def test_998_f_strings():
     with open(path2, "r", encoding="utf-8") as f:
         content = f.read()
     assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
+
+def test_f_strings_substrate_1007():
+    import os
+    canonizer = "substrates/t/1007_jules_training/substrato_1007_jules_training.py"
+    assert os.path.exists(canonizer)
+    with open(canonizer, "r") as f:
+        content = f.read()
+    assert 'f"' not in content
+    assert "f'" not in content
