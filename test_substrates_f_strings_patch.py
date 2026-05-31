@@ -234,10 +234,10 @@ def test_substrate_989_f_strings():
             content = f.read()
         assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
 
-def test_substrate_989_y_3_f_strings():
+def test_989_y_3_f_strings():
     import os
-    file_path = "substrates/t/989_y_3_full_100t_orchestrator/substrato_989_y_3_full_100t_orchestrator.py"
-    if os.path.exists(file_path):
-        with open(file_path, "r") as f:
-            content = f.read()
-        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+    import re
+    file_path = os.path.abspath('substrates/t/989_y_3_full_100t_orchestrator/substrato_989_y_3_full_100t_orchestrator.py')
+    with open(file_path, "r", encoding="utf-8") as file:
+        content = file.read()
+    assert re.search(r'\bf["\']', content) is None, f"Found f-strings in {file_path}"
