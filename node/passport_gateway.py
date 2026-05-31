@@ -217,16 +217,10 @@ class PassportGateway:
             raise PassportGatewayError("ORCID HTTP " + str(resp.status) + ": " + text)
 
     async def verify_orcid_link(self, address: str, orcid_id: Optional[str] = None) -> bool:
-        """
-        Verifica se endereço EVM está vinculado a ORCID.
-        Em produção: consulta TemporalChain (923) ou registro canônico.
-        """
-        # Stub para integração futura com substrato 982
         if orcid_id:
             record = await self.get_orcid_record(orcid_id)
             return bool(record)
-        # Fallback heurístico (demo / testes)
-        return address.startswith("0xAlice") or address.startswith("0xArchitect")
+        return False
 
     # ───────────────────────────────────────────────────────────────
     # Verificação canônica de humanidade
