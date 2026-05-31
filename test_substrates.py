@@ -2732,3 +2732,24 @@ def test_substrate_989_passport_gateway():
     assert "proof_of_clean_hands.py" in report["Files"]
     assert "temporal_chain_anchor.py" in report["Files"]
     assert "PassportEmbed.jsx" in report["Files"]
+
+def test_substrate_989_y_3_full_100t_orchestrator():
+    result = subprocess.run(
+        ["python3", "substrates/t/989_y_3_full_100t_orchestrator/substrato_989_y_3_full_100t_orchestrator.py"],
+        capture_output=True, text=True
+    )
+    assert result.returncode == 0
+    report = json.loads(result.stdout)
+    assert report["Substrate"] == "989.y.3-FULL-100T-ORCHESTRATOR"
+    assert report["Status"] == "CANONIZED_PROVISIONAL"
+    assert report["Canonical_Seal"] == "ORCH-100T-F3A4B5C6D7E8F901"
+    assert "Files" in report
+
+    files = report["Files"]
+    assert "full_100t_orchestrator.py" in files
+    assert "orchestrator_schema.yaml" in files
+    assert "decree_989y3.md" in files
+    assert "tests/test_orchestrator.py" in files
+    assert "requirements.txt" in files
+    assert "README.md" in files
+    assert "substrate.toml" in files
