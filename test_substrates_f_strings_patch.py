@@ -241,3 +241,17 @@ def test_989_y_3_f_strings():
     with open(file_path, "r", encoding="utf-8") as file:
         content = file.read()
     assert re.search(r'\bf["\']', content) is None, f"Found f-strings in {file_path}"
+
+def test_998_f_strings():
+    import os
+    import re
+    # Check that f-strings are strictly forbidden in the source
+    path = "substrates/t/998_recursive_mutation_engine/recursive_mutation_engine.py"
+    with open(path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
+
+    path2 = "substrates/t/998_recursive_mutation_engine/substrato_998_recursive_mutation_engine.py"
+    with open(path2, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"

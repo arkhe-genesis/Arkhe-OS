@@ -2746,3 +2746,13 @@ def test_substrate_989_y_3_full_100t_orchestrator():
     assert report["Substrate"] == "989.y.3"
     assert report["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
     assert report["Canonical_Seal"] == "ORCH-100T-F3A4B5C6D7E8F901"
+
+def test_substrate_998():
+    import subprocess
+    result = subprocess.run(
+        ["python3", "substrates/t/998_recursive_mutation_engine/substrato_998_recursive_mutation_engine.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    assert "Substrate 998 canonized at:" in result.stdout
