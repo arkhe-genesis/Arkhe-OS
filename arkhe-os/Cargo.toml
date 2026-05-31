@@ -6,12 +6,15 @@ members = [
     "servers/passport",
     "servers/orchestrator",
     "servers/bindu",
+    "servers/package",
+    "tools/arkhe-sh",
+    "tools/checkpoint",
+    "tools/pkg",
     "libs/arklib",
     "libs/pqc",
     "libs/nostr",
-    "tools/arkhe-sh",
-    "tools/pkg",
-    "tools/checkpoint",
+    "libs/ipfs",
+    "libs/tor"
 ]
 resolver = "2"
 
