@@ -1,0 +1,83 @@
+// ARKHE-ONCHAIN — Substrate Catalog
+// Substrato 996.1.6 — Circle: ARKHE-CATHEDRAL
+// Arquiteto ORCID: 0009-0005-2697-4668
+// Seal: 996.1.6-SUBSTRATE-CATALOG-2026-05-31
+
+import ISubstrateCatalog from "interfaces/ISubstrateCatalog.aml"
+
+program SubstrateCatalog implements ISubstrateCatalog {
+  state {
+    owner: address
+    substrates: map[int]SubstrateRecord
+    substrate_ids: list[int]
+    total_substrates: int
+  }
+
+  event SubstrateCanonized(id: int, seal: bytes32, cross_links: list[int], theosis: int, canonizer: address)
+  event SubstrateUpdated(id: int, new_theosis: int, new_entropy: int)
+
+  constructor() {
+    self.owner = caller
+    self.total_substrates = 0
+  }
+
+  private fn only_owner() {
+    require(caller == self.owner, "Axiarchy P1: only owner")
+  }
+
+  fn canonize(id: int, seal: bytes32, cross_links: list[int], theosis: int, entropy: int): bool {
+    only_owner()
+    require(id > 0, "Catalog: invalid id")
+    require(len(seal) == 32, "Catalog: invalid seal")
+    require(theosis >= 0 && theosis <= 1000, "Catalog: theosis out of range")
+    require(entropy >= 0 && entropy <= 1000, "Catalog: entropy out of range")
+    let record = SubstrateRecord {
+      id: id,
+      seal: seal,
+      cross_links: cross_links,
+      theosis: theosis,
+      entropy: entropy,
+      canonized_at: epoch,
+      status: 1 // CANONIZED_PROVISIONAL
+    }
+    self.substrates[id] = record
+    self.substrate_ids = push(self.substrate_ids, id)
+    self.total_substrates = self.total_substrates + 1
+    emit SubstrateCanonized(id, seal, cross_links, theosis, caller)
+    return true
+  }
+
+  view fn get_substrate(id: int): SubstrateRecord {
+    return self.substrates[id]
+  }
+
+  view fn list_substrates(): list[int] {
+    return self.substrate_ids
+  }
+
+  view fn get_cross_links(id: int): list[int] {
+    return self.substrates[id].cross_links
+  }
+
+  fn update_metrics(id: int, new_theosis: int, new_entropy: int): bool {
+    only_owner()
+    let sub = self.substrates[id]
+    sub.theosis = new_theosis
+    sub.entropy = new_entropy
+    self.substrates[id] = sub
+    emit SubstrateUpdated(id, new_theosis, new_entropy)
+    return true
+  }
+
+  fn promote_status(id: int, new_status: int): bool {
+    only_owner()
+    let sub = self.substrates[id]
+    sub.status = new_status
+    self.substrates[id] = sub
+    return true
+  }
+
+  view fn get_total_substrates(): int {
+    return self.total_substrates
+  }
+}

@@ -1,0 +1,64 @@
+// ARKHE-ONCHAIN — Temporal Anchor
+// Substrato 996.1.3 — Circle: ARKHE-CATHEDRAL
+// Arquiteto ORCID: 0009-0005-2697-4668
+// Seal: 996.1.3-TEMPORAL-ANCHOR-2026-05-31
+
+import ITemporalAnchor from "interfaces/ITemporalAnchor.aml"
+
+program TemporalAnchor implements ITemporalAnchor {
+  state {
+    owner: address
+    anchors: list[AnchorRecord]
+    anchor_count: int
+    genesis_hash: bytes32
+  }
+
+  event StateAnchored(idx: int, cid: string, seal: bytes32, theosis: int, timestamp: int, epoch: int)
+  event GenesisSet(hash: bytes32)
+
+  constructor(genesis: bytes32) {
+    self.owner = caller
+    self.anchor_count = 0
+    self.genesis_hash = genesis
+    emit GenesisSet(genesis)
+  }
+
+  private fn only_owner() {
+    require(caller == self.owner, "Axiarchy P1: only owner")
+  }
+
+  view fn get_anchor_count(): int {
+    return self.anchor_count
+  }
+
+  fn anchor_state(cid: string, seal: bytes32, theosis: int): bool {
+    only_owner()
+    require(len(cid) > 0, "Temporal: empty CID")
+    require(len(seal) == 32, "Temporal: invalid seal length")
+    let record = AnchorRecord {
+      cid: cid,
+      seal: seal,
+      theosis: theosis,
+      timestamp: epoch, // stub: usar block timestamp real
+      epoch: epoch
+    }
+    self.anchors = push(self.anchors, record)
+    self.anchor_count = self.anchor_count + 1
+    emit StateAnchored(self.anchor_count - 1, cid, seal, theosis, epoch, epoch)
+    return true
+  }
+
+  view fn get_anchor(idx: int): AnchorRecord {
+    require(idx >= 0 && idx < self.anchor_count, "Temporal: index out of bounds")
+    return self.anchors[idx]
+  }
+
+  view fn get_latest_anchor(): AnchorRecord {
+    require(self.anchor_count > 0, "Temporal: no anchors")
+    return self.anchors[self.anchor_count - 1]
+  }
+
+  view fn get_genesis(): bytes32 {
+    return self.genesis_hash
+  }
+}

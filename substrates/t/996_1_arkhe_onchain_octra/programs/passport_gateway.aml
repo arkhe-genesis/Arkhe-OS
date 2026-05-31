@@ -1,0 +1,91 @@
+// ARKHE-ONCHAIN — Passport Gateway
+// Substrato 996.1.4 — Circle: ARKHE-CATHEDRAL
+// Arquiteto ORCID: 0009-0005-2697-4668
+// Seal: 996.1.4-PASSPORT-GATEWAY-2026-05-31
+
+import IPassportGateway from "interfaces/IPassportGateway.aml"
+
+program PassportGateway implements IPassportGateway {
+  state {
+    owner: address
+    identities: map[address]IdentityRecord
+    threshold: int
+    total_verified: int
+  }
+
+  struct IdentityRecord {
+    encrypted_passport: bytes
+    orcid_hash: bytes32
+    score: int
+    verified: bool
+    revoked: bool
+    registered_at: int
+  }
+
+  event IdentityRegistered(addr: address, orcid_hash: bytes32, score: int)
+  event IdentityRevoked(addr: address, reason: string)
+  event ThresholdChanged(old: int, new: int)
+
+  constructor(min_score: int) {
+    self.owner = caller
+    self.threshold = min_score
+    self.total_verified = 0
+  }
+
+  private fn only_owner() {
+    require(caller == self.owner, "Axiarchy P1: only owner")
+  }
+
+  fn register_identity(encrypted_passport: bytes, orcid_hash: bytes32): bool {
+    require(len(encrypted_passport) > 0, "Passport: empty passport")
+    require(len(orcid_hash) == 32, "Passport: invalid ORCID hash")
+    // Em Octra real, o score seria computado via HFHE sobre dados criptografados
+    let score = 50 // stub: score padrão
+    let record = IdentityRecord {
+      encrypted_passport: encrypted_passport,
+      orcid_hash: orcid_hash,
+      score: score,
+      verified: score >= self.threshold,
+      revoked: false,
+      registered_at: epoch
+    }
+    self.identities[caller] = record
+    if score >= self.threshold {
+      self.total_verified = self.total_verified + 1
+    }
+    emit IdentityRegistered(caller, orcid_hash, score)
+    return true
+  }
+
+  view fn is_human(addr: address): bool {
+    let id = self.identities[addr]
+    return id.verified && !id.revoked
+  }
+
+  view fn get_score(addr: address): int {
+    return self.identities[addr].score
+  }
+
+  fn revoke_identity(addr: address): bool {
+    only_owner()
+    let id = self.identities[addr]
+    require(id.verified, "Passport: not verified")
+    id.revoked = true
+    self.identities[addr] = id
+    self.total_verified = self.total_verified - 1
+    emit IdentityRevoked(addr, "Axiarchy P7: identity violation")
+    return true
+  }
+
+  fn set_threshold(new_threshold: int): bool {
+    only_owner()
+    let old = self.threshold
+    self.threshold = new_threshold
+    emit ThresholdChanged(old, new_threshold)
+    return true
+  }
+
+  view fn get_total_verified(): int {
+    return self.total_verified
+  }
+}
