@@ -4,6 +4,7 @@
 
 [bits 64]
 global _start
+;
 
 section .text
 _start:
@@ -22,7 +23,7 @@ _start:
     call setup_paging
 
     ; Saltar para o entry point do kernel
-    jmp kernel_entry
+    hlt
 
 load_kernel_from_ipfs:
     ; Lógica de carregamento do IPFS
@@ -40,6 +41,5 @@ setup_paging:
     ; Lógica de configuração de paginação
     ret
 
-kernel_entry:
-    ; Ponto de entrada do kernel
-    hlt
+section .bss
+    resb 8192

@@ -1,5 +1,4 @@
 #![no_std]
-#![no_main]
 
 use core::panic::PanicInfo;
 
@@ -9,9 +8,10 @@ mod syscalls;
 mod ipc;
 mod isolation;
 mod temporal;
+mod axiarchy;
 
 #[no_mangle]
-pub extern "C" fn _start() -> ! {
+pub extern "C" fn kmain() -> ! {
     loop {}
 }
 
