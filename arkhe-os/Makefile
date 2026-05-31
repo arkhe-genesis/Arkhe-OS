@@ -1,19 +1,13 @@
-# ARKHE OS Main Makefile
-all: kernel userspace
+# Makefile para ARKHE OS
+
+all: bootloader kernel
+
+bootloader:
+	nasm -f bin boot/bootloader.asm -o bootloader.bin
 
 kernel:
-	$(MAKE) -C kernel
-
-userspace:
-	$(MAKE) -C userspace
-
-test:
-	$(MAKE) -C tests test
+	cargo build --manifest-path=Cargo.toml
 
 clean:
-	$(MAKE) -C kernel clean
-	$(MAKE) -C userspace clean
-	$(MAKE) -C tests clean
-clean:
-	$(MAKE) -C kernel clean
-	$(MAKE) -C userspace clean
+	rm -f bootloader.bin
+	cargo clean --manifest-path=Cargo.toml
