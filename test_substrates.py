@@ -2768,3 +2768,13 @@ def test_substrate_1007_jules_training():
     output = result.stdout
     report = json.loads(output)
     assert report.get("status", "") in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+
+def test_substrate_1008_1_recursive_mutation_engine_v2():
+    import subprocess
+    import json
+    import os
+    canonizer = "substrates/t/1008_1_recursive_mutation_engine_v2/substrato_1008_1_recursive_mutation_engine_v2.py"
+    assert os.path.exists(canonizer)
+    result = subprocess.run(["python3", canonizer], capture_output=True, text=True)
+    assert result.returncode == 0
+    assert "Substrate 1008.1 canonized at:" in result.stdout
