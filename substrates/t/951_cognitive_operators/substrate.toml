@@ -1,0 +1,7 @@
+[substrate]
+id = "951-953"
+name = "Cognitive Operators"
+type = "Cognitive Algorithms"
+era = "7"
+status = "CANONIZED_PROVISIONAL"
+cross_links = ["1018"]

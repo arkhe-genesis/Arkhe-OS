@@ -280,3 +280,153 @@ def test_f_strings_substrate_1008_1():
         content = f.read()
     assert 'f"' not in content
     assert "f'" not in content
+
+
+def test_no_f_strings_substrate_951():
+    import subprocess
+    import glob
+    import os
+    path = "substrates/t/951*/*"
+    files_to_check = glob.glob(path)
+
+    if not files_to_check:
+        return
+
+    for file in files_to_check:
+        if file.endswith(".py"):
+            with open(file, "r") as f:
+                content = f.read()
+            import re
+            lines = content.split('\n')
+            for line in lines:
+                if re.search(r'f["\']', line) and not "# noqa: FS002" in line:
+                    assert False, f"f-string found in {file}: {line}"
+
+
+def test_no_f_strings_substrate_954_1():
+    import subprocess
+    import glob
+    import os
+    path = "substrates/t/954_1/*"
+    files_to_check = glob.glob(path)
+
+    if not files_to_check:
+        return
+
+    for file in files_to_check:
+        if file.endswith(".py"):
+            with open(file, "r") as f:
+                content = f.read()
+            import re
+            lines = content.split('\n')
+            for line in lines:
+                if re.search(r'f["\']', line) and not "# noqa: FS002" in line:
+                    assert False, f"f-string found in {file}: {line}"
+
+
+def test_no_f_strings_substrate_955_1():
+    import subprocess
+    import glob
+    import os
+    path = "substrates/t/955_1/*"
+    files_to_check = glob.glob(path)
+
+    if not files_to_check:
+        return
+
+    for file in files_to_check:
+        if file.endswith(".py"):
+            with open(file, "r") as f:
+                content = f.read()
+            import re
+            lines = content.split('\n')
+            for line in lines:
+                if re.search(r'f["\']', line) and not "# noqa: FS002" in line:
+                    assert False, f"f-string found in {file}: {line}"
+
+
+def test_no_f_strings_substrate_972_2():
+    import subprocess
+    import glob
+    import os
+    path = "substrates/t/972_2/*"
+    files_to_check = glob.glob(path)
+
+    if not files_to_check:
+        return
+
+    for file in files_to_check:
+        if file.endswith(".py"):
+            with open(file, "r") as f:
+                content = f.read()
+            import re
+            lines = content.split('\n')
+            for line in lines:
+                if re.search(r'f["\']', line) and not "# noqa: FS002" in line:
+                    assert False, f"f-string found in {file}: {line}"
+
+
+def test_no_f_strings_substrate_1018():
+    import subprocess
+    import glob
+    import os
+    path = "substrates/t/1018*/*"
+    files_to_check = glob.glob(path)
+
+    if not files_to_check:
+        return
+
+    for file in files_to_check:
+        if file.endswith(".py"):
+            with open(file, "r") as f:
+                content = f.read()
+            import re
+            lines = content.split('\n')
+            for line in lines:
+                if re.search(r'f["\']', line) and not "# noqa: FS002" in line:
+                    assert False, f"f-string found in {file}: {line}"
+
+def test_no_f_strings_substrate_989_x_v3():
+    import subprocess
+    result = subprocess.run(["python3", "tests/regex_f_strings.py", "substrates/t/989_x_v3*/*"], capture_output=True, text=True)
+    assert result.returncode == 0
+
+def test_no_f_strings_substrate_989_x_v3():
+    import subprocess
+    import glob
+    import os
+    path = "substrates/t/989_x_v3*/*"
+    files_to_check = glob.glob(path)
+
+    if not files_to_check:
+        return
+
+    for file in files_to_check:
+        if file.endswith(".py"):
+            with open(file, "r") as f:
+                content = f.read()
+            import re
+            lines = content.split('\n')
+            for line in lines:
+                if re.search(r'f["\']', line) and not "# noqa: FS002" in line:
+                    assert False, f"f-string found in {file}: {line}"
+
+def test_no_f_strings_substrate_1018_1():
+    import subprocess
+    import glob
+    import os
+    path = "substrates/t/1018_1*/*"
+    files_to_check = glob.glob(path)
+
+    if not files_to_check:
+        return
+
+    for file in files_to_check:
+        if file.endswith(".py"):
+            with open(file, "r") as f:
+                content = f.read()
+            import re
+            lines = content.split('\n')
+            for line in lines:
+                if re.search(r'f["\']', line) and not "# noqa: FS002" in line:
+                    assert False, f"f-string found in {file}: {line}"

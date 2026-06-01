@@ -1,0 +1,7 @@
+[substrate]
+id = "954.1"
+name = "Axiarchy (Lean 4)"
+type = "Formal Verification"
+era = "7"
+status = "CANONIZED_PROVISIONAL"
+cross_links = ["1018"]
