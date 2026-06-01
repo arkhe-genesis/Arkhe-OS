@@ -41,6 +41,13 @@ def test_870_g_f_strings():
             content = f.read()
             assert "f\"" not in content, f"f-strings are strictly prohibited in the codebase. Found in {filepath}"
 
+def test_pvac_f_strings_896_telco_nfv_bridge():
+    import ast
+    with open('substrates/t/896_telco_nfv_bridge/substrato_896_telco_nfv_bridge.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
+
 def test_pvac_f_strings_898_899_900():
     import os
     files_to_check = [

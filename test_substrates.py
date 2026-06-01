@@ -2025,6 +2025,20 @@ def test_870_g_arkhe_http_gateway():
     # Strict string assertions
     assert "f\"" not in open(file_path).read()
 
+def test_pvac_896_telco_nfv_bridge():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/t/896_telco_nfv_bridge/substrato_896_telco_nfv_bridge.py"], capture_output=True, text=True)
+    assert result.returncode == 0, f"Error running substrato_896: {result.stderr}"
+
+    path = result.stdout.strip()
+    with open(path, "r") as f:
+        data = json.load(f)
+
+    assert "Substrate" in data
+    assert data["Substrate"].startswith("896")
+    assert "896-telco-nfv-peptide" in data.get("Canonical_Seal", "")
+
 def test_pvac_898_kolmogorov():
     import subprocess
     import json
