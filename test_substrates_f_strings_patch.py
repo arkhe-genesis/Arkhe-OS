@@ -264,3 +264,12 @@ def test_f_strings_substrate_1007():
         content = f.read()
     assert 'f"' not in content
     assert "f'" not in content
+
+def test_f_strings_substrate_1008_1():
+    import os
+    canonizer = "substrates/t/1008_1_recursive_mutation_engine_v2/substrato_1008_1_recursive_mutation_engine_v2.py"
+    assert os.path.exists(canonizer)
+    with open(canonizer, "r") as f:
+        content = f.read()
+    assert 'f"' not in content
+    assert "f'" not in content
