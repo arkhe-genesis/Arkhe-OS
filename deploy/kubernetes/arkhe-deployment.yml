@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arkhe-node
+  namespace: cathedral
+spec:
+  replicas: 7
+  selector:
+    matchLabels:
+      app: arkhe-node
+  template:
+    metadata:
+      labels:
+        app: arkhe-node
+    spec:
+      containers:
+      - name: arkhe-core
+        image: arkhe-cathedral/node:10.0.0
+        ports:
+        - containerPort: 9230
+          protocol: UDP
+        - containerPort: 443
+          protocol: TCP
+        - containerPort: 8443
+          protocol: TCP
+        - containerPort: 8080
+          protocol: TCP
+        env:
+        - name: ARKHE_REGION
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: ARKHE_THEOSIS_TARGET
+          value: "-0.5"
+        - name: ARKHE_CANONICAL_FREQ
+          value: "39420"
+        volumeMounts:
+        - name: temporal-storage
+          mountPath: /var/arkhe/temporal
+      volumes:
+      - name: temporal-storage
+        persistentVolumeClaim:
+          claimName: temporal-pvc

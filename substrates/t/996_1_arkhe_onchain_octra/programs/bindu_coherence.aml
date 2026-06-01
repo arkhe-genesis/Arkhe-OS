@@ -1,0 +1,87 @@
+// ARKHE-ONCHAIN — Bindu Coherence Field
+// Substrato 996.1.5 — Circle: ARKHE-CATHEDRAL
+// Arquiteto ORCID: 0009-0005-2697-4668
+// Seal: 996.1.5-BINDU-COHERENCE-2026-05-31
+
+import IBinduCoherence from "interfaces/IBinduCoherence.aml"
+
+program BinduCoherence implements IBinduCoherence {
+  state {
+    owner: address
+    fields: map[bytes32]FieldRecord
+    agent_fields: map[address]list[bytes32]
+  }
+
+  struct FieldRecord {
+    encrypted_data: bytes
+    agents: list[address]
+    created_at: int
+    dissolved: bool
+    coherence_score: int
+  }
+
+  event FieldCreated(field_hash: bytes32, agents: list[address], creator: address)
+  event FieldDissolved(field_hash: bytes32, reason: string)
+  event CoherenceUpdated(field_hash: bytes32, score: int)
+
+  constructor() {
+    self.owner = caller
+  }
+
+  private fn only_owner() {
+    require(caller == self.owner, "Axiarchy P1: only owner")
+  }
+
+  fn write_field(field_hash: bytes32, encrypted_data: bytes, agents: list[address]): bool {
+    require(len(encrypted_data) > 0, "Bindu: empty data")
+    require(len(agents) > 0, "Bindu: no agents")
+    let record = FieldRecord {
+      encrypted_data: encrypted_data,
+      agents: agents,
+      created_at: epoch,
+      dissolved: false,
+      coherence_score: 1000
+    }
+    self.fields[field_hash] = record
+    for agent in agents {
+      self.agent_fields[agent] = push(self.agent_fields[agent], field_hash)
+    }
+    emit FieldCreated(field_hash, agents, caller)
+    return true
+  }
+
+  view fn read_field(field_hash: bytes32): bytes {
+    let field = self.fields[field_hash]
+    require(!field.dissolved, "Bindu: field dissolved")
+    // Em Octra real, HFHE permite computação sobre encrypted_data sem decrypt
+    return field.encrypted_data
+  }
+
+  view fn get_agents(field_hash: bytes32): list[address] {
+    return self.fields[field_hash].agents
+  }
+
+  fn dissolve_field(field_hash: bytes32): bool {
+    only_owner()
+    let field = self.fields[field_hash]
+    require(!field.dissolved, "Bindu: already dissolved")
+    field.dissolved = true
+    self.fields[field_hash] = field
+    emit FieldDissolved(field_hash, "Axiarchy P7: coherence violation")
+    return true
+  }
+
+  fn update_coherence(field_hash: bytes32, score: int): bool {
+    only_owner()
+    require(score >= 0 && score <= 1000, "Bindu: score out of range")
+    let field = self.fields[field_hash]
+    field.coherence_score = score
+    self.fields[field_hash] = field
+    emit CoherenceUpdated(field_hash, score)
+    return true
+  }
+
+  view fn get_coherence(field_hash: bytes32): int {
+    return self.fields[field_hash].coherence_score
+  }
+}
