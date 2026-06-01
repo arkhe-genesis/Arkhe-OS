@@ -2792,3 +2792,90 @@ def test_substrate_1008_1_recursive_mutation_engine_v2():
     result = subprocess.run(["python3", canonizer], capture_output=True, text=True)
     assert result.returncode == 0
     assert "Substrate 1008.1 canonized at:" in result.stdout
+
+def test_substrate_1018():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/t/1018_orchestrator/substrato_1018.py"], capture_output=True, text=True)
+    assert result.returncode == 0
+    report = json.loads(result.stdout)
+    assert report["Substrate_ID"] == "1018"
+    assert report["Name"] == "ORCHESTRATOR-LATTICE"
+    assert report["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "orchestrator.py" in report["Files"]
+    assert "substrate.toml" in report["Files"]
+
+def test_substrate_955_1():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/t/955_1_safe_core_pqc/substrato_955_1.py"], capture_output=True, text=True)
+    assert result.returncode == 0
+    report = json.loads(result.stdout)
+    assert report["Substrate_ID"] == "955.1"
+    assert report["Name"] == "Safe-Core-PQC"
+    assert report["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "lattice_crypto.py" in report["Files"]
+    assert "substrate.toml" in report["Files"]
+
+def test_substrate_954_1():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/t/954_1_axiarchy_lattice/substrato_954_1.py"], capture_output=True, text=True)
+    assert result.returncode == 0
+    report = json.loads(result.stdout)
+    assert report["Substrate_ID"] == "954.1"
+    assert report["Name"] == "Axiarchy (Lean 4)"
+    assert report["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "axiarchy_lattice.lean" in report["Files"]
+    assert "substrate.toml" in report["Files"]
+
+def test_substrate_972_2():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/t/972_2_mesh_passport/substrato_972_2.py"], capture_output=True, text=True)
+    assert result.returncode == 0
+    report = json.loads(result.stdout)
+    assert report["Substrate_ID"] == "972.2"
+    assert report["Name"] == "Mesh Passport Gateway"
+    assert report["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "mesh_passport.py" in report["Files"]
+    assert "substrate.toml" in report["Files"]
+
+def test_substrate_951():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/t/951_cognitive_operators/substrato_951.py"], capture_output=True, text=True)
+    assert result.returncode == 0
+    report = json.loads(result.stdout)
+    assert report["Substrate_ID"] == "951-953"
+    assert report["Name"] == "Cognitive Operators"
+    assert report["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "cognitive_operators.py" in report["Files"]
+    assert "substrate.toml" in report["Files"]
+
+
+def test_substrate_989_x_v3():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/t/989_x_v3_pluralistic_passport_gateway/substrato_989_x_v3.py"], capture_output=True, text=True)
+    assert result.returncode == 0
+    report = json.loads(result.stdout)
+    assert report["Substrate_ID"] == "989.x.v3"
+    assert report["Name"] == "Pluralistic Passport Gateway"
+    assert report["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "pluralistic_passport_gateway.py" in report["Files"]
+    assert "substrate.toml" in report["Files"]
+
+
+def test_substrate_1018_1():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/t/1018_1_test_suite/substrato_1018_1.py"], capture_output=True, text=True)
+    assert result.returncode == 0
+    report = json.loads(result.stdout)
+    assert report["Substrate_ID"] == "1018.1"
+    assert report["Name"] == "Test Suite Completa"
+    assert report["Status"] in ["CANONIZED", "CANONIZED_PROVISIONAL", "Canonized"]
+    assert "test_suite.py" in report["Files"]
+    assert "Makefile" in report["Files"]
+    assert "substrate.toml" in report["Files"]

@@ -1,0 +1,7 @@
+[substrate]
+id = "972.2"
+name = "Mesh Passport Gateway"
+type = "Network/Identity"
+era = "7"
+status = "CANONIZED_PROVISIONAL"
+cross_links = ["1018"]

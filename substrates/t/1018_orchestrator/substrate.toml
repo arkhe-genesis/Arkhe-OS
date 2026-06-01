@@ -1,0 +1,7 @@
+[substrate]
+id = "1018"
+name = "ORCHESTRATOR-LATTICE"
+type = "Integration"
+era = "7"
+status = "CANONIZED_PROVISIONAL"
+cross_links = ["951", "952", "953", "954", "955", "972", "989"]
