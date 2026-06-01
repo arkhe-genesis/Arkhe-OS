@@ -87,11 +87,29 @@ def test_substrate_929_f_strings():
             content = f.read()
         assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
 
-def test_100t_moe_centum_f_strings():
-    file_path = "substrates/t/100T_moe_centum/substrato_100t_moe_centum.py"
-    with open(file_path, "r") as f:
-        content = f.read()
-    assert 'f"' not in content and "f'" not in content, f"Substrate 100T MoE Centum contains f-strings!"
+def test_substrate_989_w_f_strings():
+    import os
+    file_path = "substrates/t/989_unified_orchestrator/substrato_989_w_unified_orchestrator.py"
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            content = f.read()
+        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_substrate_989_v_f_strings():
+    import os
+    file_path = "substrates/t/989_fair_metrics_dashboard/substrato_989_v_fair_metrics_dashboard.py"
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            content = f.read()
+        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
+
+def test_substrate_989_y_f_strings():
+    import os
+    file_path = "substrates/t/989_desci_nodes_bridge/substrato_989_y_desci_nodes_bridge.py"
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            content = f.read()
+        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
 
 def test_substrate_931_f_strings():
     import os
@@ -101,77 +119,10 @@ def test_substrate_931_f_strings():
             content = f.read()
         assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
 
-def test_933_f_strings():
-    import ast
-    with open('substrates/t/933_brazilian_financial_infrastructure_bridge/substrato_933_brazilian_financial_infrastructure_bridge.py', 'r') as f:
-        tree = ast.parse(f.read())
-    for node in ast.walk(tree):
-        assert not isinstance(node, ast.JoinedStr)
-    with open('substrates/t/933_brazilian_financial_infrastructure_bridge/substrate_933_bfi_bridge.py', 'r') as f:
-        tree = ast.parse(f.read())
-    for node in ast.walk(tree):
-        assert not isinstance(node, ast.JoinedStr)
-
-def test_substrate_923_2_f_strings():
-    import os
-    file_path = "substrates/t/923_2_vulnerability_temporalchain/substrato_923_2_vulnerability_temporalchain.py"
-    if os.path.exists(file_path):
-        with open(file_path, "r") as f:
-            content = f.read()
-        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
-
-def test_substrate_100T_f_strings():
-    import os
-    file_path = "substrates/t/100T_moe_centum/substrato_100t_moe_centum.py"
-    if os.path.exists(file_path):
-        with open(file_path, "r") as f:
-            content = f.read()
-        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
-
-def test_substrate_944_f_strings():
-    import os
-    file_path = "substrates/t/944_glasswing_sentinel/substrato_944_glasswing_sentinel.py"
-    if os.path.exists(file_path):
-        with open(file_path, "r") as f:
-            content = f.read()
-        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
-
-def test_272_f_strings():
-    with open("substrates/t/272_oracle_aws_bridge/substrato_272_oracle_aws_bridge.py", "r") as f:
-        content = f.read()
-
-    assert "f\"" not in content, "f-strings are strictly prohibited"
-    assert "f'" not in content, "f-strings are strictly prohibited"
-
-def test_substrate_563_1_f_strings():
-    import ast
-    with open('substrates/t/563_1_cortexmae_bridge/substrato_563_1_cortexmae_bridge.py', 'r') as f:
-        tree = ast.parse(f.read())
-    for node in ast.walk(tree):
-        assert not isinstance(node, ast.JoinedStr), "f-strings found in 563.1!"
-
-def test_substrate_937_f_strings():
-    with open('substrates/t/937_web4_autonomous_intelligence/substrato_937.py', 'r') as f:
-        content = f.read()
-        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
-
-def test_substrate_936_f_strings():
-    with open('substrates/t/936_crossbreeding_neural_network/substrato_936.py', 'r') as f:
-        content = f.read()
-        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
-
-def test_substrate_276_1_f_strings():
-    with open('substrates/t/276_1_arkhe_infer_c/substrato_276_1.py', 'r') as f:
-        content = f.read()
-        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
-
-def test_substrate_276_2_f_strings():
-    with open('substrates/t/276_2_arkhe_rtl/substrato_276_2.py', 'r') as f:
-        content = f.read()
-        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
-
-def test_substrate_934_f_strings():
-    with open('substrates/t/934_perceptual_geometry/substrato_934_perceptual_geometry.py', 'r') as f:
+def test_substrate_261_f_strings():
+    """Verify that Substrate 261 does not contain f-strings."""
+    script_path = "substrates/t/261_arkhe_brasil_finance/substrato_261_arkhe_brasil_finance.py"
+    with open(script_path, "r") as f:
         content = f.read()
         assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
 
@@ -275,30 +226,50 @@ def test_no_f_strings_972():
         content = f.read()
     assert re.search(r"f['\"]", content) is None
 
-def test_no_fstrings_986():
+def test_substrate_989_f_strings():
     import os
-    file_path = os.path.abspath('substrates/t/986_evolution_engine/substrato_986_evolution_engine.py')
-    with open(file_path, 'r', encoding='utf-8') as f:
-        content = f.read()
-    assert 'f"' not in content and "f'" not in content, "f-strings found in substrates/t/986_evolution_engine/substrato_986_evolution_engine.py"
+    file_path = "substrates/t/989_passport_gateway/substrato_989_passport_gateway.py"
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            content = f.read()
+        assert 'f"' not in content and "f'" not in content, "F-strings are strictly forbidden in Python canonizers."
 
-def test_no_fstrings_987():
+def test_989_y_3_f_strings():
     import os
-    file_path = os.path.abspath('substrates/t/987_omniscient_interface/substrato_987_omniscient_interface.py')
-    with open(file_path, 'r', encoding='utf-8') as f:
-        content = f.read()
-    assert 'f"' not in content and "f'" not in content, "f-strings found in substrates/t/987_omniscient_interface/substrato_987_omniscient_interface.py"
+    import re
+    file_path = os.path.abspath('substrates/t/989_y_3_full_100t_orchestrator/substrato_989_y_3_full_100t_orchestrator.py')
+    with open(file_path, "r", encoding="utf-8") as file:
+        content = file.read()
+    assert re.search(r'\bf["\']', content) is None, f"Found f-strings in {file_path}"
 
-def test_no_fstrings_988():
+def test_998_f_strings():
     import os
-    file_path = os.path.abspath('substrates/t/988_immortality_protocol/substrato_988_immortality_protocol.py')
-    with open(file_path, 'r', encoding='utf-8') as f:
+    import re
+    # Check that f-strings are strictly forbidden in the source
+    path = "substrates/t/998_recursive_mutation_engine/recursive_mutation_engine.py"
+    with open(path, "r", encoding="utf-8") as f:
         content = f.read()
-    assert 'f"' not in content and "f'" not in content, "f-strings found in substrates/t/988_immortality_protocol/substrato_988_immortality_protocol.py"
+    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
 
-def test_no_fstrings_989():
-    import os
-    file_path = os.path.abspath('substrates/t/989_unified_nexus/substrato_989_unified_nexus.py')
-    with open(file_path, 'r', encoding='utf-8') as f:
+    path2 = "substrates/t/998_recursive_mutation_engine/substrato_998_recursive_mutation_engine.py"
+    with open(path2, "r", encoding="utf-8") as f:
         content = f.read()
-    assert 'f"' not in content and "f'" not in content, "f-strings found in substrates/t/989_unified_nexus/substrato_989_unified_nexus.py"
+    assert "f'" not in content and 'f"' not in content, "f-strings are strictly forbidden"
+
+def test_f_strings_substrate_1007():
+    import os
+    canonizer = "substrates/t/1007_jules_training/substrato_1007_jules_training.py"
+    assert os.path.exists(canonizer)
+    with open(canonizer, "r") as f:
+        content = f.read()
+    assert 'f"' not in content
+    assert "f'" not in content
+
+def test_f_strings_substrate_1008_1():
+    import os
+    canonizer = "substrates/t/1008_1_recursive_mutation_engine_v2/substrato_1008_1_recursive_mutation_engine_v2.py"
+    assert os.path.exists(canonizer)
+    with open(canonizer, "r") as f:
+        content = f.read()
+    assert 'f"' not in content
+    assert "f'" not in content

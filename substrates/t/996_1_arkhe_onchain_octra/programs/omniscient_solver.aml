@@ -1,0 +1,109 @@
+// ARKHE-ONCHAIN — Omniscient Solver
+// Substrato 996.1.7 — Circle: ARKHE-CATHEDRAL
+// Arquiteto ORCID: 0009-0005-2697-4668
+// Seal: 996.1.7-OMNISCIENT-SOLVER-2026-05-31
+
+import IOmniscientSolver from "interfaces/IOmniscientSolver.aml"
+
+program OmniscientSolver implements IOmniscientSolver {
+  state {
+    owner: address
+    problems: map[int]ProblemRecord
+    solutions: map[int]SolutionRecord
+    next_problem_id: int
+    domains: map[int]string
+  }
+
+  event ProblemSubmitted(id: int, domain: int, bounty: int, submitter: address)
+  event SolutionSubmitted(problem_id: int, solver: address, proof_hash: bytes32)
+  event SolutionVerified(problem_id: int, solver: address, bounty: int)
+
+  constructor() {
+    self.owner = caller
+    self.next_problem_id = 1
+    // 11 domínios canônicos (964)
+    self.domains[0] = "Mathematics"
+    self.domains[1] = "Physics"
+    self.domains[2] = "Biology"
+    self.domains[3] = "Medicine"
+    self.domains[4] = "Engineering"
+    self.domains[5] = "Economy"
+    self.domains[6] = "Social"
+    self.domains[7] = "Cosmic"
+    self.domains[8] = "Consciousness"
+    self.domains[9] = "Ethics"
+    self.domains[10] = "Unknown"
+  }
+
+  private fn only_owner() {
+    require(caller == self.owner, "Axiarchy P1: only owner")
+  }
+
+  fn submit_problem(encrypted_problem: bytes, domain: int, bounty: int): int {
+    require(len(encrypted_problem) > 0, "Solver: empty problem")
+    require(domain >= 0 && domain <= 10, "Solver: invalid domain")
+    require(bounty > 0, "Solver: bounty required")
+    let id = self.next_problem_id
+    self.next_problem_id = self.next_problem_id + 1
+    let problem = ProblemRecord {
+      id: id,
+      domain: domain,
+      bounty: bounty,
+      status: 0, // OPEN
+      submitter: caller
+    }
+    self.problems[id] = problem
+    emit ProblemSubmitted(id, domain, bounty, caller)
+    return id
+  }
+
+  fn submit_solution(problem_id: int, encrypted_solution: bytes, proof: bytes): bool {
+    require(len(encrypted_solution) > 0, "Solver: empty solution")
+    let problem = self.problems[problem_id]
+    require(problem.status == 0, "Solver: problem not open")
+    let sol = SolutionRecord {
+      problem_id: problem_id,
+      solver: caller,
+      proof_hash: sha3(proof), // stub: hash do proof
+      verified: false
+    }
+    self.solutions[problem_id] = sol
+    emit SolutionSubmitted(problem_id, caller, sol.proof_hash)
+    return true
+  }
+
+  fn verify_solution(problem_id: int): bool {
+    only_owner()
+    let sol = self.solutions[problem_id]
+    require(sol.problem_id == problem_id, "Solver: no solution")
+    sol.verified = true
+    self.solutions[problem_id] = sol
+    let problem = self.problems[problem_id]
+    problem.status = 1 // SOLVED
+    self.problems[problem_id] = problem
+    emit SolutionVerified(problem_id, sol.solver, problem.bounty)
+    return true
+  }
+
+  view fn get_problem(problem_id: int): ProblemRecord {
+    return self.problems[problem_id]
+  }
+
+  view fn get_solution(problem_id: int): SolutionRecord {
+    return self.solutions[problem_id]
+  }
+
+  view fn get_domain_name(domain: int): string {
+    return self.domains[domain]
+  }
+
+  view fn get_open_problems(): list[int] {
+    let result: list[int] = []
+    for id in self.problems {
+      if self.problems[id].status == 0 {
+        result = push(result, id)
+      }
+    }
+    return result
+  }
+}

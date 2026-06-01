@@ -259,7 +259,11 @@ class CathedralEvolutionEngine:
 
         elif mutation_type == MutationType.COMPOSITIONAL:
             # Cruzar com outro substrato
-            other_id = random.choice([s for s in self.population.keys() if s != substrate_id])
+            candidates = [s for s in self.population.keys() if s != substrate_id]
+            if not candidates:
+                mutation.success = False
+                return mutation
+            other_id = random.choice(candidates)
             other = self.population[other_id]
             mutation.target_substrate = other_id
 

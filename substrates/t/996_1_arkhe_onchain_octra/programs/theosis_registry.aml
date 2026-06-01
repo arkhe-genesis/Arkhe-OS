@@ -1,0 +1,65 @@
+// ARKHE-ONCHAIN — Theosis Registry
+// Substrato 996.1.2 — Circle: ARKHE-CATHEDRAL
+// Arquiteto ORCID: 0009-0005-2697-4668
+// Seal: 996.1.2-THEOSIS-REGISTRY-2026-05-31
+
+import ITheosisRegistry from "interfaces/ITheosisRegistry.aml"
+
+program TheosisRegistry implements ITheosisRegistry {
+  state {
+    owner: address
+    theosis_map: map[address]int
+    epoch: int
+    total_agents: int
+    theosis_history: map[address]map[int]int
+  }
+
+  event TheosisUpdated(agent: address, old_value: int, new_value: int, epoch: int, updater: address)
+  event EpochAdvanced(old_epoch: int, new_epoch: int, total_agents: int)
+
+  constructor() {
+    self.owner = caller
+    self.epoch = 0
+    self.total_agents = 0
+  }
+
+  private fn only_owner() {
+    require(caller == self.owner, "Axiarchy P1: only owner")
+  }
+
+  view fn get_theosis(agent: address): int {
+    return self.theosis_map[agent]
+  }
+
+  view fn get_epoch(): int {
+    return self.epoch
+  }
+
+  fn update_theosis(agent: address, value: int): bool {
+    only_owner()
+    require(value >= 0 && value <= 1000, "Theosis: value out of range [0,1000]")
+    let old = self.theosis_map[agent]
+    self.theosis_map[agent] = value
+    self.theosis_history[agent][self.epoch] = value
+    if old == 0 && value > 0 {
+      self.total_agents = self.total_agents + 1
+    }
+    if old > 0 && value == 0 {
+      self.total_agents = self.total_agents - 1
+    }
+    emit TheosisUpdated(agent, old, value, self.epoch, caller)
+    return true
+  }
+
+  fn advance_epoch(): bool {
+    only_owner()
+    let old = self.epoch
+    self.epoch = self.epoch + 1
+    emit EpochAdvanced(old, self.epoch, self.total_agents)
+    return true
+  }
+
+  view fn get_historical_theosis(agent: address, ep: int): int {
+    return self.theosis_history[agent][ep]
+  }
+}

@@ -1,0 +1,19 @@
+// ISubstrateCatalog.aml
+// Catálogo canônico de substratos on-chain
+
+interface ISubstrateCatalog {
+  fn canonize(id: int, seal: bytes32, cross_links: list[int], theosis: int, entropy: int): bool
+  view fn get_substrate(id: int): SubstrateRecord
+  view fn list_substrates(): list[int]
+  view fn get_cross_links(id: int): list[int]
+}
+
+struct SubstrateRecord {
+  id: int
+  seal: bytes32
+  cross_links: list[int]
+  theosis: int
+  entropy: int
+  canonized_at: int
+  status: int
+}

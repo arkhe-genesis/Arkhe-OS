@@ -9,7 +9,7 @@ import tempfile
 def get_b64_artifacts():
     return {
         "substrate.toml": base64.b64encode(open("substrates/t/986_evolution_engine/substrate.toml", "rb").read()).decode('utf-8'),
-        "evolution_engine.py": base64.b64encode(open("substrates/t/986_evolution_engine/evolution_engine.py", "rb").read()).decode('utf-8')
+        "evolution_engine.py": base64.b64encode(open("substrates/t/986_evolution_engine/evolution_engine.py", "rb").read()).decode("utf-8")
     }
 
 def compute_seal(payload_dict):

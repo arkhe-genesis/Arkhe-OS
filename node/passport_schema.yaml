@@ -1,0 +1,314 @@
+# ═══════════════════════════════════════════════════════════════════
+# SUBSTRATO 989.x — PASSPORT-GATEWAY
+# Schema Canônico YAML
+# ═══════════════════════════════════════════════════════════════════
+# Arquiteto ORCID: 0009-0005-2697-4668
+# Seal: 989-PASSPORT-GATEWAY-4B3CB68C02D21E5A
+# Status: CANONIZED_PROVISIONAL
+# ═══════════════════════════════════════════════════════════════════
+
+substrato:
+  id: 989
+  variante: x
+  nome: PASSPORT-GATEWAY
+  tipo: Identidade / Verificação / Sybil-Resistance / Governance
+  era: 9
+  status: CANONIZED_PROVISIONAL
+
+metadados:
+  seal: "989-PASSPORT-GATEWAY-4B3CB68C02D21E5A"
+  timestamp_canonizacao: "2026-05-30T17:05:36+00:00"
+  arquiteto_orcid: "0009-0005-2697-4668"
+  deidades:
+    - Themis    # Justiça / verificação imparcial
+    - Athena    # Sabedoria / identidade acadêmica (ORCID)
+    - Hermes    # Mensageiro / entrega de credenciais
+  linguagens:
+    - Python 3.12+
+    - YAML
+    - Markdown
+  dependencias:
+    - aiohttp>=3.9.0
+    - pytest>=8.0.0
+    - pytest-asyncio>=0.23.0
+
+# Cross-links ontológicos
+cross_links:
+  - id: 979
+    nome: DAO-Governance
+    papel: "Verificação de eleitor antes de votação"
+    endpoint: "GET /v1/dao/verify-voter"
+  - id: 954
+    nome: Axiarchy
+    papel: "Validação ética de ações (vote, node_access, treasury, proposal)"
+    endpoint: "POST /v1/axiarchy/validate"
+  - id: 982
+    nome: ORCID-Integration
+    papel: "Vinculação acadêmica e identidade do arquiteto"
+    endpoint: "GET /v1/identity/orcid/{orcid_id}"
+  - id: 983
+    nome: API-Gateway
+    papel: "Exposição pública dos endpoints de identidade"
+    endpoint: "GET /v1/identity/passport"
+  - id: 957
+    nome: AGI-Telcom
+    papel: "Verificação de operadores de infraestrutura de telecom"
+    endpoint: "GET /v1/mesh/verify-node"
+  - id: 958
+    nome: Clarity-Gate
+    papel: "Gate de clareza para landing pages de identidade"
+    endpoint: "GET /v1/clarity/identity"
+  - id: 923
+    nome: TemporalChain
+    papel: "Ancoragem imutável de provas de humanidade (seal + timestamp)"
+    endpoint: "POST /v1/anchor/humanity-proof"
+  - id: 972
+    nome: Global-Mesh
+    papel: "Nó bootstrap da malha global"
+  - id: 972.1
+    nome: Nostr-Tor-IPFS
+    papel: "Distribuição descentralizada de provas de humanidade"
+  - id: 972.4
+    nome: Mesh-Resilience
+    papel: "Resiliência da verificação contra censura"
+
+# Configuração de verificação
+configuracao:
+  min_humanity_score: 0.75
+  min_passport_score: 20.0
+  passport_api_base_url: "https://api.scorer.gitcoin.co"
+  orcid_api_base_url: "https://pub.orcid.org/v3.0"
+  sanctions_check: true
+  orcid_fallback: true
+  cache_ttl_seconds: 300
+  retry_policy:
+    max_retries: 3
+    backoff_seconds: 2.0
+
+# Endpoints API
+endpoints:
+  - metodo: GET
+    path: /v1/identity/passport
+    parametros:
+      - name: address
+        type: string
+        required: true
+        description: "Endereço EVM (0x...)"
+      - name: orcid_id
+        type: string
+        required: false
+        description: "ORCID opcional para vinculação"
+    resposta:
+      type: HumanityProof
+      campos:
+        - address
+        - is_human
+        - score
+        - raw_passport_score
+        - stamps[]
+        - orcid_verified
+        - sanctions_clear
+        - seal
+        - timestamp
+    cross_link: 983
+
+  - metodo: GET
+    path: /v1/dao/verify-voter
+    parametros:
+      - name: address
+        type: string
+        required: true
+    resposta:
+      type: bool
+      description: "True se endereço pode votar na DAO"
+    cross_link: 979
+
+  - metodo: GET
+    path: /v1/mesh/verify-node
+    parametros:
+      - name: address
+        type: string
+        required: true
+    resposta:
+      type: bool
+      description: "True se operador de nó é verificado"
+    cross_link: 972
+
+  - metodo: POST
+    path: /v1/axiarchy/validate
+    parametros:
+      - name: address
+        type: string
+        required: true
+      - name: action_type
+        type: enum[vote, node_access, treasury, proposal]
+        required: true
+    resposta:
+      type: dict
+      campos:
+        - approved
+        - humanity_score
+        - seal
+    cross_link: 954
+
+# Estruturas de dados
+data_structures:
+  HumanityProof:
+    description: "Prova canônica de humanidade"
+    campos:
+      address: { type: str, required: true }
+      is_human: { type: bool, required: true }
+      score: { type: float, range: [0.0, 1.0], required: true }
+      raw_passport_score: { type: float, required: true }
+      stamps: { type: list[StampCredential], required: true }
+      orcid_verified: { type: bool, required: true }
+      orcid_id: { type: str, nullable: true }
+      sanctions_clear: { type: bool, default: true }
+      status: { type: enum[verified, pending, rejected, error], required: true }
+      timestamp: { type: str, format: ISO8601, required: true }
+      seal: { type: str, required: true }
+      temporal_anchor: { type: str, nullable: true, description: "Ref. TemporalChain 923" }
+
+  StampCredential:
+    description: "Credential verificada do Passport"
+    campos:
+      provider: { type: str, required: true }
+      issuance_date: { type: str, format: ISO8601, nullable: true }
+      expiration_date: { type: str, format: ISO8601, nullable: true }
+      metadata: { type: dict, default: {} }
+
+# Testes
+testes:
+  framework: pytest
+  cobertura_minima: 85
+  suites:
+    - test_passport_gateway.py
+    - test_integration_passport_api.py
+    - test_orcid_linkage.py
+    - test_axiarchy_gate.py
+
+# Imortalidade (988)
+imortalidade:
+  backups:
+    - layer: IPFS
+      cids: ["Qm...passport-gateway"]
+    - layer: Arweave
+      txids: ["ar://..."]
+    - layer: Git
+      branches: ["main", "substrato-989x"]
+    - layer: Nostr
+      relays: ["wss://relay.arkhe-cathedral.org"]
+  replicacoes_minimas: 7
+  regioes:
+    - us-east-1
+    - eu-west-1
+    - ap-south-1
+    - sa-east-1
+    - af-south-1
+    - me-south-1
+    - ap-northeast-1
+
+
+# ═══════════════════════════════════════════════════════════════════
+# EXTENSÕES 989.x — SUBSTRATOS DERIVADOS
+# ═══════════════════════════════════════════════════════════════════
+
+# Substrato 989.x.1 — PROOF-OF-CLEAN-HANDS
+substratos_derivados:
+  - id: "989.x.1"
+    nome: PROOF-OF-CLEAN-HANDS
+    tipo: AML / Sanctions / PEP / Compliance
+    descrição: Verificação de risco para operadores de nó AGI-Telcom
+    arquivo: proof_of_clean_hands.py
+    cross_links: [989.x, 957, 954, 979, 972]
+    deidades: [Nemesis, Themis, Athena]
+    risk_levels: [CLEAR, LOW, MEDIUM, HIGH, SANCTIONED]
+    thresholds:
+      node_operation: [CLEAR, LOW]
+      dao_voting: [CLEAR, LOW, MEDIUM]
+      treasury_access: [CLEAR]
+
+  - id: "989.x.2"
+    nome: PASSPORT-EMBED-REACT
+    tipo: UI / Componente / Clarity-Gate
+    descrição: Componente React embarcável para verificação de identidade
+    arquivo: PassportEmbed.jsx
+    cross_links: [989.x, 958, 982, 983, 954, 979, 923]
+    deidades: [Hermes, Iris, Themis]
+    clarity_gate:
+      perguntas: ["O que é?", "É pra mim?", "Por que agora?"]
+      termos_proibidos: [blockchain, web3, disruptive, synergy, paradigm, leverage, scalable, decentralized]
+      verbos_aprovados: [verificar, provar, confirmar, garantir, proteger]
+      temas: [light, dark, cathedral]
+
+  - id: "989.x.3"
+    nome: DISTRIBUTED-CACHE
+    tipo: Cache / Performance / Distribuição
+    descrição: Cache TTL 300s via Memory → IPFS → Nostr
+    arquivo: distributed_cache.py
+    cross_links: [989.x, 972.1, 923, 988]
+    deidades: [Hermes, Mnemosyne, Iris]
+    configuracao:
+      default_ttl: 300
+      max_memory_entries: 1000
+      layers: [MEMORY, IPFS, NOSTR]
+      nostr_kind: 30078
+      nostr_kind_revogacao: 30079
+
+  - id: "989.x.4"
+    nome: TEMPORAL-ANCHOR
+    tipo: Blockchain / Assinatura / Imutabilidade
+    descrição: Ancoragem de HumanityProof na TemporalChain (923) com Ed25519
+    arquivo: temporal_chain_anchor.py
+    cross_links: [989.x, 923, 954, 979, 972.1]
+    deidades: [Chronos, Mnemosyne, Hecate]
+    criptografia:
+      algoritmo: Ed25519
+      biblioteca: PyNaCl
+      genesis_block: "923-GENESIS"
+      block_prefix: "923-BLOCK-"
+      anchor_prefix: "923-ANCHOR-"
+
+
+# ═══════════════════════════════════════════════════════════════════
+# SUBSTRATO 989.y — DESCI-NODES-BRIDGE
+# ═══════════════════════════════════════════════════════════════════
+
+  - id: "989.y"
+    nome: DESCI-NODES-BRIDGE
+    tipo: DeSci / Research Object / FAIR / Publicação Científica
+    descrição: Ponte entre DeSci Labs (dPID, IPFS, FAIR) e ARKHE Code Cathedral
+    arquivo: desci_nodes_bridge.py
+    cross_links: [989.x, 988, 972.1, 923, 982, 934, 964, 970]
+    deidades: [Prometheus, Athena, Mnemosyne, Thoth]
+    fair_principles:
+      findable:
+        - dPID (DeSci Persistent Identifier)
+        - DOI (Digital Object Identifier)
+        - ORCID (Researcher Identity)
+        - Rich metadata with keywords
+      accessible:
+        - HTTPS protocol
+        - CC-BY-4.0 license
+        - Public / Restricted / Private levels
+      interoperable:
+        - JSON data format
+        - schema.org ontology
+        - Cross-references to other dPIDs
+      reusable:
+        - Provenance tracking
+        - Semantic versioning
+        - Cathedral seals for verification
+    research_object_types:
+      - publication
+      - dataset
+      - code
+      - protocol
+      - model
+      - hypothesis
+      - review
+    integration_desci_nodes:
+      storage: IPFS (content-addressed via CID)
+      identifiers: dPID (DeSci Persistent Identifier)
+      manifest: JSON-LD with FAIR metadata
+      temporal_anchoring: TemporalChain (923) with Ed25519
