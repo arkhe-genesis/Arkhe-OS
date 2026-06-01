@@ -1,0 +1,8 @@
+[substrate]
+id = 998
+name = "RECURSIVE-MUTATION-ENGINE"
+type = "Evolução Recursiva / Mutação Controlada / Coevolução LLM"
+era = "9"
+deity = "Eros / Chronos / Athena / Nemesis"
+status = "CANONIZED_PROVISIONAL"
+cross_links = [989, 986, 954, 923, 989, 965]
