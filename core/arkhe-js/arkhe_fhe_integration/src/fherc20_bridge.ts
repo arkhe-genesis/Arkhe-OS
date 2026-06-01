@@ -10,7 +10,6 @@ const FHERC20_ABI = [
   'function shieldFromOctra(string circleId, uint64 publicAmount) returns (uint256)',
   'function confidentialCircleTransfer(string fromCircle, string toCircle, tuple(uint256 ctHash, bytes signature) encryptedAmount) returns (uint256)',
   'function unshieldToOctra(string circleId, uint64 plaintextAmount, bytes thresholdSignature)',
-  'function applyCircleACL(string circleId)',
   'function circleIndicatorOf(string circleId) view returns (uint256)',
   'function confidentialCircleBalance(string circleId) view returns (uint256)',
   'event CircleBridged(string circleId, uint64 amount, uint256 fhenixHandle)',
@@ -42,7 +41,7 @@ export class OctraFHERC20Client {
     circleId: string,
     publicAmount: bigint
   ): Promise<{ handle: bigint; txHash: `0x${string}` }> {
-    // Chama shieldFromOctra (criptografia é feita on-chain)
+    // 1. Chama shieldFromOctra
     const tx = await this.cofheClient.writeContract({
       address: this.tokenContract,
       abi: FHERC20_ABI,
@@ -101,20 +100,6 @@ export class OctraFHERC20Client {
       plaintext: decryptResult.plaintext,
       txHash: receipt.transactionHash,
     };
-  }
-
-  /**
-   * Aplica permissões ACL on-chain baseadas no nível do ACL Manager
-   */
-  async applyCircleACL(circleId: string): Promise<`0x${string}`> {
-    const tx = await this.cofheClient.writeContract({
-      address: this.tokenContract,
-      abi: FHERC20_ABI,
-      functionName: 'applyCircleACL',
-      args: [circleId],
-    });
-    const receipt = await tx.wait();
-    return receipt.transactionHash;
   }
 
   /**

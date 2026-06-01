@@ -3,6 +3,7 @@ pragma solidity ^0.8.25;
 
 import { FHERC20 } from "@fhenixprotocol/confidential-contracts/contracts/FHERC20/FHERC20.sol";
 import { InEuint64 } from "@fhenixprotocol/cofhe-contracts/FHE.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /**
  * @title OctraFHERC20
@@ -15,33 +16,39 @@ contract OctraFHERC20 is FHERC20 {
     // Mapping: Octra Circle ID → balanço cifrado bridgeado
     mapping(string => euint64) public circleBridgeBalances;
 
+    // Mapping: Circle ID → owner address
+    mapping(string => address) public circleOwners;
+
     // Mapping: Circle ID → indicador de atividade
     mapping(string => uint256) public circleIndicators;
 
-    // Referência ao ACL Manager
-    address public aclManager;
+    // Mapping: used unshield signatures to prevent replay and front-running
+    mapping(bytes => bool) public usedSignatures;
+
+    IERC20 public publicToken;
 
     // Taxa de bridge (2% para Royalty Catedral — Substrato 252)
     uint256 public constant BRIDGE_FEE_BPS = 200; // 2% = 200 basis points
-    address public constant CATHEDRAL_TREASURY = 0x0000000000000000000000000000000000000000; // Endereço royalty placeholder
-
-    // Níveis de permissão (espelhando ACL Manager)
-    uint8 constant LEVEL_NONE = 0;      // Nenhum acesso
-    uint8 constant LEVEL_THIS = 1;      // Apenas este contrato
-    uint8 constant LEVEL_DELEGATED = 2;   // Endereços delegados
-    uint8 constant LEVEL_DECRYPT = 3;    // Threshold Network
-    uint8 constant LEVEL_PUBLIC = 4;     // Público
-
-    function setAclManager(address _aclManager) external onlyOwner {
-        aclManager = _aclManager;
-    }
+    address public constant CATHEDRAL_TREASURY = 0x0000000000000000000000000000000000000000; // Endereço royalty
 
     // Eventos
     event CircleBridged(string circleId, uint64 amount, uint256 fhenixHandle);
     event CircleUnshielded(string circleId, uint64 plaintext, bytes thresholdSignature);
     event BridgeFeeCollected(string circleId, uint64 feeAmount);
 
-    constructor() FHERC20("Octra Confidential Token", "OCTRA-F", 6) {}
+    modifier onlyCircleOwner(string calldata circleId) {
+        require(circleOwners[circleId] == msg.sender, "Not circle owner");
+        _;
+    }
+
+    constructor(address _publicToken) FHERC20("Octra Confidential Token", "OCTRA-F", 6) {
+        publicToken = IERC20(_publicToken);
+    }
+
+    function registerCircle(string calldata circleId) external {
+        require(circleOwners[circleId] == address(0), "Circle already registered");
+        circleOwners[circleId] = msg.sender;
+    }
 
     /**
      * @dev Bridge de tokens públicos para confidenciais (shield)
@@ -51,9 +58,10 @@ contract OctraFHERC20 is FHERC20 {
         string calldata circleId,
         uint64 publicAmount
     ) external returns (euint64) {
+        require(circleOwners[circleId] == msg.sender, "Not circle owner");
+
         // 1. Recebe tokens públicos do usuário
-        // Burn or pull public tokens from msg.sender
-        _transfer(msg.sender, address(this), publicAmount);
+        require(publicToken.transferFrom(msg.sender, address(this), publicAmount), "Transfer failed");
 
         // 2. Converte para FHERC20 cifrado
         euint64 encryptedBalance = FHE.asEuint64(publicAmount);
@@ -70,17 +78,14 @@ contract OctraFHERC20 is FHERC20 {
         circleBridgeBalances[circleId] = FHE.add(currentBalance, netAmount);
 
         // 5. Registra fee para treasury
-        // (implementação simplificada)
+        // publicToken.transfer(CATHEDRAL_TREASURY, calculatedFee);
 
         // 6. Atualiza indicador
         _updateCircleIndicator(circleId, true);
 
-        // 7. Configura ACL delegando ao ACL Manager
+        // 7. Configura ACL
         uint256 handle = FHE.getHandle(circleBridgeBalances[circleId]);
         FHE.allowThis(handle);
-        if (aclManager != address(0)) {
-            FHE.allow(handle, aclManager);
-        }
 
         emit CircleBridged(circleId, publicAmount, handle);
         return netAmount;
@@ -93,19 +98,7 @@ contract OctraFHERC20 is FHERC20 {
         string calldata fromCircle,
         string calldata toCircle,
         InEuint64 memory encryptedAmount
-    ) external returns (euint64) {
-        // Verifica autorização no ACL Manager
-        if (aclManager != address(0)) {
-            (bool success, bytes memory data) = aclManager.staticcall(
-                abi.encodeWithSignature("verifyAccess(uint256,address,string)",
-                    FHE.getHandle(circleBridgeBalances[fromCircle]),
-                    msg.sender,
-                    fromCircle
-                )
-            );
-            require(success && abi.decode(data, (bool)), "Not authorized to transfer from this circle");
-        }
-
+    ) external onlyCircleOwner(fromCircle) returns (euint64) {
         euint64 amount = FHE.asEuint64(encryptedAmount);
 
         // Verifica balanço suficiente
@@ -116,7 +109,7 @@ contract OctraFHERC20 is FHERC20 {
         euint64 newFromBalance = FHE.select(hasEnough, FHE.sub(fromBalance, amount), fromBalance);
         circleBridgeBalances[fromCircle] = newFromBalance;
 
-        // Adiciona ao receiver (condicional — FHE select para evitar inflação)
+        // Adiciona ao receiver
         euint64 toBalance = circleBridgeBalances[toCircle];
         euint64 amountToTransfer = FHE.select(hasEnough, amount, FHE.asEuint64(0));
         circleBridgeBalances[toCircle] = FHE.add(toBalance, amountToTransfer);
@@ -136,21 +129,12 @@ contract OctraFHERC20 is FHERC20 {
         string calldata circleId,
         uint64 plaintextAmount,
         bytes calldata thresholdSignature
-    ) external {
+    ) external onlyCircleOwner(circleId) {
+        require(!usedSignatures[thresholdSignature], "Signature already used");
+        usedSignatures[thresholdSignature] = true;
+
         euint64 encBalance = circleBridgeBalances[circleId];
         uint256 handle = FHE.getHandle(encBalance);
-
-        // Verifica autorização no ACL Manager
-        if (aclManager != address(0)) {
-            (bool success, bytes memory data) = aclManager.staticcall(
-                abi.encodeWithSignature("verifyAccess(uint256,address,string)",
-                    handle,
-                    msg.sender,
-                    circleId
-                )
-            );
-            require(success && abi.decode(data, (bool)), "Not authorized to unshield this circle");
-        }
 
         // 1. Verifica assinatura Threshold Network
         FHE.verifyDecryptResult(handle, plaintextAmount, thresholdSignature);
@@ -161,7 +145,7 @@ contract OctraFHERC20 is FHERC20 {
         circleBridgeBalances[circleId] = newBalance;
 
         // 3. Envia tokens públicos para usuário
-        _transfer(address(this), msg.sender, plaintextAmount);
+        require(publicToken.transfer(msg.sender, plaintextAmount), "Transfer failed");
 
         // 4. Atualiza indicador
         _updateCircleIndicator(circleId, false);
@@ -181,39 +165,6 @@ contract OctraFHERC20 is FHERC20 {
      */
     function confidentialCircleBalance(string calldata circleId) external view returns (euint64) {
         return circleBridgeBalances[circleId];
-    }
-
-    /**
-     * @dev Aplica permissões ACL para o handle do Circle interagindo com o ACL Manager
-     * Este contrato (owner do ciphertext) deve chamar FHE.allow()
-     */
-    function applyCircleACL(string calldata circleId) external {
-        require(aclManager != address(0), "ACL Manager not set");
-
-        euint64 encBalance = circleBridgeBalances[circleId];
-        uint256 handle = FHE.getHandle(encBalance);
-
-        // Fetch permission level from ACL Manager
-        (bool success, bytes memory data) = aclManager.staticcall(
-            abi.encodeWithSignature("circlePermissionLevel(string)", circleId)
-        );
-        require(success, "Failed to fetch permission level");
-
-        uint8 level = abi.decode(data, (uint8));
-
-        if (level == LEVEL_NONE) {
-            return;
-        } else if (level == LEVEL_THIS) {
-            FHE.allowThis(handle);
-        } else if (level == LEVEL_DELEGATED) {
-            FHE.allowThis(handle);
-        } else if (level == LEVEL_DECRYPT) {
-            FHE.allowThis(handle);
-            FHE.allowForDecryption(handle);
-        } else if (level == LEVEL_PUBLIC) {
-            FHE.allowThis(handle);
-            FHE.allowPublic(handle);
-        }
     }
 
     /**
@@ -253,7 +204,10 @@ contract OctraFHERC20 is FHERC20 {
         euint64 currentBalance = _confidentialBalances[to];
         _confidentialBalances[to] = FHE.add(currentBalance, amount);
 
-        // Emite evento ERC20 compatível (without undefined indicators)
-        emit Transfer(address(0), to, 0);
+        // Atualiza indicador público
+        _updateIndicator(to, true);
+
+        // Emite evento ERC20 compatível (com indicatorTick)
+        emit Transfer(address(0), to, indicatorTick);
     }
 }

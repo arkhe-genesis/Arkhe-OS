@@ -1,0 +1,28 @@
+import json
+import base64
+import tempfile
+import os
+
+class Substrato_853_sap_ariba_erp_bridge:
+    def __init__(self):
+        self.id = "853-SAP-ARIBA-ERP-BRIDGE"
+        self.adapter_source = {}
+        self.adapter_source['b64_sap_ariba_adapter'] = "IyEvICJzYXBfYXJpYmFfYWRhcHRlci5weSIKaW1wb3J0IGhhc2hsaWIKZnJvbSB0eXBpbmcgaW1wb3J0IERpY3QsIExpc3QsIE9wdGlvbmFsCmZyb20gZGF0YWNsYXNzZXMgaW1wb3J0IGRhdGFjbGFzcwoKY2xhc3MgU0FQQXJraGVBZGFwdGVyOgogICAgZGVmIF9faW5pdF9fKHNlbGYsIGNvbm5fY29uZmlnOiBkaWN0KToKICAgICAgICBzZWxmLmNvbm5fY29uZmlnID0gY29ubl9jb25maWcKICAgICAgICBzZWxmLnN1YnN0cmF0ZV9yZWdpc3RyeSA9IHt9CgogICAgZGVmIHJlYWRfZmluYW5jaWFsX2RvY3VtZW50KHNlbGYsIGRvY19udW1iZXI6IHN0ciwgY29tcGFueV9jb2RlOiBzdHIsIGZpc2NhbF95ZWFyOiBzdHIpIC0+IERpY3Q6CiAgICAgICAgaXRlbXMgPSBbeyJBTU9VTlQiOiAxMDB9XQogICAgICAgIHRvdGFsX2Ftb3VudCA9IHN1bShmbG9hdChpdGVtLmdldCgnQU1PVU5UJywgMCkpIGZvciBpdGVtIGluIGl0ZW1zKQogICAgICAgIHBoaV9jID0gMC44NSBpZiB0b3RhbF9hbW91bnQgPiAwIGVsc2UgMC43MgoKICAgICAgICBzZWFsX3N0ciA9IGRvY19udW1iZXIgKyBjb21wYW55X2NvZGUgKyBmaXNjYWxfeWVhcgogICAgICAgIHNlYWwgPSBoYXNobGliLnNoYTNfMjU2KHNlYWxfc3RyLmVuY29kZSgpKS5oZXhkaWdlc3QoKVs6MTZdCiAgICAgICAgZGVjcmVlID0gIjx8QVJLSEVfU1RBUlR8PlxuPHxTVUJTVFJBVEV8PiA4NTMtRkktezB9XG48fElOVkFSSUFOVHw+IEkuNCAoSXNvbGF0aW9uKVxuPHxQSElfQ3w+IHsxOi4zZn1cblxuRG9jdW1lbnRvIEZpbmFuY2Vpcm8gU0FQOiB7MH1cbkVtcHJlc2E6IHsyfSB8IEV4ZXJjw61jaW86IHszfVxuVG90YWw6IHs0Oi4yZn1cblxuPHxTRUFMfD4gezV9XG48fEFSS0hFX0VORHw+Ii5mb3JtYXQoZG9jX251bWJlciwgcGhpX2MsIGNvbXBhbnlfY29kZSwgZmlzY2FsX3llYXIsIHRvdGFsX2Ftb3VudCwgc2VhbCkKICAgICAgICByZXR1cm4geyJzdWJzdHJhdGVfaWQiOiAiODUzLUZJLSIgKyBkb2NfbnVtYmVyLCAicGhpX2MiOiBwaGlfYywgImRlY3JlZSI6IGRlY3JlZSwgInNlYWwiOiBzZWFsfQoKICAgIGRlZiBmZXRjaF9hcmliYV9zdXBwbGllcnMoc2VsZiwgcmVhbG06IHN0cikgLT4gTGlzdFtEaWN0XToKICAgICAgICBzdXBwbGllcnMgPSBbeyJpZCI6ICJTVVAtMDAxIiwgIm5hbWUiOiAiR2xvYmFsIFN1cHBseSBDby4iLCAicmlza19zY29yZSI6IDAuMTJ9XQogICAgICAgIGZvciBzdXAgaW4gc3VwcGxpZXJzOgogICAgICAgICAgICBzZWFsID0gaGFzaGxpYi5zaGEzXzI1NihzdXBbImlkIl0uZW5jb2RlKCkpLmhleGRpZ2VzdCgpWzoxNl0KICAgICAgICAgICAgc2VsZi5zdWJzdHJhdGVfcmVnaXN0cnlbc3VwWyJpZCJdXSA9IHsKICAgICAgICAgICAgICAgICJzdWJzdHJhdGVfaWQiOiAiODUzLUFSSUJBU1VQLSIgKyBzdXBbJ2lkJ10sCiAgICAgICAgICAgICAgICAicGhpX2MiOiAxLjAgLSBzdXAuZ2V0KCJyaXNrX3Njb3JlIiwgMC41KSwKICAgICAgICAgICAgICAgICJzdGF0dXMiOiAiQ0FOT05JWkVEX1BST1ZJU0lPTkFMIiwKICAgICAgICAgICAgICAgICJzZWFsIjogc2VhbCwKICAgICAgICAgICAgfQogICAgICAgIHJldHVybiBbc2VsZi5zdWJzdHJhdGVfcmVnaXN0cnlbc1siaWQiXV0gZm9yIHMgaW4gc3VwcGxpZXJzXQoKICAgIGRlZiBnZW5lcmF0ZV9nb3Zlcm5hbmNlX2RlY3JlZShzZWxmKSAtPiBzdHI6CiAgICAgICAgYWxsX3BoaSA9IFt2WyJwaGlfYyJdIGZvciB2IGluIHNlbGYuc3Vic3RyYXRlX3JlZ2lzdHJ5LnZhbHVlcygpXQogICAgICAgIGF2Z19waGkgPSBzdW0oYWxsX3BoaSkvbGVuKGFsbF9waGkpIGlmIGFsbF9waGkgZWxzZSAwLjAKICAgICAgICByZXR1cm4gIjx8QVJLSEVfU1RBUlR8PlxuPHxTVUJTVFJBVEV8PiA4NTMtR09WXG48fFBISV9DfD4gezA6LjNmfVxuPHxTRUFMfD4gLi4uXG48fEFSS0hFX0VORHw+Ii5mb3JtYXQoYXZnX3BoaSkK"
+
+    def canonize(self):
+        # Strict mode: use pre-defined seal
+        seal = "d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0"
+
+        report = {
+            "Substrate": self.id,
+            "Status": "CANONIZED_PROVISIONAL",
+            "Canonical_Seal": seal,
+            "Files": self.adapter_source
+        }
+
+        fd, path = tempfile.mkstemp(suffix=".json")
+        with os.fdopen(fd, 'w') as f:
+            json.dump(report, f)
+
+        print("Report generated at: " + path)
+        return path

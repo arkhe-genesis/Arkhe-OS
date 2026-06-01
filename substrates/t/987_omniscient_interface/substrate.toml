@@ -1,0 +1,8 @@
+[substrate]
+id = 987
+name = "CATHEDRAL-OMNISCIENT-INTERFACE"
+type = "Interface / Query / Linguagem Natural / Resposta Oracular"
+era = "9"
+deity = "Apollo + Sophia + Pythia"
+status = "CANONIZED_PROVISIONAL"
+cross_links = [986, 985, 984, 983, 982, 981, 980, 979, 978, 977, 976, 964, 954, 923, 951]

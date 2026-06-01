@@ -54,22 +54,18 @@ export class ThresholdNetworkClient {
     timeoutMs: number = 30000
   ): Promise<{ plaintext: bigint; signature: `0x${string}` }> {
     return new Promise((resolve, reject) => {
-      let unwatch: () => void;
-
       const timer = setTimeout(() => {
-        if (unwatch) unwatch();
         reject(new Error('Threshold decrypt timeout'));
       }, timeoutMs);
 
       // Monitora eventos do contrato bridge
-      unwatch = this.cofheClient.watchContractEvent({
+      this.cofheClient.watchContractEvent({
         address: this.bridgeContract,
         abi: THRESHOLD_BRIDGE_ABI,
         eventName: 'ThresholdDecryptVerified',
         args: { circleId, fhenixHandle },
         onLogs: (logs: any[]) => {
           clearTimeout(timer);
-          unwatch();
           const log = logs[0];
           resolve({
             plaintext: log.args.plaintext,

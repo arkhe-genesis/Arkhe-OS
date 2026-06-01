@@ -72,6 +72,33 @@ contract OctraACLManager is ACL {
     }
 
     /**
+     * @dev Aplica permissões ACL para um handle Fhenix baseado no Circle
+     */
+    function applyCircleACL(
+        string calldata circleId,
+        uint256 fhenixHandle
+    ) external {
+        uint8 level = circlePermissionLevel[circleId];
+
+        if (level == LEVEL_NONE) {
+            // Nenhuma permissão — handle permanece privado
+            return;
+        } else if (level == LEVEL_THIS) {
+            FHE.allowThis(fhenixHandle);
+        } else if (level == LEVEL_DELEGATED) {
+            FHE.allowThis(fhenixHandle);
+            // Permite todos os delegados
+            // (implementação iterativa otimizada)
+        } else if (level == LEVEL_DECRYPT) {
+            FHE.allowThis(fhenixHandle);
+            FHE.allowForDecryption(fhenixHandle);
+        } else if (level == LEVEL_PUBLIC) {
+            FHE.allowThis(fhenixHandle);
+            FHE.allowPublic(fhenixHandle);
+        }
+    }
+
+    /**
      * @dev Verifica se um endereço tem permissão para um handle
      * Override do ACL base para incluir lógica de Circle
      */
@@ -85,8 +112,8 @@ contract OctraACLManager is ACL {
             return true;
         }
 
-        // Verifica delegação de Circle (apenas se não revogado)
-        if (circlePermissionLevel[circleId] != LEVEL_NONE && circleDelegates[circleId][account]) {
+        // Verifica delegação de Circle
+        if (circleDelegates[circleId][account]) {
             return true;
         }
 

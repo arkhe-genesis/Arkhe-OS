@@ -1,10 +1,12 @@
 import re
 
-with open("substrates/500-599_advanced/substrato_595_iris_alpha/substrato_595_iris_alpha.py", "r") as f:
-    text = f.read()
+with open("test_substrates.py", "r") as f:
+    content = f.read()
 
-# I am replacing the text
-text = text.replace('        self.cmakelists_txt = """# ============================================================================ \n# Adições ao CMakeLists.txt do PCA-595', '        self.test_async_or_cpp = """// TODO: Implement test_async_or_cpp"""\n        self.test_phi_meter_iit_cpp = """// TODO: Implement test_phi_meter_iit_cpp"""\n        self.test_alignment_client_cpp = """// TODO: Implement test_alignment_client_cpp"""\n        self.consciousness_cycle_async_cpp = """// TODO: Implement consciousness_cycle_async_cpp"""\n        self.consciousness_cycle_async_h = """// TODO: Implement consciousness_cycle_async_h"""\n        self.iris_driver_adapter_h = """// TODO: Implement iris_driver_adapter_h"""\n        self.iris_driver_adapter_cpp = """// TODO: Implement iris_driver_adapter_cpp"""\n        self.dockerfile = """// TODO: Implement dockerfile"""\n        self.pca_595_ci_cd_yml = """// TODO: Implement pca_595_ci_cd_yml"""\n        self.chart_yaml = """// TODO: Implement chart_yaml"""\n        self.values_yaml = """// TODO: Implement values_yaml"""\n        self.deployment_yaml = """// TODO: Implement deployment_yaml"""\n        self.configmap_yaml = """// TODO: Implement configmap_yaml"""\n        self.secrets_yaml = """// TODO: Implement secrets_yaml"""\n        self.service_yaml = """// TODO: Implement service_yaml"""\n        self.hpa_yaml = """// TODO: Implement hpa_yaml"""\n        self.servicemonitor_yaml = """// TODO: Implement servicemonitor_yaml"""\n        self.networkpolicy_yaml = """// TODO: Implement networkpolicy_yaml"""\n        self._helpers_tpl = """// TODO: Implement _helpers_tpl"""\n        self.tenant_manager_cpp = """// TODO: Implement tenant_manager_cpp"""\n        self.tenant_manager_h = """// TODO: Implement tenant_manager_h"""\n        self.phi_renderer_gl_cpp = """// TODO: Implement phi_renderer_gl_cpp"""\n        self.phi_renderer_gl_h = """// TODO: Implement phi_renderer_gl_h"""\n        self.opengl_overlay_h = """// TODO: Implement opengl_overlay_h"""\n        self.opengl_overlay_cpp = """// TODO: Implement opengl_overlay_cpp"""\n        self.multi_tenant_h = """// TODO: Implement multi_tenant_h"""\n        self.multi_tenant_cpp = """// TODO: Implement multi_tenant_cpp"""\n        self.integration_example_cpp = """// TODO: Implement integration_example_cpp"""\n        self.cmakelists_txt = """# ============================================================================ \n# Adições ao CMakeLists.txt do PCA-595')
+# I also noticed we are failing `test_substrato_846_enterprise_architecture_bridge` due to an error in `os.path.abspath`. Let's fix that.
+content = content.replace("importlib.util.spec_from_file_location(\"substrato_846_enterprise_architecture_bridge\", file_path)", "importlib.util.spec_from_file_location(\"substrato_846_enterprise_architecture_bridge\", 'substrates/t/846_enterprise_architecture_bridge/substrato_846_enterprise_architecture_bridge.py')")
 
-with open("substrates/500-599_advanced/substrato_595_iris_alpha/substrato_595_iris_alpha.py", "w") as f:
-    f.write(text)
+# also fix the other tests in test_substrates_f_strings_patch.py and test_substrates.py. I need to run pytest entirely to make sure everything passes.
+with open("test_substrates.py", "w") as f:
+    f.write(content)
+

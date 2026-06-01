@@ -9,6 +9,7 @@ const ACL_ABI = [
   'function setCirclePermissionLevel(string circleId, uint8 level)',
   'function addCircleDelegate(string circleId, address delegate)',
   'function removeCircleDelegate(string circleId, address delegate)',
+  'function applyCircleACL(string circleId, uint256 fhenixHandle)',
   'function verifyAccess(uint256 handle, address account, string circleId) view returns (bool)',
   'function emergencyRevokeCircle(string circleId)',
   'event CirclePermissionSet(string circleId, uint8 level, address setter)',
@@ -59,6 +60,20 @@ export class OctraACLManager {
       abi: ACL_ABI,
       functionName: 'addCircleDelegate',
       args: [circleId, delegate],
+    });
+    const receipt = await tx.wait();
+    return receipt.transactionHash;
+  }
+
+  /**
+   * Aplica ACL a um handle Fhenix
+   */
+  async applyACL(circleId: string, fhenixHandle: bigint): Promise<`0x${string}`> {
+    const tx = await this.cofheClient.writeContract({
+      address: this.aclContract,
+      abi: ACL_ABI,
+      functionName: 'applyCircleACL',
+      args: [circleId, fhenixHandle],
     });
     const receipt = await tx.wait();
     return receipt.transactionHash;

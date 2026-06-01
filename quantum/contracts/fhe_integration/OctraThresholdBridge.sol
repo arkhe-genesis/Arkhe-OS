@@ -3,13 +3,14 @@ pragma solidity ^0.8.25;
 
 import "@fhenixprotocol/cofhe-contracts/FHE.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @title OctraThresholdBridge
  * @dev Integra Threshold Network Fhenix com Octra HFHE para decriptação controlada
  * Substrate 840+ — Threshold Integration Module
  */
-contract OctraThresholdBridge {
+contract OctraThresholdBridge is Ownable {
     using ECDSA for bytes32;
 
     // Endereço do Dispatcher signer (registrado no TaskManager)
@@ -28,14 +29,14 @@ contract OctraThresholdBridge {
         _;
     }
 
-    constructor(address _thresholdSigner) {
+    constructor(address _thresholdSigner) Ownable(msg.sender) {
         thresholdSigner = _thresholdSigner;
     }
 
     /**
      * @dev Atualiza o endereço do Threshold signer (governança)
      */
-    function updateThresholdSigner(address newSigner) external {
+    function updateThresholdSigner(address newSigner) external onlyOwner {
         // Requer GOV-840-001: 2/3 supermajoridade
         thresholdSigner = newSigner;
         emit ThresholdSignerUpdated(newSigner);
@@ -94,7 +95,7 @@ contract OctraThresholdBridge {
         string calldata circleId,
         uint256 fhenixHandle,
         bool permitted
-    ) external {
+    ) external onlyOwner {
         // Verificação de governança: apenas bridge admin ou GOV-840
         circleDecryptPermitted[circleId][fhenixHandle] = permitted;
     }

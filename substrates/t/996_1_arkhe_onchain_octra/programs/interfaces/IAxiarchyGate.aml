@@ -1,0 +1,10 @@
+// IAxiarchyGate.aml
+// Interface canônica do Portão Ético da Catedral
+// Substrato 996.1 — ARKHE-ONCHAIN
+
+interface IAxiarchyGate {
+  view fn is_verified(code_hash: bytes32): bool
+  fn verify_code(code_hash: bytes32, lean_proof: bytes): bool
+  fn revoke_verification(code_hash: bytes32): bool
+  view fn get_proof(code_hash: bytes32): bytes
+}

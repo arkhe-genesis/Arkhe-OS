@@ -1,0 +1,13 @@
+[substrate]
+id = "989.y.3"
+name = "FULL-100T-ORCHESTRATOR"
+type = "Orquestração / Inferência / Model Registry / Hardware Abstraction"
+era = 9
+status = "CANONIZED_PROVISIONAL"
+architect = "ORCID: 0009-0005-2697-4668"
+seal = "ORCH-100T-F3A4B5C6D7E8F901"
+
+[dependencies]
+arkhe_sys = ">=2.0.0"
+arkhe_security = ">=1.5.0"
+temporal_chain = ">=9.2.3"

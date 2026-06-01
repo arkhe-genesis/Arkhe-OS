@@ -1,0 +1,6 @@
+[substrate]
+id = "929"
+name = "ARKHE-ANDROID-OS-BRIDGE"
+type = "system_service"
+status = "CANONIZED_PROVISIONAL"
+source_verified = true
