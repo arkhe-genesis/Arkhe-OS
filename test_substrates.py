@@ -2937,3 +2937,22 @@ def test_1042_rbb_bridge():
     assert data["metadata"]["substrate"] == "1042-RBB-CATHEDRAL-BRIDGE"
     assert "Files" in data
     assert "substrate.toml" in data["Files"]
+
+def test_substrate_1047_twin_wallet():
+    import subprocess
+    import json
+    result = subprocess.run(['python3', 'src/arkhe/substrates/t/1047_twin_wallet/substrato_1047_twin_wallet_canonizer.py'], capture_output=True, text=True, check=True)
+    report = json.loads(result.stdout)
+    assert report["Substrate_ID"] == "1047"
+    assert report["Name"] == "TWIN-WALLET"
+    assert report["Status"] == "CANONIZED_PROVISIONAL"
+    assert "Canonical_Seal" in report
+    assert report["Canonical_Seal"].startswith("TWIN-WALLET-1047-")
+
+    files = report["Files"]
+    assert "TwinAccount.sol" in files
+    assert "TwinFactory.sol" in files
+    assert "TwitchJWTVerifier.sol" in files
+    assert "README.md" in files
+    assert "PROTOCOL.md" in files
+    assert "substrate.toml" in files

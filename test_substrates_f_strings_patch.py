@@ -457,3 +457,9 @@ def test_1042_f_strings():
     with open(canonizer_path, 'r', encoding='utf-8') as f:
         code = f.read()
     assert 'f"' not in code and "f'" not in code, "Canonizers must not contain f-strings"
+
+def test_substrate_1047_f_strings():
+    import re
+    with open('src/arkhe/substrates/t/1047_twin_wallet/substrato_1047_twin_wallet_canonizer.py', 'r') as f:
+        content = f.read()
+    assert not re.search(r'f[\"\']', content)
