@@ -439,3 +439,14 @@ def test_substrate_1040_canonizer_f_strings():
     # We only care about f-strings in the canonizer.
     f_strings = re.findall(r'f["\']', content)
     assert not f_strings, "O canonizador 1040 não deve conter f-strings (f\"...\")."
+
+def test_1038_1_f_strings():
+    import subprocess
+    result = subprocess.run(
+        ["python3", "substrates/t/1038_1_continuous_fuzzer/substrato_1038_1.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    assert 'f"' not in open('substrates/t/1038_1_continuous_fuzzer/substrato_1038_1.py').read()
+    assert "f'" not in open('substrates/t/1038_1_continuous_fuzzer/substrato_1038_1.py').read()

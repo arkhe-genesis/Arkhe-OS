@@ -1,0 +1,7 @@
+[substrate]
+id = "1038.1"
+name = "Continuous Fuzzer"
+version = "1.0.0"
+
+[dependencies]
+python = ">=3.10"

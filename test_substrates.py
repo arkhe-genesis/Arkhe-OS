@@ -2896,3 +2896,23 @@ def test_substrate_1040_hermes_bridge():
     assert "hermes_cathedral_bridge.py" in files
     assert "substrate.toml" in files
     assert report["Canonical_Seal"] is not None
+
+
+def test_substrate_1038_1():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/1038_1_continuous_fuzzer/substrato_1038_1.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+
+    report = json.loads(result.stdout.strip())
+
+    assert report["Substrate_ID"] == "1038.1"
+    assert report["Name"] == "Continuous Fuzzer"
+    assert "Files" in report
+    assert "hermes_fuzzer_1038.1.py" in report["Files"]
+    assert "substrate.toml" in report["Files"]
+    assert "Canonical_Seal" in report
