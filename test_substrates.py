@@ -2916,3 +2916,24 @@ def test_substrate_1038_1():
     assert "hermes_fuzzer_1038.1.py" in report["Files"]
     assert "substrate.toml" in report["Files"]
     assert "Canonical_Seal" in report
+
+def test_1042_rbb_bridge():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_1042_rbb_cathedral_bridge",
+        os.path.abspath('substrates/t/1042_rbb_cathedral_bridge/substrato_1042_rbb_cathedral_bridge.py')
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    canonizer = module.Substrate1042Canonizer()
+    path = canonizer.canonize()
+
+    assert os.path.exists(path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    assert data["metadata"]["substrate"] == "1042-RBB-CATHEDRAL-BRIDGE"
+    assert "Files" in data
+    assert "substrate.toml" in data["Files"]

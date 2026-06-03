@@ -450,3 +450,10 @@ def test_1038_1_f_strings():
     )
     assert 'f"' not in open('substrates/t/1038_1_continuous_fuzzer/substrato_1038_1.py').read()
     assert "f'" not in open('substrates/t/1038_1_continuous_fuzzer/substrato_1038_1.py').read()
+
+def test_1042_f_strings():
+    import os
+    canonizer_path = os.path.abspath('substrates/t/1042_rbb_cathedral_bridge/substrato_1042_rbb_cathedral_bridge.py')
+    with open(canonizer_path, 'r', encoding='utf-8') as f:
+        code = f.read()
+    assert 'f"' not in code and "f'" not in code, "Canonizers must not contain f-strings"
