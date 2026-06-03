@@ -1,0 +1,13 @@
+[substrate]
+id = "1040"
+name = "HERMES-CATHEDRAL BRIDGE"
+type = "ontology-bridge"
+version = "2026.06.02"
+architect = "ORCID 0009-0005-2697-4668"
+
+[tags]
+keywords = ["hermes", "agent", "nous-research", "bridge", "mcp", "skills", "memory"]
+
+[dependencies]
+arkhe = ">=1039.6.0"
+numpy = ">=1.24.0"

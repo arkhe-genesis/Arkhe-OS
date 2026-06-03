@@ -2879,3 +2879,20 @@ def test_substrate_1018_1():
     assert "test_suite.py" in report["Files"]
     assert "Makefile" in report["Files"]
     assert "substrate.toml" in report["Files"]
+
+def test_substrate_1040_hermes_bridge():
+    """Valida o canonizador do Substrato 1040 (Hermes-Cathedral Bridge)."""
+    import subprocess
+    import json
+
+    result = subprocess.run(["python3", "substrato_1040_hermes_bridge.py"], capture_output=True, text=True)
+    assert result.returncode == 0, "O canonizador 1040 falhou ao executar."
+
+    report = json.loads(result.stdout)
+    assert report["Substrate_ID"] == "1040"
+    assert report["Name"] == "HERMES-CATHEDRAL BRIDGE"
+
+    files = report["Files"]
+    assert "hermes_cathedral_bridge.py" in files
+    assert "substrate.toml" in files
+    assert report["Canonical_Seal"] is not None

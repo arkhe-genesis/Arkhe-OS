@@ -430,3 +430,12 @@ def test_no_f_strings_substrate_1018_1():
             for line in lines:
                 if re.search(r'f["\']', line) and not "# noqa: FS002" in line:
                     assert False, f"f-string found in {file}: {line}"
+
+def test_substrate_1040_canonizer_f_strings():
+    import re
+    with open("substrato_1040_hermes_bridge.py", "r", encoding="utf-8") as f:
+        content = f.read()
+
+    # We only care about f-strings in the canonizer.
+    f_strings = re.findall(r'f["\']', content)
+    assert not f_strings, "O canonizador 1040 não deve conter f-strings (f\"...\")."
