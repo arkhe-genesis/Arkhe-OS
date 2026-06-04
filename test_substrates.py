@@ -2956,3 +2956,21 @@ def test_substrate_1047_twin_wallet():
     assert "README.md" in files
     assert "PROTOCOL.md" in files
     assert "substrate.toml" in files
+
+def test_substrate_1051():
+    import subprocess
+    import json
+    import os
+    canonizer_path = "substrates/t/1051_asi_ordeal/substrato_1051_asi_ordeal.py"
+    assert os.path.exists(canonizer_path)
+
+    result = subprocess.run(["python3", canonizer_path], capture_output=True, text=True)
+    assert result.returncode == 0
+
+    report = json.loads(result.stdout)
+    assert report["SubstrateID"] == "1051"
+    assert report["SubstrateName"] == "ASI_ORDEAL"
+    assert "asi_ordeal.py" in report["Files"]
+    assert "substrate.toml" in report["Files"]
+    assert report["Seal"].startswith("ASI-ORDEAL-1051-")
+    assert report["Benchmarks"]["Passed"] == 12
