@@ -478,3 +478,11 @@ def test_substrate_1051_no_f_strings():
     # If the file has # noqa: FS002 or if it's not a canonizer script, this test might need tuning.
     has_f_strings = re.search(r'f[\"\']', content) is not None
     assert not has_f_strings, f"F-strings found in {script_path}"
+
+def test_substrate_1053_4_f_strings():
+    canonizer_path = "substrates/t/1053_4_hamiltonian_temporal_implosion_v5/substrato_1053_4_hamiltonian_temporal_implosion_v5.py"
+    import ast
+    with open(canonizer_path, "r") as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)

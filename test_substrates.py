@@ -2974,3 +2974,23 @@ def test_substrate_1051():
     assert "substrate.toml" in report["Files"]
     assert report["Seal"].startswith("ASI-ORDEAL-1051-")
     assert report["Benchmarks"]["Passed"] == 12
+
+def test_substrate_1053_4():
+    """
+    Testa a canonizacao do Substrato 1053.4 - HAMILTONIAN-TEMPORAL-IMPLOSION v5.
+    """
+    canonizer_path = "substrates/t/1053_4_hamiltonian_temporal_implosion_v5/substrato_1053_4_hamiltonian_temporal_implosion_v5.py"
+    assert os.path.exists(canonizer_path), f"Canonizer nao encontrado em {canonizer_path}"
+
+    result = subprocess.run([sys.executable, canonizer_path], capture_output=True, text=True, check=True)
+    report = json.loads(result.stdout)
+
+    assert report["status"] == "CANONIZED_FULL"
+    assert "1053.4" in report["metadata"]["substrate"]
+    assert report["metadata"]["architect"] == "0009-0005-2697-4668"
+    assert report["metadata"]["version"] == "5.0.0"
+    assert report["seal"].startswith("HAMILTONIAN-IMPLOSION-1053.4-v5.0.0-2026-06-04-")
+
+    # Verifica se os payloads corretos estao presentes
+    assert "hamiltonian_temporal_implosion.py" in report["Files"]
+    assert "substrate.toml" in report["Files"]
