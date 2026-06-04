@@ -2994,3 +2994,21 @@ def test_substrate_1053_4():
     # Verifica se os payloads corretos estao presentes
     assert "hamiltonian_temporal_implosion.py" in report["Files"]
     assert "substrate.toml" in report["Files"]
+
+def test_1064_rsi_agi_strategic_recommendations():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/1064_rsi_agi_strategic_recommendations/substrato_1064_rsi_agi_strategic_recommendations.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+
+    report = json.loads(result.stdout)
+    assert report["SubstrateID"] == "1064"
+    assert report["Name"] == "RSI_AGI_STRATEGIC_RECOMMENDATIONS"
+    assert report["Status"] == "CANONIZED_FULL"
+    assert "Seal" in report
+    assert "Components" in report
+    assert len(report["Components"]) == 4
