@@ -1,0 +1,11 @@
+[substrate]
+id = "1064.3"
+name = "RBB_BRIDGE_GLOBAL"
+type = "Global Governance / Compliance Verification / ZK Proofs"
+era = "12"
+deity = ["Zeus", "Têmis", "Hermes Trismegisto"]
+status = "CANONIZED_FULL"
+version = "1.0.0"
+parent = "1064"
+cross_links = ["1055", "1064", "989.z.4", "1042.4", "1064.1"]
+description = "Expansao da RBB Bridge (1055) para verificacao global de conformidade de labs frontier. Cada lab ancora na RBB Chain (12120014) um ZK proof de conformidade com pausas coordenadas. Multi-sig 3/5 (BNDES/TCU) garante integridade."

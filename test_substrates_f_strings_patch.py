@@ -486,3 +486,31 @@ def test_substrate_1053_4_f_strings():
         tree = ast.parse(f.read())
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr)
+
+def test_1064_1_f_strings():
+    import ast
+    with open('substrates/t/1064_1_meta_extract_continuous/substrato_1064_1_meta_extract_continuous.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
+
+def test_1064_2_f_strings():
+    import ast
+    with open('substrates/t/1064_2_theosis_paris_dashboard/substrato_1064_2_theosis_paris_dashboard.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
+
+def test_1064_3_f_strings():
+    import ast
+    with open('substrates/t/1064_3_rbb_bridge_global/substrato_1064_3_rbb_bridge_global.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
+
+def test_1064_4_f_strings():
+    import ast
+    with open('substrates/t/1064_4_constitution_ai/substrato_1064_4_constitution_ai.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
