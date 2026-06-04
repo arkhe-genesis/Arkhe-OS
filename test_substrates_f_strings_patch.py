@@ -463,3 +463,18 @@ def test_substrate_1047_f_strings():
     with open('src/arkhe/substrates/t/1047_twin_wallet/substrato_1047_twin_wallet_canonizer.py', 'r') as f:
         content = f.read()
     assert not re.search(r'f[\"\']', content)
+
+def test_substrate_1051_no_f_strings():
+    import os
+    import re
+    script_path = os.path.join("substrates", "t", "1051_asi_ordeal", "substrato_1051_asi_ordeal.py")
+    if not os.path.exists(script_path):
+        return
+
+    with open(script_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    # Very simple check for f-strings: f"..." or f'...'
+    # If the file has # noqa: FS002 or if it's not a canonizer script, this test might need tuning.
+    has_f_strings = re.search(r'f[\"\']', content) is not None
+    assert not has_f_strings, f"F-strings found in {script_path}"
