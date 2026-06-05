@@ -524,3 +524,10 @@ def test_1065_f_strings():
     with open('substrates/t/1065_arkhe_cathedral_blueprint/substrato_1065_arkhe_cathedral_blueprint.py', 'r') as f:
         content = f.read()
     assert 'f"' not in content and "f'" not in content, "f-strings are strictly forbidden in python canonizers"
+
+def test_substrate_1066_1_f_strings():
+    import ast
+    with open("substrates/t/1066_1_fordefi_bridge_orchestrator/substrato_1066_1_fordefi_bridge.py", "r") as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr), "F-strings are not allowed in the canonizer"
