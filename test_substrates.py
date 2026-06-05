@@ -3073,3 +3073,18 @@ def test_substrate_1066_1_fordefi_bridge_orchestrator():
     files = report["Files"]
     assert "src/fordefi_client.py" in files
     assert "tests/test_fordefi_bridge.py" in files
+
+def test_1068_arkhe_cathedral_master_repo():
+    import subprocess, json
+    result = subprocess.run(
+        ["python3", "substrates/t/1068_arkhe_cathedral_master_repo/substrato_1068_arkhe_cathedral_master_repo.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    report = json.loads(result.stdout)
+    assert report["SubstrateID"] == "1068"
+    assert report["Status"] == "CANONIZED_FULL"
+    assert report["Seal"] == "CATHEDRAL-MASTER-REPO-1068-v1.0.0-2026-06-05"
+    assert "master_repo_1068.md" in report["Files"]
+    assert "substrate.toml" in report["Files"]

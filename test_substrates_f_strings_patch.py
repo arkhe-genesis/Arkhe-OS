@@ -531,3 +531,10 @@ def test_substrate_1066_1_f_strings():
         tree = ast.parse(f.read())
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr), "F-strings are not allowed in the canonizer"
+
+def test_1068_f_strings():
+    import ast
+    with open("substrates/t/1068_arkhe_cathedral_master_repo/substrato_1068_arkhe_cathedral_master_repo.py", "r") as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr), "F-strings are not allowed in the canonizer"
