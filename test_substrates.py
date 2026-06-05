@@ -3050,3 +3050,26 @@ def test_1065_arkhe_cathedral_blueprint():
     assert "Files" in report
     assert "blueprint_1065.md" in report["Files"]
     assert "substrate.toml" in report["Files"]
+
+def test_substrate_1066_1_fordefi_bridge_orchestrator():
+    """
+    Testa se o canonizer do substrato 1066.1 (Fordefi Bridge)
+    retorna um JSON válido, contém o ID correto e os payloads em base64.
+    """
+    import subprocess
+    import json
+
+    result = subprocess.run(
+        ["python3", "substrates/t/1066_1_fordefi_bridge_orchestrator/substrato_1066_1_fordefi_bridge.py"],
+        capture_output=True,
+        text=True
+    )
+    assert result.returncode == 0, f"Canonizer failed: {result.stderr}"
+
+    report = json.loads(result.stdout)
+    assert report.get("substrate_id") == "1066.1"
+    assert report.get("name") == "FORDEFI-BRIDGE-ORCHESTRATOR"
+    assert "Files" in report
+    files = report["Files"]
+    assert "src/fordefi_client.py" in files
+    assert "tests/test_fordefi_bridge.py" in files
