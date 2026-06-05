@@ -3012,3 +3012,41 @@ def test_1064_rsi_agi_strategic_recommendations():
     assert "Seal" in report
     assert "Components" in report
     assert len(report["Components"]) == 4
+
+def test_1065_arkhe_cathedral_blueprint():
+    import subprocess
+    import json
+
+    result = subprocess.run(
+        ["python3", "substrates/t/1065_arkhe_cathedral_blueprint/substrato_1065_arkhe_cathedral_blueprint.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+
+    report = json.loads(result.stdout)
+    assert report["SubstrateID"] == "1065"
+    assert report["Name"] == "ARKHE_CATHEDRAL_BLUEPRINT"
+    assert report["Status"] == "CANONIZED_FULL"
+    assert "Files" in report
+    assert "blueprint_1065.md" in report["Files"]
+    assert "substrate.toml" in report["Files"]
+
+def test_1065_arkhe_cathedral_blueprint():
+    import subprocess
+    import json
+
+    result = subprocess.run(
+        ["python3", "substrates/t/1065_arkhe_cathedral_blueprint/substrato_1065_arkhe_cathedral_blueprint.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+
+    report = json.loads(result.stdout)
+    assert report["SubstrateID"] == "1065"
+    assert report["Name"] == "ARKHE_CATHEDRAL_BLUEPRINT"
+    assert report["Status"] == "CANONIZED_FULL"
+    assert "Files" in report
+    assert "blueprint_1065.md" in report["Files"]
+    assert "substrate.toml" in report["Files"]
