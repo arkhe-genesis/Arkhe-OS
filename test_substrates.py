@@ -2995,50 +2995,20 @@ def test_substrate_1053_4():
     assert "hamiltonian_temporal_implosion.py" in report["Files"]
     assert "substrate.toml" in report["Files"]
 
-def test_substrate_1064_1():
-    canonizer_path = "substrates/t/1064_1_meta_extract_continuous/substrato_1064_1_meta_extract_continuous.py"
-    result = subprocess.run([sys.executable, canonizer_path], capture_output=True, text=True)
-    assert result.returncode == 0
-    report = json.loads(result.stdout)
-    assert report["SubstrateID"] == "1064.1"
-    assert report["SubstrateName"] == "META_EXTRACT_CONTINUOUS"
-    assert report["Status"] == "CANONIZED_FULL"
-    assert "meta_extract_continuous.py" in report["Files"]
-    assert "substrate.toml" in report["Files"]
-    assert report["Seal"].startswith("META-EXTRACT-CONTINUOUS-1064.1-")
+def test_1064_rsi_agi_strategic_recommendations():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/1064_rsi_agi_strategic_recommendations/substrato_1064_rsi_agi_strategic_recommendations.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
 
-def test_substrate_1064_2():
-    canonizer_path = "substrates/t/1064_2_theosis_paris_dashboard/substrato_1064_2_theosis_paris_dashboard.py"
-    result = subprocess.run([sys.executable, canonizer_path], capture_output=True, text=True)
-    assert result.returncode == 0
     report = json.loads(result.stdout)
-    assert report["SubstrateID"] == "1064.2"
-    assert report["SubstrateName"] == "THEOSIS_PARIS_DASHBOARD"
+    assert report["SubstrateID"] == "1064"
+    assert report["Name"] == "RSI_AGI_STRATEGIC_RECOMMENDATIONS"
     assert report["Status"] == "CANONIZED_FULL"
-    assert "theosis_paris_dashboard.py" in report["Files"]
-    assert "substrate.toml" in report["Files"]
-    assert report["Seal"].startswith("THEOSIS-PARIS-DASHBOARD-1064.2-")
-
-def test_substrate_1064_3():
-    canonizer_path = "substrates/t/1064_3_rbb_bridge_global/substrato_1064_3_rbb_bridge_global.py"
-    result = subprocess.run([sys.executable, canonizer_path], capture_output=True, text=True)
-    assert result.returncode == 0
-    report = json.loads(result.stdout)
-    assert report["SubstrateID"] == "1064.3"
-    assert report["SubstrateName"] == "RBB_BRIDGE_GLOBAL"
-    assert report["Status"] == "CANONIZED_FULL"
-    assert "rbb_bridge_global.py" in report["Files"]
-    assert "substrate.toml" in report["Files"]
-    assert report["Seal"].startswith("RBB-BRIDGE-GLOBAL-1064.3-")
-
-def test_substrate_1064_4():
-    canonizer_path = "substrates/t/1064_4_constitution_ai/substrato_1064_4_constitution_ai.py"
-    result = subprocess.run([sys.executable, canonizer_path], capture_output=True, text=True)
-    assert result.returncode == 0
-    report = json.loads(result.stdout)
-    assert report["SubstrateID"] == "1064.4"
-    assert report["SubstrateName"] == "CONSTITUTION_AI"
-    assert report["Status"] == "CANONIZED_FULL"
-    assert "constitution_ai.lean" in report["Files"]
-    assert "substrate.toml" in report["Files"]
-    assert report["Seal"].startswith("CONSTITUTION-AI-1064.4-")
+    assert "Seal" in report
+    assert "Components" in report
+    assert len(report["Components"]) == 4
