@@ -1,0 +1,11 @@
+[substrate]
+id = "1064.4"
+name = "CONSTITUTION_AI"
+type = "Formal Constitution / Alignment Contracts / Lean 4"
+era = "12"
+deity = ["Atena", "Têmis", "Mnemosyne"]
+status = "CANONIZED_FULL"
+version = "1.0.0"
+parent = "1064"
+cross_links = ["1062.3", "1046.4", "1064", "954", "989.z.4"]
+description = "Formalizacao da Constitution AI da Anthropic como contratos formais em Lean 4, usando o pipeline Proof-Refactor-Bio-Gov (1062.3). Cada principio de alignment e um teorema verificavel."
