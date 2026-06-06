@@ -3117,3 +3117,16 @@ def test_substrate_1079_1080_auto_canonization_engine():
     assert report["Seal"] == "AUTO-CANON-1079-1080-v1.0.0-2026-06-06"
     assert "auto_canonization_engine.py" in report["Files"]
     assert "substrate.toml" in report["Files"]
+
+def test_substrate_1082_cathedral_translation_engine():
+    result = subprocess.run(
+        ["python3", "substrates/t/1082_cathedral_translation_engine/substrato_1082_cathedral_translation_engine.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    report = json.loads(result.stdout)
+    assert report["SubstrateID"] == "1082"
+    assert report["Seal"] == "CATHEDRAL-TRANSLATION-1082-v1.0.0-2026-06-06"
+    assert "cathedral_translation_engine.py" in report["Files"]
+    assert "substrate.toml" in report["Files"]
