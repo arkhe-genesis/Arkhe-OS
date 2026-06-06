@@ -538,3 +538,15 @@ def test_1068_f_strings():
         tree = ast.parse(f.read())
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr), "F-strings are not allowed in the canonizer"
+
+def test_1077_f_strings():
+    import os
+    import re
+
+    filepath = os.path.abspath('substrato_1077_goose_cathedral_bridge.py')
+    with open(filepath, 'r', encoding='utf-8') as f:
+        content = f.read()
+
+    pattern = r'\bf([\'"])'
+    matches = re.findall(pattern, content)
+    assert not matches, f"Found f-strings in substrato_1077_goose_cathedral_bridge.py: {matches}"
