@@ -1,0 +1,7 @@
+[substrate]
+id = "1086"
+name = "DROPS DATABASE BRIDGE"
+version = "1.0.0"
+architect = "ORCID 0009-0005-2697-4668"
+status = "canonized"
+seal = "DROPS-BRIDGE-1086-v1.0.0-2026-06-06"
