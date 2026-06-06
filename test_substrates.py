@@ -3103,3 +3103,17 @@ def test_substrate_1077_goose_cathedral_bridge():
     assert report["Name"] == "GOOSE-CATHEDRAL BRIDGE"
     assert "goose_cathedral_bridge.py" in report["Files"]
     assert "substrate.toml" in report["Files"]
+def test_substrate_1079_1080_auto_canonization_engine():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/1079_1080_auto_canonization_engine/substrato_1079_1080_auto_canonization_engine.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    report = json.loads(result.stdout)
+    assert report["SubstrateID"] == "1079-1080"
+    assert report["Seal"] == "AUTO-CANON-1079-1080-v1.0.0-2026-06-06"
+    assert "auto_canonization_engine.py" in report["Files"]
+    assert "substrate.toml" in report["Files"]

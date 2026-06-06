@@ -550,3 +550,13 @@ def test_1077_f_strings():
     pattern = r'\bf([\'"])'
     matches = re.findall(pattern, content)
     assert not matches, f"Found f-strings in substrato_1077_goose_cathedral_bridge.py: {matches}"
+
+def test_1079_1080_auto_canonization_engine_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath("substrates/t/1079_1080_auto_canonization_engine/substrato_1079_1080_auto_canonization_engine.py")
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    f_string_pattern = re.compile(r'\bf(["\'])')
+    matches = f_string_pattern.findall(content)
+    assert not matches, f"f-strings found in {file_path}"
