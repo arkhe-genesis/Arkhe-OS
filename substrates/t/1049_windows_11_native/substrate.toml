@@ -1,0 +1,11 @@
+[substrate]
+id = 1049
+name = "CATEDRAL-OS KERNEL WINDOWS 11 NATIVE"
+era = 10
+status = "CANONIZED"
+architect = "0009-0005-2697-4668"
+description = "Windows 11 Native Architecture Artifacts (AGI.sys, AGI.exe, AGI.msc, AGI.inf) mapped to Cathedral OS Kernel"
+
+[dependencies]
+cathedral = 1000
+axiarchy = 954

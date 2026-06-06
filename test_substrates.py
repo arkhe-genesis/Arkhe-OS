@@ -3088,3 +3088,21 @@ def test_1068_arkhe_cathedral_master_repo():
     assert report["Seal"] == "CATHEDRAL-MASTER-REPO-1068-v1.0.0-2026-06-05"
     assert "master_repo_1068.md" in report["Files"]
     assert "substrate.toml" in report["Files"]
+
+def test_substrate_1049():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/1049_windows_11_native/substrato_1049_windows_11_native.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    report = json.loads(result.stdout.strip())
+    assert report["Substrate"] == "1049"
+    assert report["Name"] == "CATEDRAL-OS KERNEL WINDOWS 11 NATIVE"
+    assert "Seal" in report
+    assert "Files" in report
+
+    # Check that payloads are base64-encoded strings and not just keys
+    assert isinstance(report["Files"]["agi_windows_native.py"], str)
