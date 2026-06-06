@@ -3130,3 +3130,23 @@ def test_substrate_1082_cathedral_translation_engine():
     assert report["Seal"] == "CATHEDRAL-TRANSLATION-1082-v1.0.0-2026-06-06"
     assert "cathedral_translation_engine.py" in report["Files"]
     assert "substrate.toml" in report["Files"]
+
+def test_substrate_1086_drops_database_bridge():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/1086_drops_database_bridge/substrato_1086_drops_bridge.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+
+    output = result.stdout.strip()
+    try:
+        report = json.loads(output)
+    except json.JSONDecodeError:
+        assert False, f"Failed to parse output as JSON:\n{output}"
+
+    assert report["substrate_id"] == "1086"
+    assert report["name"] == "DROPS-DATABASE-BRIDGE"
+    assert report["status"] == "CANONICAL"
