@@ -570,3 +570,12 @@ def test_1082_cathedral_translation_engine_f_strings():
     f_string_pattern = re.compile(r'\bf(["\'])')
     matches = f_string_pattern.findall(content)
     assert not matches, f"f-strings found in {file_path}"
+
+def test_1084_moltbook_identity_bridge_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath("substrates/t/1084_moltbook_identity_bridge/substrato_1084_moltbook_identity_bridge.py")
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert not re.search(r'\bf(["\'])', content), "f-string found in " + file_path
