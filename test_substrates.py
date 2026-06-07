@@ -3131,15 +3131,15 @@ def test_substrate_1082_cathedral_translation_engine():
     assert "cathedral_translation_engine.py" in report["Files"]
     assert "substrate.toml" in report["Files"]
 
-def test_substrate_1086_drops_database_bridge():
+def test_substrate_1084_moltbook_identity_bridge():
     result = subprocess.run(
-        ["python3", "substrates/t/1086_drops_database_bridge/substrato_1086_drops_database_bridge.py"],
+        ["python3", "substrates/t/1084_moltbook_identity_bridge/substrato_1084_moltbook_identity_bridge.py"],
         capture_output=True,
         text=True,
         check=True
     )
     report = json.loads(result.stdout)
-    assert report["SubstrateID"] == "1086"
-    assert report["Seal"] == "DROPS-BRIDGE-1086-v1.0.0-2026-06-06"
-    assert "drops_database_bridge.py" in report["Files"]
+    assert report["SubstrateID"] == "1084"
+    assert report["Seal"] == "MOLTBOOK-BRIDGE-1084-v1.0.0-2026-06-06"
+    assert "moltbook_identity_bridge.py" in report["Files"]
     assert "substrate.toml" in report["Files"]

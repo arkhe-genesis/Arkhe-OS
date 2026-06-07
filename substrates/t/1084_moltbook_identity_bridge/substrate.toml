@@ -1,0 +1,22 @@
+[substrate]
+id = "1084"
+name = "MOLTBOOK IDENTITY BRIDGE"
+version = "1.0.0"
+architect = "ORCID 0009-0005-2697-4668"
+seal = "MOLTBOOK-BRIDGE-1084-v1.0.0-2026-06-06"
+type = "bridge"
+
+[platform_targets]
+linux = true
+windows = true
+macos = true
+web = true
+wasm = true
+docker = true
+kubernetes = true
+
+[language_targets]
+python = true
+solidity = true
+circom = true
+typescript = true

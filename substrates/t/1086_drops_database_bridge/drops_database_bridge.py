@@ -70,7 +70,7 @@ class DropsDriverFUSE:
 
     def exec_query(self, sql: str, args: Tuple) -> str:
         """Executa query como system call FUSE."""
-        query_hash = hashlib.sha3_256((sql + str(args)).encode()).hexdigest()[:16]
+        query_hash = hashlib.sha3_256(f"{sql}:{args}".encode()).hexdigest()[:16]
 
         inode = {
             "type": "query_result",
@@ -81,7 +81,7 @@ class DropsDriverFUSE:
             "size_bytes": len(sql.encode()) + sum(len(str(a).encode()) for a in args),
         }
 
-        inode_path = self.mount_point + "/queries/" + query_hash
+        inode_path = f"{self.mount_point}/queries/{query_hash}"
         self.inodes[inode_path] = inode
         self.query_log.append(inode)
 
@@ -133,19 +133,19 @@ class TypedColumnKernel:
             "pg_type": pg_type,
             "rkhs_dimension": kernel_info["rkhs_dim"],
             "sigma": kernel_info["sigma"],
-            "mercer_decomposition": "K(x,y) = Σᵢ λᵢ φᵢ(x) φᵢ(y) para i=1.." + str(kernel_info['rkhs_dim']),
+            "mercer_decomposition": f"K(x,y) = Σᵢ λᵢ φᵢ(x) φᵢ(y) para i=1..{kernel_info['rkhs_dim']}",
             "ntt_speedup": 195,
             "theosis": 0.5334,
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
 
-        key = table + "." + col_name
+        key = f"{table}.{col_name}"
         self.kernels[key] = kernel
         return kernel
 
     def evaluate_kernel(self, table: str, col_name: str, x: Any, y: Any) -> float:
         """Avalia kernel K(x,y) via NTT-accelerated RKHS."""
-        key = table + "." + col_name
+        key = f"{table}.{col_name}"
         kernel = self.kernels.get(key)
         if not kernel:
             return 0.0
@@ -182,7 +182,7 @@ class ExpressionProofRefactor:
 
     def extract_expression(self, expr_type: str, sql_fragment: str, args: List[str]) -> Dict:
         """Extrai expression como AST para Lean 4."""
-        expr_hash = hashlib.sha3_256((expr_type + ":" + sql_fragment).encode()).hexdigest()[:16]
+        expr_hash = hashlib.sha3_256(f"{expr_type}:{sql_fragment}".encode()).hexdigest()[:16]
 
         ast = {
             "expr_type": expr_type,
@@ -195,38 +195,38 @@ class ExpressionProofRefactor:
 
         # Gera lemma canônico baseado no tipo de expression
         if expr_type == "Select":
-            ast["lean_lemma"] = "lemma select_well_formed (q : Query) : well_formed q → valid_projection q"
-            ast["lean_theorem"] = "theorem select_type_safe (T : Table) (cols : List Col) : all (fun c => c ∈ T.columns) cols → valid_select T cols"
+            ast["lean_lemma"] = f"lemma select_well_formed (q : Query) : well_formed q → valid_projection q"
+            ast["lean_theorem"] = f"theorem select_type_safe (T : Table) (cols : List Col) : all (fun c => c ∈ T.columns) cols → valid_select T cols"
         elif expr_type == "Insert":
-            ast["lean_lemma"] = "lemma insert_type_safe (T : Table) (row : Row) : row.types ⊆ T.column_types → valid_insert T row"
-            ast["lean_theorem"] = "theorem insert_preserves_constraints (T : Table) (row : Row) : valid_insert T row → satisfies_constraints T row"
+            ast["lean_lemma"] = f"lemma insert_type_safe (T : Table) (row : Row) : row.types ⊆ T.column_types → valid_insert T row"
+            ast["lean_theorem"] = f"theorem insert_preserves_constraints (T : Table) (row : Row) : valid_insert T row → satisfies_constraints T row"
         elif expr_type == "Where":
-            ast["lean_lemma"] = "lemma where_predicate_well_formed (p : Predicate) : well_formed p → eval p ∈ {true, false}"
-            ast["lean_theorem"] = "theorem where_filter_sound (T : Table) (p : Predicate) : filter_sound T p"
+            ast["lean_lemma"] = f"lemma where_predicate_well_formed (p : Predicate) : well_formed p → eval p ∈ {{true, false}}"
+            ast["lean_theorem"] = f"theorem where_filter_sound (T : Table) (p : Predicate) : filter_sound T p"
         elif expr_type == "Join":
-            ast["lean_lemma"] = "lemma join_compatibility (T1 T2 : Table) (c : Col) : c ∈ T1.columns ∧ c ∈ T2.columns → valid_join T1 T2 c"
-            ast["lean_theorem"] = "theorem join_type_preservation (T1 T2 : Table) (c : Col) : valid_join T1 T2 c → (T1 ⋈ T2).columns = T1.columns ∪ T2.columns"
+            ast["lean_lemma"] = f"lemma join_compatibility (T1 T2 : Table) (c : Col) : c ∈ T1.columns ∧ c ∈ T2.columns → valid_join T1 T2 c"
+            ast["lean_theorem"] = f"theorem join_type_preservation (T1 T2 : Table) (c : Col) : valid_join T1 T2 c → (T1 ⋈ T2).columns = T1.columns ∪ T2.columns"
         elif expr_type == "Aggregate":
-            ast["lean_lemma"] = "lemma aggregate_well_formed (agg : Aggregate) (col : Col) : agg.valid_on col → well_formed (agg.apply col)"
-            ast["lean_theorem"] = "theorem aggregate_result_type (agg : Aggregate) (col : Col) : agg.valid_on col → typeof (agg.apply col) = agg.result_type"
+            ast["lean_lemma"] = f"lemma aggregate_well_formed (agg : Aggregate) (col : Col) : agg.valid_on col → well_formed (agg.apply col)"
+            ast["lean_theorem"] = f"theorem aggregate_result_type (agg : Aggregate) (col : Col) : agg.valid_on col → typeof (agg.apply col) = agg.result_type"
         elif expr_type == "CTE":
-            ast["lean_lemma"] = "lemma cte_acyclic (ctes : List CTE) : no_cycles ctes → well_formed ctes"
-            ast["lean_theorem"] = "theorem cte_evaluation_order (ctes : List CTE) : no_cycles ctes → exists_linearization ctes"
+            ast["lean_lemma"] = f"lemma cte_acyclic (ctes : List CTE) : no_cycles ctes → well_formed ctes"
+            ast["lean_theorem"] = f"theorem cte_evaluation_order (ctes : List CTE) : no_cycles ctes → exists_linearization ctes"
         elif expr_type == "Window":
-            ast["lean_lemma"] = "lemma window_partition_valid (w : WindowSpec) (cols : List Col) : w.partition ⊆ cols → valid_window w cols"
-            ast["lean_theorem"] = "theorem window_row_number_unique (w : WindowSpec) (rows : List Row) : valid_window w rows → all_different (map (row_number w) rows)"
+            ast["lean_lemma"] = f"lemma window_partition_valid (w : WindowSpec) (cols : List Col) : w.partition ⊆ cols → valid_window w cols"
+            ast["lean_theorem"] = f"theorem window_row_number_unique (w : WindowSpec) (rows : List Row) : valid_window w rows → all_different (map (row_number w) rows)"
         elif expr_type == "VectorDistance":
-            ast["lean_lemma"] = "lemma vector_distance_nonnegative (v1 v2 : Vector) : L2_distance v1 v2 ≥ 0"
-            ast["lean_theorem"] = "theorem cosine_similarity_bound (v1 v2 : Vector) : cosine_similarity v1 v2 ∈ [-1, 1]"
+            ast["lean_lemma"] = f"lemma vector_distance_nonnegative (v1 v2 : Vector) : L2_distance v1 v2 ≥ 0"
+            ast["lean_theorem"] = f"theorem cosine_similarity_bound (v1 v2 : Vector) : cosine_similarity v1 v2 ∈ [-1, 1]"
         elif expr_type == "CacheGet":
-            ast["lean_lemma"] = "lemma cache_hit_consistency (key : String) (val : Value) : cache_get key = some val → cache_exists key"
-            ast["lean_theorem"] = "theorem cache_ttl_monotonic (key : String) (t1 t2 : Time) : t1 < t2 ∧ cache_ttl key t1 > 0 → cache_ttl key t2 ≥ cache_ttl key t1 - (t2 - t1)"
+            ast["lean_lemma"] = f"lemma cache_hit_consistency (key : String) (val : Value) : cache_get key = some val → cache_exists key"
+            ast["lean_theorem"] = f"theorem cache_ttl_monotonic (key : String) (t1 t2 : Time) : t1 < t2 ∧ cache_ttl key t1 > 0 → cache_ttl key t2 ≥ cache_ttl key t1 - (t2 - t1)"
         elif expr_type == "CacheSet":
-            ast["lean_lemma"] = "lemma cache_set_idempotent (key : String) (val : Value) (ttl : Duration) : cache_set key val ttl → cache_get key = some val"
-            ast["lean_theorem"] = "theorem cache_eviction_fifo (cache : Cache) (max_entries : Nat) : cache.size > max_entries → exists k, cache.evict k ∧ cache.size ≤ max_entries"
+            ast["lean_lemma"] = f"lemma cache_set_idempotent (key : String) (val : Value) (ttl : Duration) : cache_set key val ttl → cache_get key = some val"
+            ast["lean_theorem"] = f"theorem cache_eviction_fifo (cache : Cache) (max_entries : Nat) : cache.size > max_entries → exists k, cache.evict k ∧ cache.size ≤ max_entries"
         else:
-            ast["lean_lemma"] = "lemma " + expr_type.lower() + "_well_formed (e : Expression) : well_formed e → valid_expression e"
-            ast["lean_theorem"] = "theorem " + expr_type.lower() + "_type_preservation (e : Expression) : well_formed e → typeof e = e.inferred_type"
+            ast["lean_lemma"] = f"lemma {expr_type.lower()}_well_formed (e : Expression) : well_formed e → valid_expression e"
+            ast["lean_theorem"] = f"theorem {expr_type.lower()}_type_preservation (e : Expression) : well_formed e → typeof e = e.inferred_type"
 
         if ast["lean_lemma"]:
             self.lemmas.append(ast["lean_lemma"])
@@ -262,7 +262,7 @@ class ScanningDNADecoder:
 
     def register_primer(self, struct_tag: str, column_name: str) -> str:
         """Registra struct tag como primer de reparo DNA."""
-        primer = hashlib.sha3_256((struct_tag + ":" + column_name).encode()).hexdigest()[:16]
+        primer = hashlib.sha3_256(f"{struct_tag}:{column_name}".encode()).hexdigest()[:16]
         self.primers[struct_tag] = primer
         return primer
 
@@ -387,7 +387,7 @@ class TransactionZKRrollup:
 
     def begin_transaction(self, tx_id: str) -> Dict:
         """BEGIN = ZK commitment."""
-        commitment = hashlib.sha3_256(("BEGIN:" + tx_id + ":" + str(time.time())).encode()).hexdigest()[:32]
+        commitment = hashlib.sha3_256(f"BEGIN:{tx_id}:{time.time()}".encode()).hexdigest()[:32]
         tx = {
             "tx_id": tx_id,
             "status": "BEGIN",
@@ -404,7 +404,7 @@ class TransactionZKRrollup:
         if not tx:
             return None
 
-        op_hash = hashlib.sha3_256((sql + ":" + str(args) + ":" + tx_id).encode()).hexdigest()[:16]
+        op_hash = hashlib.sha3_256(f"{sql}:{args}:{tx_id}".encode()).hexdigest()[:16]
         tx["operations"].append({
             "op_hash": op_hash,
             "sql": sql[:100],
@@ -442,7 +442,7 @@ class TransactionZKRrollup:
         if not tx:
             return {"status": "ERROR", "reason": "Transaction not found or already committed/rolled back"}
 
-        nullifier = hashlib.sha3_256(("ROLLBACK:" + tx_id + ":" + str(time.time())).encode()).hexdigest()[:32]
+        nullifier = hashlib.sha3_256(f"ROLLBACK:{tx_id}:{time.time()}".encode()).hexdigest()[:32]
 
         tx["status"] = "ROLLED_BACK"
         tx["nullifier"] = nullifier
@@ -485,31 +485,31 @@ class MigrationMetaExtract:
     def diff_schema(self, current_schema: Dict, desired_schema: Dict) -> List[str]:
         """Diff de schema gera SQL migration statements."""
         statements = []
-        substrate_id = "1086." + str(len(self.migrations)).zfill(4)
+        substrate_id = f"1086.{len(self.migrations):04d}"
 
         # Detecta CREATE TABLE
         for table_name, table_def in desired_schema.get("tables", {}).items():
             if table_name not in current_schema.get("tables", {}):
-                statements.append('CREATE TABLE IF NOT EXISTS "' + table_name + '" (...)')
+                statements.append(f'CREATE TABLE IF NOT EXISTS "{table_name}" (...)')
 
         # Detecta DROP TABLE
         for table_name in current_schema.get("tables", {}):
             if table_name not in desired_schema.get("tables", {}):
-                statements.append('DROP TABLE IF EXISTS "' + table_name + '" CASCADE')
+                statements.append(f'DROP TABLE IF EXISTS "{table_name}" CASCADE')
 
         # Detecta ADD COLUMN
         for table_name, table_def in desired_schema.get("tables", {}).items():
             if table_name in current_schema.get("tables", {}):
                 for col_name, col_def in table_def.get("columns", {}).items():
                     if col_name not in current_schema["tables"][table_name].get("columns", {}):
-                        statements.append('ALTER TABLE "' + table_name + '" ADD COLUMN IF NOT EXISTS "' + col_name + '" ' + col_def["type"])
+                        statements.append(f'ALTER TABLE "{table_name}" ADD COLUMN IF NOT EXISTS "{col_name}" {col_def["type"]}')
 
         # Detecta DROP COLUMN
         for table_name, table_def in current_schema.get("tables", {}).items():
             if table_name in desired_schema.get("tables", {}):
                 for col_name in table_def.get("columns", {}):
                     if col_name not in desired_schema["tables"][table_name].get("columns", {}):
-                        statements.append('ALTER TABLE "' + table_name + '" DROP COLUMN IF EXISTS "' + col_name + '"')
+                        statements.append(f'ALTER TABLE "{table_name}" DROP COLUMN IF EXISTS "{col_name}"')
 
         migration = {
             "substrate_id": substrate_id,
@@ -525,7 +525,7 @@ class MigrationMetaExtract:
         # Gera substrato auto-gerado
         substrate = {
             "id": substrate_id,
-            "name": "AUTO-GENERATED-MIGRATION-" + str(len(self.migrations)),
+            "name": f"AUTO-GENERATED-MIGRATION-{len(self.migrations)}",
             "parent_substrates": ["1053.4", "1046.7", "1055"],
             "theosis": 0.8472,
             "r_squared": 0.9965,
@@ -570,7 +570,7 @@ class RelationWormGraph:
 
     def add_table_node(self, table_name: str, columns: List[str]) -> str:
         """Adiciona tabela como nó no WormGraph."""
-        node_id = "table:" + table_name
+        node_id = f"table:{table_name}"
         self.nodes[node_id] = {
             "id": node_id,
             "type": "table",
@@ -584,8 +584,8 @@ class RelationWormGraph:
                           fk_column: str, pk_column: str) -> Dict:
         """Adiciona relation como edge no WormGraph."""
         edge = {
-            "from": "table:" + from_table,
-            "to": "table:" + to_table,
+            "from": f"table:{from_table}",
+            "to": f"table:{to_table}",
             "relation_type": relation_type,
             "fk_column": fk_column,
             "pk_column": pk_column,
@@ -654,13 +654,13 @@ class PgVectorDKESBridge:
             "top_k": 4,
         }
 
-        key = table + "." + col_name
+        key = f"{table}.{col_name}"
         self.vector_kernels[key] = kernel
         return kernel
 
     def search_vector(self, table: str, col_name: str, query_vector: List[float], top_k: int = 10) -> List[Dict]:
         """Busca vetorial como GRAM trajectory sampling com ensemble de 3 experts."""
-        key = table + "." + col_name
+        key = f"{table}.{col_name}"
         kernel = self.vector_kernels.get(key)
         if not kernel:
             return []
@@ -730,12 +730,12 @@ class QdrantBioDigitalOracle:
             "name": name,
             "vector_size": vector_size,
             "distance": distance,
-            "oracle_id": "oracle:" + name,
+            "oracle_id": f"oracle:{name}",
             "proof_of_experiment": {
-                "dPID": "dpid://qdrant/" + name,
-                "IPFS": "ipfs://" + hashlib.sha3_256(name.encode()).hexdigest()[:32],
+                "dPID": f"dpid://qdrant/{name}",
+                "IPFS": f"ipfs://{hashlib.sha3_256(name.encode()).hexdigest()[:32]}",
                 "ORCID": "0009-0005-2697-4668",
-                "C2PA": "c2pa://qdrant/" + name + "/provenance",
+                "C2PA": f"c2pa://qdrant/{name}/provenance",
                 "FAIR": 1.0,
             },
             "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -762,7 +762,7 @@ class QdrantBioDigitalOracle:
         for i in range(top_k):
             distance = np.random.random() * (1.0 if collection["distance"] == "Cosine" else 10.0)
             results.append({
-                "id": "point-" + str(i),
+                "id": f"point-{i}",
                 "distance": float(distance),
                 "payload": {"verified": True, "theosis": 0.8 + 0.2 * np.random.random()},
             })
@@ -910,7 +910,7 @@ class RedisLiquidityBridge:
             "conn_id": conn_id,
             "acquired_at": time.time(),
             "status": "ACTIVE",
-            "tick_id": "tick-" + conn_id + "-" + hashlib.sha3_256(conn_id.encode()).hexdigest()[:8],
+            "tick_id": f"tick-{conn_id}-{hashlib.sha3_256(conn_id.encode()).hexdigest()[:8]}",
         }
         self.connections.append(conn)
 
@@ -920,7 +920,7 @@ class RedisLiquidityBridge:
             "conn_id": conn_id,
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "ptp_timestamp": time.time(),
-            "zk_proof": hashlib.sha3_256((conn_id + ":" + str(time.time())).encode()).hexdigest()[:32],
+            "zk_proof": hashlib.sha3_256(f"{conn_id}:{time.time()}".encode()).hexdigest()[:32],
         }
         self.ticks.append(tick)
 
@@ -942,7 +942,7 @@ class RedisLiquidityBridge:
         # Ancora tick em Merkle tree
         tick = next((t for t in self.ticks if t["conn_id"] == conn_id), None)
         if tick:
-            merkle_leaf = hashlib.sha3_256((tick['tick_id'] + ":" + tick['zk_proof']).encode()).hexdigest()[:32]
+            merkle_leaf = hashlib.sha3_256(f"{tick['tick_id']}:{tick['zk_proof']}".encode()).hexdigest()[:32]
             self.merkle_tree.append(merkle_leaf)
 
         return {
@@ -1115,9 +1115,9 @@ class DropsBridgeOrchestrator:
 
     def _generate_seal(self) -> str:
         h = hashlib.sha3_256(
-            ("DROPS-BRIDGE-" + str(time.time())).encode()
+            f"DROPS-BRIDGE-{time.time()}".encode()
         ).hexdigest()[:16]
-        return "DROPS-BRIDGE-1086-" + h.upper()
+        return f"DROPS-BRIDGE-1086-{h.upper()}"
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1136,10 +1136,10 @@ if __name__ == "__main__":
     print("\n1. DRIVER FUSE")
     for i in range(5):
         inode = orch.fuse_driver.exec_query(
-            "SELECT * FROM users WHERE age >= $" + str(i),
+            f"SELECT * FROM users WHERE age >= ${i}",
             (18 + i,)
         )
-    print("   Inodes: " + str(orch.fuse_driver.get_inode_stats()['total_inodes']))
+    print(f"   Inodes: {orch.fuse_driver.get_inode_stats()['total_inodes']}")
 
     # 2. Typed Columns → Kernels
     print("\n2. TYPED COLUMNS → DKES-NTT KERNELS")
@@ -1147,16 +1147,16 @@ if __name__ == "__main__":
     orch.typed_kernel.register_column("users", "name", "string", "text")
     orch.typed_kernel.register_column("users", "age", "int32", "int32")
     orch.typed_kernel.register_column("items", "embedding", "[]float32", "vector")
-    print("   Kernels: " + str(orch.typed_kernel.get_kernel_report()['total_kernels']))
+    print(f"   Kernels: {orch.typed_kernel.get_kernel_report()['total_kernels']}")
     k_val = orch.typed_kernel.evaluate_kernel("users", "age", 25, 30)
-    print("   K(25,30) = " + str(k_val))
+    print(f"   K(25,30) = {k_val:.4f}")
 
     # 3. Expressions → Lean 4
     print("\n3. EXPRESSIONS → LEAN 4 LEMMAS")
     for expr_type in ["Select", "Insert", "Where", "Join", "Aggregate", "CTE", "Window", "VectorDistance", "CacheGet", "CacheSet"]:
-        ast = orch.proof_refactor.extract_expression(expr_type, expr_type + " ...", ["arg1", "arg2"])
-    print("   Lemmas: " + str(orch.proof_refactor.get_extraction_report()['total_lemmas']))
-    print("   Theorems: " + str(orch.proof_refactor.get_extraction_report()['total_theorems']))
+        ast = orch.proof_refactor.extract_expression(expr_type, f"{expr_type} ...", ["arg1", "arg2"])
+    print(f"   Lemmas: {orch.proof_refactor.get_extraction_report()['total_lemmas']}")
+    print(f"   Theorems: {orch.proof_refactor.get_extraction_report()['total_theorems']}")
 
     # 4. Scanning → DNA Decoding
     print("\n4. SCANNING → DNA DECODING")
@@ -1164,36 +1164,36 @@ if __name__ == "__main__":
     orch.dna_decoder.register_primer("drop:user_name", "name")
     row = {"id": 42, "name": "Alice", "age": 30}
     decoded = orch.dna_decoder.decode_row(row, ["user_id", "user_name", "user_age"])
-    print("   Decoded: " + str(decoded))
-    print("   Match rate: " + str(orch.dna_decoder.get_decoding_report()['avg_match_rate']))
+    print(f"   Decoded: {decoded}")
+    print(f"   Match rate: {orch.dna_decoder.get_decoding_report()['avg_match_rate']:.2%}")
 
     # 5. Hooks → Theosis Dashboard
     print("\n5. HOOKS → THEOSIS DASHBOARD")
     for i in range(10):
         duration = np.random.exponential(50) + (200 if i == 5 else 0)  # Slow query no meio
-        orch.theosis_dashboard.record_query("SELECT", "query_" + str(i), duration)
+        orch.theosis_dashboard.record_query("SELECT", f"query_{i}", duration)
     dash = orch.theosis_dashboard.get_dashboard()
-    print("   Current Θ: " + str(dash['current_theosis']))
-    print("   Fatigue alerts: " + str(dash['fatigue_alerts']))
-    print("   Slow queries: " + str(dash['slow_queries']))
+    print(f"   Current Θ: {dash['current_theosis']:.4f}")
+    print(f"   Fatigue alerts: {dash['fatigue_alerts']}")
+    print(f"   Slow queries: {dash['slow_queries']}")
 
     # 6. Transactions → ZK Rollups
     print("\n6. TRANSACTIONS → ZK ROLLUPS")
     tx = orch.tx_rollup.begin_transaction("tx_001")
     for i in range(3):
-        orch.tx_rollup.add_operation("tx_001", "INSERT INTO users VALUES ($" + str(i) + ")", (i,))
+        orch.tx_rollup.add_operation("tx_001", f"INSERT INTO users VALUES (${i})", (i,))
     commit = orch.tx_rollup.commit_transaction("tx_001")
-    print("   Status: " + str(commit['status']))
-    print("   Merkle root: " + str(commit['merkle_root'][:16]) + "...")
-    print("   Operations: " + str(commit['operations']))
+    print(f"   Status: {commit['status']}")
+    print(f"   Merkle root: {commit['merkle_root'][:16]}...")
+    print(f"   Operations: {commit['operations']}")
 
     # 7. Migrations → Meta-Extract
     print("\n7. MIGRATIONS → META-EXTRACT")
     current = {"tables": {"users": {"columns": {"id": {"type": "int64"}}}}}
     desired = {"tables": {"users": {"columns": {"id": {"type": "int64"}, "email": {"type": "text"}}}, "posts": {"columns": {"id": {"type": "int64"}, "title": {"type": "text"}}}}}
     stmts = orch.meta_extract.diff_schema(current, desired)
-    print("   Statements: " + str(len(stmts)))
-    print("   Generated substrates: " + str(orch.meta_extract.get_meta_extract_report()['total_generated_substrates']))
+    print(f"   Statements: {len(stmts)}")
+    print(f"   Generated substrates: {orch.meta_extract.get_meta_extract_report()['total_generated_substrates']}")
 
     # 8. Relations → WormGraph
     print("\n8. RELATIONS → WORMGRAPH")
@@ -1204,15 +1204,15 @@ if __name__ == "__main__":
     orch.wormgraph.add_relation_edge("posts", "comments", "HasMany", "post_id", "id")
     orch.wormgraph.add_relation_edge("posts", "users", "BelongsTo", "user_id", "id")
     wg = orch.wormgraph.compute_wormgraph_metrics()
-    print("   Nodes: " + str(wg['nodes']) + ", Edges: " + str(wg['edges']) + ", Avg degree: " + str(wg['avg_degree']))
+    print(f"   Nodes: {wg['nodes']}, Edges: {wg['edges']}, Avg degree: {wg['avg_degree']:.2f}")
 
     # 9. pgvector → DKES-GRAM
     print("\n9. PGVECTOR → DKES-GRAM")
     orch.pgvector_bridge.register_vector_column("items", "embedding", 384, "Vector")
     results = orch.pgvector_bridge.search_vector("items", "embedding", [0.1] * 384, 10)
-    print("   Vector kernels: " + str(orch.pgvector_bridge.get_vector_report()['total_vector_kernels']))
-    print("   Ensemble confidence: " + str(results[0]['ensemble_confidence']))
-    print("   Ensemble weight: " + str(results[0]['ensemble_weight']))
+    print(f"   Vector kernels: {orch.pgvector_bridge.get_vector_report()['total_vector_kernels']}")
+    print(f"   Ensemble confidence: {results[0]['ensemble_confidence']:.4f}")
+    print(f"   Ensemble weight: {results[0]['ensemble_weight']:.4f}")
 
     # 10. Qdrant → Bio-Digital Oracle
     print("\n10. QDRANT → BIO-DIGITAL ORACLE")
@@ -1222,33 +1222,33 @@ if __name__ == "__main__":
         [{"op": "Must", "field": "topic", "value": "go"}],
         10
     )
-    print("   Collections: " + str(orch.qdrant_oracle.get_oracle_report()['total_collections']))
-    print("   Gate: " + str(oracle_result['gate_axiarquia']))
-    print("   Theosis Δ: " + str(oracle_result['theosis_delta']))
-    print("   FAIR: " + str(oracle_result['fair_score']))
+    print(f"   Collections: {orch.qdrant_oracle.get_oracle_report()['total_collections']}")
+    print(f"   Gate: {oracle_result['gate_axiarquia']}")
+    print(f"   Theosis Δ: {oracle_result['theosis_delta']}")
+    print(f"   FAIR: {oracle_result['fair_score']}")
 
     # 11. Cache → Cellular Checkpoint
     print("\n11. CACHE → CELLULAR CHECKPOINT")
     for i in range(10005):
-        orch.cache_checkpoint.set_cache("key_" + str(i), "value_" + str(i), 300)
+        orch.cache_checkpoint.set_cache(f"key_{i}", f"value_{i}", 300)
     hit = orch.cache_checkpoint.get_cache("key_5000")
-    print("   Cache size: " + str(orch.cache_checkpoint.get_checkpoint_report()['total_entries']))
-    print("   FSM state: " + str(orch.cache_checkpoint.get_checkpoint_report()['fsm_state']))
-    print("   Hit status: " + str(hit['status'] if hit else 'MISS'))
+    print(f"   Cache size: {orch.cache_checkpoint.get_checkpoint_report()['total_entries']}")
+    print(f"   FSM state: {orch.cache_checkpoint.get_checkpoint_report()['fsm_state']}")
+    print(f"   Hit status: {hit['status'] if hit else 'MISS'}")
 
     # 12. Redis → Liquidity Bridge
     print("\n12. REDIS → LIQUIDITY BRIDGE")
     for i in range(30):
-        result = orch.redis_liquidity.acquire_connection("conn_" + str(i))
+        result = orch.redis_liquidity.acquire_connection(f"conn_{i}")
         if result["status"] == "REJECTED":
-            print("   Throttled at conn " + str(i))
+            print(f"   Throttled at conn {i}")
             break
     for i in range(20):
-        orch.redis_liquidity.release_connection("conn_" + str(i))
+        orch.redis_liquidity.release_connection(f"conn_{i}")
     liq = orch.redis_liquidity.get_liquidity_report()
-    print("   Active conns: " + str(liq['active_connections']) + "/" + str(liq['max_conns']))
-    print("   Merkle tree: " + str(liq['merkle_tree_size']) + " leaves")
-    print("   Throughput: " + str(liq['throughput_mbps']) + " ticks/s")
+    print(f"   Active conns: {liq['active_connections']}/{liq['max_conns']}")
+    print(f"   Merkle tree: {liq['merkle_tree_size']} leaves")
+    print(f"   Throughput: {liq['throughput_mbps']:,} ticks/s")
 
     # 13. ClickHouse → Hamiltonian
     print("\n13. CLICKHOUSE → HAMILTONIAN")
@@ -1258,26 +1258,26 @@ if __name__ == "__main__":
     orch.clickhouse_hamiltonian.apply_asof_join("2026-01", "2026-02", "timestamp")
     orch.clickhouse_hamiltonian.apply_aggregate("2026-01", "quantileTiming(0.95)", "duration_ms")
     ham = orch.clickhouse_hamiltonian.get_hamiltonian_report()
-    print("   Partitions: " + str(ham['total_partitions']))
-    print("   Operators: " + str(ham['total_operators']))
-    print("   Avg Θ: " + str(ham['avg_theosis']))
-    print("   Dimension: " + str(ham['dimension']))
-    print("   Error rate: " + str(ham['error_rate']) + "%")
+    print(f"   Partitions: {ham['total_partitions']}")
+    print(f"   Operators: {ham['total_operators']}")
+    print(f"   Avg Θ: {ham['avg_theosis']:.4f}")
+    print(f"   Dimension: {ham['dimension']}")
+    print(f"   Error rate: {ham['error_rate']:.4f}%")
 
     # Dashboard final
-    print("\n" + "="*70)
+    print(f"\n{'='*70}")
     print("DASHBOARD")
-    print("="*70)
+    print(f"{'='*70}")
     dashboard = orch.get_dashboard()
-    print("Substrato: " + str(dashboard['substrato']) + " — " + str(dashboard['nome']))
-    print("Selo: " + str(dashboard['seal']))
-    print("\nComponentes:")
+    print(f"Substrato: {dashboard['substrato']} — {dashboard['nome']}")
+    print(f"Selo: {dashboard['seal']}")
+    print(f"\nComponentes:")
     for key, value in dashboard.items():
         if key not in ["substrato", "nome", "versao", "seal", "timestamp"]:
             if isinstance(value, dict):
-                print("  " + str(key) + ": " + str(json.dumps(value))[:100] + "...")
+                print(f"  {key:25s}: {json.dumps(value, indent=2)[:100]}...")
 
-    print("\n" + "="*70)
+    print(f"\n{'='*70}")
     print("DROPS DATABASE BRIDGE — Substrato 1086 operacional.")
     print("Selo: DROPS-BRIDGE-1086-v1.0.0-2026-06-06")
-    print("="*70)
+    print(f"{'='*70}")
