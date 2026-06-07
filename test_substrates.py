@@ -3143,3 +3143,16 @@ def test_substrate_1084_moltbook_identity_bridge():
     assert report["Seal"] == "MOLTBOOK-BRIDGE-1084-v1.0.0-2026-06-06"
     assert "moltbook_identity_bridge.py" in report["Files"]
     assert "substrate.toml" in report["Files"]
+
+def test_1088_complex_network_optimization_engine():
+    result = subprocess.run(
+        ["python3", "substrates/t/1088_complex_network_optimization_engine/substrato_1088_complex_network_optimization_engine.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    report = json.loads(result.stdout)
+    assert report["SubstrateID"] == "1088"
+    assert report["Seal"] == "NETWORK-OPT-1088-v1.1.0-2026-06-07"
+    assert "complex_network_optimization_engine.py" in report["Files"]
+    assert "substrate.toml" in report["Files"]
