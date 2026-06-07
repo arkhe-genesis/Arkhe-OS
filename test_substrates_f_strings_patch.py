@@ -588,3 +588,10 @@ def test_1088_complex_network_optimization_engine_f_strings():
         content = f.read()
 
     assert not re.search(r'\bf(["\'])', content), "f-string found in " + file_path
+
+def test_1076_3_f_strings():
+    import ast
+    with open('substrates/t/1076_3_orchestrator_rsi_loop/substrato_1076_3_orchestrator_rsi_loop.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)

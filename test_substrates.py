@@ -3156,3 +3156,16 @@ def test_1088_complex_network_optimization_engine():
     assert report["Seal"] == "NETWORK-OPT-1088-v1.1.0-2026-06-07"
     assert "complex_network_optimization_engine.py" in report["Files"]
     assert "substrate.toml" in report["Files"]
+
+def test_1076_3_orchestrator_rsi_loop():
+    result = subprocess.run(
+        ["python3", "substrates/t/1076_3_orchestrator_rsi_loop/substrato_1076_3_orchestrator_rsi_loop.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    report = json.loads(result.stdout)
+    assert report["SubstrateID"] == "1076.3"
+    assert report["Seal"] == "ORCHESTRATOR-1076.3-v1.0.0-2026-06-07"
+    assert "orchestrator_rsi_loop.py" in report["Files"]
+    assert "substrate.toml" in report["Files"]
