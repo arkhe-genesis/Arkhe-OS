@@ -571,16 +571,11 @@ def test_1082_cathedral_translation_engine_f_strings():
     matches = f_string_pattern.findall(content)
     assert not matches, f"f-strings found in {file_path}"
 
-def test_1086_drops_database_bridge_f_strings():
-    import re
+def test_1084_moltbook_identity_bridge_f_strings():
     import os
-    canonizer_path = os.path.abspath("substrates/t/1086_drops_database_bridge/substrato_1086_drops_bridge.py")
-    if not os.path.exists(canonizer_path):
-        pytest.skip(f"Canonizer for 1086 not found at {canonizer_path}")
-
-    with open(canonizer_path, "r", encoding="utf-8") as f:
+    import re
+    file_path = os.path.abspath("substrates/t/1084_moltbook_identity_bridge/substrato_1084_moltbook_identity_bridge.py")
+    with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
 
-    matches = re.findall(r'\bf([\'"])', content)
-    if matches:
-        pytest.fail(f"F-strings detectadas em 1086 (Drops Database Bridge). Total: {len(matches)}. As canonizações da Catedral não permitem f-strings.")
+    assert not re.search(r'\bf(["\'])', content), "f-string found in " + file_path
