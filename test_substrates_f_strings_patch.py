@@ -579,3 +579,12 @@ def test_1084_moltbook_identity_bridge_f_strings():
         content = f.read()
 
     assert not re.search(r'\bf(["\'])', content), "f-string found in " + file_path
+
+def test_1088_complex_network_optimization_engine_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath("substrates/t/1088_complex_network_optimization_engine/substrato_1088_complex_network_optimization_engine.py")
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert not re.search(r'\bf(["\'])', content), "f-string found in " + file_path
