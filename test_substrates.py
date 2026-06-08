@@ -3201,3 +3201,17 @@ def test_1098_orchestrator_v5():
     assert "Files" in result
     assert "orchestrator_v5.py" in result["Files"]
     assert "substrate.toml" in result["Files"]
+
+def test_1101_hashtree_bridge():
+    import importlib.util
+    file_path = os.path.abspath('substrates/t/1101_hashtree_bridge/substrato_1101_hashtree_bridge.py')
+    spec = importlib.util.spec_from_file_location("substrato_1101", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    result = module.canonize()
+    data = json.loads(result)
+
+    assert data["substrate_id"] == "1101"
+    assert "hashtree_bridge.py" in data["Files"]
+    assert "substrate.toml" in data["Files"]
