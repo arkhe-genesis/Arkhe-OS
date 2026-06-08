@@ -613,3 +613,10 @@ def test_1098_f_strings():
     import re
     # We use \bf(['"]) to avoid matching strings like 'f"' inside base64 payload
     assert not re.search(r'\bf(["\'])', content), ("Encontrado f-string em %s" % file_path)
+
+def test_1101_f_strings():
+    import ast
+    with open('substrates/t/1101_hashtree_bridge/substrato_1101_hashtree_bridge.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)

@@ -1,0 +1,14 @@
+[substrate]
+id = "1101"
+name = "Hashtree Bridge"
+version = "1.0.0"
+description = "Integração Cathedral ARKHE ↔ hashtree.cc (content-addressed)"
+author = "ORCID 0009-0005-2697-4668"
+seal = "HASHTREE-BRIDGE-1101-v1.0.0-2026-06-08"
+
+[dependencies]
+python = ">=3.10"
+numpy = ">=1.24"
+
+[execution]
+entrypoint = "hashtree_bridge.py"
