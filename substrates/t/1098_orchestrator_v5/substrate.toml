@@ -1,0 +1,14 @@
+[substrate]
+id = "1098"
+name = "Cathedral Orchestrator v5.0.0"
+version = "5.0.0"
+description = "ERA AUTONOMA ZK-AGENTICA Orchestrator"
+author = "ORCID 0009-0005-2697-4668"
+seal = "ORCHESTRATOR-v5.0.0-2026-06-07"
+
+[dependencies]
+python = ">=3.10"
+numpy = ">=1.24"
+
+[execution]
+entrypoint = "orchestrator_v5.py"
