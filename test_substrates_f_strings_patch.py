@@ -595,3 +595,12 @@ def test_1076_3_f_strings():
         tree = ast.parse(f.read())
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr)
+
+def test_1093_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath("substrates/t/1093_universal_architecture_bridge/substrato_1093_universal_architecture_bridge.py")
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    assert not re.search(r'\bf(["\'])', content), "f-string found in " + file_path
