@@ -3169,3 +3169,16 @@ def test_1076_3_orchestrator_rsi_loop():
     assert report["Seal"] == "ORCHESTRATOR-1076.3-v1.0.0-2026-06-07"
     assert "orchestrator_rsi_loop.py" in report["Files"]
     assert "substrate.toml" in report["Files"]
+
+def test_1093_universal_architecture_bridge():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/1093_universal_architecture_bridge/substrato_1093_universal_architecture_bridge.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    report = json.loads(result.stdout.strip())
+    assert report["SubstrateID"] == "1093"
+    assert report["Seal"] == "UNIVERSAL-ARCH-1093-v1.0.0-2026-06-07"
