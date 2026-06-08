@@ -3182,3 +3182,22 @@ def test_1093_universal_architecture_bridge():
     report = json.loads(result.stdout.strip())
     assert report["SubstrateID"] == "1093"
     assert report["Seal"] == "UNIVERSAL-ARCH-1093-v1.0.0-2026-06-07"
+
+def test_1098_orchestrator_v5():
+    import importlib.util
+    import os
+    import json
+    spec = importlib.util.spec_from_file_location(
+        "substrato_1098_orchestrator_v5",
+        os.path.abspath("substrates/t/1098_orchestrator_v5/substrato_1098_orchestrator_v5.py")
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    result = json.loads(module.canonize())
+    assert result["substrate_id"] == "1098"
+    assert result["name"] == "Cathedral Orchestrator v5.0.0"
+    assert result["status"] == "CANONIZED_FULL"
+    assert "Files" in result
+    assert "orchestrator_v5.py" in result["Files"]
+    assert "substrate.toml" in result["Files"]

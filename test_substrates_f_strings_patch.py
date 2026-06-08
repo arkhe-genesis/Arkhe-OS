@@ -604,3 +604,12 @@ def test_1093_f_strings():
         content = f.read()
 
     assert not re.search(r'\bf(["\'])', content), "f-string found in " + file_path
+
+def test_1098_f_strings():
+    import os
+    file_path = os.path.abspath("substrates/t/1098_orchestrator_v5/orchestrator_v5.py")
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    import re
+    # We use \bf(['"]) to avoid matching strings like 'f"' inside base64 payload
+    assert not re.search(r'\bf(["\'])', content), ("Encontrado f-string em %s" % file_path)
