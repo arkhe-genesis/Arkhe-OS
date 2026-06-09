@@ -3230,3 +3230,15 @@ def test_substrate_1111():
     assert report["status"] == "CANONIZED_FULL"
     assert "cathedral/config/v9/config.py" in report["Files"]
     assert "cathedral/models/backbone/v9/hierarchical_moe.py" in report["Files"]
+
+def test_1105_cathedral_ui_noesis():
+    import importlib.util
+    import os
+    import json
+    file_path = os.path.abspath('substrates/t/1105_cathedral_ui_noesis/substrato_1105.py')
+    spec = importlib.util.spec_from_file_location("substrato_1105", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    data = json.loads(module.canonize())
+    assert data["substrate_id"] == "1105"
+    assert data["seal"] == "CATHEDRAL-ARKHE-v10.1.0-NOESIS-2026-06-15"

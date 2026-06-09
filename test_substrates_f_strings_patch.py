@@ -630,3 +630,12 @@ def test_1102_rsi_safety_addendum_f_strings():
 
     # We use \bf(['"]) to avoid matching strings like 'f"' inside base64 payload
     assert not re.search(r'\bf(["\'])', content), ("Encontrado f-string em %s" % file_path)
+
+def test_1105_cathedral_ui_noesis_f_strings():
+    import importlib.util
+    import os
+    import re
+    file_path = os.path.abspath('substrates/t/1105_cathedral_ui_noesis/substrato_1105.py')
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert len(re.findall(r'\bf(["\'])', content)) == 0, "f-strings found in Python canonizer 1105"
