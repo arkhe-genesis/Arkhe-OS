@@ -620,3 +620,10 @@ def test_1101_f_strings():
         tree = ast.parse(f.read())
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr)
+
+def test_1111_f_strings():
+    import ast
+    with open('substrates/t/1111_v9_logos/substrato_1111_v9_logos.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)

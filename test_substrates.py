@@ -3215,3 +3215,18 @@ def test_1101_hashtree_bridge():
     assert data["substrate_id"] == "1101"
     assert "hashtree_bridge.py" in data["Files"]
     assert "substrate.toml" in data["Files"]
+
+def test_substrate_1111():
+    import importlib.util
+    file_path = os.path.abspath('substrates/t/1111_v9_logos/substrato_1111_v9_logos.py')
+    spec = importlib.util.spec_from_file_location("substrato_1111_v9_logos", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    report_json = module.canonize()
+    report = json.loads(report_json)
+
+    assert report["substrate_id"] == "1111"
+    assert report["status"] == "CANONIZED_FULL"
+    assert "cathedral/config/v9/config.py" in report["Files"]
+    assert "cathedral/models/backbone/v9/hierarchical_moe.py" in report["Files"]
