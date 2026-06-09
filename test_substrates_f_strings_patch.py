@@ -620,3 +620,13 @@ def test_1101_f_strings():
         tree = ast.parse(f.read())
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr)
+
+def test_1102_rsi_safety_addendum_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath("substrates/t/1102_rsi_safety_addendum/substrato_1102_rsi_safety_addendum.py")
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    # We use \bf(['"]) to avoid matching strings like 'f"' inside base64 payload
+    assert not re.search(r'\bf(["\'])', content), ("Encontrado f-string em %s" % file_path)
