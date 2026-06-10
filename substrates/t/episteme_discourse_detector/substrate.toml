@@ -1,0 +1,16 @@
+[substrate]
+id = "1130_episteme_ontology_expansion"
+name = "CATHEDRAL ARKHE EPISTEMIC ONTOLOGY EXPANSION"
+version = "1.0.0"
+status = "active"
+description = "Expands the epistemic ontology, generating ZK-proofs for consistency, and integrating with DiscourseDetectorCientifico"
+author = "JULES / ORCID-0009-0005-2697-4668"
+
+[tags]
+keywords = ["ontology", "epistemology", "zk-proofs", "discourse-analysis"]
+
+[dependencies]
+arkhe_kernel = ">=2.0.0"
+
+[verification]
+required_verifications = ["ZK_CONSISTENCY", "DISCOURSE_INTEGRATION"]
