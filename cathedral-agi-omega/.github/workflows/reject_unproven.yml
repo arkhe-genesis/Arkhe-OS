@@ -1,0 +1,23 @@
+name: Reject Unproven Code
+
+on:
+  pull_request:
+    paths:
+      - 'ZK_REASONING_ENGINE/circuits/**'
+      - 'COGNITIVE_CORTEX/agents/**'
+      - 'DISTRIBUTED_COMPUTATION/**'
+
+jobs:
+  check-lean4-proofs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Check for Lean 4 Proofs
+        run: python INFRASTRUCTURE/ci_cd/reject_unproven.py
