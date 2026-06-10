@@ -3242,3 +3242,26 @@ def test_1105_cathedral_ui_noesis():
     data = json.loads(module.canonize())
     assert data["substrate_id"] == "1105"
     assert data["seal"] == "CATHEDRAL-ARKHE-v10.1.0-NOESIS-2026-06-15"
+
+
+def test_1130_episteme_ontology_expansion():
+    import json
+    import subprocess
+
+    result = subprocess.run(
+        ["python3", "substrates/t/episteme_discourse_detector/substrato_1130_episteme_ontology_expansion.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+
+    report = json.loads(result.stdout)
+    assert report["substrate_id"] == "1130_episteme_ontology_expansion"
+    assert report["status"] == "canonized"
+    assert "episteme_ontology.xml" in report["payloads"]
+    assert "episteme_ontology.json" in report["payloads"]
+    assert "episteme_ontology.lean" in report["payloads"]
+    assert "episteme_ontology_expanded.json" in report["payloads"]
+    assert "episteme_discourse_detector.py" in report["payloads"]
+    assert "substrate.toml" in report["payloads"]
+    assert "zk_proof" in report["payloads"]

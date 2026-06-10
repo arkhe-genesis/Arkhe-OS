@@ -639,3 +639,14 @@ def test_1105_cathedral_ui_noesis_f_strings():
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
     assert len(re.findall(r'\bf(["\'])', content)) == 0, "f-strings found in Python canonizer 1105"
+
+
+def test_1130_episteme_ontology_expansion_no_f_strings():
+    import re
+    with open('substrates/t/episteme_discourse_detector/substrato_1130_episteme_ontology_expansion.py', 'r') as f:
+        content = f.read()
+    assert not re.search(r'\bf([\'"\n])', content), "f-strings found in Python canonizer"
+
+    with open('substrates/t/episteme_discourse_detector/episteme_discourse_detector.py', 'r') as f:
+        content = f.read()
+    assert not re.search(r'\bf([\'"\n])', content), "f-strings found in Python payload"

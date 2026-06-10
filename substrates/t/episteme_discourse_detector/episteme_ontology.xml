@@ -1,0 +1,222 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:episteme="http://cathedral-arkhe.org/ontology/episteme#">
+
+  <owl:Ontology rdf:about="http://cathedral-arkhe.org/ontology/episteme">
+    <owl:versionInfo>1.0.0</owl:versionInfo>
+    <rdfs:comment>CATHEDRAL ARKHE Epistemic Ontology</rdfs:comment>
+  </owl:Ontology>
+
+  <owl:Class rdf:about="http://cathedral-arkhe.org/ontology/episteme#entity"/>
+  <owl:Class rdf:about="http://cathedral-arkhe.org/ontology/episteme#process"/>
+  <owl:Class rdf:about="http://cathedral-arkhe.org/ontology/episteme#relation"/>
+  <owl:Class rdf:about="http://cathedral-arkhe.org/ontology/episteme#property"/>
+  <owl:Class rdf:about="http://cathedral-arkhe.org/ontology/episteme#evidence"/>
+  <owl:Class rdf:about="http://cathedral-arkhe.org/ontology/episteme#method"/>
+  <owl:Class rdf:about="http://cathedral-arkhe.org/ontology/episteme#theory"/>
+  <owl:Class rdf:about="http://cathedral-arkhe.org/ontology/episteme#paradigm"/>
+  <owl:Class rdf:about="http://cathedral-arkhe.org/ontology/episteme#discourse"/>
+  <owl:Class rdf:about="http://cathedral-arkhe.org/ontology/episteme#value"/>
+
+  <episteme:relation rdf:about="http://cathedral-arkhe.org/ontology/episteme#eb3afdd2-b959-46">
+    <rdfs:label>Causality</rdfs:label>
+    <rdfs:comment xml:lang="en">A relation where one event brings about another</rdfs:comment>
+    <rdfs:comment xml:lang="pt">Uma relação onde um evento produz outro</rdfs:comment>
+    <rdfs:comment xml:lang="es">Una relación donde un evento produce otro</rdfs:comment>
+    <episteme:status>canonized</episteme:status>
+    <episteme:discourse>analyst</episteme:discourse>
+    <episteme:reproducibilityScore rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:reproducibilityScore>
+    <episteme:verificationIndex rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:verificationIndex>
+  </episteme:relation>
+
+  <episteme:entity rdf:about="http://cathedral-arkhe.org/ontology/episteme#521ba9ad-2b2d-4f">
+    <rdfs:label>Evidence</rdfs:label>
+    <rdfs:comment xml:lang="en">Empirical data supporting or refuting a claim</rdfs:comment>
+    <rdfs:comment xml:lang="pt">Dados empíricos que apoiam ou refutam uma alegação</rdfs:comment>
+    <episteme:status>canonized</episteme:status>
+    <episteme:discourse>analyst</episteme:discourse>
+    <episteme:reproducibilityScore rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:reproducibilityScore>
+    <episteme:verificationIndex rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:verificationIndex>
+  </episteme:entity>
+
+  <episteme:property rdf:about="http://cathedral-arkhe.org/ontology/episteme#b42f6256-d32a-46">
+    <rdfs:label>Reproducibility</rdfs:label>
+    <rdfs:comment xml:lang="en">The ability to obtain consistent results across independent experiments</rdfs:comment>
+    <rdfs:comment xml:lang="pt">A capacidade de obter resultados consistentes em experimentos independentes</rdfs:comment>
+    <episteme:status>canonized</episteme:status>
+    <episteme:discourse>analyst</episteme:discourse>
+    <episteme:reproducibilityScore rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:reproducibilityScore>
+    <episteme:verificationIndex rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:verificationIndex>
+  </episteme:property>
+
+  <episteme:process rdf:about="http://cathedral-arkhe.org/ontology/episteme#2acf1aaa-2c93-4c">
+    <rdfs:label>P-hacking</rdfs:label>
+    <rdfs:comment xml:lang="en">Selective reporting of statistically significant results</rdfs:comment>
+    <rdfs:comment xml:lang="pt">Relato seletivo de resultados estatisticamente significativos</rdfs:comment>
+    <episteme:status>canonized</episteme:status>
+    <episteme:discourse>analyst</episteme:discourse>
+    <episteme:reproducibilityScore rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:reproducibilityScore>
+    <episteme:verificationIndex rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:verificationIndex>
+  </episteme:process>
+
+  <episteme:value rdf:about="http://cathedral-arkhe.org/ontology/episteme#c73db382-b1f4-45">
+    <rdfs:label>Epistemic Justice</rdfs:label>
+    <rdfs:comment xml:lang="en">Fair treatment of knowledge and knowers</rdfs:comment>
+    <rdfs:comment xml:lang="pt">Tratamento justo do conhecimento e dos conhecedores</rdfs:comment>
+    <episteme:status>canonized</episteme:status>
+    <episteme:discourse>analyst</episteme:discourse>
+    <episteme:reproducibilityScore rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:reproducibilityScore>
+    <episteme:verificationIndex rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:verificationIndex>
+  </episteme:value>
+
+  <episteme:paradigm rdf:about="http://cathedral-arkhe.org/ontology/episteme#0492f97e-da80-41">
+    <rdfs:label>Paradigm</rdfs:label>
+    <rdfs:comment xml:lang="en">A dominant framework of scientific practice (Kuhn)</rdfs:comment>
+    <rdfs:comment xml:lang="pt">Um framework dominante de prática científica (Kuhn)</rdfs:comment>
+    <episteme:status>canonized</episteme:status>
+    <episteme:discourse>analyst</episteme:discourse>
+    <episteme:reproducibilityScore rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:reproducibilityScore>
+    <episteme:verificationIndex rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:verificationIndex>
+  </episteme:paradigm>
+
+  <episteme:discourse rdf:about="http://cathedral-arkhe.org/ontology/episteme#17ba3f3c-4061-4b">
+    <rdfs:label>Discourse</rdfs:label>
+    <rdfs:comment xml:lang="en">A structured way of producing and circulating knowledge (Lacan)</rdfs:comment>
+    <rdfs:comment xml:lang="pt">Uma forma estruturada de produzir e circular conhecimento (Lacan)</rdfs:comment>
+    <episteme:status>canonized</episteme:status>
+    <episteme:discourse>analyst</episteme:discourse>
+    <episteme:reproducibilityScore rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:reproducibilityScore>
+    <episteme:verificationIndex rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:verificationIndex>
+  </episteme:discourse>
+
+  <episteme:method rdf:about="http://cathedral-arkhe.org/ontology/episteme#67ff25d3-80b4-41">
+    <rdfs:label>Method</rdfs:label>
+    <rdfs:comment xml:lang="en">A systematic procedure for acquiring knowledge</rdfs:comment>
+    <rdfs:comment xml:lang="pt">Um procedimento sistemático para aquisição de conhecimento</rdfs:comment>
+    <episteme:status>canonized</episteme:status>
+    <episteme:discourse>analyst</episteme:discourse>
+    <episteme:reproducibilityScore rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:reproducibilityScore>
+    <episteme:verificationIndex rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:verificationIndex>
+  </episteme:method>
+
+  <episteme:theory rdf:about="http://cathedral-arkhe.org/ontology/episteme#722f7206-2f6d-4f">
+    <rdfs:label>Theory</rdfs:label>
+    <rdfs:comment xml:lang="en">An explanatory framework for a set of phenomena</rdfs:comment>
+    <rdfs:comment xml:lang="pt">Um framework explicativo para um conjunto de fenômenos</rdfs:comment>
+    <episteme:status>canonized</episteme:status>
+    <episteme:discourse>analyst</episteme:discourse>
+    <episteme:reproducibilityScore rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:reproducibilityScore>
+    <episteme:verificationIndex rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:verificationIndex>
+  </episteme:theory>
+
+  <episteme:property rdf:about="http://cathedral-arkhe.org/ontology/episteme#7c9dfc67-d664-42">
+    <rdfs:label>Uncertainty</rdfs:label>
+    <rdfs:comment xml:lang="en">The state of having limited knowledge about an outcome</rdfs:comment>
+    <rdfs:comment xml:lang="pt">O estado de ter conhecimento limitado sobre um resultado</rdfs:comment>
+    <episteme:status>canonized</episteme:status>
+    <episteme:discourse>analyst</episteme:discourse>
+    <episteme:reproducibilityScore rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:reproducibilityScore>
+    <episteme:verificationIndex rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:verificationIndex>
+  </episteme:property>
+
+  <episteme:process rdf:about="http://cathedral-arkhe.org/ontology/episteme#2bf6aca8-a26d-42">
+    <rdfs:label>Gene Expression</rdfs:label>
+    <rdfs:comment xml:lang="en">The process by which information from a gene is used to synthesize a functional gene product</rdfs:comment>
+    <rdfs:comment xml:lang="pt">O processo pelo qual informação de um gene é usada para sintetizar um produto funcional</rdfs:comment>
+    <episteme:status>evidenced</episteme:status>
+    <episteme:discourse>university</episteme:discourse>
+    <episteme:reproducibilityScore rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:reproducibilityScore>
+    <episteme:verificationIndex rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:verificationIndex>
+  </episteme:process>
+
+  <episteme:method rdf:about="http://cathedral-arkhe.org/ontology/episteme#12c44c1a-480d-48">
+    <rdfs:label>Traditional Medicine Knowledge</rdfs:label>
+    <rdfs:comment xml:lang="en">Healing practices and knowledge systems developed by indigenous communities</rdfs:comment>
+    <rdfs:comment xml:lang="pt">Práticas de cura e sistemas de conhecimento desenvolvidos por comunidades indígenas</rdfs:comment>
+    <episteme:status>evidenced</episteme:status>
+    <episteme:discourse>analyst</episteme:discourse>
+    <episteme:reproducibilityScore rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:reproducibilityScore>
+    <episteme:verificationIndex rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:verificationIndex>
+  </episteme:method>
+
+  <episteme:entity rdf:about="http://cathedral-arkhe.org/ontology/episteme#87cb2c84-2585-4b">
+    <rdfs:label>Quantum Entanglement</rdfs:label>
+    <rdfs:comment xml:lang="en">Concept from physics</rdfs:comment>
+    <episteme:status>verified</episteme:status>
+    <episteme:discourse>university</episteme:discourse>
+    <episteme:reproducibilityScore rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:reproducibilityScore>
+    <episteme:verificationIndex rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:verificationIndex>
+  </episteme:entity>
+
+  <episteme:entity rdf:about="http://cathedral-arkhe.org/ontology/episteme#c276e4f0-3ee5-4f">
+    <rdfs:label>Neural Network</rdfs:label>
+    <rdfs:comment xml:lang="en">Concept from ai_ml</rdfs:comment>
+    <episteme:status>evidenced</episteme:status>
+    <episteme:discourse>capitalist</episteme:discourse>
+    <episteme:reproducibilityScore rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:reproducibilityScore>
+    <episteme:verificationIndex rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:verificationIndex>
+  </episteme:entity>
+
+  <episteme:entity rdf:about="http://cathedral-arkhe.org/ontology/episteme#6300f423-df7e-44">
+    <rdfs:label>Thick Description</rdfs:label>
+    <rdfs:comment xml:lang="en">Concept from anthropology</rdfs:comment>
+    <episteme:status>evidenced</episteme:status>
+    <episteme:discourse>analyst</episteme:discourse>
+    <episteme:reproducibilityScore rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:reproducibilityScore>
+    <episteme:verificationIndex rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:verificationIndex>
+  </episteme:entity>
+
+  <episteme:entity rdf:about="http://cathedral-arkhe.org/ontology/episteme#c8d07c55-4118-41">
+    <rdfs:label>Ayahuasca Ritual</rdfs:label>
+    <rdfs:comment xml:lang="en">Concept from indigenous_knowledge</rdfs:comment>
+    <episteme:status>conjecture</episteme:status>
+    <episteme:discourse>analyst</episteme:discourse>
+    <episteme:reproducibilityScore rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:reproducibilityScore>
+    <episteme:verificationIndex rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:verificationIndex>
+  </episteme:entity>
+
+  <episteme:entity rdf:about="http://cathedral-arkhe.org/ontology/episteme#39dc8f63-96d2-43">
+    <rdfs:label>Randomized Controlled Trial</rdfs:label>
+    <rdfs:comment xml:lang="en">Concept from medicine</rdfs:comment>
+    <episteme:status>canonized</episteme:status>
+    <episteme:discourse>master</episteme:discourse>
+    <episteme:reproducibilityScore rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:reproducibilityScore>
+    <episteme:verificationIndex rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:verificationIndex>
+  </episteme:entity>
+
+  <episteme:entity rdf:about="http://cathedral-arkhe.org/ontology/episteme#36ccf722-8311-46">
+    <rdfs:label>P-value</rdfs:label>
+    <rdfs:comment xml:lang="en">Concept from statistics</rdfs:comment>
+    <episteme:status>contested</episteme:status>
+    <episteme:discourse>hysteric</episteme:discourse>
+    <episteme:reproducibilityScore rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:reproducibilityScore>
+    <episteme:verificationIndex rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</episteme:verificationIndex>
+  </episteme:entity>
+
+  <rdf:Description rdf:about="http://cathedral-arkhe.org/ontology/episteme#5a800907-773c-47">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <episteme:relationType>supports</episteme:relationType>
+    <episteme:strength rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.9</episteme:strength>
+    <rdfs:domain rdf:resource="http://cathedral-arkhe.org/ontology/episteme#521ba9ad-2b2d-4f"/>
+    <rdfs:range rdf:resource="http://cathedral-arkhe.org/ontology/episteme#eb3afdd2-b959-46"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://cathedral-arkhe.org/ontology/episteme#76c6c015-86a2-49">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <episteme:relationType>enables</episteme:relationType>
+    <episteme:strength rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.85</episteme:strength>
+    <rdfs:domain rdf:resource="http://cathedral-arkhe.org/ontology/episteme#b42f6256-d32a-46"/>
+    <rdfs:range rdf:resource="http://cathedral-arkhe.org/ontology/episteme#521ba9ad-2b2d-4f"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://cathedral-arkhe.org/ontology/episteme#4b45fe3c-9393-4b">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <episteme:relationType>translates_to</episteme:relationType>
+    <episteme:strength rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.65</episteme:strength>
+    <rdfs:domain rdf:resource="http://cathedral-arkhe.org/ontology/episteme#2bf6aca8-a26d-42"/>
+    <rdfs:range rdf:resource="http://cathedral-arkhe.org/ontology/episteme#12c44c1a-480d-48"/>
+  </rdf:Description>
+
+</rdf:RDF>
