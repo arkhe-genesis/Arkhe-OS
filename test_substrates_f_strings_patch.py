@@ -650,3 +650,10 @@ def test_1130_episteme_ontology_expansion_no_f_strings():
     with open('substrates/t/episteme_discourse_detector/episteme_discourse_detector.py', 'r') as f:
         content = f.read()
     assert not re.search(r'\bf([\'"\n])', content), "f-strings found in Python payload"
+
+def test_1113_f_strings():
+    import ast
+    with open("substrates/t/1113_cathedral_agi_omega_v13/substrato_1113_cathedral_agi_omega_v13.py", "r") as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr), "F-strings are not allowed in the canonizer"
