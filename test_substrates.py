@@ -3265,3 +3265,18 @@ def test_1130_episteme_ontology_expansion():
     assert "episteme_discourse_detector.py" in report["payloads"]
     assert "substrate.toml" in report["payloads"]
     assert "zk_proof" in report["payloads"]
+
+def test_1113_cathedral_agi_omega_v13():
+    import subprocess, json
+    result = subprocess.run(
+        ["python3", "substrates/t/1113_cathedral_agi_omega_v13/substrato_1113_cathedral_agi_omega_v13.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    report = json.loads(result.stdout)
+    assert report["SubstrateID"] == "1113"
+    assert report["Status"] == "CANONIZED_FULL"
+    assert report["Seal"] == "CATHEDRAL-REPO-STRUCTURE-v13.1-2026-06-11"
+    assert "cathedral_agi_omega_v13.md" in report["Files"]
+    assert "substrate.toml" in report["Files"]
