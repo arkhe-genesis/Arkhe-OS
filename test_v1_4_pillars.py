@@ -1,10 +1,8 @@
-import asyncio
-import numpy as np
+import sys
+sys.path.append("cathedral-agi-omega-v12")
 
-# Test all the newly created files
-import arkp_benchmark.ewc_gem_continual_learning as cl
-import arkp_security.decentralized_audit_dashboard as dash
-import arkp_bio.chaperones.cryo_em_validation as cryo
-import arkp_field.src.services.rl_profile_adapter as rl
+from cathedral_agents.pouw_engine import PoUWEngine
+from cathedral_crypto.bls_utils import BLSKeyPair
+from cathedral_chain.rbb_anchor import RBBAnchor
 
-print("All modules imported successfully.")
+print("Success")
