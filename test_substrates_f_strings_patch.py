@@ -664,3 +664,10 @@ def test_1101_qubes_f_strings():
         tree = ast.parse(f.read())
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr)
+
+def test_1103_btfs_depin_storage_f_strings():
+    import ast
+    with open('substrates/t/1103_btfs_depin_storage/substrato_1103_btfs_depin_storage.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)

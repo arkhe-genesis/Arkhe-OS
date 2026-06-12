@@ -3296,3 +3296,19 @@ def test_1101_cathedral_qubes_integration():
     assert data["SubstrateID"] == "1101_cathedral_qubes"
     assert "cathedral_qubes_integration_1101.md" in data["Files"]
     assert "substrate.toml" in data["Files"]
+
+def test_1103_btfs_depin_storage():
+    import importlib.util
+    import os
+    import json
+    file_path = os.path.abspath('substrates/t/1103_btfs_depin_storage/substrato_1103_btfs_depin_storage.py')
+    spec = importlib.util.spec_from_file_location("substrato_1103", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    result = module.canonize()
+    data = json.loads(result)
+
+    assert data["SubstrateID"] == "1103_btfs_depin_storage"
+    assert "cathedral_btfs_integration_1103.md" in data["Files"]
+    assert "substrate.toml" in data["Files"]
