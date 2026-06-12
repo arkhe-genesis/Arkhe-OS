@@ -3280,3 +3280,23 @@ def test_1113_cathedral_agi_omega_v13():
     assert report["Seal"] == "CATHEDRAL-REPO-STRUCTURE-v13.1-2026-06-11"
     assert "cathedral_agi_omega_v13.md" in report["Files"]
     assert "substrate.toml" in report["Files"]
+
+def test_1101_cathedral_qubes_integration():
+    import importlib.util
+    import os
+    import json
+    file_path = os.path.abspath('substrates/t/1101_cathedral_qubes_integration/substrato_1101_cathedral_qubes_integration.py')
+    spec = importlib.util.spec_from_file_location("substrato_1101_qubes", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    result = module.canonize()
+    data = json.loads(result)
+
+    assert data["SubstrateID"] == "1101_cathedral_qubes"
+    assert "cathedral_qubes_integration_1101.md" in data["Files"]
+    assert "substrate.toml" in data["Files"]
+    assert "provision_qubes.sh" in data["Files"]
+    assert "cathedral.LLMInference" in data["Files"]
+    assert "30-cathedral.policy" in data["Files"]
+    assert "agi_core_orchestrator.py" in data["Files"]

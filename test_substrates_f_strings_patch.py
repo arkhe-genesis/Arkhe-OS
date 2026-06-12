@@ -657,3 +657,10 @@ def test_1113_f_strings():
         tree = ast.parse(f.read())
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr), "F-strings are not allowed in the canonizer"
+
+def test_1101_qubes_f_strings():
+    import ast
+    with open('substrates/t/1101_cathedral_qubes_integration/substrato_1101_cathedral_qubes_integration.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
