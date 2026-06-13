@@ -3371,3 +3371,22 @@ def test_2140_7_canonizer():
     assert report['substrate_id'] == '2140.7'
     assert 'firewall_semantico_temporal.rs' in report['Files']
     assert 'substrate.toml' in report['Files']
+
+def test_1104_2_rio35_open_397b_integration():
+    import subprocess
+    import json
+    # Run the canonizer and parse the JSON
+    result = subprocess.run(
+        ["python3", "substrates/t/1104_2_rio35_open_397b_integration/canonize.py"],
+        capture_output=True, text=True, check=True
+    )
+    data = json.loads(result.stdout)
+
+    assert "arkhe_1104_2_engine.rs" in data
+    assert "vllm_rio35.yaml" in data
+    assert "run_chat_rio35.py" in data
+    assert "Makefile_rio35" in data
+    assert "calibration_report_template.json" in data
+    assert "artifacts.json" in data
+    assert "substrate.toml" in data
+    assert data["seal"] == "CATHEDRAL-1104.2-RIO35-ENGINE-2026-06-13"
