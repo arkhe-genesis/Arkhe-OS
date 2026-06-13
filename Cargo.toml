@@ -65,9 +65,9 @@ members = [
     "oracle-server",                        # gRPC oracle daemon (Rust)
     "scripts",                              # Self‑completion binary (arkhe-self-complete)
     "ark-lang/ark-compiler", "substrate-6067",
-    "arkp-polyglot", "arkhe_photon", "bhyve",
-    "substrates/substrato_231_sqlite"
-, "store/rust"]
+
+
+"store/rust", "crates/arkhe-cognitive", "crates/xaynet", "crates/sealy", "crates/arya-stark", "crates/reflect-mcp", "crates/optimizer"]
 
 # ============================================================================
 # Workspace‑level shared dependencies
