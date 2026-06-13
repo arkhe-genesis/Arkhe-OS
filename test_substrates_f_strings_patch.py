@@ -710,3 +710,11 @@ def test_2140_7_f_strings():
     with open(file_path, 'r', encoding='utf-8') as f:
         content = f.read()
     assert not re.search(r'\bf(["\'])', content), "f-strings found!"
+
+def test_1200_omniscient_switch_thinking_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath('substrates/t/1200_omniscient_switch_thinking/orchestrator_v12_0_0_omniscient_canonizer.py')
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+        assert not re.search(r'\bf([\'"])', content), f"f-strings found in {file_path}!"
