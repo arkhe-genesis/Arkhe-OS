@@ -710,3 +710,10 @@ def test_2140_7_f_strings():
     with open(file_path, 'r', encoding='utf-8') as f:
         content = f.read()
     assert not re.search(r'\bf(["\'])', content), "f-strings found!"
+
+def test_319_1_f_strings():
+    import ast
+    with open('substrates/t/319_1_caster_software/substrato_319_1.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
