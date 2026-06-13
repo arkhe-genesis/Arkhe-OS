@@ -686,3 +686,10 @@ def test_12_9_multi_cut_out_f_strings():
             tree = ast.parse(f.read())
         for node in ast.walk(tree):
             assert not isinstance(node, ast.JoinedStr), "F-strings are not allowed in %s" % file_path
+
+def test_00_cognitive_kernel_no_f_strings():
+    import re
+    with open('substrates/t/00_cognitive_kernel/substrato_00_cognitive_kernel.py', 'r', encoding='utf-8') as f:
+        content = f.read()
+    if re.search(r'\bf(["\'])', content):
+        assert False, "Found f-strings in substrato_00_cognitive_kernel.py"
