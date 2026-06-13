@@ -3312,3 +3312,21 @@ def test_1103_btfs_depin_storage():
     assert data["SubstrateID"] == "1103_btfs_depin_storage"
     assert "cathedral_btfs_integration_1103.md" in data["Files"]
     assert "substrate.toml" in data["Files"]
+
+def test_12_9_multi_cut_out():
+    import importlib.util
+    import os
+    import json
+    file_path = os.path.abspath('substrates/t/12_9_multi_cut_out_bft/substrato_12_9_multi_cut_out.py')
+    spec = importlib.util.spec_from_file_location("substrato_12_9", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    result = module.canonize()
+    data = json.loads(result)
+
+    assert data["SubstrateID"] == "12_9_multi_cut_out_bft"
+    assert "cathedral_v12_9_multi_cut_out.md" in data["Files"]
+    assert "substrate.toml" in data["Files"]
+    assert "multi_cut_out_bft.py" in data["Files"]
+    assert "classification_enforcement.py" in data["Files"]

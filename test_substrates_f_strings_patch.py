@@ -671,3 +671,18 @@ def test_1103_btfs_depin_storage_f_strings():
         tree = ast.parse(f.read())
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr)
+
+def test_12_9_multi_cut_out_f_strings():
+    import ast
+
+    files_to_check = [
+        'substrates/t/12_9_multi_cut_out_bft/substrato_12_9_multi_cut_out.py',
+        'substrates/t/12_9_multi_cut_out_bft/multi_cut_out_bft.py',
+        'substrates/t/12_9_multi_cut_out_bft/classification_enforcement.py'
+    ]
+
+    for file_path in files_to_check:
+        with open(file_path, 'r') as f:
+            tree = ast.parse(f.read())
+        for node in ast.walk(tree):
+            assert not isinstance(node, ast.JoinedStr), "F-strings are not allowed in %s" % file_path
