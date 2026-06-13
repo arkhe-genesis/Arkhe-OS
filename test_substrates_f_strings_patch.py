@@ -671,3 +671,23 @@ def test_1103_btfs_depin_storage_f_strings():
         tree = ast.parse(f.read())
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr)
+
+def test_12_9_multi_cut_out_bft():
+    import subprocess
+    result = subprocess.run(["python3", "substrates/t/12_9_multi_cut_out_bft/canonizer_12_9.py"], capture_output=True, text=True)
+    assert result.returncode == 0
+
+def test_12_9_f_strings():
+    with open("substrates/t/12_9_multi_cut_out_bft/canonizer_12_9.py", "r") as f:
+        content = f.read()
+
+    import re
+    # We allow base64.b64decode so we need a regex that matches f-strings specifically
+    assert not re.search(r'\bf(["\'])', content), "f-string found in canonizer"
+
+def test_1113_cathedral_arkhe_v12_9_f_strings():
+    with open("substrates/t/1113_cathedral_arkhe_v12_9/canonizer_1113.py", "r") as f:
+        content = f.read()
+
+    import re
+    assert not re.search(r'\bf(["\'])', content), "f-string found in canonizer"

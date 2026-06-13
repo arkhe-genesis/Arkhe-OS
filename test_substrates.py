@@ -3312,3 +3312,22 @@ def test_1103_btfs_depin_storage():
     assert data["SubstrateID"] == "1103_btfs_depin_storage"
     assert "cathedral_btfs_integration_1103.md" in data["Files"]
     assert "substrate.toml" in data["Files"]
+
+def test_12_9_multi_cut_out_bft():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/t/12_9_multi_cut_out_bft/canonizer_12_9.py"], capture_output=True, text=True)
+    assert result.returncode == 0
+    report = json.loads(result.stdout)
+    assert report["substrate_id"] == "12.9"
+    assert "payload" in report
+
+
+def test_1113_cathedral_arkhe_v12_9():
+    import subprocess
+    import json
+    result = subprocess.run(["python3", "substrates/t/1113_cathedral_arkhe_v12_9/canonizer_1113.py"], capture_output=True, text=True)
+    assert result.returncode == 0
+    report = json.loads(result.stdout)
+    assert report["substrate_id"] == "1113"
+    assert "payload" in report

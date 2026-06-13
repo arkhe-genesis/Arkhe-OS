@@ -1,0 +1,11 @@
+[substrate]
+id = "12.9"
+name = "MULTI-CUT-OUT BFT + CLASSIFICACAO HIERARQUICA"
+version = "1.0.0"
+type = "documentation"
+author = "Arkhe OS"
+
+[canonization]
+payload_file = "multi_cut_out_bft.md"
+seal_date = "2026-06-12"
+static_seal = "MULTI-CUT-OUT-BFT-v1.0-2026-06-12"
