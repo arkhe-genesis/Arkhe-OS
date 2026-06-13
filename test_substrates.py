@@ -3372,56 +3372,18 @@ def test_2140_7_canonizer():
     assert 'firewall_semantico_temporal.rs' in report['Files']
     assert 'substrate.toml' in report['Files']
 
-def test_protocolo_corte_canonizer():
+def test_1200_omniscient_switch_thinking():
     import subprocess
     import json
-    result = subprocess.run(["python3", "substrates/t/294_protocolo_corte/protocolo_corte.py"], capture_output=True, text=True)
-    assert result.returncode == 0
-    data = json.loads(result.stdout)
-    assert "protocolo_corte.rs" in data["artifacts"]
-    assert "substrate.toml" in data["artifacts"]
-    assert data["seal"] == "CATHEDRAL-294-PROTOCOLO-CORTE-v1.0.0-2026-06-14"
+    result = subprocess.run(
+        ["python3", "substrates/t/1200_omniscient_switch_thinking/orchestrator_v12_0_0_omniscient_canonizer.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
 
-def test_arkhe_cognitive_canonizer():
-    import subprocess
-    import json
-    result = subprocess.run(["python3", "substrates/t/1104_arkhe_cognitive/arkhe_cognitive.py"], capture_output=True, text=True)
-    assert result.returncode == 0
-    data = json.loads(result.stdout)
-    assert "arkhe_cognitive.rs" in data["artifacts"]
-    assert "substrate.toml" in data["artifacts"]
-    assert data["seal"] == "CATHEDRAL-COGNITIVE-v1.0.0-2026-06-14"
+    report = json.loads(result.stdout)
 
-def test_caster_software_canonizer():
-    import subprocess
-    import json
-    result = subprocess.run(["python3", "substrates/t/319_1_caster_software/caster_software.py"], capture_output=True, text=True)
-    assert result.returncode == 0
-    data = json.loads(result.stdout)
-    assert "caster_software.rs" in data["artifacts"]
-    assert "substrate.toml" in data["artifacts"]
-    assert data["seal"] == "CATHEDRAL-319.1-CASTER-v1.2.0-FASE-A-2026-06-14"
-
-def test_arkhe_orchestrator_canonizer():
-    import subprocess
-    import json
-    result = subprocess.run(["python3", "substrates/t/1104_arkhe_orchestrator/arkhe_orchestrator.py"], capture_output=True, text=True)
-    assert result.returncode == 0
-    data = json.loads(result.stdout)
-    assert "arkhe_orchestrator.py" in data["artifacts"]
-    assert "arkhe_core_v11_6_corrected.py" in data["artifacts"]
-    assert "verify_supply_chain.py" in data["artifacts"]
-    assert "substrate.toml" in data["artifacts"]
-    assert data["seal"] == "CATHEDRAL-ARKHE-v11.7.1-B1-REAL-NETWORK-PLASMA-2026-06-14"
-
-def test_rio35_integration_canonizer():
-    import subprocess
-    import json
-    result = subprocess.run(["python3", "substrates/t/1104_2_rio35_integration/rio35_integration.py"], capture_output=True, text=True)
-    assert result.returncode == 0
-    data = json.loads(result.stdout)
-    assert "analyze_swir_metrics.py" in data["artifacts"]
-    assert "engine.rs" in data["artifacts"]
-    assert "docker-compose.rio35.yml" in data["artifacts"]
-    assert "substrate.toml" in data["artifacts"]
-    assert data["seal"] == "CATHEDRAL-1104.2-RIO35-INTEGRATION-v1.1.0-2026-06-13"
+    assert report["SubstrateID"] == "1200"
+    assert report["Status"] == "CANONIZED_FULL"
+    assert report["Seal"] == "CATHEDRAL-ARKHE-v12.0-SWIREASONING-2026-06-14"

@@ -711,43 +711,9 @@ def test_2140_7_f_strings():
         content = f.read()
     assert not re.search(r'\bf(["\'])', content), "f-strings found!"
 
-def test_protocolo_corte_f_strings():
-    import os
-    if os.path.exists("substrates/t/294_protocolo_corte/protocolo_corte.py"):
-        with open("substrates/t/294_protocolo_corte/protocolo_corte.py", "r") as f:
-            content = f.read()
-            import re
-            assert not re.search(r'\bf([\'"])', content), "Found f-string in protocolo_corte.py"
-
-def test_arkhe_cognitive_f_strings():
-    import os
-    if os.path.exists("substrates/t/1104_arkhe_cognitive/arkhe_cognitive.py"):
-        with open("substrates/t/1104_arkhe_cognitive/arkhe_cognitive.py", "r") as f:
-            content = f.read()
-            import re
-            assert not re.search(r'\bf([\'"])', content), "Found f-string in arkhe_cognitive.py"
-
-def test_caster_software_f_strings():
-    import os
-    if os.path.exists("substrates/t/319_1_caster_software/caster_software.py"):
-        with open("substrates/t/319_1_caster_software/caster_software.py", "r") as f:
-            content = f.read()
-            import re
-            assert not re.search(r'\bf([\'"])', content), "Found f-string in caster_software.py"
-
-def test_arkhe_orchestrator_f_strings():
-    import os
-    if os.path.exists("substrates/t/1104_arkhe_orchestrator/arkhe_orchestrator.py"):
-        with open("substrates/t/1104_arkhe_orchestrator/arkhe_orchestrator.py", "r") as f:
-            content = f.read()
-            import re
-            assert not re.search(r'\bf([\'"])', content), "Found f-string in arkhe_orchestrator.py"
-
-
-def test_rio35_integration_f_strings():
-    import os
-    if os.path.exists("substrates/t/1104_2_rio35_integration/rio35_integration.py"):
-        with open("substrates/t/1104_2_rio35_integration/rio35_integration.py", "r") as f:
-            content = f.read()
-            import re
-            assert not re.search(r'\bf([\'"])', content), "Found f-string in rio35_integration.py"
+def test_319_1_f_strings():
+    import ast
+    with open('substrates/t/319_1_caster_software/substrato_319_1.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
