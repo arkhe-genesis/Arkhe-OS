@@ -3371,3 +3371,19 @@ def test_2140_7_canonizer():
     assert report['substrate_id'] == '2140.7'
     assert 'firewall_semantico_temporal.rs' in report['Files']
     assert 'substrate.toml' in report['Files']
+
+def test_1200_omniscient_switch_thinking():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/1200_omniscient_switch_thinking/orchestrator_v12_0_0_omniscient_canonizer.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+
+    report = json.loads(result.stdout)
+
+    assert report["SubstrateID"] == "1200"
+    assert report["Status"] == "CANONIZED_FULL"
+    assert report["Seal"] == "CATHEDRAL-ARKHE-v12.0-SWIREASONING-2026-06-14"
