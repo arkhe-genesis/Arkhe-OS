@@ -3345,3 +3345,19 @@ def test_00_cognitive_kernel():
     assert report["Seal"] == "ASI-COGNITIVE-KERNEL-v1.0-2026-06-13"
     assert "cognitive_kernel_00.md" in report["Files"]
     assert "substrate.toml" in report["Files"]
+
+def test_1120_cathedral_blockchain_spec():
+    import importlib.util
+    import os
+    import json
+    file_path = os.path.abspath('substrates/t/cathedral_blockchain_spec/substrato_1120_cathedral_blockchain_spec.py')
+    spec = importlib.util.spec_from_file_location("substrato_1120", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    result = module.canonize()
+    data = json.loads(result)
+
+    assert data["SubstrateID"] == "1120_cathedral_blockchain_spec"
+    assert "cathedral_blockchain_spec.md" in data["Files"]
+    assert "substrate.toml" in data["Files"]

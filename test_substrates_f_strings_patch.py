@@ -693,3 +693,14 @@ def test_00_cognitive_kernel_no_f_strings():
         content = f.read()
     if re.search(r'\bf(["\'])', content):
         assert False, "Found f-strings in substrato_00_cognitive_kernel.py"
+
+def test_1120_cathedral_blockchain_spec_no_fstrings():
+    import re
+    with open('substrates/t/cathedral_blockchain_spec/substrato_1120_cathedral_blockchain_spec.py', 'r') as f:
+        content = f.read()
+
+    # Simple check for f-strings: look for f"..." or f'...'
+    # Use the regex that memory mentioned: \bf(['"])
+    pattern = re.compile(r'\bf([\'"])')
+    match = pattern.search(content)
+    assert match is None, "f-string found in substrato_1120_cathedral_blockchain_spec.py"
