@@ -3330,3 +3330,18 @@ def test_12_9_multi_cut_out():
     assert "substrate.toml" in data["Files"]
     assert "multi_cut_out_bft.py" in data["Files"]
     assert "classification_enforcement.py" in data["Files"]
+
+def test_00_cognitive_kernel():
+    import subprocess, json
+    result = subprocess.run(
+        ["python3", "substrates/t/00_cognitive_kernel/substrato_00_cognitive_kernel.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    report = json.loads(result.stdout)
+    assert report["SubstrateID"] == "00"
+    assert report["Status"] == "CANONIZED_FULL"
+    assert report["Seal"] == "ASI-COGNITIVE-KERNEL-v1.0-2026-06-13"
+    assert "cognitive_kernel_00.md" in report["Files"]
+    assert "substrate.toml" in report["Files"]
