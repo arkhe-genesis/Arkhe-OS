@@ -3361,3 +3361,22 @@ def test_1120_cathedral_blockchain_spec():
     assert data["SubstrateID"] == "1120_cathedral_blockchain_spec"
     assert "cathedral_blockchain_spec.md" in data["Files"]
     assert "substrate.toml" in data["Files"]
+
+def test_2140_8_creekguard():
+    import importlib.util
+    import os
+    import json
+
+    file_path = os.path.abspath('substrates/t/2140_8_creekguard/substrato_2140_8_creekguard.py')
+    spec = importlib.util.spec_from_file_location("substrato_2140_8", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    output = module.canonize()
+    data = json.loads(output)
+
+    assert data["substrate_id"] == "2140.8"
+    assert data["name"] == "CreekGuard"
+    assert data["seal"] == "CATHEDRAL-2140.8-CREEKGUARD-v1.0.0-2026-06-13"
+    assert "creekguard_2140_8.rs" in data["artifacts"]
+    assert "substrate.toml" in data["artifacts"]

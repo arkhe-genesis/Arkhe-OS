@@ -704,3 +704,13 @@ def test_1120_cathedral_blockchain_spec_no_fstrings():
     pattern = re.compile(r'\bf([\'"])')
     match = pattern.search(content)
     assert match is None, "f-string found in substrato_1120_cathedral_blockchain_spec.py"
+
+def test_2140_8_creekguard_f_strings():
+    import os
+    import re
+    file_path = os.path.abspath("substrates/t/2140_8_creekguard/substrato_2140_8_creekguard.py")
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    # We use \bf(['"]) to avoid matching strings like 'f"' inside base64 payload
+    assert not re.search(r'\bf(["\'])', content), ("Encontrado f-string em %s" % file_path)
