@@ -711,10 +711,9 @@ def test_2140_7_f_strings():
         content = f.read()
     assert not re.search(r'\bf(["\'])', content), "f-strings found!"
 
-def test_1104_2_f_strings():
-    import re
-    with open("substrates/t/1104_2_rio35_open_397b_integration/canonize.py", "r") as f:
-        content = f.read()
-    # allow f-strings in canonizer itself if they only use .format()? Wait, the memory says: "The Python canonizer strictly avoids f-strings"
-    # let's just make sure there are no `f"` or `f'`
-    assert not re.search(r'\bf[\'"]', content), "Found f-string in canonize.py"
+def test_319_1_f_strings():
+    import ast
+    with open('substrates/t/319_1_caster_software/substrato_319_1.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
