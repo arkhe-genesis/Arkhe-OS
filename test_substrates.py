@@ -3361,3 +3361,13 @@ def test_1120_cathedral_blockchain_spec():
     assert data["SubstrateID"] == "1120_cathedral_blockchain_spec"
     assert "cathedral_blockchain_spec.md" in data["Files"]
     assert "substrate.toml" in data["Files"]
+
+def test_2140_7_canonizer():
+    import subprocess
+    import json
+    result = subprocess.run(['python3', 'substrates/t/2140_7_firewall_semantico_temporal/substrato_2140_7.py'], capture_output=True, text=True)
+    assert result.returncode == 0
+    report = json.loads(result.stdout)
+    assert report['substrate_id'] == '2140.7'
+    assert 'firewall_semantico_temporal.rs' in report['Files']
+    assert 'substrate.toml' in report['Files']

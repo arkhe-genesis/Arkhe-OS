@@ -704,3 +704,9 @@ def test_1120_cathedral_blockchain_spec_no_fstrings():
     pattern = re.compile(r'\bf([\'"])')
     match = pattern.search(content)
     assert match is None, "f-string found in substrato_1120_cathedral_blockchain_spec.py"
+
+def test_2140_7_f_strings():
+    file_path = "substrates/t/2140_7_firewall_semantico_temporal/substrato_2140_7.py"
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), "f-strings found!"
