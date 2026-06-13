@@ -561,6 +561,16 @@ def test_1079_1080_auto_canonization_engine_f_strings():
     matches = f_string_pattern.findall(content)
     assert not matches, f"f-strings found in {file_path}"
 
+def test_1200_fsi_f_strings():
+    import os
+    import re
+    file_path = "substrates/t/1200_federacao_soberana_inferencia/fsi_canonizer.py"
+    if os.path.exists(file_path):
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        f_string_pattern = re.compile(r'\bf(["\'])')
+        assert not f_string_pattern.search(content), f"Found f-string in {file_path}"
+
 def test_1082_cathedral_translation_engine_f_strings():
     import os
     import re

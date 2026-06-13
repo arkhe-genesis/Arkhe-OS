@@ -3387,3 +3387,20 @@ def test_1200_omniscient_switch_thinking():
     assert report["SubstrateID"] == "1200"
     assert report["Status"] == "CANONIZED_FULL"
     assert report["Seal"] == "CATHEDRAL-ARKHE-v12.0-SWIREASONING-2026-06-14"
+
+def test_1200_federacao_soberana_inferencia():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/1200_federacao_soberana_inferencia/fsi_canonizer.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+
+    report = json.loads(result.stdout)
+
+    assert report["SubstrateID"] == "1200"
+    assert report["Status"] == "CANONIZED_FULL"
+    assert report["Seal"] == "CATHEDRAL-1200-FSI-v1.0.0-2026-06-13"
+    assert "FSI_Whitepaper_v1.0.0.md" in report["Files"]
