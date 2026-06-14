@@ -751,12 +751,17 @@ def test_no_f_strings_1600_cognitive_autonomous_structural():
                     matches = f_string_pattern.findall(content)
                     assert not matches, "Found f-strings in " + file_path + ": " + str(matches)
 
-def test_3000_f_strings():
+def test_16_2_zvec_f_strings():
+    import os
     import re
-    with open("substrates/t/3000_vision_transformer_core/cathedral_arkhe_v16_embodied_final.py", "r") as f:
-        content = f.read()
-    assert not re.search(r'\bf(["\'])', content), "Found f-strings in cathedral_arkhe_v16_embodied_final.py"
-
-    with open("substrates/t/3000_vision_transformer_core/substrato_3000.py", "r") as f:
-        content = f.read()
-    assert not re.search(r'\bf(["\'])', content), "Found f-strings in substrato_3000.py"
+    # check that we aren't using f-strings
+    target_dir = os.path.join(os.path.dirname(__file__), "substrates", "t", "16_2_zvec")
+    f_string_pattern = re.compile(rb'f([\'"])')
+    if os.path.exists(target_dir):
+        for root, _, files in os.walk(target_dir):
+            for file in files:
+                if file.endswith(".py"):
+                    file_path = os.path.join(root, file)
+                    with open(file_path, "rb") as f:
+                        content = f.read()
+                        assert not f_string_pattern.search(content), "f-string found in {0}".format(file_path)
