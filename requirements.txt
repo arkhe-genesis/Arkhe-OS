@@ -16,3 +16,14 @@ scikit-learn
 numpy
 pytest-asyncio>=0.23.8
 rampart
+torch-geometric
+RDFlib
+OWLReady2
+hnswlib
+faiss-cpu
+sqlite-vec
+redis
+dowhy
+pyro-ppl
+torchmeta
+learn2learn
