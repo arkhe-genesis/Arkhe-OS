@@ -3433,3 +3433,15 @@ def test_1600_cognitive_autonomous_structural():
     assert report["substrate_id"] == "1600"
     assert "cathedral_agi_production.py" in report["artifacts"]
     assert "substrate.toml" in report["artifacts"]
+
+def test_1115_paxos_usdg_substrato():
+    import importlib.util
+    import os
+    import json
+    file_path = os.path.abspath('substrates/t/1115_paxos_usdg_integration/substrato_1115_paxos_usdg_integration.py')
+    spec = importlib.util.spec_from_file_location("substrato_1115", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    report = json.loads(module.canonize())
+    assert report["SubstrateID"] == "1115_paxos_usdg"
+    assert "paxos_gateway.py" in report["Files"]
