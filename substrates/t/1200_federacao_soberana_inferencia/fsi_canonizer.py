@@ -14,6 +14,8 @@ def main():
     sol_path = os.path.join(base_dir, "ArkheFederation.sol")
     risk_path = os.path.join(base_dir, "FSI_Risk_Matrix_v1.0.0.md")
     manifest_path = os.path.join(base_dir, "manifest_1200.json")
+    creek_path = os.path.join(base_dir, "creek_guard_stub.rs")
+    rbb_path = os.path.join(base_dir, "rbb_client_stub.rs")
     toml_path = os.path.join(base_dir, "substrate.toml")
 
     report = {
@@ -31,6 +33,8 @@ def main():
             "ArkheFederation.sol": to_base64(sol_path),
             "FSI_Risk_Matrix_v1.0.0.md": to_base64(risk_path),
             "manifest_1200.json": to_base64(manifest_path),
+            "creek_guard_stub.rs": to_base64(creek_path),
+            "rbb_client_stub.rs": to_base64(rbb_path),
             "substrate.toml": to_base64(toml_path)
         }
     }
