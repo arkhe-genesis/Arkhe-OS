@@ -3417,3 +3417,19 @@ def test_substrate_1300_canonizer():
     assert report["substrate_id"] == "1300"
     assert report["seal"] == "CATHEDRAL-1300.0-ASI-READINESS-v1.0.0-2026-06-13"
     assert "1300_3_pattern_engine.rs" in report["payloads"]
+
+
+def test_1600_cognitive_autonomous_structural():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/1600_cognitive_autonomous_structural/canonizer.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+
+    report = json.loads(result.stdout)
+    assert report["substrate_id"] == "1600"
+    assert "cathedral_agi_production.py" in report["artifacts"]
+    assert "substrate.toml" in report["artifacts"]
