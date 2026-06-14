@@ -3417,3 +3417,23 @@ def test_substrate_1300_canonizer():
     assert report["substrate_id"] == "1300"
     assert report["seal"] == "CATHEDRAL-1300.0-ASI-READINESS-v1.0.0-2026-06-13"
     assert "1300_3_pattern_engine.rs" in report["payloads"]
+
+
+def test_substrate_12_1_2():
+    import json
+    import os
+    import importlib.util
+
+    file_path = os.path.abspath('substrates/t/12_1_2_agi_extension_production/substrato_12_1_2.py')
+    if not os.path.exists(file_path):
+        pytest.skip(f"File not found: {file_path}")
+
+    spec = importlib.util.spec_from_file_location("substrato_12_1_2", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    report_str = module.canonize()
+    report = json.loads(report_str)
+
+    assert report["substrate_id"] == "1500"
+    assert report["seal"] == "CATHEDRAL-ARKHE-v14.0.0-SUBSTRATO1500-2026-06-14"
