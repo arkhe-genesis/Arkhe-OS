@@ -734,3 +734,34 @@ def test_1300_f_strings():
         tree = ast.parse(f.read())
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr), "f-strings found!"
+
+def test_no_f_strings_1600_cognitive_autonomous_structural():
+    import os
+    import re
+
+    base_dir = "substrates/t/1600_cognitive_autonomous_structural"
+    f_string_pattern = re.compile(r'\bf([\'\"])')
+
+    for root, _, files in os.walk(base_dir):
+        for file in files:
+            if file.endswith(".py"):
+                file_path = os.path.join(root, file)
+                with open(file_path, "r", encoding="utf-8") as f:
+                    content = f.read()
+                    matches = f_string_pattern.findall(content)
+                    assert not matches, "Found f-strings in " + file_path + ": " + str(matches)
+
+def test_16_2_zvec_f_strings():
+    import os
+    import re
+    # check that we aren't using f-strings
+    target_dir = os.path.join(os.path.dirname(__file__), "substrates", "t", "16_2_zvec")
+    f_string_pattern = re.compile(rb'f([\'"])')
+    if os.path.exists(target_dir):
+        for root, _, files in os.walk(target_dir):
+            for file in files:
+                if file.endswith(".py"):
+                    file_path = os.path.join(root, file)
+                    with open(file_path, "rb") as f:
+                        content = f.read()
+                        assert not f_string_pattern.search(content), "f-string found in {0}".format(file_path)
