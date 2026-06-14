@@ -772,3 +772,12 @@ def test_3001_f_strings():
         tree = ast.parse(f.read())
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr)
+
+def test_1115_f_strings():
+    import ast
+    import glob
+    for filepath in glob.glob("substrates/t/1115_paxos_usdg_integration/*.py"):
+        with open(filepath, 'r', encoding='utf-8') as f:
+            tree = ast.parse(f.read())
+        for node in ast.walk(tree):
+            assert not isinstance(node, ast.JoinedStr), "f-strings found in {0}!".format(filepath)
