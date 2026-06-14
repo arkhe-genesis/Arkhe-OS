@@ -1,0 +1,205 @@
+# config/config.yaml
+# Cathedral ARKHE v17.0 - Configuração Central
+# Gerado para: RTX 4090, 64 GB RAM, 16 Cores (Exemplo)
+
+cathedral:
+  version: "17.0"
+  substrato: 3000
+  selo: "CATHEDRAL-ARKHE-v17.0-2026-06-14"
+
+  logging:
+    level: INFO
+    dir: "logs"
+    max_size_mb: 100
+    backup_count: 10
+    format: "%(asctime)s [%(name)s] [%(levelname)s]: %(message)s"
+
+  # ============================================================
+  # FAST BRAIN
+  # ============================================================
+  fast_brain:
+    enabled: true
+    action_dim: 4
+    embed_dim: 256
+    device: "cuda"                    # "cuda" se tiver GPU, "cpu" se não
+    target_cycle_ms: 5.0
+    target_frequency_hz: 100
+
+    vision:
+      encoder: "yolov8n"              # yolov8n (mais rápido) ou yolov8s (mais preciso)
+      device: "cuda"
+      confidence_threshold: 0.5
+      # Se não tiver câmera, desabilite:
+      # enabled: false
+
+    world_model:
+      type: "rssm"
+      deter_dim: 256
+      stoch_dim: 32
+      hidden_dim: 256
+
+    safety:
+      engine: "z3"                    # "z3" ou "stub" se Z3 der problemas
+      max_force: 10.0
+      forbidden_targets: ["humano", "animal", "objeto_fragil"]
+
+    meta_learning:
+      enabled: true
+      adaptation_strength: 0.3
+      prototype_dim: 256
+
+    memory:
+      backend: "hnsw"                 # "zvec" precisa de Milvus; use "hnsw" para começar
+      data_dir: "zvec_data"
+      collection_name: "cathedral_fastbrain_v17"
+      state_dim: 288                  # 256 (deter) + 32 (stoch)
+      top_k: 5
+
+  # ============================================================
+  # SLOW BRAIN (SGLang via WSL2)
+  # ============================================================
+  slow_brain:
+    enabled: true
+    engine: "sglang"                  # "sglang" (recomendado) ou "vllm" (alternativa)
+
+    # Endpoint do servidor SGLang rodando no WSL2
+    api_base: "http://localhost:8000/v1"
+    api_key: "cathedral_key"
+    model_name: "default"             # SGLang usa "default" como model name
+    timeout: 30.0
+    max_tokens: 500
+    temperature: 0.1
+
+    # XGrammar: schema JSON para saída estruturada
+    xgrammar:
+      enabled: true
+      schema_file: "config/slow_brain_schema.json"
+
+    # RAG com memória episódica
+    rag:
+      enabled: true
+      memory_backend: "hnsw"          # "zvec" ou "hnsw"
+      top_k_memories: 5
+      context_window_tokens: 2000
+
+    # SwiReasoning
+    swi_reasoning:
+      enabled: true
+      system_prompt: |
+        Você é o Slow Brain do Cathedral AGI. Especialista em raciocínio lógico
+        e segurança de sistemas autônomos.
+        Use SwiReasoning: decomponha o problema em premissas, derive conclusões,
+        e só então proponha a ação.
+        Responda SEMPRE em JSON válido seguindo o schema fornecido.
+
+    # Fallback quando SGLang não está disponível
+    fallback:
+      enabled: true
+      stub_action: "zero"             # "zero", "random", "last_known"
+      max_retries: 3
+      retry_delay_ms: 1000
+      # Fallback para Windows AI APIs (Phi Silica / Aion)
+      windows_native:
+        enabled: false                # Ative na Fase 5 se quiser explorar
+        endpoint: "http://localhost:8001/v1"
+        model: "phi-4-mini"
+
+  # ============================================================
+  # ROUTER
+  # ============================================================
+  router:
+    confidence_threshold: 0.3
+    deadlock_window: 10
+    deadlock_threshold: 0.1
+
+    rules:
+      - name: "Z3_UNSAT"
+        condition: "not safety_approved"
+        priority: 1
+        action: "route_to_slow"
+
+      - name: "LOW_CONFIDENCE"
+        condition: "confidence < 0.3"
+        priority: 2
+        action: "route_to_slow"
+
+      - name: "DEADLOCK"
+        condition: "action_variance < 0.1 over 10 steps"
+        priority: 2
+        action: "route_to_slow"
+
+      - name: "NO_MEMORY"
+        condition: "zvec_memory_count == 0 and episode_step > 0"
+        priority: 3
+        action: "route_to_slow"
+
+      - name: "FAST_SUFFICIENT"
+        condition: "default"
+        priority: 4
+        action: "route_to_fast"
+
+  # ============================================================
+  # zVEC / MEMÓRIA EPISÓDICA
+  # ============================================================
+  zvec:
+    enabled: true
+    # Milvus (requer Docker) - desabilite se não quiser rodar Milvus
+    milvus:
+      enabled: false                  # Mude para true na Fase 6 (Nex-AGI)
+      host: "localhost"
+      port: 19530
+      collection_name: "cathedral_memories"
+      index_type: "HNSW"
+      metric_type: "L2"
+      dim: 288
+
+    # HNSW fallback (roda em RAM, sem Docker)
+    fallback:
+      enabled: true
+      backend: "hnswlib"
+      data_dir: "zvec_data/hnsw_fallback"
+      max_elements: 100000
+      ef_construction: 200
+      M: 16
+
+  # ============================================================
+  # TELEMETRY
+  # ============================================================
+  telemetry:
+    enabled: true
+    prometheus_port: 9090
+    metrics:
+      - fast_brain_cycle_ms
+      - slow_brain_latency_ms
+      - router_decisions
+      - zvec_retrieval_time_ms
+      - safety_violations
+
+  # ============================================================
+  # HARDWARE PROFILE
+  # ============================================================
+  hardware:
+    # Preencha com os valores reais do comando da Fase 2.1
+    gpu: "RTX 4090"
+    vram_gb: 24
+    ram_gb: 64
+    cpu_cores: 16
+
+  # ============================================================
+  # SECURITY
+  # ============================================================
+  security:
+    pqc:
+      enabled: false                  # Ative quando tiver libsphincs compilada
+      algorithm: "SPHINCS+"
+      key_dir: "keys"
+
+    provenance:
+      enabled: false                  # Ative quando tiver modelos assinados
+      gguf_required: false
+      reject_unknown_origin: false
+
+    firewall:
+      enabled: true
+      substrate: 2140
+      max_connections_per_second: 1000
