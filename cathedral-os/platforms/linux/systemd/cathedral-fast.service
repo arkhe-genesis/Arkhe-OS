@@ -1,0 +1,23 @@
+[Unit]
+Description=Cathedral OS - Fast Brain (Realtime Reflex Loop)
+After=systemd-modules-load.service
+Requires=cathedral-slow.socket
+
+[Service]
+Type=simple
+User=root
+# Prioridade Máxima de Tempo Real (SCHED_FIFO)
+CPUSchedulingPolicy=fifo
+CPUSchedulingPriority=99
+# Trava as páginas na RAM (proibe swap para garantir latência < 2ms)
+MemoryLock=yes
+# Executa o binário Rust compilado do core/
+ExecStart=/opt/cathedral/bin/cathedral-fast-core /dev/cathedral0
+Restart=always
+RestartSec=0.1
+
+# Aplica a política SELinux definida acima
+SELinuxContext=system_u:system_r:cathedral_fast_t:s0
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,28 @@
+# Definição do Domínio
+type cathedral_fast_t;
+type cathedral_fast_exec_t;
+
+# Inicialização como daemon
+init_daemon_domain(cathedral_fast_t)
+
+# Permissões Necessárias (Mínimo Privilégio)
+allow cathedral_fast_t self:process { setsched setrlimit };
+allow cathedral_fast_t self:capability { sys_nice ipc_lock }; # Para SCHED_FIFO e mlock()
+
+# Acesso ao LKM de Sensores
+allow cathedral_fast_t cathedral_device_t:chr { read ioctl open };
+
+# Acesso à Memória Compartilhada (para enviar dados para o Slow Brain)
+allow cathedral_fast_t shared_mem_t:file { read write getattr lock map };
+
+# ==========================================================
+# Z3 DO SISTEMA OPERACIONAL (Bloqueios Maciços)
+# ==========================================================
+
+# BLOQUEIO DE REDE: O Fast Brain NUNCA pode acessar sockets.
+# Se um invasor comprometer o Fast Brain, ele fica cego para a rede.
+neverallow cathedral_fast_t node_t:tcp_socket { create connect };
+neverallow cathedral_fast_t port_t:tcp_socket { name_bind };
+
+# BLOQUEIO DE SISTEMA DE ARQUIVOS: Não pode ler logs, senhas ou outros apps.
+neverallow cathedral_fast_t { app_data_file system_file }:file { read write open getattr };

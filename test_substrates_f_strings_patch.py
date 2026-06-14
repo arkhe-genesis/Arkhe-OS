@@ -765,3 +765,10 @@ def test_16_2_zvec_f_strings():
                     with open(file_path, "rb") as f:
                         content = f.read()
                         assert not f_string_pattern.search(content), "f-string found in {0}".format(file_path)
+import ast
+
+def test_3001_f_strings():
+    with open('substrates/t/3001_agi_platform_specification/substrato_3001.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)

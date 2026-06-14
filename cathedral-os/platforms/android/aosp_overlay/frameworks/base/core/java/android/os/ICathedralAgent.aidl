@@ -1,0 +1,1 @@
+// ICathedralAgent.aidl placeholder
