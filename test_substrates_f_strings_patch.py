@@ -727,3 +727,10 @@ def test_319_1_f_strings():
         tree = ast.parse(f.read())
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr)
+
+def test_1300_f_strings():
+    import ast
+    with open('substrates/t/1300_asi_readiness/canonizer_1300.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr), "f-strings found!"

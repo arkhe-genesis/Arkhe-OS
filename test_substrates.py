@@ -3404,3 +3404,16 @@ def test_1200_federacao_soberana_inferencia():
     assert report["Status"] == "CANONIZED_FULL"
     assert report["Seal"] == "CATHEDRAL-1200-FSI-v1.0.0-2026-06-13"
     assert "FSI_Whitepaper_v1.0.0.md" in report["Files"]
+
+def test_substrate_1300_canonizer():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("canonizer_1300", "substrates/t/1300_asi_readiness/canonizer_1300.py")
+    canonizer_1300 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(canonizer_1300)
+    canonize = canonizer_1300.canonize
+    import json
+    report_json = canonize()
+    report = json.loads(report_json)
+    assert report["substrate_id"] == "1300"
+    assert report["seal"] == "CATHEDRAL-1300.0-ASI-READINESS-v1.0.0-2026-06-13"
+    assert "1300_3_pattern_engine.rs" in report["payloads"]
