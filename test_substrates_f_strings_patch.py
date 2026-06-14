@@ -750,3 +750,13 @@ def test_no_f_strings_1600_cognitive_autonomous_structural():
                     content = f.read()
                     matches = f_string_pattern.findall(content)
                     assert not matches, "Found f-strings in " + file_path + ": " + str(matches)
+
+def test_3000_f_strings():
+    import re
+    with open("substrates/t/3000_vision_transformer_core/cathedral_arkhe_v16_embodied_final.py", "r") as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), "Found f-strings in cathedral_arkhe_v16_embodied_final.py"
+
+    with open("substrates/t/3000_vision_transformer_core/substrato_3000.py", "r") as f:
+        content = f.read()
+    assert not re.search(r'\bf(["\'])', content), "Found f-strings in substrato_3000.py"
