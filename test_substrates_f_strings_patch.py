@@ -781,3 +781,10 @@ def test_1115_f_strings():
             tree = ast.parse(f.read())
         for node in ast.walk(tree):
             assert not isinstance(node, ast.JoinedStr), "f-strings found in {0}!".format(filepath)
+
+def test_265_f_strings():
+    import ast
+    with open('substrates/t/265_tensorzkp_gpu_daemon_v5_0/substrato_265.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr)
