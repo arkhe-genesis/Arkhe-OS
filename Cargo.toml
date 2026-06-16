@@ -16,6 +16,9 @@
 [workspace]
 resolver = "2"
 members = [
+    "crates/aegis",
+    "crates/aegis-plausible-reasoner",
+    "crates/cathedral-core",
     "arkhe_token",
     # --- Low‑level foundations ---
     "bootloader",                           # Bare‑metal firmware & handoff
@@ -187,3 +190,6 @@ overflow-checks = true
 opt-level = 3
 lto = true
 debug = false
+
+[workspace.dependencies.aegis-plausible-reasoner]
+path = "crates/aegis-plausible-reasoner"
