@@ -16,6 +16,11 @@
 [workspace]
 resolver = "2"
 members = [
+    "cathedral-embodied-no_std",
+    "napi-arkhe-consent",
+    "hyperon-bridge",
+    "metacognitive-regulator",
+    "srta-client",
     "arkhe_token",
     # --- Low‑level foundations ---
     "bootloader",                           # Bare‑metal firmware & handoff
@@ -67,7 +72,7 @@ members = [
     "ark-lang/ark-compiler", "substrate-6067",
 
 
-"store/rust", "crates/arkhe-cognitive", "crates/xaynet", "crates/sealy", "crates/arya-stark", "crates/reflect-mcp", "crates/optimizer"]
+"store/rust", ]
 
 # ============================================================================
 # Workspace‑level shared dependencies
