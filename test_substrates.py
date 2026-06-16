@@ -3445,3 +3445,15 @@ def test_1115_paxos_usdg_substrato():
     report = json.loads(module.canonize())
     assert report["SubstrateID"] == "1115_paxos_usdg"
     assert "paxos_gateway.py" in report["Files"]
+
+def test_265():
+    import sys
+    import os
+    import json
+    sys.path.append(os.path.abspath('substrates/t/265_tensorzkp_gpu_daemon_v5_0'))
+    import substrato_265
+    output = substrato_265.canonize()
+    data = json.loads(output)
+    assert data['seal'] == 'CATHEDRAL-ARKHE-v26.5-RING-STATUS-ACCEL-2026-06-15'
+    assert data['status'] == 'canonized'
+    assert 'cathedral-arkhe-v26' in data['output_directory']
