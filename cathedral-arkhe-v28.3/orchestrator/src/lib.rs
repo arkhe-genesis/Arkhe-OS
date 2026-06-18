@@ -5,3 +5,4 @@ pub mod consensus;
 pub mod agents;
 pub mod agent_loop;
 pub mod telemetry;
+pub mod skill;
