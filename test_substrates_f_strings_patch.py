@@ -13,6 +13,13 @@ def test_719_f_strings():
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr)
 
+def test_4004_b20_base_bridge_f_strings():
+    import ast
+    with open('substrates/t/4004_b20_base_bridge/canonizer.py', 'r') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        assert not isinstance(node, ast.JoinedStr), "f-string found in canonizer.py"
+
 def test_825_f_strings():
     import ast
     with open('substrates/t/825_parametric_memory_engine/substrato_825_parametric_memory_engine.py', 'r') as f:

@@ -3457,3 +3457,26 @@ def test_265():
     assert data['seal'] == 'CATHEDRAL-ARKHE-v26.5-RING-STATUS-ACCEL-2026-06-15'
     assert data['status'] == 'canonized'
     assert 'cathedral-arkhe-v26' in data['output_directory']
+
+def test_4004_b20_base_bridge():
+    import subprocess
+    import json
+    import os
+
+    result = subprocess.run(
+        ["python3", "substrates/t/4004_b20_base_bridge/canonizer.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+
+    output_path = "substrates/t/4004_b20_base_bridge/b64_output.json"
+    assert os.path.exists(output_path), "Canonized output not found"
+
+    with open(output_path, "r") as f:
+        report = json.load(f)
+
+    assert report["substrate_id"] == "4004"
+    assert report["seal"] == "CATHEDRAL-ARKHE-SUBSTRATO-4004-v1.0.0-2026-06-18"
+    assert "b20_mapper.rs" in report["payloads"]
+    assert "cross_chain_bridge.rs" in report["payloads"]
