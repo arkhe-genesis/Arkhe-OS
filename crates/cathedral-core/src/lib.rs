@@ -5,3 +5,6 @@ pub mod attestation;
 pub mod memory;
 pub mod governance;
 pub mod orchestrator;
+pub mod error_handling;
+pub mod evolution;
+pub mod skill;
