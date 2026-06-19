@@ -19,6 +19,7 @@ members = [
     "crates/aegis",
     "crates/aegis-plausible-reasoner",
     "crates/cathedral-core",
+    "crates/polyglot-parser",
     "arkhe_token",
     # --- Low‑level foundations ---
     "bootloader",                           # Bare‑metal firmware & handoff
