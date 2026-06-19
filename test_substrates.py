@@ -3388,6 +3388,24 @@ def test_1200_omniscient_switch_thinking():
     assert report["Status"] == "CANONIZED_FULL"
     assert report["Seal"] == "CATHEDRAL-ARKHE-v12.0-SWIREASONING-2026-06-14"
 
+
+def test_8000_headroom_bridge():
+    import subprocess
+    import json
+    result = subprocess.run(
+        ["python3", "substrates/t/8000_headroom_bridge/canonizer_8000.py"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+
+    report = json.loads(result.stdout)
+
+    assert report["SubstrateID"] == "8000"
+    assert report["Status"] == "CANONIZED_FULL"
+    assert report["Seal"] == "CATHEDRAL-ARKHE-8000-HEADROOM-v1.0.0-2026-06-18"
+    assert "Cargo.toml" in report["Files"]
+
 def test_1200_federacao_soberana_inferencia():
     import subprocess
     import json
@@ -3480,3 +3498,11 @@ def test_4004_b20_base_bridge():
     assert report["seal"] == "CATHEDRAL-ARKHE-SUBSTRATO-4004-v1.0.0-2026-06-18"
     assert "b20_mapper.rs" in report["payloads"]
     assert "cross_chain_bridge.rs" in report["payloads"]
+
+def test_canonizer_7001_v2():
+    import subprocess
+    import os
+    canonizer_path = os.path.join("substrates", "t", "7001_x402_polar_v2", "canonizer_7001.py")
+    if os.path.exists(canonizer_path):
+        result = subprocess.run(["python3", canonizer_path], capture_output=True, text=True)
+        assert result.returncode == 0

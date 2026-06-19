@@ -568,6 +568,13 @@ def test_1079_1080_auto_canonization_engine_f_strings():
     matches = f_string_pattern.findall(content)
     assert not matches, f"f-strings found in {file_path}"
 
+
+def test_8000_headroom_bridge_f_strings():
+    file_path = "substrates/t/8000_headroom_bridge/canonizer_8000.py"
+    with open(file_path, "rb") as f:
+        content = f.read()
+    assert not re.search(rb'f([\'"])', content), f"File {file_path} contains f-strings!"
+
 def test_1200_fsi_f_strings():
     import os
     import re
@@ -795,3 +802,13 @@ def test_265_f_strings():
         tree = ast.parse(f.read())
     for node in ast.walk(tree):
         assert not isinstance(node, ast.JoinedStr)
+
+def test_canonizer_7001_v2_no_fstrings():
+    import re
+    import os
+    canonizer_path = os.path.join("substrates", "t", "7001_x402_polar_v2", "canonizer_7001.py")
+    if os.path.exists(canonizer_path):
+        with open(canonizer_path, "r", encoding="utf-8") as f:
+            content = f.read()
+            # The python file must not contain any f-string
+            assert not re.search(r'f["\']', content)
