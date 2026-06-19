@@ -21,7 +21,6 @@ use tracing::{info, error, warn};
 
 #[derive(Debug, Deserialize)]
 struct JsonRpcRequest {
-    #[allow(dead_code)]
     jsonrpc: String,
     id: Option<Value>,
     method: String,
@@ -495,7 +494,7 @@ async fn main() -> anyhow::Result<()> {
         let req: JsonRpcRequest = match serde_json::from_str(line) {
             Ok(r) => r,
             Err(e) => {
-                warn!("JSON inválido no stdin: {} — {}", e, line.chars().take(200).collect::<String>());
+                warn!("JSON inválido no stdin: {} — {}", e, &line[..line.len().min(200)]);
                 let resp = err_response(None, -32700, &format!("Parse error: {}", e));
                 let _ = writeln!(stdout, "{}", serde_json::to_string(&resp).unwrap());
                 let _ = stdout.flush();

@@ -8,10 +8,10 @@ use tokio::sync::RwLock;
 use tracing::info;
 
 mod metrics_exporter;
+mod webhooks;
 
-mod webhooks {
-    pub mod polar_handler;
-    pub use polar_handler::*;
+mod app_webhooks {
+    pub use crate::webhooks::polar_handler::*;
 }
 
 #[tokio::main]
@@ -26,12 +26,12 @@ async fn main() -> anyhow::Result<()> {
     info!("🏛️ Cathedral ARKHE — Substrato 7001 (x402 + Polar) v2.0.0");
 
     // 1. Configuração
-    let webhook_config = webhooks::WebhookConfig::from_env()?;
-    let dlq: webhooks::DeadLetterQueue = Arc::new(RwLock::new(Vec::new()));
+    let webhook_config = app_webhooks::WebhookConfig::from_env()?;
+    let dlq: app_webhooks::DeadLetterQueue = Arc::new(RwLock::new(Vec::new()));
 
     // 2. Inicializa handler
     let webhook_handler = Arc::new(
-        webhooks::PolarWebhookHandler::new(webhook_config, Arc::clone(&dlq))
+        app_webhooks::PolarWebhookHandler::new(webhook_config, Arc::clone(&dlq))
     );
 
     // 3. Prometheus metrics
@@ -41,7 +41,7 @@ async fn main() -> anyhow::Result<()> {
     crate::metrics_exporter::install_metrics_exporter(metrics_port)?;
 
     // 4. Router Axum
-    let app = webhooks::create_webhook_router(webhook_handler, dlq);
+    let app = app_webhooks::create_webhook_router(webhook_handler, dlq);
 
     // 5. Inicia servidor
     let port: u16 = std::env::var("POLAR_WEBHOOK_PORT")

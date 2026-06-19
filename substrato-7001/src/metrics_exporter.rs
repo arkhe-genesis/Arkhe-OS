@@ -8,7 +8,7 @@ use metrics_exporter_prometheus::PrometheusBuilder;
 
 pub fn install_metrics_exporter(port: u16) -> anyhow::Result<()> {
     let builder = PrometheusBuilder::new()
-        .with_http_listener(format!("0.0.0.0:{}", port).parse::<std::net::SocketAddr>()?);
+        .with_http_listener(format!("0.0.0.0:{}", port).parse::<std::net::SocketAddr>().unwrap());
 
     builder.install()?;
 

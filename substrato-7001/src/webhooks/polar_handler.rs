@@ -19,10 +19,9 @@ use axum::{
     routing::post,
 };
 use hmac::{Hmac, Mac};
-use subtle::ConstantTimeEq;
 use sha2::Sha256;
 use serde_json::{json, Value};
-use tokio::sync::{mpsc, RwLock};
+use tokio::sync::RwLock;
 use tracing::{info, warn, error};
 use tokio_retry::{
     strategy::{jitter, ExponentialBackoff},
@@ -54,7 +53,7 @@ pub type DeadLetterQueue = Arc<RwLock<Vec<DeadLetterEvent>>>;
 pub struct WebhookConfig {
     pub secret: String,
     pub wormgraph_url: String,
-    pub max_retries: u32,
+    pub max_retries: usize,
 }
 
 impl WebhookConfig {
@@ -104,7 +103,7 @@ impl PolarWebhookHandler {
             }
         };
 
-        let mut mac = match <HmacSha256 as Mac>::new_from_slice(self.config.secret.as_bytes()) {
+        let mut mac = match HmacSha256::new_from_slice(self.config.secret.as_bytes()) {
             Ok(m) => m,
             Err(e) => {
                 error!("Secret inválido: {}", e);
@@ -116,19 +115,15 @@ impl PolarWebhookHandler {
         let computed = hex::encode(mac.finalize().into_bytes());
 
         // Polar usa formato: t=timestamp,v1=hex_digest
-        let expected_str = match sig.split(',').find(|part| part.starts_with("v1=")) {
+        let expected = match sig.split(',').find(|part| part.starts_with("v1=")) {
             Some(part) => &part[3..],
             None => sig, // fallback: compara direto
         };
 
-        // Use constant time comparison
-        let expected_bytes = hex::decode(expected_str).unwrap_or_default();
-        let computed_bytes = hex::decode(&computed).unwrap_or_default();
-        if expected_bytes.len() == computed_bytes.len() && expected_bytes.ct_eq(&computed_bytes).into()
-        {
+        if computed == expected {
             true
         } else {
-            warn!("Assinatura inválida: computed={}, received={}", computed, expected_str);
+            warn!("Assinatura inválida: computed={}, received={}", computed, expected);
             false
         }
     }
@@ -142,9 +137,9 @@ impl PolarWebhookHandler {
         let retry_strategy = ExponentialBackoff::from_millis(100)
             .max_delay(std::time::Duration::from_secs(10))
             .map(jitter)
-            .take(self.config.max_retries as usize);
+            .take(self.config.max_retries);
 
-        match tokio_retry::Retry::spawn(retry_strategy, action).await {
+        match Retry::spawn(retry_strategy, action).await {
             Ok(_) => info!("✅ Evento processado: {}", event_type),
             Err(e) => {
                 error!("❌ Evento falhou após {} tentativas: {} — {}",
@@ -156,7 +151,7 @@ impl PolarWebhookHandler {
                     event_type: event_type.to_string(),
                     data: data.clone(),
                     error: e.to_string(),
-                    attempt: self.config.max_retries,
+                    attempt: self.config.max_retries as u32,
                     timestamp: chrono::Utc::now().to_rfc3339(),
                 });
             }
@@ -245,7 +240,8 @@ impl PolarWebhookHandler {
         }
 
         metrics::gauge!("polar_active_subscriptions").set(
-            match status { "active" => 1.0, _ => 0.0 });
+            match status { "active" => 1.0, _ => 0.0 }
+        );
         Ok(())
     }
 
@@ -424,12 +420,13 @@ pub async fn webhook_handler(
     headers: axum::http::HeaderMap,
     body: String,
 ) -> impl IntoResponse {
+    let handler = state.handler;
     // Verifica assinatura — Polar usa "Polar-Signature" (corrigido do v1)
     let signature = headers
         .get("polar-signature")
         .and_then(|v| v.to_str().ok());
 
-    if !state.handler.verify_signature(body.as_bytes(), signature) {
+    if !handler.verify_signature(body.as_bytes(), signature) {
         warn!("Webhook rejeitado: assinatura inválida");
         return (StatusCode::UNAUTHORIZED, "Invalid signature").into_response();
     }
@@ -449,7 +446,8 @@ pub async fn webhook_handler(
     let data = payload["data"].clone();
 
     // Processa de forma assíncrona (não bloqueia a resposta)
-    let handler_clone = Arc::clone(&state.handler);
+    let handler_clone = Arc::clone(&handler);
+    // Extract the string out of the payload borrow correctly
     let event_type_owned = event_type.to_string();
     tokio::spawn(async move {
         handler_clone.process_with_retry(&event_type_owned, data).await;
@@ -463,7 +461,8 @@ pub async fn webhook_handler(
 pub async fn dlq_handler(
     State(state): State<AppState>,
 ) -> impl IntoResponse {
-    let queue = state.dlq.read().await;
+    let dlq = state.dlq;
+    let queue = dlq.read().await;
     axum::Json(json!({
         "count": queue.len(),
         "events": queue.as_slice(),

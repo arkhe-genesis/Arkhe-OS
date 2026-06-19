@@ -1,12 +1,13 @@
-//! substrato-7001/tests/polar_integration.rs
-//! Testes de integração com mock server Polar
-//!
-//! Selo: CATHEDRAL-ARKHE-POLAR-TESTS-v2.0.0-2026-06-19
+
+// substrato-7001/tests/polar_integration.rs
+// Testes de integração com mock server Polar
+//
+// Selo: CATHEDRAL-ARKHE-POLAR-TESTS-v2.0.0-2026-06-19
 
 use wiremock::{Mock, MockServer, ResponseTemplate};
 use wiremock::matchers::{method, path};
 use serde_json::json;
-use hmac::{Hmac, Mac};
+use hmac::Mac;
 
 // ============================================================================
 // Test 1: Criação de produto
@@ -85,25 +86,26 @@ async fn test_create_checkout_success() {
 // ============================================================================
 #[test]
 fn test_webhook_signature_verification() {
+    use hmac::{Hmac, Mac};
     use sha2::Sha256;
     type HmacSha256 = Hmac<Sha256>;
 
     let secret = "test_webhook_secret_12345";
     let payload = r#"{"type":"order.paid","data":{"id":"ord_1"}}"#;
 
-    let mut mac = <HmacSha256 as Mac>::new_from_slice(secret.as_bytes()).unwrap();
+    let mut mac = HmacSha256::new_from_slice(secret.as_bytes()).unwrap();
     mac.update(payload.as_bytes());
     let sig = hex::encode(mac.finalize().into_bytes());
 
     // Verifica com a mesma secret
-    let mut mac2 = <HmacSha256 as Mac>::new_from_slice(secret.as_bytes()).unwrap();
+    let mut mac2 = HmacSha256::new_from_slice(secret.as_bytes()).unwrap();
     mac2.update(payload.as_bytes());
     let sig2 = hex::encode(mac2.finalize().into_bytes());
 
     assert_eq!(sig, sig2);
 
     // Verifica que secret diferente falha
-    let mut mac3 = <HmacSha256 as Mac>::new_from_slice(b"wrong_secret").unwrap();
+    let mut mac3 = HmacSha256::new_from_slice(b"wrong_secret").unwrap();
     mac3.update(payload.as_bytes());
     let sig3 = hex::encode(mac3.finalize().into_bytes());
 
@@ -115,10 +117,13 @@ fn test_webhook_signature_verification() {
 // ============================================================================
 #[test]
 fn test_webhook_signature_polar_format() {
+    use hmac::{Hmac, Mac};
+    use sha2::Sha256;
+    type HmacSha256 = Hmac<Sha256>;
     let secret = "test_secret";
     let payload = b"test_payload";
 
-    let mut mac = <hmac::Hmac<sha2::Sha256> as Mac>::new_from_slice(secret.as_bytes()).unwrap();
+    let mut mac = HmacSha256::new_from_slice(secret.as_bytes()).unwrap();
     mac.update(payload);
     let sig = hex::encode(mac.finalize().into_bytes());
 

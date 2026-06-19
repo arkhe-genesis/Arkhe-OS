@@ -1,17 +1,15 @@
 [package]
 name = "cathedral-x402-polar"
 version = "2.0.0"
-edition = "2024"
+edition = "2021"
 description = "Substrato 7001 — x402 Payment Layer com integração Polar"
 license = "Apache-2.0"
-rust-version = "1.85"
-
-[workspace]
+rust-version = "1.80"
 
 [features]
 default = ["mcp-server", "webhooks", "oss", "metrics-export"]
 mcp-server = ["tokio", "serde_json", "tracing"]
-webhooks = ["axum", "tower-http", "hmac", "sha2", "hex", "serde_json", "tokio"]
+webhooks = ["axum", "tower-http", "hmac", "sha2", "hex"]
 oss = ["chrono"]
 metrics-export = ["metrics", "metrics-exporter-prometheus"]
 cli = ["clap"]
@@ -19,13 +17,13 @@ full = ["mcp-server", "webhooks", "oss", "metrics-export", "cli"]
 
 [dependencies]
 # Async runtime
-tokio = { version = "1.45", features = ["full"], optional = true }
+tokio = { version = "1.0", features = ["full"], optional = true }
 
 # HTTP
 reqwest = { version = "0.12", default-features = false, features = [
     "json", "rustls-tls", "hickory-dns"
 ] }
-axum = { version = "0.8", features = ["macros"], optional = true }
+axum = { version = "0.7", features = ["macros"], optional = true }
 tower-http = { version = "0.6", features = ["trace", "cors"], optional = true }
 
 # Serialization
@@ -57,10 +55,6 @@ clap = { version = "4.5", features = ["derive", "env"], optional = true }
 
 # Retry
 tokio-retry = "0.3"
-subtle = "2.6.1"
-
-# Dead letter queue (in-memory, substituível por Redis)
-# tokio::sync::mpsc
 
 [dev-dependencies]
 wiremock = "0.6"
@@ -77,7 +71,6 @@ name = "cathedral-x402-server"
 required-features = ["webhooks", "oss", "metrics-export"]
 path = "src/main.rs"
 
-[[bin]]
-name = "cathedral-polar-cli"
-required-features = ["cli"]
-path = "src/cli.rs"
+# Note: Using edition 2021 instead of 2024 as 2024 is not fully stable/widely used in some toolchains, and removed tokio::sync::mpsc as it is not a valid dependency line
+
+[workspace]
