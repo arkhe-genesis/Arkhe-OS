@@ -1,27 +1,58 @@
-#![allow(dead_code)]
-pub mod attention;
+//! Cathedral ARKHE 33T v4.0 — ASI Architecture
+//!
+//! Módulos principais:
+//! - `moe`: Mixture of Experts (4096 experts)
+//! - `attention`: CSA + HCA + MLA
+//! - `mhc`: Manifold-Constrained Hyper-Connections
+//! - `optimizer`: MONA-Lite
+//! - `routing`: Anticipatory Routing
+//! - `speculative`: EAGLE-3
+//! - `placement`: Occult + Hybrid-EP
+//! - `ssm`: SSM Engine (Mamba‑2)
+//! - `symbolic`: Neuro‑Symbolic Reasoner
+//! - `swarm`: Swarm Coordination Layer
+//! - `consistency`: Behavioral Consistency Engine
+//! - `platform`: Deteção de plataforma
+
+
+
+
+
+
 pub mod config;
-pub mod mhc;
+pub mod tensor;
 pub mod moe;
+pub mod attention;
+pub mod mhc;
 pub mod optimizer;
-pub mod placement;
 pub mod routing;
 pub mod speculative;
-pub mod tensor;
+pub mod placement;
 pub mod utils;
+pub mod platform;
 
-pub use attention::HybridAttention;
+#[cfg(feature = "ssm")]
+pub mod ssm;
+
+#[cfg(feature = "symbolic")]
+pub mod symbolic;
+
+#[cfg(feature = "swarm")]
+pub mod swarm;
+
+#[cfg(feature = "consistency")]
+pub mod consistency;
+
+// Re-export principais
 pub use config::CathedralConfig;
+pub use tensor::Tensor;
+pub use moe::MoELayer;
+pub use attention::HybridAttention;
 pub use mhc::ManifoldConstrainedHyperConnections;
-pub use moe::{Expert, HierarchicalRouter, MoELayer};
 pub use optimizer::MONALiteOptimizer;
-pub use placement::{HybridEP, OccultPlacementOptimizer};
 pub use routing::AnticipatoryRouter;
 pub use speculative::Eagle3Decoder;
-pub use tensor::{Shape, Tensor};
+pub use placement::{OccultPlacementOptimizer, HybridEP};
+pub use platform::{Platform, init_platform};
 
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
-#[cfg(test)]
-mod tests {
-    include!("../tests/unit/moe_tests.rs");
-}
