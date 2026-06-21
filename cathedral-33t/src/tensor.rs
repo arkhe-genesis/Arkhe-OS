@@ -1,62 +1,232 @@
-use ndarray::{ArrayD, Axis, Ix1, Ix2, IxDyn};
-use ndarray_rand::rand_distr::StandardNormal;
+use ndarray::Array2;
 use ndarray_rand::RandomExt;
-use rand::thread_rng;
+use rand::distributions::Standard;
+use rand::rngs::StdRng;
+use rand::SeedableRng;
+use serde::{Deserialize, Serialize};
 use std::ops::{Add, Mul, Sub};
-pub type TensorDtype = f32;
-#[derive(Debug, Clone, PartialEq)]
-pub struct Tensor { pub data: ArrayD<TensorDtype>, }
+
 pub type Shape = Vec<usize>;
-impl Tensor {
-    pub fn zeros(shape: &[usize]) -> Self { Self { data: ArrayD::zeros(IxDyn(shape)), } }
-    pub fn ones(shape: &[usize]) -> Self { Self { data: ArrayD::ones(IxDyn(shape)), } }
-    pub fn randn(shape: &[usize]) -> Self { let mut rng = thread_rng(); Self { data: ArrayD::random_using(IxDyn(shape), StandardNormal, &mut rng), } }
-    pub fn from_vec(vec: Vec<TensorDtype>, shape: &[usize]) -> Self { let expected_len: usize = shape.iter().product(); assert_eq!(vec.len(), expected_len); Self { data: ArrayD::from_shape_vec(IxDyn(shape), vec).expect("Shape inválido"), } }
-    pub fn scalar(value: TensorDtype) -> Self { Self { data: ArrayD::from_elem(IxDyn(&[]), value), } }
-    pub fn shape(&self) -> Vec<usize> { self.data.shape().to_vec() }
-    pub fn ndim(&self) -> usize { self.data.ndim() }
-    pub fn len(&self) -> usize { self.data.len() }
-    pub fn is_empty(&self) -> bool { self.data.is_empty() }
-    pub fn get(&self, indices: &[usize]) -> TensorDtype { self.data[indices].clone() }
-    pub fn set(&mut self, indices: &[usize], value: TensorDtype) { self.data[indices] = value; }
-    pub fn slice(&self, idx: usize) -> Self { let sliced = self.data.slice(ndarray::s![idx, .., ..]); Self { data: sliced.to_owned().into_dyn(), } }
-    pub fn slice_axis(&self, axis: usize, idx: usize) -> Self { let mut slice_spec = vec![ndarray::Slice::new(0, None, 1); self.ndim()]; slice_spec[axis] = ndarray::Slice::new(idx as isize, Some((idx + 1) as isize), 1); let sliced = self.data.select(ndarray::Axis(axis), &[idx]); Self { data: sliced.to_owned().into_dyn(), } }
-    pub fn reshape(&self, shape: &[usize]) -> Self { let expected_len: usize = shape.iter().product(); assert_eq!(self.len(), expected_len); Self { data: self.data.clone().into_shape(shape).expect("Reshape falhou"), } }
-    pub fn flatten(&self) -> Self { Self { data: self.data.clone().into_shape(IxDyn(&[self.len()])).expect("Flatten falhou"), } }
-    pub fn t(&self) -> Self { assert_eq!(self.ndim(), 2, "Transpose só suporta 2D"); let view2d = self.data.view().into_dimensionality::<Ix2>().unwrap(); Self { data: view2d.t().to_owned().into_dyn(), } }
-    pub fn to_vec(&self) -> Vec<TensorDtype> { self.data.iter().copied().collect() }
-    pub fn as_array2(&self) -> ndarray::ArrayView2<TensorDtype> { self.data.view().into_dimensionality::<Ix2>().expect("Tensor não é 2D") }
-    pub fn as_array1(&self) -> ndarray::ArrayView1<TensorDtype> { self.data.view().into_dimensionality::<Ix1>().expect("Tensor não é 1D") }
-    pub fn matmul(&self, other: &Self) -> Self { assert_eq!(self.ndim(), 2, "matmul requer tensor 2D"); assert_eq!(other.ndim(), 2, "matmul requer tensor 2D"); let a = self.as_array2(); let b = other.as_array2(); let result = a.dot(&b); Self { data: result.into_dyn(), } }
-    pub fn mul_elem(&self, other: &Self) -> Self { Self { data: &self.data * &other.data, } }
-    pub fn div_elem(&self, other: &Self) -> Self { Self { data: &self.data / &other.data, } }
-    pub fn add_elem(&self, other: &Self) -> Self { Self { data: &self.data + &other.data, } }
-    pub fn sub_elem(&self, other: &Self) -> Self { Self { data: &self.data - &other.data, } }
-    pub fn scale(&self, scalar: TensorDtype) -> Self { Self { data: &self.data * scalar, } }
-    pub fn div_scalar(&self, scalar: TensorDtype) -> Self { Self { data: &self.data / scalar, } }
-    pub fn add_scalar(&self, scalar: TensorDtype) -> Self { Self { data: &self.data + scalar, } }
-    pub fn clamp(&self, min: TensorDtype, max: TensorDtype) -> Self { Self { data: self.data.mapv(|v| v.clamp(min, max)), } }
-    pub fn mapv(&self, f: impl Fn(TensorDtype) -> TensorDtype) -> Self { Self { data: self.data.mapv(f), } }
-    pub fn sum_axis(&self, axis: usize) -> Self { Self { data: self.data.sum_axis(Axis(axis)), } }
-    pub fn mean_axis(&self, axis: usize) -> Self { let sum = self.sum_axis(axis); let count = self.shape()[axis] as TensorDtype; sum.scale(1.0 / count) }
-    pub fn sum_all(&self) -> TensorDtype { self.data.sum() }
-    pub fn mean_all(&self) -> TensorDtype { self.data.mean().unwrap_or(0.0) }
-    pub fn max_axis(&self, axis: usize) -> Self { Self { data: self.data.map_axis(Axis(axis), |view| { view.iter().copied().fold(TensorDtype::NEG_INFINITY, TensorDtype::max) }), } }
-    pub fn argmax_axis(&self, axis: usize) -> Vec<usize> { self.data.axis_iter(Axis(axis)).map(|view| { view.iter().enumerate().max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap()).map(|(idx, _)| idx).unwrap_or(0) }).collect() }
-    pub fn topk(&self, k: usize, axis: usize) -> Vec<(usize, TensorDtype)> { let mut result = Vec::new(); for slice in self.data.axis_iter(Axis(axis)) { let mut indexed: Vec<(usize, TensorDtype)> = slice.iter().enumerate().map(|(i, &v)| (i, v)).collect(); indexed.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap()); result.extend(indexed.into_iter().take(k)); } result }
-    pub fn rms_norm(&self, eps: TensorDtype) -> Self { let mean_sq = self.data.mapv(|v| v * v).mean().unwrap_or(1.0); let norm = (mean_sq + eps).sqrt(); self.scale(1.0 / norm) }
-    pub fn layer_norm(&self, eps: TensorDtype) -> Self { let mean = self.mean_all(); let var = self.data.mapv(|v| (v - mean).powi(2)).mean().unwrap_or(1.0); let std = (var + eps).sqrt(); self.mapv(|v| (v - mean) / std) }
-    pub fn sigmoid(&self) -> Self { self.mapv(|v| 1.0 / (1.0 + (-v).exp())) }
-    pub fn relu(&self) -> Self { self.mapv(|v| v.max(0.0)) }
-    pub fn gelu(&self) -> Self { self.mapv(|v| { let cdf = 0.5 * (1.0 + (v * 0.7978845608 * (1.0 + 0.044715 * v * v)).tanh()); v * cdf }) }
-    pub fn swiglu_clamp(&self, gate: &Self, up: &Self, clamp_limit: TensorDtype) -> Self { let g = gate.clamp(-clamp_limit, clamp_limit); let u = up.clamp(-clamp_limit, clamp_limit); let sig_g = g.sigmoid(); g.mul_elem(&sig_g).mul_elem(&u) }
-    pub fn softmax(&self, axis: usize) -> Self { let max_val = self.max_axis(axis); let shifted = self.sub_elem(&max_val); let exp = shifted.mapv(|v| v.exp()); let sum_exp = exp.sum_axis(axis); exp.div_elem(&sum_exp) }
-    pub fn concat(tensors: &[&Self], axis: usize) -> Self { let arrays: Vec<_> = tensors.iter().map(|t| t.data.view()).collect(); Self { data: ndarray::concatenate(Axis(axis), &arrays).expect("Concatenação falhou").into_owned().into_dyn(), } }
-    pub fn broadcast_add(&self, other: &Self) -> Self { Self { data: &self.data + &other.data, } }
-    pub fn broadcast_mul(&self, other: &Self) -> Self { Self { data: &self.data * &other.data, } }
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct Tensor {
+    pub(crate) data: Array2<f32>,
 }
-impl Add for &Tensor { type Output = Tensor; fn add(self, other: &Tensor) -> Tensor { self.add_elem(other) } }
-impl Sub for &Tensor { type Output = Tensor; fn sub(self, other: &Tensor) -> Tensor { self.sub_elem(other) } }
-impl Mul for &Tensor { type Output = Tensor; fn mul(self, other: &Tensor) -> Tensor { self.mul_elem(other) } }
-impl Add<TensorDtype> for &Tensor { type Output = Tensor; fn add(self, scalar: TensorDtype) -> Tensor { self.add_scalar(scalar) } }
-impl Mul<TensorDtype> for &Tensor { type Output = Tensor; fn mul(self, scalar: TensorDtype) -> Tensor { self.scale(scalar) } }
+
+impl Tensor {
+    pub fn zeros(shape: (usize, usize)) -> Self {
+        Self {
+            data: Array2::zeros(shape),
+        }
+    }
+
+    pub fn randn(shape: (usize, usize)) -> Self {
+        let mut rng = StdRng::seed_from_u64(42);
+        Self {
+            data: Array2::random_using(shape, Standard, &mut rng),
+        }
+    }
+
+    pub fn full(shape: (usize, usize), value: f32) -> Self {
+        Self {
+            data: Array2::from_elem(shape, value),
+        }
+    }
+
+    pub fn shape(&self) -> (usize, usize) {
+        let dims = self.data.shape();
+        (dims[0], dims[1])
+    }
+
+    pub fn nrows(&self) -> usize {
+        self.data.shape()[0]
+    }
+    pub fn ncols(&self) -> usize {
+        self.data.shape()[1]
+    }
+
+    pub fn to_vec(&self) -> Vec<f32> {
+        self.data.iter().copied().collect()
+    }
+
+    pub fn row(&self, idx: usize) -> Tensor {
+        Tensor {
+            data: self.data.row(idx).to_owned().insert_axis(ndarray::Axis(0)),
+        }
+    }
+
+    pub fn col(&self, idx: usize) -> Tensor {
+        Tensor {
+            data: self
+                .data
+                .column(idx)
+                .to_owned()
+                .insert_axis(ndarray::Axis(1)),
+        }
+    }
+
+    pub fn slice_row(&self, idx: usize) -> Tensor {
+        Tensor {
+            data: self
+                .data
+                .slice(ndarray::s![idx, ..])
+                .to_owned()
+                .insert_axis(ndarray::Axis(0)),
+        }
+    }
+
+    pub fn add(&self, other: &Tensor) -> Tensor {
+        Tensor {
+            data: &self.data + &other.data,
+        }
+    }
+
+    pub fn sub(&self, other: &Tensor) -> Tensor {
+        Tensor {
+            data: &self.data - &other.data,
+        }
+    }
+
+    pub fn mul_elem(&self, other: &Tensor) -> Tensor {
+        Tensor {
+            data: &self.data * &other.data,
+        }
+    }
+
+    pub fn scale(&self, scalar: f32) -> Tensor {
+        Tensor {
+            data: &self.data * scalar,
+        }
+    }
+
+    pub fn matmul(&self, other: &Tensor) -> Tensor {
+        Tensor {
+            data: self.data.dot(&other.data),
+        }
+    }
+
+    pub fn mapv(&self, f: impl Fn(f32) -> f32) -> Tensor {
+        Tensor {
+            data: self.data.mapv(f),
+        }
+    }
+
+    pub fn clamp(&self, min: f32, max: f32) -> Tensor {
+        self.mapv(|v| v.clamp(min, max))
+    }
+
+    pub fn sum_axis(&self, axis: usize) -> Tensor {
+        let sum = if axis == 0 {
+            self.data
+                .sum_axis(ndarray::Axis(0))
+                .insert_axis(ndarray::Axis(0))
+        } else if axis == 1 {
+            self.data
+                .sum_axis(ndarray::Axis(1))
+                .insert_axis(ndarray::Axis(1))
+        } else {
+            panic!("Axis must be 0 or 1");
+        };
+        Tensor { data: sum }
+    }
+
+    pub fn mean_axis(&self, axis: usize) -> Tensor {
+        let len = if axis == 0 {
+            self.nrows()
+        } else {
+            self.ncols()
+        } as f32;
+        self.sum_axis(axis).scale(1.0 / len)
+    }
+
+    pub fn reshape(&self, new_shape: (usize, usize)) -> Tensor {
+        let new_len = new_shape.0 * new_shape.1;
+        let old_len = self.data.len();
+        assert_eq!(new_len, old_len, "Total elements must match");
+        Tensor {
+            data: self.data.clone().into_shape(new_shape).unwrap(),
+        }
+    }
+
+    pub fn sigmoid(&self) -> Tensor {
+        self.mapv(|v| 1.0 / (1.0 + (-v).exp()))
+    }
+
+    pub fn exp(&self) -> Tensor {
+        self.mapv(|v| v.exp())
+    }
+    pub fn sqrt(&self) -> Tensor {
+        self.mapv(|v| v.sqrt())
+    }
+    pub fn abs(&self) -> Tensor {
+        self.mapv(|v| v.abs())
+    }
+    pub fn dot(&self, other: &Tensor) -> f32 {
+        (self.data.clone() * &other.data).sum()
+    }
+    pub fn max(&self) -> f32 {
+        self.data.iter().copied().fold(f32::NEG_INFINITY, f32::max)
+    }
+    pub fn min(&self) -> f32 {
+        self.data.iter().copied().fold(f32::INFINITY, f32::min)
+    }
+    pub fn sum(&self) -> f32 {
+        self.data.iter().sum()
+    }
+}
+
+impl Add<&Tensor> for &Tensor {
+    type Output = Tensor;
+    fn add(self, other: &Tensor) -> Tensor {
+        self.add(other)
+    }
+}
+
+impl Add<f32> for &Tensor {
+    type Output = Tensor;
+    fn add(self, scalar: f32) -> Tensor {
+        self.mapv(|v| v + scalar)
+    }
+}
+
+impl Mul<&Tensor> for &Tensor {
+    type Output = Tensor;
+    fn mul(self, other: &Tensor) -> Tensor {
+        self.mul_elem(other)
+    }
+}
+
+impl Mul<f32> for &Tensor {
+    type Output = Tensor;
+    fn mul(self, scalar: f32) -> Tensor {
+        self.scale(scalar)
+    }
+}
+
+impl Sub<&Tensor> for &Tensor {
+    type Output = Tensor;
+    fn sub(self, other: &Tensor) -> Tensor {
+        self.sub(other)
+    }
+}
+
+impl From<Array2<f32>> for Tensor {
+    fn from(data: Array2<f32>) -> Self {
+        Self { data }
+    }
+}
+
+impl From<Tensor> for Array2<f32> {
+    fn from(tensor: Tensor) -> Self {
+        tensor.data
+    }
+}
+
+impl Tensor {
+    pub(crate) fn to_ndarray(&self) -> &ndarray::Array2<f32> {
+        &self.data
+    }
+    pub(crate) fn to_ndarray_mut(&mut self) -> &mut ndarray::Array2<f32> {
+        &mut self.data
+    }
+}
