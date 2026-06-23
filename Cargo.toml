@@ -19,6 +19,12 @@ members = [
     "crates/aegis",
     "crates/aegis-plausible-reasoner",
     "crates/cathedral-core",
+    "crates/cathedral-mcp",
+    "crates/cathedral-mcp-client",
+    "crates/cathedral-mem",
+    "crates/cathedral-memory-adapter",
+    "crates/cathedral-plurality",
+    "crates/cathedral-relay-adapter",
     "crates/polyglot-parser",
     "arkhe_token",
     # --- Low‑level foundations ---
