@@ -77,7 +77,7 @@ members = [
     "ark-lang/ark-compiler", "substrate-6067",
 
 
-"store/rust", ]
+"store/rust", "crates/cathedral-identity", "crates/cathedral-wormgraph", "crates/cathedral-zk", "crates/cathedral-harness", "crates/cathedral-orchestration", "crates/cathedral-tools", "crates/cathedral-permissions", "crates/cathedral-self-improve", "crates/cathedral-remix-bridge", "crates/cathedral-server", "crates/cathedral-cli", ]
 
 # ============================================================================
 # Workspace‑level shared dependencies
