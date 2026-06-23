@@ -1,5 +1,5 @@
 [package]
-name = "cathedral-cli"
+name = "cathedral-tests"
 version = "0.1.0"
 edition = "2024"
 authors.workspace = true
@@ -7,8 +7,6 @@ license.workspace = true
 repository.workspace = true
 
 [dependencies]
-clap.workspace = true
-reqwest = { version = "0.12", features = ["json"] }
-serde_json.workspace = true
+cathedral-inference-runtime = { path = "../cathedral-inference-runtime" }
+cathedral-identity = { path = "../cathedral-identity" }
 tokio.workspace = true
-hex.workspace = true
