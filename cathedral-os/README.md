@@ -1,3 +1,3 @@
 # Cathedral OS
 
-Cathedral OS is an Application-Specific Operating System (SPOS) designed to host General Artificial Intelligence (AGI).
+Cathedral OS is the foundational OS for engineering and AGI workloads.
