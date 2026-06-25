@@ -12,7 +12,14 @@ members = [
     "crates/cathedral-api",
     "crates/cathedral-cli",
     "crates/cathedral-benchmarks",
-    "crates/cathedral-tests"
+    "crates/cathedral-tests",
+    "crates/arkhe-core",
+    "crates/arkhe-forge",
+    "crates/arkhe-agents",
+    "crates/arkhe-security-audit",
+    "crates/arkhe-llm",
+    "crates/arkhe-metacognition",
+    "crates/arkhe-bridge"
 ]
 
 [workspace.package]
