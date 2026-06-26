@@ -19,7 +19,8 @@ members = [
     "crates/arkhe-security-audit",
     "crates/arkhe-llm",
     "crates/arkhe-metacognition",
-    "crates/arkhe-bridge"
+    "crates/arkhe-bridge",
+    "crates/arkhe-image-builder"
 ]
 
 [workspace.package]
