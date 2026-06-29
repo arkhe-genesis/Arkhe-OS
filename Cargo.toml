@@ -20,7 +20,8 @@ members = [
     "crates/arkhe-llm",
     "crates/arkhe-metacognition",
     "crates/arkhe-bridge",
-    "crates/arkhe-image-builder"
+    "crates/arkhe-image-builder",
+    "crates/safe-core-reactive-governance"
 ]
 
 [workspace.package]
@@ -74,3 +75,4 @@ dirs = "5.0"
 candle-core = { version = "0.10" }
 candle-nn = { version = "0.10" }
 candle-transformers = { version = "0.10" }
+async-trait = "0.1"
