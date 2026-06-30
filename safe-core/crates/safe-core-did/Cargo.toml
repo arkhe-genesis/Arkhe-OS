@@ -16,4 +16,4 @@ anyhow.workspace = true
 [dev-dependencies]
 mockall.workspace = true
 proptest.workspace = true
-kani.workspace = true
+# kani.workspace = true
