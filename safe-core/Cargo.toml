@@ -5,6 +5,7 @@ members = [
     "crates/action-executor",
     "crates/memory-system",
     "crates/kernel",
+    "crates/safe-core-fhe",
 ]
 
 [workspace.dependencies]
