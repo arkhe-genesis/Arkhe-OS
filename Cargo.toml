@@ -21,7 +21,13 @@ members = [
     "crates/arkhe-metacognition",
     "crates/arkhe-bridge",
     "crates/arkhe-image-builder",
-    "crates/safe-core-reactive-governance"
+    "crates/safe-core-reactive-governance",
+    "crates/safe-core-ethics",
+    "crates/safe-core-persistence",
+    "crates/safe-core-verifier",
+    "crates/safe-core-audit",
+    "crates/safe-core-governance",
+    "crates/safe-core-bridge"
 ]
 
 [workspace.package]
