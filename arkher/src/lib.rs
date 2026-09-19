@@ -5,11 +5,11 @@ extern "C" {
     fn gap_to_finality(gap: f64) -> u32;
 }
 
-pub fn compute_gap(query: &str, source: &str, response: &str) -> f64 {
-    let c_query = CString::new(query).unwrap();
-    let c_source = CString::new(source).unwrap();
-    let c_response = CString::new(response).unwrap();
-    unsafe { kolmogorov_gap(c_query.as_ptr(), c_source.as_ptr(), c_response.as_ptr()) }
+pub fn compute_gap(query: &str, source: &str, response: &str) -> Result<f64, std::ffi::NulError> {
+    let c_query = CString::new(query)?;
+    let c_source = CString::new(source)?;
+    let c_response = CString::new(response)?;
+    Ok(unsafe { kolmogorov_gap(c_query.as_ptr(), c_source.as_ptr(), c_response.as_ptr()) })
 }
 
 #[repr(u32)]

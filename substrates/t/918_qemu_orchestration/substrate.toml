@@ -1,0 +1,7 @@
+[substrate]
+id = "918"
+name = "QEMU Orchestration"
+description = "Generates docker-compose for multi-arch orchestration and build instructions."
+version = "1.0.0"
+status = "Canonized"
+source_verified = true

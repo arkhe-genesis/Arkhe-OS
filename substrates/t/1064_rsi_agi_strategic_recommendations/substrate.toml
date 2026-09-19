@@ -1,0 +1,8 @@
+[substrate]
+id = "1064"
+name = "RSI_AGI_STRATEGIC_RECOMMENDATIONS"
+type = "Governance / Recommendations"
+version = "1.0.0"
+era = "12"
+status = "CANONIZED_FULL"
+description = "Strategic recommendations derived from RSI-AGI mapping"

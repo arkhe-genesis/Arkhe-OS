@@ -1,0 +1,31 @@
+[substrate]
+id = "1042"
+name = "RBB-CATHEDRAL-BRIDGE"
+status = "CANONIZED_PROVISIONAL"
+version = "1.0.0"
+architect = "0009-0005-2697-4668"
+date = "2026-06-03"
+protocol = "QBFT"
+chain_id = 12120014
+license = "GPL-3.0"
+
+[cross_links]
+active = [
+    923, 954, 955.1, 964, 965, 966, 970, 972, 972.1,
+    "989.x", "989.y", "989.y.5", "989.y.6.1",
+    1027, 1027.2, 1028, 1028.1, 1028.3, 1041
+]
+
+[deities]
+Themis = "Governança on-chain"
+Athena = "Block explorers / Auditoria"
+Hermes = "Bridge cross-chain"
+Mnemosyne = "Temporal anchor / Arquivamento"
+Prometheus = "Fogo / Inovação"
+Chronos = "Ancoragem temporal"
+
+[infrastructure]
+nodes = ["observer", "validator", "boot", "writer"]
+metrics = ["prometheus", "grafana"]
+bridge_contract = "0x0000000000000000000000000000000000010420"
+permission_contract = "0x0000000000000000000000000000000000010421"

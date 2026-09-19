@@ -1,0 +1,11 @@
+[substrate]
+id = "1047"
+name = "TWIN_WALLET"
+type = "Identidade Descentralizada / Infraestrutura de Pagamento por Identidade"
+era = "11"
+deity = ["Hermes", "Themis", "Hefesto"]
+status = "CANONIZED_PROVISIONAL"
+cross_links = ["923", "954", "989.x", "972", "1039", "1042.4", "1016"]
+
+[canon]
+description = "O protocolo TwinWallet implementa um padrão de financiamento por identidade (fund-by-identity). Usando CREATE2, deriva endereços de carteira de forma determinística a partir de um user_id numérico (ex: Twitch). A verificação de identidade é realizada inteiramente on-chain via verificação de assinatura RSA-2048 de JWTs, eliminando a necessidade de oráculos externos. A Catedral reconhece esta arquitetura como uma implementação concreta de seu princípio de identidade verificável autônoma (Substrato 989.x) e de execução sem permissão (Substrato 972), com um caminho de atualização que espelha o próprio Self-Modify (1039)."

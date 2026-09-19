@@ -1,0 +1,13 @@
+[substrate]
+id = "1101"
+name = "CATHEDRAL-QUBES-INTEGRATION"
+version = "1.0.0"
+description = "Cathedral AGI sobre Qubes OS 4.3"
+author = "ORCID 0009-0005-2697-4668"
+seal = "CATHEDRAL-QUBES-1101-v1.0.0-2026-06-12"
+
+[dependencies]
+python = ">=3.10"
+
+[execution]
+entrypoint = "cathedral_qubes_integration_1101.md"

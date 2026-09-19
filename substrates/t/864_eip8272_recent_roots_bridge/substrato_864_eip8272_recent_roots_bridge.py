@@ -6,8 +6,13 @@ import os
 class Substrato_864_eip8272_recent_roots_bridge:
     def __init__(self):
         self.id = "864-EIP8272-RECENT-ROOTS-BRIDGE"
-        # base64 encoded Python snippet to avoid f-strings
-        self.b64_adapter = "IyEvICJlaXA4MjcyX3ZlcmlmaWVyLnB5IiDigJQgU3Vic3RyYXRvIDg2NCAKIyBWZXJpZmljYSBzZSB1bSBhcnF1aXZvIC5jdXJzb3JydWxlcyBjb3JyZXNwb25kZSBhIHJhaXogcmVjZW50ZSBwdWJsaWNhZGEgb24tY2hhaW4uIApmcm9tIHdlYjMgaW1wb3J0IFdlYjMgCmltcG9ydCBoYXNobGliIAogCmNsYXNzIEVJUDgyNzJWZXJpZmllcjogCiAgICBkZWYgX19pbml0X18oc2VsZiwgcnBjX3VybCwgc291cmNlX2lkLCB3aW5kb3c9ODE5MSk6IAogICAgICAgIHNlbGYudzMgPSBXZWIzKFdlYjMuSFRUUFByb3ZpZGVyKHJwY191cmwpKSAKICAgICAgICBzZWxmLnNvdXJjZV9pZCA9IHNvdXJjZV9pZCAKICAgICAgICBzZWxmLndpbmRvdyA9IHdpbmRvdyAKIAogICAgZGVmIGlzX3ZhbGlkKHNlbGYsIGZpbGVfY29udGVudDogYnl0ZXMsIGRlY2xhcmVkX3Nsb3Q6IGludCkgLT4gYm9vbDogCiAgICAgICAgIyBDYWxjdWxhIGEgcmFpeiBkbyBhcnF1aXZvIAogICAgICAgIHJvb3QgPSBoYXNobGliLnNoYTNfMjU2KGZpbGVfY29udGVudCkuZGlnZXN0KCkgCiAgICAgICAgIyBWZXJpZmljYSBzZSBhIHJhaXogZXN0YSBhcm1hemVuYWRhIG5vIGNvbnRyYXRvIGRlIHNpc3RlbWEgcGFyYSBvIHNsb3QgZGVjbGFyYWRvIAogICAgICAgIHJldHVybiBUcnVlICAjIHN0dWIgCg=="
+
+        # Read the adapters
+        try:
+            with open(os.path.join(os.path.dirname(__file__), "eip8272_verifier.py"), "r", encoding="utf-8") as f:
+                self.b64_adapter = base64.b64encode(f.read().encode()).decode()
+        except Exception:
+            self.b64_adapter = ""
 
     def canonize(self):
         # Strict mode: use pre-defined seal
@@ -17,7 +22,9 @@ class Substrato_864_eip8272_recent_roots_bridge:
             "id": self.id,
             "status": "CANONIZED_PROVISIONAL",
             "canonical_seal": seal,
-            "adapter_source": self.b64_adapter
+            "adapter_source": {
+                "eip8272_verifier": self.b64_adapter
+            }
         }
 
         fd, path = tempfile.mkstemp(suffix=".json")

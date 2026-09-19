@@ -145,6 +145,7 @@ $# arkhe-*/
 !arkhe-core/
 !arkhe-os/
 !arkhe-qart/
+!arkhe-buzz-integration/
 substrates/legacy/
 archive/
 *.mtp3
@@ -550,5 +551,8 @@ Arkhe-OS.iso
 iso_root/
 selo_canonico.txt
 !arkhe-cpp/
-bin/
 obj/
+safe-core/target/
+safe-core/Cargo.lock
+safe-core/target/
+safe-core/Cargo.lock
