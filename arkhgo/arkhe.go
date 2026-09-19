@@ -2,6 +2,7 @@ package arkhgo
 
 /*
 #cgo LDFLAGS: -larkhe -lz
+#include <stdlib.h>
 #include "../arkhe.h"
 */
 import "C"

@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "arklib"
+version = "280.0"
+description = "Arklib — A Biblioteca Canónica da ASI (ARKHE Code Cathedral)"
+authors = [{name = "Arquiteto", orcid = "0009-0005-2697-4668"}]
+requires-python = ">=3.11"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: Other/Proprietary License",  # ARKHE PUBLIC LICENSE 1.0
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "numpy",
+    "aiohttp",
+    "pyyaml",
+    "websockets",
+    "prometheus-client",
+    "grpcio",
+    "fastapi",
+    "uvicorn",
+    "python-dotenv",
+]

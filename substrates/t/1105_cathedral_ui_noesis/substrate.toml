@@ -1,0 +1,14 @@
+[substrate]
+id = "1105"
+name = "CathedralUI (NOESIS)"
+version = "10.1.0"
+description = "Real-time dashboard layer aggregating get_canonical_state() from Hashtree + OnChain, Governance proposals, Safety telemetry, and Theosis RL visualization. Integrated into ARKHE OS v10.1 NOESIS."
+author = "ORCID 0009-0005-2697-4668"
+seal = "CATHEDRAL-ARKHE-v10.1.0-NOESIS-2026-06-15"
+
+[dependencies]
+python = ">=3.10"
+torch = ">=2.0"
+
+[execution]
+entrypoint = "arkhe_v10_1_noesis.py"

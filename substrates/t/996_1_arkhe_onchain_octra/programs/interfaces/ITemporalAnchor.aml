@@ -1,0 +1,16 @@
+// ITemporalAnchor.aml
+// Ancora TemporalChain na Octra L1
+
+interface ITemporalAnchor {
+  view fn get_anchor_count(): int
+  fn anchor_state(cid: string, seal: bytes32, theosis: int): bool
+  view fn get_anchor(idx: int): AnchorRecord
+}
+
+struct AnchorRecord {
+  cid: string
+  seal: bytes32
+  theosis: int
+  timestamp: int
+  epoch: int
+}
