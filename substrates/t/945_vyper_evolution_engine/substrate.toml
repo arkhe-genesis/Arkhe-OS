@@ -1,7 +1,0 @@
-[substrate]
-id = "945"
-name = "VYPER-EVOLUTION-ENGINE"
-description = "Integração do vyupgrade (banteg) ao ecossistema ARKHE como motor de evolução segura de contratos Vyper."
-type = "Compiler Infrastructure / Smart Contract Evolution"
-status = "CANONIZED_PROVISIONAL"
-seal = "bbdd6984f4827c337cda77a0440c72283ea5ac25720f7541b7a111c98fdd119c"

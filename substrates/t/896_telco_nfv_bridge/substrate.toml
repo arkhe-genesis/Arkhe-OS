@@ -1,0 +1,5 @@
+[substrate]
+id = "896"
+name = "Telco-NFV Peptide Bridge"
+status = "CANONIZED_PROVISIONAL"
+cross_links = ["900", "905", "895", "917"]

@@ -1,0 +1,25 @@
+[workspace]
+members = [
+    "kernel",
+    "servers/vfs",
+    "servers/net",
+    "servers/passport",
+    "servers/orchestrator",
+    "servers/bindu",
+    "servers/package",
+    "tools/arkhe-sh",
+    "tools/checkpoint",
+    "tools/pkg",
+    "libs/arklib",
+    "libs/pqc",
+    "libs/nostr",
+    "libs/ipfs",
+    "libs/tor"
+]
+resolver = "2"
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"

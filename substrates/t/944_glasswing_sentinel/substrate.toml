@@ -1,7 +1,0 @@
-[substrate]
-id = "944"
-name = "Glasswing Sentinel"
-description = "Autonomous vulnerability detection and response system integrated with TemporalChain."
-version = "1.0.0"
-status = "Canonized"
-source_verified = true

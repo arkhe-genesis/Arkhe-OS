@@ -1,0 +1,15 @@
+[substrate]
+id = "1102"
+name = "RSI Safety Addendum"
+version = "1.0.0"
+description = "Módulos adicionais para mitigar riscos de Recursive Self-Improvement"
+author = "ORCID 0009-0005-2697-4668"
+seal = "RSI-SAFETY-1102-v1.0.0-2026-06-08"
+
+[dependencies]
+python = ">=3.10"
+numpy = ">=1.24"
+torch = ">=2.0"
+
+[execution]
+entrypoint = "rsi_safety_addendum.py"

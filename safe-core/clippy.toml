@@ -1,0 +1,9 @@
+pedantic = true
+allow-unwrap-in-tests = true
+warn-on-all-doc-comments = true
+check = ["security-fixes", "vulnerabilities"]
+deny = [
+    "duplicate-crates",
+    "wildcard-dependencies",
+    "multiple-versions"
+]

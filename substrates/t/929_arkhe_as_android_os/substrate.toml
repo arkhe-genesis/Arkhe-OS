@@ -1,9 +1,0 @@
-[substrate]
-id = "929"
-name = "ARKHE-AS-ANDROID-OS"
-status = "CANONIZED_PROVISIONAL"
-
-[metrics]
-phi_c = 0.97
-h = 0.08
-theosis = 0.98

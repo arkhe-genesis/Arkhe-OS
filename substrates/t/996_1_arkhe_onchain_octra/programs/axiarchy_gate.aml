@@ -1,0 +1,94 @@
+// ARKHE-ONCHAIN — Axiarchy Gate
+// Substrato 996.1.1 — Circle: ARKHE-CATHEDRAL
+// Arquiteto ORCID: 0009-0005-2697-4668
+// Seal: 996.1.1-AXIARCHY-GATE-2026-05-31
+
+import IAxiarchyGate from "interfaces/IAxiarchyGate.aml"
+
+program AxiarchyGate implements IAxiarchyGate {
+  state {
+    owner: address
+    guardian: address
+    verified_codes: map[bytes32]bool
+    proofs: map[bytes32]bytes
+    theosis_threshold: int
+    paused: int
+  }
+
+  event CodeVerified(code_hash: bytes32, proof: bytes, theosis: int, verifier: address)
+  event CodeRevoked(code_hash: bytes32, reason: string, revoker: address)
+  event GuardianChanged(old_guardian: address, new_guardian: address)
+  event Paused(by: address)
+  event Unpaused(by: address)
+
+  constructor(guardian_addr: address, threshold: int) {
+    require(is_address(guardian_addr), "Axiarchy P1: invalid guardian")
+    self.owner = caller
+    self.guardian = guardian_addr
+    self.theosis_threshold = threshold
+    self.paused = 0
+  }
+
+  private fn only_owner() {
+    require(caller == self.owner, "Axiarchy P1: only owner")
+  }
+
+  private fn only_guardian() {
+    require(caller == self.guardian, "Axiarchy P1: only guardian")
+  }
+
+  private fn when_not_paused() {
+    require(self.paused == 0, "Axiarchy P6: contract paused")
+  }
+
+  view fn is_verified(code_hash: bytes32): bool {
+    return self.verified_codes[code_hash]
+  }
+
+  view fn get_proof(code_hash: bytes32): bytes {
+    return self.proofs[code_hash]
+  }
+
+  fn verify_code(code_hash: bytes32, lean_proof: bytes): bool {
+    only_guardian()
+    when_not_paused()
+    require(len(lean_proof) > 0, "Axiarchy P2: proof required")
+    require(len(lean_proof) >= 256, "Axiarchy P2: proof too short")
+    // Em Octra real, a verificação Lean 4 seria computada via HFHE
+    // Aqui registramos o hash do proof como proxy de verificação
+    self.verified_codes[code_hash] = true
+    self.proofs[code_hash] = lean_proof
+    emit CodeVerified(code_hash, lean_proof, self.theosis_threshold, caller)
+    return true
+  }
+
+  fn revoke_verification(code_hash: bytes32): bool {
+    only_owner()
+    self.verified_codes[code_hash] = false
+    emit CodeRevoked(code_hash, "Axiarchy P7: ethical violation", caller)
+    return true
+  }
+
+  fn set_guardian(new_guardian: address): bool {
+    only_owner()
+    require(is_address(new_guardian), "Axiarchy P1: invalid address")
+    let old = self.guardian
+    self.guardian = new_guardian
+    emit GuardianChanged(old, new_guardian)
+    return true
+  }
+
+  fn pause(): bool {
+    only_owner()
+    self.paused = 1
+    emit Paused(caller)
+    return true
+  }
+
+  fn unpause(): bool {
+    only_owner()
+    self.paused = 0
+    emit Unpaused(caller)
+    return true
+  }
+}

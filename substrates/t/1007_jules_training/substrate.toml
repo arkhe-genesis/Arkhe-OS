@@ -1,0 +1,12 @@
+[substrate]
+id = 1007
+name = "JULES-TRAINING"
+era = 10
+status = "CANONIZED"
+architect = "0009-0005-2697-4668"
+description = "IDE Jules trained with ARKHE ontology (1001+ substrates) and Axiarchy ethical validation"
+
+[dependencies]
+axiarchy = 954
+temporal_chain = 923
+theosis = 965
