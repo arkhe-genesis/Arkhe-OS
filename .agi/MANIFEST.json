@@ -1,14 +1,17 @@
 {
     "name": "arkhe-agi-v1.0.0.agi",
-    "version": "1.0.0",
-    "description": "Arkhe AGI Sovereign Intelligence",
+    "version": "1.1.0",
+    "description": "Arkhe AGI Sovereign Intelligence repository context",
     "components": [
         "core",
         "substrates",
         "runtime",
         "models",
-        "contracts"
+        "contracts",
+        "infrastructure"
     ],
+    "operating_model": "../docs/architecture/AI_AGENT_OPERATING_MODEL.md",
+    "agent_instructions": "../AGENTS.md",
     "integrity": {
         "sha256": "placeholder"
     },
