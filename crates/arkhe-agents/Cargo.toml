@@ -8,3 +8,8 @@ edition = "2021"
 arkhe-core = { path = "../arkhe-core" }
 arkhe-llm = { path = "../arkhe-llm" }
 arkhe-metacognition = { path = "../arkhe-metacognition" }
+async-trait = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true }
