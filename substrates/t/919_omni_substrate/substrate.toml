@@ -1,11 +1,11 @@
 [substrate]
-name = "919-OMNI-SUBSTRATE"
-id = 919
-status = "active"
-source_verified = true
-layer = "mega-consolidation"
+id = "919-OMNI-SUBSTRATE"
+name = "ArkheOmniAgent Consolidation"
+version = "1.0.0"
+author = "Arkhe OS Contributors"
+description = "Mega-consolidation of 20+ substrates into a single ArkheOmniAgent"
 
 [metadata]
-description = "Mega-Consolidation of 20+ Substrates in a single file"
-architect = "ORCID 0009-0005-2697-4668"
-date = "2026-05-27"
+category = "consolidation"
+type = "agent"
+source_verified = true

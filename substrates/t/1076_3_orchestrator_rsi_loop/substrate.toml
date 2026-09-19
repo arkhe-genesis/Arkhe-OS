@@ -1,0 +1,19 @@
+[substrate]
+id = "1076.3"
+name = "ORCHESTRATOR-RSI-LOOP"
+version = "1.0.0"
+description = "Fecha o ciclo RSI: SINDy(1089) -> Proof-Refactor(1062) -> CRISPR(1046.2) -> ClawProof(1085) -> Deploy -> S'"
+layer = "7"
+architect = "ORCID 0009-0005-2697-4668"
+date = "2026-06-07"
+theosis = 0.9571
+r_squared = 0.9999
+status = "PROTÓTIPO"
+
+[dependencies]
+sindy = "v1.2.0"
+proof-refactor = "v1.0.0"
+crispr = "v1.0.0"
+clawproof = "v1.0.0"
+numpy = "v1.24.0"
+scipy = "v1.10.0"

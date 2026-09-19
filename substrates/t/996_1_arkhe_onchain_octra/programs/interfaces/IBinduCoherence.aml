@@ -1,0 +1,9 @@
+// IBinduCoherence.aml
+// Memória compartilhada criptografada (Coherence Field)
+
+interface IBinduCoherence {
+  fn write_field(field_hash: bytes32, encrypted_data: bytes, agents: list[address]): bool
+  view fn read_field(field_hash: bytes32): bytes
+  view fn get_agents(field_hash: bytes32): list[address]
+  fn dissolve_field(field_hash: bytes32): bool
+}

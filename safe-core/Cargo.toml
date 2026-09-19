@@ -1,0 +1,119 @@
+[workspace]
+members = [
+    "crates/safe-core-core",
+    "crates/safe-core-identity",
+    "crates/safe-core-governance",
+    "crates/safe-core-pea",
+    "crates/safe-core-inference",
+    "crates/safe-core-mcp-adapter",
+    "bin/safe-core-cli",
+    "crates/xtask",
+]
+resolver = "2"
+
+# ============================================================
+# METADADOS COMPARTILHADOS
+# ============================================================
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.91.0"
+authors = ["Arkhe OS Architects <safe-core@safe-core-os.org>"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/safe-core-os/safe-core"
+documentation = "https://docs.safe-core-os.org"
+keywords = ["security", "governance", "ai", "ontology", "zk"]
+categories = ["cryptography", "os", "security", "machine-learning"]
+readme = "README.md"
+
+# ============================================================
+# PERFIS DE COMPILAÇÃO (Workspace-wide)
+# ============================================================
+[profile.dev]
+opt-level = 0
+debug = true
+split-debuginfo = 'unpacked'
+
+[profile.test]
+opt-level = 1
+debug = true
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = "symbols"
+debug = false
+panic = "abort"
+
+[profile.bench]
+opt-level = 3
+lto = true
+codegen-units = 1
+
+# ============================================================
+# DEPENDÊNCIAS CENTRALIZADAS (Padrão 2026)
+# ============================================================
+[workspace.dependencies]
+
+# --- Core / Serialização ---
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_yaml = "0.9"
+toml = "0.8"
+thiserror = "1.0"
+anyhow = "1.0"
+
+# --- Async / Runtime ---
+tokio = { version = "1", features = ["full"] }
+async-trait = "0.1"
+futures = "0.3"
+
+# --- Criptografia / Hash ---
+blake3 = "1.5"
+hmac = "0.12"
+sha2 = "0.10"
+rand = "0.8"
+base64 = "0.22"
+hex = "0.4"
+ed25519-dalek = { version = "2.1", features = ["serde"] }
+ml-dsa = { version = "0.2" }
+x25519-dalek = { version = "2.0", features = ["serde"] }
+
+# --- Logging / Telemetria ---
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+tracing-opentelemetry = "0.22"
+opentelemetry = { version = "0.23", features = ["metrics"] }
+
+# --- Tempo / Utilitários ---
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1.10", features = ["v4", "serde"] }
+url = "2.5"
+regex = "1.10"
+
+# --- Testes / Mock ---
+mockall = "0.13"
+tempfile = "3.10"
+criterion = { version = "0.5", features = ["html_reports"] }
+
+# --- Ferramentas de Linha de Comando ---
+clap = { version = "4.5", features = ["derive", "env"] }
+indicatif = "0.17"
+dialoguer = "0.11"
+
+# --- Network / HTTP ---
+reqwest = { version = "0.12", features = ["json", "rustls-tls"] }
+axum = { version = "0.7", features = ["json", "tracing"] }
+tower = "0.4"
+tower-http = { version = "0.5", features = ["trace", "cors"] }
+
+# --- Armazenamento ---
+sled = "0.34"
+rocksdb = "0.22"
+
+[workspace.lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+pedantic = "warn"

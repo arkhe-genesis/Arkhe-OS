@@ -1,0 +1,12 @@
+[substrate]
+id = "1079-1080"
+name = "AUTO-CANONIZATION ENGINE"
+version = "1.0.0"
+architect = "ORCID 0009-0005-2697-4668"
+type = "agent-canonization"
+
+[config]
+theosis_threshold = 0.08
+plasticity_eta = 0.5334
+discovery_interval_seconds = 30
+max_history_size = 5000

@@ -1,0 +1,11 @@
+[substrate]
+id = "1064.2"
+name = "THEOSIS_PARIS_DASHBOARD"
+type = "Real-time Monitoring / Fatigue Analysis / Alert System"
+era = "12"
+deity = ["Hefesto", "Nêmesis"]
+status = "CANONIZED_FULL"
+version = "1.0.0"
+parent = "1064"
+cross_links = ["1063.1", "1027.2", "954", "1064", "1055"]
+description = "Dashboard em tempo real que monitora a taxa de fadiga (dTheta/dn) de cada substrato usando o modelo Theosis-Paris (1063.1). Se a taxa exceder DeltaKc, aciona o gate Axiarquia (954) automaticamente."

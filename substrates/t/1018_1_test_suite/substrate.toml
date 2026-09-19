@@ -1,0 +1,7 @@
+[substrate]
+id = "1018.1"
+name = "Test Suite Completa"
+type = "Integration"
+era = "7"
+status = "CANONIZED_PROVISIONAL"
+cross_links = ["1018", "951", "952", "953", "954", "955", "972", "989"]

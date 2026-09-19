@@ -1,0 +1,6 @@
+[substrate]
+id = "924"
+name = "Compound Motion Dynamics Engine"
+description = "SE(3) kinematics, Featherstone dynamics, differentiable physics for compound motion."
+version = "1.0.0"
+source_verified = true
