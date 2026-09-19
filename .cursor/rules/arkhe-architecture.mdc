@@ -1,0 +1,12 @@
+---
+description: Repository map and safe change workflow for Arkhe OS.
+alwaysApply: true
+---
+
+Read `docs/architecture/AI_AGENT_OPERATING_MODEL.md` and `AGENTS.md` before
+editing. Arkhe OS is a polyglot multi-project repository: use the nearest
+manifest and README, not a guessed root command. Keep changes inside the target
+component, preserve existing worktree changes, and do not edit generated files
+or binary artifacts. Treat crypto, identity, governance, boot/kernel, hardware,
+and deployment code as security-sensitive. Run and report the narrowest
+component-level validation available.
