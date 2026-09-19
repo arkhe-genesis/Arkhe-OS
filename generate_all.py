@@ -120,6 +120,7 @@ with open('arkhgo/arkhe.go', 'w') as f:
 
 /*
 #cgo LDFLAGS: -larkhe -lz
+#include <stdlib.h>
 #include "../arkhe.h"
 */
 import "C"
@@ -222,11 +223,11 @@ extern "C" {
     fn gap_to_finality(gap: f64) -> u32;
 }
 
-pub fn compute_gap(query: &str, source: &str, response: &str) -> f64 {
-    let c_query = CString::new(query).unwrap();
-    let c_source = CString::new(source).unwrap();
-    let c_response = CString::new(response).unwrap();
-    unsafe { kolmogorov_gap(c_query.as_ptr(), c_source.as_ptr(), c_response.as_ptr()) }
+pub fn compute_gap(query: &str, source: &str, response: &str) -> Result<f64, std::ffi::NulError> {
+    let c_query = CString::new(query)?;
+    let c_source = CString::new(source)?;
+    let c_response = CString::new(response)?;
+    Ok(unsafe { kolmogorov_gap(c_query.as_ptr(), c_source.as_ptr(), c_response.as_ptr()) })
 }
 
 #[repr(u32)]
@@ -667,7 +668,22 @@ with open('contracts/ResourceOracle.sol', 'w') as f:
 pragma solidity ^0.8.19;
 
 contract ResourceOracle {
+    address public owner;
     mapping(string => uint256) public resourcePrices;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not owner");
+        _;
+    }
+
+    // A mechanism to update resourcePrices is required, such as this admin setter
+    function setPrice(string calldata resource, uint256 price) external onlyOwner {
+        resourcePrices[resource] = price;
+    }
 
     function requestResourcePrice(string calldata resource, string calldata source) external returns (bytes32) {
         return keccak256(abi.encodePacked(resource, source));

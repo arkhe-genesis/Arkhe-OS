@@ -1,0 +1,9 @@
+// IPassportGateway.aml
+// Verificação de humanidade via FHE
+
+interface IPassportGateway {
+  fn register_identity(encrypted_passport: bytes, orcid_hash: bytes32): bool
+  view fn is_human(addr: address): bool
+  view fn get_score(addr: address): int
+  fn revoke_identity(addr: address): bool
+}

@@ -1,0 +1,15 @@
+[package]
+name = "pacir-agi-cli"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+[[bin]]
+name = "pacir-agi"
+path = "src/main.rs"
+[dependencies]
+pacir-agi-core = { path = "../pacir-agi-core" }
+pacir-agi-verify = { path = "../pacir-agi-verify" }
+clap.workspace = true
+serde_json.workspace = true
+tokio.workspace = true

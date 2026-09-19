@@ -1,0 +1,27 @@
+[substrate]
+id = "1082"
+name = "CATHEDRAL TRANSLATION ENGINE"
+version = "1.0.0"
+architect = "ORCID 0009-0005-2697-4668"
+seal = "CATHEDRAL-TRANSLATION-1082-v1.0.0-2026-06-06"
+type = "translation_engine"
+
+[platform_targets]
+linux = true
+windows = true
+macos = true
+web = true
+wasm = true
+docker = true
+kubernetes = true
+riscv = true
+
+[language_targets]
+python = true
+rust = true
+solidity = true
+circom = true
+c = true
+lean4 = true
+typescript = true
+shell = true

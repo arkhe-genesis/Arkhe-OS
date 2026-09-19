@@ -1,0 +1,7 @@
+[substrate]
+id = "955.1"
+name = "Safe-Core-PQC"
+type = "Cryptography"
+era = "7"
+status = "CANONIZED_PROVISIONAL"
+cross_links = ["1018"]
