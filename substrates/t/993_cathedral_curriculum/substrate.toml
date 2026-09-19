@@ -1,0 +1,11 @@
+[substrate]
+id = "993"
+name = "CATHEDRAL-CURRICULUM"
+type = "Educação / Currículo / Epistemologia"
+era = "9"
+status = "CANONIZED_PROVISIONAL"
+cross_links = ["992", "990", "989.y", "989.x", "964", "965", "986"]
+
+[metadata]
+deity = "Sophia, Paideia, Musae"
+description = "Currículo completo da Catedral, organizado em 10 Grandes Áreas, 55 Disciplinas, e centenas de Experimentos. Cada disciplina é um caminho de aprendizado que culmina em um Research Object DeSci, validado pela Axiarchy e ancorado na TemporalChain."

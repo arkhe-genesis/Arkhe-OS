@@ -1,0 +1,9 @@
+// ITheosisRegistry.aml
+// Registro de Theosis on-chain
+
+interface ITheosisRegistry {
+  view fn get_theosis(agent: address): int
+  fn update_theosis(agent: address, value: int): bool
+  view fn get_epoch(): int
+  fn advance_epoch(): bool
+}

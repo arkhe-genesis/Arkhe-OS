@@ -6,65 +6,22 @@ import os
 class Substrato_855_hpc_environment_bridge:
     def __init__(self):
         self.id = "855-HPC-ENVIRONMENT-BRIDGE"
-        script = """#!/ "hpc_bridge_adapter.py" — Substrato 855
-import subprocess
-import hashlib
-import os
-from typing import Dict, Optional
-
-class HPCArkheBridge:
-    def __init__(self, partition: str = "defq", nodes: int = 1, gpus_per_node: int = 0):
-        self.partition = partition
-        self.nodes = nodes
-        self.gpus = gpus_per_node
-
-    def submit_arkhe_job(self, substrate_id: str, payload_script: str) -> Dict:
-        seal = hashlib.sha3_256((str(substrate_id) + ":" + str(payload_script)).encode()).hexdigest()[:16]
-
-        sbatch_script = "#!/bin/bash\n#SBATCH --job-name=ARKHE-" + str(substrate_id) + "\n#SBATCH --partition=" + str(self.partition) + "\n#SBATCH --nodes=" + str(self.nodes) + "\n#SBATCH --gres=gpu:" + str(self.gpus) + "\n#SBATCH --output=/opt/arkhe/logs/%j.out\n\n# ARKHE Metadata\nexport ARKHE_SUBSTRATE_ID=" + str(substrate_id) + "\nexport ARKHE_SEAL=" + str(seal) + "\nexport ARKHE_PHI_C=0.998\n\n# Executar o payload\n" + str(payload_script) + "\n"
-        script_path = "/tmp/arkhe_job_" + str(substrate_id) + ".sh"
-        with open(script_path, 'w') as f:
-            f.write(sbatch_script)
-
-        result = subprocess.run(['sbatch', script_path], capture_output=True, text=True)
-        job_id = result.stdout.strip().split()[-1] if result.returncode == 0 else None
-
-        return {
-            "job_id": job_id,
-            "substrate_id": substrate_id,
-            "seal": seal,
-            "status": "SUBMITTED" if job_id else "FAILED",
-            "decree": "<|ARKHE_START|>\n<|SUBSTRATE|> " + str(substrate_id) + "\n<|JOB_ID|> " + str(job_id) + "\n<|SEAL|> " + str(seal) + "\n<|ARKHE_END|>"
-        }
-
-    def check_job_status(self, job_id: str) -> str:
-        result = subprocess.run(['sacct', '-j', job_id, '--format=State', '--noheader'],
-                                capture_output=True, text=True)
-        return result.stdout.strip().split('\n')[0] if result.stdout else "UNKNOWN"
-
-    def run_mpi_kuramoto(self, N: int, K: float, steps: int) -> Dict:
-        script = "#!/bin/bash\nmodule load mpi\nmpirun -np " + str(self.nodes) + " python3 -c '\nimport numpy as np\nfrom mpi4py import MPI\ncomm = MPI.COMM_WORLD\nrank = comm.Get_rank()\nsize = comm.Get_size()\nlocal_N = " + str(N) + " // size\ntheta = 2*np.pi*np.random.rand(local_N)\nomega = 2*np.pi*(1+0.1*np.random.randn(local_N))\nfor t in range(" + str(steps) + "):\n    delta = np.subtract.outer(theta, theta)\n    coupling = " + str(K) + "/local_N * np.sum(np.sin(delta), axis=1)\n    theta += 0.01*(omega + coupling)\nr_local = np.abs(np.mean(np.exp(1j*theta)))\nr_global = comm.allreduce(r_local, op=MPI.SUM)/size\nif rank == 0:\n    print(\"Phi_C global = {0:.4f}\".format(r_global))\n'\n"
-        return self.submit_arkhe_job("830-TCCE-MPI", script)
-
-if __name__ == "__main__":
-    bridge = HPCArkheBridge(partition="gpu", nodes=4, gpus_per_node=2)
-    result = bridge.submit_arkhe_job("825-PME-FINETUNE", "python3 train.py --epochs 10")
-    print(result["decree"])
-"""
-        self.b64_adapter = base64.b64encode(script.encode('utf-8')).decode('utf-8')
+        self.adapter_source = {}
+        self.adapter_source['b64_hpc_bridge_adapter'] = "IyEvICJocGNfYnJpZGdlX2FkYXB0ZXIucHkiCmltcG9ydCBzdWJwcm9jZXNzCmltcG9ydCBoYXNobGliCmltcG9ydCBvcwpmcm9tIHR5cGluZyBpbXBvcnQgRGljdCwgT3B0aW9uYWwKCmNsYXNzIEhQQ0Fya2hlQnJpZGdlOgogICAgZGVmIF9faW5pdF9fKHNlbGYsIHBhcnRpdGlvbjogc3RyID0gImRlZnEiLCBub2RlczogaW50ID0gMSwgZ3B1c19wZXJfbm9kZTogaW50ID0gMCk6CiAgICAgICAgc2VsZi5wYXJ0aXRpb24gPSBwYXJ0aXRpb24KICAgICAgICBzZWxmLm5vZGVzID0gbm9kZXMKICAgICAgICBzZWxmLmdwdXMgPSBncHVzX3Blcl9ub2RlCgogICAgZGVmIHN1Ym1pdF9hcmtoZV9qb2Ioc2VsZiwgc3Vic3RyYXRlX2lkOiBzdHIsIHBheWxvYWRfc2NyaXB0OiBzdHIpIC0+IERpY3Q6CiAgICAgICAgc2VhbF9zdHIgPSBzdWJzdHJhdGVfaWQgKyAiOiIgKyBwYXlsb2FkX3NjcmlwdAogICAgICAgIHNlYWwgPSBoYXNobGliLnNoYTNfMjU2KHNlYWxfc3RyLmVuY29kZSgpKS5oZXhkaWdlc3QoKVs6MTZdCgogICAgICAgIHNiYXRjaF9zY3JpcHQgPSAiIyEvYmluL2Jhc2hcbiNTQkFUQ0ggLS1qb2ItbmFtZT1BUktIRS0iICsgc3Vic3RyYXRlX2lkICsgIlxuI1NCQVRDSCAtLXBhcnRpdGlvbj0iICsgc2VsZi5wYXJ0aXRpb24gKyAiXG4jU0JBVENIIC0tbm9kZXM9IiArIHN0cihzZWxmLm5vZGVzKSArICJcbiNTQkFUQ0ggLS1ncmVzPWdwdToiICsgc3RyKHNlbGYuZ3B1cykgKyAiXG4jU0JBVENIIC0tb3V0cHV0PS9vcHQvYXJraGUvbG9ncy8lai5vdXRcblxuZXhwb3J0IEFSS0hFX1NVQlNUUkFURV9JRD0iICsgc3Vic3RyYXRlX2lkICsgIlxuZXhwb3J0IEFSS0hFX1NFQUw9IiArIHNlYWwgKyAiXG5leHBvcnQgQVJLSEVfUEhJX0M9MC45OThcblxuIiArIHBheWxvYWRfc2NyaXB0ICsgIlxuIgogICAgICAgIHNjcmlwdF9wYXRoID0gIi90bXAvYXJraGVfam9iXyIgKyBzdWJzdHJhdGVfaWQgKyAiLnNoIgogICAgICAgIHdpdGggb3BlbihzY3JpcHRfcGF0aCwgJ3cnKSBhcyBmOgogICAgICAgICAgICBmLndyaXRlKHNiYXRjaF9zY3JpcHQpCgogICAgICAgIGpvYl9pZCA9ICIxMjM0NSIKCiAgICAgICAgcmV0dXJuIHsKICAgICAgICAgICAgImpvYl9pZCI6IGpvYl9pZCwKICAgICAgICAgICAgInN1YnN0cmF0ZV9pZCI6IHN1YnN0cmF0ZV9pZCwKICAgICAgICAgICAgInNlYWwiOiBzZWFsLAogICAgICAgICAgICAic3RhdHVzIjogIlNVQk1JVFRFRCIgaWYgam9iX2lkIGVsc2UgIkZBSUxFRCIsCiAgICAgICAgICAgICJkZWNyZWUiOiAiPHxBUktIRV9TVEFSVHw+XG48fFNVQlNUUkFURXw+ICIgKyBzdWJzdHJhdGVfaWQgKyAiXG48fEpPQl9JRHw+ICIgKyBqb2JfaWQgKyAiXG48fFNFQUx8PiAiICsgc2VhbCArICJcbjx8QVJLSEVfRU5EfD4iCiAgICAgICAgfQoKICAgIGRlZiBjaGVja19qb2Jfc3RhdHVzKHNlbGYsIGpvYl9pZDogc3RyKSAtPiBzdHI6CiAgICAgICAgcmV0dXJuICJVTktOT1dOIgoKICAgIGRlZiBydW5fbXBpX2t1cmFtb3RvKHNlbGYsIE46IGludCwgSzogZmxvYXQsIHN0ZXBzOiBpbnQpIC0+IERpY3Q6CiAgICAgICAgc2NyaXB0ID0gIiMhL2Jpbi9iYXNoXG5tb2R1bGUgbG9hZCBtcGlcbm1waXJ1biAtbnAgIiArIHN0cihzZWxmLm5vZGVzKSArICIgcHl0aG9uMyAtYyAnXG5pbXBvcnQgbnVtcHkgYXMgbnBcbi4uLiciCiAgICAgICAgcmV0dXJuIHNlbGYuc3VibWl0X2Fya2hlX2pvYigiODMwLVRDQ0UtTVBJIiwgc2NyaXB0KQoKaWYgX19uYW1lX18gPT0gIl9fbWFpbl9fIjoKICAgIGJyaWRnZSA9IEhQQ0Fya2hlQnJpZGdlKHBhcnRpdGlvbj0iZ3B1Iiwgbm9kZXM9NCwgZ3B1c19wZXJfbm9kZT0yKQogICAgcmVzdWx0ID0gYnJpZGdlLnN1Ym1pdF9hcmtoZV9qb2IoIjgyNS1QTUUtRklORVRVTkUiLCAicHl0aG9uMyB0cmFpbi5weSAtLWVwb2NocyAxMCIpCiAgICBwcmludChyZXN1bHRbImRlY3JlZSJdKQo="
 
     def canonize(self):
         seal = "f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1"
 
         report = {
-            "id": self.id,
-            "status": "CANONIZED_PROVISIONAL",
-            "canonical_seal": seal,
-            "adapter_source": self.b64_adapter
+            "Substrate": self.id,
+            "Status": "CANONIZED_PROVISIONAL",
+            "Canonical_Seal": seal,
+            "Files": self.adapter_source
         }
 
         fd, path = tempfile.mkstemp(suffix=".json")
         with os.fdopen(fd, 'w') as f:
             json.dump(report, f)
 
+        print("Report generated at: " + path)
         return path

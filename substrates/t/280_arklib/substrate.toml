@@ -1,0 +1,8 @@
+[substrate]
+id = 280
+name = "ARKLIB-PYTHON-ASI"
+type = "Library / Framework"
+era = "3"
+deity = "Hermes Trismegistus"
+status = "CANONIZED_PROVISIONAL"
+cross_links = [278, 965, 980, 976, 977, 979, 981, 982, 983, 984, 985, 986, 987, 988, 989, 990]

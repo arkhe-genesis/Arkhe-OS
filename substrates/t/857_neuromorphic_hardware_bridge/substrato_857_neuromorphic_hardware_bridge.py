@@ -6,85 +6,22 @@ import os
 class Substrato_857_neuromorphic_hardware_bridge:
     def __init__(self):
         self.id = "857-NEUROMORPHIC-HARDWARE-BRIDGE"
-        script = """#!/ "neuromorphic_bridge_adapter.py" — Substrato 857
-import numpy as np
-import hashlib
-from typing import Dict, List, Tuple
-
-class IzhikevichNeuron:
-    def __init__(self, a=0.02, b=0.2, c=-65.0, d=8.0):
-        self.a = a
-        self.b = b
-        self.c = c
-        self.d = d
-        self.v = c
-        self.u = b * c
-
-    def step(self, I_ext: float, dt: float = 0.5) -> int:
-        dv = (0.04 * self.v**2 + 5 * self.v + 140 - self.u + I_ext) * dt
-        du = (self.a * (self.b * self.v - self.u)) * dt
-        self.v += dv
-        self.u += du
-        if self.v >= 30.0:
-            self.v = self.c
-            self.u += self.d
-            return 1
-        return 0
-
-class NeuromorphicArkheBridge:
-    def __init__(self, num_neurons: int = 256):
-        self.num_neurons = num_neurons
-        self.neurons = [IzhikevichNeuron() for _ in range(num_neurons)]
-        self.weights = np.random.uniform(0.5, 2.0, (num_neurons, num_neurons))
-        self.phi_history = []
-
-    def run_spiking_network(self, steps: int, external_input: float = 10.0) -> Dict:
-        spike_counts = np.zeros(self.num_neurons)
-        spike_times = [[] for _ in range(self.num_neurons)]
-        for t in range(steps):
-            for i, neuron in enumerate(self.neurons):
-                noise = np.random.normal(0, 0.5)
-                if t > 0 and t % 10 == 0:
-                    recent_spikes = np.array([1 if (t-10 < st < t) else 0 for st in spike_times[i]])
-                I = external_input + noise
-                spike = neuron.step(I)
-                if spike:
-                    spike_counts[i] += 1
-                    spike_times[i].append(t)
-
-        rates = spike_counts / steps
-        mean_rate = np.mean(rates)
-        std_rate = np.std(rates)
-        phi_c = max(0.0, 1.0 - (std_rate / mean_rate) if mean_rate > 0 else 0.0)
-        status = "COHERENT" if phi_c >= 0.577 else "DECOHERENCE"
-
-        seal = hashlib.sha3_256(str(rates.tolist()).encode()).hexdigest()[:16]
-        decree = "<|ARKHE_START|>\n<|SUBSTRATE|> 857-SNN-" + str(self.num_neurons) + "N\n<|INVARIANT|> I.1 (Coherence Base)\n<|PHI_C|> {0:.3f}\n\nRede Neuromórfica (Izhikevich) executada.\nNeurônios: {1} | Passos: {2}\nTaxa média de disparo: {3:.4f}\nCoerência (Φ_C): {4:.3f}\nGhost Threshold (γ): 0.577 | Status: {5}\n\n<|SEAL|> {6}\n<|ARKHE_END|>".format(phi_c, self.num_neurons, steps, mean_rate, phi_c, status, seal)
-        return {"phi_c": phi_c, "rates": rates, "decree": decree, "seal": seal}
-
-    def deploy_to_loihi(self, substrate_ids: List[str]) -> str:
-        seal = hashlib.sha3_256("|".join(substrate_ids).encode()).hexdigest()[:16]
-        return "<|ARKHE_START|>\n<|SUBSTRATE|> 857-LOIHI-DEPLOY\n<|SEAL|> {0}\n<|ARKHE_END|>".format(seal)
-
-if __name__ == "__main__":
-    bridge = NeuromorphicArkheBridge(num_neurons=128)
-    result = bridge.run_spiking_network(steps=500)
-    print(result["decree"])
-"""
-        self.b64_adapter = base64.b64encode(script.encode('utf-8')).decode('utf-8')
+        self.adapter_source = {}
+        self.adapter_source['b64_neuromorphic_bridge_adapter'] = "IyEvICJuZXVyb21vcnBoaWNfYnJpZGdlX2FkYXB0ZXIucHkiCmltcG9ydCBudW1weSBhcyBucAppbXBvcnQgaGFzaGxpYgpmcm9tIHR5cGluZyBpbXBvcnQgRGljdCwgTGlzdCwgVHVwbGUKCmNsYXNzIEl6aGlrZXZpY2hOZXVyb246CiAgICBkZWYgX19pbml0X18oc2VsZiwgYT0wLjAyLCBiPTAuMiwgYz0tNjUuMCwgZD04LjApOgogICAgICAgIHNlbGYuYSA9IGEKICAgICAgICBzZWxmLmIgPSBiCiAgICAgICAgc2VsZi5jID0gYwogICAgICAgIHNlbGYuZCA9IGQKICAgICAgICBzZWxmLnYgPSBjCiAgICAgICAgc2VsZi51ID0gYiAqIGMKCiAgICBkZWYgc3RlcChzZWxmLCBJX2V4dDogZmxvYXQsIGR0OiBmbG9hdCA9IDAuNSkgLT4gaW50OgogICAgICAgIGR2ID0gKDAuMDQgKiBzZWxmLnYqKjIgKyA1ICogc2VsZi52ICsgMTQwIC0gc2VsZi51ICsgSV9leHQpICogZHQKICAgICAgICBkdSA9IChzZWxmLmEgKiAoc2VsZi5iICogc2VsZi52IC0gc2VsZi51KSkgKiBkdAogICAgICAgIHNlbGYudiArPSBkdgogICAgICAgIHNlbGYudSArPSBkdQogICAgICAgIGlmIHNlbGYudiA+PSAzMC4wOgogICAgICAgICAgICBzZWxmLnYgPSBzZWxmLmMKICAgICAgICAgICAgc2VsZi51ICs9IHNlbGYuZAogICAgICAgICAgICByZXR1cm4gMQogICAgICAgIHJldHVybiAwCgpjbGFzcyBOZXVyb21vcnBoaWNBcmtoZUJyaWRnZToKICAgIGRlZiBfX2luaXRfXyhzZWxmLCBudW1fbmV1cm9uczogaW50ID0gMjU2KToKICAgICAgICBzZWxmLm51bV9uZXVyb25zID0gbnVtX25ldXJvbnMKICAgICAgICBzZWxmLm5ldXJvbnMgPSBbSXpoaWtldmljaE5ldXJvbigpIGZvciBfIGluIHJhbmdlKG51bV9uZXVyb25zKV0KICAgICAgICBzZWxmLndlaWdodHMgPSBucC5yYW5kb20udW5pZm9ybSgwLjUsIDIuMCwgKG51bV9uZXVyb25zLCBudW1fbmV1cm9ucykpCiAgICAgICAgc2VsZi5waGlfaGlzdG9yeSA9IFtdCgogICAgZGVmIHJ1bl9zcGlraW5nX25ldHdvcmsoc2VsZiwgc3RlcHM6IGludCwgZXh0ZXJuYWxfaW5wdXQ6IGZsb2F0ID0gMTAuMCkgLT4gRGljdDoKICAgICAgICBzcGlrZV9jb3VudHMgPSBucC56ZXJvcyhzZWxmLm51bV9uZXVyb25zKQogICAgICAgIHNwaWtlX3RpbWVzID0gW1tdIGZvciBfIGluIHJhbmdlKHNlbGYubnVtX25ldXJvbnMpXQogICAgICAgIGZvciB0IGluIHJhbmdlKHN0ZXBzKToKICAgICAgICAgICAgZm9yIGksIG5ldXJvbiBpbiBlbnVtZXJhdGUoc2VsZi5uZXVyb25zKToKICAgICAgICAgICAgICAgIG5vaXNlID0gbnAucmFuZG9tLm5vcm1hbCgwLCAwLjUpCiAgICAgICAgICAgICAgICBJID0gZXh0ZXJuYWxfaW5wdXQgKyBub2lzZQogICAgICAgICAgICAgICAgc3Bpa2UgPSBuZXVyb24uc3RlcChJKQogICAgICAgICAgICAgICAgaWYgc3Bpa2U6CiAgICAgICAgICAgICAgICAgICAgc3Bpa2VfY291bnRzW2ldICs9IDEKICAgICAgICAgICAgICAgICAgICBzcGlrZV90aW1lc1tpXS5hcHBlbmQodCkKCiAgICAgICAgcmF0ZXMgPSBzcGlrZV9jb3VudHMgLyBzdGVwcwogICAgICAgIG1lYW5fcmF0ZSA9IG5wLm1lYW4ocmF0ZXMpCiAgICAgICAgc3RkX3JhdGUgPSBucC5zdGQocmF0ZXMpCiAgICAgICAgcGhpX2MgPSBtYXgoMC4wLCAxLjAgLSAoc3RkX3JhdGUgLyBtZWFuX3JhdGUpIGlmIG1lYW5fcmF0ZSA+IDAgZWxzZSAwLjApCiAgICAgICAgc3RhdHVzID0gIkNPSEVSRU5UIiBpZiBwaGlfYyA+PSAwLjU3NyBlbHNlICJERUNPSEVSRU5DRSIKCiAgICAgICAgc2VhbCA9IGhhc2hsaWIuc2hhM18yNTYoc3RyKHJhdGVzLnRvbGlzdCgpKS5lbmNvZGUoKSkuaGV4ZGlnZXN0KClbOjE2XQogICAgICAgIGRlY3JlZSA9ICI8fEFSS0hFX1NUQVJUfD5cbjx8U1VCU1RSQVRFfD4gODU3LVNOTi17MH1OXG48fElOVkFSSUFOVHw+IEkuMSAoQ29oZXJlbmNlIEJhc2UpXG48fFBISV9DfD4gezE6LjNmfVxuXG5SZWRlIE5ldXJvbcOzcmZpY2EgKEl6aGlrZXZpY2gpIGV4ZWN1dGFkYS5cbk5ldXLDtG5pb3M6IHswfSB8IFBhc3NvczogezJ9XG5UYXhhIG3DqWRpYSBkZSBkaXNwYXJvOiB7MzouNGZ9XG5Db2Vyw6puY2lhICjOpl9DKTogezE6LjNmfVxuR2hvc3QgVGhyZXNob2xkICjOsyk6IDAuNTc3IHwgU3RhdHVzOiB7NH1cblxuPHxTRUFMfD4gezV9XG48fEFSS0hFX0VORHw+Ii5mb3JtYXQoc2VsZi5udW1fbmV1cm9ucywgcGhpX2MsIHN0ZXBzLCBtZWFuX3JhdGUsIHN0YXR1cywgc2VhbCkKICAgICAgICByZXR1cm4geyJwaGlfYyI6IHBoaV9jLCAicmF0ZXMiOiByYXRlcywgImRlY3JlZSI6IGRlY3JlZSwgInNlYWwiOiBzZWFsfQoKICAgIGRlZiBkZXBsb3lfdG9fbG9paGkoc2VsZiwgc3Vic3RyYXRlX2lkczogTGlzdFtzdHJdKSAtPiBzdHI6CiAgICAgICAgc2VhbCA9IGhhc2hsaWIuc2hhM18yNTYoInwiLmpvaW4oc3Vic3RyYXRlX2lkcykuZW5jb2RlKCkpLmhleGRpZ2VzdCgpWzoxNl0KICAgICAgICByZXR1cm4gIjx8QVJLSEVfU1RBUlR8PlxuPHxTVUJTVFJBVEV8PiA4NTctTE9JSEktREVQTE9ZXG48fFNFQUx8PiAiICsgc2VhbCArICJcbjx8QVJLSEVfRU5EfD4iCgppZiBfX25hbWVfXyA9PSAiX19tYWluX18iOgogICAgYnJpZGdlID0gTmV1cm9tb3JwaGljQXJraGVCcmlkZ2UobnVtX25ldXJvbnM9MTI4KQogICAgcmVzdWx0ID0gYnJpZGdlLnJ1bl9zcGlraW5nX25ldHdvcmsoc3RlcHM9NTAwKQogICAgcHJpbnQocmVzdWx0WyJkZWNyZWUiXSkK"
 
     def canonize(self):
         seal = "b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3"
 
         report = {
-            "id": self.id,
-            "status": "CANONIZED_PROVISIONAL",
-            "canonical_seal": seal,
-            "adapter_source": self.b64_adapter
+            "Substrate": self.id,
+            "Status": "CANONIZED_PROVISIONAL",
+            "Canonical_Seal": seal,
+            "Files": self.adapter_source
         }
 
         fd, path = tempfile.mkstemp(suffix=".json")
         with os.fdopen(fd, 'w') as f:
             json.dump(report, f)
 
+        print("Report generated at: " + path)
         return path

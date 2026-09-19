@@ -1,0 +1,11 @@
+[package]
+name = "pacir-q-kani"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+pacir-q-core = { path = "../pacir-q-core" }
+pacir-q-benchmarking = { path = "../pacir-q-benchmarking" }
