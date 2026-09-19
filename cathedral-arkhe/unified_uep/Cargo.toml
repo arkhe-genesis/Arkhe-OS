@@ -1,0 +1,8 @@
+[package]
+license.workspace = true
+name = "unified_uep"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+safety-core = { path = "../safety-core" }

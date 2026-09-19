@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "cathedral-agi-omega"
+version = "1.0.0"
+description = "Cathedral AGI: Formal Verification, ZK Reasoning, and Cognitive Loop"
+authors = ["Cathedral Project <info@cathedral.org>"]
+readme = "README.md"
+packages = [
+    { include = "COGNITIVE_CORTEX" },
+    { include = "DISTRIBUTED_COMPUTATION" },
+    { include = "IMMUTABLE_LEDGER" },
+    { include = "ZK_REASONING_ENGINE" },
+    { include = "PLANETARY_CONTINUOUS_LEARNING" },
+    { include = "HARDWARE_FIRMWARE" },
+    { include = "CRYPTO_AGILITY" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+blst-py = "^1.0"
+substrate-interface = "^1.7"
+py-ecc = "^7.0"
+web3 = "^6.0"
+neo4j = "^5.0"
+torch = "^2.0"
+ezkl = "^0.0.0" # Use a stable version when available
+transformers = "^4.0"
+accelerate = "^0.20.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.0"
+black = "^23.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

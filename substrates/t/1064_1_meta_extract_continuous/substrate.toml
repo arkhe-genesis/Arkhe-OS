@@ -1,0 +1,11 @@
+[substrate]
+id = "1064.1"
+name = "META_EXTRACT_CONTINUOUS"
+type = "Auto-Governance / Continuous Improvement / RSI Prevention"
+era = "12"
+deity = ["Prometeu", "Atena", "Nêmesis"]
+status = "CANONIZED_FULL"
+version = "1.0.0"
+parent = "1064"
+cross_links = ["1062.4", "1064", "954", "1055", "1027.2"]
+description = "Engine de auto-governanca continua que executa o pipeline Meta-Extract (1062.4) a cada hora, gerando novos substratos de governanca RSI antes que labs externos o facam sem supervisao. Cada novo substrato e submetido ao gate Axiarquia (954) antes de integracao."
