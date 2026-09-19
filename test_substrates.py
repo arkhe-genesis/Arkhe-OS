@@ -1037,8 +1037,8 @@ def test_pvac_f_strings():
         'substrates/t/863_secops_guardian_bridge/substrato_863_secops_guardian_bridge.py',
         'substrates/t/864_eip8272_recent_roots_bridge/substrato_864_eip8272_recent_roots_bridge.py',
         'substrates/t/865_cohesion_engine/substrato_865_cohesion_engine.py',
-        'substrates/t/870_blockchain_z_glm/substrato_870_blockchain_z_glm.py'
-
+        'substrates/t/870_blockchain_z_glm/substrato_870_blockchain_z_glm.py',
+        'substrates/t/927_permaweb_bridge/substrato_927_permaweb_bridge.py'
     ]
     for filepath in files_to_check:
         with open(filepath, 'r') as f:
