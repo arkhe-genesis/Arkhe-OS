@@ -147,7 +147,7 @@
     "react-katex": "^3.1.0",
     "react-native": "^0.87.1",
     "recharts": "^3.8.1",
-    "three": "^0.185.1"
+    "three": "^0.186.0"
   },
   "directories": {
     "doc": "docs",
