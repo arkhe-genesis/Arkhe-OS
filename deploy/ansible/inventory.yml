@@ -1,0 +1,42 @@
+all:
+  children:
+    us_east:
+      hosts:
+        node-us-east-1:
+          ansible_host: 54.227.XX.XX
+          region: us-east-1
+    eu_west:
+      hosts:
+        node-eu-west-1:
+          ansible_host: 34.245.XX.XX
+          region: eu-west-1
+    ap_south:
+      hosts:
+        node-ap-south-1:
+          ansible_host: 13.233.XX.XX
+          region: ap-south-1
+    sa_east:
+      hosts:
+        node-sa-east-1:
+          ansible_host: 18.231.XX.XX
+          region: sa-east-1
+    af_south:
+      hosts:
+        node-af-south-1:
+          ansible_host: 13.246.XX.XX
+          region: af-south-1
+    me_south:
+      hosts:
+        node-me-south-1:
+          ansible_host: 15.185.XX.XX
+          region: me-south-1
+    ap_northeast:
+      hosts:
+        node-ap-northeast-1:
+          ansible_host: 13.112.XX.XX
+          region: ap-northeast-1
+  vars:
+    ansible_user: arkhe
+    ansible_python_interpreter: /usr/bin/python3
+    cathedral_version: "10.0.0"
+    canonical_freq: 39420

@@ -1,0 +1,8 @@
+[substrate]
+id = 973
+name = "NOSTR-RELAY"
+type = "Camada Social Descentralizada"
+era = "9"
+deity = "Iris"
+status = "CANONIZED_PROVISIONAL"
+cross_links = [972, 972.1]

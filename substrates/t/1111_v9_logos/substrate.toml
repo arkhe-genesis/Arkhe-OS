@@ -1,0 +1,14 @@
+[substrate]
+id = "1111"
+name = "Cathedral ARKHE v9.0 LOGOS"
+version = "9.0.0"
+description = "Geração Completa dos 10 módulos de inovação do Cathedral ARKHE v9.0 LOGOS"
+author = "ORCID 0009-0005-2697-4668"
+seal = "CATHEDRAL-ARKHE-v9.0.0-LOGOS-2026-01-15"
+
+[dependencies]
+python = ">=3.10"
+torch = ">=2.0"
+
+[execution]
+entrypoint = "cathedral_v9_logos_generator.py"

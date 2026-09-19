@@ -1,0 +1,24 @@
+// IOmniscientSolver.aml
+// Motor universal de resolução on-chain
+
+interface IOmniscientSolver {
+  fn submit_problem(encrypted_problem: bytes, domain: int, bounty: int): int
+  fn submit_solution(problem_id: int, encrypted_solution: bytes, proof: bytes): bool
+  view fn get_problem(problem_id: int): ProblemRecord
+  view fn get_solution(problem_id: int): SolutionRecord
+}
+
+struct ProblemRecord {
+  id: int
+  domain: int
+  bounty: int
+  status: int
+  submitter: address
+}
+
+struct SolutionRecord {
+  problem_id: int
+  solver: address
+  proof_hash: bytes32
+  verified: bool
+}

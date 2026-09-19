@@ -1,0 +1,8 @@
+[substrate]
+id = 972.1
+name = "NOSTR-TOR-IPFS-BRIDGE"
+type = "Camada de Resiliência / Anti-censura / Content-Routing"
+era = "9"
+deity = "Hermes e Hecate"
+status = "CANONIZED_PROVISIONAL"
+cross_links = [972, 923, 937, 955, 953, 954, 966, 970]

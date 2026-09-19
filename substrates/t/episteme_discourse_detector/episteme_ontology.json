@@ -1,0 +1,466 @@
+{
+  "@context": {
+    "episteme": "http://cathedral-arkhe.org/ontology/episteme#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "owl": "http://www.w3.org/2002/07/owl#"
+  },
+  "@type": "owl:Ontology",
+  "@id": "http://cathedral-arkhe.org/ontology/episteme",
+  "versionInfo": "1.0.0",
+  "nodes": [
+    {
+      "id": "eb3afdd2-b959-46",
+      "label": "Causality",
+      "category": "relation",
+      "status": "canonized",
+      "discourse": "analyst",
+      "definitions": {
+        "en": "A relation where one event brings about another",
+        "pt": "Uma relação onde um evento produz outro",
+        "es": "Una relación donde un evento produce otro"
+      },
+      "axioms": [],
+      "evidence_ids": [],
+      "created_by": "ORCID-0009-0005-2697-4668",
+      "created_at": "2026-06-10T11:53:12.705960",
+      "modified_at": "2026-06-10T11:53:12.705965",
+      "version": "1.0.0",
+      "domain_mappings": {},
+      "reproducibility_score": 0.0,
+      "verification_index": 0.0,
+      "epistemic_diversity": 0.0,
+      "anchor_hash": null
+    },
+    {
+      "id": "521ba9ad-2b2d-4f",
+      "label": "Evidence",
+      "category": "entity",
+      "status": "canonized",
+      "discourse": "analyst",
+      "definitions": {
+        "en": "Empirical data supporting or refuting a claim",
+        "pt": "Dados empíricos que apoiam ou refutam uma alegação"
+      },
+      "axioms": [],
+      "evidence_ids": [],
+      "created_by": "ORCID-0009-0005-2697-4668",
+      "created_at": "2026-06-10T11:53:12.705992",
+      "modified_at": "2026-06-10T11:53:12.705998",
+      "version": "1.0.0",
+      "domain_mappings": {},
+      "reproducibility_score": 0.0,
+      "verification_index": 0.0,
+      "epistemic_diversity": 0.0,
+      "anchor_hash": null
+    },
+    {
+      "id": "b42f6256-d32a-46",
+      "label": "Reproducibility",
+      "category": "property",
+      "status": "canonized",
+      "discourse": "analyst",
+      "definitions": {
+        "en": "The ability to obtain consistent results across independent experiments",
+        "pt": "A capacidade de obter resultados consistentes em experimentos independentes"
+      },
+      "axioms": [],
+      "evidence_ids": [],
+      "created_by": "ORCID-0009-0005-2697-4668",
+      "created_at": "2026-06-10T11:53:12.706020",
+      "modified_at": "2026-06-10T11:53:12.706025",
+      "version": "1.0.0",
+      "domain_mappings": {},
+      "reproducibility_score": 0.0,
+      "verification_index": 0.0,
+      "epistemic_diversity": 0.0,
+      "anchor_hash": null
+    },
+    {
+      "id": "2acf1aaa-2c93-4c",
+      "label": "P-hacking",
+      "category": "process",
+      "status": "canonized",
+      "discourse": "analyst",
+      "definitions": {
+        "en": "Selective reporting of statistically significant results",
+        "pt": "Relato seletivo de resultados estatisticamente significativos"
+      },
+      "axioms": [],
+      "evidence_ids": [],
+      "created_by": "ORCID-0009-0005-2697-4668",
+      "created_at": "2026-06-10T11:53:12.706046",
+      "modified_at": "2026-06-10T11:53:12.706051",
+      "version": "1.0.0",
+      "domain_mappings": {},
+      "reproducibility_score": 0.0,
+      "verification_index": 0.0,
+      "epistemic_diversity": 0.0,
+      "anchor_hash": null
+    },
+    {
+      "id": "c73db382-b1f4-45",
+      "label": "Epistemic Justice",
+      "category": "value",
+      "status": "canonized",
+      "discourse": "analyst",
+      "definitions": {
+        "en": "Fair treatment of knowledge and knowers",
+        "pt": "Tratamento justo do conhecimento e dos conhecedores"
+      },
+      "axioms": [],
+      "evidence_ids": [],
+      "created_by": "ORCID-0009-0005-2697-4668",
+      "created_at": "2026-06-10T11:53:12.706071",
+      "modified_at": "2026-06-10T11:53:12.706076",
+      "version": "1.0.0",
+      "domain_mappings": {},
+      "reproducibility_score": 0.0,
+      "verification_index": 0.0,
+      "epistemic_diversity": 0.0,
+      "anchor_hash": null
+    },
+    {
+      "id": "0492f97e-da80-41",
+      "label": "Paradigm",
+      "category": "paradigm",
+      "status": "canonized",
+      "discourse": "analyst",
+      "definitions": {
+        "en": "A dominant framework of scientific practice (Kuhn)",
+        "pt": "Um framework dominante de prática científica (Kuhn)"
+      },
+      "axioms": [],
+      "evidence_ids": [],
+      "created_by": "ORCID-0009-0005-2697-4668",
+      "created_at": "2026-06-10T11:53:12.706096",
+      "modified_at": "2026-06-10T11:53:12.706101",
+      "version": "1.0.0",
+      "domain_mappings": {},
+      "reproducibility_score": 0.0,
+      "verification_index": 0.0,
+      "epistemic_diversity": 0.0,
+      "anchor_hash": null
+    },
+    {
+      "id": "17ba3f3c-4061-4b",
+      "label": "Discourse",
+      "category": "discourse",
+      "status": "canonized",
+      "discourse": "analyst",
+      "definitions": {
+        "en": "A structured way of producing and circulating knowledge (Lacan)",
+        "pt": "Uma forma estruturada de produzir e circular conhecimento (Lacan)"
+      },
+      "axioms": [],
+      "evidence_ids": [],
+      "created_by": "ORCID-0009-0005-2697-4668",
+      "created_at": "2026-06-10T11:53:12.706122",
+      "modified_at": "2026-06-10T11:53:12.706127",
+      "version": "1.0.0",
+      "domain_mappings": {},
+      "reproducibility_score": 0.0,
+      "verification_index": 0.0,
+      "epistemic_diversity": 0.0,
+      "anchor_hash": null
+    },
+    {
+      "id": "67ff25d3-80b4-41",
+      "label": "Method",
+      "category": "method",
+      "status": "canonized",
+      "discourse": "analyst",
+      "definitions": {
+        "en": "A systematic procedure for acquiring knowledge",
+        "pt": "Um procedimento sistemático para aquisição de conhecimento"
+      },
+      "axioms": [],
+      "evidence_ids": [],
+      "created_by": "ORCID-0009-0005-2697-4668",
+      "created_at": "2026-06-10T11:53:12.706145",
+      "modified_at": "2026-06-10T11:53:12.706150",
+      "version": "1.0.0",
+      "domain_mappings": {},
+      "reproducibility_score": 0.0,
+      "verification_index": 0.0,
+      "epistemic_diversity": 0.0,
+      "anchor_hash": null
+    },
+    {
+      "id": "722f7206-2f6d-4f",
+      "label": "Theory",
+      "category": "theory",
+      "status": "canonized",
+      "discourse": "analyst",
+      "definitions": {
+        "en": "An explanatory framework for a set of phenomena",
+        "pt": "Um framework explicativo para um conjunto de fenômenos"
+      },
+      "axioms": [],
+      "evidence_ids": [],
+      "created_by": "ORCID-0009-0005-2697-4668",
+      "created_at": "2026-06-10T11:53:12.706169",
+      "modified_at": "2026-06-10T11:53:12.706175",
+      "version": "1.0.0",
+      "domain_mappings": {},
+      "reproducibility_score": 0.0,
+      "verification_index": 0.0,
+      "epistemic_diversity": 0.0,
+      "anchor_hash": null
+    },
+    {
+      "id": "7c9dfc67-d664-42",
+      "label": "Uncertainty",
+      "category": "property",
+      "status": "canonized",
+      "discourse": "analyst",
+      "definitions": {
+        "en": "The state of having limited knowledge about an outcome",
+        "pt": "O estado de ter conhecimento limitado sobre um resultado"
+      },
+      "axioms": [],
+      "evidence_ids": [],
+      "created_by": "ORCID-0009-0005-2697-4668",
+      "created_at": "2026-06-10T11:53:12.706193",
+      "modified_at": "2026-06-10T11:53:12.706198",
+      "version": "1.0.0",
+      "domain_mappings": {},
+      "reproducibility_score": 0.0,
+      "verification_index": 0.0,
+      "epistemic_diversity": 0.0,
+      "anchor_hash": null
+    },
+    {
+      "id": "2bf6aca8-a26d-42",
+      "label": "Gene Expression",
+      "category": "process",
+      "status": "evidenced",
+      "discourse": "university",
+      "definitions": {
+        "en": "The process by which information from a gene is used to synthesize a functional gene product",
+        "pt": "O processo pelo qual informação de um gene é usada para sintetizar um produto funcional"
+      },
+      "axioms": [],
+      "evidence_ids": [],
+      "created_by": "ORCID-0009-0005-2697-4668",
+      "created_at": "2026-06-10T11:53:12.706328",
+      "modified_at": "2026-06-10T11:53:12.706334",
+      "version": "1.0.0",
+      "domain_mappings": {
+        "primary": "genomics"
+      },
+      "reproducibility_score": 0.0,
+      "verification_index": 0.0,
+      "epistemic_diversity": 0.0,
+      "anchor_hash": null
+    },
+    {
+      "id": "12c44c1a-480d-48",
+      "label": "Traditional Medicine Knowledge",
+      "category": "method",
+      "status": "evidenced",
+      "discourse": "analyst",
+      "definitions": {
+        "en": "Healing practices and knowledge systems developed by indigenous communities",
+        "pt": "Práticas de cura e sistemas de conhecimento desenvolvidos por comunidades indígenas"
+      },
+      "axioms": [],
+      "evidence_ids": [],
+      "created_by": "ORCID-0009-0005-2697-4668",
+      "created_at": "2026-06-10T11:53:12.706373",
+      "modified_at": "2026-06-10T11:53:12.706379",
+      "version": "1.0.0",
+      "domain_mappings": {
+        "primary": "indigenous_knowledge"
+      },
+      "reproducibility_score": 0.0,
+      "verification_index": 0.0,
+      "epistemic_diversity": 0.0,
+      "anchor_hash": null
+    },
+    {
+      "id": "87cb2c84-2585-4b",
+      "label": "Quantum Entanglement",
+      "category": "entity",
+      "status": "verified",
+      "discourse": "university",
+      "definitions": {
+        "en": "Concept from physics"
+      },
+      "axioms": [],
+      "evidence_ids": [],
+      "created_by": "ORCID-0009-0005-2697-4668",
+      "created_at": "2026-06-10T11:53:12.706511",
+      "modified_at": "2026-06-10T11:53:12.706517",
+      "version": "1.0.0",
+      "domain_mappings": {
+        "primary": "physics"
+      },
+      "reproducibility_score": 0.0,
+      "verification_index": 0.0,
+      "epistemic_diversity": 0.0,
+      "anchor_hash": null
+    },
+    {
+      "id": "c276e4f0-3ee5-4f",
+      "label": "Neural Network",
+      "category": "entity",
+      "status": "evidenced",
+      "discourse": "capitalist",
+      "definitions": {
+        "en": "Concept from ai_ml"
+      },
+      "axioms": [],
+      "evidence_ids": [],
+      "created_by": "ORCID-0009-0005-2697-4668",
+      "created_at": "2026-06-10T11:53:12.706559",
+      "modified_at": "2026-06-10T11:53:12.706565",
+      "version": "1.0.0",
+      "domain_mappings": {
+        "primary": "ai_ml"
+      },
+      "reproducibility_score": 0.0,
+      "verification_index": 0.0,
+      "epistemic_diversity": 0.0,
+      "anchor_hash": null
+    },
+    {
+      "id": "6300f423-df7e-44",
+      "label": "Thick Description",
+      "category": "entity",
+      "status": "evidenced",
+      "discourse": "analyst",
+      "definitions": {
+        "en": "Concept from anthropology"
+      },
+      "axioms": [],
+      "evidence_ids": [],
+      "created_by": "ORCID-0009-0005-2697-4668",
+      "created_at": "2026-06-10T11:53:12.706604",
+      "modified_at": "2026-06-10T11:53:12.706609",
+      "version": "1.0.0",
+      "domain_mappings": {
+        "primary": "anthropology"
+      },
+      "reproducibility_score": 0.0,
+      "verification_index": 0.0,
+      "epistemic_diversity": 0.0,
+      "anchor_hash": null
+    },
+    {
+      "id": "c8d07c55-4118-41",
+      "label": "Ayahuasca Ritual",
+      "category": "entity",
+      "status": "conjecture",
+      "discourse": "analyst",
+      "definitions": {
+        "en": "Concept from indigenous_knowledge"
+      },
+      "axioms": [],
+      "evidence_ids": [],
+      "created_by": "ORCID-0009-0005-2697-4668",
+      "created_at": "2026-06-10T11:53:12.706648",
+      "modified_at": "2026-06-10T11:53:12.706654",
+      "version": "1.0.0",
+      "domain_mappings": {
+        "primary": "indigenous_knowledge"
+      },
+      "reproducibility_score": 0.0,
+      "verification_index": 0.0,
+      "epistemic_diversity": 0.0,
+      "anchor_hash": null
+    },
+    {
+      "id": "39dc8f63-96d2-43",
+      "label": "Randomized Controlled Trial",
+      "category": "entity",
+      "status": "canonized",
+      "discourse": "master",
+      "definitions": {
+        "en": "Concept from medicine"
+      },
+      "axioms": [],
+      "evidence_ids": [],
+      "created_by": "ORCID-0009-0005-2697-4668",
+      "created_at": "2026-06-10T11:53:12.706701",
+      "modified_at": "2026-06-10T11:53:12.706706",
+      "version": "1.0.0",
+      "domain_mappings": {
+        "primary": "medicine"
+      },
+      "reproducibility_score": 0.0,
+      "verification_index": 0.0,
+      "epistemic_diversity": 0.0,
+      "anchor_hash": null
+    },
+    {
+      "id": "36ccf722-8311-46",
+      "label": "P-value",
+      "category": "entity",
+      "status": "contested",
+      "discourse": "hysteric",
+      "definitions": {
+        "en": "Concept from statistics"
+      },
+      "axioms": [],
+      "evidence_ids": [],
+      "created_by": "ORCID-0009-0005-2697-4668",
+      "created_at": "2026-06-10T11:53:12.706747",
+      "modified_at": "2026-06-10T11:53:12.706752",
+      "version": "1.0.0",
+      "domain_mappings": {
+        "primary": "statistics"
+      },
+      "reproducibility_score": 0.0,
+      "verification_index": 0.0,
+      "epistemic_diversity": 0.0,
+      "anchor_hash": null
+    }
+  ],
+  "edges": [
+    {
+      "id": "5a800907-773c-47",
+      "source_id": "521ba9ad-2b2d-4f",
+      "target_id": "eb3afdd2-b959-46",
+      "relation_type": "supports",
+      "evidence_ids": [],
+      "strength": 0.9,
+      "created_by": "",
+      "created_at": "2026-06-10T11:53:12.706227",
+      "zk_proof_hash": null
+    },
+    {
+      "id": "76c6c015-86a2-49",
+      "source_id": "b42f6256-d32a-46",
+      "target_id": "521ba9ad-2b2d-4f",
+      "relation_type": "enables",
+      "evidence_ids": [],
+      "strength": 0.85,
+      "created_by": "",
+      "created_at": "2026-06-10T11:53:12.706250",
+      "zk_proof_hash": null
+    },
+    {
+      "id": "4b45fe3c-9393-4b",
+      "source_id": "2bf6aca8-a26d-42",
+      "target_id": "12c44c1a-480d-48",
+      "relation_type": "translates_to",
+      "evidence_ids": [],
+      "strength": 0.65,
+      "created_by": "",
+      "created_at": "2026-06-10T11:53:12.706410",
+      "zk_proof_hash": null
+    }
+  ],
+  "metrics": {
+    "total_nodes": 18,
+    "total_edges": 3,
+    "domains": 7,
+    "epistemic_diversity_entropy": 0.5970357553054273,
+    "decolonization_index": 0.35940715106108545,
+    "representation_indigenous": 0.2,
+    "representation_traditional": 0.0,
+    "ontology_version": "1.0.0",
+    "ontology_seal": "7f4698d0f92e868654b4dbee5de064db"
+  }
+}

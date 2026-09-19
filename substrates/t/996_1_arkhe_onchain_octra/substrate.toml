@@ -1,0 +1,11 @@
+[substrate]
+id = "996.1"
+name = "ARKHE-ONCHAIN"
+type = "Canonizer"
+status = "Canonized"
+architect = "0009-0005-2697-4668"
+seal = "996.1-ARKHE-ONCHAIN-OCTRA-2026-05-31"
+odometer = "∞.Ω.∇+++.996.1"
+
+[dependencies]
+octra_aml = "0.1.0"

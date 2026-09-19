@@ -1,0 +1,22 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  rust:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: pacir-agi } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with: { toolchain: '1.75', components: 'rustfmt,clippy' }
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --workspace -- -D warnings
+      - run: cargo test --workspace
+  python:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: pacir-agi } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install -e '.[test]'
+      - run: PYTHONPATH=python python -m pytest python/tests

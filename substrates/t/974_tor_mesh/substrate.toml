@@ -1,0 +1,8 @@
+[substrate]
+id = 974
+name = "TOR-MESH"
+type = "Camada de Anonimato"
+era = "9"
+deity = "Hades"
+status = "CANONIZED_PROVISIONAL"
+cross_links = [972, 972.1]
